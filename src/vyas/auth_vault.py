@@ -188,13 +188,31 @@ def get_saved_kundlis(user_id: int) -> List[Dict]:
         pass
     return kundlis
 
-def delete_kundli(user_id: int, kundli_id: int) -> Tuple[bool, str]:
-    """Deletes a saved kundli profile."""
+def upgrade_vip(user_id: int, plan_type: str, txn_id: str) -> Tuple[bool, str]:
+    """Extends user VIP access based on payment plan."""
+    days_map = {
+        "monthly": 30,
+        "annual": 365,
+        "lifetime": 3650
+    }
+    add_days = days_map.get(plan_type.lower(), 365)
     try:
         with _get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM saved_kundlis WHERE id = ? AND user_id = ?", (kundli_id, user_id))
+            cursor.execute("SELECT vip_expiry FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            if not row:
+                return False, "उपयोगकर्ता नहीं मिला।"
+            
+            curr_exp = datetime.fromisoformat(row["vip_expiry"])
+            base_date = max(datetime.now(), curr_exp)
+            new_exp = base_date + timedelta(days=add_days)
+
+            cursor.execute("""
+                UPDATE users SET vip_expiry = ?, tier = 'VIP_PAID' WHERE id = ?
+            """, (new_exp.isoformat(), user_id))
             conn.commit()
-            return True, "कुंडली सफलतापूर्वक हटा दी गई।"
+            return True, f"सफल अपग्रेड! आपका VIP प्लान {new_exp.strftime('%d/%m/%Y')} तक सक्रिय कर दिया गया है।"
     except Exception as e:
-        return False, f"हटाने में त्रुटि: {str(e)}"
+        return False, f"अपग्रेड में त्रुटि: {str(e)}"
+

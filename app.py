@@ -287,6 +287,96 @@ st.markdown("""
         color: #f0c05a;
         margin-bottom: 8px;
     }
+
+    /* -------------------------------------------------------------
+       CRITICAL FIXES: DARK GLASSMORPHISM SIDEBAR & DEVANAGARI FONTS
+       ------------------------------------------------------------- */
+    /* Force complete dark background on Streamlit Sidebar */
+    section[data-testid="stSidebar"] {
+        background: #090e1a !important;
+        background-color: #090e1a !important;
+        border-right: 1px solid rgba(240, 192, 90, 0.22) !important;
+        color: #e2e8f0 !important;
+    }
+    section[data-testid="stSidebar"] > div:first-child {
+        background: #090e1a !important;
+        background-color: #090e1a !important;
+    }
+    section[data-testid="stSidebar"] .stMarkdown, 
+    section[data-testid="stSidebar"] p, 
+    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] div {
+        color: #e2e8f0 !important;
+        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+    }
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3 {
+        color: #f0c05a !important;
+        font-family: 'Cinzel', 'Noto Sans Devanagari', serif !important;
+    }
+
+    /* Streamlit Input Fields in Sidebar */
+    section[data-testid="stSidebar"] div[data-baseweb="input"] > div,
+    section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+        background-color: rgba(15, 23, 42, 0.95) !important;
+        border: 1px solid rgba(240, 192, 90, 0.35) !important;
+        color: #f7d584 !important;
+        border-radius: 8px !important;
+    }
+    section[data-testid="stSidebar"] input {
+        color: #fef0cd !important;
+        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif !important;
+    }
+
+    /* -------------------------------------------------------------
+       PRIORITY 2: ROYAL GOLD CTA BUTTON WITH DEEP BLACK HIGH-CONTRAST TEXT
+       ------------------------------------------------------------- */
+    div.stButton > button[kind="primary"], 
+    div.stButton > button,
+    section[data-testid="stSidebar"] div.stButton > button {
+        background: linear-gradient(135deg, #e5a93c 0%, #fcd375 50%, #c98822 100%) !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 900 !important;
+        font-size: 1.05rem !important;
+        letter-spacing: 0.5px !important;
+        border: 2px solid #ffd97d !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 20px rgba(212, 148, 41, 0.45) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 12px 24px !important;
+        text-shadow: none !important;
+    }
+    div.stButton > button *,
+    section[data-testid="stSidebar"] div.stButton > button * {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-weight: 900 !important;
+    }
+    div.stButton > button:hover,
+    section[data-testid="stSidebar"] div.stButton > button:hover {
+        background: linear-gradient(135deg, #fcd375 0%, #fff2cc 50%, #e5a93c 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 28px rgba(247, 213, 132, 0.65) !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+    /* Expander styling in dark mode */
+    .streamlit-expanderHeader {
+        background: rgba(14, 23, 47, 0.85) !important;
+        border: 1px solid rgba(240, 192, 90, 0.25) !important;
+        border-radius: 8px !important;
+        color: #f0c05a !important;
+    }
+
+    /* Ensure universal Devanagari typography across entire body */
+    * {
+        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -315,8 +405,8 @@ with st.sidebar:
     if "user" not in st.session_state:
         st.session_state["user"] = {
             "id": 1,
-            "name": "Nikhil Vyas",
-            "email": "inikhilvyas@gmail.com",
+            "name": "नया जातक (Seeker)",
+            "email": "seeker@vyasastro.com",
             "tier": "VIP_TRIAL",
             "days_left": 30,
             "is_vip": True
@@ -325,11 +415,82 @@ with st.sidebar:
     u = st.session_state["user"]
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
-                border: 1px solid rgba(240, 192, 90, 0.6); border-radius: 10px; padding: 10px 14px; text-align: center; margin-bottom: 12px;">
+                border: 1px solid rgba(240, 192, 90, 0.6); border-radius: 10px; padding: 10px 14px; text-align: center; margin-bottom: 8px;">
         <div style="color: #f7d584; font-weight: 800; font-size: 0.95rem;">👑 VIP PRO TRIAL ACTIVE</div>
         <div style="color: #eedc9a; font-size: 0.8rem; margin-top: 2px;">{u['name']} • <b>{u['days_left']} Days Left</b> (30-Day Free Trial)</div>
     </div>
     """, unsafe_allow_html=True)
+
+    # Hybrid Payment & Upgrade VIP Modal
+    with st.expander("💳 Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
+        st.markdown("""
+        <div style="font-size: 0.85rem; color: #eedc9a; margin-bottom: 8px;">
+            <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, 30+ पेज PDF, D60 देवता, लाल किताब व BTR का पूर्ण एक्सेस।
+        </div>
+        """, unsafe_allow_html=True)
+        plan_sel = st.selectbox("चुनें प्लान (Select Plan)", [
+            "🥈 वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
+            "🥉 मासिक (Monthly Starter) - ₹199 / माह",
+            "🥇 लाइफटाइम एलीट (Lifetime Elite) - ₹2,499"
+        ])
+        
+        plan_key = "annual"
+        amount = 999
+        if "मासिक" in plan_sel:
+            plan_key = "monthly"
+            amount = 199
+        elif "लाइफटाइम" in plan_sel:
+            plan_key = "lifetime"
+            amount = 2499
+
+        # Dynamic UPI Link & Exact Amount QR Code
+        upi_id = "inikhilvyas@ybl"
+        payee_name = "Nikhil Vyas"
+        import urllib.parse
+        upi_uri = f"upi://pay?pa={upi_id}&pn={urllib.parse.quote(payee_name)}&am={amount}.00&cu=INR&tn={urllib.parse.quote('VYAS VIP Subscription')}"
+        encoded_uri = urllib.parse.quote(upi_uri)
+        # Generate online QR code image URL with exact payment amount embedded
+        qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encoded_uri}"
+
+        st.markdown(f"""
+        <div style="text-align: center; background: rgba(10, 16, 32, 0.9); border: 1px solid #f0c05a; border-radius: 12px; padding: 14px; margin-top: 8px;">
+            <div style="color: #f0c05a; font-weight: 800; font-size: 0.95rem;">📲 Scan & Pay ₹{amount} (Exact Amount QR)</div>
+            <div style="color: #eedc9a; font-size: 0.8rem;">(PhonePe, GPay, Paytm, BHIM - स्कैन करते ही ₹{amount} अपने आप आ जाएगा)</div>
+            <div style="margin: 12px 0;">
+                <img src="{qr_url}" width="180" height="180" style="border-radius: 10px; border: 2px solid #eedc9a; background: white; padding: 6px;"/>
+            </div>
+            <div style="font-size: 0.85rem; color: #f7d584;"><b>UPI ID:</b> <code>{upi_id}</code></div>
+            <div style="font-size: 0.95rem; color: #48cae4; font-weight: 800; margin-top: 5px;">कुल देय राशि: ₹{amount}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<small style='color: #eedc9a;'><b>भुगतान के बाद पुष्टि करें (Verification):</b></small>", unsafe_allow_html=True)
+        txn_input = st.text_input("UPI Reference / UTR No.", placeholder="e.g. 428192849120", key="txn_field")
+        
+        col_pay1, col_pay2 = st.columns(2)
+        with col_pay1:
+            if st.button("✅ Confirm Payment", use_container_width=True):
+                if txn_input and len(txn_input) >= 6:
+                    ok, up_msg = auth_vault.upgrade_vip(u["id"], plan_key, txn_input)
+                    if ok:
+                        st.session_state["user"]["tier"] = "VIP_PAID"
+                        st.session_state["user"]["is_vip"] = True
+                        st.success(up_msg)
+                        st.rerun()
+                    else:
+                        st.error(up_msg)
+                else:
+                    st.warning("कृपया मान्य UTR / ट्रांजैक्शन नंबर दर्ज करें।")
+        with col_pay2:
+            wa_text = f"Namaste Nikhil Ji, I have paid INR {amount} for VYAS VIP ({plan_key}). UTR: {txn_input}"
+            wa_url = f"https://wa.me/919414121172?text={wa_text.replace(' ', '%20')}"
+            st.markdown(f"""
+            <a href="{wa_url}" target="_blank" style="text-decoration: none;">
+                <button style="width: 100%; background: #25D366; color: white; border: none; border-radius: 6px; padding: 7px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                    💬 WhatsApp Help
+                </button>
+            </a>
+            """, unsafe_allow_html=True)
 
     with st.expander("👤 User Account / Login / Register", expanded=False):
         auth_mode = st.radio("Account Action", ["Quick Register (New User)", "Login (Existing)"], horizontal=True)
@@ -375,20 +536,20 @@ with st.sidebar:
     mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
     
     lp = st.session_state.get('loaded_profile', {})
-    default_name = lp.get('name', 'Nikhil Vyas')
-    default_city = lp.get('city', 'Pali, Rajasthan')
-    default_lat = float(lp.get('lat', 25.7711))
-    default_lon = float(lp.get('lon', 73.3234))
+    default_name = lp.get('name', 'जातक / Seeker')
+    default_city = lp.get('city', 'New Delhi, India')
+    default_lat = float(lp.get('lat', 28.6139))
+    default_lon = float(lp.get('lon', 77.2090))
     
     if "Natal" in mode:
         name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
-        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=datetime(1984, 11, 23).date(), min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
+        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=datetime(1995, 1, 1).date(), min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
         
         # Exact HH:MM:SS input for ultra micro-precision
         st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
         t_col1, t_col2, t_col3 = st.columns(3)
-        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=16)
-        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=45)
+        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=12)
+        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=0)
         tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=0)
         time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
     else:
@@ -444,7 +605,7 @@ with st.sidebar:
         else:
             st.warning(s_msg)
     
-    btn_lbl = "कुण्डली एवं ज्योतिषीय शोध प्रारंभ करें" if is_hi else "Generate Horoscope & Intelligence"
+    btn_lbl = "☸️ कुण्डली बनाएं एवं फलादेश देखें (Generate Kundli)" if is_hi else "☸️ Generate Kundli & Astrological Analysis"
     generate = st.button(btn_lbl, type="primary", use_container_width=True)
 
 # Calculate Core Structures
@@ -509,7 +670,7 @@ if st.session_state.get('data_generated'):
         d1_houses[house_num].append(abbr)
 
     # -------------------------------------------------------------------------
-    # DOMAIN SUITE NAVIGATION (Expanded with Daily Horoscope, Lal Kitab, and BTR)
+    # DOMAIN SUITE NAVIGATION (Pure Astrology & Research Suites)
     # -------------------------------------------------------------------------
     suite_options = [
         "🌞 व्यक्तिगत दैनिक राशिफल" if is_hi else "🌞 Personalised Daily Horoscope",
@@ -519,7 +680,6 @@ if st.session_state.get('data_generated'):
         "⏳ जन्म समय शुद्धि (BTR)" if is_hi else "⏳ Birth Time Rectification (BTR)",
         "⚖️ अष्टकवर्ग, षड्बल एवं मैत्री" if is_hi else "⚖️ Ashtakavarga & Strengths",
         "👑 केपी, जैमिनी, नाड़ी एवं चक्र" if is_hi else "👑 KP, Jaimini, Nadi & Chakras",
-        "📖 शीर्ष गुरु ज्ञान व फलित" if is_hi else "📖 Masters' Wisdom & Predictions",
         "📄 35+ पेज शोध प्रबंध PDF" if is_hi else "📄 35+ Page Publication PDF"
     ]
     
@@ -678,20 +838,7 @@ if st.session_state.get('data_generated'):
                 else:
                     st.info("वर्तमान दर्ज समय ही गणितीय रूप से सर्वाधिक संतुलित है।")
 
-    # =========================================================================
-    # SUITE: 📖 MASTERS' WISDOM & PREDICTIONS
-    # =========================================================================
-    if "शीर्ष गुरु" in selected_suite or "Masters" in selected_suite:
-        st.markdown(f'<div class="section-title">{"📖 भारत के शीर्ष ज्योतिषाचार्यों का सिद्ध ज्ञान बैंक एवं सूत्र" if is_hi else "📖 Masters Knowledge Bank & Classical Formulas"}</div>', unsafe_allow_html=True)
-        m_list = vyas_vp.get_masters_knowledge_bank()
-        for m in m_list:
-            st.markdown(f"""
-            <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #f0c05a;">
-                <div style="font-weight: 800; font-size: 1.1rem; color: #f0c05a;">👤 {m['master']}</div>
-                <div style="font-size: 0.88rem; color: #2a9d8f; font-weight: 600;">विशेषज्ञता: {m['specialty']}</div>
-                <div style="font-size: 0.95rem; color: #fdf5e6; margin-top: 6px;"><b>प्रामाणिक सूत्र:</b> {m['formula']}</div>
-            </div>
-            """, unsafe_allow_html=True)
+
 
     # =========================================================================
     # SUITE 1: 🌟 CHARTS & 16 VARGAS
