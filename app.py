@@ -305,9 +305,9 @@ st.markdown("""
     }
     section[data-testid="stSidebar"] .stMarkdown, 
     section[data-testid="stSidebar"] p, 
-    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] span:not([data-testid*="Icon"]):not([data-testid*="Material"]):not([class*="material"]):not([class*="icon"]), 
     section[data-testid="stSidebar"] label,
-    section[data-testid="stSidebar"] div {
+    section[data-testid="stSidebar"] div:not([data-testid*="Icon"]):not([data-testid*="Material"]) {
         color: #e2e8f0 !important;
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
@@ -376,19 +376,20 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------
-       CRITICAL ICON BUG FIX: PRESERVE GOOGLE MATERIAL SYMBOLS
-       Prevents 'keyboard_double_arrow_left' and 'arrow_right' raw ligature leaks
+       CRITICAL ICON BUG FIX: BULLETPROOF MATERIAL SYMBOLS
+       Prevents 'keyboard_double_arrow_left' and '_arrow_right' raw ligature leaks
        ------------------------------------------------------------- */
     span[data-testid="stIconMaterial"],
     span[data-testid*="stIcon"],
     [data-testid="stSidebarCollapseButton"] span,
     [data-testid="stExpandSidebarButton"] span,
     [data-testid="stExpanderToggleIcon"] span,
-    button[data-testid="stSidebarCollapseButton"] *,
-    button[data-testid="stExpandSidebarButton"] *,
-    details summary svg,
-    details summary span {
-        font-family: "Material Symbols Rounded", "Material Icons", sans-serif !important;
+    [data-testid="stExpanderToggleIcon"],
+    button[data-testid="stSidebarCollapseButton"] span,
+    button[data-testid="stExpandSidebarButton"] span,
+    details summary span[data-testid="stIconMaterial"],
+    details summary [data-testid="stExpanderToggleIcon"] span {
+        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
         font-feature-settings: 'liga' 1 !important;
         -webkit-font-feature-settings: 'liga' 1 !important;
         text-transform: none !important;
@@ -397,10 +398,12 @@ st.markdown("""
         word-wrap: normal !important;
         direction: ltr !important;
         -webkit-font-smoothing: antialiased !important;
+        display: inline-block !important;
+        line-height: 1 !important;
     }
 
     /* Target typography cleanly WITHOUT overriding Streamlit internal icon SVGs & spans */
-    body, p, label, .stMarkdown:not([data-testid*="stIcon"]), .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button:not([data-testid*="Sidebar"]):not([data-testid*="stExpander"]) {
+    body, p, label, .stMarkdown:not([data-testid*="stIcon"]):not([data-testid*="Material"]), .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button:not([data-testid*="Sidebar"]):not([data-testid*="stExpander"]) {
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
 </style>
