@@ -374,29 +374,9 @@ st.markdown("""
         color: #f0c05a !important;
     }
 
-    /* Fix Material Icons font so 'arrow_right' renders as an actual SVG icon, not raw text */
-    [data-testid="stExpanderToggleIcon"],
-    .material-symbols-rounded,
-    .material-icons,
-    span[class*="material"] {
-        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
-        font-weight: normal;
-        font-style: normal;
-        font-size: 20px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-feature-settings: 'liga';
-        -webkit-font-smoothing: antialiased;
-    }
-
-    /* Ensure universal Devanagari typography without breaking icons */
-    *:not([data-testid="stExpanderToggleIcon"]):not(.material-symbols-rounded):not([class*="material"]) {
-        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif;
+    /* Target typography cleanly WITHOUT overriding Streamlit internal icon SVGs & spans */
+    body, p, label, .stMarkdown, .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button {
+        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
 </style>
 """, unsafe_allow_html=True)
