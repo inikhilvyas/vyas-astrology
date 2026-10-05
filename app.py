@@ -419,8 +419,24 @@ st.markdown("""
 
 # Sidebar Native Setup
 with st.sidebar:
-    st.image(os.path.join(os.path.dirname(__file__), "logo.jpg"), use_container_width=True)
-    st.markdown("<div style='text-align: center;'><small><b>System Architect:</b> Nikhil Vyas (M.A. Jyotish / PG in Astrology)</small></div><hr>", unsafe_allow_html=True)
+    # Use transparent PNG logo with cosmic gold halo
+    logo_file = "logo.png" if os.path.exists(os.path.join(os.path.dirname(__file__), "logo.png")) else "logo.jpg"
+    st.markdown(f"""
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="data:image/png;base64,{base64.b64encode(open(os.path.join(os.path.dirname(__file__), logo_file), 'rb').read()).decode()}" 
+             style="max-width: 170px; height: auto; filter: drop-shadow(0 0 16px rgba(240, 192, 90, 0.45));" />
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center;'><small style='color: #eedc9a;'><b>System Architect:</b> Nikhil Vyas (M.A. Jyotish / PG in Astrology)</small></div><hr style='border-color: rgba(240,192,90,0.2);'>", unsafe_allow_html=True)
+    
+    # ---------------- MOBILE APP INSTALL BANNER (PWA) ----------------
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(14, 23, 47, 0.95) 100%);
+                border: 1px solid rgba(96, 165, 250, 0.4); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; text-align: center;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: #93c5fd;">📱 मोबाइल ऐप इंस्टॉल करें (Install App)</div>
+        <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 3px;">ब्राउज़र मेनू (⋮) खोलकर <b>'Add to Home screen'</b> दबाएं।</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     if "user" not in st.session_state:
