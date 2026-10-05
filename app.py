@@ -45,6 +45,7 @@ from vyas import lalkitab as vyas_lalkitab
 from vyas import daily_horoscope as vyas_daily
 from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
+from vyas import match as vyas_match
 
 def render_kundli(svg_str: str):
     """Render astrological SVG cleanly via base64 data URI to prevent DOMPurify stripping."""
@@ -374,28 +375,159 @@ st.markdown("""
         color: #f0c05a !important;
     }
 
+    /* -------------------------------------------------------------
+       CRITICAL ICON BUG FIX: PRESERVE GOOGLE MATERIAL SYMBOLS
+       Prevents 'keyboard_double_arrow_left' and 'arrow_right' raw ligature leaks
+       ------------------------------------------------------------- */
+    span[data-testid="stIconMaterial"],
+    span[data-testid*="stIcon"],
+    [data-testid="stSidebarCollapseButton"] span,
+    [data-testid="stExpandSidebarButton"] span,
+    [data-testid="stExpanderToggleIcon"] span,
+    button[data-testid="stSidebarCollapseButton"] *,
+    button[data-testid="stExpandSidebarButton"] *,
+    details summary svg,
+    details summary span {
+        font-family: "Material Symbols Rounded", "Material Icons", sans-serif !important;
+        font-feature-settings: 'liga' 1 !important;
+        -webkit-font-feature-settings: 'liga' 1 !important;
+        text-transform: none !important;
+        letter-spacing: normal !important;
+        white-space: nowrap !important;
+        word-wrap: normal !important;
+        direction: ltr !important;
+        -webkit-font-smoothing: antialiased !important;
+    }
+
     /* Target typography cleanly WITHOUT overriding Streamlit internal icon SVGs & spans */
-    body, p, label, .stMarkdown, .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button {
+    body, p, label, .stMarkdown:not([data-testid*="stIcon"]), .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button:not([data-testid*="Sidebar"]):not([data-testid*="stExpander"]) {
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Master Header
-st.markdown("""
-<div class="vyas-banner">
-    <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.15rem; color: #f0c05a; letter-spacing: 2px;">|| श्री गणेशाय नमः ||</div>
-    <div class="vyas-title">VYAS ASTRA</div>
-    <div class="vyas-subtitle">Vedic Yield Astrology Systems • बहु-पद्धति शोध-स्तरीय ज्योतिष शोध प्रबंध</div>
-    <div class="vyas-badge-bar">
-        <span class="vyas-badge">👤 निखिल व्यास (एम.ए. ज्योतिष - स्नातकोत्तर / M.A. Jyotish)</span>
-        <span class="vyas-badge">📞 +91-9414121172</span>
-        <span class="vyas-badge">✉️ inikhilvyas@gmail.com</span>
-        <span class="vyas-badge">🪐 JPL Ephemeris DE440s</span>
-        <span class="vyas-badge">⚡ Sub-Arcsec Precision</span>
+# Master Header with Interactive 60fps Cosmic Particle Canvas
+st.components.v1.html("""
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Tiro+Devanagari+Sanskrit&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: transparent; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .vyas-banner {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(180deg, rgba(16, 26, 52, 0.88) 0%, rgba(7, 12, 26, 0.96) 100%);
+            border: 1px solid rgba(240, 192, 90, 0.4);
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-align: center;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(240, 192, 90, 0.3);
+        }
+        .vyas-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #fff2cc 0%, #f0c05a 50%, #d49429 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2px;
+            text-shadow: 0 0 25px rgba(240, 192, 90, 0.4);
+        }
+        .vyas-subtitle {
+            font-family: 'Tiro Devanagari Sanskrit', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #eedc9a;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        .vyas-badge-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .vyas-badge {
+            background: rgba(240, 192, 90, 0.12);
+            border: 1px solid rgba(240, 192, 90, 0.35);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.82rem;
+            color: #f7d584;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="vyas-banner">
+        <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.1rem; color: #f0c05a; letter-spacing: 2px;">|| श्री गणेशाय नमः ||</div>
+        <div class="vyas-title">VYAS ASTRA</div>
+        <div class="vyas-subtitle">Vedic Yield Astrology Systems • बहु-पद्धति शोध-स्तरीय ज्योतिष शोध प्रबंध</div>
+        <div class="vyas-badge-bar">
+            <span class="vyas-badge">👤 निखिल व्यास (एम.ए. ज्योतिष - स्नातकोत्तर / M.A. Jyotish)</span>
+            <span class="vyas-badge">📞 +91-9414121172</span>
+            <span class="vyas-badge">✉️ inikhilvyas@gmail.com</span>
+            <span class="vyas-badge">🪐 JPL Ephemeris DE440s</span>
+            <span class="vyas-badge">⚡ Sub-Arcsec Precision</span>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const stars = [];
+        for (let i = 0; i < 45; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.6 + 0.4,
+                alpha: Math.random() * 0.8 + 0.2,
+                speed: Math.random() * 0.03 + 0.01,
+                dx: (Math.random() - 0.5) * 0.3,
+                dy: (Math.random() - 0.5) * 0.3
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if (s.alpha > 1 || s.alpha < 0.2) s.speed = -s.speed;
+                s.x += s.dx;
+                s.y += s.dy;
+                if (s.x < 0) s.x = width;
+                if (s.x > width) s.x = 0;
+                if (s.y < 0) s.y = height;
+                if (s.y > height) s.y = 0;
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(240, 192, 90, ' + Math.abs(s.alpha) + ')';
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = '#f0c05a';
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
+""", height=185)
 
 # Sidebar Native Setup
 with st.sidebar:
@@ -636,7 +768,12 @@ with st.sidebar:
     st.session_state['lon'] = lon
     
     tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=5.5, step=0.5)
-    ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
+    
+    col_ay1, col_ay2 = st.columns(2)
+    with col_ay1:
+        ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
+    with col_ay2:
+        node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
 
     # Save to vault button
     if st.button("💾 Save Profile to Vault / वॉल्ट में सेव करें", use_container_width=True):
@@ -665,6 +802,7 @@ if generate or 'data_generated' not in st.session_state:
     dt_utc = dt - timedelta(hours=tz_offset)
     dt_utc = dt_utc.replace(tzinfo=timezone.utc)
     vyas_ephem.set_ayanamsa(ayan_choice)
+    vyas_ephem.set_node_model("true" if "True" in node_choice else "mean")
     with st.spinner("Executing Micro-Degree Ephemeris, D60 & KP Cuspal Mathematics..."):
         try:
             raw_pos = planet_positions(dt_utc)
@@ -726,6 +864,7 @@ if st.session_state.get('data_generated'):
     suite_options = [
         "🌞 व्यक्तिगत दैनिक राशिफल" if is_hi else "🌞 Personalised Daily Horoscope",
         "🌟 कुण्डली एवं षोडशवर्ग" if is_hi else "🌟 Charts & 16 Vargas",
+        "💍 अष्टकूट मिलान एवं दोष परिहार" if is_hi else "💍 Ashtakoota Match & Dosha Parihara",
         "📕 लाल किताब सम्पूर्ण" if is_hi else "📕 Lal Kitab System & Remedies",
         "🔮 दशा, गोचर एवं वर्षफल" if is_hi else "🔮 Dasha, Transits & Varshphal",
         "⏳ जन्म समय शुद्धि (BTR)" if is_hi else "⏳ Birth Time Rectification (BTR)",
@@ -1057,8 +1196,49 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
 
     # =========================================================================
-    # SUITE 2: 🔮 DASHA, TRANSITS & VARSHPHAL
+    # SUITE: 💍 ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
     # =========================================================================
+    elif "अष्टकूट" in selected_suite or "Ashtakoota" in selected_suite:
+        st.markdown(f'<div class="section-title">{"💍 अष्टकूट गुण मिलान (36 गुण) एवं शास्त्रीय दोष परिहार विश्लेषण" if is_hi else "💍 Ashtakoota 36 Gunas Match & Classical Dosha Cancellation"}</div>', unsafe_allow_html=True)
+        st.info("विवाह मिलान केवल 36 में से 18 गुण मिलाने तक सीमित नहीं है। ऋषि पराशर एवं मुहुर्त चिंतामणि के अनुसार यदि नाड़ी या भकूट में शास्त्रीय परिहार (Exceptions) लागू हो जाएं, तो शून्य अंक भी दोषमुक्त होकर शुभ फल प्रदान करते हैं।")
+
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.markdown("<h4 style='color: #48cae4;'>👦 वर विवरण (Boy Details)</h4>", unsafe_allow_html=True)
+            boy_name = st.text_input("वर का नाम (Boy Name)", birth.get('name', 'वर (Groom)'), key="match_boy_name")
+            boy_m_lon = chart.planets["Moon"].longitude
+            boy_mars_h = (chart.planets["Mars"].sign_index - asc_sign_idx + 12) % 12 + 1
+            st.markdown(f"<b>चन्द्र राशि:</b> {constants.SIGNS_HI[int(boy_m_lon // 30) % 12]} | <b>नक्षत्र:</b> {constants.NAKSHATRAS_HI[int(boy_m_lon // constants.NAKSHATRA_SPAN) % 27]} | <b>मंगल भाव:</b> भाव {boy_mars_h}", unsafe_allow_html=True)
+
+        with col_m2:
+            st.markdown("<h4 style='color: #ff858d;'>👧 कन्या विवरण (Girl Details)</h4>", unsafe_allow_html=True)
+            girl_name = st.text_input("कन्या का नाम (Girl Name)", "कन्या (Bride)", key="match_girl_name")
+            girl_sign_choice = st.selectbox("कन्या की चन्द्र राशि (Girl Moon Sign)", constants.SIGNS_HI, index=(int(boy_m_lon // 30) + 4) % 12, key="match_girl_sign")
+            girl_sign_idx = constants.SIGNS_HI.index(girl_sign_choice)
+            girl_deg_in_sign = st.slider("कन्या चन्द्र अंश (Degrees in Sign)", min_value=0.0, max_value=29.9, value=15.0, step=0.5, key="match_girl_deg")
+            girl_m_lon = girl_sign_idx * 30.0 + girl_deg_in_sign
+            girl_mars_h = st.number_input("कन्या की कुण्डली में मंगल का भाव (Girl Mars House 1-12)", min_value=1, max_value=12, value=1, key="match_girl_mars")
+
+        match_res = vyas_match.calculate_ashtakoota(boy_m_lon, girl_m_lon, boy_mars_h, girl_mars_h)
+
+        # Overview score card
+        st.markdown(f"""
+        <div class="glass-card" style="text-align: center; border: 2px solid #f0c05a; margin-top: 15px; margin-bottom: 20px;">
+            <div style="font-size: 0.95rem; color: #eedc9a; font-weight: 700;">अष्टकूट कुल प्राप्तांक (TOTAL ASHTAKOOTA SCORE)</div>
+            <div style="font-size: 3rem; font-weight: 900; color: #ffd97d; font-family: 'Cinzel', serif; margin: 4px 0;">
+                {match_res['total_score']} / {match_res['max_score']} <span style="font-size: 1.2rem; color: #cbd5e1;">गुण</span>
+            </div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: {'#4ade80' if match_res['total_score'] >= 18 else '#f87171'};">
+                {match_res['verdict']}
+            </div>
+            <div style="font-size: 0.95rem; color: #93c5fd; margin-top: 8px;">
+                <b>मांगलिक (कुज) दोष स्थिति:</b> {match_res['manglik_status']}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"#### 📜 8 कूटों का विस्तृत परीक्षण एवं दोष परिहार सारणी")
+        st.dataframe(pd.DataFrame(match_res["kootas"]), use_container_width=True, hide_index=True)
     elif "दशा" in selected_suite or "Dasha" in selected_suite:
         d_tab1, d_tab2, d_tab3, d_tab4 = st.tabs([
             "विंशोत्तरी 5-स्तरीय दशा (Vimshottari 5-Levels)" if is_hi else "Vimshottari 5-Levels",
@@ -1274,20 +1454,54 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(shad_table), use_container_width=True, hide_index=True)
 
         with b_tab3:
-            st.markdown(f'<div class="section-title">{"श्रीपति भाव चलित एवं पञ्चधा मैत्री" if is_hi else "Sripati Chalit & Maitri"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"श्रीपति भाव चलित चक्र एवं पञ्चधा मैत्री" if is_hi else "Sripati Chalit Chart & Maitri"}</div>', unsafe_allow_html=True)
             pl_lons = {n: p.longitude for n, p in chart.planets.items()}
             mc_lon = kp_cusps[9].longitude
             chalit_data = vyas_chalit.compute_sripati_chalit(chart.ascendant_longitude, mc_lon, pl_lons)
-            chalit_table = []
+            
+            # Construct Bhava Chalit Houses for Chart SVG
+            chalit_houses = {h: [] for h in range(1, 13)}
             for cd in chalit_data:
-                chalit_table.append({
-                    "भाव": f"भाव {cd.bhava_num}",
-                    "आरम्भ": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.arambha_sign)] if is_hi and cd.arambha_sign in constants.SIGNS else cd.arambha_sign} {cd.arambha_dms}",
-                    "मध्य": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.madhya_sign)] if is_hi and cd.madhya_sign in constants.SIGNS else cd.madhya_sign} {cd.madhya_dms}",
-                    "अन्त": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.anta_sign)] if is_hi and cd.anta_sign in constants.SIGNS else cd.anta_sign} {cd.anta_dms}",
-                    "चलित भावस्थ ग्रह": ", ".join([constants.PLANETS_HI.get(p, p) if is_hi else p for p in cd.planets_in_bhava]) if cd.planets_in_bhava else "-"
-                })
-            st.dataframe(pd.DataFrame(chalit_table), use_container_width=True, hide_index=True)
+                # Sign index of Bhava Madhya
+                m_sign_idx = int(cd.madhya_deg // 30.0) % 12
+                chalit_houses[cd.bhava_num].append(str(m_sign_idx + 1))
+                for p in cd.planets_in_bhava:
+                    p_obj = chart.planets[p]
+                    p_hi_abbr = constants.PLANETS_HI.get(p, p)[:2] if is_hi else p[:2]
+                    abbr = f"{p_hi_abbr} {int(p_obj.longitude % 30)}°{int((p_obj.longitude % 1)*60):02d}'"
+                    if p_obj.is_retrograde:
+                        abbr += " (व)" if is_hi else " (R)"
+                    chalit_houses[cd.bhava_num].append(abbr)
+                    
+            ch_col1, ch_col2 = st.columns([1, 1.2])
+            with ch_col1:
+                st.markdown(f"<h4 style='text-align: center; color: #f0c05a;'>{'श्रीपति भाव-चलित चक्र' if is_hi else 'Sripati Bhava Chalit Chart'}</h4>", unsafe_allow_html=True)
+                svg_chalit = get_north_indian_chart_svg(chalit_houses, size=410, chart_title="श्रीपति भाव चलित चक्र" if is_hi else "Sripati Bhava Chalit")
+                render_kundli(svg_chalit)
+            with ch_col2:
+                st.markdown(f"#### {'📐 भाव आरम्भ, मध्य (संधि) एवं अन्त सारणी' if is_hi else 'Bhava Sandhi & Cuspal Table'}")
+                chalit_table = []
+                for cd in chalit_data:
+                    chalit_table.append({
+                        "भाव": f"भाव {cd.bhava_num}",
+                        "आरम्भ": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.arambha_sign)] if is_hi and cd.arambha_sign in constants.SIGNS else cd.arambha_sign} {cd.arambha_dms}",
+                        "मध्य (शिखर)": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.madhya_sign)] if is_hi and cd.madhya_sign in constants.SIGNS else cd.madhya_sign} {cd.madhya_dms}",
+                        "अन्त (संधि)": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.anta_sign)] if is_hi and cd.anta_sign in constants.SIGNS else cd.anta_sign} {cd.anta_dms}",
+                        "चलित भावस्थ ग्रह": ", ".join([constants.PLANETS_HI.get(p, p) if is_hi else p for p in cd.planets_in_bhava]) if cd.planets_in_bhava else "-"
+                    })
+                st.dataframe(pd.DataFrame(chalit_table), use_container_width=True, hide_index=True)
+
+            # Panchadha Maitri Matrix
+            st.markdown(f"#### {'🤝 सप्तग्रह पञ्चधा मैत्री चक्र (Compound 5-Fold Friendship Matrix)' if is_hi else 'Panchadha Maitri Matrix'}")
+            pm_matrix = vyas_chalit.compute_panchadha_maitri(p_signs)
+            pm_rows = []
+            for p1, rels in pm_matrix.items():
+                row = {"ग्रह": constants.PLANETS_HI.get(p1, p1) if is_hi else p1}
+                for p2, relation in rels.items():
+                    p2_lbl = constants.PLANETS_HI.get(p2, p2) if is_hi else p2
+                    row[p2_lbl] = relation
+                pm_rows.append(row)
+            st.dataframe(pd.DataFrame(pm_rows), use_container_width=True, hide_index=True)
 
     # =========================================================================
     # SUITE 4: 👑 KP, JAIMINI, NADI & CHAKRAS

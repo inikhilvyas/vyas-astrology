@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 AYANAMSA_NAME = "Lahiri"
-NODE_MODEL = "mean"
+NODE_MODEL = "mean"  # "mean" or "true"
 _LAHIRI_T0_JD = 2435553.5          # 1956-09-22, Lahiri reference epoch
 _LAHIRI_AT_T0 = 23.245524743       # degrees at that epoch (Swiss Ephemeris definition)
 
@@ -30,6 +30,15 @@ def set_ayanamsa(name: str) -> None:
     if name not in AYANAMSAS:
         raise ValueError(f"Unknown ayanamsa {name!r}; choose from {list(AYANAMSAS)}")
     AYANAMSA_NAME = name
+
+
+def set_node_model(model: str) -> None:
+    """Select the Rahu/Ketu lunar node model: 'mean' or 'true'."""
+    global NODE_MODEL
+    m = model.strip().lower()
+    if m not in ("mean", "true"):
+        raise ValueError(f"Unknown node model {model!r}; choose 'mean' or 'true'")
+    NODE_MODEL = m
 
 _ts = None
 _eph = None
@@ -112,6 +121,34 @@ def mean_node_tropical(jd_tt: float) -> float:
             + T ** 3 / 467441.0) % 360.0
 
 
+def true_node_tropical(jd_tt: float) -> float:
+    """True lunar node (Meeus Astronomical Algorithms high-order periodic terms)."""
+    T = (jd_tt - 2451545.0) / 36525.0
+    D = math.radians(297.85036 + 445267.111480 * T - 0.0019142 * T**2 + T**3 / 189474.0)
+    M = math.radians(357.52772 + 35999.050340 * T - 0.0001603 * T**2 - T**3 / 300000.0)
+    M_prime = math.radians(134.96298 + 477198.867398 * T + 0.0086972 * T**2 + T**3 / 56250.0)
+    F = math.radians(93.27191 + 483202.017538 * T - 0.0036825 * T**2 + T**3 / 327270.0)
+    omega = 125.04455 - 1934.13618 * T + 0.002075 * T**2 + T**3 / 467440.0
+    
+    corr = (
+        -1.4979 * math.sin(2 * (D - F))
+        - 0.4416 * math.sin(2 * D)
+        - 0.1498 * math.sin(M)
+        + 0.1255 * math.sin(2 * (D - M_prime))
+        + 0.0641 * math.sin(2 * (D - F + M_prime))
+        - 0.0638 * math.sin(2 * F)
+        + 0.0469 * math.sin(2 * (D + F))
+        - 0.0447 * math.sin(2 * (D - F - M))
+        + 0.0384 * math.sin(2 * (D - M))
+        + 0.0264 * math.sin(2 * (D + M))
+    )
+    return (omega + corr) % 360.0
+
+
+def node_tropical(jd_tt: float) -> float:
+    return true_node_tropical(jd_tt) if NODE_MODEL == "true" else mean_node_tropical(jd_tt)
+
+
 @dataclass(frozen=True)
 class RawPosition:
     longitude: float      # sidereal, degrees 0-360
@@ -147,8 +184,8 @@ def planet_positions(dt_utc: datetime) -> dict[str, RawPosition]:
         l2 = (_tropical_lon(name, t2) - ay2) % 360.0
         d = ((l2 - l1 + 180.0) % 360.0) - 180.0
         out[name] = RawPosition(l1, d * 2.0)
-    n1 = (mean_node_tropical(jd) - ay) % 360.0
-    n2 = (mean_node_tropical(jd2) - ay2) % 360.0
+    n1 = (node_tropical(jd) - ay) % 360.0
+    n2 = (node_tropical(jd2) - ay2) % 360.0
     dn = (((n2 - n1) + 180.0) % 360.0 - 180.0) * 2.0
     out["Rahu"] = RawPosition(n1, dn)
     out["Ketu"] = RawPosition((n1 + 180.0) % 360.0, dn)
@@ -160,7 +197,7 @@ def sidereal_lon(name: str, dt_utc: datetime) -> float:
     t = _t(dt_utc)
     ay = lahiri_ayanamsa(t.tt)
     if name in ("Rahu", "Ketu"):
-        n = (mean_node_tropical(t.tt) - ay) % 360.0
+        n = (node_tropical(t.tt) - ay) % 360.0
         return n if name == "Rahu" else (n + 180.0) % 360.0
     return (_tropical_lon(name, t) - ay) % 360.0
 
