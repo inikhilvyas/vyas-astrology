@@ -59,7 +59,14 @@ st.set_page_config(page_title="VYAS • Vedic Yield Astrology Systems", page_ico
 # Global Luxury Vedic Styling
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+    @font-face {
+        font-family: 'Material Symbols Rounded';
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v376/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxI.ttf) format('truetype');
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
     :root {
         --gold-primary: #f0c05a;
@@ -381,15 +388,15 @@ st.markdown("""
        ------------------------------------------------------------- */
     span[data-testid="stIconMaterial"],
     span[data-testid*="stIcon"],
-    [data-testid="stSidebarCollapseButton"] span,
-    [data-testid="stExpandSidebarButton"] span,
-    [data-testid="stExpanderToggleIcon"] span,
-    [data-testid="stExpanderToggleIcon"],
-    button[data-testid="stSidebarCollapseButton"] span,
-    button[data-testid="stExpandSidebarButton"] span,
-    details summary span[data-testid="stIconMaterial"],
-    details summary [data-testid="stExpanderToggleIcon"] span {
-        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
+    span[class*="e1vmumty"],
+    span[class*="eafbkhs"],
+    [data-testid="stSidebarCollapseButton"] *,
+    [data-testid="stExpandSidebarButton"] *,
+    [data-testid="stExpanderToggleIcon"] *,
+    [data-testid="stExpanderStepChevron"] *,
+    details summary *,
+    .material-symbols-rounded {
+        font-family: 'Material Symbols Rounded', 'Material Icons' !important;
         font-feature-settings: 'liga' 1 !important;
         -webkit-font-feature-settings: 'liga' 1 !important;
         text-transform: none !important;
@@ -398,8 +405,7 @@ st.markdown("""
         word-wrap: normal !important;
         direction: ltr !important;
         -webkit-font-smoothing: antialiased !important;
-        display: inline-block !important;
-        line-height: 1 !important;
+        font-style: normal !important;
     }
 
     /* Target typography cleanly WITHOUT overriding Streamlit internal icon SVGs & spans */
