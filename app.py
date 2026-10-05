@@ -58,7 +58,7 @@ st.set_page_config(page_title="VYAS • Vedic Yield Astrology Systems", page_ico
 # Global Luxury Vedic Styling
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
 
     :root {
         --gold-primary: #f0c05a;
@@ -366,15 +366,36 @@ st.markdown("""
     }
 
     /* Expander styling in dark mode */
-    .streamlit-expanderHeader {
+    .streamlit-expanderHeader,
+    details summary {
         background: rgba(14, 23, 47, 0.85) !important;
         border: 1px solid rgba(240, 192, 90, 0.25) !important;
         border-radius: 8px !important;
         color: #f0c05a !important;
     }
 
-    /* Ensure universal Devanagari typography across entire body */
-    * {
+    /* Fix Material Icons font so 'arrow_right' renders as an actual SVG icon, not raw text */
+    [data-testid="stExpanderToggleIcon"],
+    .material-symbols-rounded,
+    .material-icons,
+    span[class*="material"] {
+        font-family: 'Material Symbols Rounded', 'Material Icons', sans-serif !important;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 20px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ensure universal Devanagari typography without breaking icons */
+    *:not([data-testid="stExpanderToggleIcon"]):not(.material-symbols-rounded):not([class*="material"]) {
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif;
     }
 </style>
