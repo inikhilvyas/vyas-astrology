@@ -1,0 +1,62 @@
+{
+  "name": "VYAS",
+  "description": "Describe the product, users, workflows and goals.",
+  "project_type": "cross_platform",
+  "platforms": [
+    "windows",
+    "android"
+  ],
+  "source_directory": "src",
+  "test_directory": "tests",
+  "ux": {
+    "responsive": true,
+    "accessibility": true,
+    "keyboard_navigation": true,
+    "touch_support": true,
+    "dark_mode": true,
+    "high_dpi": true,
+    "loading_states": true,
+    "empty_states": true,
+    "error_states": true,
+    "success_states": true,
+    "motion": {
+      "enabled": true,
+      "respect_reduced_motion": true,
+      "interaction_style": "responsive",
+      "navigation_transition": "contextual",
+      "micro_interactions": true,
+      "layout_animation": true,
+      "max_duration_ms": 420,
+      "max_concurrent_animations": 8
+    }
+  },
+  "security": {
+    "secret_names": [],
+    "external_services": [],
+    "release_requires_approval": true,
+    "allow_network_during_build": false
+  },
+  "builds": {
+    "windows": {
+      "adapter": "generic-command",
+      "command": "",
+      "output_patterns": [
+        "**/*.exe"
+      ],
+      "working_directory": ".",
+      "environment": {},
+      "signing_profile": null
+    },
+    "android": {
+      "adapter": "generic-command",
+      "command": "",
+      "output_patterns": [
+        "**/*.apk",
+        "**/*.aab"
+      ],
+      "working_directory": ".",
+      "environment": {},
+      "signing_profile": null
+    }
+  }
+}
