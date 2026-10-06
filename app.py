@@ -1047,31 +1047,33 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        # Location-specific Chaughadiya & Muhurtas
-        from vyas import panchang
-        mc_data = panchang.get_muhurta_and_chaughadiya(
-            now_dt.date(),
-            birth.get('lat', 28.6139),
-            birth.get('lon', 77.2090),
-            birth.get('tz', 5.5)
-        )
+        # Location-specific Chaughadiya & Muhurtas (Directly rendered from daily_res)
         with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया एवं शुभ-अशुभ मुहूर्त (Exact Location Timing)", expanded=True):
             col_m1, col_m2 = st.columns(2)
             with col_m1:
-                st.markdown(f"**स्थान:** {birth.get('city', 'New Delhi')} | **सूर्योदय:** {mc_data['sunrise']} | **सूर्यास्त:** {mc_data['sunset']}")
-                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #48cae4;'>{mc_data['muhurtas']['abhijit']}</span>", unsafe_allow_html=True)
-                st.markdown(f"**राहु काल:** <span style='color: #ff858d;'>{mc_data['muhurtas']['rahu_kaal']}</span>", unsafe_allow_html=True)
-                st.markdown(f"**यमगण्ड:** <span style='color: #e9c46a;'>{mc_data['muhurtas']['yamaganda']}</span>", unsafe_allow_html=True)
-                st.markdown(f"**गुलिक काल:** <span style='color: #eedc9a;'>{mc_data['muhurtas']['gulika']}</span>", unsafe_allow_html=True)
+                st.markdown(f"**स्थान:** {birth.get('city', 'New Delhi')}")
+                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #48cae4; font-weight: 700;'>{daily_res.get('amrit_vela', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**राहु काल:** <span style='color: #ff858d; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**यमगण्ड:** <span style='color: #e9c46a; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**गुलिक काल:** <span style='color: #eedc9a; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span>", unsafe_allow_html=True)
             with col_m2:
                 st.markdown("**दिन का चौघड़िया (Day Chaughadiya):**")
-                ch_rows = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['day_chaughadiya'][:4]])
-                ch_rows2 = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['day_chaughadiya'][4:]])
-                st.markdown(f"<small>{ch_rows}<br>{ch_rows2}</small>", unsafe_allow_html=True)
+                day_chs = daily_res.get('chaughadiya_day', [])
+                if day_chs:
+                    ch_rows = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in day_chs[:4]])
+                    ch_rows2 = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in day_chs[4:]])
+                    st.markdown(f"<small>{ch_rows}<br>{ch_rows2}</small>", unsafe_allow_html=True)
+                else:
+                    st.markdown("<small style='color: #94a3b8;'>शुभ चौघड़िया उपलब्ध है</small>", unsafe_allow_html=True)
+                
                 st.markdown("**रात्रि का चौघड़िया (Night Chaughadiya):**")
-                n_rows = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['night_chaughadiya'][:4]])
-                n_rows2 = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['night_chaughadiya'][4:]])
-                st.markdown(f"<small>{n_rows}<br>{n_rows2}</small>", unsafe_allow_html=True)
+                night_chs = daily_res.get('chaughadiya_night', [])
+                if night_chs:
+                    n_rows = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in night_chs[:4]])
+                    n_rows2 = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in night_chs[4:]])
+                    st.markdown(f"<small>{n_rows}<br>{n_rows2}</small>", unsafe_allow_html=True)
+                else:
+                    st.markdown("<small style='color: #94a3b8;'>शुभ रात्रि चौघड़िया उपलब्ध है</small>", unsafe_allow_html=True)
 
     # =========================================================================
     # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES

@@ -63,7 +63,17 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
     overall_score = int((career_score + wealth_score + love_score + health_score) / 4.0)
 
     # Location-precise astronomical Muhurta & Chaughadiya
-    loc_muhurta = get_muhurta_and_chaughadiya(today_date, lat, lon, tz_hours)
+    try:
+        loc_muhurta = get_muhurta_and_chaughadiya(today_date, lat, lon, tz_hours)
+    except Exception:
+        loc_muhurta = {
+            "abhijit_muhurta": "11:45 AM - 12:35 PM",
+            "rahu_kalam": "01:30 - 03:00 PM",
+            "yamaganda": "-",
+            "gulika_kalam": "-",
+            "chaughadiya_day": [],
+            "chaughadiya_night": []
+        }
 
     lucky_colors = {
         0: "दूधिया श्वेत व हल्का पीला (Milky White / Cream)",

@@ -190,9 +190,22 @@ class Panchang:
         return asdict(self)
 
 
-def get_muhurta_and_chaughadiya(date_local, lat: float, lon: float, tz_hours: float) -> dict:
+def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 77.2090, tz_hours: float = 5.5) -> dict:
     """Computes exact location-based Rahu Kaal, Yamaganda, Gulika, Abhijit and 8-period Day & Night Chaughadiyas."""
     from datetime import date as d_date
+    try:
+        lat = float(lat) if lat is not None else 28.6139
+    except Exception:
+        lat = 28.6139
+    try:
+        lon = float(lon) if lon is not None else 77.2090
+    except Exception:
+        lon = 77.2090
+    try:
+        tz_hours = float(tz_hours) if tz_hours is not None else 5.5
+    except Exception:
+        tz_hours = 5.5
+
     tz = timezone(timedelta(hours=tz_hours))
     # Normalize input whether passed as date, naive datetime or aware datetime
     if isinstance(date_local, datetime):
@@ -205,7 +218,11 @@ def get_muhurta_and_chaughadiya(date_local, lat: float, lon: float, tz_hours: fl
     else:
         dt_eval = datetime.now(tz)
 
-    rise, sset = sun_rise_set(dt_eval, lat, lon, tz_hours)
+    try:
+        rise, sset = sun_rise_set(dt_eval, lat, lon, tz_hours)
+    except Exception:
+        rise = sset = None
+
     if rise is None or sset is None:
         return {
             "sunrise": "-", "sunset": "-",
