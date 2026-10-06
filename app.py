@@ -69,47 +69,34 @@ st.markdown("""
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
     :root {
-        --gold-primary: #f0c05a;
-        --gold-light: #fef0cd;
-        --bg-deep: #070b16;
-        --card-bg: rgba(14, 23, 47, 0.82);
-        --card-border: rgba(240, 192, 90, 0.3);
-        --accent-ruby: #e63946;
-        --accent-emerald: #2a9d8f;
-    }
-
-    @keyframes cosmicShimmer {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    @keyframes goldPulse {
-        0%, 100% { box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(240, 192, 90, 0.3); border-color: rgba(240, 192, 90, 0.35); }
-        50% { box-shadow: 0 14px 45px rgba(240, 192, 90, 0.25), inset 0 1px 0 rgba(240, 192, 90, 0.6); border-color: rgba(240, 192, 90, 0.65); }
-    }
-    @keyframes badgeFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-2px); }
-    }
-    @keyframes textGlow {
-        0%, 100% { text-shadow: 0 0 15px rgba(240, 192, 90, 0.3); }
-        50% { text-shadow: 0 0 28px rgba(240, 192, 90, 0.65); }
+        --gold-primary: #e5a93c;
+        --gold-light: #fef3c7;
+        --gold-accent: #f59e0b;
+        --bg-deep: #07090d;
+        --bg-surface: #0b1220;
+        --card-bg: rgba(11, 18, 32, 0.88);
+        --card-border: rgba(229, 169, 60, 0.22);
+        --card-border-hover: rgba(229, 169, 60, 0.55);
+        --accent-ruby: #ef4444;
+        --accent-emerald: #10b981;
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
     }
 
     .stApp {
-        background: radial-gradient(circle at 50% 0%, #111e3b 0%, #070b16 70%, #03050a 100%) !important;
-        font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif !important;
-        color: #e2e8f0 !important;
+        background: radial-gradient(circle at 50% -10%, #101c33 0%, #07090d 65%, #040508 100%) !important;
+        font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif !important;
+        color: #f1f5f9 !important;
     }
 
     /* Top Executive Header */
     .vyas-banner {
-        background: linear-gradient(180deg, rgba(22, 34, 66, 0.95) 0%, rgba(10, 16, 33, 0.98) 100%);
-        border: 1px solid rgba(240, 192, 90, 0.35);
+        background: linear-gradient(180deg, rgba(14, 23, 42, 0.96) 0%, rgba(7, 9, 13, 0.98) 100%);
+        border: 1px solid rgba(229, 169, 60, 0.28);
         border-radius: 16px;
         padding: 24px 28px;
         text-align: center;
-        animation: goldPulse 5s infinite ease-in-out;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
         margin-bottom: 22px;
         position: relative;
     }
@@ -162,67 +149,71 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(240, 192, 90, 0.3);
     }
 
-    /* Cards with Glassmorphism & Micro-animations */
+    /* Cards with Glassmorphism & High-Precision Look */
     .glass-card {
-        background: rgba(14, 23, 47, 0.78);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 1px solid rgba(240, 192, 90, 0.28);
-        border-radius: 14px;
-        padding: 18px 22px;
+        background: rgba(11, 18, 32, 0.92);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(229, 169, 60, 0.22);
+        border-radius: 12px;
+        padding: 20px 24px;
         margin-bottom: 16px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
-        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
     .glass-card:hover {
-        border-color: rgba(240, 192, 90, 0.6);
-        box-shadow: 0 12px 36px rgba(240, 192, 90, 0.22);
-        transform: translateY(-3px);
+        border-color: rgba(229, 169, 60, 0.5);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), 0 0 15px rgba(229, 169, 60, 0.1);
+        transform: translateY(-2px);
     }
 
     .section-title {
         font-family: 'Cinzel', 'Noto Sans Devanagari', serif;
-        font-size: 1.4rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        color: #f0c05a;
-        letter-spacing: 1px;
-        border-bottom: 1px solid rgba(240, 192, 90, 0.3);
+        color: #f1f5f9;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(229, 169, 60, 0.25);
         padding-bottom: 10px;
-        margin-top: 8px;
+        margin-top: 10px;
         margin-bottom: 18px;
         display: flex;
         align-items: center;
         gap: 12px;
     }
 
-    /* Domain Suite Pills (Segmented Selector) */
+    /* Domain Suite Pills (Segmented Navigation Selector from reference) */
     div[data-testid="stRadio"] > div {
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
+        background: rgba(7, 9, 13, 0.85);
+        padding: 6px;
+        border-radius: 10px;
+        border: 1px solid rgba(229, 169, 60, 0.15);
     }
     div[data-testid="stRadio"] label {
-        background: rgba(14, 23, 47, 0.88) !important;
-        border: 1px solid rgba(240, 192, 90, 0.3) !important;
-        border-radius: 12px !important;
-        padding: 11px 20px !important;
-        color: #d1d5db !important;
-        font-weight: 600 !important;
-        font-size: 0.94rem !important;
-        transition: all 0.28s ease !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        color: #94a3b8 !important;
+        font-weight: 500 !important;
+        font-size: 0.88rem !important;
+        transition: all 0.22s ease !important;
         cursor: pointer !important;
     }
     div[data-testid="stRadio"] label:hover {
-        border-color: #f0c05a !important;
-        color: #fef0cd !important;
-        background: rgba(240, 192, 90, 0.16) !important;
-        transform: translateY(-2px);
+        border-color: rgba(229, 169, 60, 0.3) !important;
+        color: #f1f5f9 !important;
+        background: rgba(229, 169, 60, 0.08) !important;
     }
     div[data-testid="stRadio"] label[data-checked="true"] {
-        background: linear-gradient(135deg, rgba(229, 169, 60, 0.38) 0%, rgba(14, 23, 47, 0.95) 100%) !important;
-        border-color: #f0c05a !important;
-        color: #ffd97d !important;
-        font-weight: 700 !important;
-        box-shadow: 0 4px 18px rgba(240, 192, 90, 0.3) !important;
+        background: linear-gradient(135deg, rgba(229, 169, 60, 0.2) 0%, rgba(14, 23, 42, 0.9) 100%) !important;
+        border: 1px solid rgba(229, 169, 60, 0.6) !important;
+        color: #fef3c7 !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
     }
 
     /* Tabs Styling */
@@ -536,12 +527,14 @@ with st.sidebar:
     # Use transparent PNG logo with cosmic gold halo
     logo_file = "logo.png" if os.path.exists(os.path.join(os.path.dirname(__file__), "logo.png")) else "logo.jpg"
     st.markdown(f"""
-    <div style="text-align: center; margin-bottom: 10px;">
+    <div style="text-align: center; margin-bottom: 8px;">
         <img src="data:image/png;base64,{base64.b64encode(open(os.path.join(os.path.dirname(__file__), logo_file), 'rb').read()).decode()}" 
-             style="max-width: 170px; height: auto; filter: drop-shadow(0 0 16px rgba(240, 192, 90, 0.45));" />
+             style="max-width: 140px; height: auto; filter: drop-shadow(0 0 20px rgba(229, 169, 60, 0.35));" />
+        <div style="font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px; margin-top: 6px;">VYAS ASTRA</div>
+        <div style="font-size: 0.72rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
     </div>
+    <hr style="border-color: rgba(229, 169, 60, 0.18); margin: 12px 0;">
     """, unsafe_allow_html=True)
-    st.markdown("<div style='text-align: center;'><small style='color: #eedc9a;'><b>System Architect:</b> Nikhil Vyas (M.A. Jyotish / PG in Astrology)</small></div><hr style='border-color: rgba(240,192,90,0.2);'>", unsafe_allow_html=True)
     
     # ---------------- MOBILE 1-CLICK PWA APP INSTALLATION (NATIVE PROMPT) ----------------
     st.components.v1.html("""
@@ -795,7 +788,7 @@ with st.sidebar:
         else:
             st.warning(s_msg)
     
-    btn_lbl = "☸️ कुण्डली बनाएं एवं फलादेश देखें (Generate Kundli)" if is_hi else "☸️ Generate Kundli & Astrological Analysis"
+    btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
     generate = st.button(btn_lbl, type="primary", use_container_width=True)
 
 # Calculate Core Structures
@@ -908,46 +901,72 @@ if st.session_state.get('data_generated'):
         score = daily_res["overall_score"]
         score_color = "#2a9d8f" if score >= 75 else ("#e9c46a" if score >= 55 else "#e63946")
         
-        col_s1, col_s2, col_s3 = st.columns([1, 1.8, 1.2])
-        with col_s1:
+        # 4-PANEL DASHBOARD (Matching Reference Figma/UI Mockup)
+        col_d1, col_d2, col_d3, col_d4 = st.columns([1.1, 1.3, 1.2, 1.4])
+        
+        with col_d1:
             st.markdown(f"""
-            <div class="glass-card" style="text-align: center; border: 2px solid {score_color}; padding: 22px;">
-                <div style="font-size: 0.85rem; color: #eedc9a; font-weight: 700;">आज का समग्र प्रभाव</div>
-                <div style="font-size: 3rem; font-weight: 900; color: {score_color}; font-family: 'Cinzel', serif;">{score}%</div>
-                <div style="font-size: 0.82rem; color: #f7d584; font-weight: 600;">{daily_res['today_str']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-        with col_s2:
-            st.markdown(f"""
-            <div class="glass-card" style="padding: 18px 22px;">
-                <div style="font-size: 1.15rem; font-weight: 700; color: #f0c05a;">☸️ {daily_res['tara_name']}</div>
-                <div style="font-size: 0.95rem; color: #e2e8f0; margin-top: 6px;">{daily_res['tara_desc']}</div>
-                <hr style="border-color: rgba(240, 192, 90, 0.2); margin: 10px 0;">
-                <div style="font-size: 0.85rem; color: #eedc9a;">
-                    <b>जन्म नक्षत्र:</b> {daily_res['natal_nakshatra']} &nbsp;|&nbsp; 
-                    <b>आज का गोचर नक्षत्र:</b> {daily_res['transit_nakshatra']} &nbsp;|&nbsp; 
-                    <b>सक्रिय दशा:</b> {daily_res['running_dasha']}
+            <div class="glass-card" style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">VYAS DAY INDEX</div>
+                <div style="margin: 14px auto; position: relative; width: 100px; height: 100px; border-radius: 50%; border: 3px solid rgba(229,169,60,0.2); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(229,169,60,0.15);">
+                    <div style="font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 900; color: {score_color};">{score}</div>
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #fef3c7;">{'अनुकूल (Favourable)' if score >= 60 else 'सतर्क (Cautious)'}</div>
+                <div style="margin-top: 10px; font-size: 0.75rem; color: #94a3b8; text-align: left;">
+                    <div>ऊर्जा (Energy): <b>{daily_res['scores']['health']}%</b></div>
+                    <div>एकाग्रता (Focus): <b>{daily_res['scores']['career']}%</b></div>
+                    <div>वृद्धि (Growth): <b>{daily_res['scores']['wealth']}%</b></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-        with col_s3:
+        with col_d2:
             st.markdown(f"""
-            <div class="glass-card" style="padding: 16px 20px;">
-                <div style="font-size: 0.85rem; color: #f7d584;"><b>⏰ अमृत वेला (शुभ समय):</b><br><span style="color: #48cae4; font-weight: 700;">{daily_res['amrit_vela']}</span></div>
-                <div style="font-size: 0.85rem; color: #f7d584; margin-top: 8px;"><b>⚠️ राहुकाल (सावधानी समय):</b><br><span style="color: #ff858d; font-weight: 700;">{daily_res['rahu_kalam']}</span></div>
-                <div style="font-size: 0.85rem; color: #eedc9a; margin-top: 8px;"><b>🎨 लकी रंग:</b> {daily_res['lucky_color']}</div>
+            <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
+                    <div style="font-size: 1.05rem; font-weight: 700; color: #e5a93c; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
+                    <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5;">{daily_res['tara_desc']}</div>
+                </div>
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 8px; margin-top: 12px; font-size: 0.78rem; color: #94a3b8;">
+                    <b>सक्रिय दशा:</b> <span style="color: #fef3c7;">{daily_res['running_dasha']}</span>
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
-        # 4 Area Meters
-        st.markdown("#### 📊 जीवन के 4 प्रमुख क्षेत्रों का दैनिक मीटर")
-        m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-        m_col1.metric("💼 आजीविका व करियर", f"{daily_res['scores']['career']}%")
-        m_col2.metric("💰 धन व वित्त", f"{daily_res['scores']['wealth']}%")
-        m_col3.metric("❤️ संबंध व दांपत्य", f"{daily_res['scores']['love']}%")
-        m_col4.metric("🧘 स्वास्थ्य व मानसिक शांति", f"{daily_res['scores']['health']}%")
+        with col_d3:
+            sun_p = chart.planets.get("Sun")
+            moon_p = chart.planets.get("Moon")
+            jup_p = chart.planets.get("Jupiter")
+            sat_p = chart.planets.get("Saturn")
+            st.markdown(f"""
+            <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
+                <div style="font-size: 0.82rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; justify-content: space-between;"><span>☀️ सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>🌙 चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>🪐 गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>⚖️ शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
+                </div>
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.76rem; color: #e5a93c;">
+                    नक्षत्र: {daily_res['natal_nakshatra']}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col_d4:
+            st.markdown(f"""
+            <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
+                <div style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px;">
+                    <div><b>अभिजीत मुहूर्त:</b> <br><span style="color: #38bdf8; font-weight: 600;">{daily_res['amrit_vela']}</span></div>
+                    <div><b>राहुकाल (सावधानी):</b> <br><span style="color: #f87171; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
+                </div>
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 6px; font-size: 0.78rem; color: #94a3b8;">
+                    <b>शुभ रंग:</b> <span style="color: #fef3c7;">{daily_res['lucky_color']}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         # Location-specific Chaughadiya & Muhurtas
         from vyas import panchang
@@ -1066,24 +1085,24 @@ if st.session_state.get('data_generated'):
         with sub_tab1:
             st.markdown(f'<div class="section-title">{"✨ वैदिक ग्रह स्थिति एवं जन्म कुण्डली" if is_hi else "✨ Vedic Planetary Positions & Natal Charts"}</div>', unsafe_allow_html=True)
             
-            # Overview metric cards
+            # Overview metric cards (Reference Style)
             st.markdown(f"""
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
-                <div class="glass-card" style="text-align: center; padding: 12px;">
-                    <div style="color: #eedc9a; font-size: 0.8rem; font-weight: 600;">{'जातक का नाम' if is_hi else 'NATIVE NAME'}</div>
-                    <div style="color: #f0c05a; font-size: 1.15rem; font-weight: 700; font-family: 'Cinzel', serif;">{birth.get('name', 'Nikhil Vyas')}</div>
+                <div class="glass-card" style="text-align: center; padding: 14px 18px;">
+                    <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">{'जातक का नाम' if is_hi else 'NATIVE NAME'}</div>
+                    <div style="color: #fef3c7; font-size: 1.15rem; font-weight: 700; font-family: 'Cinzel', serif; margin-top: 4px;">{birth.get('name', 'Nikhil Vyas')}</div>
                 </div>
-                <div class="glass-card" style="text-align: center; padding: 12px;">
-                    <div style="color: #eedc9a; font-size: 0.8rem; font-weight: 600;">{'जन्म लग्न' if is_hi else 'LAGNA (ASCENDANT)'}</div>
-                    <div style="color: #f0c05a; font-size: 1.15rem; font-weight: 700;">{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]} ({format_varga_dms(chart.ascendant_longitude)})</div>
+                <div class="glass-card" style="text-align: center; padding: 14px 18px;">
+                    <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">{'जन्म लग्न' if is_hi else 'LAGNA (ASCENDANT)'}</div>
+                    <div style="color: #e5a93c; font-size: 1.15rem; font-weight: 700; margin-top: 4px;">{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]} ({format_varga_dms(chart.ascendant_longitude)})</div>
                 </div>
-                <div class="glass-card" style="text-align: center; padding: 12px;">
-                    <div style="color: #eedc9a; font-size: 0.8rem; font-weight: 600;">{'चन्द्र राशि एवं नक्षत्र' if is_hi else 'MOON RASHI & NAKSHATRA'}</div>
-                    <div style="color: #f0c05a; font-size: 1.15rem; font-weight: 700;">{constants.SIGNS_HI[chart.planets['Moon'].sign_index] if is_hi else chart.planets['Moon'].sign_name} • {constants.NAKSHATRAS_HI[int(chart.planets['Moon'].longitude // constants.NAKSHATRA_SPAN) % 27] if is_hi else constants.NAKSHATRAS[int(chart.planets['Moon'].longitude // constants.NAKSHATRA_SPAN) % 27]}</div>
+                <div class="glass-card" style="text-align: center; padding: 14px 18px;">
+                    <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">{'चन्द्र राशि एवं नक्षत्र' if is_hi else 'MOON RASHI & NAKSHATRA'}</div>
+                    <div style="color: #fef3c7; font-size: 1.05rem; font-weight: 700; margin-top: 4px;">{constants.SIGNS_HI[chart.planets['Moon'].sign_index] if is_hi else chart.planets['Moon'].sign_name} • {constants.NAKSHATRAS_HI[int(chart.planets['Moon'].longitude // constants.NAKSHATRA_SPAN) % 27] if is_hi else constants.NAKSHATRAS[int(chart.planets['Moon'].longitude // constants.NAKSHATRA_SPAN) % 27]}</div>
                 </div>
-                <div class="glass-card" style="text-align: center; padding: 12px;">
-                    <div style="color: #eedc9a; font-size: 0.8rem; font-weight: 600;">{'अयनांश' if is_hi else 'AYANAMSA'}</div>
-                    <div style="color: #f0c05a; font-size: 1.15rem; font-weight: 700;">{vyas_ephem.AYANAMSA_NAME}</div>
+                <div class="glass-card" style="text-align: center; padding: 14px 18px;">
+                    <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;">{'अयनांश व नोड' if is_hi else 'AYANAMSA & NODE'}</div>
+                    <div style="color: #e5a93c; font-size: 1.05rem; font-weight: 700; margin-top: 4px;">{vyas_ephem.AYANAMSA_NAME} ({vyas_ephem.NODE_MODEL.title()})</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
