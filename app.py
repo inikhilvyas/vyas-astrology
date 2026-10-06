@@ -476,16 +476,9 @@ st.components.v1.html("""
 <body>
     <canvas id="canvas"></canvas>
     <div class="vyas-banner">
-        <div style="font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 1.1rem; color: #f0c05a; letter-spacing: 2px;">|| श्री गणेशाय नमः ||</div>
+        <div style="font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 3px; color: #eedc9a; margin-bottom: 4px;">YOUR CELESTIAL PATTERN HAS A STRUCTURE</div>
         <div class="vyas-title">VYAS ASTRA</div>
-        <div class="vyas-subtitle">Vedic Yield Astrology Systems • बहु-पद्धति शोध-स्तरीय ज्योतिष शोध प्रबंध</div>
-        <div class="vyas-badge-bar">
-            <span class="vyas-badge">👤 निखिल व्यास (एम.ए. ज्योतिष - स्नातकोत्तर / M.A. Jyotish)</span>
-            <span class="vyas-badge">📞 +91-9414121172</span>
-            <span class="vyas-badge">✉️ inikhilvyas@gmail.com</span>
-            <span class="vyas-badge">🪐 JPL Ephemeris DE440s</span>
-            <span class="vyas-badge">⚡ Sub-Arcsec Precision</span>
-        </div>
+        <div class="vyas-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Engine</div>
     </div>
     <script>
         const canvas = document.getElementById('canvas');
@@ -871,15 +864,15 @@ if st.session_state.get('data_generated'):
     # DOMAIN SUITE NAVIGATION (Pure Astrology & Research Suites)
     # -------------------------------------------------------------------------
     suite_options = [
-        "🌞 व्यक्तिगत दैनिक राशिफल" if is_hi else "🌞 Personalised Daily Horoscope",
-        "🌟 कुण्डली एवं षोडशवर्ग" if is_hi else "🌟 Charts & 16 Vargas",
-        "💍 अष्टकूट मिलान एवं दोष परिहार" if is_hi else "💍 Ashtakoota Match & Dosha Parihara",
-        "📕 लाल किताब सम्पूर्ण" if is_hi else "📕 Lal Kitab System & Remedies",
-        "🔮 दशा, गोचर एवं वर्षफल" if is_hi else "🔮 Dasha, Transits & Varshphal",
-        "⏳ जन्म समय शुद्धि (BTR)" if is_hi else "⏳ Birth Time Rectification (BTR)",
-        "⚖️ अष्टकवर्ग, षड्बल एवं मैत्री" if is_hi else "⚖️ Ashtakavarga & Strengths",
-        "👑 केपी, जैमिनी, नाड़ी एवं चक्र" if is_hi else "👑 KP, Jaimini, Nadi & Chakras",
-        "📄 35+ पेज शोध प्रबंध PDF" if is_hi else "📄 35+ Page Publication PDF"
+        "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
+        "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
+        "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
+        "लाल किताब सम्पूर्ण" if is_hi else "Lal Kitab System & Remedies",
+        "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal",
+        "जन्म समय शुद्धि (BTR)" if is_hi else "Birth Time Rectification",
+        "अष्टकवर्ग, षड्बल एवं मैत्री" if is_hi else "Ashtakavarga & Strengths",
+        "केपी, जैमिनी, नाड़ी एवं चक्र" if is_hi else "KP, Jaimini, Nadi & Chakras",
+        "शोध प्रबंध PDF" if is_hi else "Publication PDF"
     ]
     
     selected_suite = st.radio("चयनित ज्योतिषीय अनुसंधान प्रभाग (Select Domain Suite):", suite_options, horizontal=True)
@@ -905,7 +898,10 @@ if st.session_state.get('data_generated'):
             chart.ascendant_longitude,
             cur_dasha_str,
             transit_moon_lon,
-            now_dt
+            now_dt,
+            lat=birth.get('lat', 28.6139),
+            lon=birth.get('lon', 77.2090),
+            tz_hours=birth.get('tz', 5.5)
         )
 
         # Render Top Score Cards
@@ -953,13 +949,31 @@ if st.session_state.get('data_generated'):
         m_col3.metric("❤️ संबंध व दांपत्य", f"{daily_res['scores']['love']}%")
         m_col4.metric("🧘 स्वास्थ्य व मानसिक शांति", f"{daily_res['scores']['health']}%")
 
-        # Daily Remedy Card
-        st.markdown(f"""
-        <div class="glass-card" style="border-left: 4px solid #2a9d8f; background: rgba(42, 157, 143, 0.12); padding: 16px 20px;">
-            <div style="color: #2a9d8f; font-weight: 800; font-size: 1.05rem;">🛡️ आज का विशेष अचूक उपाय (Daily Astro Remedy)</div>
-            <div style="color: #fdf5e6; font-size: 0.95rem; margin-top: 4px;">{daily_res['remedy']}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Location-specific Chaughadiya & Muhurtas
+        from vyas import panchang
+        mc_data = panchang.get_muhurta_and_chaughadiya(
+            now_dt.date(),
+            birth.get('lat', 28.6139),
+            birth.get('lon', 77.2090),
+            birth.get('tz', 5.5)
+        )
+        with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया एवं शुभ-अशुभ मुहूर्त (Exact Location Timing)", expanded=True):
+            col_m1, col_m2 = st.columns(2)
+            with col_m1:
+                st.markdown(f"**स्थान:** {birth.get('city', 'New Delhi')} | **सूर्योदय:** {mc_data['sunrise']} | **सूर्यास्त:** {mc_data['sunset']}")
+                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #48cae4;'>{mc_data['muhurtas']['abhijit']}</span>", unsafe_allow_html=True)
+                st.markdown(f"**राहु काल:** <span style='color: #ff858d;'>{mc_data['muhurtas']['rahu_kaal']}</span>", unsafe_allow_html=True)
+                st.markdown(f"**यमगण्ड:** <span style='color: #e9c46a;'>{mc_data['muhurtas']['yamaganda']}</span>", unsafe_allow_html=True)
+                st.markdown(f"**गुलिक काल:** <span style='color: #eedc9a;'>{mc_data['muhurtas']['gulika']}</span>", unsafe_allow_html=True)
+            with col_m2:
+                st.markdown("**दिन का चौघड़िया (Day Chaughadiya):**")
+                ch_rows = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['day_chaughadiya'][:4]])
+                ch_rows2 = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['day_chaughadiya'][4:]])
+                st.markdown(f"<small>{ch_rows}<br>{ch_rows2}</small>", unsafe_allow_html=True)
+                st.markdown("**रात्रि का चौघड़िया (Night Chaughadiya):**")
+                n_rows = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['night_chaughadiya'][:4]])
+                n_rows2 = " | ".join([f"**{c['name']}** ({c['start']} - {c['end']})" for c in mc_data['night_chaughadiya'][4:]])
+                st.markdown(f"<small>{n_rows}<br>{n_rows2}</small>", unsafe_allow_html=True)
 
     # =========================================================================
     # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES

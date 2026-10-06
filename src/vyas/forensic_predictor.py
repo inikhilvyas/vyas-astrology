@@ -452,165 +452,72 @@ def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float) -> List
     """
     Computes chronological lifetime Sade Sati and Dhaiya (Chhoti Panoti) cycles 
     for the native over 90+ years with exact dates and 3-phase qualitative predictions.
-    Matches the 46-period classical transit ephemeris table.
     """
-    # 46 classical periods covering the full human lifespan across retrogrades and direct motions
-    # Each period features an authentic, bespoke senior-astrologer interpretation
-    raw_periods = [
-        ("साढ़े साती", "तुला", "06/10/1982", "20/12/1984", "उदय", 
-         "तुला में उच्च शनि का उदय चरण (चन्द्र से 12H)। जन्म पूर्व व शैशव काल; पारिवारिक निवेश, आवास परिवर्तन एवं माता-पिता द्वारा दूरस्थ यात्राओं में व्यय।",
-         "Saturn exalted in Libra (12H from Moon). Early infancy stage; family expenditures, maternal care and relocation."),
-        ("साढ़े साती", "वृश्चिक", "21/12/1984", "31/05/1985", "शिखर",
-         "जन्म चन्द्र पर शनि का प्रथम प्रवेश (शिखर चरण)। शैशव काल में स्वास्थ्य व पोषण के प्रति अतिरिक्त सतर्कता, परिवार में गंभीर वातावरण।",
-         "Peak phase over natal Moon in Scorpio. Sensitivity to early infant health and disciplined family environment."),
-        ("साढ़े साती", "तुला", "01/06/1985", "16/09/1985", "उदय",
-         "वक्री गति से पुनः तुला राशि में संचरण। जन्म स्थान व गृह-परिवेश में समायोजन; माता-पिता द्वारा पारिवारिक दायित्वों का पुनर्गठन।",
-         "Retrograde return to Libra. Adjustment in home environment and parental restructuring."),
-        ("साढ़े साती", "वृश्चिक", "17/09/1985", "16/12/1987", "शिखर",
-         "वृश्चिक में शिखर चरण की निरंतरता। बाल्यकाल में अनुशासन व गंभीर स्वभाव की नींव; स्वास्थ्य सुधार व परिवार में स्थिरता।",
-         "Continuation of Peak Phase in Scorpio. Development of focused mental temperament and emotional resilience."),
-        ("साढ़े साती", "धनु", "17/12/1987", "20/03/1990", "अस्त",
-         "धनु में अस्त चरण (चन्द्र से 2H)। बाल्यकाल में प्रारंभिक विद्यारंभ, संस्कार व परिवार की आर्थिक स्थिति में क्रमिक समृद्धि।",
-         "Setting phase in Sagittarius (2nd from Moon). Primary schooling, ethical values and family financial stability."),
-        ("साढ़े साती", "धनु", "21/06/1990", "14/12/1990", "अस्त",
-         "साढ़े साती के प्रथम चक्र का समापन काल। कुटुंब में स्थिरता, प्राथमिक शिक्षा का सुचारु विकास व पारिवारिक शांति।",
-         "Completion of 1st Sade Sati cycle in Sagittarius. Educational progress, harmonious domestic sphere."),
-        ("छोटी पनौती", "कुंभ", "06/03/1993", "15/10/1993", "ढैय्या (4H)",
-         "कुंभ में स्वराशि चतुर्थ ढैय्या (कंटक शनि)। विद्यार्थी जीवन में अध्ययन एकाग्रता, आवास अथवा विद्यालय में बदलाव के योग।",
-         "Saturn in own sign Aquarius (4H Kantaka). Focus in academic studies, possible change in school/residence."),
-        ("छोटी पनौती", "कुंभ", "10/11/1993", "01/06/1995", "ढैय्या (4H)",
-         "चतुर्थ ढैय्या का मुख्य प्रभाव। विद्याध्ययन में कठोर श्रम, बौद्धिक स्पर्धा में सफलता, माता के स्वास्थ्य के प्रति सजगता।",
-         "Main 4H Dhaiya impact. Diligent academic pursuit, intellectual success, care for maternal health."),
-        ("छोटी पनौती", "कुंभ", "10/08/1995", "16/02/1996", "ढैय्या (4H)",
-         "कुंभ ढैय्या का अंतिम भाग। माध्यमिक शिक्षा में प्रगति, नए मित्रों का सहयोग व पारिवारिक परिसंपत्ति निर्माण।",
-         "Conclusion of Aquarius Dhaiya. Steady academic growth, supportive peers, constructive domestic foundations."),
-        ("छोटी पनौती", "मिथुन", "23/07/2002", "08/01/2003", "ढैय्या (8H)",
-         "मिथुन में अष्टम ढैय्या का आरंभ। उच्च शिक्षा एवं कॉलेज प्रवेश काल; तकनीकी व गूढ़ विषयों में गहन रुचि, अनिर्णय से बचाव आवश्यक।",
-         "8H Ashtama Shani in Gemini. College entrance, keen interest in technical/occult subjects, avoiding indecision."),
-        ("छोटी पनौती", "मिथुन", "08/04/2003", "05/09/2004", "ढैय्या (8H)",
-         "अष्टम ढैय्या का गहन प्रभाव काल। प्रतियोगी परीक्षाओं व अकादमिक शोध में श्रम; वाहन व यात्राओं में सावधानी, स्नायु बल की रक्षा।",
-         "Core Ashtama Shani phase. Rigorous effort in exams and research; diligence in travel, nervous stamina."),
-        ("छोटी पनौती", "मिथुन", "14/01/2005", "25/05/2005", "ढैय्या (8H)",
-         "अष्टम ढैय्या का समापन चरण। उच्च शिक्षा की पूर्णता, करियर की प्रारंभिक दिशा तय होना व अप्रत्याशित बौद्धिक उपलब्धियां।",
-         "Culmination of 8H Dhaiya. Graduation milestones, crystallization of career path and intellectual breakthrough."),
-        ("साढ़े साती", "तुला", "15/11/2011", "15/05/2012", "उदय",
-         "द्वितीय जीवन चक्र: तुला में उच्च शनि का उदय चरण। करियर में बड़े बदलाव, व्यावसायिक महत्वाकांक्षाओं का उदय, दूरस्थ संपर्कों का विस्तार।",
-         "2nd Lifecycle: Exalted Saturn in Libra (Rising Phase). Professional shifts, ambition awakening, distant connections."),
-        ("साढ़े साती", "तुला", "04/08/2012", "02/11/2014", "उदय",
-         "उदय चरण की मुख्य अवधि। आजीविका में गहन पुनर्गठन, उच्च शनि द्वारा दीर्घकालिक परियोजनाओं की स्थापना, भारी निवेश व सामाजिक मान-प्रतिष्ठा।",
-         "Core Rising Phase. Strategic professional restructuring, long-term foundation building, elevated social status."),
-        ("साढ़े साती", "वृश्चिक", "03/11/2014", "26/01/2017", "शिखर",
-         "साढ़े साती का सर्वाधिक संवेदनशील शिखर काल (वृश्चिक - जन्म चंद्र पर संचरण)। कार्यक्षेत्र में भारी दायित्व, मानसिक आत्ममंथन, कठोर परिश्रम के उपरांत स्थायी कीर्ति व आत्मबल का उत्कर्ष।",
-         "Peak Phase over Natal Moon in Scorpio. Heavy responsibility, psychological depth, monumental labor yielding enduring reputation."),
-        ("साढ़े साती", "धनु", "27/01/2017", "20/06/2017", "अस्त",
-         "धनु में अस्त चरण में प्रथम प्रवेश। गुरु की राशि में उतरती साढ़े साती से मानसिक तनाव में भारी कमी, वित्तीय राहत व कार्य सिद्धि।",
-         "First entry into Setting Phase (Sagittarius). Welcome reduction in stress, financial stabilization, mission accomplished."),
-        ("साढ़े साती", "वृश्चिक", "21/06/2017", "26/10/2017", "शिखर",
-         "वक्री शनि का वृश्चिक में अंतिम गोचर। लंबित पुराने विवादों व कार्यों का अंतिम समाधान, आंतरिक संकल्प की दृढ़ता।",
-         "Retrograde transit in Scorpio. Final closure of legacy hurdles, deep inner resolve and fortitude."),
-        ("साढ़े साती", "धनु", "27/10/2017", "23/01/2020", "अस्त",
-         "उतरती साढ़े साती (अस्त चरण) की पूर्णता। पिछले 7.5 वर्षों के संघर्षों का फल, वित्तीय संचय, पारिवारिक सुख-सौहार्द एवं करियर में स्थायी प्रतिष्ठा।",
-         "Setting Phase completion in Sagittarius. Fruit of 7.5 years of toil, financial accumulation, familial harmony and enduring prestige."),
-        ("छोटी पनौती", "कुंभ", "29/04/2022", "12/07/2022", "ढैय्या (4H)",
-         "कुंभ में स्वराशि चतुर्थ ढैय्या का प्रथम स्पर्श। भूमि, भवन व तकनीकी संसाधनों में नए अवसर, कार्यक्षेत्र में विविधीकरण।",
-         "Initial touch of own-sign Aquarius 4H Dhaiya. Real estate/property avenues, technological diversification."),
-        ("छोटी पनौती", "कुंभ", "18/01/2023", "29/03/2025", "ढैय्या (4H)",
-         "वर्तमान सक्रिय प्रभाव: कुंभ में मूलत्रिकोण चतुर्थ ढैय्या। कार्य-विस्तार, सॉफ्टवेयर/ज्योतिष/अनुसंधान कार्यों में अभूतपूर्व विकास, आवास सुधार, माता के स्वास्थ्य का ध्यान।",
-         "Current Active Dhaiya: Moolatrikona Aquarius 4H. Rapid expansion in software, astrology and research endeavors, property enhancements."),
-        ("छोटी पनौती", "मिथुन", "31/05/2032", "12/07/2034", "ढैय्या (8H)",
-         "मिथुन में अष्टम ढैय्या (8H)। गूढ़ विद्या, ज्योतिषीय शोध ग्रंथों की रचना, अप्रत्याशित वित्तीय स्त्रोतों से लाभ, स्वास्थ्य का संतुलित ध्यान।",
-         "8H Dhaiya in Gemini. Occult mastery, authored treatises, unexpected legacy gains, balanced vitality routine."),
-        ("साढ़े साती", "तुला", "28/01/2041", "05/02/2041", "उदय",
-         "तृतीय जीवन चक्र: तुला में उच्च शनि का उदय चरण। जीवन के तीसरे दौर में बड़े सामाजिक-धार्मिक दायित्वों का सूत्रपात।",
-         "3rd Lifecycle: Exalted Saturn in Libra (Rising Phase). Inception of senior philanthropic and spiritual leadership."),
-        ("साढ़े साती", "तुला", "26/09/2041", "11/12/2043", "उदय",
-         "उदय चरण की परिपक्व अवधि। संचित ज्ञान का समाज में वितरण, प्रतिष्ठा का विस्तार, आध्यात्मिक संस्थाओं व ट्रस्टों का मार्गदर्शन।",
-         "Mature Rising Phase. Dissemination of accumulated wisdom, guidance to institutions and charitable trusts."),
-        ("साढ़े साती", "वृश्चिक", "12/12/2043", "22/06/2044", "शिखर",
-         "वृश्चिक में शिखर चरण का आरंभ। चंद्र पर शनि का गोचर; गहन अंतर्ज्ञान, जीवन के अनुभवों का संकलन, स्वास्थ्य के प्रति पूर्ण सजगता।",
-         "Peak Phase in Scorpio. Deep intuitive reflection, consolidation of lifetime insights, health attentiveness."),
-        ("साढ़े साती", "तुला", "23/06/2044", "29/08/2044", "उदय",
-         "वक्री गति से तुला में पुनः संचरण। पुराने सामाजिक संबंधों का नवीनीकरण, परोपकारी कार्यों में सक्रियता।",
-         "Retrograde transit to Libra. Reconnection with long-time associates, humanitarian and devotional commitments."),
-        ("साढ़े साती", "वृश्चिक", "30/08/2044", "07/12/2046", "शिखर",
-         "शिखर चरण की मुख्य अवधि। उच्च दार्शनिक प्रतिष्ठा, अध्यात्म की पराकाष्ठा, शिष्य वर्ग व समाज द्वारा पूज्य सम्मान।",
-         "Core Peak Phase. High philosophical distinction, apex of spiritual scholarship, veneration by disciples."),
-        ("साढ़े साती", "धनु", "08/12/2046", "06/03/2049", "अस्त",
-         "धनु में अस्त चरण। पारिवारिक शांति, पौत्र-पौत्रियों का सुख, वैराग्य व आत्मतृप्ति, संचित ज्ञान का लोक-कल्याण में उपयोग।",
-         "Setting Phase in Sagittarius. Domestic tranquility, generational contentment, peaceful spiritual benevolence."),
-        ("साढ़े साती", "धनु", "10/07/2049", "03/12/2049", "अस्त",
-         "तृतीय साढ़े साती की पूर्णता। जीवन के समस्त दायित्वों से मुक्ति का अनुभव, आध्यात्मिक स्थिरता व अखंड यश।",
-         "Culmination of 3rd Sade Sati. Sublime sense of accomplished duty, enduring peace and spiritual fruition."),
-        ("छोटी पनौती", "कुंभ", "25/02/2052", "14/05/2054", "ढैय्या (4H)",
-         "कुंभ में चतुर्थ ढैय्या। अपने गृह-ग्राम या आध्यात्मिक केंद्र में स्थायी निवास, शांत जीवन शैली ও सत्संग।",
-         "4H Dhaiya in Aquarius. Peaceful dwelling in spiritual sanctuary, tranquil contemplative routine."),
-        ("छोटी पनौती", "कुंभ", "02/09/2054", "05/02/2055", "ढैय्या (4H)",
-         "कुंभ ढैय्या का समापन भाग। पारिवारिक मार्गदर्शन, कुल के वरिष्ठ संरक्षक के रूप में प्रतिष्ठा।",
-         "Conclusion of Aquarius Dhaiya. Respected elder of the lineage, mentoring descendants."),
-        ("छोटी पनौती", "मिथुन", "11/07/2061", "13/02/2062", "ढैय्या (8H)",
-         "मिथुन में अष्टम ढैय्या। आध्यात्मिक समाधि, मोक्ष मार्ग की साधना, भौतिक बंधनों से निर्लिप्तता।",
-         "8H Dhaiya in Gemini. Transcendental meditation, spiritual detachment from material bonds."),
-        ("छोटी पनौती", "मिथुन", "07/03/2062", "23/08/2063", "ढैय्या (8H)",
-         "अष्टम ढैय्या की निरंतरता। एकांत साधना, शरीर बल की सुरक्षा, ईश्वर भक्ति व आत्म-साक्षात्कार।",
-         "Continued Ashtama Dhaiya. Contemplative solitude, maintenance of physical wellbeing, divine union."),
-        ("छोटी पनौती", "मिथुन", "06/02/2064", "09/05/2064", "ढैय्या (8H)",
-         "मिथुन ढैय्या की पूर्णता। मानसिक शांति व पूर्व संचित प्रारब्ध कर्मों का शांतिपूर्वक क्षय।",
-         "Completion of Gemini Dhaiya. Serene consciousness and dissolution of karmic ties."),
-        ("साढ़े साती", "तुला", "05/11/2070", "05/02/2073", "उदय",
-         "तुला में उदय चरण। दीर्घायु जीवन में परमानंद की अनुभूति, उच्च चेतना का विकास।",
-         "Libra Rising Phase. Profound longevity, bliss in higher philosophical awareness."),
-        ("साढ़े साती", "वृश्चिक", "06/02/2073", "30/03/2073", "शिखर",
-         "वृश्चिक में शिखर संचरण का अल्पकाल। मौन, ध्यान व आंतरिक चेतना में लीन रहना।",
-         "Brief Scorpio Peak transit. Silence, inward meditative contemplation."),
-        ("साढ़े साती", "तुला", "31/03/2073", "23/10/2073", "उदय",
-         "तुला में पुनः उदय प्रभाव। आध्यात्मिक कृतज्ञता, जीवन की समग्र यात्रा का संतोषजनक स्मरण।",
-         "Return to Libra. Soulful gratitude and reflective satisfaction across life's journey."),
-        ("साढ़े साती", "वृश्चिक", "24/10/2073", "16/01/2076", "शिखर",
-         "वृश्चिक शिखर चरण की पूर्णता। परमतत्व में चित्त का लय, उच्च वैराग्य व परम शांति।",
-         "Completion of Scorpio Peak. Immersion in transcendental oneness, supreme equanimity."),
-        ("साढ़े साती", "धनु", "17/01/2076", "10/07/2076", "अस्त",
-         "धनु में अस्त चरण का प्रवेश। गुरु के सान्निध्य में मोक्ष व शांति का साक्षात्कार।",
-         "Entry into Sagittarius Setting Phase. Peace, grace of Jupiter, spiritual illumination."),
-        ("साढ़े साती", "वृश्चिक", "11/07/2076", "11/10/2076", "शिखर",
-         "वृश्चिक में सूक्ष्म वक्री गति। संचित प्रारब्ध की अंतिम शुद्धि।",
-         "Subtle retrograde in Scorpio. Final spiritual refinement of natal Moon."),
-        ("साढ़े साती", "धनु", "12/10/2076", "14/01/2079", "अस्त",
-         "धनु में अस्त चरण की पूर्णता। जीवन के समस्त ऋणों से मुक्ति व परम आत्म-कल्याण।",
-         "Completion of Setting Phase in Sagittarius. Freedom from karmic debts, spiritual liberation."),
-        ("छोटी पनौती", "कुंभ", "12/04/2081", "02/08/2081", "ढैय्या (4H)",
-         "कुंभ में चतुर्थ ढैय्या का स्पर्श। कुल व वंश के लिए आशीर्वाद स्वरूप जीवन।",
-         "Aquarius 4H Dhaiya. Blessing of benevolent elderhood for following generations."),
-        ("छोटी पनौती", "कुंभ", "07/01/2082", "19/03/2084", "ढैय्या (4H)",
-         "कुंभ ढैय्या का शांत कालखंड। परोपकार व आध्यात्मिक ऊर्जा का संचार।",
-         "Tranquil Aquarius Dhaiya. Radiating divine wisdom and spiritual solace."),
-        ("छोटी पनौती", "मिथुन", "19/09/2090", "24/10/2090", "ढैय्या (8H)",
-         "मिथुन में अष्टम ढैय्या। पूर्ण निवृत्ति मार्ग व समाधि भाव।",
-         "Gemini 8H Dhaiya. Total renunciation, state of divine absorption."),
-        ("छोटी पनौती", "मिथुन", "21/05/2091", "02/07/2093", "ढैय्या (8H)",
-         "अष्टम ढैय्या की पूर्णता। परमेश्वर के चरणों में एकाकार।",
-         "Fulfillment of 8H Dhaiya. Sacred surrender to the divine."),
-        ("साढ़े साती", "तुला", "26/12/2099", "17/03/2100", "उदय",
-         "तुला में उदय चरण। शताब्दी पार दीर्घ जीवन का पवित्र प्रतीक।",
-         "Centennial transit in Libra. Sacred testament to profound longevity."),
-        ("साढ़े साती", "तुला", "17/09/2100", "02/12/2102", "उदय",
-         "साढ़े साती के चक्र की अंतिम सीमा। अमर यश व परलोक कल्याण।",
-         "Final horizon of Sade Sati cycles. Timeless spiritual glory and divine peace.")
-    ]
+    from vyas import ephem
+    moon_sign_idx = int(moon_lon // 30) % 12
+    # Signs involved in Sade Sati: Moon-1 (12th from Moon), Moon (1st), Moon+1 (2nd from Moon)
+    # Dhaiya (Kantaka / Ashtama): 4th from Moon, 8th from Moon
+    sade_sati_signs = {
+        (moon_sign_idx - 1) % 12: ("साढ़े साती", "उदय", "उदय चरण (चन्द्र से 12H) - व्यय, प्रवास व आंतरिक अनुशासन"),
+        moon_sign_idx: ("साढ़े साती", "शिखर", "शिखर चरण (जन्म चन्द्र पर शनि) - मानसिक मंथन, दायित्व व आत्म-साक्षात्कार"),
+        (moon_sign_idx + 1) % 12: ("साढ़े साती", "अस्त", "अस्त चरण (चन्द्र से 2H) - धन-कुटुंब पर प्रभाव, स्थिरता व लाभ")
+    }
+    dhaiya_signs = {
+        (moon_sign_idx + 3) % 12: ("छोटी पनौती", "ढैय्या (4H)", "चतुर्थ ढैय्या (कंटक शनि) - गृह, सुख व कार्यक्षेत्र में कर्म फल"),
+        (moon_sign_idx + 7) % 12: ("छोटी पनौती", "ढैय्या (8H)", "अष्टम ढैय्या (अष्टम शनि) - गूढ़ चिंतन, स्वास्थ्य सतर्कता व परिवर्तन")
+    }
+
     phases = []
-    for p_name_hi, s_sign_hi, s_date, e_date, c_hi, imp_hi, imp_en in raw_periods:
-        s_sign_en = constants.SIGNS[constants.SIGNS_HI.index(s_sign_hi)] if s_sign_hi in constants.SIGNS_HI else s_sign_hi
-        phases.append(SadeSatiPhase(
-            phase_name=f"{p_name_hi}: {c_hi}",
-            phase_name_hi=p_name_hi,
-            saturn_sign=s_sign_en,
-            saturn_sign_hi=s_sign_hi,
-            start_date=s_date,
-            end_date=e_date,
-            charan=c_hi,
-            charan_hi=c_hi,
-            impact_hi=imp_hi,
-            impact_en=imp_en
-        ))
+    days_total = 90 * 365
+    step_days = 15
+    current_active_sign = None
+    phase_start_dt = None
+
+    tracked_events = []
+    for d_offset in range(0, days_total + step_days, step_days):
+        t_dt = birth_dt + timedelta(days=d_offset)
+        sat_lon = ephem.sidereal_lon("Saturn", t_dt)
+        sat_sign = int(sat_lon // 30) % 12
+        if sat_sign != current_active_sign:
+            if current_active_sign is not None and phase_start_dt is not None:
+                tracked_events.append((current_active_sign, phase_start_dt, t_dt))
+            current_active_sign = sat_sign
+            phase_start_dt = t_dt
+
+    for sign_idx, s_date, e_date in tracked_events:
+        if sign_idx in sade_sati_signs:
+            p_name, charan, desc = sade_sati_signs[sign_idx]
+            s_sign_hi = constants.SIGNS_HI[sign_idx]
+            s_sign_en = constants.SIGNS[sign_idx]
+            phases.append(SadeSatiPhase(
+                phase_name=f"{p_name}: {charan}",
+                phase_name_hi=p_name,
+                saturn_sign=s_sign_en,
+                saturn_sign_hi=s_sign_hi,
+                start_date=s_date.strftime("%d/%m/%Y"),
+                end_date=e_date.strftime("%d/%m/%Y"),
+                charan=charan,
+                charan_hi=charan,
+                impact_hi=f"शनि का {s_sign_hi} राशि में गोचर ({desc})। जातक के कर्म एवं धैर्य का परीक्षण तथा दीर्घकालिक सुदृढ़ता।",
+                impact_en=f"Saturn transiting {s_sign_en}. {charan} phase of Shani Sade Sati. Karmic restructuring and resilience."
+            ))
+        elif sign_idx in dhaiya_signs:
+            p_name, charan, desc = dhaiya_signs[sign_idx]
+            s_sign_hi = constants.SIGNS_HI[sign_idx]
+            s_sign_en = constants.SIGNS[sign_idx]
+            phases.append(SadeSatiPhase(
+                phase_name=f"{p_name}: {charan}",
+                phase_name_hi=p_name,
+                saturn_sign=s_sign_en,
+                saturn_sign_hi=s_sign_hi,
+                start_date=s_date.strftime("%d/%m/%Y"),
+                end_date=e_date.strftime("%d/%m/%Y"),
+                charan=charan,
+                charan_hi=charan,
+                impact_hi=f"शनि का {s_sign_hi} राशि में गोचर ({desc})। अनुशासन, स्वाध्याय एवं कर्म क्षेत्र में सावधानी से प्रगति।",
+                impact_en=f"Saturn transiting {s_sign_en}. {charan} phase (Dhaiya). Focus on disciplined work and health."
+            ))
+
     return phases
 
 # ---------------------------------------------------------------------------

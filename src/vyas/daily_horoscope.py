@@ -42,10 +42,13 @@ def calculate_navatara(natal_moon_nak_idx: int, transit_moon_nak_idx: int) -> Tu
 
 def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
                              running_dasha_str: str, transit_moon_lon: float,
-                             today_date: datetime) -> Dict:
+                             today_date: datetime,
+                             lat: float = 28.6139, lon: float = 77.2090, tz_hours: float = 5.5) -> Dict:
     """
-    Synthesizes the complete personalised daily horoscope for the native.
+    Synthesizes the complete personalised daily horoscope for the native
+    with exact location-based Rahu Kaal, Abhijit Muhurta, and Chaughadiya.
     """
+    from vyas.panchang import get_muhurta_and_chaughadiya
     natal_nak = int(natal_moon_lon // constants.NAKSHATRA_SPAN) % 27
     transit_nak = int(transit_moon_lon // constants.NAKSHATRA_SPAN) % 27
     
@@ -59,27 +62,8 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
 
     overall_score = int((career_score + wealth_score + love_score + health_score) / 4.0)
 
-    # Auspicious window
-    # Approximate auspicious hora or amrit vela based on vara
-    day_of_week = today_date.weekday() # 0=Monday, 6=Sunday
-    rahu_kalam_times = {
-        0: "07:30 - 09:00 AM", # Mon
-        1: "03:00 - 04:30 PM", # Tue
-        2: "12:00 - 01:30 PM", # Wed
-        3: "01:30 - 03:00 PM", # Thu
-        4: "10:30 - 12:00 PM", # Fri
-        5: "09:00 - 10:30 AM", # Sat
-        6: "04:30 - 06:00 PM"  # Sun
-    }
-    amrit_times = {
-        0: "09:15 - 10:45 AM",
-        1: "10:30 - 12:00 PM",
-        2: "07:30 - 09:00 AM",
-        3: "09:00 - 10:30 AM",
-        4: "01:30 - 03:00 PM",
-        5: "12:00 - 01:30 PM",
-        6: "08:00 - 09:30 AM"
-    }
+    # Location-precise astronomical Muhurta & Chaughadiya
+    loc_muhurta = get_muhurta_and_chaughadiya(today_date, lat, lon, tz_hours)
 
     lucky_colors = {
         0: "दूधिया श्वेत व हल्का पीला (Milky White / Cream)",
@@ -90,6 +74,7 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         5: "गहरा नीला व जामुनी (Navy Blue)",
         6: "रूबी लाल व गहरा संतरी (Ruby Red)"
     }
+    day_of_week = today_date.weekday()
 
     # Daily Tailored Remedy
     remedy_map = {
@@ -112,8 +97,12 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         "running_dasha": running_dasha_str,
         "natal_nakshatra": constants.NAKSHATRAS[natal_nak],
         "transit_nakshatra": constants.NAKSHATRAS[transit_nak],
-        "amrit_vela": amrit_times.get(day_of_week, "09:00 - 10:30 AM"),
-        "rahu_kalam": rahu_kalam_times.get(day_of_week, "01:30 - 03:00 PM"),
+        "amrit_vela": loc_muhurta.get("abhijit_muhurta", "11:45 AM - 12:35 PM"),
+        "rahu_kalam": loc_muhurta.get("rahu_kalam", "01:30 - 03:00 PM"),
+        "yamaganda": loc_muhurta.get("yamaganda", "-"),
+        "gulika_kalam": loc_muhurta.get("gulika_kalam", "-"),
+        "chaughadiya_day": loc_muhurta.get("chaughadiya_day", []),
+        "chaughadiya_night": loc_muhurta.get("chaughadiya_night", []),
         "lucky_color": lucky_colors.get(day_of_week, "पीला व सफेद"),
         "remedy": remedy_map.get(category, "सदाचार रखें और माता-पिता का आशीर्वाद लें।")
     }

@@ -1118,16 +1118,14 @@ def generate_35_page_publication_html(
     pages.append(p23)
 
     # =========================================================================
-    # PAGES 24-27: 4 Unique Vimshottari Mahadasha Schedules (Venus, Sun, Moon, Mars)
+    # PAGES 24-27: 4 Sequential Vimshottari Mahadasha Schedules from Birth
     # =========================================================================
-    all_mds = dasha_engine.calculate_mahadashas(num_cycles=2)
-    md_map = {m.lord: m for m in all_mds}
-
-    target_md_keys = ["Venus", "Sun", "Moon", "Mars"]
-    for idx_md, md_k in enumerate(target_md_keys):
-        md_node = md_map.get(md_k)
-        if not md_node:
-            continue
+    all_mds = dasha_engine.calculate_mahadashas(num_cycles=1)
+    
+    # Take chronological Mahadashas starting from native's birth
+    target_mds = all_mds[:4] if len(all_mds) >= 4 else all_mds
+    for idx_md, md_node in enumerate(target_mds):
+        md_k = md_node.lord
         ads = dasha_engine.expand_sub_dashas(md_node, target_level=2)
         ad_rows = []
         for ad in ads:
