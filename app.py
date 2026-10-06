@@ -732,7 +732,21 @@ with st.sidebar:
         time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
     else:
         name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
-        st.info("Prashna uses exact current time / प्रश्न कुण्डली में तात्कालिक समय प्रयुक्त होगा।")
+        prashna_category = st.selectbox(
+            "प्रश्न विषय (Prashna Subject / Category)",
+            [
+                "💼 नौकरी / कार्य सफलता (Career & Job)",
+                "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
+                "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
+                "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
+                "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
+                "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
+                "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
+            ]
+        )
+        prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
+        st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
+        st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
         now = datetime.now()
         date_val = now.date()
         time_val = now.time()
@@ -869,6 +883,71 @@ if st.session_state.get('data_generated'):
     ]
     
     selected_suite = st.radio("चयनित ज्योतिषीय अनुसंधान प्रभाग (Select Domain Suite):", suite_options, horizontal=True)
+
+    # -------------------------------------------------------------------------
+    # PRASHNA KUNDLI HORARY JUDGEMENT (तात्कालिक प्रश्न विचार व फलित)
+    # -------------------------------------------------------------------------
+    if "Prashna" in mode:
+        pm = st.session_state.get('prashna_meta', {})
+        cat = pm.get("category", "💼 नौकरी / कार्य सफलता")
+        q_text = pm.get("text", "क्या मेरा कार्य सिद्ध होगा?")
+        
+        # Horary analysis: Lagnesh, Karyesh and Moon relation
+        lagna_lord = constants.SIGN_LORD[asc_sign_idx]
+        moon_lord = constants.SIGN_LORD[chart.planets["Moon"].sign_index]
+        
+        # Target house based on question category
+        cat_house_map = {
+            "नौकरी": (10, "दशम भाव (करियर व आजीविका)", ["Sun", "Saturn", "Jupiter"]),
+            "विवाह": (7, "सप्तम भाव (दांपत्य व साझेदार)", ["Venus", "Jupiter"]),
+            "रोग": (6, "षष्ठ भाव (रोग व उपशम)", ["Sun", "Mars"]),
+            "कोर्ट": (6, "षष्ठ व एकादश भाव (जीत व न्याय)", ["Mars", "Jupiter"]),
+            "धन": (2, "द्वितीय व एकादश भाव (धन लाभ)", ["Jupiter", "Mercury", "Venus"]),
+            "विदेश": (9, "नवम व द्वादश भाव (दूरस्थ यात्रा)", ["Moon", "Rahu", "Saturn"]),
+            "खोई": (4, "चतुर्थ भाव (पुनः प्राप्ति)", ["Moon", "Mercury"])
+        }
+        target_h, target_desc, karaka_list = (10, "दशम भाव (कर्म)", ["Jupiter"])
+        for k_word, val in cat_house_map.items():
+            if k_word in cat:
+                target_h, target_desc, karaka_list = val
+                break
+                
+        target_sign = (asc_sign_idx + target_h - 1) % 12
+        karyesh = constants.SIGN_LORD[target_sign]
+        
+        # Check Ithasala / mutual relation between Lagnesh and Karyesh
+        lagnesh_p = chart.planets.get(lagna_lord)
+        karyesh_p = chart.planets.get(karyesh)
+        moon_p = chart.planets.get("Moon")
+        
+        is_benefic_lagna = lagna_lord in ["Jupiter", "Venus", "Mercury", "Moon"]
+        verdict_positive = (lagna_lord == karyesh) or (lagnesh_p and karyesh_p and abs(lagnesh_p.longitude - karyesh_p.longitude) <= 60)
+        
+        st.markdown(f"""
+        <div class="glass-card" style="border: 2px solid #f0c05a; background: linear-gradient(135deg, rgba(229, 169, 60, 0.15) 0%, rgba(11, 18, 32, 0.95) 100%);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a;">🔮 प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
+                <span style="background: {'#10b981' if verdict_positive else '#f59e0b'}; color: black; font-weight: 800; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem;">
+                    {'कार्य सिद्धि के प्रबल योग (Success Likely)' if verdict_positive else 'प्रयास व समय की आवश्यकता (Requires Effort)'}
+                </span>
+            </div>
+            <div style="font-size: 0.95rem; color: #fef3c7; margin-top: 8px;"><b>पूछा गया प्रश्न:</b> "{q_text}" ({cat})</div>
+            <hr style="border-color: rgba(240, 192, 90, 0.25); margin: 10px 0;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.85rem; color: #cbd5e1;">
+                <div><b>प्रच्छक (लग्न):</b> {constants.SIGNS_HI[asc_sign_idx]} (स्वामी: {constants.PLANETS_HI.get(lagna_lord, lagna_lord)})</div>
+                <div><b>कार्य भाव:</b> {target_desc}</div>
+                <div><b>कार्येश ग्रह:</b> {constants.PLANETS_HI.get(karyesh, karyesh)} (राशि: {constants.SIGNS_HI[target_sign]})</div>
+                <div><b>चन्द्रमा (कार्यवाहक):</b> {constants.SIGNS_HI[moon_p.sign_index]} ({constants.PLANETS_HI.get(moon_lord, moon_lord)})</div>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.9rem; color: #e2e8f0; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px; border-left: 3px solid #f0c05a;">
+                <b>शास्त्रीय निर्णय (Classical Horary Synthesis):</b> {
+                    'लग्न एवं कार्येश में शुभ दृष्टि व संबंध स्थापित हो रहा है। प्रश्नकर्ता का अभीष्ट कार्य अनुकूल परिस्थितियों में सिद्ध होगा। चन्द्रमा की स्थिति कार्य में गति का संकेत देती है।'
+                    if verdict_positive else
+                    'लग्न और कार्येश के मध्य तात्कालिक अवरोध है अथवा कार्येश वक्री/अस्त स्थिति में है। कार्य में थोड़ा विलंब संभावित है; धैर्य एवं अतिरिक्त प्रयास से ही सफलता संभव होगी।'
+                }
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # =========================================================================
     # SUITE 0: 🌞 HYPER-PERSONALISED DAILY HOROSCOPE
@@ -1069,6 +1148,52 @@ if st.session_state.get('data_generated'):
                     st.dataframe(pd.DataFrame(candidates), use_container_width=True, hide_index=True)
                 else:
                     st.info("वर्तमान दर्ज समय ही गणितीय रूप से सर्वाधिक संतुलित है।")
+
+        # -------------------------------------------------------------
+        # LIFE EVENTS CORRELATION & VERIFICATION (जीवन की प्रमुख घटनाओं से समय शुद्धि)
+        # -------------------------------------------------------------
+        st.markdown("---")
+        st.markdown("#### 📜 जीवन की वास्तविक घटनाओं द्वारा जन्म समय सत्यापन (Life Events Cross-Verification)")
+        st.markdown("""
+        <div style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 12px;">
+            <b>वैदिक एवं केपी शोधन सिद्धांत:</b> यदि जन्म समय 1-2 मिनट भी आगे-पीछे हो, तो विंशोत्तरी दशा व वर्ग कुंडलियों (D9, D10, D7) 
+            का सटीक फलित जीवन की वास्तविक घटनाओं (विवाह, नौकरी, संतान, दुर्घटना) से मेल नहीं खाता। 
+            नीचे अपने जीवन की 1 या अधिक प्रमुख घटनाएं दर्ज करें और कुंडली के दशा चक्र से मिलान जांचें:
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_ev1, col_ev2 = st.columns([1.5, 1])
+        with col_ev1:
+            ev_type_input = st.selectbox("घटना का प्रकार (Event Type)", [
+                "विवाह (Marriage)",
+                "करियर / नौकरी (Job / Promotion)",
+                "संतान जन्म (Childbirth)",
+                "वाहन / गृह क्रय (Property / Vehicle)",
+                "विदेश गमन (Foreign Travel / Relocation)",
+                "स्वास्थ्य कष्ट / दुर्घटना (Surgery / Health Event)"
+            ])
+        with col_ev2:
+            ev_date_input = st.date_input("घटना दिनांक (Event Date)", value=datetime(2020, 1, 1).date(),
+                                         min_value=datetime(1950, 1, 1).date(), max_value=datetime.now().date())
+
+        if st.button("🎯 Verify Event Alignment (दशा व वर्ग कुण्डली से घटना का मिलान करें)", use_container_width=True):
+            test_events = [{"type": ev_type_input, "date": ev_date_input.strftime("%Y-%m-%d")}]
+            ev_res = vyas_btr.verify_life_events(
+                birth['local'], chart.planets['Moon'].longitude, chart.ascendant_longitude, test_events
+            )
+            if ev_res:
+                st.markdown("##### 📊 घटना एवं दशा समन्वय परिणाम (Event Alignment Report)")
+                for r in ev_res:
+                    st.markdown(f"""
+                    <div class="glass-card" style="border-left: 4px solid #2a9d8f; padding: 14px 18px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; color: #f0c05a; font-size: 1rem;">{r['event_type']} ({r['event_date']})</span>
+                            <span style="background: rgba(42, 157, 143, 0.25); border: 1px solid #2a9d8f; color: #a7f3d0; padding: 3px 10px; border-radius: 12px; font-weight: 700; font-size: 0.82rem;">सटीकता: {r['alignment_score']}</span>
+                        </div>
+                        <div style="font-size: 0.88rem; color: #e2e8f0; margin-top: 6px;"><b>सक्रिय विंशोत्तरी दशा:</b> {r['running_dasha']} &nbsp;|&nbsp; <b>संबंधित वर्ग चक्र:</b> {r['relevant_varga']}</div>
+                        <div style="font-size: 0.85rem; color: #eedc9a; margin-top: 6px; line-height: 1.4;">{r['explanation']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
 
 

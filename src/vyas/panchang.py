@@ -190,18 +190,33 @@ class Panchang:
         return asdict(self)
 
 
-def get_muhurta_and_chaughadiya(date_local: datetime, lat: float, lon: float, tz_hours: float) -> dict:
+def get_muhurta_and_chaughadiya(date_local, lat: float, lon: float, tz_hours: float) -> dict:
     """Computes exact location-based Rahu Kaal, Yamaganda, Gulika, Abhijit and 8-period Day & Night Chaughadiyas."""
-    rise, sset = sun_rise_set(date_local, lat, lon, tz_hours)
+    from datetime import date as d_date
     tz = timezone(timedelta(hours=tz_hours))
+    # Normalize input whether passed as date, naive datetime or aware datetime
+    if isinstance(date_local, datetime):
+        if date_local.tzinfo is None:
+            dt_eval = date_local.replace(tzinfo=tz)
+        else:
+            dt_eval = date_local.astimezone(tz)
+    elif isinstance(date_local, d_date):
+        dt_eval = datetime(date_local.year, date_local.month, date_local.day, 12, 0, 0, tzinfo=tz)
+    else:
+        dt_eval = datetime.now(tz)
+
+    rise, sset = sun_rise_set(dt_eval, lat, lon, tz_hours)
     if rise is None or sset is None:
         return {
+            "sunrise": "-", "sunset": "-",
             "rahu_kalam": "-", "yamaganda": "-", "gulika_kalam": "-", "abhijit_muhurta": "-",
-            "chaughadiya_day": [], "chaughadiya_night": []
+            "muhurtas": {"rahu_kaal": "-", "yamaganda": "-", "gulika": "-", "abhijit": "-"},
+            "chaughadiya_day": [], "chaughadiya_night": [],
+            "day_chaughadiya": [], "night_chaughadiya": []
         }
     
     # Next day sunrise for accurate night division
-    next_day = date_local + timedelta(days=1)
+    next_day = dt_eval + timedelta(days=1)
     next_rise, _ = sun_rise_set(next_day, lat, lon, tz_hours)
     if next_rise is None:
         next_rise = sset + timedelta(hours=12)
@@ -211,8 +226,8 @@ def get_muhurta_and_chaughadiya(date_local: datetime, lat: float, lon: float, tz
     night_secs = (next_rise - sset).total_seconds()
     night_part = night_secs / 8.0
 
-    # Hindu vara based on sunrise
-    vara_date = date_local if date_local >= rise else date_local - timedelta(days=1)
+    # Hindu vara based on sunrise (both dt_eval and rise are tz-aware)
+    vara_date = dt_eval if dt_eval >= rise else dt_eval - timedelta(days=1)
     wd = (vara_date.weekday() + 1) % 7  # 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
 
     # Classical 8-part daytime indices (0-indexed):
@@ -289,12 +304,22 @@ def get_muhurta_and_chaughadiya(date_local: datetime, lat: float, lon: float, tz
         })
 
     return {
+        "sunrise": rise.strftime("%I:%M %p"),
+        "sunset": sset.strftime("%I:%M %p"),
         "rahu_kalam": rahu_str,
         "yamaganda": yama_str,
         "gulika_kalam": guli_str,
         "abhijit_muhurta": abhijit_str,
+        "muhurtas": {
+            "abhijit": abhijit_str,
+            "rahu_kaal": rahu_str,
+            "yamaganda": yama_str,
+            "gulika": guli_str
+        },
         "chaughadiya_day": day_ch,
-        "chaughadiya_night": night_ch
+        "chaughadiya_night": night_ch,
+        "day_chaughadiya": day_ch,
+        "night_chaughadiya": night_ch
     }
 
 

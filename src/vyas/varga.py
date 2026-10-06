@@ -163,17 +163,31 @@ def calculate_vargas_detailed(longitude: float) -> Dict[str, VargaPosition]:
     d7_sign = get_sign(planet_sign + d7_part) if is_odd_sign else get_sign(planet_sign + 6 + d7_part)
     add_varga("D7", 7, d7_sign, d7_deg)
 
-    # 6. D9 Navamsha (Span 3°20')
-    absolute_deg = (planet_sign * 30.0) + degree_in_sign
-    d9_part = int(absolute_deg // (30.0 / 9.0)) # 0 to 107
+    # 6. D9 Navamsha (Span 3°20' = 10/3 degrees)
+    # Movable signs (0, 3, 6, 9) start from sign itself
+    # Fixed signs (1, 4, 7, 10) start from 9th from sign (sign + 8)
+    # Dual signs (2, 5, 8, 11) start from 5th from sign (sign + 4)
+    nav_span = 30.0 / 9.0  # 3.3333333333333335°
+    d9_idx_in_sign = int((degree_in_sign + 1e-10) // nav_span)
+    if d9_idx_in_sign > 8:
+        d9_idx_in_sign = 8
+    sign_type = planet_sign % 3
+    if sign_type == 0:    # Chara (Movable)
+        start_nav = planet_sign
+    elif sign_type == 1:  # Sthira (Fixed)
+        start_nav = get_sign(planet_sign + 8)
+    else:                 # Dwiswabhava (Dual)
+        start_nav = get_sign(planet_sign + 4)
+    d9_sign = get_sign(start_nav + d9_idx_in_sign)
     d9_deg = (degree_in_sign * 9.0) % 30.0
-    d9_sign = get_sign(d9_part)
     add_varga("D9", 9, d9_sign, d9_deg)
 
     # 7. D10 Dashamsha (Span 3°00')
+    # BPHS: Odd signs start from the sign itself. Even signs start from the 9th from it (i.e. sign + 8).
     d10_part = int(degree_in_sign // 3.0) # 0 to 9
     d10_deg = (degree_in_sign * 10.0) % 30.0
-    d10_sign = get_sign(planet_sign + d10_part) if is_odd_sign else get_sign(planet_sign + 8 + d10_part)
+    start_d10 = planet_sign if is_odd_sign else get_sign(planet_sign + 8)
+    d10_sign = get_sign(start_d10 + d10_part)
     add_varga("D10", 10, d10_sign, d10_deg)
 
     # 8. D12 Dwadashamsha (Span 2°30')
