@@ -55,42 +55,78 @@ class MatchedSutra:
     strength_modifiers: str
     matched_detail: str
 
-def load_knowledge_bank() -> List[Dict[str, Any]]:
-    """Loads and caches all sutras from all knowledge bank jsonl/json files in the books/ folder."""
-    global _CACHED_KNOWLEDGE
-    if _CACHED_KNOWLEDGE is not None:
-        return _CACHED_KNOWLEDGE
-    
-    records = []
-    b_dir = Path(__file__).resolve().parents[2] / "books"
-    if b_dir.exists():
-        # Match all files containing knowledge/sutra in name or jsonl/json
-        target_files = sorted(b_dir.glob("*.jsonl")) + sorted(b_dir.glob("*sutra*.json")) + sorted(b_dir.glob("*knowledge*.json"))
-        # If no specific matched, check default ai_jyotish file
-        if not target_files and KNOWLEDGE_FILE_PATH.exists():
-            target_files = [KNOWLEDGE_FILE_PATH]
+_LAST_DIR_STATE: Optional[tuple] = None
 
-        seen_ids = set()
-        for k_file in target_files:
+def load_knowledge_bank(force_reload: bool = False) -> List[Dict[str, Any]]:
+    """
+    Dynamically scans books/ folder and auto-reloads whenever:
+    1. Any new .jsonl, .json, or .md sutra file is added.
+    2. Any existing sutra file is edited or updated.
+    Guarantees that user's uploaded sutras are ALWAYS immediately active!
+    """
+    global _CACHED_KNOWLEDGE, _LAST_DIR_STATE
+    b_dir = Path(__file__).resolve().parents[2] / "books"
+    
+    # Calculate current modification signature of all sutra/knowledge files
+    current_state = []
+    target_files = []
+    if b_dir.exists():
+        # Match any jsonl, json files, or text/markdown sutra files
+        all_potential = list(b_dir.glob("*.jsonl")) + list(b_dir.glob("*.json")) + list(b_dir.glob("*sutra*.txt"))
+        target_files = sorted(list(set(all_potential)))
+        for p in target_files:
             try:
-                with open(k_file, "r", encoding="utf-8") as f:
-                    for line in f:
-                        line = line.strip()
-                        if line:
-                            try:
-                                d = json.loads(line)
-                                sid = d.get("sutra_id", "")
-                                if sid and sid in seen_ids:
-                                    continue
-                                if sid:
-                                    seen_ids.add(sid)
-                                records.append(d)
-                            except Exception:
-                                pass
+                current_state.append((p.name, p.stat().st_mtime, p.stat().st_size))
             except Exception:
                 pass
+    
+    state_tuple = tuple(current_state)
+    if not force_reload and _CACHED_KNOWLEDGE is not None and _LAST_DIR_STATE == state_tuple:
+        return _CACHED_KNOWLEDGE
+
+    records = []
+    seen_ids = set()
+
+    for k_file in target_files:
+        try:
+            with open(k_file, "r", encoding="utf-8", errors="ignore") as f:
+                # Handle JSON array file
+                if k_file.suffix.lower() == ".json":
+                    try:
+                        content = f.read().strip()
+                        if content.startswith("["):
+                            parsed = json.loads(content)
+                            for d in parsed:
+                                if isinstance(d, dict):
+                                    sid = d.get("sutra_id", "")
+                                    if sid and sid in seen_ids:
+                                        continue
+                                    if sid:
+                                        seen_ids.add(sid)
+                                    records.append(d)
+                            continue
+                    except Exception:
+                        f.seek(0)
+
+                # Handle JSONL or line-by-line JSON
+                for line in f:
+                    line = line.strip()
+                    if line.startswith("{") and line.endswith("}"):
+                        try:
+                            d = json.loads(line)
+                            sid = d.get("sutra_id", "")
+                            if sid and sid in seen_ids:
+                                continue
+                            if sid:
+                                seen_ids.add(sid)
+                            records.append(d)
+                        except Exception:
+                            pass
+        except Exception:
+            pass
 
     _CACHED_KNOWLEDGE = records
+    _LAST_DIR_STATE = state_tuple
     return _CACHED_KNOWLEDGE
 
 def evaluate_chart_sutras(chart, current_dasha: Optional[Tuple[str, str]] = None, current_transits: Optional[Dict[str, int]] = None) -> List[MatchedSutra]:

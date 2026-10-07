@@ -231,23 +231,37 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
             "rahu_kalam": "-", "yamaganda": "-", "gulika_kalam": "-", "abhijit_muhurta": "-",
             "muhurtas": {"rahu_kaal": "-", "yamaganda": "-", "gulika": "-", "abhijit": "-"},
             "chaughadiya_day": [], "chaughadiya_night": [],
-            "day_chaughadiya": [], "night_chaughadiya": []
+            "day_chaughadiya": [], "night_chaughadiya": [],
+            "horas_day": [], "horas_night": []
         }
-    
-    # Next day sunrise for accurate night division
-    next_day = dt_eval + timedelta(days=1)
-    next_rise, _ = sun_rise_set(next_day, lat, lon, tz_hours)
-    if next_rise is None:
-        next_rise = sset + timedelta(hours=12)
+
+    # In Vedic astronomy, a day begins at sunrise.
+    # If dt_eval is before sunrise, the current operational cycle belongs to yesterday's sunrise.
+    if dt_eval < rise:
+        prev_day = dt_eval - timedelta(days=1)
+        prev_rise, prev_sset = sun_rise_set(prev_day, lat, lon, tz_hours)
+        if prev_rise and prev_sset:
+            next_rise = rise
+            rise, sset = prev_rise, prev_sset
+            vara_date = prev_day
+        else:
+            next_rise = rise
+            vara_date = dt_eval - timedelta(days=1)
+    else:
+        # Next day sunrise for accurate night division
+        next_day = dt_eval + timedelta(days=1)
+        next_rise, _ = sun_rise_set(next_day, lat, lon, tz_hours)
+        if next_rise is None:
+            next_rise = sset + timedelta(hours=12)
+        vara_date = dt_eval
 
     day_secs = (sset - rise).total_seconds()
     day_part = day_secs / 8.0
     night_secs = (next_rise - sset).total_seconds()
     night_part = night_secs / 8.0
 
-    # Hindu vara based on sunrise (both dt_eval and rise are tz-aware)
-    vara_date = dt_eval if dt_eval >= rise else dt_eval - timedelta(days=1)
-    wd = (vara_date.weekday() + 1) % 7  # 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+    # Hindu vara: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+    wd = (vara_date.weekday() + 1) % 7
 
     # Classical 8-part daytime indices (0-indexed):
     # Rahu Kaal: Sun=7 (8th part), Mon=1 (2nd), Tue=6 (7th), Wed=4 (5th), Thu=5 (6th), Fri=3 (4th), Sat=2 (3rd)

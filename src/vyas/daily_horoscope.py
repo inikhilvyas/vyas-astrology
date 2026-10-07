@@ -75,14 +75,15 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
             "chaughadiya_night": []
         }
 
+    # Python weekday(): 0=Mon (Chandra), 1=Tue (Mangal), 2=Wed (Budh), 3=Thu (Guru), 4=Fri (Shukra), 5=Sat (Shani), 6=Sun (Surya)
     lucky_colors = {
-        0: "दूधिया श्वेत व हल्का पीला (Milky White / Cream)",
+        0: "दूधिया श्वेत व मोती रंग (Milky White / Pearl)",
         1: "लाल, केसरिया व नारंगी (Crimson / Saffron)",
         2: "हरा व पिस्ता (Emerald Green)",
         3: "हल्दी पीला व सुनहरा (Golden Yellow)",
         4: "सफेद, गुलाबी व चमकदार (Silvery White / Pink)",
-        5: "गहरा नीला व जामुनी (Navy Blue)",
-        6: "रूबी लाल व गहरा संतरी (Ruby Red)"
+        5: "गहरा नीला व काला (Navy Blue / Black)",
+        6: "ताम्र, रूबी लाल व सुनहरा संतरी (Ruby Red / Copper)"
     }
     day_of_week = today_date.weekday()
 

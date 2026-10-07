@@ -2287,34 +2287,74 @@ if st.session_state.get('data_generated'):
                 st.dataframe(pd.DataFrame(nt_table), use_container_width=True, hide_index=True)
 
         with k_tab5:
-            st.markdown(f'<div class="section-title">{"दैनिक पंचांग एवं अवकहड़ा चक्र" if is_hi else "Panchang & Avakhada"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"दैनिक पंचांग, अवकहड़ा चक्र एवं शुद्ध स्थानीय मुहूर्त" if is_hi else "Panchang, Avakhada & Local Muhurta"}</div>', unsafe_allow_html=True)
             panch_obj = vyas_panchang.compute(birth['local'], birth['lat'], birth['lon'], birth['tz'], chart.ascendant_longitude)
-            col_p1, col_p2 = st.columns(2)
+            col_p1, col_p2, col_p3 = st.columns([1.1, 1.1, 1.2])
             with col_p1:
                 st.markdown(f"""
-                <div class="glass-card">
-                    <div style="font-weight: bold; color: #f0c05a;">पंचांग विवरण:</div>
-                    <p>वार: <b>{panch_obj.vara}</b><br>
-                    तिथि: <b>{panch_obj.tithi}</b><br>
-                    नक्षत्र: <b>{panch_obj.nakshatra} (पद {panch_obj.nakshatra_pada})</b><br>
-                    योग: <b>{panch_obj.yoga}</b><br>
-                    करण: <b>{panch_obj.karana}</b><br>
-                    सूर्योदय: <b>{panch_obj.sunrise}</b> | सूर्यास्त: <b>{panch_obj.sunset}</b></p>
+                <div class="glass-card" style="height: 100%;">
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">📜 पंचांग मुख्य अंग:</div>
+                    <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
+                        <b>वार:</b> {panch_obj.vara} ({panch_obj.vara_lord})<br>
+                        <b>तिथि:</b> {panch_obj.tithi} ({panch_obj.tithi_hi})<br>
+                        <small style="color: #94a3b8;">समाप्ति: {panch_obj.tithi_end}</small><br>
+                        <b>नक्षत्र:</b> {panch_obj.nakshatra} ({panch_obj.nakshatra_hi}) पद {panch_obj.nakshatra_pada}<br>
+                        <small style="color: #94a3b8;">समाप्ति: {panch_obj.nakshatra_end}</small><br>
+                        <b>योग:</b> {panch_obj.yoga} (समाप्ति: {panch_obj.yoga_end})<br>
+                        <b>करण:</b> {panch_obj.karana} (समाप्ति: {panch_obj.karana_end})
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
             with col_p2:
                 av = panch_obj.avakhada
                 st.markdown(f"""
-                <div class="glass-card">
-                    <div style="font-weight: bold; color: #f0c05a;">अवकहड़ा चक्र:</div>
-                    <p>वर्ण: <b>{av.get('Varna', 'Brahmin')}</b><br>
-                    वश्य: <b>{av.get('Vashya', 'Keet')}</b><br>
-                    योनि: <b>{av.get('Yoni', 'Mrig')}</b><br>
-                    गण: <b>{av.get('Gana', 'Deva')}</b><br>
-                    नाड़ी: <b>{av.get('Nadi', 'Madhya')}</b><br>
-                    नाम अक्षर: <b>{av.get('Naam Akshar', 'न')}</b></p>
+                <div class="glass-card" style="height: 100%;">
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">🔮 अवकहड़ा चक्र (Avakhada):</div>
+                    <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
+                        <b>वर्ण:</b> {av.get('Varna', 'Brahmin')}<br>
+                        <b>वश्य:</b> {av.get('Vashya', 'Keet')}<br>
+                        <b>योनि:</b> {av.get('Yoni', 'Mrig')}<br>
+                        <b>गण:</b> {av.get('Gana', 'Deva')}<br>
+                        <b>नाड़ी:</b> {av.get('Nadi', 'Madhya')}<br>
+                        <b>नाम अक्षर:</b> <span style="font-size: 1.1rem; color: #facc15; font-weight: bold;">{av.get('Naam Akshar', 'न')}</span>
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
+            with col_p3:
+                st.markdown(f"""
+                <div class="glass-card" style="height: 100%;">
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">⏱️ स्थानीय खगोलीय काल ({birth.get('city', 'New Delhi')}):</div>
+                    <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
+                        <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
+                        <b>दिनमान:</b> {panch_obj.day_length}<br>
+                        <b>अभिजीत मुहूर्त:</b> <span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span><br>
+                        <b>राहु काल:</b> <span style="color: #ef4444; font-weight: 700;">{panch_obj.rahu_kalam}</span><br>
+                        <b>यमगण्ड:</b> <span style="color: #f59e0b; font-weight: 700;">{panch_obj.yamaganda}</span><br>
+                        <b>गुलिक काल:</b> {panch_obj.gulika_kalam}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            # Chaughadiya Grid inside Panchang tab
+            if panch_obj.chaughadiya_day:
+                with st.expander("⏱️ शुद्ध अक्षांशीय चौघड़िया चक्र (Day & Night Chaughadiya Grid)", expanded=False):
+                    ch_col1, ch_col2 = st.columns(2)
+                    with ch_col1:
+                        st.markdown("**दिन का चौघड़िया (Day):**")
+                        st.dataframe(pd.DataFrame([{
+                            "चौघड़िया": f"{c.get('name_hi')} ({c.get('name')})",
+                            "समय सीमा": f"{c.get('start')} - {c.get('end')}",
+                            "प्रकृति": c.get('nature'),
+                            "गुण": "शुभ" if c.get('is_good') else "अशुभ"
+                        } for c in panch_obj.chaughadiya_day]), use_container_width=True, hide_index=True)
+                    with ch_col2:
+                        st.markdown("**रात्रि का चौघड़िया (Night):**")
+                        st.dataframe(pd.DataFrame([{
+                            "चौघड़िया": f"{c.get('name_hi')} ({c.get('name')})",
+                            "समय सीमा": f"{c.get('start')} - {c.get('end')}",
+                            "प्रकृति": c.get('nature'),
+                            "गुण": "शुभ" if c.get('is_good') else "अशुभ"
+                        } for c in panch_obj.chaughadiya_night]), use_container_width=True, hide_index=True)
 
     # =========================================================================
     # SUITE 5: 📖 DEEP FORENSIC PREDICTIONS (Extensive Classical Analysis)
