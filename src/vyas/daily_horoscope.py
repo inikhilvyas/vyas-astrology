@@ -60,6 +60,42 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
     love_score = min(98, max(42, base_score + (6 if "Venus" in running_dasha_str or "Moon" in running_dasha_str else -4)))
     health_score = min(98, max(40, base_score + (-8 if tara_idx in [2, 6] else 4)))
 
+    overall_score = int((career_score + wealth_score + love_score + health_score) / 4.0)
+
+    # Location-precise astronomical Muhurta & Chaughadiya
+    try:
+        loc_muhurta = get_muhurta_and_chaughadiya(today_date, lat, lon, tz_hours)
+    except Exception:
+        loc_muhurta = {
+            "abhijit_muhurta": "-",
+            "rahu_kalam": "-",
+            "yamaganda": "-",
+            "gulika_kalam": "-",
+            "chaughadiya_day": [],
+            "chaughadiya_night": [],
+            "horas_day": [],
+            "horas_night": []
+        }
+
+    # Python weekday(): 0=Mon (Chandra), 1=Tue (Mangal), 2=Wed (Budh), 3=Thu (Guru), 4=Fri (Shukra), 5=Sat (Shani), 6=Sun (Surya)
+    lucky_colors = {
+        0: "दूधिया श्वेत व मोती रंग (Milky White / Pearl)",
+        1: "लाल, केसरिया व नारंगी (Crimson / Saffron)",
+        2: "हरा व पिस्ता (Emerald Green)",
+        3: "हल्दी पीला व सुनहरा (Golden Yellow)",
+        4: "सफेद, गुलाबी व चमकदार (Silvery White / Pink)",
+        5: "गहरा नीला व काला (Navy Blue / Black)",
+        6: "ताम्र, रूबी लाल व सुनहरा संतरी (Ruby Red / Copper)"
+    }
+    day_of_week = today_date.weekday()
+
+    # Daily Tailored Remedy
+    remedy_map = {
+        "good": "आज दिन अत्यंत अनुकूल है। किसी नए संकल्प या महत्वपूर्ण कार्य की शुरुआत से पूर्व मीठा जल पीकर निकलें।",
+        "neutral": "दिन सामान्य रहेगा। भगवान शिव अथवा श्री गणेश को दूर्वा/जल अर्पित करें; मन शांत रहेगा।",
+        "bad": "आज थोड़ा सतर्क रहने का दिन है। यात्रा व वाद-विवाद से बचें; हनुमान चालीसा का पाठ करें अथवा पक्षियों को दाना डालें।"
+    }
+
     # In-depth multi-dimensional astrological narratives
     transit_rashi = int(transit_moon_lon // 30) % 12
     natal_rashi = int(natal_moon_lon // 30) % 12

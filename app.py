@@ -1211,6 +1211,14 @@ if st.session_state.get('data_generated'):
                         } for h in h_day])
                         st.dataframe(h_df, use_container_width=True, hide_index=True)
                 with col_h2:
+                    st.markdown("**रात्रि की 12 होरा (Night Horas):**")
+                    if h_night:
+                        h_ndf = pd.DataFrame([{
+                            "होरा #": h["num"],
+                            "होरा स्वामी": f"{h['lord_hi']} ({h['lord']})",
+                            "समय सीमा": f"{h['start']} - {h['end']}",
+                            "प्रकृति": h["nature"]
+                        } for h in h_night])
                         st.dataframe(h_ndf, use_container_width=True, hide_index=True)
 
         # In-depth Comprehensive Daily Forecast (4 Life Pillars & Gochar Synthesis)
