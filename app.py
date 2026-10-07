@@ -34,6 +34,7 @@ from vyas.predictive_engine import synthesize_prediction
 from vyas import chakras as vyas_chakras
 from vyas import nadi as vyas_nadi
 from vyas import sutra_bank as vyas_sutra_bank
+from vyas import knowledge_engine as vyas_knowledge_engine
 from vyas import ashtakavarga as vyas_ashtaka
 from vyas import shadbala as vyas_shadbala
 from vyas import chalit as vyas_chalit
@@ -403,6 +404,54 @@ st.markdown("""
     body, p, label, .stMarkdown:not([data-testid*="stIcon"]):not([data-testid*="Material"]), .stText, h1, h2, h3, h4, h5, h6, input, select, textarea, button:not([data-testid*="Sidebar"]):not([data-testid*="stExpander"]) {
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
+
+    /* -------------------------------------------------------------
+       MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION
+       ------------------------------------------------------------- */
+    @media (max-width: 768px) {
+        .glass-card {
+            padding: 12px 14px !important;
+            margin-bottom: 12px !important;
+        }
+        .section-title {
+            font-size: 1.05rem !important;
+            letter-spacing: 0.5px !important;
+        }
+        div[data-testid="stRadio"] > div {
+            gap: 4px !important;
+            padding: 4px !important;
+        }
+        div[data-testid="stRadio"] label {
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
+        }
+        .stTabs [data-baseweb="tab-list"], .stTabs [role="tablist"] {
+            overflow-x: auto !important;
+            white-space: nowrap !important;
+            padding: 6px 8px !important;
+            gap: 6px !important;
+        }
+        .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
+            font-size: 0.82rem !important;
+            padding: 6px 12px !important;
+            height: 38px !important;
+        }
+        .kundli-container {
+            padding: 8px !important;
+            overflow-x: auto !important;
+        }
+        .kundli-container svg {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        div[data-testid="column"] {
+            min-width: 100% !important;
+            margin-bottom: 10px !important;
+        }
+        .block-container {
+            padding: 1rem 0.5rem 3rem 0.5rem !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -581,14 +630,26 @@ with st.sidebar:
     
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     if "user" not in st.session_state:
-        st.session_state["user"] = {
-            "id": 1,
-            "name": "नया जातक (Seeker)",
-            "email": "seeker@vyasastro.com",
-            "tier": "VIP_TRIAL",
-            "days_left": 30,
-            "is_vip": True
-        }
+        # Check query param for persistent login across page refreshes
+        uid_param = st.query_params.get("uid")
+        restored_user = None
+        if uid_param:
+            try:
+                restored_user = auth_vault.get_user_by_id(int(uid_param))
+            except Exception:
+                restored_user = None
+        
+        if restored_user:
+            st.session_state["user"] = restored_user
+        else:
+            st.session_state["user"] = {
+                "id": 1,
+                "name": "नया जातक (Seeker)",
+                "email": "seeker@vyasastro.com",
+                "tier": "VIP_TRIAL",
+                "days_left": 30,
+                "is_vip": True
+            }
 
     u = st.session_state["user"]
     st.markdown(f"""
@@ -670,27 +731,55 @@ with st.sidebar:
             </a>
             """, unsafe_allow_html=True)
 
-    with st.expander("👤 User Account / Login / Register", expanded=False):
-        auth_mode = st.radio("Account Action", ["Quick Register (New User)", "Login (Existing)"], horizontal=True)
-        if "Register" in auth_mode:
-            reg_name = st.text_input("Full Name", "New Seeker")
-            reg_email = st.text_input("Email", "seeker@example.com")
-            reg_pwd = st.text_input("Password", type="password")
+    with st.expander("👤 User Account / Login / Register (लॉगिन व खाता)", expanded=False):
+        # 1-Click Google Sign-in option
+        st.markdown("""
+        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(240, 192, 90, 0.3); border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; color: #f8fafc; font-size: 0.88rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                Google से त्वरित लॉगिन (1-Click Google Auth)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        g_col1, g_col2 = st.columns([1.5, 1])
+        with g_col1:
+            google_email = st.text_input("Google Email", "user@gmail.com", key="g_email_in")
+        with g_col2:
+            st.write("")
+            st.write("")
+            if st.button("🚀 Google Sign-In", use_container_width=True):
+                ok, msg, u_data = auth_vault.login_or_register_google(google_email, google_email.split("@")[0])
+                if ok and u_data:
+                    st.session_state["user"] = u_data
+                    st.query_params["uid"] = str(u_data["id"])
+                    st.success(msg)
+                    st.rerun()
+                else:
+                    st.error(msg)
+
+        st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.78rem; margin: 8px 0;'>— या ईमेल द्वारा लॉगिन करें —</div>", unsafe_allow_html=True)
+        auth_mode = st.radio("Account Action", ["Login (लॉगिन)", "Register (नया खाता)"], horizontal=True)
+        if "Register" in auth_mode or "खाता" in auth_mode:
+            reg_name = st.text_input("Full Name (पूरा नाम)", "New Seeker")
+            reg_email = st.text_input("Email (ईमेल)", "seeker@example.com")
+            reg_pwd = st.text_input("Password (पासवर्ड)", type="password")
             if st.button("Activate 30-Day Free VIP Trial", use_container_width=True):
                 ok, msg, u_data = auth_vault.register_user(reg_email, reg_name, reg_pwd)
                 if ok and u_data:
                     st.session_state["user"] = u_data
+                    st.query_params["uid"] = str(u_data["id"])
                     st.success(msg)
                     st.rerun()
                 else:
                     st.error(msg)
         else:
-            log_email = st.text_input("Registered Email", "inikhilvyas@gmail.com")
-            log_pwd = st.text_input("Password", type="password", key="log_pwd")
-            if st.button("Login", use_container_width=True):
+            log_email = st.text_input("Registered Email (ईमेल)", "inikhilvyas@gmail.com")
+            log_pwd = st.text_input("Password (पासवर्ड)", type="password", key="log_pwd")
+            if st.button("Login (लॉगिन करें)", use_container_width=True):
                 ok, msg, u_data = auth_vault.login_user(log_email, log_pwd)
                 if ok and u_data:
                     st.session_state["user"] = u_data
+                    st.query_params["uid"] = str(u_data["id"])
                     st.success(msg)
                     st.rerun()
                 else:
@@ -873,6 +962,7 @@ if st.session_state.get('data_generated'):
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
+        "वैदिक फलित एवं 2000+ सूत्र" if is_hi else "Vedic Forecast & 2000+ Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
         "लाल किताब सम्पूर्ण" if is_hi else "Lal Kitab System & Remedies",
         "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal",
@@ -1047,33 +1137,75 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        # Location-specific Chaughadiya & Muhurtas (Directly rendered from daily_res)
-        with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया एवं शुभ-अशुभ मुहूर्त (Exact Location Timing)", expanded=True):
-            col_m1, col_m2 = st.columns(2)
+        # Location-specific Chaughadiya, Horas & Muhurtas (Directly rendered from daily_res)
+        with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया, 24 होरा चक्र एवं शुभ-अशुभ मुहूर्त", expanded=True):
+            col_m1, col_m2 = st.columns([1, 1.4])
             with col_m1:
-                st.markdown(f"**स्थान:** {birth.get('city', 'New Delhi')}")
-                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #48cae4; font-weight: 700;'>{daily_res.get('amrit_vela', '-')}</span>", unsafe_allow_html=True)
-                st.markdown(f"**राहु काल:** <span style='color: #ff858d; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span>", unsafe_allow_html=True)
-                st.markdown(f"**यमगण्ड:** <span style='color: #e9c46a; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span>", unsafe_allow_html=True)
-                st.markdown(f"**गुलिक काल:** <span style='color: #eedc9a; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**स्थान (Location):** `{birth.get('city', 'New Delhi')}`")
+                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #38bdf8; font-weight: 700;'>{daily_res.get('amrit_vela', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**राहु काल:** <span style='color: #ef4444; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**यमगण्ड:** <span style='color: #f59e0b; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**गुलिक काल:** <span style='color: #e2e8f0; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span>", unsafe_allow_html=True)
             with col_m2:
-                st.markdown("**दिन का चौघड़िया (Day Chaughadiya):**")
+                st.markdown("""
+                <div style="font-size: 0.82rem; color: #cbd5e1; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229, 169, 60, 0.2); border-radius: 8px; padding: 10px;">
+                    <b>💡 चौघड़िया नियम:</b> 
+                    <span style="color: #10b981; font-weight: 700;">शुभ, लाभ, अमृत, चर = हरा (शुभ/कार्य सिद्धि)</span> | 
+                    <span style="color: #ef4444; font-weight: 700;">उद्वेग, काल, रोग = लाल (वर्जित/सावधानी)</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+            tab_ch1, tab_ch2, tab_ch3 = st.tabs(["☀️ दिन का चौघड़िया", "🌙 रात्रि का चौघड़िया", "🪐 24 कालहोरा चक्र (Planetary Horas)"])
+            with tab_ch1:
                 day_chs = daily_res.get('chaughadiya_day', [])
                 if day_chs:
-                    ch_rows = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in day_chs[:4]])
-                    ch_rows2 = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in day_chs[4:]])
-                    st.markdown(f"<small>{ch_rows}<br>{ch_rows2}</small>", unsafe_allow_html=True)
-                else:
-                    st.markdown("<small style='color: #94a3b8;'>शुभ चौघड़िया उपलब्ध है</small>", unsafe_allow_html=True)
-                
-                st.markdown("**रात्रि का चौघड़िया (Night Chaughadiya):**")
+                    st.markdown("""
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px;">
+                    """ + "".join([
+                        f"""<div style="background: rgba(15, 23, 42, 0.85); border-left: 4px solid {c.get('color', '#10b981')}; border-radius: 8px; padding: 8px 10px; border-top: 1px solid rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <div style="font-weight: 800; font-size: 0.95rem; color: {c.get('color', '#10b981')};">{c.get('name_hi')} ({c.get('name')})</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin: 2px 0;">{c.get('nature')}</div>
+                            <div style="font-size: 0.78rem; font-weight: 600; color: #f8fafc;">{c.get('start')} - {c.get('end')}</div>
+                        </div>""" for c in day_chs
+                    ]) + "</div>", unsafe_allow_html=True)
+
+            with tab_ch2:
                 night_chs = daily_res.get('chaughadiya_night', [])
                 if night_chs:
-                    n_rows = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in night_chs[:4]])
-                    n_rows2 = " | ".join([f"**{c.get('name_hi', c.get('name'))}** ({c.get('start')} - {c.get('end')})" for c in night_chs[4:]])
-                    st.markdown(f"<small>{n_rows}<br>{n_rows2}</small>", unsafe_allow_html=True)
-                else:
-                    st.markdown("<small style='color: #94a3b8;'>शुभ रात्रि चौघड़िया उपलब्ध है</small>", unsafe_allow_html=True)
+                    st.markdown("""
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px;">
+                    """ + "".join([
+                        f"""<div style="background: rgba(15, 23, 42, 0.85); border-left: 4px solid {c.get('color', '#10b981')}; border-radius: 8px; padding: 8px 10px; border-top: 1px solid rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <div style="font-weight: 800; font-size: 0.95rem; color: {c.get('color', '#10b981')};">{c.get('name_hi')} ({c.get('name')})</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin: 2px 0;">{c.get('nature')}</div>
+                            <div style="font-size: 0.78rem; font-weight: 600; color: #f8fafc;">{c.get('start')} - {c.get('end')}</div>
+                        </div>""" for c in night_chs
+                    ]) + "</div>", unsafe_allow_html=True)
+
+            with tab_ch3:
+                h_day = daily_res.get('horas_day', [])
+                h_night = daily_res.get('horas_night', [])
+                col_h1, col_h2 = st.columns(2)
+                with col_h1:
+                    st.markdown("**दिन की 12 होरा (Day Horas):**")
+                    if h_day:
+                        h_df = pd.DataFrame([{
+                            "होरा #": h["num"],
+                            "होरा स्वामी": f"{h['lord_hi']} ({h['lord']})",
+                            "समय सीमा": f"{h['start']} - {h['end']}",
+                            "प्रकृति": h["nature"]
+                        } for h in h_day])
+                        st.dataframe(h_df, use_container_width=True, hide_index=True)
+                with col_h2:
+                    st.markdown("**रात्रि की 12 होरा (Night Horas):**")
+                    if h_night:
+                        h_ndf = pd.DataFrame([{
+                            "होरा #": h["num"],
+                            "होरा स्वामी": f"{h['lord_hi']} ({h['lord']})",
+                            "समय सीमा": f"{h['start']} - {h['end']}",
+                            "प्रकृति": h["nature"]
+                        } for h in h_night])
+                        st.dataframe(h_ndf, use_container_width=True, hide_index=True)
 
     # =========================================================================
     # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES
@@ -1203,10 +1335,11 @@ if st.session_state.get('data_generated'):
     # SUITE 1: 🌟 CHARTS & 16 VARGAS
     # =========================================================================
     if "कुण्डली" in selected_suite or "Charts" in selected_suite:
-        sub_tab1, sub_tab2, sub_tab3 = st.tabs([
+        sub_tab1, sub_tab2, sub_tab3, sub_tab4 = st.tabs([
             "लग्न एवं नवमांश (D1 & D9 Charts)" if is_hi else "D1 & D9 Natal Charts",
             "षोडशवर्ग 16 चक्र (All 16 Vargas)" if is_hi else "All 16 Divisional Charts",
-            "षष्ट्यंश देवता (D60 Shashtyamsha & Deities)" if is_hi else "D60 Shashtyamsha Deities"
+            "षष्ट्यंश देवता (D60 Shashtyamsha & Deities)" if is_hi else "D60 Shashtyamsha Deities",
+            "📜 2000+ शास्त्रीय सूत्र फलादेश (AI Knowledge Bank)" if is_hi else "2000+ Classical Sutras Bank"
         ])
 
         with sub_tab1:
@@ -1363,6 +1496,66 @@ if st.session_state.get('data_generated'):
                     "प्रकृति / स्वभाव": "शुभ (Benefic)" if pv.is_benefic else "अशुभ / शोधन योग्य"
                 })
             st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
+
+        with sub_tab4:
+            st.markdown(f'<div class="section-title">{"🔮 2000+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else "2000+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
+            
+            # Evaluate from ai_jyotish_knowledge_bank_2000
+            kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
+            st.markdown(f"""
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+                <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
+                    ✨ आपकी जन्म कुण्डली पर AI ज्ञानकोष (2,000+ शास्त्रीय सूत्र) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
+                </div>
+                <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
+                    यह इंजन भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय मिलान करके केवल आपकी कुंडली पर लागू होने वाले सूत्रों का सटीक फलित प्रदर्शित करता है।
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Filter options for the knowledge bank
+            kb_categories = sorted(list(set(k.category for k in kb_eval)))
+            col_f1, col_f2 = st.columns([1.5, 1])
+            with col_f1:
+                if kb_categories:
+                    selected_cat = st.selectbox(
+                        "श्रेणी अनुसार सूत्र देखें (Filter by Category):" if is_hi else "Filter Sutras by Category:",
+                        ["समस्त श्रेणियाँ (All Categories)"] + kb_categories,
+                        index=0,
+                        key="kb_cat_filter_subtab4"
+                    )
+                    filtered_kb = [k for k in kb_eval if selected_cat == "समस्त श्रेणियाँ (All Categories)" or k.category == selected_cat]
+                else:
+                    filtered_kb = kb_eval
+            with col_f2:
+                search_q = st.text_input("🔍 सूत्र खोजें (Search Keyword)", placeholder="ग्रह, योग या भाव लिखें...", key="kb_srch_subtab4")
+                if search_q:
+                    filtered_kb = [k for k in filtered_kb if search_q.lower() in k.prediction_hi.lower() or search_q.lower() in k.matched_detail.lower() or search_q.lower() in k.sub_category.lower()]
+
+            st.markdown(f"<small style='color: #94a3b8;'>प्रदर्शित सक्रिय सूत्र: <b>{len(filtered_kb)}</b> / कुल {len(kb_eval)}</small>", unsafe_allow_html=True)
+
+            for k in filtered_kb:
+                domain_badge = f'<span style="background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 8px;">{k.life_domain}</span>'
+                st.markdown(f"""
+                <div class="predict-card" style="margin-bottom: 14px; border-left: 4px solid #facc15;">
+                    <div class="predict-header" style="font-size: 1.05rem; color: #fde047;">
+                        📜 [{k.sutra_id}] {k.sub_category} {domain_badge}
+                    </div>
+                    <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 2px;">
+                        <b>स्रोत:</b> {k.source} &nbsp;|&nbsp; <b>वर्गीकरण:</b> {k.category}
+                    </div>
+                    <div style="color: #e2e8f0; font-size: 0.95rem; margin: 6px 0; background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 6px;">
+                        🔍 <b>सत्यापित खगोलीय स्थिति:</b> {k.matched_detail}
+                    </div>
+                    <div style="color: #4ade80; font-size: 1rem; line-height: 1.6;">
+                        <b>फलकथन (फलादेश):</b> {k.prediction_hi}
+                    </div>
+                    <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
+                        <i><b>English:</b> {k.prediction_en}</i>
+                    </div>
+                    {f'<div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">⚖️ <b>बल व संशोधन:</b> {k.strength_modifiers}</div>' if k.strength_modifiers else ''}
+                </div>
+                """, unsafe_allow_html=True)
 
     # =========================================================================
     # SUITE: 💍 ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
@@ -2295,7 +2488,58 @@ if st.session_state.get('data_generated'):
                         st.markdown(f"✓ {u}")
 
         with p_tab8:
-            st.markdown(f'<div class="section-title">{"शास्त्रीय सूत्र डेटाबैंक (Laghu Parashari, Phaladeepika, Saravali)" if is_hi else "Classical Sutras Bank"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"🔮 2000+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else "2000+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
+            
+            # 1. Evaluate from ai_jyotish_knowledge_bank_2000
+            kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
+            st.markdown(f"""
+            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
+                <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
+                    ✨ AI ज्ञानकोष (ai_jyotish_knowledge_bank_2000) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
+                </div>
+                <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
+                    यह प्रणाली भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय विश्लेषण करती है।
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Filter options for the knowledge bank
+            kb_categories = sorted(list(set(k.category for k in kb_eval)))
+            if kb_categories:
+                selected_cat = st.selectbox(
+                    "श्रेणी अनुसार सूत्र देखें (Filter by Category):" if is_hi else "Filter Sutras by Category:",
+                    ["समस्त श्रेणियाँ (All Categories)"] + kb_categories,
+                    index=0
+                )
+                filtered_kb = [k for k in kb_eval if selected_cat == "समस्त श्रेणियाँ (All Categories)" or k.category == selected_cat]
+            else:
+                filtered_kb = kb_eval
+
+            for k in filtered_kb:
+                domain_badge = f'<span style="background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 8px;">{k.life_domain}</span>'
+                st.markdown(f"""
+                <div class="predict-card" style="margin-bottom: 14px; border-left: 4px solid #facc15;">
+                    <div class="predict-header" style="font-size: 1.05rem; color: #fde047;">
+                        📜 [{k.sutra_id}] {k.sub_category} {domain_badge}
+                    </div>
+                    <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 2px;">
+                        <b>स्रोत:</b> {k.source} &nbsp;|&nbsp; <b>वर्गीकरण:</b> {k.category}
+                    </div>
+                    <div style="color: #e2e8f0; font-size: 0.95rem; margin: 6px 0; background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 6px;">
+                        🔍 <b>सत्यापित खगोलीय स्थिति:</b> {k.matched_detail}
+                    </div>
+                    <div style="color: #4ade80; font-size: 1rem; line-height: 1.6;">
+                        <b>फलकथन (फलादेश):</b> {k.prediction_hi}
+                    </div>
+                    <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
+                        <i><b>English:</b> {k.prediction_en}</i>
+                    </div>
+                    {f'<div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">⚖️ <b>बल व संशोधन:</b> {k.strength_modifiers}</div>' if k.strength_modifiers else ''}
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown("---")
+            st.markdown(f'<div class="section-title">{"पारंपरिक पाराशरी सूत्र बैंक (Deterministic Sutra Bank)" if is_hi else "Traditional Parashari Sutras"}</div>', unsafe_allow_html=True)
             sutra_eval = vyas_sutra_bank.evaluate_classical_sutras(chart)
             for se in sutra_eval:
                 st.markdown(f"""

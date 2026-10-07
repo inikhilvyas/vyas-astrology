@@ -1438,15 +1438,38 @@ def compute_overall_life_forecast(chart, dignities: Dict[str, PlanetDignity], bh
         f"गोचर में शनिदेव का कुंभ और मीन में संचरण तथा देवगुरु बृहस्पति का वृषभ व मिथुन में गोचर जातक को करियर में स्थिरता, नवीन अनुसंधान एवं स्थायी संपदा के अर्जन में सहायक रहेगा। "
         f"अक्टूबर 2026 से 2028 तक का समय विशेष उपलब्धियों, सम्मान एवं वित्तीय सुदृढ़ता का रहेगा। जातक को निरंतर कर्मठ रहते हुए अपने शोध और लक्ष्यों पर अडिग रहना चाहिए।"
     )
-    chapters.append({
-        "id": "strategic_forecast",
-        "chapter_num": 13,
-        "title": "अध्याय 13: दशा-गोचर समन्वय एवं आगामी 5 वर्षीय समग्र मार्गदर्शन",
-        "title_hi": "दशा-गोचर समन्वय एवं आगामी 5 वर्षीय समग्र मार्गदर्शन",
-        "title_en": "5-Year Strategic Life Forecast & Contemporary Transits",
-        "icon": "⏳",
-        "content_hi": f"<p>{p_dasha1}</p><p>{p_dasha2}</p>"
-    })
+    # 14. 2000+ शास्त्रीय सूत्र एवं नाड़ी फलित समन्वय (AI Classical Sutras Synthesis)
+    try:
+        from vyas.knowledge_engine import synthesize_knowledge_predictions
+        synth_kb = synthesize_knowledge_predictions(chart)
+        total_kb_sutras = synth_kb.get("total_active_sutras", 0)
+        domain_items = synth_kb.get("by_domain", {})
+
+        kb_highlights = []
+        for dom, sutras in list(domain_items.items())[:6]:
+            s_top = sutras[0]
+            kb_highlights.append(
+                f"<li><b>{dom} ({len(sutras)} सूत्र सक्रिय):</b> {s_top.matched_detail} — <i>{s_top.prediction_hi}</i> <small style='color: #a0aec0;'>[{s_top.source}]</small></li>"
+            )
+        kb_hl_html = "".join(kb_highlights)
+
+        p_kb1 = (
+            f"आपकी जन्म कुण्डली का 'AI ज्योतिष ज्ञानकोष' (2,073 प्रामाणिक शास्त्रीय सूत्रों) के साथ सूक्ष्म मिलान करने पर कुल <b>{total_kb_sutras} विशिष्ट शास्त्रीय सूत्र एवं योग</b> पूर्णतः सक्रिय पाए गए। "
+            f"यह भृगु सूत्रम्, पाराशरी भावाधिपति फल, नाड़ी योग तथा जैमिनी सूत्रों का दुर्लभ समन्वय है जो आपके जीवन के विभिन्न पक्षों पर सटीक प्रकाश डालता है।"
+        )
+        p_kb2 = f"<ul>{kb_hl_html}</ul>" if kb_highlights else ""
+
+        chapters.append({
+            "id": "classical_sutras_summary",
+            "chapter_num": 14,
+            "title": "अध्याय 14: 2000+ शास्त्रीय सूत्र एवं नाड़ी फलित महा-समन्वय",
+            "title_hi": "2000+ शास्त्रीय सूत्र एवं नाड़ी फलित महा-समन्वय",
+            "title_en": "2000+ Classical Vedic & Nadi Sutras Matrix Synthesis",
+            "icon": "📜",
+            "content_hi": f"<p>{p_kb1}</p>{p_kb2}"
+        })
+    except Exception as e:
+        pass
 
     return chapters
 

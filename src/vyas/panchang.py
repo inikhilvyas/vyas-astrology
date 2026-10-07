@@ -185,6 +185,8 @@ class Panchang:
     abhijit_muhurta: str = "-"
     chaughadiya_day: list = field(default_factory=list)
     chaughadiya_night: list = field(default_factory=list)
+    horas_day: list = field(default_factory=list)
+    horas_night: list = field(default_factory=list)
 
     def as_dict(self):
         return asdict(self)
@@ -268,19 +270,24 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
     muhurta_span = day_secs / 15.0
     abhijit_s = rise + timedelta(seconds=7 * muhurta_span)
     abhijit_e = rise + timedelta(seconds=8 * muhurta_span)
-    # Note: On Wednesday, Abhijit is traditionally avoided, but window exists astronomical
-    abhijit_str = _fmt_span(abhijit_s, abhijit_e)
+    # Note: On Wednesday (wd == 3), Abhijit Muhurta is strictly prohibited in Vedic astrology!
+    if wd == 3:
+        abhijit_str = "बुधवार को अभिजीत मुहूर्त वर्जित (Inauspicious / Prohibited on Wednesday)"
+    else:
+        abhijit_str = _fmt_span(abhijit_s, abhijit_e)
 
     # 7 Chaughadiya types: Udveg (Sun), Char (Ven), Labh (Mer), Amrit (Moon), Kaal (Sat), Shubh (Jup), Rog (Mars)
     # Cycle order: Udveg -> Char -> Labh -> Amrit -> Kaal -> Shubh -> Rog
+    # Rules: Shubh, Labh, Amrit, Char = Green (#10b981)
+    # Udveg, Kaal, Rog = Red (#ef4444)
     ch_names = [
-        {"name": "Udveg", "name_hi": "उद्वेग", "nature": "अशुभ (Sun)", "color": "#ff7675"},
-        {"name": "Char", "name_hi": "चल", "nature": "सामान्य/शुभ (Ven)", "color": "#74b9ff"},
-        {"name": "Labh", "name_hi": "लाभ", "nature": "अति शुभ (Mer)", "color": "#55efc4"},
-        {"name": "Amrit", "name_hi": "अमृत", "nature": "सर्वश्रेष्ठ (Moon)", "color": "#ffeaa7"},
-        {"name": "Kaal", "name_hi": "काल", "nature": "हानिकारक (Sat)", "color": "#d63031"},
-        {"name": "Shubh", "name_hi": "शुभ", "nature": "उत्तम (Jup)", "color": "#00b894"},
-        {"name": "Rog", "name_hi": "रोग", "nature": "कष्टप्रद (Mars)", "color": "#e17055"}
+        {"name": "Udveg", "name_hi": "उद्वेग", "nature": "अशुभ (Sun)", "color": "#ef4444", "is_good": False},
+        {"name": "Char", "name_hi": "चल", "nature": "शुभ / चर (Ven)", "color": "#10b981", "is_good": True},
+        {"name": "Labh", "name_hi": "लाभ", "nature": "अति शुभ (Mer)", "color": "#10b981", "is_good": True},
+        {"name": "Amrit", "name_hi": "अमृत", "nature": "सर्वश्रेष्ठ (Moon)", "color": "#10b981", "is_good": True},
+        {"name": "Kaal", "name_hi": "काल", "nature": "अशुभ / काल (Sat)", "color": "#ef4444", "is_good": False},
+        {"name": "Shubh", "name_hi": "शुभ", "nature": "उत्तम / शुभ (Jup)", "color": "#10b981", "is_good": True},
+        {"name": "Rog", "name_hi": "रोग", "nature": "अशुभ / रोग (Mars)", "color": "#ef4444", "is_good": False}
     ]
     # First day Chaughadiya starting index per weekday:
     # Sun(0)=Udveg(0), Mon(1)=Amrit(3), Tue(2)=Rog(6), Wed(3)=Labh(2), Thu(4)=Shubh(5), Fri(5)=Char(1), Sat(6)=Kaal(4)
@@ -302,6 +309,7 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
             "name_hi": c_obj["name_hi"],
             "nature": c_obj["nature"],
             "color": c_obj["color"],
+            "is_good": c_obj["is_good"],
             "start": c_s.strftime("%I:%M %p"),
             "end": c_e.strftime("%I:%M %p")
         })
@@ -316,8 +324,58 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
             "name_hi": c_obj["name_hi"],
             "nature": c_obj["nature"],
             "color": c_obj["color"],
+            "is_good": c_obj["is_good"],
             "start": c_s.strftime("%I:%M %p"),
             "end": c_e.strftime("%I:%M %p")
+        })
+
+    # 24 Planetary Horas (12 Day Horas + 12 Night Horas)
+    # Chaldean order: Sun -> Venus -> Mercury -> Moon -> Saturn -> Jupiter -> Mars
+    hora_order = [
+        {"lord": "Sun", "lord_hi": "सूर्य", "nature": "तेजस्वी / मध्यम", "color": "#f59e0b"},
+        {"lord": "Venus", "lord_hi": "शुक्र", "nature": "शुभ / सौम्य", "color": "#10b981"},
+        {"lord": "Mercury", "lord_hi": "बुध", "nature": "शुभ / बुद्धिप्रद", "color": "#10b981"},
+        {"lord": "Moon", "lord_hi": "चन्द्र", "nature": "शुभ / शांतिप्रद", "color": "#10b981"},
+        {"lord": "Saturn", "lord_hi": "शनि", "nature": "क्रूर / सावधान", "color": "#ef4444"},
+        {"lord": "Jupiter", "lord_hi": "गुरु", "nature": "अति शुभ / ज्ञान", "color": "#10b981"},
+        {"lord": "Mars", "lord_hi": "मंगल", "nature": "उग्र / मध्यम", "color": "#ef4444"}
+    ]
+    # Day lord maps to hora_order index:
+    # 0=Sun (idx 0), 1=Mon (Moon, idx 3), 2=Tue (Mars, idx 6), 3=Wed (Mer, idx 2), 4=Thu (Jup, idx 5), 5=Fri (Ven, idx 1), 6=Sat (Sat, idx 4)
+    day_lord_to_hora_idx = {0: 0, 1: 3, 2: 6, 3: 2, 4: 5, 5: 1, 6: 4}
+    start_hora_idx = day_lord_to_hora_idx[wd]
+
+    hora_day_part = day_secs / 12.0
+    hora_night_part = night_secs / 12.0
+
+    day_horas = []
+    for h in range(12):
+        h_info = hora_order[(start_hora_idx + h) % 7]
+        h_s = rise + timedelta(seconds=h * hora_day_part)
+        h_e = rise + timedelta(seconds=(h + 1) * hora_day_part)
+        day_horas.append({
+            "num": h + 1,
+            "lord": h_info["lord"],
+            "lord_hi": h_info["lord_hi"],
+            "nature": h_info["nature"],
+            "color": h_info["color"],
+            "start": h_s.strftime("%I:%M %p"),
+            "end": h_e.strftime("%I:%M %p")
+        })
+
+    night_horas = []
+    for h in range(12):
+        h_info = hora_order[(start_hora_idx + 12 + h) % 7]
+        h_s = sset + timedelta(seconds=h * hora_night_part)
+        h_e = sset + timedelta(seconds=(h + 1) * hora_night_part)
+        night_horas.append({
+            "num": h + 1,
+            "lord": h_info["lord"],
+            "lord_hi": h_info["lord_hi"],
+            "nature": h_info["nature"],
+            "color": h_info["color"],
+            "start": h_s.strftime("%I:%M %p"),
+            "end": h_e.strftime("%I:%M %p")
         })
 
     return {
@@ -336,7 +394,9 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
         "chaughadiya_day": day_ch,
         "chaughadiya_night": night_ch,
         "day_chaughadiya": day_ch,
-        "night_chaughadiya": night_ch
+        "night_chaughadiya": night_ch,
+        "horas_day": day_horas,
+        "horas_night": night_horas
     }
 
 
@@ -458,5 +518,7 @@ def compute(dt_local: datetime, lat: float, lon: float, tz_hours: float,
         gulika_kalam=muh_ch["gulika_kalam"],
         abhijit_muhurta=muh_ch["abhijit_muhurta"],
         chaughadiya_day=muh_ch["chaughadiya_day"],
-        chaughadiya_night=muh_ch["chaughadiya_night"]
+        chaughadiya_night=muh_ch["chaughadiya_night"],
+        horas_day=muh_ch.get("horas_day", []),
+        horas_night=muh_ch.get("horas_night", [])
     )

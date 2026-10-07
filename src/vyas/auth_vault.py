@@ -132,6 +132,78 @@ def login_user(email: str, password: str) -> Tuple[bool, str, Optional[Dict]]:
     except Exception as e:
         return False, f"लॉगिन त्रुटि: {str(e)}", None
 
+def get_user_by_id(user_id: int) -> Optional[Dict]:
+    """Retrieves user profile by ID for session restoration."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            if not row:
+                return None
+            vip_exp = datetime.fromisoformat(row["vip_expiry"])
+            now = datetime.now()
+            days_left = max(0, (vip_exp - now).days)
+            is_vip = vip_exp > now
+            return {
+                "id": row["id"],
+                "email": row["email"],
+                "name": row["name"],
+                "tier": row.get("tier", "VIP_TRIAL") if is_vip else "FREE",
+                "vip_expiry": vip_exp.strftime("%d/%m/%Y"),
+                "days_left": days_left,
+                "is_vip": is_vip
+            }
+    except Exception:
+        return None
+
+def login_or_register_google(email: str, name: str) -> Tuple[bool, str, Optional[Dict]]:
+    """One-click Google login / registration."""
+    email = email.strip().lower()
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+            row = cursor.fetchone()
+            if row:
+                vip_exp = datetime.fromisoformat(row["vip_expiry"])
+                now = datetime.now()
+                days_left = max(0, (vip_exp - now).days)
+                is_vip = vip_exp > now
+                user_data = {
+                    "id": row["id"],
+                    "email": email,
+                    "name": row["name"],
+                    "tier": row.get("tier", "VIP_TRIAL") if is_vip else "FREE",
+                    "vip_expiry": vip_exp.strftime("%d/%m/%Y"),
+                    "days_left": days_left,
+                    "is_vip": is_vip
+                }
+                return True, f"Google से सफल लॉगिन: {user_data['name']}", user_data
+            else:
+                # Register new google user with 30-day VIP trial
+                now = datetime.now()
+                vip_expiry = now + timedelta(days=30)
+                pwd_hash = _hash_password(f"google_oauth_{email}")
+                cursor.execute("""
+                    INSERT INTO users (email, name, password_hash, created_at, vip_expiry, tier)
+                    VALUES (?, ?, ?, ?, ?, 'VIP_TRIAL')
+                """, (email, name.strip() or "Google User", pwd_hash, now.isoformat(), vip_expiry.isoformat()))
+                user_id = cursor.lastrowid
+                conn.commit()
+                user_data = {
+                    "id": user_id,
+                    "email": email,
+                    "name": name.strip() or "Google User",
+                    "tier": "VIP_TRIAL",
+                    "vip_expiry": vip_expiry.strftime("%d/%m/%Y"),
+                    "days_left": 30,
+                    "is_vip": True
+                }
+                return True, "Google से सफल पंजीकरण! 30-दिन का VIP Pro निःशुल्क सक्रिय।", user_data
+    except Exception as e:
+        return False, f"Google लॉगिन त्रुटि: {str(e)}", None
+
 def save_kundli(user_id: int, kundli_dict: Dict) -> Tuple[bool, str]:
     """Saves a horoscope profile into the user vault."""
     try:

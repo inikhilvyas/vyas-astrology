@@ -20,7 +20,7 @@ def list_available_books() -> List[Dict]:
     b_dir = get_books_dir()
     books = []
     for f in sorted(b_dir.iterdir()):
-        if f.is_file() and f.suffix.lower() in [".pdf", ".txt", ".md"]:
+        if f.is_file() and f.suffix.lower() in [".pdf", ".txt", ".md", ".json", ".jsonl"]:
             size_mb = f.stat().st_size / (1024 * 1024)
             num_pages = None
             if f.suffix.lower() == ".pdf":

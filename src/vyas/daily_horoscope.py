@@ -113,6 +113,8 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         "gulika_kalam": loc_muhurta.get("gulika_kalam", "-"),
         "chaughadiya_day": loc_muhurta.get("chaughadiya_day", []),
         "chaughadiya_night": loc_muhurta.get("chaughadiya_night", []),
+        "horas_day": loc_muhurta.get("horas_day", []),
+        "horas_night": loc_muhurta.get("horas_night", []),
         "lucky_color": lucky_colors.get(day_of_week, "पीला व सफेद"),
         "remedy": remedy_map.get(category, "सदाचार रखें और माता-पिता का आशीर्वाद लें।")
     }
