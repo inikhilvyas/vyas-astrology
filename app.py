@@ -657,7 +657,7 @@ with st.sidebar:
     
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     if "user" not in st.session_state:
-        # Check query param for persistent login across page refreshes
+        # 1. Check query param for persistent login across page refreshes
         uid_param = st.query_params.get("uid")
         restored_user = None
         if uid_param:
@@ -666,8 +666,13 @@ with st.sidebar:
             except Exception:
                 restored_user = None
         
+        # 2. If not in query param, check permanent active_session in SQLite DB
+        if not restored_user:
+            restored_user = auth_vault.get_last_active_user()
+
         if restored_user:
             st.session_state["user"] = restored_user
+            st.query_params["uid"] = str(restored_user["id"])
         else:
             st.session_state["user"] = {
                 "id": 1,
@@ -778,6 +783,7 @@ with st.sidebar:
                 ok, msg, u_data = auth_vault.login_or_register_google(google_email, google_email.split("@")[0])
                 if ok and u_data:
                     st.session_state["user"] = u_data
+                    auth_vault.set_active_session_user(u_data["id"])
                     st.query_params["uid"] = str(u_data["id"])
                     st.success(msg)
                     st.rerun()
@@ -794,6 +800,7 @@ with st.sidebar:
                 ok, msg, u_data = auth_vault.register_user(reg_email, reg_name, reg_pwd)
                 if ok and u_data:
                     st.session_state["user"] = u_data
+                    auth_vault.set_active_session_user(u_data["id"])
                     st.query_params["uid"] = str(u_data["id"])
                     st.success(msg)
                     st.rerun()
@@ -806,22 +813,51 @@ with st.sidebar:
                 ok, msg, u_data = auth_vault.login_user(log_email, log_pwd)
                 if ok and u_data:
                     st.session_state["user"] = u_data
+                    auth_vault.set_active_session_user(u_data["id"])
                     st.query_params["uid"] = str(u_data["id"])
                     st.success(msg)
                     st.rerun()
                 else:
                     st.error(msg)
 
-    # Saved Kundlis Vault
+        # Logout button
+        if st.session_state.get("user") and st.session_state["user"].get("email") != "seeker@vyasastro.com":
+            if st.button("🚪 Logout (लॉगआउट करें)", key="logout_btn", use_container_width=True):
+                auth_vault.clear_active_session()
+                st.query_params.clear()
+                st.session_state["user"] = {
+                    "id": 1,
+                    "name": "नया जातक (Seeker)",
+                    "email": "seeker@vyasastro.com",
+                    "tier": "VIP_TRIAL",
+                    "days_left": 30,
+                    "is_vip": True
+                }
+                st.session_state.pop("loaded_profile", None)
+                st.success("सफलतापूर्वक लॉगआउट हुआ।")
+                st.rerun()
+
+    # Saved Kundlis Vault (Always visible & prominent at top of sidebar)
     saved_list = auth_vault.get_saved_kundlis(u["id"])
+    st.markdown(f"""
+    <div style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 10px; padding: 10px 14px; margin: 10px 0;">
+        <div style="color: #38bdf8; font-weight: 800; font-size: 0.95rem;">📁 मेरी सेव की गई कुंडलियां (Saved Kundlis: {len(saved_list)})</div>
+        <div style="color: #cbd5e1; font-size: 0.78rem;">यहाँ से अपनी पहले से सुरक्षित की हुई कोई भी कुंडली 1-क्लिक में खोलें।</div>
+    </div>
+    """, unsafe_allow_html=True)
     if saved_list:
-        with st.expander(f"📁 My Kundli Vault ({len(saved_list)} Saved)", expanded=False):
-            k_names = [f"{k['name']} ({k['dob']})" for k in saved_list]
-            selected_k_idx = st.selectbox("Load Saved Kundli", range(len(saved_list)), format_func=lambda i: k_names[i])
-            if st.button("⚡ Load Profile into Workspace", use_container_width=True):
+        k_names = [f"🔮 {k['name']} — {k['dob']} ({k.get('city', '')})" for k in saved_list]
+        selected_k_idx = st.selectbox("खोलें सुरक्षित कुंडली (Select Kundli to Open)", range(len(saved_list)), format_func=lambda i: k_names[i])
+        col_load1, col_load2 = st.columns([1.5, 1])
+        with col_load1:
+            if st.button("⚡ कुंडली लोड करें (Open Chart)", key="load_saved_k_btn", use_container_width=True):
                 sk = saved_list[selected_k_idx]
                 st.session_state['loaded_profile'] = sk
+                st.session_state['data_generated'] = False
+                st.success(f"'{sk['name']}' की कुंडली लोड हो गई!")
                 st.rerun()
+    else:
+        st.info("💡 अभी कोई कुंडली सेव नहीं है। नीचे जन्म विवरण भरकर **'💾 Save Profile to Vault'** बटन दबाएं।")
 
     ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True)
     is_hi = "हिन्दी" in ui_lang
@@ -834,17 +870,35 @@ with st.sidebar:
     default_city = lp.get('city', 'New Delhi, India')
     default_lat = float(lp.get('lat', 28.6139))
     default_lon = float(lp.get('lon', 77.2090))
+    default_tz = float(lp.get('tz', 5.5))
+
+    default_dob = datetime(1995, 1, 1).date()
+    if lp.get('dob'):
+        try:
+            default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
+        except Exception:
+            pass
+
+    def_h, def_m, def_s = 12, 0, 0
+    if lp.get('tob'):
+        try:
+            parts = [int(p) for p in lp['tob'].split(':')]
+            if len(parts) >= 1: def_h = parts[0]
+            if len(parts) >= 2: def_m = parts[1]
+            if len(parts) >= 3: def_s = parts[2]
+        except Exception:
+            pass
     
     if "Natal" in mode:
         name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
-        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=datetime(1995, 1, 1).date(), min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
+        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
         
         # Exact HH:MM:SS input for ultra micro-precision
         st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
         t_col1, t_col2, t_col3 = st.columns(3)
-        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=12)
-        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=0)
-        tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=0)
+        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
+        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
+        tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
         time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
     else:
         name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
@@ -1176,8 +1230,8 @@ if st.session_state.get('data_generated'):
 
         with col_d4:
             amrit_v = daily_res.get('amrit_vela', '-')
-            if "वर्जित" in amrit_v or "Prohibited" in amrit_v:
-                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">🚫 आज बुधवार को वर्जित (मान्य नहीं)</span>'
+            if "कोई नहीं" in amrit_v or "वर्जित" in amrit_v or "Prohibited" in amrit_v or "बुधवार" in amrit_v:
+                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">🚫 कोई नहीं (बुधवार को नहीं होता)</span>'
             else:
                 abhijit_ui = f'<span style="color: #38bdf8; font-weight: 600;">{amrit_v}</span>'
 
@@ -1199,8 +1253,8 @@ if st.session_state.get('data_generated'):
             col_m1, col_m2 = st.columns([1, 1.4])
             with col_m1:
                 amrit_v_exp = daily_res.get('amrit_vela', '-')
-                if "वर्जित" in amrit_v_exp or "Prohibited" in amrit_v_exp:
-                    abhijit_exp_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 आज बुधवार को सर्वथा वर्जित (मान्य नहीं)</span>'
+                if "कोई नहीं" in amrit_v_exp or "वर्जित" in amrit_v_exp or "Prohibited" in amrit_v_exp or "बुधवार" in amrit_v_exp:
+                    abhijit_exp_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>'
                 else:
                     abhijit_exp_ui = f"<span style='color: #38bdf8; font-weight: 700;'>{amrit_v_exp}</span>"
 
@@ -2440,7 +2494,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
                         <b>दिनमान:</b> {panch_obj.day_length}<br>
-                        <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 आज बुधवार को वर्जित (मान्य नहीं)</span>' if ('वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
+                        <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>' if ('कोई नहीं' in panch_obj.abhijit_muhurta or 'वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta or 'बुधवार' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
                         <b>राहु काल:</b> <span style="color: #ef4444; font-weight: 700;">{panch_obj.rahu_kalam}</span><br>
                         <b>यमगण्ड:</b> <span style="color: #f59e0b; font-weight: 700;">{panch_obj.yamaganda}</span><br>
                         <b>गुलिक काल:</b> {panch_obj.gulika_kalam}

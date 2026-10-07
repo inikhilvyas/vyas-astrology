@@ -53,7 +53,56 @@ def init_db():
                 FOREIGN KEY (user_id) REFERENCES users (id)
             )
         """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS app_state (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL,
+                updated_at TIMESTAMP NOT NULL
+            )
+        """)
         conn.commit()
+
+def set_active_session_user(user_id: int):
+    """Saves the last logged-in user ID permanently so reopening the browser/app auto logs in."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO app_state (key, value, updated_at) VALUES ('active_user_id', ?, ?)
+                ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at
+            """, (str(user_id), datetime.now().isoformat()))
+            conn.commit()
+    except Exception:
+        pass
+
+def clear_active_session():
+    """Clears the active session on manual logout."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM app_state WHERE key = 'active_user_id'")
+            conn.commit()
+    except Exception:
+        pass
+
+def get_last_active_user() -> Optional[Dict]:
+    """Retrieves the last logged-in user profile automatically on startup."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM app_state WHERE key = 'active_user_id'")
+            row = cursor.fetchone()
+            if row:
+                uid = int(row["value"])
+                return get_user_by_id(uid)
+            # If no active_user_id set yet, fallback to the latest registered user in the DB
+            cursor.execute("SELECT id FROM users ORDER BY id DESC LIMIT 1")
+            u_row = cursor.fetchone()
+            if u_row:
+                return get_user_by_id(u_row["id"])
+    except Exception:
+        pass
+    return None
 
 # Ensure DB is initialized on module import
 init_db()
