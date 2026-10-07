@@ -284,11 +284,12 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
     muhurta_span = day_secs / 15.0
     abhijit_s = rise + timedelta(seconds=7 * muhurta_span)
     abhijit_e = rise + timedelta(seconds=8 * muhurta_span)
+    abhijit_raw = _fmt_span(abhijit_s, abhijit_e)
     # Note: On Wednesday (wd == 3), Abhijit Muhurta is strictly prohibited in Vedic astrology!
     if wd == 3:
-        abhijit_str = "बुधवार को अभिजीत मुहूर्त वर्जित (Inauspicious / Prohibited on Wednesday)"
+        abhijit_str = f"{abhijit_raw} [बुधवार को अभिजीत मुहूर्त वर्जित / Prohibited on Wednesday]"
     else:
-        abhijit_str = _fmt_span(abhijit_s, abhijit_e)
+        abhijit_str = abhijit_raw
 
     # 7 Chaughadiya types: Udveg (Sun), Char (Ven), Labh (Mer), Amrit (Moon), Kaal (Sat), Shubh (Jup), Rog (Mars)
     # Cycle order: Udveg -> Char -> Labh -> Amrit -> Kaal -> Shubh -> Rog
