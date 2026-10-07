@@ -1047,11 +1047,12 @@ if st.session_state.get('data_generated'):
     if "दैनिक" in selected_suite or "Daily" in selected_suite:
         st.markdown(f'<div class="section-title">{"🌞 जातक का व्यक्तिगत दैनिक राशिफल (नवतारा चक्र + गोचर + चालू दशा)" if is_hi else "🌞 Personalised Daily Horoscope (Navatara + Transit + Active Dasha)"}</div>', unsafe_allow_html=True)
         
-        # Calculate daily horoscope using current UTC time
-        now_dt = datetime.now()
+        # Calculate daily horoscope using native location timezone
+        target_tz = timezone(timedelta(hours=birth.get('tz', 5.5)))
+        now_dt = datetime.now(timezone.utc).astimezone(target_tz)
         # Transit moon longitude using current time
         try:
-            cur_raw_pos = planet_positions(now_dt.replace(tzinfo=timezone.utc))
+            cur_raw_pos = planet_positions(now_dt)
             transit_moon_lon = cur_raw_pos["Moon"].longitude
         except Exception:
             transit_moon_lon = (chart.planets["Moon"].longitude + 13.2) % 360.0

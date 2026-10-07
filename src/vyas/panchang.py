@@ -303,19 +303,62 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
         {"name": "Shubh", "name_hi": "शुभ", "nature": "उत्तम / शुभ (Jup)", "color": "#10b981", "is_good": True},
         {"name": "Rog", "name_hi": "रोग", "nature": "अशुभ / रोग (Mars)", "color": "#ef4444", "is_good": False}
     ]
-    # First day Chaughadiya starting index per weekday:
-    # Sun(0)=Udveg(0), Mon(1)=Amrit(3), Tue(2)=Rog(6), Wed(3)=Labh(2), Thu(4)=Shubh(5), Fri(5)=Char(1), Sat(6)=Kaal(4)
-    day_first = {0: 0, 1: 3, 2: 6, 3: 2, 4: 5, 5: 1, 6: 4}
-    # Night Chaughadiya starting index per weekday:
-    # Sun(0)=Shubh(5), Mon(1)=Char(1), Tue(2)=Kaal(4), Wed(3)=Udveg(0), Thu(4)=Amrit(3), Fri(5)=Rog(6), Sat(6)=Labh(2)
-    night_first = {0: 5, 1: 1, 2: 4, 3: 0, 4: 3, 5: 6, 6: 2}
+    # -------------------------------------------------------------------------
+    # EXPLICIT 7-DAY FIXED ARRAYS (शास्त्रीय 7 वारों का निर्धारित क्रम - सूर्योदय से सूर्यास्त एवं सूर्यास्त से सूर्योदय)
+    # -------------------------------------------------------------------------
+    # Day Chaughadiya sequence (सूर्योदय से सूर्यास्त):
+    # रविवार: उद्वेग -> चर -> लाभ -> अमृत -> काल -> शुभ -> रोग -> उद्वेग
+    # सोमवार: अमृत -> काल -> शुभ -> रोग -> उद्वेग -> चर -> लाभ -> अमृत
+    # मंगलवार: रोग -> उद्वेग -> चर -> लाभ -> अमृत -> काल -> शुभ -> रोग
+    # बुधवार: लाभ -> अमृत -> काल -> शुभ -> रोग -> उद्वेग -> चर -> लाभ
+    # गुरुवार: शुभ -> रोग -> उद्वेग -> चर -> लाभ -> अमृत -> काल -> शुभ
+    # शुक्रवार: चर -> लाभ -> अमृत -> काल -> शुभ -> रोग -> उद्वेग -> चर
+    # शनिवार: काल -> शुभ -> रोग -> उद्वेग -> चर -> लाभ -> अमृत -> काल
+    CHAUGHADIYA_7_DAYS_DAY = {
+        0: ["Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg"],
+        1: ["Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit"],
+        2: ["Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog"],
+        3: ["Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh"],
+        4: ["Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal", "Shubh"],
+        5: ["Char", "Labh", "Amrit", "Kaal", "Shubh", "Rog", "Udveg", "Char"],
+        6: ["Kaal", "Shubh", "Rog", "Udveg", "Char", "Labh", "Amrit", "Kaal"]
+    }
 
-    d_start_idx = day_first[wd]
-    n_start_idx = night_first[wd]
+    # Night Chaughadiya sequence (सूर्यास्त से अगले सूर्योदय):
+    # रविवार: शुभ -> अमृत -> चर -> रोग -> काल -> लाभ -> उद्वेग -> शुभ
+    # सोमवार: चल (चर) -> रोग -> काल -> लाभ -> उद्वेग -> शुभ -> अमृत -> चल
+    # मंगलवार: काल -> लाभ -> उद्वेग -> शुभ -> अमृत -> चल -> रोग -> काल
+    # बुधवार: उद्वेग -> शुभ -> अमृत -> चल -> रोग -> काल -> लाभ -> उद्वेग
+    # गुरुवार: अमृत -> चल -> रोग -> काल -> लाभ -> उद्वेग -> शुभ -> अमृत
+    # शुक्रवार: रोग -> काल -> लाभ -> उद्वेग -> शुभ -> अमृत -> चल -> रोग
+    # शनिवार: लाभ -> उद्वेग -> शुभ -> अमृत -> चल -> रोग -> काल -> लाभ
+    CHAUGHADIYA_7_DAYS_NIGHT = {
+        0: ["Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh"],
+        1: ["Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char"],
+        2: ["Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal"],
+        3: ["Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg"],
+        4: ["Amrit", "Char", "Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit"],
+        5: ["Rog", "Kaal", "Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog"],
+        6: ["Labh", "Udveg", "Shubh", "Amrit", "Char", "Rog", "Kaal", "Labh"]
+    }
+
+    ch_meta = {
+        "Udveg": {"name": "Udveg", "name_hi": "उद्वेग", "nature": "अशुभ (Sun)", "color": "#ef4444", "is_good": False},
+        "Char": {"name": "Char", "name_hi": "चल", "nature": "शुभ / चर (Ven)", "color": "#10b981", "is_good": True},
+        "Labh": {"name": "Labh", "name_hi": "लाभ", "nature": "अति शुभ (Mer)", "color": "#10b981", "is_good": True},
+        "Amrit": {"name": "Amrit", "name_hi": "अमृत", "nature": "सर्वश्रेष्ठ (Moon)", "color": "#10b981", "is_good": True},
+        "Kaal": {"name": "Kaal", "name_hi": "काल", "nature": "अशुभ / काल (Sat)", "color": "#ef4444", "is_good": False},
+        "Shubh": {"name": "Shubh", "name_hi": "शुभ", "nature": "उत्तम / शुभ (Jup)", "color": "#10b981", "is_good": True},
+        "Rog": {"name": "Rog", "name_hi": "रोग", "nature": "अशुभ / रोग (Mars)", "color": "#ef4444", "is_good": False}
+    }
+
+    day_sequence = CHAUGHADIYA_7_DAYS_DAY[wd]
+    night_sequence = CHAUGHADIYA_7_DAYS_NIGHT[wd]
 
     day_ch = []
     for i in range(8):
-        c_obj = ch_names[(d_start_idx + i) % 7]
+        c_key = day_sequence[i]
+        c_obj = ch_meta[c_key]
         c_s = rise + timedelta(seconds=i * day_part)
         c_e = rise + timedelta(seconds=(i + 1) * day_part)
         day_ch.append({
@@ -330,7 +373,8 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
 
     night_ch = []
     for i in range(8):
-        c_obj = ch_names[(n_start_idx + i) % 7]
+        c_key = night_sequence[i]
+        c_obj = ch_meta[c_key]
         c_s = sset + timedelta(seconds=i * night_part)
         c_e = sset + timedelta(seconds=(i + 1) * night_part)
         night_ch.append({
@@ -343,28 +387,32 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
             "end": c_e.strftime("%I:%M %p")
         })
 
-    # 24 Planetary Horas (12 Day Horas + 12 Night Horas)
-    # Chaldean order: Sun -> Venus -> Mercury -> Moon -> Saturn -> Jupiter -> Mars
-    hora_order = [
-        {"lord": "Sun", "lord_hi": "सूर्य", "nature": "तेजस्वी / मध्यम", "color": "#f59e0b"},
-        {"lord": "Venus", "lord_hi": "शुक्र", "nature": "शुभ / सौम्य", "color": "#10b981"},
-        {"lord": "Mercury", "lord_hi": "बुध", "nature": "शुभ / बुद्धिप्रद", "color": "#10b981"},
-        {"lord": "Moon", "lord_hi": "चन्द्र", "nature": "शुभ / शांतिप्रद", "color": "#10b981"},
-        {"lord": "Saturn", "lord_hi": "शनि", "nature": "क्रूर / सावधान", "color": "#ef4444"},
-        {"lord": "Jupiter", "lord_hi": "गुरु", "nature": "अति शुभ / ज्ञान", "color": "#10b981"},
-        {"lord": "Mars", "lord_hi": "मंगल", "nature": "उग्र / मध्यम", "color": "#ef4444"}
-    ]
-    # Day lord maps to hora_order index:
-    # 0=Sun (idx 0), 1=Mon (Moon, idx 3), 2=Tue (Mars, idx 6), 3=Wed (Mer, idx 2), 4=Thu (Jup, idx 5), 5=Fri (Ven, idx 1), 6=Sat (Sat, idx 4)
-    day_lord_to_hora_idx = {0: 0, 1: 3, 2: 6, 3: 2, 4: 5, 5: 1, 6: 4}
-    start_hora_idx = day_lord_to_hora_idx[wd]
+    # -------------------------------------------------------------------------
+    # 24 PLANETARY HORAS (12 दिन की होरा + 12 रात्रि की होरा - 7 वारों का नियत क्रम)
+    # -------------------------------------------------------------------------
+    # प्रथम होरा सदैव वार स्वामी की होती है, उसके बाद काल्डीयन अवरोही क्रम (Surya -> Shukra -> Budh -> Chandra -> Shani -> Guru -> Mangal)
+    hora_planets_info = {
+        "Sun": {"lord": "Sun", "lord_hi": "सूर्य", "nature": "तेजस्वी / मध्यम", "color": "#f59e0b"},
+        "Venus": {"lord": "Venus", "lord_hi": "शुक्र", "nature": "शुभ / सौम्य", "color": "#10b981"},
+        "Mercury": {"lord": "Mercury", "lord_hi": "बुध", "nature": "शुभ / बुद्धिप्रद", "color": "#10b981"},
+        "Moon": {"lord": "Moon", "lord_hi": "चन्द्र", "nature": "शुभ / शांतिप्रद", "color": "#10b981"},
+        "Saturn": {"lord": "Saturn", "lord_hi": "शनि", "nature": "क्रूर / सावधान", "color": "#ef4444"},
+        "Jupiter": {"lord": "Jupiter", "lord_hi": "गुरु", "nature": "अति शुभ / ज्ञान", "color": "#10b981"},
+        "Mars": {"lord": "Mars", "lord_hi": "मंगल", "nature": "उग्र / मध्यम", "color": "#ef4444"}
+    }
+    
+    chaldean_cycle = ["Sun", "Venus", "Mercury", "Moon", "Saturn", "Jupiter", "Mars"]
+    # Day 1st Hora: Sun=0 (Sun), Mon=3 (Moon), Tue=6 (Mars), Wed=2 (Mercury), Thu=5 (Jupiter), Fri=1 (Venus), Sat=4 (Saturn)
+    first_hora_offset = {0: 0, 1: 3, 2: 6, 3: 2, 4: 5, 5: 1, 6: 4}
+    start_h_idx = first_hora_offset[wd]
 
     hora_day_part = day_secs / 12.0
     hora_night_part = night_secs / 12.0
 
     day_horas = []
     for h in range(12):
-        h_info = hora_order[(start_hora_idx + h) % 7]
+        p_name = chaldean_cycle[(start_h_idx + h) % 7]
+        h_info = hora_planets_info[p_name]
         h_s = rise + timedelta(seconds=h * hora_day_part)
         h_e = rise + timedelta(seconds=(h + 1) * hora_day_part)
         day_horas.append({
@@ -379,7 +427,8 @@ def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 7
 
     night_horas = []
     for h in range(12):
-        h_info = hora_order[(start_hora_idx + 12 + h) % 7]
+        p_name = chaldean_cycle[(start_h_idx + 12 + h) % 7]
+        h_info = hora_planets_info[p_name]
         h_s = sset + timedelta(seconds=h * hora_night_part)
         h_e = sset + timedelta(seconds=(h + 1) * hora_night_part)
         night_horas.append({
