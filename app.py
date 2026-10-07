@@ -248,6 +248,32 @@ st.markdown("""
         font-weight: 700 !important;
     }
 
+    /* Floating Astrologer Bot Button in Bottom Right Corner */
+    div.floating-bot-anchor {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999999;
+    }
+    div.stButton > button[key="open_acharya_bot_btn"],
+    div.stButton > button[key="open_acharya_bot_bar_btn"] {
+        background: linear-gradient(135deg, #f0c05a 0%, #b8860b 50%, #7c2d12 100%) !important;
+        color: #000000 !important;
+        font-weight: 800 !important;
+        font-size: 0.95rem !important;
+        border: 2px solid #ffd700 !important;
+        box-shadow: 0 6px 20px rgba(240, 192, 90, 0.45) !important;
+        border-radius: 30px !important;
+        padding: 8px 22px !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    div.stButton > button[key="open_acharya_bot_btn"]:hover,
+    div.stButton > button[key="open_acharya_bot_bar_btn"]:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 8px 25px rgba(240, 192, 90, 0.65) !important;
+        color: #000000 !important;
+    }
+
     /* Kundli Container */
     .kundli-container {
         display: flex;
@@ -958,11 +984,33 @@ if st.session_state.get('data_generated'):
         d1_houses[house_num].append(abbr)
 
     # -------------------------------------------------------------------------
+    # 🧘‍♂️ ACHARYA VYAS LIVE VEDIC BOT CONSULTATION TRIGGER BAR
+    # -------------------------------------------------------------------------
+    col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
+    with col_bot_bar1:
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.15) 0%, rgba(14, 23, 42, 0.95) 100%);
+                    border: 1px solid rgba(240, 192, 90, 0.4); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 14px;">
+            <div style="font-size: 2.1rem; line-height: 1;">🧙‍♂️</div>
+            <div>
+                <div style="font-weight: 800; color: #f0c05a; font-size: 1.02rem;">
+                    आचार्य व्यास • वैदिक AI ज्योतिषी (Live Chat Consultation)
+                </div>
+                <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 2px;">
+                    आपकी कुण्डली, 4,700+ सूत्रों व तात्कालिक गोचर पर आधारित प्रत्यक्ष संवाद
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_bot_bar2:
+        if st.button("💬 परामर्श प्रारंभ करें (Chat Now)", key="open_acharya_bot_bar_btn", use_container_width=True):
+            st.session_state["show_acharya_dialog"] = True
+
+    # -------------------------------------------------------------------------
     # DOMAIN SUITE NAVIGATION (Pure Astrology & Research Suites)
     # -------------------------------------------------------------------------
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
-        "💬 महर्षि व्यास AI ज्योतिषी" if is_hi else "💬 Maharshi Vyas AI Chatbot",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
         "वैदिक फलित एवं 2000+ सूत्र" if is_hi else "Vedic Forecast & 2000+ Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
@@ -1270,94 +1318,7 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-    # =========================================================================
-    # SUITE: 💬 MAHARSHI VYAS CLASSICAL AI ASTROLOGER CHATBOT
-    # =========================================================================
-    if "AI ज्योतिषी" in selected_suite or "AI Chatbot" in selected_suite:
-        st.markdown(f'<div class="section-title">{"💬 महर्षि व्यास AI ज्योतिषी (इंटरएक्टिव ज्योतिषीय परामर्श)" if is_hi else "💬 Maharshi Vyas Classical AI Astrologer"}</div>', unsafe_allow_html=True)
-
-        st.markdown("""
-        <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 16px;">
-            <div style="font-size: 1.05rem; font-weight: 700; color: #f0c05a; margin-bottom: 4px;">
-                🧘‍♂️ प्रत्यक्ष वैदिक परामर्श कक्ष (Live Jyotish Consultation Chamber)
-            </div>
-            <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
-                यह वैदिक AI चैटबॉट आपकी <b>जन्म कुण्डली</b>, <b>तात्कालिक गोचर</b>, <b>विंशोत्तरी महादशा-अंतरदशा</b>, <b>ग्रह दृष्टियों</b> एवं हमारे <b>4,700+ शास्त्रीय सूत्रों</b> के आधार पर सटीक, तार्किक व शास्त्रोक्त समाधान प्रदान करता है। नीचे प्रश्न पूछें अथवा दिए गए त्वरित प्रश्नों पर क्लिक करें।
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Quick Suggested Question Chips
-        suggested_queries = [
-            "मेरी वर्तमान दशा और गोचर के अनुसार करियर और नौकरी में क्या योग हैं?",
-            "आर्थिक स्थिति और धन लाभ के लिए कौन सा समय श्रेष्ठ रहेगा?",
-            "कुंडली के अनुसार विवाह व दांपत्य जीवन का क्या फलित है?",
-            "स्वास्थ्य और मानसिक शांति हेतु मुझे कौन से वैदिक उपाय करने चाहिए?",
-            "क्या वर्तमान में शनि की साढ़े साती या ढैय्या का प्रभाव है?"
-        ]
-        
-        st.markdown("**⚡ त्वरित ज्योतिषीय प्रश्न (Quick Inquiries):**")
-        chip_cols = st.columns(len(suggested_queries))
-        auto_query = None
-        for i, q_chip in enumerate(suggested_queries):
-            with chip_cols[i]:
-                btn_label = q_chip[:24] + "..."
-                if st.button(btn_label, key=f"chip_q_{i}", use_container_width=True):
-                    auto_query = q_chip
-
-        # Initialize session state for chat history
-        if "astro_chat_history" not in st.session_state:
-            st.session_state["astro_chat_history"] = [
-                {
-                    "role": "assistant",
-                    "content": f"**सादर प्रणाम {birth.get('name', 'जातक')} जी!** मैं महर्षि व्यास AI ज्योतिषी हूँ। आपकी जन्म कुंडली ({constants.SIGNS_HI[asc_sign_idx]} लग्न, {constants.SIGNS_HI[chart.planets['Moon'].sign_index]} राशि) एवं वर्तमान दशा ({cur_dasha.get('full_path', 'दशा') if isinstance(cur_dasha, dict) else str(cur_dasha)}) का सूक्ष्म अध्ययन पूर्ण है। आप करियर, धन, विवाह, स्वास्थ्य अथवा विशिष्ट उपायों के विषय में जो भी जानना चाहें, संकोच रहित पूछें।"
-                }
-            ]
-
-        # Render chat message log
-        for msg in st.session_state["astro_chat_history"]:
-            with st.chat_message(msg["role"], avatar="🧘‍♂️" if msg["role"] == "assistant" else "👤"):
-                st.markdown(msg["content"])
-
-        # Chat Input Bar
-        user_prompt = st.chat_input("अपना ज्योतिषीय प्रश्न यहाँ लिखें (उदा. मेरी नौकरी में तरक्की कब होगी?)...")
-        if auto_query:
-            user_prompt = auto_query
-
-        if user_prompt:
-            # Append User Message
-            st.session_state["astro_chat_history"].append({"role": "user", "content": user_prompt})
-            with st.chat_message("user", avatar="👤"):
-                st.markdown(user_prompt)
-
-            # Generate Astrology Chatbot Answer
-            with st.chat_message("assistant", avatar="🧘‍♂️"):
-                with st.spinner("महर्षि व्यास प्राचीन सूत्रों, वर्तमान गोचर व दशा का अनुसंधान कर रहे हैं..."):
-                    # Current transits
-                    try:
-                        cur_raw_pos = planet_positions(datetime.now().replace(tzinfo=timezone.utc))
-                    except Exception:
-                        cur_raw_pos = None
-
-                    pm_data = st.session_state.get('prashna_meta') if "Prashna" in mode else None
-                    bot_reply = vyas_chatbot.consult(
-                        query=user_prompt,
-                        chart=chart,
-                        cur_dasha=cur_dasha,
-                        birth_info=birth,
-                        transit_pos=cur_raw_pos,
-                        prashna_meta=pm_data,
-                        chat_history=st.session_state["astro_chat_history"]
-                    )
-                    st.markdown(bot_reply)
-
-            st.session_state["astro_chat_history"].append({"role": "assistant", "content": bot_reply})
-            st.rerun()
-
-        # Clear chat option
-        if st.button("🗑️ संवाद इतिहास साफ करें (Clear Chat History)"):
-            st.session_state["astro_chat_history"] = []
-            st.rerun()
+    # (Chatbot is now integrated as a Floating Popup Dialog with Acharya Vyas)
 
     # =========================================================================
     # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES
@@ -2796,3 +2757,112 @@ if st.session_state.get('data_generated'):
                 </ul>
             </div>
             """, unsafe_allow_html=True)
+
+    # =========================================================================
+    # 🧘‍♂️ ACHARYA VYAS LIVE VEDIC BOT POPUP MODAL (आचार्य व्यास AI ज्योतिषी)
+    # =========================================================================
+    @st.dialog("🧘‍♂️ आचार्य व्यास • प्रत्यक्ष वैदिक AI परामर्श (Live Consultation)", width="large")
+    def show_acharya_consultation_dialog(ch, b_info, c_dasha, p_meta):
+        # Header profile card
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.2) 0%, rgba(14, 23, 42, 0.95) 100%);
+                    border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 14px; padding: 12px 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;">
+            <div style="font-size: 2.8rem; background: rgba(240,192,90,0.15); border: 2px solid #f0c05a; border-radius: 50%; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(240,192,90,0.3);">
+                🧙‍♂️
+            </div>
+            <div style="flex-grow: 1;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; display: flex; align-items: center; gap: 8px;">
+                    आचार्य व्यास <span style="font-size: 0.75rem; background: #166534; color: #bbf7d0; padding: 2px 8px; border-radius: 12px; font-weight: 600;">🟢 ऑनलाइन उपस्थित</span>
+                </div>
+                <div style="font-size: 0.82rem; color: #e2e8f0; margin-top: 2px;">
+                    प्रधान वैदिक ज्योतिषाचार्य • <b>{constants.SIGNS_HI[ch.ascendant_sign]} लग्न</b>, <b>{constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि</b> • दशा: <b>{c_dasha.get('full_path', 'दशा') if isinstance(c_dasha, dict) else str(c_dasha)}</b>
+                </div>
+                <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 2px;">
+                    📖 4,700+ शास्त्रीय सूत्र • गोचर एवं ग्रह दृष्टियों के सूक्ष्म गणितीय समन्वय से उत्तर
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Quick chips inside popup
+        st.markdown("<div style='font-size: 0.84rem; color: #f0c05a; font-weight: 700; margin-bottom: 4px;'>⚡ त्वरित प्रश्न चयन करें:</div>", unsafe_allow_html=True)
+        suggested_queries = [
+            "करियर, नौकरी एवं प्रमोशन के क्या योग हैं?",
+            "आर्थिक स्थिति और धन लाभ का श्रेष्ठ समय कब है?",
+            "विवाह व दांपत्य जीवन के ग्रह क्या संकेत दे रहे हैं?",
+            "स्वास्थ्य रक्षा हेतु कौन से सात्विक उपाय करें?",
+            "शनि की साढ़े साती अथवा ढैय्या का क्या प्रभाव है?"
+        ]
+        
+        chip_cols = st.columns(len(suggested_queries))
+        chosen_chip = None
+        for i, q_chip in enumerate(suggested_queries):
+            with chip_cols[i]:
+                if st.button(q_chip[:20] + "...", key=f"dialog_chip_{i}", use_container_width=True):
+                    chosen_chip = q_chip
+
+        # Initialize session state for dialog chat history
+        if "dialog_chat_history" not in st.session_state or not st.session_state["dialog_chat_history"]:
+            st.session_state["dialog_chat_history"] = [
+                {
+                    "role": "assistant",
+                    "content": f"**ॐ नमो भगवते वासुदेवाय। सादर प्रणाम {b_info.get('name', 'जातक')} जी!**\n\nमैं **आचार्य व्यास** हूँ। आपकी जन्म कुंडली ({constants.SIGNS_HI[ch.ascendant_sign]} लग्न, {constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि) एवं प्रभावी दशा ({c_dasha.get('full_path', 'दशा') if isinstance(c_dasha, dict) else str(c_dasha)}) मेरे समक्ष खुली है। आप आजीविका, धन, परिवार, स्वास्थ्य या किसी भी उलझन के संबंध में निसंकोच प्रश्न पूछें।"
+                }
+            ]
+
+        # Chat message log container
+        chat_container = st.container(height=340)
+        with chat_container:
+            for msg in st.session_state["dialog_chat_history"]:
+                with st.chat_message(msg["role"], avatar="🧙‍♂️" if msg["role"] == "assistant" else "👤"):
+                    st.markdown(msg["content"])
+
+        # Chat Input inside popup
+        dialog_user_input = st.chat_input("आचार्य व्यास जी से अपना प्रश्न यहाँ पूछें...")
+        if chosen_chip:
+            dialog_user_input = chosen_chip
+
+        if dialog_user_input:
+            st.session_state["dialog_chat_history"].append({"role": "user", "content": dialog_user_input})
+            try:
+                cur_raw_pos = planet_positions(datetime.now().replace(tzinfo=timezone.utc))
+            except Exception:
+                cur_raw_pos = None
+
+            bot_reply = vyas_chatbot.consult(
+                query=dialog_user_input,
+                chart=ch,
+                cur_dasha=c_dasha,
+                birth_info=b_info,
+                transit_pos=cur_raw_pos,
+                prashna_meta=p_meta,
+                chat_history=st.session_state["dialog_chat_history"]
+            )
+            st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+            st.rerun()
+
+        col_act1, col_act2 = st.columns([4, 1])
+        with col_act2:
+            if st.button("🗑️ साफ करें", key="clear_dialog_chat_btn", use_container_width=True):
+                st.session_state["dialog_chat_history"] = []
+                st.rerun()
+
+    # Trigger Dialog if requested
+    if st.session_state.get("show_acharya_dialog"):
+        show_acharya_consultation_dialog(chart, birth, cur_dasha, st.session_state.get('prashna_meta'))
+
+    # Floating Bottom-Right Launcher Widget
+    st.markdown("""
+    <div class="floating-bot-anchor">
+        <div style="font-size: 0.72rem; text-align: center; color: #ffd700; background: rgba(0,0,0,0.85); border-radius: 8px; padding: 2px 6px; margin-bottom: 4px; border: 1px solid rgba(255,215,0,0.4);">
+            🧙‍♂️ आचार्य व्यास ज्योतिषी
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.sidebar:
+        st.markdown("---")
+        if st.button("🧙‍♂️ आचार्य व्यास जी से बात करें (Live AI Consultation)", key="open_acharya_bot_sidebar_btn", use_container_width=True):
+            st.session_state["show_acharya_dialog"] = True
+            st.rerun()
+

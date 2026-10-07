@@ -157,7 +157,8 @@ class VyasChatbotEngine:
         name = birth_info.get("name", "प्रिये जातक")
         response_sections.append(
             f"**ॐ नमो भगवते वासुदेवाय। सादर प्रणाम {name} जी!**\n\n"
-            f"आपकी जन्म कुंडली का लग्न **{facts['asc_sign_name']} (लग्नेश: {facts['lagnesh_hi']})** एवं "
+            f"मैं **आचार्य व्यास (Vedic Jyotish Acharya)**, आपकी जन्म कुंडली का सूक्ष्म अवलोकन कर रहा हूँ। "
+            f"आपका लग्न **{facts['asc_sign_name']} (लग्नेश: {facts['lagnesh_hi']})** एवं "
             f"चन्द्र राशि **{facts['moon_sign_name']} ({facts['moon_nak_name']} नक्षत्र)** है। "
             f"वर्तमान समय में आपकी विंशोत्तरी दशा **{facts['dasha_str']}** प्रभावी है।"
         )
