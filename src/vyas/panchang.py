@@ -462,12 +462,18 @@ def avakhada(moon_lon: float, asc_lon: float | None = None) -> dict:
     return out
 
 
-def compute(dt_local: datetime, lat: float, lon: float, tz_hours: float,
+def compute(dt_local, lat: float, lon: float, tz_hours: float,
             asc_lon: float | None = None) -> Panchang:
-    """Full panchang for a tz-aware or naive local datetime with exact location-based Chaughadiyas & Rahu Kaal."""
+    """Full panchang for a tz-aware or naive local datetime or date with exact location-based Chaughadiyas & Rahu Kaal."""
+    from datetime import date as d_date
     tz = timezone(timedelta(hours=tz_hours))
-    if dt_local.tzinfo is None:
-        dt_local = dt_local.replace(tzinfo=tz)
+    if isinstance(dt_local, datetime):
+        if dt_local.tzinfo is None:
+            dt_local = dt_local.replace(tzinfo=tz)
+    elif isinstance(dt_local, d_date):
+        dt_local = datetime(dt_local.year, dt_local.month, dt_local.day, 12, 0, 0, tzinfo=tz)
+    else:
+        dt_local = datetime.now(tz)
     dt_u = _utc(dt_local)
 
     rise, sset = sun_rise_set(dt_local, lat, lon, tz_hours)

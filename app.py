@@ -47,6 +47,7 @@ from vyas import daily_horoscope as vyas_daily
 from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
 from vyas import match as vyas_match
+from vyas.chatbot import vyas_chatbot
 
 def render_kundli(svg_str: str):
     """Render astrological SVG cleanly via base64 data URI to prevent DOMPurify stripping."""
@@ -961,6 +962,7 @@ if st.session_state.get('data_generated'):
     # -------------------------------------------------------------------------
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
+        "💬 महर्षि व्यास AI ज्योतिषी" if is_hi else "💬 Maharshi Vyas AI Chatbot",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
         "वैदिक फलित एवं 2000+ सूत्र" if is_hi else "Vedic Forecast & 2000+ Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
@@ -1124,11 +1126,17 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
         with col_d4:
+            amrit_v = daily_res.get('amrit_vela', '-')
+            if "वर्जित" in amrit_v or "Prohibited" in amrit_v:
+                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">🚫 आज बुधवार को वर्जित (मान्य नहीं)</span>'
+            else:
+                abhijit_ui = f'<span style="color: #38bdf8; font-weight: 600;">{amrit_v}</span>'
+
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
                 <div style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px;">
-                    <div><b>अभिजीत मुहूर्त:</b> <br><span style="color: #38bdf8; font-weight: 600;">{daily_res['amrit_vela']}</span></div>
+                    <div><b>अभिजीत मुहूर्त:</b> <br>{abhijit_ui}</div>
                     <div><b>राहुकाल (सावधानी):</b> <br><span style="color: #f87171; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
                 </div>
                 <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 6px; font-size: 0.78rem; color: #94a3b8;">
@@ -1141,8 +1149,14 @@ if st.session_state.get('data_generated'):
         with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया, 24 होरा चक्र एवं शुभ-अशुभ मुहूर्त", expanded=True):
             col_m1, col_m2 = st.columns([1, 1.4])
             with col_m1:
+                amrit_v_exp = daily_res.get('amrit_vela', '-')
+                if "वर्जित" in amrit_v_exp or "Prohibited" in amrit_v_exp:
+                    abhijit_exp_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 आज बुधवार को सर्वथा वर्जित (मान्य नहीं)</span>'
+                else:
+                    abhijit_exp_ui = f"<span style='color: #38bdf8; font-weight: 700;'>{amrit_v_exp}</span>"
+
                 st.markdown(f"**स्थान (Location):** `{birth.get('city', 'New Delhi')}`")
-                st.markdown(f"**अभिजीत मुहूर्त:** <span style='color: #38bdf8; font-weight: 700;'>{daily_res.get('amrit_vela', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"**अभिजीत मुहूर्त:** {abhijit_exp_ui}", unsafe_allow_html=True)
                 st.markdown(f"**राहु काल:** <span style='color: #ef4444; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span>", unsafe_allow_html=True)
                 st.markdown(f"**यमगण्ड:** <span style='color: #f59e0b; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span>", unsafe_allow_html=True)
                 st.markdown(f"**गुलिक काल:** <span style='color: #e2e8f0; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span>", unsafe_allow_html=True)
@@ -1197,15 +1211,144 @@ if st.session_state.get('data_generated'):
                         } for h in h_day])
                         st.dataframe(h_df, use_container_width=True, hide_index=True)
                 with col_h2:
-                    st.markdown("**रात्रि की 12 होरा (Night Horas):**")
-                    if h_night:
-                        h_ndf = pd.DataFrame([{
-                            "होरा #": h["num"],
-                            "होरा स्वामी": f"{h['lord_hi']} ({h['lord']})",
-                            "समय सीमा": f"{h['start']} - {h['end']}",
-                            "प्रकृति": h["nature"]
-                        } for h in h_night])
                         st.dataframe(h_ndf, use_container_width=True, hide_index=True)
+
+        # In-depth Comprehensive Daily Forecast (4 Life Pillars & Gochar Synthesis)
+        narrs = daily_res.get("narratives", {})
+        if narrs:
+            st.markdown(f'<div class="section-title">{"🔮 आज का विस्तृत 4-स्तंभ फलादेश एवं गोचर मीमांसा" if is_hi else "Comprehensive 4-Pillar Daily Forecast"}</div>', unsafe_allow_html=True)
+            
+            st.markdown(f"""
+            <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 16px;">
+                <div style="font-size: 1.1rem; font-weight: 800; color: #f0c05a; margin-bottom: 6px;">
+                    📜 {narrs.get('chandra_gochar_title', 'दैनिक गोचर सारांश')} (जन्म राशि से {narrs.get('chandra_gochar_house')}वाँ भाव)
+                </div>
+                <p style="font-size: 0.95rem; color: #f8fafc; line-height: 1.7; margin: 0;">
+                    {narrs.get('synthesis', '')}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_narr1, col_narr2 = st.columns(2)
+            with col_narr1:
+                st.markdown(f"""
+                <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #3b82f6;">
+                    <div style="font-weight: 700; color: #60a5fa; font-size: 1rem; margin-bottom: 4px;">💼 आजीविका एवं कार्यक्षेत्र (Career & Profession) • {daily_res['scores']['career']}%</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('career', '')}</div>
+                </div>
+                <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #10b981;">
+                    <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 4px;">💰 धन, व्यापार एवं निवेश (Wealth & Finance) • {daily_res['scores']['wealth']}%</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('wealth', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col_narr2:
+                st.markdown(f"""
+                <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #ec4899;">
+                    <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">❤️ संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('love', '')}</div>
+                </div>
+                <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #f59e0b;">
+                    <div style="font-weight: 700; color: #fbbf24; font-size: 1rem; margin-bottom: 4px;">🌿 स्वास्थ्य, ऊर्जा व मनोबल (Health & Vitality) • {daily_res['scores']['health']}%</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('health', '')}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 10px; padding: 12px 16px; margin-top: 8px;">
+                <div style="color: #34d399; font-weight: 700; font-size: 0.92rem;">✨ आज का अचूक सात्विक उपाय (Target Daily Remedy):</div>
+                <div style="color: #f0fdf4; font-size: 0.9rem; margin-top: 4px;">{daily_res['remedy']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # =========================================================================
+    # SUITE: 💬 MAHARSHI VYAS CLASSICAL AI ASTROLOGER CHATBOT
+    # =========================================================================
+    if "AI ज्योतिषी" in selected_suite or "AI Chatbot" in selected_suite:
+        st.markdown(f'<div class="section-title">{"💬 महर्षि व्यास AI ज्योतिषी (इंटरएक्टिव ज्योतिषीय परामर्श)" if is_hi else "💬 Maharshi Vyas Classical AI Astrologer"}</div>', unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 16px;">
+            <div style="font-size: 1.05rem; font-weight: 700; color: #f0c05a; margin-bottom: 4px;">
+                🧘‍♂️ प्रत्यक्ष वैदिक परामर्श कक्ष (Live Jyotish Consultation Chamber)
+            </div>
+            <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">
+                यह वैदिक AI चैटबॉट आपकी <b>जन्म कुण्डली</b>, <b>तात्कालिक गोचर</b>, <b>विंशोत्तरी महादशा-अंतरदशा</b>, <b>ग्रह दृष्टियों</b> एवं हमारे <b>4,700+ शास्त्रीय सूत्रों</b> के आधार पर सटीक, तार्किक व शास्त्रोक्त समाधान प्रदान करता है। नीचे प्रश्न पूछें अथवा दिए गए त्वरित प्रश्नों पर क्लिक करें।
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Quick Suggested Question Chips
+        suggested_queries = [
+            "मेरी वर्तमान दशा और गोचर के अनुसार करियर और नौकरी में क्या योग हैं?",
+            "आर्थिक स्थिति और धन लाभ के लिए कौन सा समय श्रेष्ठ रहेगा?",
+            "कुंडली के अनुसार विवाह व दांपत्य जीवन का क्या फलित है?",
+            "स्वास्थ्य और मानसिक शांति हेतु मुझे कौन से वैदिक उपाय करने चाहिए?",
+            "क्या वर्तमान में शनि की साढ़े साती या ढैय्या का प्रभाव है?"
+        ]
+        
+        st.markdown("**⚡ त्वरित ज्योतिषीय प्रश्न (Quick Inquiries):**")
+        chip_cols = st.columns(len(suggested_queries))
+        auto_query = None
+        for i, q_chip in enumerate(suggested_queries):
+            with chip_cols[i]:
+                btn_label = q_chip[:24] + "..."
+                if st.button(btn_label, key=f"chip_q_{i}", use_container_width=True):
+                    auto_query = q_chip
+
+        # Initialize session state for chat history
+        if "astro_chat_history" not in st.session_state:
+            st.session_state["astro_chat_history"] = [
+                {
+                    "role": "assistant",
+                    "content": f"**सादर प्रणाम {birth.get('name', 'जातक')} जी!** मैं महर्षि व्यास AI ज्योतिषी हूँ। आपकी जन्म कुंडली ({constants.SIGNS_HI[asc_sign_idx]} लग्न, {constants.SIGNS_HI[chart.planets['Moon'].sign_index]} राशि) एवं वर्तमान दशा ({cur_dasha.get('full_path', 'दशा') if isinstance(cur_dasha, dict) else str(cur_dasha)}) का सूक्ष्म अध्ययन पूर्ण है। आप करियर, धन, विवाह, स्वास्थ्य अथवा विशिष्ट उपायों के विषय में जो भी जानना चाहें, संकोच रहित पूछें।"
+                }
+            ]
+
+        # Render chat message log
+        for msg in st.session_state["astro_chat_history"]:
+            with st.chat_message(msg["role"], avatar="🧘‍♂️" if msg["role"] == "assistant" else "👤"):
+                st.markdown(msg["content"])
+
+        # Chat Input Bar
+        user_prompt = st.chat_input("अपना ज्योतिषीय प्रश्न यहाँ लिखें (उदा. मेरी नौकरी में तरक्की कब होगी?)...")
+        if auto_query:
+            user_prompt = auto_query
+
+        if user_prompt:
+            # Append User Message
+            st.session_state["astro_chat_history"].append({"role": "user", "content": user_prompt})
+            with st.chat_message("user", avatar="👤"):
+                st.markdown(user_prompt)
+
+            # Generate Astrology Chatbot Answer
+            with st.chat_message("assistant", avatar="🧘‍♂️"):
+                with st.spinner("महर्षि व्यास प्राचीन सूत्रों, वर्तमान गोचर व दशा का अनुसंधान कर रहे हैं..."):
+                    # Current transits
+                    try:
+                        cur_raw_pos = planet_positions(datetime.now().replace(tzinfo=timezone.utc))
+                    except Exception:
+                        cur_raw_pos = None
+
+                    pm_data = st.session_state.get('prashna_meta') if "Prashna" in mode else None
+                    bot_reply = vyas_chatbot.consult(
+                        query=user_prompt,
+                        chart=chart,
+                        cur_dasha=cur_dasha,
+                        birth_info=birth,
+                        transit_pos=cur_raw_pos,
+                        prashna_meta=pm_data,
+                        chat_history=st.session_state["astro_chat_history"]
+                    )
+                    st.markdown(bot_reply)
+
+            st.session_state["astro_chat_history"].append({"role": "assistant", "content": bot_reply})
+            st.rerun()
+
+        # Clear chat option
+        if st.button("🗑️ संवाद इतिहास साफ करें (Clear Chat History)"):
+            st.session_state["astro_chat_history"] = []
+            st.rerun()
 
     # =========================================================================
     # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES
@@ -2327,7 +2470,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
                         <b>दिनमान:</b> {panch_obj.day_length}<br>
-                        <b>अभिजीत मुहूर्त:</b> <span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span><br>
+                        <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 आज बुधवार को वर्जित (मान्य नहीं)</span>' if ('वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
                         <b>राहु काल:</b> <span style="color: #ef4444; font-weight: 700;">{panch_obj.rahu_kalam}</span><br>
                         <b>यमगण्ड:</b> <span style="color: #f59e0b; font-weight: 700;">{panch_obj.yamaganda}</span><br>
                         <b>गुलिक काल:</b> {panch_obj.gulika_kalam}
