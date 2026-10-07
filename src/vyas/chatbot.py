@@ -250,7 +250,7 @@ class VyasChatbotEngine:
                 f"- प्रश्न लग्न एवं तात्कालिक चन्द्रमा की संचरण गति इंगित करती है कि संकल्प और उचित समय के चयन से इच्छित परिणाम प्राप्त होंगे।"
             )
 
-        # Section 4: Matched Classical Sutras from Knowledge Bank (4,700+ Database)
+        # Section 4: Matched Classical Shastriya Sutras & Yogas
         if relevant_sutras:
             sutra_bullets = []
             for s in relevant_sutras:
@@ -259,7 +259,7 @@ class VyasChatbotEngine:
                     f"- **[{s.source}] {s.primary_factor}:** {s.matched_detail} → *\"{s_pred}\"*"
                 )
             response_sections.append(
-                f"### 📖 हमारे प्राचीन ज्ञानकोष (Classical Sutras) से प्रमाणित योग:\n" +
+                f"### 📖 प्रामाणिक शास्त्रीय सिद्धांत एवं योग (Shastriya Sutras):\n" +
                 "\n".join(sutra_bullets)
             )
 

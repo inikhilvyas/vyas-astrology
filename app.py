@@ -1051,7 +1051,7 @@ if st.session_state.get('data_generated'):
                     आचार्य व्यास • वैदिक AI ज्योतिषी (Live Chat Consultation)
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 2px;">
-                    आपकी कुण्डली, 12,000+ शास्त्रीय सूत्रों व तात्कालिक गोचर पर आधारित प्रत्यक्ष संवाद
+                    आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित प्रत्यक्ष वैदिक संवाद
                 </div>
             </div>
         </div>
@@ -2864,7 +2864,7 @@ if st.session_state.get('data_generated'):
                     प्रधान वैदिक ज्योतिषाचार्य • <b>{constants.SIGNS_HI[ch.ascendant_sign]} लग्न</b>, <b>{constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि</b> • दशा: <b>{c_dasha.get('full_path', 'दशा') if isinstance(c_dasha, dict) else str(c_dasha)}</b>
                 </div>
                 <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 2px;">
-                    📖 4,700+ शास्त्रीय सूत्र • गोचर एवं ग्रह दृष्टियों के सूक्ष्म गणितीय समन्वय से उत्तर
+                    📖 महर्षि पाराशर, भृगु एवं जैमिनी सिद्धांत • गोचर एवं ग्रह दृष्टियों के सूक्ष्म गणितीय समन्वय से उत्तर
                 </div>
             </div>
         </div>
