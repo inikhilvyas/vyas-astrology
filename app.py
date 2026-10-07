@@ -1051,7 +1051,7 @@ if st.session_state.get('data_generated'):
                     आचार्य व्यास • वैदिक AI ज्योतिषी (Live Chat Consultation)
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 2px;">
-                    आपकी कुण्डली, 4,700+ सूत्रों व तात्कालिक गोचर पर आधारित प्रत्यक्ष संवाद
+                    आपकी कुण्डली, 12,000+ शास्त्रीय सूत्रों व तात्कालिक गोचर पर आधारित प्रत्यक्ष संवाद
                 </div>
             </div>
         </div>
@@ -1066,7 +1066,7 @@ if st.session_state.get('data_generated'):
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
-        "वैदिक फलित एवं 2000+ सूत्र" if is_hi else "Vedic Forecast & 2000+ Sutras",
+        "वैदिक फलित एवं 12,000+ सूत्र" if is_hi else "Vedic Forecast & 12,000+ Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
         "लाल किताब सम्पूर्ण" if is_hi else "Lal Kitab System & Remedies",
         "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal",
@@ -1506,7 +1506,7 @@ if st.session_state.get('data_generated'):
             "लग्न एवं नवमांश (D1 & D9 Charts)" if is_hi else "D1 & D9 Natal Charts",
             "षोडशवर्ग 16 चक्र (All 16 Vargas)" if is_hi else "All 16 Divisional Charts",
             "षष्ट्यंश देवता (D60 Shashtyamsha & Deities)" if is_hi else "D60 Shashtyamsha Deities",
-            "📜 2000+ शास्त्रीय सूत्र फलादेश (AI Knowledge Bank)" if is_hi else "2000+ Classical Sutras Bank"
+            "📜 12,000+ शास्त्रीय सूत्र फलादेश (AI Knowledge Bank)" if is_hi else "12,000+ Classical Sutras Bank"
         ])
 
         with sub_tab1:
@@ -1665,17 +1665,18 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
 
         with sub_tab4:
-            st.markdown(f'<div class="section-title">{"🔮 2000+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else "2000+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
+            total_kb_all = len(vyas_knowledge_engine.load_knowledge_bank())
+            st.markdown(f'<div class="section-title">{"🔮 " + f"{total_kb_all:,}+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else f"{total_kb_all:,}+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
             
-            # Evaluate from ai_jyotish_knowledge_bank_2000
+            # Evaluate from knowledge bank
             kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
             st.markdown(f"""
             <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
                 <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
-                    ✨ आपकी जन्म कुण्डली पर AI ज्ञानकोष (2,000+ शास्त्रीय सूत्र) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
+                    ✨ आपकी जन्म कुण्डली पर AI ज्ञानकोष ({total_kb_all:,}+ शास्त्रीय सूत्रों के महा-संग्रह) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
-                    यह इंजन भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय मिलान करके केवल आपकी कुंडली पर लागू होने वाले सूत्रों का सटीक फलित प्रदर्शित करता है।
+                    यह इंजन भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय मिलान करके केवल आपकी कुंडली पर लागू होने वाले सूत्रों का सटीक फलित प्रदर्शित करता है।
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -1695,7 +1696,7 @@ if st.session_state.get('data_generated'):
                 else:
                     filtered_kb = kb_eval
             with col_f2:
-                search_q = st.text_input("🔍 सूत्र खोजें (Search Keyword)", placeholder="ग्रह, योग या भाव लिखें...", key="kb_srch_subtab4")
+                search_q = st.text_input("🔍 सक्रिय सूत्र खोजें (Search Active Sutras)", placeholder="ग्रह, योग या भाव लिखें...", key="kb_srch_subtab4")
                 if search_q:
                     filtered_kb = [k for k in filtered_kb if search_q.lower() in k.prediction_hi.lower() or search_q.lower() in k.matched_detail.lower() or search_q.lower() in k.sub_category.lower()]
 
@@ -1723,6 +1724,36 @@ if st.session_state.get('data_generated'):
                     {f'<div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">⚖️ <b>बल व संशोधन:</b> {k.strength_modifiers}</div>' if k.strength_modifiers else ''}
                 </div>
                 """, unsafe_allow_html=True)
+
+            # Classical treatises direct search
+            with st.expander("📚 समस्त शास्त्रीय ग्रंथ एवं पुस्तकें प्रत्यक्ष खोज (Search Classical Astrological Library)", expanded=False):
+                try:
+                    import vyas.book_reader as vyas_books
+                    all_bks = vyas_books.list_available_books()
+                    st.markdown(f"**पुस्तकालय स्थिति:** कुल **{len(all_bks)} शास्त्रीय ग्रंथ व पुस्तकें** (PDF, Markdown, JSONL) `books/` फोल्डर में उपलब्ध हैं।")
+                    col_bk1, col_bk2 = st.columns([1.5, 1])
+                    with col_bk1:
+                        bk_query = st.text_input("ग्रंथों में श्लोक / शब्द खोजें (Search Shloka or Topic across Books):", placeholder="उदा. गजकेसरी, भृगु, मांगलिक, सूर्य...", key="bk_lib_search_q")
+                    with col_bk2:
+                        bk_options = ["समस्त ग्रंथ (All Treatises)"] + [b["filename"] for b in all_bks]
+                        sel_bk = st.selectbox("विशिष्ट पुस्तक चुनें:", bk_options, index=0, key="bk_lib_sel_file")
+
+                    if bk_query:
+                        target_file_param = None if sel_bk == "समस्त ग्रंथ (All Treatises)" else sel_bk
+                        search_res = vyas_books.search_books(bk_query, target_file_param, max_results=12)
+                        if search_res:
+                            st.success(f"कुल {len(search_res)} संदर्भ प्राप्त हुए:")
+                            for sr in search_res:
+                                st.markdown(f"""
+                                <div style="background: rgba(15, 23, 42, 0.7); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;">
+                                    <div style="font-weight: 700; color: #38bdf8; font-size: 0.92rem;">📖 {sr['book']} &nbsp;<span style="color: #94a3b8; font-size: 0.82rem;">({sr['page']})</span></div>
+                                    <div style="color: #f1f5f9; font-size: 0.88rem; margin-top: 4px; font-family: monospace;">{sr['snippet']}</div>
+                                </div>
+                                """, unsafe_allow_html=True)
+                        else:
+                            st.info("इस शब्द पर कोई संदर्भ नहीं मिला। कृपया भिन्न शब्द खोजें।")
+                except Exception as e:
+                    st.warning(f"पुस्तक खोज में त्रुटि: {e}")
 
     # =========================================================================
     # SUITE: 💍 ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
@@ -2695,17 +2726,18 @@ if st.session_state.get('data_generated'):
                         st.markdown(f"✓ {u}")
 
         with p_tab8:
-            st.markdown(f'<div class="section-title">{"🔮 2000+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else "2000+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
+            total_kb_all = len(vyas_knowledge_engine.load_knowledge_bank())
+            st.markdown(f'<div class="section-title">{"🔮 " + f"{total_kb_all:,}+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else f"{total_kb_all:,}+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
             
-            # 1. Evaluate from ai_jyotish_knowledge_bank_2000
+            # Evaluate from knowledge bank
             kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
             st.markdown(f"""
             <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
                 <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
-                    ✨ AI ज्ञानकोष (ai_jyotish_knowledge_bank_2000) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
+                    ✨ AI ज्ञानकोष ({total_kb_all:,}+ शास्त्रीय सूत्रों के महा-संग्रह) से आपकी कुण्डली पर {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
-                    यह प्रणाली भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय विश्लेषण करती है।
+                    यह प्रणाली भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय विश्लेषण करती है।
                 </div>
             </div>
             """, unsafe_allow_html=True)

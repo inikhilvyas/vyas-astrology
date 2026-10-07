@@ -56,7 +56,7 @@ def search_books(query: str, book_filename: Optional[str] = None, max_results: i
         if p.is_file():
             target_files = [p]
     else:
-        target_files = [f for f in sorted(b_dir.iterdir()) if f.is_file() and f.suffix.lower() in [".pdf", ".txt"]]
+        target_files = [f for f in sorted(b_dir.iterdir()) if f.is_file() and f.suffix.lower() in [".pdf", ".txt", ".md"]]
         
     for f in target_files:
         if f.suffix.lower() == ".pdf":
