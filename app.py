@@ -2,7 +2,10 @@ import streamlit as st
 from datetime import datetime, timezone, timedelta, time as d_time
 import sys
 import os
+import shutil
+import platform
 import re
+import urllib.parse
 import pandas as pd
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
@@ -48,6 +51,156 @@ from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
 from vyas import match as vyas_match
 from vyas.chatbot import vyas_chatbot
+from vyas import city_search
+from vyas import google_drive_sync
+
+# ---------------- AUTH SESSION HELPERS ----------------
+# A signed-in user must survive a full page reload, but Streamlit Cloud has no
+# server-side session: the old get_last_active_user() restored the SAME account
+# for every visitor (one shared row). Instead each browser gets an opaque token
+# cookie that maps to exactly one account.
+_SESSION_COOKIE = "vyas_sess"
+
+
+def _read_session_cookie() -> str:
+    try:
+        return str((st.context.cookies or {}).get(_SESSION_COOKIE, "") or "")
+    except Exception:
+        return ""
+
+
+def _write_session_cookie(token: str) -> None:
+    """Sets/clears the browser token. SameSite=None so it also works when the
+    app is embedded in Streamlit Cloud's sharing iframe."""
+    try:
+        if token:
+            _js = (
+                f"document.cookie='{_SESSION_COOKIE}={token}; path=/; "
+                "max-age=2592000; SameSite=None; Secure';"
+            )
+        else:
+            _js = (
+                f"document.cookie='{_SESSION_COOKIE}=; path=/; "
+                "max-age=0; SameSite=None; Secure';"
+            )
+        _snippet = f"<script>{_js}</script>"
+        # st.iframe is the documented replacement for components.html, but it
+        # drops <script>, which is exactly what is needed here — so keep using
+        # components.html and fall back to st.iframe only if it is gone.
+        try:
+            import streamlit.components.v1 as _components
+            _components.html(_snippet, height=0)
+        except Exception:
+            if hasattr(st, "iframe"):
+                st.iframe(_snippet, height=0)
+    except Exception:
+        pass
+
+
+# ---------------- DURABLE BROWSER SESSION (localStorage bridge) ----------------
+# Streamlit Community Cloud's proxy forwards only an allowlist of cookies to
+# the app. A custom `vyas_sess` cookie is stored in the browser (document.cookie
+# shows it) but arrives EMPTY in st.context.cookies on Cloud, so every reload
+# fell back to the logged-out landing page. This zero-height bidirectional
+# component runs in the app page itself (no sandboxed iframe), so it can read
+# and write localStorage and hand the token back to Python through component
+# state — a channel the proxy cannot strip.
+_SESSION_STORE_KEY = "vyas_session_v1"
+_SESSION_STORE_JS = r"""
+export default function (component) {
+    const { setStateValue, data } = component;
+    const KEY = 'vyas_session_v1';
+    const action = (data && data.action) || 'read';
+    try {
+        if (action === 'store' && data && data.token) {
+            localStorage.setItem(KEY, data.token);
+            setStateValue('token', data.token);
+        } else if (action === 'clear') {
+            localStorage.removeItem(KEY);
+            setStateValue('token', '');
+        } else {
+            setStateValue('token', localStorage.getItem(KEY) || '');
+        }
+    } catch (err) {
+        setStateValue('token', '');
+    }
+}
+"""
+
+try:
+    _SESSION_COMPONENT = st.components.v2.component(
+        "vyas_session_store", js=_SESSION_STORE_JS
+    )
+except Exception:
+    _SESSION_COMPONENT = None
+
+
+def _mount_session_bridge(action: str = "read", token: str = "") -> str:
+    """Reads/stores/clears the browser session token (empty on any failure)."""
+    if _SESSION_COMPONENT is None:
+        return ""
+    try:
+        result = _SESSION_COMPONENT(
+            data={"action": action, "token": token},
+            default={"token": ""},
+            key="vyas_session_bridge",
+            on_token_change=lambda: None,
+            height=0,
+            width="stretch",
+        )
+        return str(getattr(result, "token", "") or "")
+    except Exception:
+        return ""
+
+
+def _start_user_session(u_obj) -> None:
+    """Marks the user signed in for this session and remembers this browser."""
+    if not u_obj:
+        return
+    st.session_state["user"] = u_obj
+    try:
+        auth_vault.set_active_session_user(u_obj["id"])
+    except Exception:
+        pass
+    try:
+        token = auth_vault.create_session_token(u_obj["id"])
+    except Exception:
+        token = ""
+    if token:
+        st.session_state["_vyas_session_token"] = token
+        # Both are written on the NEXT run: this call is followed by st.rerun(),
+        # which discards any element (including the cookie script) created in
+        # the current run.
+        st.session_state["_vyas_store_pending"] = token
+        st.session_state["_vyas_cookie_pending"] = True
+
+
+def _end_user_session() -> None:
+    """Logs out: invalidates the token, clears the cookie and session flags."""
+    token = st.session_state.pop("_vyas_session_token", "") or _read_session_cookie()
+    try:
+        auth_vault.delete_session_token(token)
+    except Exception:
+        pass
+    try:
+        auth_vault.clear_active_session()
+    except Exception:
+        pass
+    st.session_state["_vyas_cookie_pending"] = True  # clears it on the next run
+    st.session_state["_vyas_clear_pending"] = True
+    st.session_state["user"] = {
+        "id": 1,
+        "name": "नया जातक (Seeker)",
+        "email": "seeker@vyasastro.com",
+        "tier": "VIP_TRIAL",
+        "days_left": 30,
+        "is_vip": True,
+    }
+    for _sk in ("loaded_profile", "google_access_token", "user_google_processed",
+                "oauth_state", "gdrive_last_link", "saved_k_picker",
+                "oauth_code_verifier"):
+        st.session_state.pop(_sk, None)
+
 
 def render_kundli(svg_str: str):
     """Render astrological SVG cleanly via base64 data URI to prevent DOMPurify stripping."""
@@ -56,11 +209,165 @@ def render_kundli(svg_str: str):
     b64 = base64.b64encode(clean.encode('utf-8')).decode('utf-8')
     st.html(f'<div class="kundli-container"><img src="data:image/svg+xml;base64,{b64}" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" /></div>')
 
-st.set_page_config(page_title="VYAS • Vedic Yield Astrology Systems", page_icon="☸️", layout="wide", initial_sidebar_state="expanded")
+
+def lazy_sections(labels, key: str):
+    """A tab strip that renders ONLY the selected section's body.
+
+    ``st.tabs`` runs every tab body on every rerun: with 8 tab groups (one nine
+    tabs wide, plus nested four-tab sets) the app rebuilt the Panchang engine
+    (~2.2s), the transit engine (~1.4s), 34 dataframes and 4 large SVG charts
+    even while the user was reading the first tab.
+
+    ``with tab:`` cannot skip work — Python always executes the body — so this
+    returns a list of booleans instead, and call sites become::
+
+        _lz = lazy_sections(["A", "B", "C"], key="forecast")
+        if _lz[0]:
+            ...expensive A...
+        if _lz[1]:
+            ...expensive B...
+
+    Because the unselected bodies never execute, their engines, dataframes and
+    charts are never built. Selection lives in session_state, so it survives
+    reruns triggered by widgets elsewhere on the page.
+    """
+    active = st.radio(
+        "section",
+        options=list(range(len(labels))),
+        format_func=lambda i: labels[i],
+        index=0,
+        key=f"lazytab_{key}",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    return [i == active for i in range(len(labels))]
+
+_VYAS_LOGO_ICON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo_icon.png")
+st.set_page_config(
+    page_title="VYAS • Vedic Yield Astrology Systems",
+    page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "☸️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+
+# ---------------- CACHED HEAVY ENGINES ----------------
+# Measured on a real chart (Windows, cold pyephem/Skyfield):
+#   panchang.compute  ~2.2s   gochar.transits ~1.4s   planet_positions ~1.5s
+# Streamlit reruns the whole script on EVERY widget interaction, so without
+# caching the user paid ~5s of astronomy for something as trivial as opening an
+# expander. These wrappers memoise on the *inputs that actually matter*, so a
+# rerun with unchanged birth data costs ~0ms.
+#
+# Dataclass results are converted to plain dicts because st.cache_data pickles
+# its return value (and the index argument lets callers rehydrate cheaply).
+@st.cache_data(show_spinner=False, max_entries=64)
+def _cached_panchang(dt_local, lat: float, lon: float, tz_hours: float, asc_lon: float):
+    """Full Panchang for a local datetime. Keyed on date+time+place+ayanamsa."""
+    return vyas_panchang.compute(dt_local, lat, lon, tz_hours, asc_lon)
+
+
+@st.cache_data(show_spinner=False, max_entries=64)
+def _cached_gochar_transits(now_day: str, tz_hours: float, moon_lon: float, asc_lon: float):
+    """Transit/ingress table for the given day. Keyed on the DAY, not the second,
+    so moving between tabs on the same day never recomputes."""
+    return vyas_gochar.transits(
+        datetime.fromisoformat(now_day), tz_hours, moon_lon, asc_lon, with_ingress=True
+    )
+
+
+@st.cache_data(show_spinner=False, max_entries=64)
+def _cached_transit_positions(now_day: str):
+    """Current transit positions for the given day (planet -> object with
+    longitude/speed/sign_index)."""
+    return vyas_gochar.get_current_transit_positions()
+
+# ---------------- FONT LOADING (non-blocking, exactly once) ----------------
+# Preconnect warms the TLS handshake to both font hosts while the HTML is still
+# parsing, so the stylesheet request starts ~200-400ms earlier than it otherwise
+# would. `display=swap` means text paints immediately in the fallback stack and
+# reflows once webfonts arrive — the page is never held hostage by fonts.google
+# .com, which is the single biggest first-paint cost on a cold Streamlit load.
+st.html("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+""")
+
+# ---------------- GOOGLE OAUTH 2.0 CALLBACK HANDLING ----------------
+# Rules:
+#  1. Google errors (redirect_uri_mismatch, access_denied...) are surfaced, never ignored.
+#  2. `state` must match the per-session nonce generated at login (CSRF protection).
+#  3. A code is processed exactly once — success OR failure — so a consumed
+#     single-use code is never re-sent to Google on every rerun (invalid_grant loop).
+_oauth_code = st.query_params.get("code")
+_oauth_state = st.query_params.get("state")
+_oauth_error = st.query_params.get("error")
+_oauth_err_desc = st.query_params.get("error_description")
+
+if _oauth_error:
+    # Google bounced back with an error — show it and clean the URL.
+    st.session_state["user_google_processed"] = True
+    _eff_ruri = google_drive_sync.resolve_redirect_uri(
+        google_drive_sync.load_google_config().get("redirect_uri", "")
+    )
+    google_drive_sync.record_oauth_error(
+        f"google_redirected_back error={_oauth_error} desc={_oauth_err_desc or '-'} redirect_uri={_eff_ruri}"
+    )
+    st.error(f"Google लॉगिन विफल: {_oauth_error} — {_oauth_err_desc or 'कृपया पुनः प्रयास करें।'}\n\n"
+             f"**Redirect URI:** `{_eff_ruri}` — यह Google Cloud Console → Credentials → "
+             f"OAuth client → **Authorized redirect URIs** में हूबहू होना चाहिए।")
+    st.query_params.clear()
+
+elif _oauth_code and not st.session_state.get("user_google_processed"):
+    st.session_state["user_google_processed"] = True  # mark BEFORE any network call
+
+    if not google_drive_sync.verify_oauth_state(_oauth_state):
+        google_drive_sync.record_oauth_error(f"state_mismatch received={(_oauth_state or '')[:12]}")
+        st.error("लॉगिन सुरक्षा जाँच विफल (state mismatch)। कृपया पेज रीफ़्रेश करके दोबारा लॉगिन करें।")
+        st.query_params.clear()
+    else:
+        with st.spinner("Google से प्रमाणीकरण एवं Google Drive सिंक किया जा रहा है..."):
+            ok_tok, msg_tok, tok_data = google_drive_sync.exchange_code_for_tokens(_oauth_code)
+            _login_err = None
+            if not ok_tok or not tok_data:
+                _login_err = f"चरण 1 (टोकन प्राप्ति) विफल: {msg_tok}"
+            else:
+                acc_tok = tok_data.get("access_token")
+                ref_tok = tok_data.get("refresh_token", "")
+                ok_ui, msg_ui, u_info = google_drive_sync.get_user_info(acc_tok)
+                if not ok_ui or not u_info:
+                    _login_err = f"चरण 2 (प्रोफ़ाइल प्राप्ति) विफल: {msg_ui}"
+                else:
+                    ok_log, msg_log, u_obj = auth_vault.login_or_register_google(u_info["email"], u_info["name"])
+                    if not ok_log or not u_obj:
+                        _login_err = f"चरण 3 (खाता) विफल: {msg_log}"
+                    elif not auth_vault.save_google_tokens(u_obj["id"], acc_tok, ref_tok):
+                        _login_err = ("लॉगिन सफल हुआ, परंतु Drive टोकन सुरक्षित नहीं हो सका "
+                                      "(डेटाबेस त्रुटि)। Drive सिंक काम नहीं करेगा।")
+                    else:
+                        st.session_state["google_access_token"] = acc_tok
+                        _start_user_session(u_obj)
+                        google_drive_sync.clear_oauth_error()
+
+            if _login_err:
+                google_drive_sync.record_oauth_error(_login_err)
+                st.error(f"Google लॉगिन विफल — {_login_err}")
+            else:
+                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}! Google Drive कनेक्ट हो गया।", icon="☁️")
+            st.query_params.clear()
+            st.session_state.pop("oauth_state", None)
+            st.rerun()
 
 # Global Luxury Vedic Styling
 st.markdown("""
 <style>
+    /* Fonts are loaded ONCE, from a <link> in the document head (see the
+       preconnect/link tags injected below), NOT via CSS @import. An @import
+       inside the app's own <style> is render-blocking: the browser must finish
+       fetching fonts.googleapis.com before it paints anything, and on Streamlit
+       Cloud that request sits behind the iframe. Preconnect + display=swap
+       paints instantly with fallback glyphs and swaps when fonts arrive. */
     @font-face {
         font-family: 'Material Symbols Rounded';
         font-style: normal;
@@ -68,7 +375,6 @@ st.markdown("""
         font-display: block;
         src: url(https://fonts.gstatic.com/s/materialsymbolsrounded/v376/syl0-zNym6YjUruM-QrEh7-nyTnjDwKNJ_190FjpZIvDmUSVOK7BDB_Qb9vUSzq3wzLK-P0J-V_Zs-QtQth3-jOcbTCVpeRL2w5rwZu2rIelXxI.ttf) format('truetype');
     }
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
     :root {
         --gold-primary: #e5a93c;
@@ -170,19 +476,25 @@ st.markdown("""
     }
 
     .section-title {
-        font-family: 'Cinzel', 'Noto Sans Devanagari', serif;
+        /* Devanagari-capable fonts FIRST: Cinzel is Latin-only, so a heading that
+           mixes Hindi + Latin ("... प्रबंध (VYAS PDF)") fell back to a
+           different font mid-line, collapsing the space and making words look
+           glued together ("प्रबंधPDF"). */
+        font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal',
+                     'Tiro Devanagari Sanskrit', 'Segoe UI', 'Cinzel', sans-serif;
         font-size: 1.25rem;
         font-weight: 700;
         color: #f1f5f9;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        word-spacing: 0.08em;
+        line-height: 1.5;
+        text-transform: none;
         border-bottom: 1px solid rgba(229, 169, 60, 0.25);
         padding-bottom: 10px;
         margin-top: 10px;
         margin-bottom: 18px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        display: block;
+        overflow-wrap: break-word;
     }
 
     /* Domain Suite Pills (Segmented Navigation Selector from reference) */
@@ -200,8 +512,11 @@ st.markdown("""
         border-radius: 8px !important;
         padding: 8px 16px !important;
         color: #94a3b8 !important;
+        font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal', 'Segoe UI', sans-serif !important;
         font-weight: 500 !important;
         font-size: 0.88rem !important;
+        letter-spacing: 0 !important;
+        word-spacing: 0.08em !important;
         transition: all 0.22s ease !important;
         cursor: pointer !important;
     }
@@ -442,7 +757,9 @@ st.markdown("""
         }
         .section-title {
             font-size: 1.05rem !important;
-            letter-spacing: 0.5px !important;
+            letter-spacing: 0 !important;
+            word-spacing: 0.04em !important;
+            line-height: 1.55 !important;
         }
         div[data-testid="stRadio"] > div {
             gap: 4px !important;
@@ -471,19 +788,482 @@ st.markdown("""
             max-width: 100% !important;
             height: auto !important;
         }
+        /* Streamlit >=1.40 renders columns as stColumn (old data-testid="column" is dead) */
+        div[data-testid="stColumn"],
         div[data-testid="column"] {
             min-width: 100% !important;
+            width: 100% !important;
+            flex: 1 1 100% !important;
             margin-bottom: 10px !important;
+        }
+        /* Expander headers: .streamlit-expanderHeader is deprecated */
+        .streamlit-expanderHeader,
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] details > summary {
+            font-size: 0.9rem !important;
+            padding: 8px 10px !important;
+            white-space: normal !important;
+            line-height: 1.4 !important;
+            overflow-wrap: anywhere !important;
+        }
+        [data-testid="stExpander"] details {
+            border-radius: 10px !important;
+        }
+        /* Keep wide dataframes/tables scrollable instead of breaking layout */
+        [data-testid="stDataFrame"],
+        [data-testid="stTable"],
+        .as-table-wrap {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+        }
+        div.stButton > button {
+            min-height: 42px !important;
+            white-space: normal !important;
+            line-height: 1.25 !important;
         }
         .block-container {
             padding: 1rem 0.5rem 3rem 0.5rem !important;
         }
     }
+
+    /* Small phones (iPhone SE / Android ~360px) */
+    @media (max-width: 480px) {
+        .section-title {
+            font-size: 0.98rem !important;
+        }
+        .glass-card {
+            padding: 10px 10px !important;
+            border-radius: 10px !important;
+        }
+        div[data-testid="stRadio"] label {
+            padding: 5px 8px !important;
+            font-size: 0.74rem !important;
+        }
+        .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
+            font-size: 0.75rem !important;
+            padding: 5px 9px !important;
+        }
+        .block-container {
+            padding: 0.6rem 0.35rem 2.5rem 0.35rem !important;
+        }
+        h1 { font-size: 1.35rem !important; }
+        h2 { font-size: 1.15rem !important; }
+        h3 { font-size: 1.02rem !important; }
+        .kundli-container svg {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .section-title { font-size: 0.9rem !important; }
+        .block-container { padding: 0.5rem 0.25rem 2.2rem 0.25rem !important; }
+        table.as-table, .as-table td, .as-table th {
+            font-size: 7.2pt !important;
+            padding: 2px 3px !important;
+        }
+    }
+
+    /* =================================================================
+       ROYAL VEDIC THEME POLISH
+       =================================================================
+       Deep midnight canvas, champagne-gold accents, soft celestial glow.
+       Keeps the existing identity intact but looks far more regal & expensive.
+       ================================================================= */
+
+    :root {
+        --vyas-gold-1: #fff4cc;
+        --vyas-gold-2: #f5d16e;
+        --vyas-gold-3: #b99a3d;
+        --vyas-copper: #d9b75b;
+        --vyas-ink-1: #060914;
+        --vyas-ink-2: #0b1026;
+        --vyas-line: rgba(245, 209, 110, 0.24);
+        --vyas-glow: rgba(245, 209, 110, 0.28);
+        --vyas-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Deep royal canvas with soft vignette */
+    .stApp {
+        background:
+            radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.08) 0%, transparent 38%),
+            radial-gradient(120% 120% at 50% 100%, rgba(76, 110, 245, 0.08) 0%, transparent 42%),
+            radial-gradient(ellipse at top, #121a36 0%, #070b1a 48%, #04050d 100%) !important;
+        background-attachment: fixed !important;
+    }
+
+    /* Subtle celestial aurora */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background:
+            radial-gradient(70rem 44rem at 15% -8%, rgba(245, 209, 110, 0.14), transparent 62%),
+            radial-gradient(60rem 38rem at 90% -4%, rgba(118, 148, 255, 0.16), transparent 64%),
+            radial-gradient(56rem 48rem at 50% 120%, rgba(245, 209, 110, 0.09), transparent 68%);
+        mix-blend-mode: screen;
+    }
+
+    /* Tiny star speckles for a celestial feel */
+    .stApp::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image:
+            radial-gradient(1px 1px at 20px 30px, rgba(255, 244, 204, 0.5), transparent),
+            radial-gradient(1px 1px at 90px 80px, rgba(255, 244, 204, 0.4), transparent),
+            radial-gradient(1px 1px at 160px 40px, rgba(255, 244, 204, 0.35), transparent),
+            radial-gradient(1px 1px at 220px 110px, rgba(255, 244, 204, 0.45), transparent),
+            radial-gradient(1px 1px at 320px 60px, rgba(255, 244, 204, 0.3), transparent);
+        background-repeat: repeat;
+        background-size: 380px 150px;
+        opacity: 0.25;
+        filter: blur(0.2px);
+    }
+
+    /* Bring app content above ambient layers */
+    .block-container,
+    header,
+    [data-testid="stHeader"] {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* --- Royal Glass Cards --- */
+    .glass-card {
+        position: relative;
+        background:
+            radial-gradient(160% 160% at 50% 0%, rgba(245, 209, 110, 0.09) 0%, transparent 48%),
+            linear-gradient(180deg, rgba(19, 27, 54, 0.98) 0%, rgba(8, 12, 26, 0.98) 100%);
+        border: 1px solid rgba(245, 209, 110, 0.32);
+        border-radius: 18px;
+        padding: 24px 28px;
+        margin-bottom: 20px;
+        box-shadow:
+            0 1px 0 rgba(255, 246, 210, 0.08) inset,
+            0 28px 60px -26px rgba(0, 0, 0, 0.98),
+            0 0 0 1px rgba(245, 209, 110, 0.08);
+        transition: transform 0.4s var(--vyas-ease),
+                    box-shadow 0.4s var(--vyas-ease),
+                    border-color 0.4s var(--vyas-ease);
+        backdrop-filter: blur(18px) saturate(1.08);
+        -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    }
+
+    /* Ornamental top glow */
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 18px;
+        right: 18px;
+        height: 1px;
+        background: radial-gradient(circle, rgba(255, 244, 204, 0.9) 0%, rgba(245, 209, 110, 0.5) 40%, transparent 100%);
+        opacity: 0.9;
+        pointer-events: none;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(255, 228, 150, 0.6);
+        box-shadow:
+            0 1px 0 rgba(255, 246, 210, 0.12) inset,
+            0 36px 74px -28px rgba(0, 0, 0, 1),
+            0 0 0 1px rgba(245, 209, 110, 0.16),
+            0 0 46px -10px rgba(245, 209, 110, 0.32);
+        transform: translateY(-4px);
+    }
+
+    /* --- Royal Micro-interactions --- */
+    div[data-testid="stRadio"] label:focus-visible,
+    div.stButton > button:focus-visible,
+    [data-testid="stExpander"] summary:focus-visible {
+        outline: 1px solid rgba(255, 232, 160, 0.9) !important;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(245, 209, 110, 0.14) !important;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* --- Royal Typography Hierarchy --- */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Cinzel', 'Noto Sans Devanagari', serif !important;
+        letter-spacing: 0.4px !important;
+        text-rendering: optimizeLegibility;
+    }
+
+    h1 {
+        font-size: 2rem !important;
+        font-weight: 900 !important;
+        background: linear-gradient(90deg, #fff4cc 0%, #f5d16e 60%, #b99a3d 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 40px rgba(245, 209, 110, 0.18);
+        margin-bottom: 1rem !important;
+    }
+
+    h2 {
+        font-size: 1.6rem !important;
+        font-weight: 800 !important;
+        color: #fff4cc !important;
+        text-shadow: 0 0 28px rgba(245, 209, 110, 0.16);
+    }
+
+    h3 {
+        font-size: 1.32rem !important;
+        font-weight: 700 !important;
+        color: #f5d16e !important;
+    }
+
+    /* Smoother body text */
+    p, li, label, .stMarkdown {
+        line-height: 1.8 !important;
+        letter-spacing: 0.01em;
+    }
+        font-family: 'Cinzel', 'Noto Sans Devanagari', serif !important;
+        font-size: 1.38rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: 1.4;
+        padding: 4px 0 14px 0;
+        margin-top: 16px;
+        margin-bottom: 22px;
+        color: #fff4cc;
+        border-bottom: none;
+        background-image:
+            radial-gradient(circle, rgba(255, 228, 150, 0.95) 0%, rgba(245, 209, 110, 0.5) 45%, transparent 75%),
+            linear-gradient(90deg, transparent, rgba(245, 209, 110, 0.24) 25%, rgba(245, 209, 110, 0.24) 75%, transparent);
+        background-repeat: no-repeat, no-repeat;
+        background-size: 100% 1px, 100% 1px;
+        background-position: 0 100%, 0 100%;
+        text-shadow: 0 0 28px rgba(245, 209, 110, 0.22);
+    }
+
+    /* --- Royal Micro-interactions --- */
+    div[data-testid="stRadio"] label:focus-visible,
+    div.stButton > button:focus-visible,
+    [data-testid="stExpander"] summary:focus-visible {
+        outline: 1px solid rgba(255, 232, 160, 0.9) !important;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(245, 209, 110, 0.14) !important;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* --- Royal Navigation Pills --- */
+    div[data-testid="stRadio"] > div[role="radiogroup"] {
+        flex-wrap: wrap;
+        gap: 7px;
+        background:
+            radial-gradient(120% 120% at 50% 0%, rgba(245, 209, 110, 0.1) 0%, transparent 55%),
+            linear-gradient(180deg, rgba(9, 14, 30, 0.9) 0%, rgba(7, 10, 22, 0.95) 100%);
+        padding: 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(245, 209, 110, 0.26);
+        box-shadow:
+            0 10px 28px -16px rgba(0, 0, 0, 0.95),
+            0 1px 0 rgba(255, 246, 210, 0.05) inset;
+        margin-bottom: 18px;
+    }
+
+    div[data-testid="stRadio"] label {
+        position: relative;
+        border-radius: 999px !important;
+        padding: 9px 18px !important;
+        color: #b9c0d6 !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        letter-spacing: 0.3px !important;
+        transition: all 0.28s var(--vyas-ease) !important;
+    }
+
+    div[data-testid="stRadio"] label:hover {
+        color: #fff4cc !important;
+        background: radial-gradient(circle, rgba(245, 209, 110, 0.16) 0%, transparent 70%) !important;
+        transform: translateY(-1px);
+    }
+
+    div[data-testid="stRadio"] label[data-checked="true"] {
+        background:
+            radial-gradient(circle at 50% 0%, rgba(255, 246, 210, 0.28) 0%, transparent 65%),
+            linear-gradient(135deg, rgba(245, 209, 110, 0.36) 0%, rgba(19, 27, 54, 0.98) 100%) !important;
+        border: 1px solid rgba(255, 232, 160, 0.8) !important;
+        color: #fff6d6 !important;
+        text-shadow: 0 0 18px rgba(245, 209, 110, 0.28);
+        box-shadow:
+            0 12px 30px -14px rgba(245, 209, 110, 0.7),
+            0 1px 0 rgba(255, 246, 210, 0.16) inset !important;
+    }
+
+    /* --- Royal Prediction Cards --- */
+    .predict-card {
+        position: relative;
+        background:
+            radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.08) 0%, transparent 48%),
+            linear-gradient(180deg, rgba(18, 26, 52, 0.98) 0%, rgba(9, 13, 28, 0.98) 100%);
+        border-left: 4px solid var(--vyas-gold-2);
+        border-top: 1px solid rgba(245, 209, 110, 0.24);
+        border-right: 1px solid rgba(245, 209, 110, 0.18);
+        border-bottom: 1px solid rgba(245, 209, 110, 0.18);
+        border-radius: 14px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 20px 46px -24px rgba(0, 0, 0, 0.98);
+        transition: transform 0.4s var(--vyas-ease), box-shadow 0.4s var(--vyas-ease), border-left-color 0.4s var(--vyas-ease);
+    }
+
+    .predict-card::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: -4px;
+        width: 4px;
+        height: calc(100% - 20px);
+        border-radius: 4px;
+        background: radial-gradient(circle, #fff4cc 0%, var(--vyas-gold-2) 60%, transparent 100%);
+        filter: blur(0.4px);
+        opacity: 0.7;
+    }
+
+    .predict-card:hover {
+        transform: translateY(-3px);
+        border-left-color: #fff4cc;
+        box-shadow:
+            0 30px 62px -26px rgba(0, 0, 0, 1),
+            0 0 38px -12px rgba(245, 209, 110, 0.34);
+    }
+
+    .predict-header {
+        font-family: 'Cinzel', 'Noto Sans Devanagari', serif !important;
+        font-size: 1.14rem;
+        font-weight: 700;
+        color: #fff4cc;
+        letter-spacing: 0.6px;
+        text-shadow: 0 0 22px rgba(245, 209, 110, 0.24);
+        margin-bottom: 10px;
+    }
+
+    /* --- Royal Kundli Frame --- */
+    .kundli-container {
+        background:
+            radial-gradient(circle at 50% 38%, rgba(245, 209, 110, 0.16) 0%, rgba(10, 16, 36, 0.98) 100%);
+        border: 1px solid rgba(245, 209, 110, 0.38);
+        border-radius: 22px;
+        box-shadow:
+            0 34px 70px -30px rgba(0, 0, 0, 1),
+            0 0 0 1px rgba(245, 209, 110, 0.12),
+            inset 0 0 48px rgba(245, 209, 110, 0.1);
+        transition: transform 0.5s var(--vyas-ease), box-shadow 0.5s var(--vyas-ease);
+    }
+
+    .kundli-container:hover {
+        transform: scale(1.012);
+        box-shadow:
+            0 44px 86px -32px rgba(0, 0, 0, 1),
+            0 0 54px -14px rgba(245, 209, 110, 0.36),
+            inset 0 0 56px rgba(245, 209, 110, 0.14);
+    }
+
+    /* --- Royal Gold CTA --- */
+    div.stButton > button[kind="primary"],
+    div.stButton > button,
+    section[data-testid="stSidebar"] div.stButton > button {
+        background:
+            radial-gradient(circle at 50% 0%, rgba(255, 248, 220, 0.4) 0%, transparent 60%),
+            linear-gradient(135deg, #f5d16e 0%, #b99a3d 48%, #8f7426 100%) !important;
+        color: #1a1305 !important;
+        -webkit-text-fill-color: #1a1305 !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.8px !important;
+        text-transform: uppercase;
+        border: 1px solid rgba(255, 244, 204, 0.9) !important;
+        border-radius: 999px !important;
+        box-shadow:
+            0 16px 38px -16px rgba(245, 209, 110, 0.9),
+            0 1px 0 rgba(255, 248, 220, 0.6) inset !important;
+        transition: all 0.3s var(--vyas-ease) !important;
+    }
+
+    div.stButton > button:hover,
+    section[data-testid="stSidebar"] div.stButton > button:hover {
+        background:
+            radial-gradient(circle at 50% 0%, rgba(255, 248, 220, 0.55) 0%, transparent 62%),
+            linear-gradient(135deg, #fff4cc 0%, #f5d16e 48%, #b99a3d 100%) !important;
+        transform: translateY(-3px) scale(1.01) !important;
+        box-shadow:
+            0 24px 48px -18px rgba(245, 209, 110, 1),
+            0 0 0 1px rgba(255, 244, 204, 0.4),
+            0 1px 0 rgba(255, 248, 220, 0.7) inset !important;
+        letter-spacing: 1px !important;
+    }
+
+    /* --- Royal Expanders --- */
+    [data-testid="stExpander"] details {
+        border: 1px solid rgba(245, 209, 110, 0.28) !important;
+        border-radius: 16px !important;
+        background:
+            radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.08) 0%, transparent 50%),
+            linear-gradient(180deg, rgba(17, 25, 50, 0.95) 0%, rgba(8, 12, 26, 0.98) 100%);
+        box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.98);
+        overflow: hidden;
+    }
+
+    [data-testid="stExpander"] summary:hover {
+        background: radial-gradient(circle at 50% 0%, rgba(245, 209, 110, 0.12) 0%, transparent 70%) !important;
+    }
+
+    /* --- Dataframes --- */
+    [data-testid="stDataFrame"] {
+        border: 1px solid rgba(245, 209, 110, 0.26);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 22px 50px -28px rgba(0, 0, 0, 0.98);
+    }
+
+    /* --- Entry animation --- */
+    @keyframes vyasRise {
+        from { opacity: 0; transform: translateY(10px); filter: blur(2px); }
+        to   { opacity: 1; transform: none; filter: blur(0); }
+    }
+
+    .glass-card, .predict-card, .section-title, .kundli-container {
+        animation: vyasRise 0.6s var(--vyas-ease) both;
+    }
+
+    /* --- Reduced motion --- */
+    @media (prefers-reduced-motion: reduce) {
+        .glass-card, .predict-card, .section-title, .kundli-container,
+        div[data-testid="stRadio"] label, div.stButton > button {
+            animation: none !important;
+            transition: none !important;
+        }
+    }
+
+    /* --- Mobile tweaks --- */
+    @media (max-width: 768px) {
+        .stApp::after { opacity: 0.16; }
+        .glass-card { padding: 16px 18px !important; border-radius: 16px !important; }
+        .section-title { font-size: 1.16rem !important; letter-spacing: 0.6px !important; }
+        div[data-testid="stRadio"] > div[role="radiogroup"] { border-radius: 14px; }
+        .kundli-container { border-radius: 18px !important; }
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# Master Header with Interactive 60fps Cosmic Particle Canvas
-st.components.v1.html("""
+# Master Header with Interactive Cosmic Particle Canvas.
+# NOTE: st.components.v1.html was deprecated (removal after 2026-06-01); the
+# sanctioned replacement is st.iframe, which accepts a raw HTML string and, like
+# components.html, renders it in a sandboxed iframe that still executes <script>.
+st.iframe("""
 <!DOCTYPE html>
 <html>
 <head>
@@ -558,6 +1338,10 @@ st.components.v1.html("""
             height = canvas.height = window.innerHeight;
         });
 
+        // Honour reduced-motion: skip the animation loop entirely.
+        const reduceMotion = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
         const stars = [];
         for (let i = 0; i < 45; i++) {
             stars.push({
@@ -571,7 +1355,28 @@ st.components.v1.html("""
             });
         }
 
-        function animate() {
+        // shadowBlur is a very expensive canvas op; precomputing one glow
+        // sprite and drawing it 45x is orders of magnitude cheaper than
+        // setting shadowBlur per star per frame at 60fps.
+        const glow = document.createElement('canvas');
+        glow.width = glow.height = 16;
+        const gctx = glow.getContext('2d');
+        const grad = gctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+        grad.addColorStop(0, 'rgba(240, 192, 90, 1)');
+        grad.addColorStop(0.4, 'rgba(240, 192, 90, 0.45)');
+        grad.addColorStop(1, 'rgba(240, 192, 90, 0)');
+        gctx.fillStyle = grad;
+        gctx.fillRect(0, 0, 16, 16);
+
+        let running = true;
+        let last = 0;
+        const FRAME_MS = 1000 / 30;  // 30fps is visually identical for slow drift
+
+        function draw(t) {
+            if (!running) return;
+            if (t - last < FRAME_MS) { requestAnimationFrame(draw); return; }
+            last = t;
+
             ctx.clearRect(0, 0, width, height);
             stars.forEach(s => {
                 s.alpha += s.speed;
@@ -583,400 +1388,765 @@ st.components.v1.html("""
                 if (s.y < 0) s.y = height;
                 if (s.y > height) s.y = 0;
 
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(240, 192, 90, ' + Math.abs(s.alpha) + ')';
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = '#f0c05a';
-                ctx.fill();
+                const size = s.radius * 4;
+                ctx.globalAlpha = Math.abs(s.alpha) * 0.75;
+                ctx.drawImage(glow, s.x - size / 2, s.y - size / 2, size, size);
             });
-            requestAnimationFrame(animate);
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(draw);
         }
-        animate();
+
+        if (reduceMotion) {
+            ctx.clearRect(0, 0, width, height);
+            stars.forEach(s => {
+                const size = s.radius * 4;
+                ctx.globalAlpha = Math.abs(s.alpha) * 0.75;
+                ctx.drawImage(glow, s.x - size / 2, s.y - size / 2, size, size);
+            });
+            ctx.globalAlpha = 1;
+        } else {
+            // Stop burning CPU when the tab is hidden or the banner scrolls away.
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    running = false;
+                } else if (!running) {
+                    running = true;
+                    requestAnimationFrame(draw);
+                }
+            });
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(entries => {
+                    const visible = entries[0].isIntersecting;
+                    if (visible && !running) {
+                        running = true;
+                        requestAnimationFrame(draw);
+                    } else if (!visible) {
+                        running = false;
+                    }
+                }, { threshold: 0 }).observe(canvas);
+            }
+            requestAnimationFrame(draw);
+        }
     </script>
 </body>
 </html>
 """, height=185)
 
-# Sidebar Native Setup
-with st.sidebar:
-    # Use transparent PNG logo with cosmic gold halo
-    logo_file = "logo.png" if os.path.exists(os.path.join(os.path.dirname(__file__), "logo.png")) else "logo.jpg"
-    st.markdown(f"""
-    <div style="text-align: center; margin-bottom: 8px;">
-        <img src="data:image/png;base64,{base64.b64encode(open(os.path.join(os.path.dirname(__file__), logo_file), 'rb').read()).decode()}" 
-             style="max-width: 140px; height: auto; filter: drop-shadow(0 0 20px rgba(229, 169, 60, 0.35));" />
-        <div style="font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px; margin-top: 6px;">VYAS ASTRA</div>
-        <div style="font-size: 0.72rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
-    </div>
-    <hr style="border-color: rgba(229, 169, 60, 0.18); margin: 12px 0;">
-    """, unsafe_allow_html=True)
-    
-    # ---------------- MOBILE 1-CLICK PWA APP INSTALLATION (NATIVE PROMPT) ----------------
-    st.components.v1.html("""
-    <div id="pwa-install-container" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
-                border: 1px solid rgba(96, 165, 250, 0.5); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center;">
-        <div style="font-size: 0.9rem; font-weight: 800; color: #93c5fd; font-family: sans-serif;">📲 VYAS ASTRA ऐप इंस्टॉल करें</div>
-        <div style="font-size: 0.76rem; color: #cbd5e1; margin: 4px 0 10px 0; font-family: sans-serif;">अपने फोन की होम स्क्रीन पर सीधे 1-क्लिक में ऐप जोड़ें।</div>
-        <button id="pwa-install-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 18px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
-            ⚡ अभी इंस्टॉल करें (Install Now)
-        </button>
-    </div>
+# ---------------- SESSION RESOLUTION (before the sidebar) ----------------
+# Resolved once, up-front: the logged-out landing page is rendered in the MAIN
+# area and st.stop() ends the run before the sidebar is built. (It used to be
+# built inside `with st.sidebar:`, so visitors saw a blank main page.)
+if st.session_state.pop("_vyas_cookie_pending", False):
+    # Deferred write from the run that just signed in/out (see
+    # _start_user_session): doing it here means it survives st.rerun().
+    _write_session_cookie(st.session_state.get("_vyas_session_token", "") or "")
 
-    <script>
-        let deferredPrompt;
-        const container = document.getElementById('pwa-install-container');
-        const installBtn = document.getElementById('pwa-install-btn');
+# Mirror the token into localStorage (works where cookies are stripped) and
+# read it back on the next run. The component is zero-height and invisible.
+_store_pending = st.session_state.pop("_vyas_store_pending", "") or ""
+_clear_pending = st.session_state.pop("_vyas_clear_pending", False)
+_bridge_token = _mount_session_bridge(
+    "store" if _store_pending else ("clear" if _clear_pending else "read"),
+    _store_pending,
+)
+if _clear_pending:
+    # The component still reports the old token on the logout run (JS clears it
+    # in the browser only after this run). Never treat that as a restore.
+    _bridge_token = ""
 
-        // Automatically trigger when browser detects installable PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            container.style.display = 'block';
-        });
-
-        // Always show button on mobile devices so user can trigger it
-        if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            container.style.display = 'block';
+_current_email = (st.session_state.get("user") or {}).get("email", "")
+if (not _current_email) or _current_email == "seeker@vyasastro.com":
+    _restored = None
+    # localStorage first: it survives reloads even when the Cloud proxy drops
+    # custom cookies. The cookie remains a fallback for local/direct hosting.
+    _token = _bridge_token or _read_session_cookie()
+    if _token:
+        try:
+            _restored = auth_vault.get_user_by_session_token(_token)
+        except Exception:
+            _restored = None
+    if _restored:
+        st.session_state["user"] = _restored
+        # Keep the token so Logout can invalidate exactly this browser's row.
+        st.session_state["_vyas_session_token"] = _token
+    else:
+        st.session_state["user"] = {
+            "id": 1,
+            "name": "नया जातक (Seeker)",
+            "email": "seeker@vyasastro.com",
+            "tier": "VIP_TRIAL",
+            "days_left": 30,
+            "is_vip": True,
         }
 
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    container.style.display = 'none';
-                }
-                deferredPrompt = null;
-            } else {
-                alert("मोबाइल पर इंस्टॉल करने के लिए ब्राउज़र के शीर्ष मेनू (⋮ या शेयर आइकन) पर टैप करके 'Add to Home screen' चुनें।");
-            }
-        });
-    </script>
-    """, height=125)
-    
-    # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
-    if "user" not in st.session_state:
-        # 1. Check query param for persistent login across page refreshes
-        uid_param = st.query_params.get("uid")
-        restored_user = None
-        if uid_param:
-            try:
-                restored_user = auth_vault.get_user_by_id(int(uid_param))
-            except Exception:
-                restored_user = None
-        
-        # 2. If not in query param, check permanent active_session in SQLite DB
-        if not restored_user:
-            restored_user = auth_vault.get_last_active_user()
+# A stale `uid` param must never log anyone in; scrub it from the URL.
+if st.query_params.get("uid"):
+    st.query_params.clear()
 
-        if restored_user:
-            st.session_state["user"] = restored_user
-            st.query_params["uid"] = str(restored_user["id"])
-        else:
-            st.session_state["user"] = {
-                "id": 1,
-                "name": "नया जातक (Seeker)",
-                "email": "seeker@vyasastro.com",
-                "tier": "VIP_TRIAL",
-                "days_left": 30,
-                "is_vip": True
-            }
+u = st.session_state["user"]
+is_logged_in_now = (u.get("email") != "seeker@vyasastro.com")
 
-    u = st.session_state["user"]
-    st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
-                border: 1px solid rgba(240, 192, 90, 0.6); border-radius: 10px; padding: 10px 14px; text-align: center; margin-bottom: 8px;">
-        <div style="color: #f7d584; font-weight: 800; font-size: 0.95rem;">👑 VIP PRO TRIAL ACTIVE</div>
-        <div style="color: #eedc9a; font-size: 0.8rem; margin-top: 2px;">{u['name']} • <b>{u['days_left']} Days Left</b> (30-Day Free Trial)</div>
-    </div>
-    """, unsafe_allow_html=True)
 
-    # Hybrid Payment & Upgrade VIP Modal
-    with st.expander("💳 Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
+# ---------------- LOGGED-OUT LANDING: EMAIL LOGIN / REGISTRATION ----------------
+if not is_logged_in_now:
+    # Mount the sidebar container on the very first run of every session, even
+    # though visitors only see the landing page. Streamlit creates the sidebar
+    # lazily, and when it was first used *after* login the deployed app rendered
+    # the main page but never mounted the sidebar (birth details unreachable).
+    with st.sidebar:
         st.markdown("""
-        <div style="font-size: 0.85rem; color: #eedc9a; margin-bottom: 8px;">
-            <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, 30+ पेज PDF, D60 देवता, लाल किताब व BTR का पूर्ण एक्सेस।
+        <div style="text-align: center; padding: 10px 0;">
+            <div style="font-family: 'Cinzel', serif; font-size: 1.02rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px;">VYAS ASTRA</div>
+            <div style="font-size: 0.66rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
         </div>
         """, unsafe_allow_html=True)
-        plan_sel = st.selectbox("चुनें प्लान (Select Plan)", [
-            "🥈 वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
-            "🥉 मासिक (Monthly Starter) - ₹199 / माह",
-            "🥇 लाइफटाइम एलीट (Lifetime Elite) - ₹2,499"
-        ])
-        
-        plan_key = "annual"
-        amount = 999
-        if "मासिक" in plan_sel:
-            plan_key = "monthly"
-            amount = 199
-        elif "लाइफटाइम" in plan_sel:
-            plan_key = "lifetime"
-            amount = 2499
+        st.caption("जन्म विवरण, कुण्डली एवं विश्लेषण के लिए लॉगिन करें।")
 
-        # Dynamic UPI Link & Exact Amount QR Code
-        upi_id = "inikhilvyas@ybl"
-        payee_name = "Nikhil Vyas"
-        import urllib.parse
-        upi_uri = f"upi://pay?pa={upi_id}&pn={urllib.parse.quote(payee_name)}&am={amount}.00&cu=INR&tn={urllib.parse.quote('VYAS VIP Subscription')}"
-        encoded_uri = urllib.parse.quote(upi_uri)
-        # Generate online QR code image URL with exact payment amount embedded
-        qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encoded_uri}"
+    _hero_col, _auth_col = st.columns([1.12, 1], gap="large")
 
-        st.markdown(f"""
-        <div style="text-align: center; background: rgba(10, 16, 32, 0.9); border: 1px solid #f0c05a; border-radius: 12px; padding: 14px; margin-top: 8px;">
-            <div style="color: #f0c05a; font-weight: 800; font-size: 0.95rem;">📲 Scan & Pay ₹{amount} (Exact Amount QR)</div>
-            <div style="color: #eedc9a; font-size: 0.8rem;">(PhonePe, GPay, Paytm, BHIM - स्कैन करते ही ₹{amount} अपने आप आ जाएगा)</div>
-            <div style="margin: 12px 0;">
-                <img src="{qr_url}" width="180" height="180" style="border-radius: 10px; border: 2px solid #eedc9a; background: white; padding: 6px;"/>
+    with _hero_col:
+        st.markdown("""
+        <div style="text-align: center; padding: 34px 26px; background: radial-gradient(circle at 50% 0%, rgba(245, 209, 110, 0.14) 0%, transparent 62%), linear-gradient(180deg, rgba(19, 27, 54, 0.98) 0%, rgba(8, 12, 26, 0.98) 100%); border: 1px solid rgba(245, 209, 110, 0.32); border-radius: 18px; box-shadow: 0 28px 60px -26px rgba(0,0,0,0.98);">
+            <div style="font-family: 'Cinzel', serif; font-size: 2.1rem; font-weight: 800; background: linear-gradient(90deg, #fff4cc 0%, #f5d16e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px;">VYAS ASTRA</div>
+            <div style="font-size: 1.05rem; color: #f7d584; margin-bottom: 8px; font-weight: 600;">वैदिक ज्योतिष • के.पी. प्रणाली • शोध प्रबंध</div>
+            <div style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">सटीक जन्मकुंडली विश्लेषण, विंशोत्तरी दशा,<br/>के.पी. फलादेश एवं विस्तृत PDF रिपोर्ट</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="margin-top: 16px; display: grid; gap: 10px;">
+            <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
+                🪔 <b style="color:#f7d584;">पूर्ण कुण्डली</b> — लग्न, नवांश, ग्रह-दशा, योग एवं भाव विश्लेषण
             </div>
-            <div style="font-size: 0.85rem; color: #f7d584;"><b>UPI ID:</b> <code>{upi_id}</code></div>
-            <div style="font-size: 0.95rem; color: #48cae4; font-weight: 800; margin-top: 5px;">कुल देय राशि: ₹{amount}</div>
+            <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
+                🔮 <b style="color:#f7d584;">के.पी. सूट</b> — सब-लॉर्ड, रूलिंग प्लैनेट्स एवं 4-फोल्ड सिग्निफिकेटर
+            </div>
+            <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
+                📜 <b style="color:#f7d584;">56-पृष्ठ PDF</b> — प्रिंट-रेडी रिपोर्ट, Google Drive में सुरक्षित
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<small style='color: #eedc9a;'><b>भुगतान के बाद पुष्टि करें (Verification):</b></small>", unsafe_allow_html=True)
-        txn_input = st.text_input("UPI Reference / UTR No.", placeholder="e.g. 428192849120", key="txn_field")
-        
-        col_pay1, col_pay2 = st.columns(2)
-        with col_pay1:
-            if st.button("✅ Confirm Payment", use_container_width=True):
-                if txn_input and len(txn_input) >= 6:
-                    ok, up_msg = auth_vault.upgrade_vip(u["id"], plan_key, txn_input)
-                    if ok:
-                        st.session_state["user"]["tier"] = "VIP_PAID"
-                        st.session_state["user"]["is_vip"] = True
-                        st.success(up_msg)
+    with _auth_col:
+        st.markdown(
+            '<div style="font-size:1.15rem;font-weight:800;color:#fef3c7;margin-bottom:2px;">'
+            'खाते में प्रवेश करें</div>'
+            '<div style="font-size:0.82rem;color:#94a3b8;margin-bottom:10px;">'
+            'ईमेल से नया खाता बनाएं या लॉगिन करें</div>',
+            unsafe_allow_html=True,
+        )
+
+        _tab_login, _tab_register = st.tabs(["🔑 लॉगिन", "✨ नया खाता"])
+
+        with _tab_login:
+            with st.form("vyas_login_form", clear_on_submit=False):
+                _in_email = st.text_input("ईमेल", key="login_email", placeholder="you@example.com")
+                _in_pw = st.text_input("पासवर्ड", type="password", key="login_pw")
+                _in_submit = st.form_submit_button("लॉगिन करें", type="primary", use_container_width=True)
+            if _in_submit:
+                _ok_in, _msg_in, _u_in = auth_vault.login_user(_in_email, _in_pw)
+                if _ok_in and _u_in:
+                    _start_user_session(_u_in)
+                    st.rerun()
+                else:
+                    st.error(_msg_in)
+            st.caption("पासवर्ड भूल गए? नीचे 'नया खाता' से नया खाता बना सकते हैं।")
+
+        with _tab_register:
+            with st.form("vyas_register_form", clear_on_submit=False):
+                _up_name = st.text_input("पूरा नाम", key="reg_name", placeholder="जैसे: राहुल शर्मा")
+                _up_email = st.text_input("ईमेल", key="reg_email", placeholder="you@example.com")
+                _up_pw = st.text_input("पासवर्ड (कम से कम 6 अक्षर)", type="password", key="reg_pw")
+                _up_pw2 = st.text_input("पासवर्ड दोबारा", type="password", key="reg_pw2")
+                _up_submit = st.form_submit_button("निःशुल्क खाता बनाएं", type="primary", use_container_width=True)
+            if _up_submit:
+                if not (_up_name or "").strip():
+                    st.error("कृपया अपना नाम भरें।")
+                elif "@" not in (_up_email or ""):
+                    st.error("कृपया सही ईमेल आईडी भरें।")
+                elif len(_up_pw or "") < 6:
+                    st.error("पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।")
+                elif _up_pw != _up_pw2:
+                    st.error("दोनों पासवर्ड मेल नहीं खा रहे।")
+                else:
+                    _ok_up, _msg_up, _u_up = auth_vault.register_user(_up_email, _up_name, _up_pw)
+                    if _ok_up and _u_up:
+                        _start_user_session(_u_up)
                         st.rerun()
                     else:
-                        st.error(up_msg)
-                else:
-                    st.warning("कृपया मान्य UTR / ट्रांजैक्शन नंबर दर्ज करें।")
-        with col_pay2:
-            wa_text = f"Namaste Nikhil Ji, I have paid INR {amount} for VYAS VIP ({plan_key}). UTR: {txn_input}"
-            wa_url = f"https://wa.me/919414121172?text={wa_text.replace(' ', '%20')}"
-            st.markdown(f"""
-            <a href="{wa_url}" target="_blank" style="text-decoration: none;">
-                <button style="width: 100%; background: #25D366; color: white; border: none; border-radius: 6px; padding: 7px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
-                    💬 WhatsApp Help
-                </button>
-            </a>
-            """, unsafe_allow_html=True)
+                        st.error(_msg_up)
+            st.caption("✨ नए खाते पर **30 दिन का VIP Pro ट्रायल निःशुल्क**।")
 
-    with st.expander("👤 User Account / Login / Register (लॉगिन व खाता)", expanded=False):
-        # 1-Click Google Sign-in option
-        st.markdown("""
-        <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(240, 192, 90, 0.3); border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 12px;">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; color: #f8fafc; font-size: 0.88rem;">
-                <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-                Google से त्वरित लॉगिन (1-Click Google Auth)
-            </div>
+        _google_login_url = google_drive_sync.get_google_auth_url(include_drive=False)
+        if _google_login_url:
+            st.markdown(
+                "<div style='text-align:center;color:#64748b;font-size:0.78rem;margin:12px 0 6px;'>— या —</div>",
+                unsafe_allow_html=True,
+            )
+            st.link_button("Google से साइन इन करें", _google_login_url, use_container_width=True)
+
+    with st.expander("🛠️ साइन-इन में समस्या? / Sign-in help", expanded=False):
+        _diag = google_drive_sync.oauth_diagnostics()
+        _bad = []
+        if _diag["client_id_configured"] != "yes":
+            _bad.append("Google Client ID सेट नहीं है — Streamlit **Secrets** में `GOOGLE_CLIENT_ID` जोड़ें।")
+        if _diag["client_secret_configured"] != "yes":
+            _bad.append("Google Client Secret सेट नहीं है — Secrets में `GOOGLE_CLIENT_SECRET` जोड़ें।")
+        if _diag["redirect_uri_registered"] != "yes":
+            _bad.append("यह Redirect URI Google Cloud Console में registered नहीं है (नीचे देखें)।")
+        if _bad:
+            st.warning(" • ".join(_bad))
+        else:
+            st.success("Google क्रेडेंशियल्स ठीक दिख रहे हैं।")
+        st.markdown(
+            f"**Redirect URI (यही Google Console में डालें):**\n\n"
+            f"`{_diag['effective_redirect_uri']}`"
+        )
+        if _diag["last_oauth_error"]:
+            st.error(f"अंतिम Google त्रुटि:\n\n{_diag['last_oauth_error']}")
+        st.caption(
+            "ईमेल/पासवर्ड से लॉगिन हमेशा काम करता है — Google वैकल्पिक है। "
+            "Google के लिए OAuth client में redirect URI जोड़ें और Audience → Test users में Gmail डालें।"
+        )
+
+    st.stop()
+
+# Sidebar Native Setup
+with st.sidebar:
+    # Use the compact logo variant (the sidebar renders it at max 110px, so the
+    # 1 MB original only bloats every rerun's HTML payload).
+    _here = os.path.dirname(__file__)
+    if os.path.exists(os.path.join(_here, "logo_icon.png")):
+        logo_file = "logo_icon.png"
+    elif os.path.exists(os.path.join(_here, "logo.png")):
+        logo_file = "logo.png"
+    else:
+        logo_file = "logo.jpg"
+    try:
+        _logo_b64 = base64.b64encode(open(os.path.join(_here, logo_file), 'rb').read()).decode()
+    except Exception:
+        _logo_b64 = ""
+    st.markdown(f"""
+    <div style="text-align: center; margin-bottom: 8px;">
+        <img src="data:image/png;base64,{_logo_b64}" 
+             style="max-width: 110px; height: auto; filter: drop-shadow(0 0 18px rgba(229, 169, 60, 0.32));" />
+        <div style="font-family: 'Cinzel', serif; font-size: 1.08rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px; margin-top: 6px;">VYAS ASTRA</div>
+        <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
+    </div>
+    <hr style="border-color: rgba(229, 169, 60, 0.16); margin: 10px 0;">
+    """, unsafe_allow_html=True)
+    
+    # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
+    # `u` and `is_logged_in_now` are resolved once, above the sidebar.
+    
+    # ---------------- MOBILE 1-CLICK PWA APP INSTALLATION (NATIVE PROMPT) ----------------
+    if is_logged_in_now:
+        st.iframe("""
+        <div id="pwa-install-container" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
+                    border: 1px solid rgba(96, 165, 250, 0.5); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center;">
+            <div style="font-size: 0.9rem; font-weight: 800; color: #93c5fd; font-family: sans-serif;">📲 VYAS ASTRA ऐप इंस्टॉल करें</div>
+            <div style="font-size: 0.76rem; color: #cbd5e1; margin: 4px 0 10px 0; font-family: sans-serif;">अपने फोन की होम स्क्रीन पर सीधे 1-क्लिक में ऐप जोड़ें।</div>
+            <button id="pwa-install-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 18px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
+                ⚡ अभी इंस्टॉल करें (Install Now)
+            </button>
+        </div>
+
+        <script>
+            let deferredPrompt;
+            const container = document.getElementById('pwa-install-container');
+            const installBtn = document.getElementById('pwa-install-btn');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                container.style.display = 'block';
+            });
+
+            if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                container.style.display = 'block';
+            }
+
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        container.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                } else {
+                    alert("मोबाइल पर इंस्टॉल करने के लिए ब्राउज़र के शीर्ष मेनू (⋮ या शेयर आइकन) पर टैप करके 'Add to Home screen' चुनें।");
+                }
+            });
+        </script>
+        """, height=125)
+    
+    if is_logged_in_now:
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 47, 0.95) 100%);
+                    border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 10px; padding: 8px 12px; text-align: center; margin-bottom: 8px;">
+            <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">👑 VIP PRO TRIAL ACTIVE</div>
+            <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{u['name']} • <b>{u['days_left']} Days Left</b></div>
         </div>
         """, unsafe_allow_html=True)
-        g_col1, g_col2 = st.columns([1.5, 1])
-        with g_col1:
-            google_email = st.text_input("Google Email", "user@gmail.com", key="g_email_in")
-        with g_col2:
-            st.write("")
-            st.write("")
-            if st.button("🚀 Google Sign-In", use_container_width=True):
-                ok, msg, u_data = auth_vault.login_or_register_google(google_email, google_email.split("@")[0])
-                if ok and u_data:
-                    st.session_state["user"] = u_data
-                    auth_vault.set_active_session_user(u_data["id"])
-                    st.query_params["uid"] = str(u_data["id"])
-                    st.success(msg)
-                    st.rerun()
-                else:
-                    st.error(msg)
 
-        st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.78rem; margin: 8px 0;'>— या ईमेल द्वारा लॉगिन करें —</div>", unsafe_allow_html=True)
-        auth_mode = st.radio("Account Action", ["Login (लॉगिन)", "Register (नया खाता)"], horizontal=True)
-        if "Register" in auth_mode or "खाता" in auth_mode:
-            reg_name = st.text_input("Full Name (पूरा नाम)", "New Seeker")
-            reg_email = st.text_input("Email (ईमेल)", "seeker@example.com")
-            reg_pwd = st.text_input("Password (पासवर्ड)", type="password")
-            if st.button("Activate 30-Day Free VIP Trial", use_container_width=True):
-                ok, msg, u_data = auth_vault.register_user(reg_email, reg_name, reg_pwd)
-                if ok and u_data:
-                    st.session_state["user"] = u_data
-                    auth_vault.set_active_session_user(u_data["id"])
-                    st.query_params["uid"] = str(u_data["id"])
-                    st.success(msg)
-                    st.rerun()
-                else:
-                    st.error(msg)
-        else:
-            log_email = st.text_input("Registered Email (ईमेल)", "inikhilvyas@gmail.com")
-            log_pwd = st.text_input("Password (पासवर्ड)", type="password", key="log_pwd")
-            if st.button("Login (लॉगिन करें)", use_container_width=True):
-                ok, msg, u_data = auth_vault.login_user(log_email, log_pwd)
-                if ok and u_data:
-                    st.session_state["user"] = u_data
-                    auth_vault.set_active_session_user(u_data["id"])
-                    st.query_params["uid"] = str(u_data["id"])
-                    st.success(msg)
-                    st.rerun()
-                else:
-                    st.error(msg)
+    # Hybrid Payment & Upgrade VIP Modal
+    if is_logged_in_now:
+        with st.expander("💳 Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
+            st.markdown("""
+            <div style="font-size: 0.82rem; color: #eedc9a; margin-bottom: 8px;">
+                <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, विस्तृत रिपोर्ट्स, लाल किताब व BTR का पूर्ण एक्सेस।
+            </div>
+            """, unsafe_allow_html=True)
+            plan_sel = st.selectbox("चुनें प्लान (Select Plan)", [
+                "🥈 वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
+                "🥉 मासिक (Monthly Starter) - ₹199 / माह",
+                "🥇 लाइफटाइम एलीट (Lifetime Elite) - ₹2,499"
+            ])
+            
+            plan_key = "annual"
+            amount = 999
+            if "मासिक" in plan_sel:
+                plan_key = "monthly"
+                amount = 199
+            elif "लाइफटाइम" in plan_sel:
+                plan_key = "lifetime"
+                amount = 2499
 
-        # Logout button
-        if st.session_state.get("user") and st.session_state["user"].get("email") != "seeker@vyasastro.com":
-            if st.button("🚪 Logout (लॉगआउट करें)", key="logout_btn", use_container_width=True):
-                auth_vault.clear_active_session()
+            upi_id = "inikhilvyas@ybl"
+            payee_name = "Nikhil Vyas"
+            import urllib.parse
+            upi_uri = f"upi://pay?pa={upi_id}&pn={urllib.parse.quote(payee_name)}&am={amount}.00&cu=INR&tn={urllib.parse.quote('VYAS VIP Subscription')}"
+            encoded_uri = urllib.parse.quote(upi_uri)
+            qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={encoded_uri}"
+
+            st.markdown(f"""
+            <div style="text-align: center; background: rgba(10, 16, 32, 0.9); border: 1px solid #f0c05a; border-radius: 12px; padding: 12px; margin-top: 8px;">
+                <div style="color: #f0c05a; font-weight: 800; font-size: 0.9rem;">📲 Scan & Pay ₹{amount}</div>
+                <div style="color: #eedc9a; font-size: 0.76rem;">(PhonePe, GPay, Paytm, BHIM)</div>
+                <div style="margin: 10px 0;">
+                    <img src="{qr_url}" width="160" height="160" style="border-radius: 10px; border: 2px solid #eedc9a; background: white; padding: 6px;"/>
+                </div>
+                <div style="font-size: 0.8rem; color: #f7d584;"><b>UPI ID:</b> <code>{upi_id}</code></div>
+                <div style="font-size: 0.9rem; color: #48cae4; font-weight: 800; margin-top: 4px;">कुल देय राशि: ₹{amount}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            st.markdown("<small style='color: #eedc9a;'><b>भुगतान के बाद पुष्टि करें:</b></small>", unsafe_allow_html=True)
+            txn_input = st.text_input("UPI Reference / UTR No.", placeholder="e.g. 428192849120", key="txn_field")
+            
+            col_pay1, col_pay2 = st.columns(2)
+            with col_pay1:
+                if st.button("✅ Confirm Payment", use_container_width=True):
+                    if txn_input and len(txn_input) >= 6:
+                        ok, up_msg = auth_vault.upgrade_vip(u["id"], plan_key, txn_input)
+                        if ok:
+                            st.session_state["user"]["tier"] = "VIP_PAID"
+                            st.session_state["user"]["is_vip"] = True
+                            st.success(up_msg)
+                            st.rerun()
+                        else:
+                            st.error(up_msg)
+                    else:
+                        st.warning("कृपया मान्य UTR दर्ज करें।")
+            with col_pay2:
+                wa_text = f"Namaste Nikhil Ji, I have paid INR {amount} for VYAS VIP ({plan_key}). UTR: {txn_input}"
+                wa_url = f"https://wa.me/919414121172?text={wa_text.replace(' ', '%20')}"
+                st.markdown(f"""
+                <a href="{wa_url}" target="_blank" style="text-decoration: none;">
+                    <button style="width: 100%; background: #25D366; color: white; border: none; border-radius: 6px; padding: 7px; font-weight: 700; font-size: 0.82rem; cursor: pointer;">
+                        💬 WhatsApp Help
+                    </button>
+                </a>
+                """, unsafe_allow_html=True)
+
+    # ---------------- USER AUTHENTICATION & SESSION ----------------
+    is_logged_in = (u["email"] != "seeker@vyasastro.com")
+    
+    with st.expander("👤 मेरा खाता / Account & Login", expanded=not is_logged_in):
+        if is_logged_in:
+            u_tokens = auth_vault.get_google_tokens(u["id"])
+            has_gdrive = bool(u_tokens and u_tokens.get("access_token"))
+            gdrive_status_html = """
+            <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                <b>Google Drive:</b> सक्रिय ('VYAS Kundli & Horoscopes' सिंक चालू)
+            </div>
+            """ if has_gdrive else """
+            <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
+                ⚠️ Google Drive कनेक्ट नहीं है (नीचे से कनेक्ट करें)
+            </div>
+            """
+
+            st.markdown(f"""
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
+                <div style="font-weight: 700; color: #34d399;">सफलतापूर्वक लॉगिन: {u['name']}</div>
+                <div style="font-size: 0.8rem; color: #cbd5e1;">{u['email']}</div>
+                {gdrive_status_html}
+            </div>
+            """, unsafe_allow_html=True)
+
+            if not has_gdrive:
+                auth_url = google_drive_sync.get_google_auth_url(include_drive=True)
+                if auth_url:
+                    st.link_button(
+                        "☁️ Google Drive से कनेक्ट करें",
+                        auth_url,
+                        use_container_width=True,
+                        help="Drive में PDF सुरक्षित करने के लिए अनुमति दें।",
+                    )
+
+            if st.button("🚪 Logout (लॉगआउट)", key="sidebar_logout_btn", use_container_width=True):
+                _end_user_session()
                 st.query_params.clear()
-                st.session_state["user"] = {
-                    "id": 1,
-                    "name": "नया जातक (Seeker)",
-                    "email": "seeker@vyasastro.com",
-                    "tier": "VIP_TRIAL",
-                    "days_left": 30,
-                    "is_vip": True
-                }
-                st.session_state.pop("loaded_profile", None)
-                st.success("सफलतापूर्वक लॉगआउट हुआ।")
+                # Drop the durable OAuth copies too, otherwise a stale nonce or
+                # verifier from before the logout could satisfy a later callback.
+                for _dk in ("oauth_state", "oauth_code_verifier"):
+                    try:
+                        auth_vault.pop_app_state(_dk)
+                    except Exception:
+                        pass
+                st.success("लॉगआउट हुआ।")
                 st.rerun()
+        else:
+            auth_url = google_drive_sync.get_google_auth_url(include_drive=False)
+            if auth_url:
+                # A plain top-level navigation (<a target="_top">) is silently
+                # blocked when the app is framed with a sandbox that omits
+                # allow-top-navigation — the click then does nothing at all.
+                # Streamlit's own link_button renders a real anchor that opens
+                # Google in a NEW top-level tab, which Google always allows.
+                st.link_button(
+                    "Google से साइन इन करें",
+                    auth_url,
+                    use_container_width=True,
+                    type="primary",
+                    help="सुरक्षित OAuth 2.0 — Google लॉगिन नई विंडो में खुलेगा।",
+                )
+                st.caption("🔒 साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
+            else:
+                st.markdown(
+                    '<div style="background: rgba(250,204,21,0.10); border:1px solid #facc15; '
+                    'border-radius:8px; padding:10px 12px; font-size:0.78rem; line-height:1.5;">'
+                    '<b>🔑 Google Login सेटअप आवश्यक</b><br/>'
+                    'Google लॉगिन के लिए Admin ने क्रेडेंशियल्स कॉन्फ़िगर करने होंगे।'
+                    '</div>',
+                    unsafe_allow_html=True
+                )
 
-    # Saved Kundlis Vault (Always visible & prominent at top of sidebar)
-    saved_list = auth_vault.get_saved_kundlis(u["id"])
-    st.markdown(f"""
-    <div style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 10px; padding: 10px 14px; margin: 10px 0;">
-        <div style="color: #38bdf8; font-weight: 800; font-size: 0.95rem;">📁 मेरी सेव की गई कुंडलियां (Saved Kundlis: {len(saved_list)})</div>
-        <div style="color: #cbd5e1; font-size: 0.78rem;">यहाँ से अपनी पहले से सुरक्षित की हुई कोई भी कुंडली 1-क्लिक में खोलें।</div>
+    # Hide admin/debug panels from non-logged-in users for cleaner landing page
+    if is_logged_in:
+        with st.expander("⚙️ Google Cloud API Credentials (Admin Only)", expanded=False):
+            g_cfg = google_drive_sync.load_google_config()
+            # Never render stored OAuth secrets in the browser.
+            cfg_cid = st.text_input("Google Client ID", value="", key="cfg_cid_in", placeholder="Leave blank to keep current Client ID")
+            cfg_csec = st.text_input("Google Client Secret", value="", type="password", key="cfg_csec_in", placeholder="Leave blank to keep current secret")
+            st.caption("Stored credentials remain server-side. Enter new values only when rotating them.")
+            cfg_ruri = st.text_input("Redirect URI", value=g_cfg.get("redirect_uri", "http://localhost:8501"), key="cfg_ruri_in")
+            if st.button("💾 Save Credentials", key="save_g_cfg_btn", use_container_width=True):
+                if google_drive_sync.save_google_config(cfg_cid, cfg_csec, cfg_ruri):
+                    st.success("Google OAuth सेटिंग्स सुरक्षित हुईं!")
+                    st.rerun()
+                else:
+                    st.error("सेव करने में त्रुटि।")
+            st.markdown("""
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px; line-height: 1.45;">
+                <b>क्रेडेंशियल्स प्राप्त करने का तरीका:</b><br/>
+                1. <a href="https://console.cloud.google.com/auth/clients" target="_blank" style="color: #60a5fa;">Google Cloud Console → Google Auth Platform → Clients</a> में जाएं।<br/>
+                2. <b>Google Drive API</b> को Enable करें।<br/>
+                3. OAuth 2.0 Web Client बनाएं और <b>Authorized redirect URIs</b> में ये दोनों जोड़ें
+                (अंत में स्लैश नहीं — Google में byte-exact मैच होना चाहिए):<br/>
+                <code>http://localhost:8501</code> (local के लिए)<br/>
+                <code>https://vyas-astrology-111.streamlit.app</code> (live app के लिए)<br/>
+                4. जिस Gmail से लॉगिन करना है उसे <b>Audience → Test users</b> में जोड़ें (या app Publish करें)।
+            </div>
+            """, unsafe_allow_html=True)
+
+            # ---- Account storage (persistence) ----
+            with st.expander("🗄️ Account Storage (खाते कहाँ सेव हैं)", expanded=False):
+                if auth_vault.BACKEND == "postgres":
+                    st.success("Neon Postgres — खाते redeploy/reboot के बाद भी सुरक्षित रहेंगे।")
+                else:
+                    st.warning(
+                        "Local SQLite — Streamlit Cloud redeploy पर खाते मिट सकते हैं। "
+                        "Settings → Secrets में DATABASE_URL जोड़ें।"
+                    )
+                if auth_vault.LAST_DB_ERROR:
+                    st.caption(f"Last DB error: {auth_vault.LAST_DB_ERROR}")
+
+            # ---- OAuth diagnostics ----
+            with st.expander("🔍 OAuth Debug (redirect URI जाँचें)", expanded=False):
+                _eff_redirect = google_drive_sync.resolve_redirect_uri(
+                    google_drive_sync.load_google_config().get("redirect_uri", "")
+                )
+                _auth_url = google_drive_sync.get_google_auth_url()
+                _sent_redirect = ""
+                try:
+                    _qs = urllib.parse.parse_qs(urllib.parse.urlparse(_auth_url).query)
+                    _sent_redirect = (_qs.get("redirect_uri") or [""])[0]
+                except Exception:
+                    pass
+
+                st.code(
+                    "Effective redirect_uri : " + repr(_eff_redirect) + "\n"
+                    + "Sent in auth URL     : " + repr(_sent_redirect) + "\n"
+                    + "Match (code side)    : "
+                    + ("OK" if _eff_redirect == _sent_redirect else "MISMATCH!") + "\n"
+                    + "Registered in code   : " + repr(sorted(google_drive_sync.REGISTERED_REDIRECT_URIS)) + "\n"
+                    + "st.context.url       : " + repr(str(getattr(st.context, "url", "") or "")) + "\n"
+                    + "X-Forwarded-Host     : " + repr(st.context.headers.get("X-Forwarded-Host")) + "\n"
+                    + "X-Forwarded-Proto    : " + repr(st.context.headers.get("X-Forwarded-Proto")) + "\n"
+                    + "Host                 : " + repr(st.context.headers.get("Host")),
+                    language="text",
+                )
+                st.caption(
+                    "Google Console → Clients → VYAS Astra → Authorized redirect URIs में "
+                    "ऊपर की 'Sent in auth URL' वाली value बिल्कुल वैसी ही होनी चाहिए "
+                    "(trailing slash, http vs https, www — कुछ भी अलग नहीं)।"
+                )
+
+                if st.button("🔬 Google क्रेडेंशियल्स जाँचें", key="test_g_creds_btn", use_container_width=True):
+                    _ok_gc, _msg_gc = google_drive_sync.test_google_credentials()
+                    if _ok_gc:
+                        st.success(_msg_gc)
+                    else:
+                        st.error(_msg_gc)
+
+    # ---------------- SAVED KUNDLIS VAULT (FULL MANAGEMENT) ----------------
+    if is_logged_in_now:
+        saved_list = auth_vault.get_saved_kundlis(u["id"])  # retrieve saved profiles
+# Quick open saved Kundli button (outside expander)
+if is_logged_in_now:
+    if st.button("🔓 Open Saved Kundli", use_container_width=True):
+        if not saved_list:
+            st.info("कोई सुरक्षित कुण्डली नहीं है। पहले 'कुण्डली सुरक्षित करें' बटन से सेव करें.")
+        else:
+            k_map = {f"{k['name']} ({k['dob']})": k for k in saved_list}
+            sel = st.selectbox("कुण्डली चुनें:", list(k_map.keys()))
+            chosen = k_map[sel]
+            st.session_state['loaded_profile'] = dict(chosen)
+            st.session_state['lat'] = float(chosen.get('lat', 28.6139))
+            st.session_state['lon'] = float(chosen.get('lon', 77.2090))
+            st.session_state['city_name'] = chosen.get('city', 'New Delhi, India')
+            st.session_state['city_search_input'] = chosen.get('city', 'New Delhi, India')
+            st.session_state['_last_chosen_city'] = chosen.get('city', 'New Delhi, India')
+            st.session_state.pop('selected_city_dropdown', None)
+            st.session_state['data_generated'] = False
+            for _stale_key in ('chart', 'birth', 'kp_cusps', 'dasha_engine', 'vargas_matrix', 'panchang', 'gochar', 'predictions', '_birth_input_sig'):
+                st.session_state.pop(_stale_key, None)
+            st.success(f"'{chosen['name']}' की कुण्डली लोड हो गई! अब 'Generate' दबाएँ.")
+            st.rerun()
+        
+        with st.expander(f"📁 मेरी सुरक्षित कुण्डलियाँ ({len(saved_list)}) — खोलें / Open saved Kundli", expanded=True):
+            if saved_list:
+                k_display_map = {f"{k['name']} ({k['dob']} - {k.get('city', '')})": k for k in saved_list}
+                chosen_k_label = st.selectbox("कुण्डली चुनें:", list(k_display_map.keys()), key="saved_k_picker")
+                chosen_k = k_display_map[chosen_k_label]
+
+                col_kv1, col_kv2 = st.columns(2)
+                with col_kv1:
+                    if st.button("📂 खोलें (Open)", key="open_k_btn", use_container_width=True):
+                        st.session_state['loaded_profile'] = dict(chosen_k)
+                        st.session_state['lat'] = float(chosen_k.get('lat', 28.6139))
+                        st.session_state['lon'] = float(chosen_k.get('lon', 77.2090))
+                        st.session_state['city_name'] = chosen_k.get('city', 'New Delhi, India')
+                        st.session_state['city_search_input'] = chosen_k.get('city', 'New Delhi, India')
+                        st.session_state['_last_chosen_city'] = chosen_k.get('city', 'New Delhi, India')
+                        st.session_state.pop('selected_city_dropdown', None)
+                        st.session_state['data_generated'] = False
+                        for _stale_key in ('chart', 'birth', 'kp_cusps', 'dasha_engine', 'vargas_matrix', 'panchang', 'gochar', 'predictions', '_birth_input_sig'):
+                            st.session_state.pop(_stale_key, None)
+                        st.rerun()
+                with col_kv2:
+                    if st.button("🗑️ हटाएं (Delete)", key="del_k_btn", use_container_width=True):
+                        ok_del, del_msg = auth_vault.delete_kundli(u["id"], chosen_k["id"])
+                        if ok_del:
+                            if st.session_state.get('loaded_profile', {}).get('id') == chosen_k["id"]:
+                                st.session_state.pop('loaded_profile', None)
+                            st.success(del_msg)
+                            st.rerun()
+                        else:
+                            st.error(del_msg)
+            else:
+                st.info("💡 अभी कोई कुण्डली सुरक्षित नहीं है। नीचे जन्म विवरण भरकर **'💾 कुण्डली सुरक्षित करें'** बटन दबाएं।")
+    # Hide saved kundlis expander for non-logged users for cleaner UI
+
+st.markdown("""
+<div style="margin: 4px 0 16px; padding: 18px 22px; border-radius: 14px;
+            background: radial-gradient(circle at 8% 0%, rgba(229,169,60,0.20) 0%, transparent 55%),
+                        linear-gradient(135deg, rgba(19,27,54,0.96) 0%, rgba(8,12,26,0.96) 100%);
+            border: 1px solid rgba(229,169,60,0.38); box-shadow: 0 18px 40px -24px #000;">
+    <div style="font-family: 'Cinzel', serif; font-size: 1.45rem; font-weight: 800; color: #fef3c7; letter-spacing: 0.5px;">
+        🪔 अपनी कुण्डली बनाएं
+    </div>
+    <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 5px;">
+        जन्म विवरण भरें, फिर नीचे <b style="color:#f7d584;">“कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं”</b> दबाएं।
+        चाहें तो <b style="color:#f7d584;">“कुण्डली सुरक्षित करें”</b> से प्रोफ़ाइल वॉल्ट में भी रख सकते हैं।
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+if is_logged_in_now and saved_list:
+    st.info("📂 आपकी सुरक्षित कुण्डलियाँ ऊपर खुली हैं। सूची से कुण्डली चुनकर **खोलें / Open** दबाएँ; नई कुण्डली नीचे बनाएं।")
+
+ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True)
+is_hi = "हिन्दी" in ui_lang
+
+if is_logged_in_now:
+    st.subheader("Native Details / जातक विवरण" if is_hi else "Native Details")
+    mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
+else:
+    st.markdown("""
+    <div style="text-align: center; padding: 40px 20px; background: radial-gradient(circle at 50% 0%, rgba(245, 209, 110, 0.12) 0%, transparent 60%), linear-gradient(180deg, rgba(19, 27, 54, 0.98) 0%, rgba(8, 12, 26, 0.98) 100%); border: 1px solid rgba(245, 209, 110, 0.32); border-radius: 18px; margin-top: 30px; box-shadow: 0 28px 60px -26px rgba(0,0,0,0.98);">
+        <div style="font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, #fff4cc 0%, #f5d16e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px;">VYAS ASTRA</div>
+        <div style="font-size: 1.1rem; color: #f7d584; margin-bottom: 8px; font-weight: 600;">वैदिक ज्योतिष • के.पी. प्रणाली • शोध प्रबंध</div>
+        <div style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 24px;">सटीक जन्मकुंडली विश्लेषण, विंशोत्तरी दशा, के.पी. फलादेश एवं विस्तृत PDF रिपोर्ट</div>
+        <div style="color: #94a3b8; font-size: 0.9rem;">कुण्डली बनाना शुरू करने के लिए ऊपर 'Google से साइन इन करें' पर क्लिक करें</div>
     </div>
     """, unsafe_allow_html=True)
-    if saved_list:
-        k_names = [f"🔮 {k['name']} — {k['dob']} ({k.get('city', '')})" for k in saved_list]
-        selected_k_idx = st.selectbox("खोलें सुरक्षित कुंडली (Select Kundli to Open)", range(len(saved_list)), format_func=lambda i: k_names[i])
-        col_load1, col_load2 = st.columns([1.5, 1])
-        with col_load1:
-            if st.button("⚡ कुंडली लोड करें (Open Chart)", key="load_saved_k_btn", use_container_width=True):
-                sk = saved_list[selected_k_idx]
-                st.session_state['loaded_profile'] = sk
-                st.session_state['data_generated'] = False
-                st.success(f"'{sk['name']}' की कुंडली लोड हो गई!")
-                st.rerun()
-    else:
-        st.info("💡 अभी कोई कुंडली सेव नहीं है। नीचे जन्म विवरण भरकर **'💾 Save Profile to Vault'** बटन दबाएं।")
+    st.stop()
 
-    ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True)
-    is_hi = "हिन्दी" in ui_lang
-    
-    st.header("Native Details / जातक विवरण" if is_hi else "Native Details")
-    mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
-    
-    lp = st.session_state.get('loaded_profile', {})
-    default_name = lp.get('name', 'जातक / Seeker')
-    default_city = lp.get('city', 'New Delhi, India')
-    default_lat = float(lp.get('lat', 28.6139))
-    default_lon = float(lp.get('lon', 77.2090))
-    default_tz = float(lp.get('tz', 5.5))
+lp = st.session_state.get('loaded_profile', {})
+default_name = lp.get('name', 'जातक / Seeker')
+default_city = lp.get('city', 'New Delhi, India')
+default_lat = float(lp.get('lat', 28.6139))
+default_lon = float(lp.get('lon', 77.2090))
+default_tz = float(lp.get('tz', 5.5))
 
-    default_dob = datetime(1995, 1, 1).date()
-    if lp.get('dob'):
-        try:
-            default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
-        except Exception:
-            pass
+default_dob = datetime(1995, 1, 1).date()
+if lp.get('dob'):
+    try:
+        default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
+    except Exception:
+        pass
 
-    def_h, def_m, def_s = 12, 0, 0
-    if lp.get('tob'):
-        try:
-            parts = [int(p) for p in lp['tob'].split(':')]
-            if len(parts) >= 1: def_h = parts[0]
-            if len(parts) >= 2: def_m = parts[1]
-            if len(parts) >= 3: def_s = parts[2]
-        except Exception:
-            pass
+def_h, def_m, def_s = 12, 0, 0
+if lp.get('tob'):
+    try:
+        parts = [int(p) for p in lp['tob'].split(':')]
+        if len(parts) >= 1: def_h = parts[0]
+        if len(parts) >= 2: def_m = parts[1]
+        if len(parts) >= 3: def_s = parts[2]
+    except Exception:
+        pass
+
+if "Natal" in mode:
+    name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
+    date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
     
-    if "Natal" in mode:
-        name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
-        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
+    # Exact HH:MM:SS input for ultra micro-precision
+    st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
+    t_col1, t_col2, t_col3 = st.columns(3)
+    tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
+    tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
+    tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
+    time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
+else:
+    name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
+    prashna_category = st.selectbox(
+        "प्रश्न विषय (Prashna Subject / Category)",
+        [
+            "💼 नौकरी / कार्य सफलता (Career & Job)",
+            "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
+            "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
+            "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
+            "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
+            "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
+            "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
+        ]
+    )
+    prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
+    st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
+    st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
+    now = datetime.now()
+    date_val = now.date()
+    time_val = now.time()
+
+st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
+
+# Instant town & city search across 565,000+ Indian & Global locations
+city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
+
+matched_cities = city_search.search_cities(city_query, limit=40)
+city_options = {}
+if matched_cities:
+    for c in matched_cities:
+        city_options[c["label"]] = c
+else:
+    # Default fallback option
+    fallback_label = f"{city_query or default_city} (स्थान)"
+    city_options[fallback_label] = {
+        "label": fallback_label,
+        "name": city_query or default_city,
+        "lat": float(st.session_state.get('lat', default_lat)),
+        "lon": float(st.session_state.get('lon', default_lon))
+    }
+
+selected_city_label = st.selectbox(
+    "नगर चुनें (Select Town / City from List):",
+    options=list(city_options.keys()),
+    index=0,
+    key="selected_city_dropdown"
+)
+
+# Automatically set lat/lon from selected town/city
+sel_city_data = city_options.get(selected_city_label)
+if sel_city_data and ('lat' in sel_city_data) and ('lon' in sel_city_data):
+    # Update session state if user selects a different city from search
+    if st.session_state.get('_last_chosen_city') != selected_city_label:
+        st.session_state['lat'] = sel_city_data['lat']
+        st.session_state['lon'] = sel_city_data['lon']
+        st.session_state['city_name'] = sel_city_data['name']
+        st.session_state['_last_chosen_city'] = selected_city_label
+
+city_name = st.session_state.get('city_name', sel_city_data.get('name', default_city) if sel_city_data else default_city)
         
-        # Exact HH:MM:SS input for ultra micro-precision
-        st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
-        t_col1, t_col2, t_col3 = st.columns(3)
-        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
-        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
-        tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
-        time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
+coord_col1, coord_col2 = st.columns(2)
+lat = coord_col1.number_input("Latitude (°N) / अक्षांश" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
+lon = coord_col2.number_input("Longitude (°E) / रेखांश" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
+st.session_state['lat'] = lat
+st.session_state['lon'] = lon
+
+tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=5.5, step=0.5)
+
+col_ay1, col_ay2 = st.columns(2)
+with col_ay1:
+    ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
+with col_ay2:
+    node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
+
+# Save to vault button
+if st.button("💾 कुण्डली सुरक्षित करें (Save Profile to Vault)", use_container_width=True):
+    k_payload = {
+        "name": name,
+        "dob": date_val.strftime("%Y-%m-%d"),
+        "tob": time_val.strftime("%H:%M:%S"),
+        "city": city_name,
+        "lat": lat,
+        "lon": lon,
+        "tz": tz_offset,
+        "ayanamsa": ayan_choice
+    }
+    ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
+    if ok:
+        st.success(f"'{name}' की कुण्डली सुरक्षित हो गई! यह ऊपर 'मेरी सुरक्षित कुण्डलियाँ' में उपलब्ध है।")
+        st.rerun()
     else:
-        name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
-        prashna_category = st.selectbox(
-            "प्रश्न विषय (Prashna Subject / Category)",
-            [
-                "💼 नौकरी / कार्य सफलता (Career & Job)",
-                "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
-                "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
-                "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
-                "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
-                "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
-                "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
-            ]
-        )
-        prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
-        st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
-        st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
-        now = datetime.now()
-        date_val = now.date()
-        time_val = now.time()
+        st.warning(s_msg)
 
-    st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
-    city_name = st.text_input("City Name / नगर" if is_hi else "City Name", default_city)
-    
-    if st.button("🔍 Search City / नगर खोजें" if is_hi else "🔍 Search City", use_container_width=True):
-        if city_name:
-            geolocator = Nominatim(user_agent="vyas_astro_software_v4")
-            try:
-                location = geolocator.geocode(city_name, timeout=5)
-                if location:
-                    st.session_state['lat'] = round(location.latitude, 4)
-                    st.session_state['lon'] = round(location.longitude, 4)
-                    st.success(f"Found: {location.address}")
-                else:
-                    st.warning("City not found. You can adjust Latitude/Longitude directly below.")
-            except Exception as e:
-                st.warning(f"Online city search unavailable ({e}). You can enter Latitude/Longitude directly below.")
-        else:
-            st.error("Please enter a city name.")
-            
-    coord_col1, coord_col2 = st.columns(2)
-    lat = coord_col1.number_input("Latitude (°N) / अक्षांश" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
-    lon = coord_col2.number_input("Longitude (°E) / रेखांश" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
-    st.session_state['lat'] = lat
-    st.session_state['lon'] = lon
-    
-    tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=5.5, step=0.5)
-    
-    col_ay1, col_ay2 = st.columns(2)
-    with col_ay1:
-        ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
-    with col_ay2:
-        node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
-
-    # Save to vault button
-    if st.button("💾 Save Profile to Vault / वॉल्ट में सेव करें", use_container_width=True):
-        k_payload = {
-            "name": name,
-            "dob": date_val.strftime("%Y-%m-%d"),
-            "tob": time_val.strftime("%H:%M:%S"),
-            "city": city_name,
-            "lat": lat,
-            "lon": lon,
-            "tz": tz_offset,
-            "ayanamsa": ayan_choice
-        }
-        ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
-        if ok:
-            st.success(s_msg)
-        else:
-            st.warning(s_msg)
-    
-    btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
-    generate = st.button(btn_lbl, type="primary", use_container_width=True)
+btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
+generate = st.button(btn_lbl, type="primary", use_container_width=True)
 
 # Calculate Core Structures
-if generate or 'data_generated' not in st.session_state:
+# Input signature: the cached chart must be invalidated whenever ANY birth-input
+# changes. Previously only the Generate button could refresh it, so users who
+# edited dob/tob/place and re-rendered kept seeing the OLD chart silently.
+_birth_input_sig = (
+    date_val.isoformat(), time_val.isoformat(), round(float(lat), 6),
+    round(float(lon), 6), round(float(tz_offset), 4), ayan_choice, node_choice,
+)
+if (generate or 'data_generated' not in st.session_state
+        or st.session_state.get('_birth_input_sig') != _birth_input_sig):
     dt = datetime.combine(date_val, time_val)
     dt_utc = dt - timedelta(hours=tz_offset)
     dt_utc = dt_utc.replace(tzinfo=timezone.utc)
@@ -1003,6 +2173,7 @@ if generate or 'data_generated' not in st.session_state:
             st.session_state['dasha_engine'] = dasha_eng
             st.session_state['vargas_matrix'] = vargas_matrix
             st.session_state['data_generated'] = True
+            st.session_state['_birth_input_sig'] = _birth_input_sig
             for k in ('panchang', 'gochar', 'predictions'):
                 st.session_state.pop(k, None)
         except Exception as e:
@@ -1038,26 +2209,26 @@ if st.session_state.get('data_generated'):
         d1_houses[house_num].append(abbr)
 
     # -------------------------------------------------------------------------
-    # 🧘‍♂️ ACHARYA VYAS LIVE VEDIC BOT CONSULTATION TRIGGER BAR
+    # ACHARYA VYAS LIVE VEDIC CONSULTATION TRIGGER BAR
     # -------------------------------------------------------------------------
     col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
     with col_bot_bar1:
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.15) 0%, rgba(14, 23, 42, 0.95) 100%);
                     border: 1px solid rgba(240, 192, 90, 0.4); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 14px;">
-            <div style="font-size: 2.1rem; line-height: 1;">🧙‍♂️</div>
+            <div style="font-size: 1.8rem; line-height: 1; color: #f0c05a; font-weight: 800; border: 1.5px solid #f0c05a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">ॐ</div>
             <div>
                 <div style="font-weight: 800; color: #f0c05a; font-size: 1.02rem;">
-                    आचार्य व्यास • वैदिक AI ज्योतिषी (Live Chat Consultation)
+                    आचार्य व्यास • प्रत्यक्ष वैदिक संवाद (Live Consultation)
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 2px;">
-                    आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित प्रत्यक्ष वैदिक संवाद
+                    आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित सीधा समाधान
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
     with col_bot_bar2:
-        if st.button("💬 परामर्श प्रारंभ करें (Chat Now)", key="open_acharya_bot_bar_btn", use_container_width=True):
+        if st.button("परामर्श प्रारंभ करें (Chat Now)", key="open_acharya_bot_bar_btn", use_container_width=True):
             st.session_state["show_acharya_dialog"] = True
 
     # -------------------------------------------------------------------------
@@ -1066,7 +2237,7 @@ if st.session_state.get('data_generated'):
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
-        "वैदिक फलित एवं 12,000+ सूत्र" if is_hi else "Vedic Forecast & 12,000+ Sutras",
+        "वैदिक फलित एवं शास्त्रीय सूत्र" if is_hi else "Vedic Forecast & Classical Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
         "लाल किताब सम्पूर्ण" if is_hi else "Lal Kitab System & Remedies",
         "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal",
@@ -1119,9 +2290,9 @@ if st.session_state.get('data_generated'):
         
         st.markdown(f"""
         <div class="glass-card" style="border: 2px solid #f0c05a; background: linear-gradient(135deg, rgba(229, 169, 60, 0.15) 0%, rgba(11, 18, 32, 0.95) 100%);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a;">🔮 प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
-                <span style="background: {'#10b981' if verdict_positive else '#f59e0b'}; color: black; font-weight: 800; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center;">
+                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; min-width: 0;">🔮 प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
+                <span style="background: {'#10b981' if verdict_positive else '#f59e0b'}; color: black; font-weight: 800; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; white-space: normal;">
                     {'कार्य सिद्धि के प्रबल योग (Success Likely)' if verdict_positive else 'प्रयास व समय की आवश्यकता (Requires Effort)'}
                 </span>
             </div>
@@ -1272,8 +2443,13 @@ if st.session_state.get('data_generated'):
                 </div>
                 """, unsafe_allow_html=True)
 
-            tab_ch1, tab_ch2, tab_ch3 = st.tabs(["☀️ दिन का चौघड़िया", "🌙 रात्रि का चौघड़िया", "🪐 24 कालहोरा चक्र (Planetary Horas)"])
-            with tab_ch1:
+            _lz_tab_ch = lazy_sections([
+                "☀️ दिन का चौघड़िया",
+                "🌙 रात्रि का चौघड़िया",
+                "🪐 24 कालहोरा चक्र (Planetary Horas)",
+                "🌟 शास्त्रोक्त शुभ-अशुभ मुहूर्त (Drik Muhurtas)",
+            ], key="tab_ch")
+            if _lz_tab_ch[0]:
                 day_chs = daily_res.get('chaughadiya_day', [])
                 if day_chs:
                     st.markdown("""
@@ -1286,7 +2462,7 @@ if st.session_state.get('data_generated'):
                         </div>""" for c in day_chs
                     ]) + "</div>", unsafe_allow_html=True)
 
-            with tab_ch2:
+            if _lz_tab_ch[1]:
                 night_chs = daily_res.get('chaughadiya_night', [])
                 if night_chs:
                     st.markdown("""
@@ -1299,7 +2475,7 @@ if st.session_state.get('data_generated'):
                         </div>""" for c in night_chs
                     ]) + "</div>", unsafe_allow_html=True)
 
-            with tab_ch3:
+            if _lz_tab_ch[2]:
                 h_day = daily_res.get('horas_day', [])
                 h_night = daily_res.get('horas_night', [])
                 col_h1, col_h2 = st.columns(2)
@@ -1323,6 +2499,29 @@ if st.session_state.get('data_generated'):
                             "प्रकृति": h["nature"]
                         } for h in h_night])
                         st.dataframe(h_ndf, use_container_width=True, hide_index=True)
+
+            if _lz_tab_ch[3]:
+                col_m_shubh, col_m_ashubh = st.columns(2)
+                with col_m_shubh:
+                    st.markdown("##### 🟢 शास्त्रोक्त शुभ मुहूर्त (Auspicious Timings)")
+                    m_shubh_data = [
+                        {"मुहूर्त नाम": "ब्रह्म मुहूर्त (Brahma Muhurta)", "समय सीमा": daily_res.get("brahma_muhurta", "-"), "महत्व": "ध्यान, योग, अध्ययन एवं ईश-स्मरण हेतु सर्वश्रेष्ठ"},
+                        {"मुहूर्त नाम": "प्रातः संध्या (Pratah Sandhya)", "समय सीमा": daily_res.get("pratah_sandhya", "-"), "महत्व": "गायत्री जप एवं सूर्योपासना का मुख्य काल"},
+                        {"मुहूर्त नाम": "अभिजीत मुहूर्त (Abhijit)", "समय सीमा": daily_res.get("amrit_vela", "-"), "महत्व": "सर्वकार्य सिद्धिदायक (बुधवार को शास्त्रानुसार वर्जित)"},
+                        {"मुहूर्त नाम": "विजय मुहूर्त (Vijaya)", "समय सीमा": daily_res.get("vijaya_muhurta", "-"), "महत्व": "मुकदमे, प्रतिस्पर्धा व यात्रा में विजय कारक"},
+                        {"मुहूर्त नाम": "गोधूलि मुहूर्त (Godhuli)", "समय सीमा": daily_res.get("godhuli_muhurta", "-"), "महत्व": "गृह प्रवेश व मांगलिक वार्तालाप हेतु शुभ"},
+                        {"मुहूर्त नाम": "अमृत कालम् (Amrit Kalam)", "समय सीमा": daily_res.get("amrit_kalam", "-"), "महत्व": "विशेष अनुबंध, क्रय-विक्रय व नवीन कार्य"},
+                        {"मुहूर्त नाम": "निशिता मुहूर्त (Nishita)", "समय सीमा": daily_res.get("nishita_muhurta", "-"), "महत्व": "मध्यरात्रि शिव-पूजा एवं तांत्रिक साधना"}
+                    ]
+                    st.dataframe(pd.DataFrame(m_shubh_data), use_container_width=True, hide_index=True)
+                with col_m_ashubh:
+                    st.markdown("##### 🔴 शास्त्रोक्त अशुभ/वर्जित काल (Inauspicious Windows)")
+                    m_ashubh_data = [
+                        {"वर्जित काल": "राहु काल (Rahu Kaal)", "समय सीमा": daily_res.get("rahu_kalam", "-"), "नियम": "नया व्यापार, क्रय एवं यात्रा सर्वथा वर्जित"},
+                        {"वर्जित काल": "यमगण्ड (Yamaganda)", "समय सीमा": daily_res.get("yamaganda", "-"), "नियम": "अप्रिय परिणाम सूचक, महत्वपूर्ण निर्णय टालें"},
+                        {"वर्जित काल": "गुलिक काल (Gulika Kalam)", "समय सीमा": daily_res.get("gulika_kalam", "-"), "नियम": "शनि-पुत्र गुलिक का समय, बाधा कारक"}
+                    ]
+                    st.dataframe(pd.DataFrame(m_ashubh_data), use_container_width=True, hide_index=True)
 
         # In-depth Comprehensive Daily Forecast (4 Life Pillars & Gochar Synthesis)
         narrs = daily_res.get("narratives", {})
@@ -1411,7 +2610,8 @@ if st.session_state.get('data_generated'):
     # =========================================================================
     # SUITE: ⏳ BIRTH TIME RECTIFICATION (BTR)
     # =========================================================================
-    if "जन्म समय शुद्धि" in selected_suite or "BTR" in selected_suite:
+    if ("जन्म समय शुद्धि" in selected_suite or "BTR" in selected_suite
+            or "Rectification" in selected_suite):
         st.markdown(f'<div class="section-title">{"⏳ जन्म समय शुद्धि (Birth Time Rectification - कुन्द व तत्व शोधन)" if is_hi else "⏳ Birth Time Rectification (BTR Engine)"}</div>', unsafe_allow_html=True)
         st.info("ऋषि पराशर एवं आधुनिक KP अनुसंधान के अनुसार जन्म समय में 1-2 मिनट का भी अंतर लग्न कस्प, D60 और सब-लॉर्ड्स को बदल देता है। नीचे दिए गए शास्त्रीय परीक्षणों से अपने समय की प्रामाणिकता जांचें:")
 
@@ -1502,14 +2702,14 @@ if st.session_state.get('data_generated'):
     # SUITE 1: 🌟 CHARTS & 16 VARGAS
     # =========================================================================
     if "कुण्डली" in selected_suite or "Charts" in selected_suite:
-        sub_tab1, sub_tab2, sub_tab3, sub_tab4 = st.tabs([
+        _lz_sub_tab = lazy_sections([
             "लग्न एवं नवमांश (D1 & D9 Charts)" if is_hi else "D1 & D9 Natal Charts",
             "षोडशवर्ग 16 चक्र (All 16 Vargas)" if is_hi else "All 16 Divisional Charts",
             "षष्ट्यंश देवता (D60 Shashtyamsha & Deities)" if is_hi else "D60 Shashtyamsha Deities",
-            "📜 12,000+ शास्त्रीय सूत्र फलादेश (AI Knowledge Bank)" if is_hi else "12,000+ Classical Sutras Bank"
-        ])
+            "📜 प्रामाणिक शास्त्रीय सूत्र फलादेश (Classical Sutras)" if is_hi else "Classical Vedic Sutras",
+        ], key="sub_tab")
 
-        with sub_tab1:
+        if _lz_sub_tab[0]:
             st.markdown(f'<div class="section-title">{"✨ वैदिक ग्रह स्थिति एवं जन्म कुण्डली" if is_hi else "✨ Vedic Planetary Positions & Natal Charts"}</div>', unsafe_allow_html=True)
             
             # Overview metric cards (Reference Style)
@@ -1588,7 +2788,7 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(p_data), use_container_width=True, hide_index=True)
 
-        with sub_tab2:
+        if _lz_sub_tab[1]:
             st.markdown(f'<div class="section-title">{"षोडशवर्ग 16 कुण्डलियाँ (Shodashvarga 16 Divisional Charts)" if is_hi else "Shodashvarga 16 Divisional Charts"}</div>', unsafe_allow_html=True)
             varga_list = ["D9", "D10", "D60", "D2", "D3", "D4", "D7", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45"]
             varga_sel = st.selectbox("जाँच हेतु वर्ग कुण्डली का चयन करें (Select Divisional Chart):", varga_list, index=0)
@@ -1649,7 +2849,7 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        with sub_tab3:
+        if _lz_sub_tab[2]:
             st.markdown(f'<div class="section-title">{"D60 षष्ट्यंश विश्लेषण एवं अधिष्ठाता देवता (Prarabdha Karma Alignment)" if is_hi else "D60 Shashtyamsha & Deities"}</div>', unsafe_allow_html=True)
             st.info("पाराशरी सिद्धांत: षष्ट्यंश कुण्डली में पूर्वजन्म संचित प्रारब्ध एवं कर्म संस्कारों का अंतिम निर्णय होता है। प्रत्येक 30 कला (0°30') पर विशिष्ट अधिष्ठाता देवता का आधिपत्य होता है।")
             d60_table = []
@@ -1664,19 +2864,18 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
 
-        with sub_tab4:
-            total_kb_all = len(vyas_knowledge_engine.load_knowledge_bank())
-            st.markdown(f'<div class="section-title">{"🔮 " + f"{total_kb_all:,}+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else f"{total_kb_all:,}+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
+        if _lz_sub_tab[3]:
+            st.markdown(f'<div class="section-title">{"🔮 प्रामाणिक वैदिक एवं नाड़ी सूत्र फलादेश" if is_hi else "Classical Vedic & Nadi Sutras"}</div>', unsafe_allow_html=True)
             
             # Evaluate from knowledge bank
             kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
             st.markdown(f"""
             <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
                 <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
-                    ✨ आपकी जन्म कुण्डली पर AI ज्ञानकोष ({total_kb_all:,}+ शास्त्रीय सूत्रों के महा-संग्रह) से {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
+                    ✨ आपकी जन्म कुण्डली पर सक्रिय प्रामाणिक शास्त्रीय सूत्र एवं योग ({len(kb_eval)} सूत्र सक्रिय)
                 </div>
                 <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
-                    यह इंजन भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय मिलान करके केवल आपकी कुंडली पर लागू होने वाले सूत्रों का सटीक फलित प्रदर्शित करता है।
+                    यह विश्लेषण भृगु सूत्रम्, पाराशरी भावाधिपति फल, नाड़ी योग, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का प्रत्यक्ष समन्वय करके फलित प्रदर्शित करता है।
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -1758,7 +2957,8 @@ if st.session_state.get('data_generated'):
     # =========================================================================
     # SUITE: 💍 ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
     # =========================================================================
-    elif "अष्टकूट" in selected_suite or "Ashtakoota" in selected_suite:
+    elif ("अष्टकूट" in selected_suite or "Ashtakoota" in selected_suite
+          or "Compatibility" in selected_suite):
         st.markdown(f'<div class="section-title">{"💍 अष्टकूट गुण मिलान (36 गुण) एवं शास्त्रीय दोष परिहार विश्लेषण" if is_hi else "💍 Ashtakoota 36 Gunas Match & Classical Dosha Cancellation"}</div>', unsafe_allow_html=True)
         st.info("विवाह मिलान केवल 36 में से 18 गुण मिलाने तक सीमित नहीं है। ऋषि पराशर एवं मुहुर्त चिंतामणि के अनुसार यदि नाड़ी या भकूट में शास्त्रीय परिहार (Exceptions) लागू हो जाएं, तो शून्य अंक भी दोषमुक्त होकर शुभ फल प्रदान करते हैं।")
 
@@ -1800,14 +3000,14 @@ if st.session_state.get('data_generated'):
         st.markdown(f"#### 📜 8 कूटों का विस्तृत परीक्षण एवं दोष परिहार सारणी")
         st.dataframe(pd.DataFrame(match_res["kootas"]), use_container_width=True, hide_index=True)
     elif "दशा" in selected_suite or "Dasha" in selected_suite:
-        d_tab1, d_tab2, d_tab3, d_tab4 = st.tabs([
+        _lz_d_tab = lazy_sections([
             "विंशोत्तरी 5-स्तरीय दशा (Vimshottari 5-Levels)" if is_hi else "Vimshottari 5-Levels",
             "योगिनी दशा चक्र (Yogini Dasha 36-Year)" if is_hi else "Yogini Dasha",
             "ताजिक वर्षफल एवं मुन्था (Tajik Varshphal)" if is_hi else "Tajik Varshphal",
-            "गोचर संचरण (Realtime Gochar Transits)" if is_hi else "Gochar Transits"
-        ])
+            "गोचर संचरण (Realtime Gochar Transits)" if is_hi else "Gochar Transits",
+        ], key="d_tab")
 
-        with d_tab1:
+        if _lz_d_tab[0]:
             st.markdown(f'<div class="section-title">{"विंशोत्तरी दशा: 5-स्तरीय सूक्ष्म समय कालक्रम" if is_hi else "Vimshottari 5-Fold Micro-Dasha"}</div>', unsafe_allow_html=True)
             cur_dasha = dasha_engine.get_running_dasha(datetime.now()) if hasattr(dasha_engine, 'get_running_dasha') else dasha_engine.get_dasha_at(datetime.now())
             st.markdown(f"""
@@ -1851,7 +3051,7 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(md_table), use_container_width=True, hide_index=True)
 
-        with d_tab2:
+        if _lz_d_tab[1]:
             st.markdown(f'<div class="section-title">{"योगिनी दशा: 36-वर्षीय जीवन चक्र एवं अन्तर्दशाएँ" if is_hi else "Yogini Dasha 36-Year Lifecycle"}</div>', unsafe_allow_html=True)
             y_cycles = forensic_predictor.compute_yogini_dasha(chart.planets["Moon"].longitude, birth["local"])
             y_table = []
@@ -1865,7 +3065,7 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(y_table), use_container_width=True, hide_index=True)
 
-        with d_tab3:
+        if _lz_d_tab[2]:
             st.markdown(f'<div class="section-title">{"ताजिक वर्षफल एवं मुन्था विचार (Annual Solar Return)" if is_hi else "Tajik Varshphal & Muntha"}</div>', unsafe_allow_html=True)
             col_v1, col_v2 = st.columns([1, 2])
             with col_v1:
@@ -1916,10 +3116,10 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(mudda_df), use_container_width=True, hide_index=True)
 
-        with d_tab4:
+        if _lz_d_tab[3]:
             st.markdown(f'<div class="section-title">{"तात्कालिक गोचर संचरण एवं शास्त्रीय वेध विश्लेषण" if is_hi else "Gochar Transits & Vedha Analysis"}</div>', unsafe_allow_html=True)
             if hasattr(vyas_gochar, "get_current_transit_positions"):
-                gochar_pos = vyas_gochar.get_current_transit_positions()
+                gochar_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
             else:
                 pos_now = vyas_ephem.planet_positions(datetime.now(timezone.utc))
                 gochar_pos = {name: PlanetState(name=name, longitude=p.longitude, speed=p.speed) for name, p in pos_now.items()}
@@ -1941,7 +3141,7 @@ if st.session_state.get('data_generated'):
 
             st.markdown(f"#### {'फलदीपिका शास्त्रीय गोचर, तारा बल एवं वेध तालिका' if is_hi else 'Phaladeepika Transit, Tara & Vedha'}")
             try:
-                transit_rows = vyas_gochar.transits(datetime.now(), 5.5, chart.planets["Moon"].longitude, chart.ascendant_longitude, with_ingress=True)
+                transit_rows = _cached_gochar_transits(datetime.now().strftime("%Y-%m-%d"), 5.5, chart.planets["Moon"].longitude, chart.ascendant_longitude)
                 t_table = []
                 for tr in transit_rows:
                     t_table.append({
@@ -1963,16 +3163,16 @@ if st.session_state.get('data_generated'):
     # SUITE 3: ⚖️ ASHTAKAVARGA, SHADBALA & MAITRI
     # =========================================================================
     elif "अष्टकवर्ग" in selected_suite or "Ashtakavarga" in selected_suite:
-        b_tab1, b_tab2, b_tab3 = st.tabs([
+        _lz_b_tab = lazy_sections([
             "अष्टकवर्ग चक्र एवं शोधन (SAV & BAV)" if is_hi else "Ashtakavarga Matrix",
             "षड्बल एवं भावबल (Shadbala & Bhavabala)" if is_hi else "Shadbala & Bhavabala",
-            "भाव चलित एवं पञ्चधा मैत्री (Chalit & Maitri)" if is_hi else "Chalit & Maitri"
-        ])
+            "भाव चलित एवं पञ्चधा मैत्री (Chalit & Maitri)" if is_hi else "Chalit & Maitri",
+        ], key="b_tab")
 
         p_signs = {n: p.sign_index for n, p in chart.planets.items()}
         av_res = vyas_ashtaka.compute_ashtakavarga(p_signs, asc_sign_idx)
 
-        with b_tab1:
+        if _lz_b_tab[0]:
             st.markdown(f'<div class="section-title">{"समुदाय अष्टकवर्ग (SAV: 337 बिंदु) एवं शोधन" if is_hi else "Samudaya Ashtakavarga"}</div>', unsafe_allow_html=True)
             sav_pred = forensic_predictor.compute_ashtakavarga_predictions(av_res["sav"], asc_sign_idx)
             st.markdown(f"""
@@ -1993,9 +3193,14 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(sav_display), use_container_width=True, hide_index=True)
 
-        with b_tab2:
+        if _lz_b_tab[1]:
             st.markdown(f'<div class="section-title">{"षड्बल एवं भावबल विश्लेषण (Six-Fold Planetary Strengths)" if is_hi else "Shadbala Six-Fold Strengths"}</div>', unsafe_allow_html=True)
-            shad_res, bhava_res = vyas_shadbala.compute_shadbala(chart, asc_sign_idx)
+            # 2nd param is is_day_birth:bool (Sun in houses 1-6 = above horizon);
+            # 3rd is paksha. The old call passed asc_sign_idx here.
+            _sun_h = (chart.planets['Sun'].sign_index - asc_sign_idx + 12) % 12 + 1
+            _is_day_birth = 1 <= _sun_h <= 6
+            _pk = "Shukla" if ((chart.planets['Moon'].longitude - chart.planets['Sun'].longitude) % 360.0) < 180.0 else "Krishna"
+            shad_res, bhava_res = vyas_shadbala.compute_shadbala(chart, _is_day_birth, _pk)
             shad_table = []
             for p, s in shad_res.items():
                 shad_table.append({
@@ -2013,7 +3218,7 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(shad_table), use_container_width=True, hide_index=True)
 
-        with b_tab3:
+        if _lz_b_tab[2]:
             st.markdown(f'<div class="section-title">{"श्रीपति भाव चलित चक्र एवं पञ्चधा मैत्री" if is_hi else "Sripati Chalit Chart & Maitri"}</div>', unsafe_allow_html=True)
             pl_lons = {n: p.longitude for n, p in chart.planets.items()}
             mc_lon = kp_cusps[9].longitude
@@ -2067,15 +3272,15 @@ if st.session_state.get('data_generated'):
     # SUITE 4: 👑 KP, JAIMINI, NADI & CHAKRAS
     # =========================================================================
     elif "केपी" in selected_suite or "KP" in selected_suite:
-        k_tab1, k_tab2, k_tab3, k_tab4, k_tab5 = st.tabs([
+        _lz_k_tab = lazy_sections([
             "🎯 केपी सूक्ष्म प्रणाली (KP SSSSSL & Promises)" if is_hi else "KP SSSSSL & Promises",
             "👑 जैमिनी चर कारक (Jaimini Chara Karakas)" if is_hi else "Jaimini Karakas",
             "🧬 भृगु नन्दी नाड़ी (Nadi Combinations)" if is_hi else "Bhrigu Nandi Nadi",
             "☸️ वैदिक चक्र (Sudarshan, SBC, Kota & Navatara)" if is_hi else "Classical Chakras",
-            "📜 पंचांग एवं अवकहड़ा (Panchang & Avakhada)" if is_hi else "Panchang & Avakhada"
-        ])
+            "📜 पंचांग एवं अवकहड़ा (Panchang & Avakhada)" if is_hi else "Panchang & Avakhada",
+        ], key="k_tab")
 
-        with k_tab1:
+        if _lz_k_tab[0]:
             st.markdown(f'<div class="section-title">{"🎯 कृष्णमूर्ति पद्धति (KP System) • SSSSSL गणना, 4-Step कार्येश एवं जीवन प्रॉमिस" if is_hi else "Krishnamurti Paddhati (KP System) Master Engine"}</div>', unsafe_allow_html=True)
             
             # Precompute KP 4-fold significators and planet lords
@@ -2206,12 +3411,12 @@ if st.session_state.get('data_generated'):
             # --- SUB-SECTION 5: 4-FOLD SIGNIFICATORS (चतुर्विध कार्येश) ---
             st.markdown(f"#### {'📊 केपी 4-Step कार्येश तालिका (KP 4-Fold Significators Matrix)' if is_hi else 'KP 4-Fold Significators Matrix'}")
             
-            sig_tab_p, sig_tab_h = st.tabs([
+            _lz_sig_tab = lazy_sections([
                 "ग्रह अनुसार कार्येश (Planet-wise Significators)" if is_hi else "Planet-wise Significators",
-                "भाव अनुसार कार्येश (House-wise Significators)" if is_hi else "House-wise Significators"
-            ])
+                "भाव अनुसार कार्येश (House-wise Significators)" if is_hi else "House-wise Significators",
+            ], key="sig_tab")
             
-            with sig_tab_p:
+            if _lz_sig_tab[0]:
                 pl_sig_rows = []
                 for p_name in constants.PLANETS:
                     if p_name in planet_significators:
@@ -2228,7 +3433,7 @@ if st.session_state.get('data_generated'):
                         })
                 st.dataframe(pd.DataFrame(pl_sig_rows), use_container_width=True, hide_index=True)
 
-            with sig_tab_h:
+            if _lz_sig_tab[1]:
                 h_sig_rows = []
                 for h in range(1, 13):
                     hs = house_significators[h]
@@ -2261,7 +3466,7 @@ if st.session_state.get('data_generated'):
                         </p>
                         """, unsafe_allow_html=True)
 
-        with k_tab2:
+        if _lz_k_tab[1]:
             st.markdown(f'<div class="section-title">{"जैमिनी सप्त चर कारक एवं आत्मकारक" if is_hi else "Jaimini Chara Karakas"}</div>', unsafe_allow_html=True)
             j_karakas, ak_p, km_sign = vyas_jaimini.compute_chara_karakas(chart.planets)
             jk_table = []
@@ -2313,13 +3518,13 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(cd_table), use_container_width=True, hide_index=True)
 
-        with k_tab3:
+        if _lz_k_tab[2]:
             st.markdown(f'<div class="section-title">{"भृगु नन्दी नाड़ी: गहन जीवन फलादेश एवं ग्रह संयोजन" if is_hi else "Bhrigu Nandi Nadi"}</div>', unsafe_allow_html=True)
             
             # BNN Deep 4-Pillar Life Predictions
             bnn_life = forensic_predictor.compute_bnn_detailed_life_predictions(chart)
             st.markdown(f"""
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-top: 15px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; margin-top: 15px; margin-bottom: 20px;">
                 <div class="glass-card" style="border-left: 4px solid #eab308;">
                     <div style="font-weight: bold; color: #facc15; font-size: 1.05rem;">🧬 जीव कारक (Jeeva Karaka - देवगुरु)</div>
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['jeeva_karaka_hi']}</p>
@@ -2357,7 +3562,7 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
 
-        with k_tab4:
+        if _lz_k_tab[3]:
             st.markdown(f'<div class="section-title">{"☸️ वैदिक चक्र अनुसंधान: सुदर्शन चक्र, कोटा, सर्वतोभद्र एवं 27 नवतारा" if is_hi else "Classical Vedic Chakras Engine"}</div>', unsafe_allow_html=True)
             
             pl_lons = {n: p.longitude for n, p in chart.planets.items()}
@@ -2366,14 +3571,14 @@ if st.session_state.get('data_generated'):
             kota_res = vyas_chakras.compute_kota_chakra(chart.planets['Moon'].longitude, chart.ascendant_longitude, pl_lons)
             navatara_items = vyas_chakras.compute_navatara_chakra(chart.planets['Moon'].longitude, pl_lons)
 
-            ch_sub1, ch_sub2, ch_sub3, ch_sub4 = st.tabs([
+            _lz_ch_sub = lazy_sections([
                 "🌟 सुदर्शन चक्र (Sudarshan Tri-Wheel)" if is_hi else "Sudarshan Chakra",
                 "🛡️ कोटा चक्र (Kota Fortress Chart)" if is_hi else "Kota Chakra",
                 "🔮 सर्वतोभद्र चक्र (Sarvatobhadra Chakra)" if is_hi else "Sarvatobhadra Chakra",
-                "✨ 27 नवतारा चक्र (27 Navatara System)" if is_hi else "27 Navatara Chakra"
-            ])
+                "✨ 27 नवतारा चक्र (27 Navatara System)" if is_hi else "27 Navatara Chakra",
+            ], key="ch_sub")
 
-            with ch_sub1:
+            if _lz_ch_sub[0]:
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #f59e0b; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #fbbf24;">
@@ -2411,7 +3616,7 @@ if st.session_state.get('data_generated'):
                         </div>
                         """, unsafe_allow_html=True)
 
-            with ch_sub2:
+            if _lz_ch_sub[1]:
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid {'#ef4444' if kota_res.is_fort_under_siege else '#22c55e'}; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: {'#f87171' if kota_res.is_fort_under_siege else '#4ade80'};">
@@ -2437,7 +3642,7 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(kota_table), use_container_width=True, hide_index=True)
 
-            with ch_sub3:
+            if _lz_ch_sub[2]:
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #8b5cf6; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #a78bfa;">
@@ -2460,7 +3665,7 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(sbc_table), use_container_width=True, hide_index=True)
 
-            with ch_sub4:
+            if _lz_ch_sub[3]:
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #06b6d4; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #22d3ee;">
@@ -2484,9 +3689,9 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(nt_table), use_container_width=True, hide_index=True)
 
-        with k_tab5:
+        if _lz_k_tab[4]:
             st.markdown(f'<div class="section-title">{"दैनिक पंचांग, अवकहड़ा चक्र एवं शुद्ध स्थानीय मुहूर्त" if is_hi else "Panchang, Avakhada & Local Muhurta"}</div>', unsafe_allow_html=True)
-            panch_obj = vyas_panchang.compute(birth['local'], birth['lat'], birth['lon'], birth['tz'], chart.ascendant_longitude)
+            panch_obj = _cached_panchang(birth['local'], birth['lat'], birth['lon'], birth['tz'], chart.ascendant_longitude)
             col_p1, col_p2, col_p3 = st.columns([1.1, 1.1, 1.2])
             with col_p1:
                 st.markdown(f"""
@@ -2526,9 +3731,10 @@ if st.session_state.get('data_generated'):
                         <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
                         <b>दिनमान:</b> {panch_obj.day_length}<br>
                         <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>' if ('कोई नहीं' in panch_obj.abhijit_muhurta or 'वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta or 'बुधवार' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
+                        <b>ब्रह्म मुहूर्त:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.brahma_muhurta}</span><br>
+                        <b>विजय मुहूर्त:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.vijaya_muhurta}</span> | <b>गोधूलि:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.godhuli_muhurta}</span><br>
                         <b>राहु काल:</b> <span style="color: #ef4444; font-weight: 700;">{panch_obj.rahu_kalam}</span><br>
-                        <b>यमगण्ड:</b> <span style="color: #f59e0b; font-weight: 700;">{panch_obj.yamaganda}</span><br>
-                        <b>गुलिक काल:</b> {panch_obj.gulika_kalam}
+                        <b>यमगण्ड:</b> <span style="color: #f59e0b; font-weight: 700;">{panch_obj.yamaganda}</span> | <b>गुलिक काल:</b> {panch_obj.gulika_kalam}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -2557,7 +3763,8 @@ if st.session_state.get('data_generated'):
     # =========================================================================
     # SUITE 5: 📖 DEEP FORENSIC PREDICTIONS (Extensive Classical Analysis)
     # =========================================================================
-    elif "फलित" in selected_suite or "Predictions" in selected_suite:
+    elif ("फलित" in selected_suite or "Predictions" in selected_suite
+          or "Forecast" in selected_suite):
         p_signs = {n: p.sign_index for n, p in chart.planets.items()}
         av_res = vyas_ashtaka.compute_ashtakavarga(p_signs, asc_sign_idx)
         sav = av_res["sav"]
@@ -2565,7 +3772,7 @@ if st.session_state.get('data_generated'):
         bhavas = forensic_predictor.analyze_all_12_bhavas(chart, dignities)
         overall_forecast = forensic_predictor.compute_overall_life_forecast(chart, dignities, bhavas, sav, vargas_matrix)
 
-        p_tab0, p_tab1, p_tab2, p_tab3, p_tab4, p_tab5, p_tab6, p_tab7, p_tab8 = st.tabs([
+        _lz_p_tab = lazy_sections([
             "🌟 समग्र जीवन फलादेश (Senior Master Forecast)" if is_hi else "Master Overall Life Forecast",
             "द्वादश भाव विस्तृत फलित (12 Bhavas)" if is_hi else "12 Bhavas In-Depth",
             "🏛️ भावत् भावम् सूक्ष्म विश्लेषण (Bhavat Bhavam)" if is_hi else "Bhavat Bhavam Matrix",
@@ -2574,10 +3781,10 @@ if st.session_state.get('data_generated'):
             "शनि साढ़े साती एवं ढैय्या (Sade Sati Report)" if is_hi else "Sade Sati Report",
             "कालसर्प दोष परीक्षण (Kalsarp Dosha)" if is_hi else "Kalsarp Dosha",
             "लाल किताब फलित एवं उपाय (Lal Kitab & Upay)" if is_hi else "Lal Kitab & Remedies",
-            "शास्त्रीय सूत्र डेटाबैंक (Classical Sutras)" if is_hi else "Classical Sutras"
-        ])
+            "शास्त्रीय सूत्र डेटाबैंक (Classical Sutras)" if is_hi else "Classical Sutras",
+        ], key="p_tab")
 
-        with p_tab0:
+        if _lz_p_tab[0]:
             st.markdown(f'<div class="section-title">{"🌟 महर्षि पाराशर व कल्याणवर्मा परंपरा: समग्र जीवन महा-फलादेश (13 जीवन अध्याय)" if is_hi else "Comprehensive Classical Life Horoscope Synthesis"}</div>', unsafe_allow_html=True)
             st.markdown("""
             <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 20px;">
@@ -2588,21 +3795,21 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
             
-            for ch in overall_forecast:
-                ch_num = ch.get('chapter_num', 1)
-                ch_title = ch.get('title_hi', ch.get('title', 'जीवन अध्याय'))
-                ch_icon = ch.get('icon', '📜')
+            for _chap in overall_forecast:
+                ch_num = _chap.get('chapter_num', 1)
+                ch_title = _chap.get('title_hi', _chap.get('title', 'जीवन अध्याय'))
+                ch_icon = _chap.get('icon', '📜')
                 with st.expander(f"{ch_icon} अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
                     st.markdown(f"""
                     <div class="predict-card" style="border-left-color: #ffd97d;">
                         <div class="predict-header" style="font-size: 1.15rem; color: #ffd97d;">{ch_icon} {ch_title}</div>
                         <p style="font-size: 1.05rem; line-height: 1.75; color: #f8fafc; text-align: justify; margin-top: 10px;">
-                            {ch.get('content_hi', '')}
+                            {_chap.get('content_hi', '')}
                         </p>
                     </div>
                     """, unsafe_allow_html=True)
 
-        with p_tab1:
+        if _lz_p_tab[0]:
             st.markdown(f'<div class="section-title">{"द्वादश भाव गहन ज्योतिषीय फलित (Bhava-by-Bhava Analysis)" if is_hi else "12 Houses Forensic Interpretation"}</div>', unsafe_allow_html=True)
             for bh in bhavas:
                 with st.expander(f"🏛️ भाव {bh.bhava_num}: {bh.sign_hi} राशि (स्वामी: {bh.lord_hi}) — [{bh.strength_type}]", expanded=(bh.bhava_num in [1, 7, 10])):
@@ -2617,7 +3824,7 @@ if st.session_state.get('data_generated'):
                     </div>
                     """, unsafe_allow_html=True)
 
-        with p_tab2:
+        if _lz_p_tab[1]:
             st.markdown(f'<div class="section-title">{"🏛️ भावत् भावम् सूक्ष्म सिद्धांत एवं फलित (Bhavat Bhavam Recursive Matrix)" if is_hi else "Bhavat Bhavam Matrix"}</div>', unsafe_allow_html=True)
             st.markdown("""
             <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 20px;">
@@ -2661,7 +3868,7 @@ if st.session_state.get('data_generated'):
                         </p>
                         """, unsafe_allow_html=True)
 
-        with p_tab3:
+        if _lz_p_tab[2]:
             st.markdown(f'<div class="section-title">{"ग्रह अवस्था, अस्त/वक्री एवं दृष्टि बल विश्लेषण" if is_hi else "Planetary Dignities & States"}</div>', unsafe_allow_html=True)
             dig_rows = []
             for p_name, dig in dignities.items():
@@ -2677,7 +3884,7 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(dig_rows), use_container_width=True, hide_index=True)
 
-        with p_tab4:
+        if _lz_p_tab[3]:
             st.markdown(f'<div class="section-title">{"मंगल दोष सम्पूर्ण शास्त्रीय विवेचन एवं परिहार" if is_hi else "Mangal Dosha Assessment"}</div>', unsafe_allow_html=True)
             m_dosha = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
             st.markdown(f"""
@@ -2690,7 +3897,7 @@ if st.session_state.get('data_generated'):
             for r in m_dosha['remedies_hi']:
                 st.markdown(f"• {r}")
 
-        with p_tab5:
+        if _lz_p_tab[4]:
             st.markdown(f'<div class="section-title">{"शनि साढ़े साती एवं ढैय्या 46-चरणीय जीवन चक्र" if is_hi else "Shani Sade Sati Full Report"}</div>', unsafe_allow_html=True)
             sade_phases = forensic_predictor.compute_comprehensive_sade_sati(birth["local"], chart.planets["Moon"].longitude)
             s_table = []
@@ -2705,7 +3912,7 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(s_table), use_container_width=True, hide_index=True)
 
-        with p_tab6:
+        if _lz_p_tab[5]:
             st.markdown(f'<div class="section-title">{"कालसर्प दोष 12 भेदों की सूक्ष्म जाँच" if is_hi else "Kalsarp Dosha Analysis"}</div>', unsafe_allow_html=True)
             k_dosha = forensic_predictor.compute_comprehensive_kalsarp(chart)
             st.markdown(f"""
@@ -2715,7 +3922,7 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        with p_tab7:
+        if _lz_p_tab[6]:
             st.markdown(f'<div class="section-title">{"लाल किताब भाव फलकथन एवं अचूक उपाय" if is_hi else "Lal Kitab Predictions & Remedies"}</div>', unsafe_allow_html=True)
             lk_items = forensic_predictor.compute_lal_kitab_predictions_and_upay(chart)
             for item in lk_items:
@@ -2725,7 +3932,7 @@ if st.session_state.get('data_generated'):
                     for u in item["upay_hi"]:
                         st.markdown(f"✓ {u}")
 
-        with p_tab8:
+        if _lz_p_tab[7]:
             total_kb_all = len(vyas_knowledge_engine.load_knowledge_bank())
             st.markdown(f'<div class="section-title">{"🔮 " + f"{total_kb_all:,}+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else f"{total_kb_all:,}+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
             
@@ -2791,55 +3998,177 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
     # =========================================================================
-    # SUITE 6: 📄 43+ PAGE PUBLICATION PDF (AstroSage-Class Publication)
+    # SUITE 6: 📄 43+ PAGE PUBLICATION PDF (VYAS-Class Publication)
     # =========================================================================
     elif "PDF" in selected_suite or "शोध प्रबंध" in selected_suite:
-        st.markdown(f'<div class="section-title">{"📄 43+ पेज सम्पूर्ण वैदिक ज्योतिष शोध प्रबंध PDF" if is_hi else "📄 43+ Page Executive Vedic Thesis PDF"}</div>', unsafe_allow_html=True)
-        st.info("यह रिपोर्ट एस्ट्रोसेज की 35-पेज प्रीमियम कुण्डली से कहीं अधिक समृद्ध, 43 पृष्ठों के शोध-स्तरीय कलेवर, 100% शुद्ध देवनागरी (Chrome HarfBuzz) और 13 विस्तृत जीवन अध्यायों से युक्त है।")
+        st.markdown(f'<div class="section-title">{"📄 56-पेज सम्पूर्ण वैदिक कुण्डली महा-शोध प्रबंध (VYAS Gold Standard PDF)" if is_hi else "📄 56-Page Executive Vedic Kundli Dossier (VYAS Gold Standard PDF)"}</div>', unsafe_allow_html=True)
+        st.info("यह रिपोर्ट एस्ट्रोसेज की 56-पृष्ठ प्रीमियम कुण्डली के समकक्ष व उससे भी अधिक शुद्ध गणितीय गणनाओं, पाश्चात्य दृष्टि तालिकाओं, षोडशवर्ग चक्रों, सूक्ष्म प्रत्यंतर दशाओं और 100% प्रामाणिक वैदिक फलित से युक्त है।")
         
-        pdf_out_path = os.path.join(os.path.dirname(__file__), "VYAS_Executive_Publication_Thesis.pdf")
+        # Unique per-run output path. The old fixed filename meant a FAILED
+        # Chrome run silently "succeeded" by serving the previously generated
+        # PDF (same report regardless of input data — the reported bug).
+        _pdf_stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        pdf_out_path = os.path.join(os.path.dirname(__file__), f"VYAS_VYAS_Standard_Kundli_56_Pages_{_pdf_stamp}.pdf")
         
         col_gen1, col_gen2 = st.columns([1, 1.2])
         with col_gen1:
+            pdf_lang_opt = st.radio(
+                "रिपोर्ट की भाषा चुनें (Select Report Language):",
+                ["English (VYAS Gold Standard)", "Hindi (हिंदी)"],
+                index=0,
+                horizontal=True,
+                key="suite6_pdf_lang"
+            )
+            selected_pdf_lang = "en" if "English" in pdf_lang_opt else "hi"
+
             varsh_choice_pdf = st.number_input(
                 "वर्षफल वर्ष का चयन (Varshphal Year in PDF):" if is_hi else "Varshphal Year in PDF:",
                 min_value=birth['local'].year,
                 max_value=birth['local'].year + 100,
-                value=2026,
+                value=max(2026, birth['local'].year),
                 step=1,
                 key="suite6_varsh_year"
             )
-            if st.button("🚀 43-पेज सम्पूर्ण शोध प्रबंध PDF तैयार करें (Generate 43-Page Thesis)", type="primary", use_container_width=True):
-                with st.spinner("Compiling 43-Page Master Thesis with High-Resolution SVG Charts, 13 Life Chapters & Chrome HarfBuzz Typography..."):
+            if st.button("🚀 56-पेज VYAS स्टैंडर्ड महा-रिपोर्ट PDF तैयार करें", type="primary", use_container_width=True):
+                with st.spinner("Compiling 56-Page VYAS Gold Standard Dossier with Crisp Diamond Charts, Pratyantar Matrices & Western Aspects..."):
                     success = publication_engine.build_publication_pdf(
-                        chart, birth, kp_cusps, dasha_engine, vargas_matrix, pdf_out_path, target_varsh_year=int(varsh_choice_pdf)
+                        chart, birth, kp_cusps, dasha_engine, vargas_matrix, pdf_out_path, target_varsh_year=int(varsh_choice_pdf), lang=selected_pdf_lang
                     )
                     if success and os.path.exists(pdf_out_path):
-                        st.session_state['pdf_ready'] = True
-                        st.success(f"🎉 43-पेज शोध प्रबंध PDF सफलतापूर्वक तैयार हो गया है! (आकार: {os.path.getsize(pdf_out_path)/1024/1024:.2f} MB)")
+                        # Retire the previous session PDF (unique per-run name).
+                        _old_pdf = st.session_state.get('pdf_out_path')
+                        if _old_pdf and _old_pdf != pdf_out_path and os.path.exists(_old_pdf):
+                            try:
+                                os.remove(_old_pdf)
+                            except OSError:
+                                pass
+                        st.session_state['pdf_out_path'] = pdf_out_path
+                        st.session_state['pdf_input_sig'] = st.session_state.get('_birth_input_sig')
+                        st.success(f"🎉 56-पेज VYAS स्टैंडर्ड कुण्डली PDF सफलतापूर्वक तैयार हो गया है! (आकार: {os.path.getsize(pdf_out_path)/1024/1024:.2f} MB)")
                     else:
-                        st.error("PDF generation encountered an issue. Please verify Chrome headless availability.")
+                        from vyas import chrome_runtime
+                        _chrome = publication_engine.find_chrome()
+                        _present = bool(_chrome) and os.path.exists(_chrome)
+                        # Try to capture the real failure reason (missing shared lib,
+                        # sandbox error, etc.) by invoking the binary once.
+                        _diag = ""
+                        try:
+                            import subprocess as _sp
+                            _r = _sp.run(
+                                [_chrome, "--version"], capture_output=True, text=True, timeout=20
+                            )
+                            _diag = (_r.stderr or "") + (_r.stdout or "")
+                        except Exception as _e:
+                            _diag = repr(_e)
+                        st.error(
+                            "PDF तैयार नहीं हो सका — HTML→PDF engine (Chromium) चल नहीं पा रहा है।\n\n"
+                            f"Resolved binary: `{_chrome}`  \n"
+                            f"File मौजूद: **{'हाँ' if _present else 'नहीं'}**\n\n"
+                            "**संभावित कारण:** Chromium को चलाने के लिए OS-level shared libraries "
+                            "(libnss3, libatk, libgbm, libasound आदि) चाहिए होती हैं, जो Streamlit "
+                            "Cloud base image में default नहीं होतीं।\n\n"
+                            "**ठीक करने के लिए (कोई एक):**\n"
+                            "1. Repo root mein `packages.txt` banayein jisme sirf `chromium` likha ho "
+                            "(Streamlit Cloud apt se install karega; auto-download fallback bhi kaam karega), या\n"
+                            "2. `CHROME_BIN` secret mein ek working browser ka full path dein, या\n"
+                            "3. Local machine par Chrome install karke wahan PDF generate karein.\n\n"
+                            "Note: ab app pure-Python fallback (xhtml2pdf) bhi try karta hai, isliye "
+                            "Chrome na ho tab bhi PDF generate hona chahiye.\n\n"
+                            "Last fallback error: " + repr(getattr(__builtins__, "_vyas_last_pdf_fallback_error", "n/a"))
+                        )
+                        with st.expander("तकनीकी विवरण (Debug)"):
+                            st.code(
+                                "find_chrome() -> " + repr(_chrome) + "\n"
+                                + "exists        -> " + str(_present) + "\n"
+                                + "chrome --version -> " + repr(_diag.strip()) + "\n"
+                                + "platform      -> " + sys.platform + " / " + platform.machine() + "\n"
+                                + "CHROME_BIN    -> " + repr(os.environ.get("CHROME_BIN")) + "\n"
+                                + "VYAS_AUTO_CHROME -> " + repr(os.environ.get("VYAS_AUTO_CHROME")) + "\n"
+                                + "cache dir     -> " + repr(os.environ.get("VYAS_CHROME_CACHE")) + "\n"
+                                + "shutil.which(chromium) -> " + repr(shutil.which("chromium")) + "\n"
+                                + "shutil.which(google-chrome) -> " + repr(shutil.which("google-chrome")) + "\n"
+                                + "PATH (first 300) -> " + repr(os.environ.get("PATH", "")[:300]),
+                                language="text",
+                            )
 
-            if os.path.exists(pdf_out_path):
-                with open(pdf_out_path, "rb") as f:
-                    pdf_bytes = f.read()
-                st.download_button(
-                    label="📥 सम्पूर्ण 43-पेज वैदिक शोध प्रबंध PDF डाउनलोड करें",
-                    data=pdf_bytes,
-                    file_name=f"VYAS_Thesis_{birth.get('name', 'Native').replace(' ', '_')}_43_Pages.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
+        # Only offer the download when it was generated for the CURRENT inputs.
+        _dl_path = st.session_state.get('pdf_out_path')
+        _dl_ok = (
+            _dl_path and os.path.exists(_dl_path)
+            and st.session_state.get('pdf_input_sig') == st.session_state.get('_birth_input_sig')
+        )
+        if _dl_ok:
+                pdf_out_path = _dl_path
+                col_btn1, col_btn2 = st.columns(2)
+                with col_btn1:
+                    with open(pdf_out_path, "rb") as f:
+                        pdf_bytes = f.read()
+                    st.download_button(
+                        label="📥 PDF डाउनलोड (Local)",
+                        data=pdf_bytes,
+                        file_name=f"VYAS_Kundli_{birth.get('name', 'Native').replace(' ', '_')}_56_Pages_{selected_pdf_lang}.pdf",
+                        mime="application/pdf",
+                        use_container_width=True
+                    )
+                with col_btn2:
+                    if st.button("☁️ Save to Google Drive", type="secondary", use_container_width=True):
+                        u_curr = st.session_state.get("user", {})
+                        u_toks = auth_vault.get_google_tokens(u_curr.get("id", 1))
+                        active_tok = st.session_state.get("google_access_token") or (u_toks.get("access_token") if u_toks else None)
+                        
+                        if not active_tok:
+                            auth_g_url = google_drive_sync.get_google_auth_url()
+                            if auth_g_url:
+                                st.warning("पहले Google से लॉगिन करें ताकि कुण्डली आपके Google Drive में सुरक्षित हो सके:")
+                                st.markdown(f'<a href="{auth_g_url}" target="_top" rel="noopener"><button style="background: #ffffff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; padding: 6px 12px; font-weight: 700; width: 100%; cursor: pointer;">🔗 Connect Google Drive</button></a>', unsafe_allow_html=True)
+                            else:
+                                st.info("कृपया साइडबार के '⚙️ Google Cloud API Credentials' में अपनी Google Client ID दर्ज करें।")
+                        else:
+                            with st.spinner("Google Drive पर फ़ोल्डर 'VYAS Kundli & Horoscopes' में अपलोड किया जा रहा है..."):
+                                f_display = f"VYAS_Kundli_{birth.get('name', 'Native').replace(' ', '_')}_56_Pages_{selected_pdf_lang}.pdf"
+                                ok_up, msg_up, res_up = google_drive_sync.upload_pdf_to_google_drive(
+                                    active_tok, pdf_out_path, file_display_name=f_display
+                                )
+                                # If token expired, try refresh
+                                if not ok_up and u_toks and u_toks.get("refresh_token"):
+                                    new_tok = google_drive_sync.refresh_access_token(u_toks["refresh_token"])
+                                    if new_tok:
+                                        auth_vault.save_google_tokens(u_curr["id"], new_tok)
+                                        st.session_state["google_access_token"] = new_tok
+                                        ok_up, msg_up, res_up = google_drive_sync.upload_pdf_to_google_drive(
+                                            new_tok, pdf_out_path, file_display_name=f_display
+                                        )
+                                if ok_up and res_up:
+                                    st.session_state["gdrive_last_link"] = res_up.get("web_view_link")
+                                    st.toast("Google Drive पर सुरक्षित हो गया!", icon="☁️")
+                                    st.rerun()
+                                else:
+                                    st.error(f"Google Drive अपलोड विफल: {msg_up}")
+
+                if st.session_state.get("gdrive_last_link"):
+                    st.markdown(f"""
+                    <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 8px; padding: 10px 14px; margin-top: 10px; text-align: center;">
+                        <div style="color: #6ee7b7; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">🎉 कुण्डली Google Drive पर सुरक्षित हो गई है!</div>
+                        <a href="{st.session_state['gdrive_last_link']}" target="_blank" style="color: #f0c05a; font-weight: 800; text-decoration: underline; font-size: 0.95rem;">
+                            📂 Google Drive में खोलें (Open in Google Drive)
+                        </a>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        if (not _dl_ok) and st.session_state.get('pdf_out_path') and os.path.exists(st.session_state['pdf_out_path']):
+            st.caption("⚠️ पिछली बार बना PDF अलग इनपुट का है — नया रिपोर्ट देखने के लिए ऊपर फिर से जनरेट करें।")
 
         with col_gen2:
             st.markdown("""
             <div class="glass-card">
-                <div style="font-weight: bold; color: #f0c05a; font-size: 1.1rem;">43-पेज शोध प्रबंध की प्रमुख विशिष्टताएँ:</div>
-                <ul style="color: #cbd5e1; font-size: 0.95rem; margin-top: 6px; line-height: 1.6;">
-                    <li><b>शुद्ध देवनागरी टंकण:</b> गूगल क्रोम के हार्फबज़ (HarfBuzz) इंजन द्वारा 100% सही मात्राएं, संयुक्ताक्षर व मुद्रण सौंदर्य।</li>
-                    <li><b>43 पृष्ठों का अखंड महा-ग्रंथ:</b> अवकहड़ा, घातक, लग्न, नवमांश, षोडशवर्ग (16 चक्र), मंगल दोष, शनि साढ़े साती (46 चक्र), कालसर्प, वर्षफल (वर्ष 2026/चयनित), योगिनी दशा (36 वर्ष चक्र), चर दशा, लाल किताब (9 ग्रह व अचूक उपाय), केपी पद्धति, अष्टकवर्ग व प्रस्तराष्टकवर्ग।</li>
-                    <li><b>समग्र जीवन महा-फलादेश (13 विस्तृत अध्याय):</b> व्यक्तित्व, मानसिकता, विद्या, आजीविका, धन, दांपत्य, संतान, भाग्य, स्वास्थ्य, शत्रु निवारण, विदेश योग, मोक्ष (D60 प्रारब्ध), एवं आगामी 5 वर्षों की रणनीतिक योजना।</li>
-                    <li><b>शोधकर्ता एवं परामर्शदाता:</b> निखिल व्यास (एम.ए. ज्योतिष - स्नातकोत्तर / M.A. Jyotish) • 9414121172</li>
+                <div style="font-weight: bold; color: #f0c05a; font-size: 1.1rem;">56-पेज VYAS गोल्ड स्टैंडर्ड की प्रमुख सामग्री:</div>
+                <ul style="color: #cbd5e1; font-size: 0.92rem; margin-top: 6px; line-height: 1.55;">
+                    <li><b>पारंपरिक चक्र एवं ग्रह स्थिति:</b> अवकहड़ा चक्र, बेसिक विवरण, अनुकूल बिन्दु, घातक चक्र, पारंपरिक लग्न व नवमांश डायमंड चार्ट, चलित सारणी।</li>
+                    <li><b>जीवन एवं ग्रह फलित:</b> लग्न फल, नक्षत्र फल, 4-पृष्ठ सम्पूर्ण जीवन फलित (चरित्र, करियर, आजीविका, स्वास्थ्य, वित्त, शिक्षा)।</li>
+                    <li><b>दोष एवं दशा चक्र:</b> मंगल दोष विस्तृत विवेचन, साढ़े साती सम्पूर्ण 46-अवधि तालिका व फलित, कालसर्प योग, ताजिक वर्षफल (मुन्था व मुद्धा दशा), विंशोत्तरी महादशा फल, योगिनी दशा (36 वर्ष चक्र)।</li>
+                    <li><b>जैमिनी, गोचर एवं लाल किताब:</b> जैमिनी कारकांश व स्वांश चार्ट, चर महादशा व 12 अंतर्दशाएं, आज का गोचर (Transit Today), लाल किताब 9 ग्रह फल व उपाय, 35-साला लाल किताब दशा।</li>
+                    <li><b>सूक्ष्म गणित एवं वर्ग चक्र:</b> षोडशवर्ग सारणी व 16 वर्ग चक्र (D1-D60), केपी कस्प व कारकत्व, 60 अंतर्दशाओं की संपूर्ण विंशोत्तरी प्रत्यंतर सारणियां, पंचधा मैत्री, षड्बल व भावबल, पाश्चात्य दृष्टि चक्र (Western Aspects, भाव मध्य व केपी कस्प), अष्टकवर्ग व संपूर्ण 7-ग्रह प्रस्तराष्टकवर्ग।</li>
+                    <li><b>सिस्टम प्रणेता:</b> निखिल व्यास (एम.ए. ज्योतिष) • 9414121172 • inikhilvyas@gmail.com</li>
                 </ul>
             </div>
             """, unsafe_allow_html=True)
@@ -2853,38 +4182,38 @@ if st.session_state.get('data_generated'):
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.2) 0%, rgba(14, 23, 42, 0.95) 100%);
                     border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 14px; padding: 12px 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;">
-            <div style="font-size: 2.8rem; background: rgba(240,192,90,0.15); border: 2px solid #f0c05a; border-radius: 50%; width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(240,192,90,0.3);">
-                🧙‍♂️
+            <div style="font-size: 2.2rem; background: rgba(240,192,90,0.15); border: 2px solid #f0c05a; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(240,192,90,0.3); color: #f0c05a; font-weight: bold;">
+                ॐ
             </div>
             <div style="flex-grow: 1;">
                 <div style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; display: flex; align-items: center; gap: 8px;">
-                    आचार्य व्यास <span style="font-size: 0.75rem; background: #166534; color: #bbf7d0; padding: 2px 8px; border-radius: 12px; font-weight: 600;">🟢 ऑनलाइन उपस्थित</span>
+                    आचार्य व्यास <span style="font-size: 0.75rem; background: #166534; color: #bbf7d0; padding: 2px 8px; border-radius: 12px; font-weight: 600;">ऑनलाइन उपस्थित</span>
                 </div>
-                <div style="font-size: 0.82rem; color: #e2e8f0; margin-top: 2px;">
-                    प्रधान वैदिक ज्योतिषाचार्य • <b>{constants.SIGNS_HI[ch.ascendant_sign]} लग्न</b>, <b>{constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि</b> • दशा: <b>{c_dasha.get('full_path', 'दशा') if isinstance(c_dasha, dict) else str(c_dasha)}</b>
+                <div style="font-size: 0.85rem; color: #e2e8f0; margin-top: 2px;">
+                    <b>{constants.SIGNS_HI[ch.ascendant_sign]} लग्न</b>, <b>{constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि</b>
                 </div>
-                <div style="font-size: 0.76rem; color: #94a3b8; margin-top: 2px;">
-                    📖 महर्षि पाराशर, भृगु एवं जैमिनी सिद्धांत • गोचर एवं ग्रह दृष्टियों के सूक्ष्म गणितीय समन्वय से उत्तर
+                <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 2px;">
+                    महर्षि पाराशर, भृगु एवं जैमिनी ज्योतिष सिद्धांतों पर आधारित प्रामाणिक संवाद
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         # Quick chips inside popup
-        st.markdown("<div style='font-size: 0.84rem; color: #f0c05a; font-weight: 700; margin-bottom: 4px;'>⚡ त्वरित प्रश्न चयन करें:</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.84rem; color: #f0c05a; font-weight: 700; margin-bottom: 4px;'>त्वरित प्रश्न:</div>", unsafe_allow_html=True)
         suggested_queries = [
-            "करियर, नौकरी एवं प्रमोशन के क्या योग हैं?",
-            "आर्थिक स्थिति और धन लाभ का श्रेष्ठ समय कब है?",
+            "करियर, नौकरी एवं पदोन्नति के क्या योग हैं?",
+            "प्रतियोगी परीक्षा / आरएचजेएस (RHJS) में सफलता की क्या संभावना है?",
+            "आर्थिक स्थिति और धन संचय का समय कैसा रहेगा?",
             "विवाह व दांपत्य जीवन के ग्रह क्या संकेत दे रहे हैं?",
-            "स्वास्थ्य रक्षा हेतु कौन से सात्विक उपाय करें?",
-            "शनि की साढ़े साती अथवा ढैय्या का क्या प्रभाव है?"
+            "स्वास्थ्य रक्षा हेतु कौन से सात्विक उपाय करें?"
         ]
         
         chip_cols = st.columns(len(suggested_queries))
         chosen_chip = None
         for i, q_chip in enumerate(suggested_queries):
             with chip_cols[i]:
-                if st.button(q_chip[:20] + "...", key=f"dialog_chip_{i}", use_container_width=True):
+                if st.button(q_chip[:22] + "...", key=f"dialog_chip_{i}", use_container_width=True):
                     chosen_chip = q_chip
 
         # Initialize session state for dialog chat history
@@ -2892,15 +4221,15 @@ if st.session_state.get('data_generated'):
             st.session_state["dialog_chat_history"] = [
                 {
                     "role": "assistant",
-                    "content": f"**ॐ नमो भगवते वासुदेवाय। सादर प्रणाम {b_info.get('name', 'जातक')} जी!**\n\nमैं **आचार्य व्यास** हूँ। आपकी जन्म कुंडली ({constants.SIGNS_HI[ch.ascendant_sign]} लग्न, {constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि) एवं प्रभावी दशा ({c_dasha.get('full_path', 'दशा') if isinstance(c_dasha, dict) else str(c_dasha)}) मेरे समक्ष खुली है। आप आजीविका, धन, परिवार, स्वास्थ्य या किसी भी उलझन के संबंध में निसंकोच प्रश्न पूछें।"
+                    "content": f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\nमैं **आचार्य व्यास** हूँ। आपकी जन्म कुंडली मेरे समक्ष खुली है। आप आजीविका, परीक्षा, आर्थिक स्थिति, दांपत्य, स्वास्थ्य अथवा जीवन के किसी भी संशय के विषय में सीधे प्रश्न पूछ सकते हैं।"
                 }
             ]
 
         # Chat message log container
-        chat_container = st.container(height=340)
+        chat_container = st.container(height=360)
         with chat_container:
             for msg in st.session_state["dialog_chat_history"]:
-                with st.chat_message(msg["role"], avatar="🧙‍♂️" if msg["role"] == "assistant" else "👤"):
+                with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
 
         # Chat Input inside popup
@@ -2925,6 +4254,7 @@ if st.session_state.get('data_generated'):
                 chat_history=st.session_state["dialog_chat_history"]
             )
             st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+            st.session_state["show_acharya_dialog"] = True
             st.rerun()
 
         col_act1, col_act2 = st.columns([4, 1])
@@ -2933,22 +4263,47 @@ if st.session_state.get('data_generated'):
                 st.session_state["dialog_chat_history"] = []
                 st.rerun()
 
-    # Trigger Dialog if requested
+    # Trigger Dialog if requested (one-shot: clear the flag after opening, else
+    # the next rerun re-opens the popup even after the user closed it).
     if st.session_state.get("show_acharya_dialog"):
+        st.session_state["show_acharya_dialog"] = False
         show_acharya_consultation_dialog(chart, birth, cur_dasha, st.session_state.get('prashna_meta'))
 
     # Floating Bottom-Right Launcher Widget
     st.markdown("""
     <div class="floating-bot-anchor">
-        <div style="font-size: 0.72rem; text-align: center; color: #ffd700; background: rgba(0,0,0,0.85); border-radius: 8px; padding: 2px 6px; margin-bottom: 4px; border: 1px solid rgba(255,215,0,0.4);">
-            🧙‍♂️ आचार्य व्यास ज्योतिषी
+        <div style="font-size: 0.74rem; text-align: center; color: #ffd700; background: rgba(0,0,0,0.85); border-radius: 8px; padding: 3px 8px; margin-bottom: 4px; border: 1px solid rgba(255,215,0,0.4);">
+            आचार्य व्यास • लाइव संवाद
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown("---")
-        if st.button("🧙‍♂️ आचार्य व्यास जी से बात करें (Live AI Consultation)", key="open_acharya_bot_sidebar_btn", use_container_width=True):
+        if st.button("आचार्य व्यास जी से परामर्श करें (Live Consultation)", key="open_acharya_bot_sidebar_btn", use_container_width=True):
             st.session_state["show_acharya_dialog"] = True
             st.rerun()
+
+# ---------------- SCRIPT TIMING (opt-in) ----------------
+# Set VYAS_SHOW_TIMING=1 (env var or secret) to see how long this rerun took.
+# Useful for verifying that cached engines and lazy sections really are skipping
+# work: an unchanged rerun should be well under a second.
+import time as _time_mod
+
+def _timing_enabled() -> bool:
+    raw = os.environ.get("VYAS_SHOW_TIMING", "")
+    if str(raw).strip() not in ("", "0", "false", "False"):
+        return True
+    try:
+        return bool(st.secrets.get("VYAS_SHOW_TIMING", False))
+    except Exception:
+        return False
+
+if _timing_enabled():
+    if "_vyas_script_start" in st.session_state:
+        _elapsed = _time_mod.perf_counter() - st.session_state["_vyas_script_start"]
+        with st.sidebar:
+            st.caption(f"⏱️ Rerun: {_elapsed * 1000:.0f} ms")
+
+st.session_state["_vyas_script_start"] = _time_mod.perf_counter()
 
