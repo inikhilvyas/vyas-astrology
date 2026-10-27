@@ -1,8 +1,8 @@
 streamlit==1.36.0
-skyfield==1.49.3
-jplephem==2.22.3
-numpy==1.26.4
-pandas==2.2.1
+skyfield==1.55
+jplephem>=2.22
+numpy>=2.1.0
+pandas==2.1.4
 reportlab==4.2.6
 geopy==2.4.1
 pdfplumber==0.31.7
