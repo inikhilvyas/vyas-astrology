@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+from vyas import ephem
 from vyas import ashtakavarga
 from vyas import astrosage_content
 from vyas import chalit
@@ -110,7 +111,9 @@ class ChartContext:
         ctx.bhavas = forensic_predictor.analyze_all_12_bhavas(chart, ctx.dignities)
         ctx.mangal_data = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
         ctx.kalsarp_data = forensic_predictor.compute_comprehensive_kalsarp(chart)
-        ctx.sade_sati_phases = forensic_predictor.compute_comprehensive_sade_sati(birth['local'], ctx.moon_lon)
+        ctx.sade_sati_phases = forensic_predictor.compute_comprehensive_sade_sati(
+            birth['local'], ctx.moon_lon, tz_hours=float(birth.get('tz', 5.5))
+        )
 
         birth_dt = birth['local']
         curr_dt = datetime.now()
@@ -133,7 +136,11 @@ class ChartContext:
         _sun_house = (chart.planets["Sun"].sign_index - ctx.asc_sign_idx + 12) % 12 + 1
         _is_day_birth = 1 <= _sun_house <= 6
         _paksha = "Shukla" if ((ctx.moon_lon - chart.planets["Sun"].longitude) % 360.0) < 180.0 else "Krishna"
-        ctx.final_shadbala, ctx.bhava_bala = shadbala.compute_shadbala(chart, _is_day_birth, _paksha)
+        ctx.final_shadbala, ctx.bhava_bala = shadbala.compute_shadbala(
+            chart, _is_day_birth, _paksha,
+            birth_utc=ephem.local_to_utc(birth['local'], float(birth.get('tz', 5.5))),
+            tz_hours=float(birth.get('tz', 5.5)),
+        )
 
         ctx.kp_significators = kp.compute_kp_significators(chart.planets, kp_cusps)
         try:

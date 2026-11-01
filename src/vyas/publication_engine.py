@@ -46,6 +46,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Tuple, Optional, Any
 
 from vyas import constants
+from vyas import ephem
 from vyas import ashtakavarga
 from vyas import shadbala
 from vyas import kp
@@ -216,7 +217,7 @@ def generate_56_page_publication_html(
     bhavas = forensic_predictor.analyze_all_12_bhavas(chart, dignities)
     mangal_data = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
     kalsarp_data = forensic_predictor.compute_comprehensive_kalsarp(chart)
-    sade_sati_phases = forensic_predictor.compute_comprehensive_sade_sati(birth_dt, moon_lon)
+    sade_sati_phases = forensic_predictor.compute_comprehensive_sade_sati(birth_dt, moon_lon, tz_hours=float(tz))
     varshphal_data = forensic_predictor.compute_tajik_varshphal(birth_dt, sun_lon, target_varsh_year, asc_sign_idx)
     mahadasha_interpretations = {item['planet']: item for item in forensic_predictor.compute_vimshottari_interpretations(chart)}
     yogini_cycles = forensic_predictor.compute_yogini_dasha(moon_lon, birth_dt)
@@ -230,13 +231,22 @@ def generate_56_page_publication_html(
     sav = ashtaka_res["sav"]
     prasthara = astrosage_content.compute_full_prastharashtakvarga(p_signs, asc_sign_idx)
 
+    # The dasha engine must work on the same aware instant as the chart, or every
+    # dasha date comparison in the report explodes (naive vs aware).
+    if getattr(dasha_engine, "birth_date", None) is not None and dasha_engine.birth_date.tzinfo is None:
+        dasha_engine.birth_date = ephem.local_to_utc(birth_dt, float(tz))
+
     # Shadbala & Bhavabala
     # (2nd arg is is_day_birth:bool — the old call passed asc_sign_idx here,
     # which silently produced wrong Kala/Dig bala. Derive day/night properly.)
     _sun_house = (chart.planets["Sun"].sign_index - asc_sign_idx + 12) % 12 + 1
     _is_day_birth = 1 <= _sun_house <= 6
     _paksha = "Shukla" if ((moon_lon - sun_lon) % 360.0) < 180.0 else "Krishna"
-    final_shadbala, bhava_bala = shadbala.compute_shadbala(chart, _is_day_birth, _paksha)
+    from vyas import ephem as _ephem_shad
+    final_shadbala, bhava_bala = shadbala.compute_shadbala(
+        chart, _is_day_birth, _paksha,
+        birth_utc=_ephem_shad.local_to_utc(birth_dt, float(tz)), tz_hours=float(tz),
+    )
 
     # KP & Chalit
     significators = kp.compute_kp_significators(chart.planets, kp_cusps)
@@ -966,7 +976,7 @@ def generate_56_page_publication_html(
         <div class="as-sub-title">{'प्रसन्नता एवं आत्म-संतुष्टि' if is_hi else 'Happiness And Fulfillment'}</div>
         <p>
             {'आप आदर्शवादी और दूसरों को प्रेरित करने वाले व्यक्ति हैं। आपमें जन्मजात आध्यात्मिक निष्ठा विद्यमान है। संवेदनशील होने के कारण आप दूसरों की भावनाओं का पूरा सम्मान करते हैं। जीवन की बाधाओं को आप ईश्वर की दी हुई सीख के रूप में स्वीकार करते हैं, जिससे आपका व्यक्तित्व निरंतर निखरता है।' if is_hi else
-            'You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others\' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual.'}
+            "You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual."}
         </p>
 
         <div class="as-sub-title">{'जीवन शैली एवं अभिप्रेरणा' if is_hi else 'Life Style'}</div>
@@ -1035,7 +1045,7 @@ def generate_56_page_publication_html(
         <div class="as-sub-title">{'विद्या एवं उच्च शिक्षा' if is_hi else 'Education'}</div>
         <p>
             {'आपमें गूढ़ और असाधारण विषयों को गहराई से समझने की विलक्षण क्षमता है। औपचारिक शिक्षा में प्रारंभिक चुनौतियों के उपरांत भी आपकी लगन और स्वाध्याय आपको उच्च शैक्षणिक प्रतिष्ठा दिलाते हैं। नियमित अभ्यास और एकाग्रता से आप अनुसंधान व विशेषज्ञता के उच्च शिखर पर पहुंचते हैं।' if is_hi else
-            'You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won\'t be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits.'}
+            "You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits."}
         </p>
         {page_footer(9)}
     </div>
@@ -1453,7 +1463,8 @@ def generate_56_page_publication_html(
             head_txt = f"{lord} is in {sign_name} in your {h_house}th house"
         d1 = md_node.start_date.strftime("%d %B %Y")
         d2 = md_node.end_date.strftime("%d %B %Y")
-        range_str = f"{d1} - {d2}" if md_node.start_date > birth_dt else f"Birth - {d2}"
+        _birth_ref = dasha_engine.birth_date
+        range_str = f"{d1} - {d2}" if md_node.start_date > _birth_ref else f"Birth - {d2}"
         return f"""
         <div class="as-sub-title">{lord} Mahadasha Phal ({range_str})</div>
         <div style="font-weight: bold; margin: 2px 0;">{head_txt}</div>

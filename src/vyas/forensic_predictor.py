@@ -448,12 +448,18 @@ def compute_comprehensive_kalsarp(chart) -> dict:
 # ---------------------------------------------------------------------------
 # Comprehensive Shani Sade Sati Timeline & Predictions
 # ---------------------------------------------------------------------------
-def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float) -> List[SadeSatiPhase]:
+def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float,
+                                    tz_hours: float = 5.5) -> List[SadeSatiPhase]:
     """
     Computes chronological lifetime Sade Sati and Dhaiya (Chhoti Panoti) cycles 
     for the native over 90+ years with exact dates and 3-phase qualitative predictions.
     """
     from vyas import ephem
+    # birth_dt is the *local wall clock* birth time with no tzinfo; Saturn's
+    # sign must be evaluated at a real instant, so anchor it to UTC.  Without
+    # this the naive value was read as server-local time (IST on a Windows box),
+    # shifting every Sade Sati boundary by ~5h30m.
+    birth_dt = ephem.ensure_utc(birth_dt, "birth_dt", assume_tz_hours=tz_hours)
     moon_sign_idx = int(moon_lon // 30) % 12
     # Signs involved in Sade Sati: Moon-1 (12th from Moon), Moon (1st), Moon+1 (2nd from Moon)
     # Dhaiya (Kantaka / Ashtama): 4th from Moon, 8th from Moon

@@ -92,7 +92,7 @@ def _write_session_cookie(token: str) -> None:
             _components.html(_snippet, height=0)
         except Exception:
             if hasattr(st, "iframe"):
-                st.iframe(_snippet, height=0)
+                st.components.v1.html(_snippet, height=0)
     except Exception:
         pass
 
@@ -1263,7 +1263,7 @@ st.markdown("""
 # NOTE: st.components.v1.html was deprecated (removal after 2026-06-01); the
 # sanctioned replacement is st.iframe, which accepts a raw HTML string and, like
 # components.html, renders it in a sandboxed iframe that still executes <script>.
-st.iframe("""
+st.components.v1.html("""
 <!DOCTYPE html>
 <html>
 <head>
@@ -1641,7 +1641,7 @@ with st.sidebar:
     
     # ---------------- MOBILE 1-CLICK PWA APP INSTALLATION (NATIVE PROMPT) ----------------
     if is_logged_in_now:
-        st.iframe("""
+        st.components.v1.html("""
         <div id="pwa-install-container" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
                     border: 1px solid rgba(96, 165, 250, 0.5); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center;">
             <div style="font-size: 0.9rem; font-weight: 800; color: #93c5fd; font-family: sans-serif;">📲 VYAS ASTRA ऐप इंस्टॉल करें</div>
@@ -1763,7 +1763,7 @@ with st.sidebar:
     # ---------------- USER AUTHENTICATION & SESSION ----------------
     is_logged_in = (u["email"] != "seeker@vyasastro.com")
     
-    with st.expander("👤 मेरा खाता / Account & Login", expanded=not is_logged_in):
+    if not is_logged_in:
         if is_logged_in:
             u_tokens = auth_vault.get_google_tokens(u["id"])
             has_gdrive = bool(u_tokens and u_tokens.get("access_token"))
@@ -1863,7 +1863,7 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
             # ---- Account storage (persistence) ----
-            with st.expander("🗄️ Account Storage (खाते कहाँ सेव हैं)", expanded=False):
+            with st.container():
                 if auth_vault.BACKEND == "postgres":
                     st.success("Neon Postgres — खाते redeploy/reboot के बाद भी सुरक्षित रहेंगे।")
                 else:
@@ -3200,7 +3200,8 @@ if st.session_state.get('data_generated'):
             _sun_h = (chart.planets['Sun'].sign_index - asc_sign_idx + 12) % 12 + 1
             _is_day_birth = 1 <= _sun_h <= 6
             _pk = "Shukla" if ((chart.planets['Moon'].longitude - chart.planets['Sun'].longitude) % 360.0) < 180.0 else "Krishna"
-            shad_res, bhava_res = vyas_shadbala.compute_shadbala(chart, _is_day_birth, _pk)
+            shad_res, bhava_res = vyas_shadbala.compute_shadbala(chart, _is_day_birth, _pk,
+                                                                birth_utc=birth['local'], tz_hours=birth['tz'])
             shad_table = []
             for p, s in shad_res.items():
                 shad_table.append({
@@ -3899,7 +3900,7 @@ if st.session_state.get('data_generated'):
 
         if _lz_p_tab[4]:
             st.markdown(f'<div class="section-title">{"शनि साढ़े साती एवं ढैय्या 46-चरणीय जीवन चक्र" if is_hi else "Shani Sade Sati Full Report"}</div>', unsafe_allow_html=True)
-            sade_phases = forensic_predictor.compute_comprehensive_sade_sati(birth["local"], chart.planets["Moon"].longitude)
+            sade_phases = forensic_predictor.compute_comprehensive_sade_sati(birth["local"], chart.planets["Moon"].longitude, tz_hours=float(birth.get("tz", 5.5)))
             s_table = []
             for sp in sade_phases:
                 s_table.append({

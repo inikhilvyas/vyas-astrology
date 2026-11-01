@@ -55,18 +55,14 @@ class PlanetState:
         return total_padas % 12
         
     def d10_sign(self) -> int:
-        """Calculates the Dashamsha (D10) sign index.
-        Parashara: For odd signs, start from the sign itself.
-        For even signs, start from the 9th house from it.
+        """Dashamsha (D10) sign index.
+
+        Delegates to the single authoritative varga table so the two copies of
+        this rule can never drift apart again (they did: this method and
+        varga.py had independent implementations).
         """
-        deg_in_sign = self.longitude % 30.0
-        part = int(deg_in_sign // 3.0) # 0 to 9
-        if self.sign_index % 2 == 0:
-            # Odd sign (0=Aries, 2=Gemini, etc.)
-            return (self.sign_index + part) % 12
-        else:
-            # Even sign (1=Taurus, etc.), start from 9th
-            return (self.sign_index + 8 + part) % 12
+        from vyas.varga import calculate_vargas_detailed
+        return calculate_vargas_detailed(self.longitude)["D10"].sign_index
 
 
 @dataclass(frozen=True)
