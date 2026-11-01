@@ -26,7 +26,12 @@
         }
         .page {
             page-break-after: always;
-            height: 278mm;
+            /* A4 is 297mm; the @page box already subtracts 10mm top + 12mm
+               bottom, so the printable content height is 275mm.  The old 278mm
+               was 3mm taller than the sheet, which pushed an empty overflow
+               page after EVERY page (56 pages printed as 112 sheets). */
+            height: 273mm;
+            /* No overflow:hidden -- long tables would be silently cut off. */
             position: relative;
             padding-bottom: 8mm;
             box-sizing: border-box;
@@ -131,26 +136,19 @@
         <div style="border-top: 1.5px solid #000000; border-bottom: 1.5px solid #000000; padding: 12px 0; width: 85%; margin: 0 auto 30px auto;">
             <div style="font-size: 14pt; font-weight: bold; margin-bottom: 6px;">Test Native</div>
             <div style="font-size: 9.5pt; color: #222222;">
-                दिनांक: 15/05/1990 | समय: 14:35:00 | स्थान: Jaipur
+                Date: 15/05/1990 | Time: 14:35:00 | Place: Jaipur
             </div>
             <div style="font-size: 9pt; color: #444444; margin-top: 4px;">
-                अक्षांश: 26.91° N | रेखांश: 75.79° E | अयनांश: Lahiri
+                Latitude: 26.91&deg; N | Longitude: 75.79&deg; E | Ayanamsa: Lahiri
             </div>
         </div>
 
         <div style="font-size: 16pt; font-weight: bold; color: #000000;">
             Price: <span style="text-decoration: line-through; color: #777777;">$10</span> <span style="color: #c53030;">FREE</span>
         </div>
-        <div style="font-size: 8.5pt; color: #666666; margin-top: 30px;">
-            Birth Chart - Calculation & Analysis
-        </div>
+        <div style="font-size: 8.5pt; color: #666666; margin-top: 30px;">Birth Chart - Calculation & Analysis</div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 1</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 1</span></div></div>
     
     <div class="page">
         
@@ -171,11 +169,11 @@
                     <tr><td>Nadi</td><td>Antya</td></tr>
                     <tr><td>Dasa Balance</td><td>Sun: 3Y 7M 20D</td></tr>
                     <tr><td>Lagna</td><td>Virgo</td></tr>
-                    <tr><td>Lagna Lord</td><td>बुध</td></tr>
+                    <tr><td>Lagna Lord</td><td>Mercury</td></tr>
                     <tr><td>Rasi</td><td>Capricorn</td></tr>
-                    <tr><td>Rasi Lord</td><td>शनि</td></tr>
+                    <tr><td>Rasi Lord</td><td>Saturn</td></tr>
                     <tr><td>Nakshatra-Pada</td><td>Uttara Ashadha 2</td></tr>
-                    <tr><td>Nakshatra Lord</td><td>सूर</td></tr>
+                    <tr><td>Nakshatra Lord</td><td>Sun</td></tr>
                     <tr><td>Julian Day</td><td>2448026.8785</td></tr>
                     <tr><td>SunSign (Indian)</td><td>Taurus</td></tr>
                     <tr><td>SunSign (Western)</td><td>Taurus</td></tr>
@@ -188,7 +186,7 @@
             <div class="col-half">
                 <div class="as-sub-title">Basic Details</div>
                 <table class="as-table as-table-left">
-                    <tr><td>Sex</td><td>Male</td></tr>
+                    <tr><td>'Sex'</td><td>Male</td></tr>
                     <tr><td>Date of Birth</td><td>15 : 05 : 1990</td></tr>
                     <tr><td>Time of Birth</td><td>14 : 35 : 00</td></tr>
                     <tr><td>Day of Birth</td><td>Mangalvar (Tue)</td></tr>
@@ -250,12 +248,7 @@
             </div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 2</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 2</span></div></div>
     
     <div class="page">
         
@@ -264,13 +257,13 @@
             <span>Vedic Kundli</span>
         </div>
         
-        <div class="as-title">|| वैदिक परम्परानुसार ||</div>
+        <div class="as-title">|| Vedic Tradition ||</div>
         
         <table class="as-table as-table-dense as-table-left" style="margin-bottom: 8px;">
             <tr>
                 <td><b>Name</b></td><td>Test Native</td>
                 <td><b>Julian Day</b></td><td>2448026.8785</td>
-                <td><b>Asc Lord</b></td><td>बुध</td>
+                <td><b>Asc Lord</b></td><td>MERCURY</td>
                 <td><b>Bal. Dasa</b></td><td>Sun: 3Y 7M 20D</td>
             </tr>
             <tr>
@@ -295,7 +288,7 @@
                 <td><b>Time of Birth</b></td><td>14.35.00</td>
                 <td><b>Longitude</b></td><td>75.79.E</td>
                 <td><b>Sunset</b></td><td>19:07:09</td>
-                <td><b>Rasi Lord</b></td><td>शनि</td>
+                <td><b>Rasi Lord</b></td><td>SATURN</td>
             </tr>
             <tr>
                 <td><b>SID</b></td><td>01.41.48</td>
@@ -318,7 +311,7 @@
 
         <div class="two-col">
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8.5pt; text-align: center; margin-bottom: 2px;">विंशोत्तरी दशा</div>
+                <div style="font-weight: bold; font-size: 8.5pt; text-align: center; margin-bottom: 2px;">Vimshottari Dasha</div>
                 <div style="font-size: 7pt; display: flex; flex-wrap: wrap; gap: 4px; border: 1px solid #000; padding: 4px;">
                     <div style="flex: 1 1 30%; line-height: 1.25;"><b>SUN -4 Yrs</b><br/>15/5/90-30/12/93<br/>SUN 15/5/90<br/>MOO 20/7/90<br/>MAR 8/11/90<br/>RAH 24/1/91</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>MOO -10 Yrs</b><br/>30/12/93-31/12/03<br/>MOO 30/12/93<br/>MAR 30/10/94<br/>RAH 31/5/95<br/>JUP 29/11/96</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>MAR -7 Yrs</b><br/>31/12/03-30/12/10<br/>MAR 31/12/03<br/>RAH 28/5/04<br/>JUP 15/6/05<br/>SAT 22/5/06</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>RAH -18 Yrs</b><br/>30/12/10-30/12/28<br/>RAH 30/12/10<br/>JUP 11/9/13<br/>SAT 5/2/16<br/>MER 12/12/18</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>JUP -16 Yrs</b><br/>30/12/28-30/12/44<br/>JUP 30/12/28<br/>SAT 17/2/31<br/>MER 30/8/33<br/>KET 6/12/35</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>SAT -19 Yrs</b><br/>30/12/44-31/12/63<br/>SAT 30/12/44<br/>MER 3/1/48<br/>KET 12/9/50<br/>VEN 22/10/51</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>MER -17 Yrs</b><br/>31/12/63-30/12/80<br/>MER 31/12/63<br/>KET 28/5/66<br/>VEN 25/5/67<br/>SUN 25/3/70</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>KET -7 Yrs</b><br/>30/12/80-31/12/87<br/>KET 30/12/80<br/>VEN 28/5/81<br/>SUN 28/7/82<br/>MOO 3/12/82</div><div style="flex: 1 1 30%; line-height: 1.25;"><b>VEN -20 Yrs</b><br/>31/12/87-1/1/08<br/>VEN 31/12/87<br/>SUN 1/5/91<br/>MOO 30/4/92<br/>MAR 30/12/93</div>
                 </div>
@@ -451,17 +444,12 @@
         
             <div class="as-sub-title">Current Dasha (up to Prana Dasha)</div>
             <table class="as-table as-table-left">
-                <tr><th>Level</th><th>Lord</th><th>Start</th><th>End</th></tr>
+                <tr><th>Level</th><th>Lord</th><th>Start</th><th>'End'</th></tr>
                 <tr><td>MD</td><td>Rahu</td><td>30/12/2010 18:40:30</td><td>30/12/2028 06:40:30</td></tr><tr><td>AD</td><td>Moon</td><td>12/06/2026 21:22:30</td><td>12/12/2027 18:22:30</td></tr><tr><td>PD</td><td>Rahu</td><td>29/08/2026 12:09:00</td><td>19/11/2026 16:30:00</td></tr><tr><td>SD</td><td>Venus</td><td>21/10/2026 05:44:29</td><td>03/11/2026 22:27:59</td></tr><tr><td>PrD</td><td>Mercury</td><td>01/11/2026 04:43:17</td><td>03/11/2026 03:17:26</td></tr>
             </table>
             
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 3</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 3</span></div></div>
     
     <div class="page">
         
@@ -475,7 +463,7 @@
         <div class="as-sub-title">What is Ascendant?</div>
         <p>The ascendant house is considered very important in Vedic astrology. During the birth of a person, the sign which rises in the sky is called the persons ascendant. And, the sign which comes in this house is called the ascendant sign. The ascendant helps in calculating minutest event in a persons life through astrology. Whereas, the daily, weekly, monthly and yearly predictions are made on the basis of moon sign and sun sign.</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">Your Ascendant is: Virgo</p>
+        <p style="font-weight: bold; margin: 8px 0;">'Your Ascendant is:' Virgo</p>
 
         <div class="as-sub-title">Health for Virgo Ascendant</div>
         <p>Prone to digestive complaints, irritable bowel syndrome, nervous tension, and food sensitivities.</p>
@@ -487,16 +475,11 @@
         <p>Neat and well-groomed appearance, youthful facial demeanor, clear complexion, and sharp observant eyes.</p>
 
         <div class="ad-box">
-            <div style="font-size: 11pt; font-weight: bold; color: #8b0000;">VYAS • वैदिक परामर्श</div>
-            <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">शास्त्रीय गणना एवं गहन विश्लेषण</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #8b0000;">VYAS • Vedic Advisory</div>
+            <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">Classical Computation &amp; Deep Analysis</div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 4</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 4</span></div></div>
     
     <div class="page">
         
@@ -507,12 +490,10 @@
         
         <div class="as-title">|| Nakshatra Phal ||</div>
         
-        <p>
-            Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 (sometimes also 28) sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a role in popular Hindu astrology, where each pada is associated with a syllable, conventionally chosen as the first syllable of the given name of a child born when the moon was in the corresponding pada.
-        </p>
+        <p>Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 (sometimes also 28) sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a role in popular Hindu astrology, where each pada is associated with a syllable, conventionally chosen as the first syllable of the given name of a child born when the moon was in the corresponding pada.</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">Your Nakshatra : UTTARA ASHADHA</p>
-        <p style="font-weight: bold; margin: 4px 0;">Your Nakshatra Pada : 2</p>
+        <p style="font-weight: bold; margin: 8px 0;">'Your Nakshatra :' UTTARA ASHADHA</p>
+        <p style="font-weight: bold; margin: 4px 0;">'Your Nakshatra Pada :' 2</p>
 
         <div class="as-sub-title">Uttara Ashadha Nakshatra Prediction :</div>
         <p>Born in Uttara Ashadha nakshatra pada 2, you possess keen intellect, strong willpower, and perseverance. You face challenges with resilience and establish authority through your consistent dedication. Your straightforward character and commitment to core principles earn you long-lasting respect in society.</p>
@@ -523,12 +504,7 @@
         <div class="as-sub-title">Family Life :</div>
         <p>You value familial bonds and uphold traditions. Career and destiny often flourish when staying or establishing ventures away from birthplace.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 5</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 5</span></div></div>
     
     <div class="page">
         
@@ -540,28 +516,22 @@
         <div class="as-title">|| Life Predictions ||</div>
         
         <div class="as-sub-title">Integrated Life Analysis</div>
-        <p>सप्तम भाव में शुक्र तथा नवमांश में समर्थन मिलने से वैवाहिक जीवन सुखमय, स्थिर एवं समृद्ध रहता है दशम भाव में स्थित कर्मकारक ग्रह उच्च अथवा मूलत्रिकोण में होने से व्यावसायिक जीवन में उच्च पद एवं प्रतिष्ठा प्राप्त होती है नवम भाव में गुरु अथवा सूर्य की स्थिति भाग्य, धर्म, पिता एवं उच्च शिक्षा का कारक बनती है. Under current Rahu Mahadasha. D9/D10 cross-checks: नवमांश में कई ग्रह बलवान; 6 भाव में सूर्य. Lagnesh Mercury in house 8. Results favorable per yoga-strength..</p>
-        <div class='as-sub-title'>Dated Predictions (with Dasha / transit / Ashtakavarga evidence)</div><table class='as-table'><tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr><tr><td>19/07/2025 - 12/06/2026</td><td>Rahu / Sun</td><td>fortune, dharma & higher learning</td><td>Caution</td><td style='font-size:0.8rem'>Rahu MD -> Sun AD; activates house 9; Taurus holds 23 AV bindus</td></tr><tr><td>12/06/2026 - 12/12/2027</td><td>Rahu / Moon</td><td>children, learning & creative merit</td><td>Favourable</td><td style='font-size:0.8rem'>Rahu MD -> Moon AD; activates house 5; Capricorn holds 27 AV bindus</td></tr><tr><td>12/12/2027 - 30/12/2028</td><td>Rahu / Mars</td><td>children, learning & creative merit</td><td>Excellent</td><td style='font-size:0.8rem'>Rahu MD -> Mars AD; activates house 5; Aquarius holds 32 AV bindus</td></tr><tr><td>30/12/2028 - 17/02/2031</td><td>Jupiter / Jupiter</td><td>career, status & public standing</td><td>Excellent</td><td style='font-size:0.8rem'>Jupiter MD -> Jupiter AD; activates house 10; Gemini holds 30 AV bindus</td></tr><tr><td>17/02/2031 - 30/08/2033</td><td>Jupiter / Saturn</td><td>children, learning & creative merit</td><td>Favourable</td><td style='font-size:0.8rem'>Jupiter MD -> Saturn AD (retrograde); activates house 5; Capricorn holds 27 AV bindus</td></tr><tr><td>30/08/2033 - 06/12/2035</td><td>Jupiter / Mercury</td><td>career, status & public standing</td><td>Favourable</td><td style='font-size:0.8rem'>Jupiter MD -> Mercury AD (retrograde); activates house 10; Aries holds 26 AV bindus</td></tr><tr><td>06/12/2035 - 11/11/2036</td><td>Jupiter / Ketu</td><td>gains, income & fulfilment of desires</td><td>Mixed</td><td style='font-size:0.8rem'>Jupiter MD -> Ketu AD; activates house 11; Cancer holds 25 AV bindus</td></tr></table><p style='font-size:0.85rem'>Each row states: running Mahadasha → Antardasha, the house it activates, and the Ashtakavarga bindus of the transited sign (28+ favourable, below 22 unfavourable).</p>
+        <p>Venus in the 7th house supported by the Navamsa gives a pleasant, stable and prosperous married life, with cooperation and affection from the partner. With the lord of the 10th house (karma-karaka for career) exalted or in its moolatrikona in the 10th, professional life brings high position, public trust and durable reputation. Jupiter or Sun in the 9th house supports fortune, dharma, the father and higher education. The native is drawn to ethical and religious activity and finds mentors at the right time. These readings are being carried by the running Rahu Mahadasha and Moon Antardasha. Divisional cross-check: several planets are strong in the Navamsa; Sun in D10 house 6. The Lagna lord Mercury sits in house 8. The strength of each yoga decides how fully it delivers: read the Shadbala table and the Ashtakavarga bindus alongside this paragraph.</p>
+        <div class='as-sub-title'>Dated Predictions (with Dasha / transit / Ashtakavarga evidence)</div><table class='as-table'><tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr><tr><td>19/07/2025 - 12/06/2026</td><td>Rahu / Sun</td><td>fortune, dharma & higher learning</td><td>Caution</td><td style='font-size:0.8rem'>Rahu MD -> Sun AD; activates house 9; Taurus holds 23 AV bindus</td></tr><tr><td>12/06/2026 - 12/12/2027</td><td>Rahu / Moon</td><td>children, learning & creative merit</td><td>Favourable</td><td style='font-size:0.8rem'>Rahu MD -> Moon AD; activates house 5; Capricorn holds 27 AV bindus</td></tr><tr><td>12/12/2027 - 30/12/2028</td><td>Rahu / Mars</td><td>children, learning & creative merit</td><td>Excellent</td><td style='font-size:0.8rem'>Rahu MD -> Mars AD; activates house 5; Aquarius holds 32 AV bindus</td></tr><tr><td>30/12/2028 - 17/02/2031</td><td>Jupiter / Jupiter</td><td>career, status & public standing</td><td>Excellent</td><td style='font-size:0.8rem'>Jupiter MD -> Jupiter AD; activates house 10; Gemini holds 30 AV bindus</td></tr><tr><td>17/02/2031 - 30/08/2033</td><td>Jupiter / Saturn</td><td>children, learning & creative merit</td><td>Favourable</td><td style='font-size:0.8rem'>Jupiter MD -> Saturn AD (retrograde); activates house 5; Capricorn holds 27 AV bindus</td></tr><tr><td>30/08/2033 - 06/12/2035</td><td>Jupiter / Mercury</td><td>career, status & public standing</td><td>Favourable</td><td style='font-size:0.8rem'>Jupiter MD -> Mercury AD (retrograde); activates house 10; Aries holds 26 AV bindus</td></tr><tr><td>06/12/2035 - 11/11/2036</td><td>Jupiter / Ketu</td><td>gains, income & fulfilment of desires</td><td>Mixed</td><td style='font-size:0.8rem'>Jupiter MD -> Ketu AD; activates house 11; Cancer holds 25 AV bindus</td></tr></table><p style='font-size:0.85rem'>Each row states: running Mahadasha &rarr; Antardasha, the house it activates, and the Ashtakavarga bindus of the transited sign (28+ favourable, below 22 unfavourable).</p>
 
+        <div class='as-sub-title'>Shadbala Evidence (in rupas)</div><table class='as-table'><tr><th>Planet</th><th>Sthana</th><th>Dig</th><th>Kala</th><th>Chesta</th><th>Naisargika</th><th>Drik</th><th>Total Rupas</th><th>Required</th><th>Ratio</th><th>Rank</th></tr><tr><td>Sun</td><td>110.2</td><td>50.2</td><td>263.8</td><td>89.2</td><td>60.0</td><td>-15.0</td><td><b>9.30</b></td><td>6.5</td><td>1.43</td><td>1</td></tr><tr><td>Jupiter</td><td>194.6</td><td>35.3</td><td>171.3</td><td>8.8</td><td>34.3</td><td>+0.0</td><td><b>7.40</b></td><td>6.5</td><td>1.14</td><td>2</td></tr><tr><td>Venus</td><td>204.3</td><td>23.7</td><td>135.1</td><td>14.5</td><td>42.9</td><td>-15.0</td><td><b>6.76</b></td><td>5.5</td><td>1.23</td><td>3</td></tr><tr><td>Mars</td><td>129.2</td><td>28.2</td><td>176.2</td><td>4.2</td><td>17.1</td><td>+15.0</td><td><b>6.16</b></td><td>5.0</td><td>1.23</td><td>4</td></tr><tr><td>Moon</td><td>130.7</td><td>49.4</td><td>85.9</td><td>39.5</td><td>51.4</td><td>+0.0</td><td><b>5.95</b></td><td>6.0</td><td>0.99</td><td>5</td></tr><tr><td>Mercury</td><td>87.8</td><td>14.8</td><td>122.5</td><td>39.8</td><td>25.7</td><td>+0.0</td><td><b>4.84</b></td><td>7.0</td><td>0.69</td><td>6</td></tr><tr><td>Saturn</td><td>147.2</td><td>40.5</td><td>85.9</td><td>7.0</td><td>8.6</td><td>+0.0</td><td><b>4.82</b></td><td>5.0</td><td>0.96</td><td>7</td></tr></table><p style='font-size:0.8rem'>Total above the required rupas = strong. A ratio above 1.0 means the planet can deliver its full result.</p>
         <div class="as-sub-title">Character</div>
         <p>Analytical, meticulous, modest, practical, and highly methodical. Excels in detailed analysis, administrative precision, and problem solving.</p>
 
         <div class="as-sub-title">Happiness And Fulfillment</div>
         <p>
-            You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual.
+            "You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual."
         </p>
 
         <div class="as-sub-title">Life Style</div>
-        <p>
-            You are motivated to enhance your personal and material life. If other factors make you feel that material possessions are a requirement, you are motivated to gain much money. Your core driving force is your ambition and desire for excellence. Recognise this, and rather than fight it, use it to best advantage.
-        </p>
+        <p>You are motivated to enhance your personal and material life. If other factors make you feel that material possessions are a requirement, you are motivated to gain much money. Your core driving force is your ambition and desire for excellence. Recognise this, and rather than fight it, use it to best advantage.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 6</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 6</span></div></div>
     
     <div class="page">
         
@@ -573,22 +543,15 @@
         <div class="as-title">|| Life Predictions ||</div>
         
         <div class="as-sub-title">Career (Sutra-Synthesis)</div>
-        <p>दशम भाव में स्थित कर्मकारक ग्रह उच्च अथवा मूलत्रिकोण में होने से व्यावसायिक जीवन में उच्च पद एवं प्रतिष्ठा प्राप्त होती है लग्नेश उच्च राशि में होने से जातक की बुद्धि, निर्णय-क्षमता एवं नेतृत्व क्षमता श्रेष्ठ रहती है दशम भाव में अष्टकवर्ग के पर्याप्त बिंदु होने से कर्म क्षेत्र में स्थिरता, प्रतिष्ठा एवं निरंतर प्रगति के योग बनते हैं. Under current Rahu Mahadasha. D9/D10 cross-checks: नवमांश में कई ग्रह बलवान; 6 भाव में सूर्य. Lagnesh Mercury in house 8. Results favorable per yoga-strength..</p>
+        <p>With the lord of the 10th house (karma-karaka for career) exalted or in its moolatrikona in the 10th, professional life brings high position, public trust and durable reputation. With the Lagna lord exalted, judgement, decision-making and leadership are of a high order. The native earns respect in society and rises above the circumstances of their birth. With good Ashtakavarga bindus in the 10th house, the career field offers stability, reputation and continuous progress. These readings are being carried by the running Rahu Mahadasha and Moon Antardasha. Divisional cross-check: several planets are strong in the Navamsa; Sun in D10 house 6. The Lagna lord Mercury sits in house 8. The strength of each yoga decides how fully it delivers: read the Shadbala table and the Ashtakavarga bindus alongside this paragraph.</p>
 
         <div class="as-sub-title">Occupation</div>
-        <p>
-            You are not particularly well suited to a routine commercial life, since these demand a monotonous nature which you do not possess. There are plenty of occupations in which you ought to do remarkably well. Generally speaking, you have an aptitude for several of the highest professions: law, medicine, advisory consultancy, literature, executive management, and research.
-        </p>
+        <p>You are not particularly well suited to a routine commercial life, since these demand a monotonous nature which you do not possess. There are plenty of occupations in which you ought to do remarkably well. Generally speaking, you have an aptitude for several of the highest professions: law, medicine, advisory consultancy, literature, executive management, and research.</p>
 
         <div class="as-sub-title">Health & Longevity (Sutra-Synthesis)</div>
-        <p>लग्नेश स्वयं लग्न में स्थित होने से आत्मबल एवं आत्मनिर्भरता प्रबल होती है. Under current Rahu Mahadasha. D9/D10 cross-checks: नवमांश में कई ग्रह बलवान; 6 भाव में सूर्य. Lagnesh Mercury in house 8. Results favorable per yoga-strength..</p>
+        <p>With the Lagna lord placed in the 1st house, self-reliance and inner will are strong. Physical vitality, bodily strength and self-confidence stay high, and the native builds their own standing through personal effort. These readings are being carried by the running Rahu Mahadasha and Moon Antardasha. Divisional cross-check: several planets are strong in the Navamsa; Sun in D10 house 6. The Lagna lord Mercury sits in house 8. The strength of each yoga decides how fully it delivers: read the Shadbala table and the Ashtakavarga bindus alongside this paragraph.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 7</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 7</span></div></div>
     
     <div class="page">
         
@@ -600,24 +563,15 @@
         <div class="as-title">|| Life Predictions ||</div>
         
         <div class="as-sub-title">Hobbies</div>
-        <p>
-            Outdoor pursuits engage much of your leisure time and you find them exceedingly beneficial. You love movement in the open, enjoy the pleasures of travel and long journeys, as well as educational visits. You take a keen interest in educating yourself using books and research.
-        </p>
+        <p>Outdoor pursuits engage much of your leisure time and you find them exceedingly beneficial. You love movement in the open, enjoy the pleasures of travel and long journeys, as well as educational visits. You take a keen interest in educating yourself using books and research.</p>
 
         <div class="as-sub-title">Love & Marriage (D9-based)</div>
-        <p>सप्तम भाव में शुक्र तथा नवमांश में समर्थन मिलने से वैवाहिक जीवन सुखमय, स्थिर एवं समृद्ध रहता है नवमांश में गुरु-शुक्र युति होने से वैवाहिक जीवन में गहन सौहार्द, पारस्परिक सम्मान एवं भौतिक सुखों की प्राप्ति होती है गुरु-शुक्र का योग सुख, समृद्धि एवं सौंदर्यबोध का कारक बनता है. Under current Rahu Mahadasha. D9/D10 cross-checks: नवमांश में कई ग्रह बलवान; 6 भाव में सूर्य. Lagnesh Mercury in house 8. Results favorable per yoga-strength..</p>
+        <p>Venus in the 7th house supported by the Navamsa gives a pleasant, stable and prosperous married life, with cooperation and affection from the partner. A Jupiter-Venus conjunction in the Navamsa brings deep harmony, mutual respect and material comfort in married life. A Jupiter-Venus combination is a classic marker of comfort, prosperity and refined taste. Married life tends to be pleasant and social standing is enhanced by the partner. These readings are being carried by the running Rahu Mahadasha and Moon Antardasha. Divisional cross-check: several planets are strong in the Navamsa; Sun in D10 house 6. The Lagna lord Mercury sits in house 8. The strength of each yoga decides how fully it delivers: read the Shadbala table and the Ashtakavarga bindus alongside this paragraph.</p>
 
         <div class="as-sub-title">Finance</div>
-        <p>
-            You are more likely to be architect of your own fortune than receive much help from others. In matters of finance, your quick-witted clever brain will give you great opportunities. There is no reason for you not to eventually succeed and even become wealthy. Holding impulsive expenditures in check will guarantee enormous prosperity.
-        </p>
+        <p>You are more likely to be architect of your own fortune than receive much help from others. In matters of finance, your quick-witted clever brain will give you great opportunities. There is no reason for you not to eventually succeed and even become wealthy. Holding impulsive expenditures in check will guarantee enormous prosperity.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 8</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 8</span></div></div>
     
     <div class="page">
         
@@ -630,15 +584,10 @@
         
         <div class="as-sub-title">Education</div>
         <p>
-            You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits.
+            "You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits."
         </p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 9</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 9</span></div></div>
     
     <div class="page">
         
@@ -649,9 +598,7 @@
         
         <div class="as-title">|| Manglik Details / Mangal Dosha ||</div>
         
-        <p>
-            Generally Manglik Dosha is considered from the position of Lagna and Moon in the birth chart.
-        </p>
+        <p>Generally Manglik Dosha is considered from the position of Lagna and Moon in the birth chart.</p>
         <p>
             In the birth chart, Mangal is placed in 6th house from Lagna, 2th house from Moon and 12th house from Venus.
         </p>
@@ -659,9 +606,7 @@
         <p style="font-weight: bold; margin: 8px 0;">
             Hence Mangal Dosha is PRESENT in your horoscope (Partial). Kundli matching is recommended before marriage.
         </p>
-        <p>
-            Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.
-        </p>
+        <p>Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.</p>
 
         <div class="as-sub-title">Some Remedies (in case Mangal Dosha is present)</div>
         
@@ -682,12 +627,7 @@
             Note: We strongly recommend you to consult an astrologer before performing these remedies on your own.
         </p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 10</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 10</span></div></div>
     
     <div class="page">
         
@@ -711,166 +651,161 @@
             
             <tr>
                 <td>1</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>15/05/1990</td>
                 <td>29/06/1990</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>2</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>29/06/1990</td>
                 <td>26/12/1990</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>3</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>26/12/1990</td>
                 <td>15/03/1993</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>4</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>15/03/1993</td>
                 <td>26/10/1993</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>5</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>26/10/1993</td>
                 <td>10/11/1993</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>6</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>10/11/1993</td>
                 <td>03/06/1995</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>7</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>17/08/1995</td>
                 <td>28/02/1996</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>8</td>
-                <td>छोटी पनौती: ढैय्या (4H)</td>
+                <td>Dhaiya: Dhaiya (4H)</td>
                 <td>Aries</td>
                 <td>18/04/1998</td>
                 <td>21/06/2000</td>
-                <td>ढैय्या (4H)</td>
+                <td>Dhaiya (4H)</td>
             </tr>
             
             <tr>
                 <td>9</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>02/11/2006</td>
                 <td>16/01/2007</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>10</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>30/07/2007</td>
                 <td>17/09/2009</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>11</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>07/02/2017</td>
                 <td>22/06/2017</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>12</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>04/11/2017</td>
                 <td>07/02/2020</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>13</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>07/02/2020</td>
                 <td>12/05/2022</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>14</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>12/05/2022</td>
                 <td>26/07/2022</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>15</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>26/07/2022</td>
                 <td>22/01/2023</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>16</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>22/01/2023</td>
                 <td>11/04/2025</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>17</td>
-                <td>छोटी पनौती: ढैय्या (4H)</td>
+                <td>Dhaiya: Dhaiya (4H)</td>
                 <td>Aries</td>
                 <td>15/06/2027</td>
                 <td>28/10/2027</td>
-                <td>ढैय्या (4H)</td>
+                <td>Dhaiya (4H)</td>
             </tr>
             
         </table>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 11</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 11</span></div></div>
     
     <div class="page">
         
@@ -886,148 +821,143 @@
             
             <tr>
                 <td>18</td>
-                <td>छोटी पनौती: ढैय्या (4H)</td>
+                <td>Dhaiya: Dhaiya (4H)</td>
                 <td>Aries</td>
                 <td>25/02/2028</td>
                 <td>18/08/2029</td>
-                <td>ढैय्या (4H)</td>
+                <td>Dhaiya (4H)</td>
             </tr>
             
             <tr>
                 <td>19</td>
-                <td>छोटी पनौती: ढैय्या (4H)</td>
+                <td>Dhaiya: Dhaiya (4H)</td>
                 <td>Aries</td>
                 <td>17/10/2029</td>
                 <td>30/04/2030</td>
-                <td>ढैय्या (4H)</td>
+                <td>Dhaiya (4H)</td>
             </tr>
             
             <tr>
                 <td>20</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>10/09/2036</td>
                 <td>30/10/2038</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>21</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>13/04/2039</td>
                 <td>27/07/2039</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>22</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>17/12/2046</td>
                 <td>21/03/2049</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>23</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>21/03/2049</td>
                 <td>19/07/2049</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>24</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>19/07/2049</td>
                 <td>16/12/2049</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>25</td>
-                <td>साढ़े साती: शिखर</td>
+                <td>Sade Sati: Shikhar</td>
                 <td>Capricorn</td>
                 <td>16/12/2049</td>
                 <td>05/03/2052</td>
-                <td>शिखर</td>
+                <td>Shikhar</td>
             </tr>
             
             <tr>
                 <td>26</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>05/03/2052</td>
                 <td>24/05/2054</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>27</td>
-                <td>साढ़े साती: अस्त</td>
+                <td>Sade Sati: Ast</td>
                 <td>Aquarius</td>
                 <td>06/09/2054</td>
                 <td>18/02/2055</td>
-                <td>अस्त</td>
+                <td>Ast</td>
             </tr>
             
             <tr>
                 <td>28</td>
-                <td>छोटी पनौती: ढैय्या (4H)</td>
+                <td>Dhaiya: Dhaiya (4H)</td>
                 <td>Aries</td>
                 <td>08/04/2057</td>
                 <td>28/05/2059</td>
-                <td>ढैय्या (4H)</td>
+                <td>Dhaiya (4H)</td>
             </tr>
             
             <tr>
                 <td>29</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>23/10/2065</td>
                 <td>05/02/2066</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>30</td>
-                <td>छोटी पनौती: ढैय्या (8H)</td>
+                <td>Dhaiya: Dhaiya (8H)</td>
                 <td>Leo</td>
                 <td>05/07/2066</td>
                 <td>07/09/2068</td>
-                <td>ढैय्या (8H)</td>
+                <td>Dhaiya (8H)</td>
             </tr>
             
             <tr>
                 <td>31</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>29/01/2076</td>
                 <td>12/07/2076</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
             <tr>
                 <td>32</td>
-                <td>साढ़े साती: उदय</td>
+                <td>Sade Sati: Uday</td>
                 <td>Sagittarius</td>
                 <td>25/10/2076</td>
                 <td>28/01/2079</td>
-                <td>उदय</td>
+                <td>Uday</td>
             </tr>
             
         </table>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 12</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 12</span></div></div>
     
     <div class="page">
         
@@ -1044,12 +974,7 @@
         </table>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 13</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 13</span></div></div>
     
     <div class="page">
         
@@ -1072,12 +997,7 @@
         <div style="font-weight: bold; margin-top: 10px;">Note:</div>
         <p style="font-size: 7.5pt; color: #444444;">Above predictions are of general nature. Truly speaking, Saturn acts as a great teacher and bestows monumental success to those who uphold truth, discipline, and charity.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 14</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 14</span></div></div>
     
     <div class="page">
         
@@ -1098,16 +1018,11 @@
         </p>
 
         <div style="text-align: center; margin: 20px 0;">
-            <div style="font-weight: bold; margin-bottom: 6px;">Lagna Chart:</div>
+            <div style="font-weight: bold; margin-bottom: 6px;">'Lagna Chart':</div>
             <svg width="285" height="285" viewBox="0 0 285 285" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff;"><rect x="1" y="1" width="283" height="283" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><line x1="0" y1="0" x2="285" y2="285" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="285" x2="285" y2="0" stroke="#000000" stroke-width="1.0"/><line x1="142.5" y1="0" x2="285" y2="142.5" stroke="#000000" stroke-width="1.0"/><line x1="285" y1="142.5" x2="142.5" y2="285" stroke="#000000" stroke-width="1.0"/><line x1="142.5" y1="285" x2="0" y2="142.5" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="142.5" x2="142.5" y2="0" stroke="#000000" stroke-width="1.0"/><text x="142.5" y="61.25" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">6</text><text x="81.25" y="31.625" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">7</text><text x="45.625" y="63.25" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">8</text><text x="31.625" y="81.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Pl</text><text x="71.25" y="134.5" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">9</text><text x="45.625" y="205.75" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">10</text><text x="31.625" y="207.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Mo</text><text x="31.625" y="218.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Sa</text><text x="31.625" y="229.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ra</text><text x="31.625" y="240.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ur</text><text x="81.25" y="245.375" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">11</text><text x="61.25" y="253.375" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ma</text><text x="142.5" y="223.75" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">12</text><text x="142.5" y="205.75" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ve</text><text x="203.75" y="245.375" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">1</text><text x="223.75" y="253.375" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Me</text><text x="239.375" y="205.75" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">2</text><text x="253.375" y="223.75" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Su</text><text x="213.75" y="134.5" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">3</text><text x="213.75" y="145.0" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ju</text><text x="213.75" y="156.0" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ne</text><text x="239.375" y="63.25" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">4</text><text x="253.375" y="81.25" font-family="Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#000000" text-anchor="middle">Ke</text><text x="203.75" y="31.625" font-family="Arial, sans-serif" font-size="9.4" font-weight="bold" fill="#000000" text-anchor="middle">5</text></svg>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 15</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 15</span></div></div>
     
     <div class="page">
         
@@ -1133,7 +1048,7 @@
             <tr><td>05:39:26</td><td>Sunrise</td><td>05:39:19</td></tr>
             <tr><td>19:07:09</td><td>Sunset</td><td>19:07:21</td></tr>
             <tr><td>Virgo</td><td>Lagna</td><td>Virgo</td></tr>
-            <tr><td>बुध</td><td>Lagna Lord</td><td>MER</td></tr>
+            <tr><td>MER</td><td>Lagna Lord</td><td>MER</td></tr>
             <tr><td>Capricorn</td><td>Rasi</td><td>Aries</td></tr>
             <tr><td>SAT</td><td>Rasi Lord</td><td>MAR</td></tr>
             <tr><td>Uttara Ashadha</td><td>Nakshatra</td><td>Ashwini</td></tr>
@@ -1150,12 +1065,7 @@
             <svg width="280" height="280" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff;"><rect x="1" y="1" width="278" height="278" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><line x1="0" y1="0" x2="280" y2="280" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="280" x2="280" y2="0" stroke="#000000" stroke-width="1.0"/><line x1="140.0" y1="0" x2="280" y2="140.0" stroke="#000000" stroke-width="1.0"/><line x1="280" y1="140.0" x2="140.0" y2="280" stroke="#000000" stroke-width="1.0"/><line x1="140.0" y1="280" x2="0" y2="140.0" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="140.0" x2="140.0" y2="0" stroke="#000000" stroke-width="1.0"/><text x="140.0" y="60.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">6</text><text x="140.0" y="76.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">Mu (Vi)</text><text x="80.0" y="31.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">7</text><text x="45.0" y="62.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">8</text><text x="70.0" y="132.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">9</text><text x="45.0" y="202.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">10</text><text x="80.0" y="241.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">11</text><text x="140.0" y="220.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">12</text><text x="200.0" y="241.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">1</text><text x="235.0" y="202.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">2</text><text x="210.0" y="132.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">3</text><text x="235.0" y="62.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">4</text><text x="200.0" y="31.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">5</text></svg>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 16</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 16</span></div></div>
     
     <div class="page">
         
@@ -1185,12 +1095,7 @@
         <div style="font-weight: bold; margin: 2px 0;">Jupiter is in Bhav Number 10</div>
         <p>There will be good stability of mind which would help live a positive and productive life. Excellent period for travel, higher education, communications, and venturing into disciplined enterprises.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 17</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 17</span></div></div>
     
     <div class="page">
         
@@ -1221,12 +1126,7 @@
         <div style="font-weight: bold; margin: 2px 0;">Sun is in Bhav Number 9</div>
         <p>Ideal time to take concrete action on long-term plans. Domestic bliss, creative fulfillment, appreciation for intellectual output, and happiness from progeny.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 18</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 18</span></div></div>
     
     <div class="page">
         
@@ -1258,12 +1158,7 @@
         <p>Supreme wisdom, spiritual authority, and societal respect. Long-distance journeys and mentorship bring boundless honor and enduring charitable legacy.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 19</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 19</span></div></div>
     
     <div class="page">
         
@@ -1291,12 +1186,7 @@
         <p>A visit to sacred places of interest is favored. Charismatic demeanor enhances cordial public relations and valuable connections. Material fulfillment, status elevation, and acquisition of luxury vehicles and immovable property.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 20</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 20</span></div></div>
     
     <div class="page">
         
@@ -1454,12 +1344,7 @@
             </div>
             </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 21</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 21</span></div></div>
     
     <div class="page">
         
@@ -1605,12 +1490,7 @@
             </div>
             </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 22</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 22</span></div></div>
     
     <div class="page">
         
@@ -1740,12 +1620,7 @@
             </div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 23</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 23</span></div></div>
     
     <div class="page">
         
@@ -1804,12 +1679,7 @@
         
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 24</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 24</span></div></div>
     
     <div class="page">
         
@@ -1917,12 +1787,7 @@
         
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 25</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 25</span></div></div>
     
         <div class="page">
             
@@ -1931,27 +1796,22 @@
             <span>Vedic Kundli</span>
         </div>
         
-            <div class="as-title">|| Transit Today (01-11-2026) ||</div>
+            <div class="as-title">|| Transit Today (02-11-2026) ||</div>
             
-        <div class="as-sub-title">Sun is in Libra 15°04' (Swati 3) in your 2th house (from Moon: 10th)</div>
+        <div class="as-sub-title">Sun is in Libra 15°06' (Swati 3) in your 2th house (from Moon: 10th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #22543d;">Transit Verdict: Favourable</div>
         <p>This transit favours accumulation of wealth, family harmony and improvement in speech. Financial decisions made now yield steady results. Next ingress: Scorpio on 16/11/2026 19:47.</p>
         
-        <div class="as-sub-title">Moon is in Cancer 13°28' (Pushya 4) in your 11th house (from Moon: 7th)</div>
+        <div class="as-sub-title">Moon is in Cancer 14°06' (Pushya 4) in your 11th house (from Moon: 7th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #9b2c2c;">Transit Verdict: Favourable but obstructed (Vedha) — Vedha by: Rahu</div>
         <p>Excellent for gains, friendships and fulfilment of desires. Income increases through networks and elder siblings. Next ingress: Leo on 03/11/2026 03:46.</p>
         
-        <div class="as-sub-title">Mars is in Cancer 24°45' (Ashlesha 3) in your 11th house (from Moon: 7th)</div>
+        <div class="as-sub-title">Mars is in Cancer 24°46' (Ashlesha 3) in your 11th house (from Moon: 7th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #9b2c2c;">Transit Verdict: Unfavourable</div>
         <p>Excellent for gains, friendships and fulfilment of desires. Income increases through networks and elder siblings. Next ingress: Leo on 12/11/2026 20:27.</p>
         
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 26</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 26</span></div></div>
         
         <div class="page">
             
@@ -1960,9 +1820,9 @@
             <span>Vedic Kundli</span>
         </div>
         
-            <div class="as-title">|| Transit Today (01-11-2026) ||</div>
+            <div class="as-title">|| Transit Today (02-11-2026) ||</div>
             
-        <div class="as-sub-title">Mercury is in Libra (R) 21°35' (Vishakha 1) in your 2th house (from Moon: 10th)</div>
+        <div class="as-sub-title">Mercury is in Libra (R) 21°32' (Vishakha 1) in your 2th house (from Moon: 10th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #9b2c2c;">Transit Verdict: Favourable but obstructed (Vedha) — Vedha by: Jupiter, Ketu</div>
         <p>This transit favours accumulation of wealth, family harmony and improvement in speech. Financial decisions made now yield steady results. Next ingress: Scorpio on 02/12/2026 17:30.</p>
         
@@ -1970,17 +1830,12 @@
         <div style="font-weight: bold; margin: 2px 0; color: #9b2c2c;">Transit Verdict: Unfavourable</div>
         <p>Expenses rise; foreign travels and spiritual pursuits are favoured. Keep strict ethics in financial transactions. Next ingress: Cancer on 25/01/2027 00:58.</p>
         
-        <div class="as-sub-title">Venus is in Libra (R) 01°39' (Chitra 3) in your 2th house (from Moon: 10th)</div>
+        <div class="as-sub-title">Venus is in Libra (R) 01°38' (Chitra 3) in your 2th house (from Moon: 10th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #9b2c2c;">Transit Verdict: Unfavourable</div>
         <p>This transit favours accumulation of wealth, family harmony and improvement in speech. Financial decisions made now yield steady results. Next ingress: Virgo on 06/11/2026 00:52.</p>
         
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 27</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 27</span></div></div>
         
         <div class="page">
             
@@ -1989,7 +1844,7 @@
             <span>Vedic Kundli</span>
         </div>
         
-            <div class="as-title">|| Transit Today (01-11-2026) ||</div>
+            <div class="as-title">|| Transit Today (02-11-2026) ||</div>
             
         <div class="as-sub-title">Saturn is in Pisces (R) 15°00' (Uttara Bhadrapada 4) in your 7th house (from Moon: 3th)</div>
         <div style="font-weight: bold; margin: 2px 0; color: #22543d;">Transit Verdict: Favourable</div>
@@ -2004,12 +1859,7 @@
         <p>Expenses rise; foreign travels and spiritual pursuits are favoured. Keep strict ethics in financial transactions.</p>
         
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 28</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 28</span></div></div>
         
     <div class="page">
         
@@ -2029,12 +1879,7 @@
         <p>(1) Worship family deity and respect elderly mentors.<br/>(2) Offer water to rising Sun and birds daily.<br/>(3) Avoid intoxicants and uphold strict personal integrity.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 29</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 29</span></div></div>
     
     <div class="page">
         
@@ -2063,12 +1908,7 @@
         <p>(1) Worship family deity and respect elderly mentors.<br/>(2) Offer water to rising Sun and birds daily.<br/>(3) Avoid intoxicants and uphold strict personal integrity.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 30</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 30</span></div></div>
     
     <div class="page">
         
@@ -2097,12 +1937,7 @@
         <p>(1) Worship family deity and respect elderly mentors.<br/>(2) Offer water to rising Sun and birds daily.<br/>(3) Avoid intoxicants and uphold strict personal integrity.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 31</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 31</span></div></div>
     
     <div class="page">
         
@@ -2131,12 +1966,7 @@
         <p>(1) Worship family deity and respect elderly mentors.<br/>(2) Offer water to rising Sun and birds daily.<br/>(3) Avoid intoxicants and uphold strict personal integrity.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 32</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 32</span></div></div>
     
     <div class="page">
         
@@ -2165,12 +1995,7 @@
         <p>(1) Worship family deity and respect elderly mentors.<br/>(2) Offer water to rising Sun and birds daily.<br/>(3) Avoid intoxicants and uphold strict personal integrity.</p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 33</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 33</span></div></div>
     
     <div class="page">
         
@@ -2293,12 +2118,7 @@
             <div style="flex: 1 1 15%;"><b>Moon 1 Yr</b><br/>2007-2008<br/>Jup 2008<br/>Sun 2008</div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 34</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 34</span></div></div>
     
     <div class="page">
         
@@ -2333,12 +2153,7 @@
         </p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 35</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 35</span></div></div>
     
     <div class="page">
         
@@ -2373,12 +2188,7 @@
         </p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 36</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 36</span></div></div>
     
     <div class="page">
         
@@ -2413,12 +2223,7 @@
         </p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 37</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 37</span></div></div>
     
     <div class="page">
         
@@ -2453,12 +2258,7 @@
         </p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 38</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 38</span></div></div>
     
     <div class="page">
         
@@ -2481,12 +2281,7 @@
         </p>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 39</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 39</span></div></div>
     
     <div class="page">
         
@@ -2508,12 +2303,7 @@
             <tr><td>1</td><td>Lagna</td><td>1</td><td>9</td><td>5</td><td>6</td><td>8</td><td>10</td><td>7</td><td>5</td><td>5</td><td>11</td></tr><tr><td>2</td><td>Hora</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>2</td><td>1</td><td>2</td><td>2</td></tr><tr><td>3</td><td>Drekkana</td><td>1</td><td>9</td><td>5</td><td>2</td><td>12</td><td>2</td><td>11</td><td>5</td><td>9</td><td>3</td></tr><tr><td>4</td><td>Chaturthamsha</td><td>1</td><td>9</td><td>5</td><td>3</td><td>11</td><td>4</td><td>1</td><td>5</td><td>11</td><td>5</td></tr><tr><td>5</td><td>Saptamamsha</td><td>1</td><td>9</td><td>5</td><td>5</td><td>5</td><td>7</td><td>11</td><td>5</td><td>9</td><td>3</td></tr><tr><td>6</td><td>Navamsha</td><td>1</td><td>1</td><td>1</td><td>5</td><td>8</td><td>2</td><td>12</td><td>1</td><td>6</td><td>12</td></tr><tr><td>7</td><td>Dashamamsha</td><td>1</td><td>9</td><td>5</td><td>6</td><td>4</td><td>7</td><td>1</td><td>5</td><td>10</td><td>4</td></tr><tr><td>8</td><td>Dwadashamamsha</td><td>1</td><td>9</td><td>5</td><td>3</td><td>1</td><td>4</td><td>2</td><td>5</td><td>12</td><td>6</td></tr><tr><td>9</td><td>Shodashamsha</td><td>1</td><td>9</td><td>6</td><td>10</td><td>12</td><td>9</td><td>11</td><td>5</td><td>2</td><td>2</td></tr><tr><td>10</td><td>Vimshamsha</td><td>1</td><td>4</td><td>9</td><td>8</td><td>5</td><td>10</td><td>12</td><td>9</td><td>7</td><td>7</td></tr><tr><td>11</td><td>Chaturvimshamsha</td><td>1</td><td>12</td><td>1</td><td>8</td><td>12</td><td>1</td><td>3</td><td>1</td><td>2</td><td>2</td></tr><tr><td>12</td><td>Saptavimshamsha</td><td>1</td><td>12</td><td>1</td><td>1</td><td>9</td><td>5</td><td>11</td><td>1</td><td>3</td><td>9</td></tr><tr><td>13</td><td>Trimshamsha</td><td>1</td><td>1</td><td>1</td><td>2</td><td>8</td><td>8</td><td>11</td><td>1</td><td>11</td><td>11</td></tr><tr><td>14</td><td>Khavedamsha</td><td>1</td><td>11</td><td>1</td><td>1</td><td>12</td><td>2</td><td>12</td><td>1</td><td>10</td><td>10</td></tr><tr><td>15</td><td>Akshvedamsha</td><td>1</td><td>7</td><td>5</td><td>7</td><td>12</td><td>10</td><td>3</td><td>5</td><td>5</td><td>5</td></tr><tr><td>16</td><td>Shashtiamsha</td><td>1</td><td>7</td><td>5</td><td>4</td><td>9</td><td>2</td><td>5</td><td>5</td><td>1</td><td>7</td></tr>
         </table>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 40</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 40</span></div></div>
     
         <div class="page">
             
@@ -2557,12 +2347,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 41</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 41</span></div></div>
         
         <div class="page">
             
@@ -2606,12 +2391,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 42</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 42</span></div></div>
         
         <div class="page">
             
@@ -2645,12 +2425,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 43</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 43</span></div></div>
         
     <div class="page">
         
@@ -2681,108 +2456,108 @@
             <td>1</td>
             <td>01-41-48</td>
             <td>VIR</td>
-            <td>सूर</td>
-            <td>गुर</td>
-            <td>शनि</td>
+            <td>SUN</td>
+            <td>JUPITER</td>
+            <td>SATURN</td>
         </tr>
         
         <tr>
             <td>2</td>
             <td>09-20-00</td>
             <td>SAG</td>
-            <td>केत</td>
-            <td>शनि</td>
-            <td>शनि</td>
+            <td>KETU</td>
+            <td>SATURN</td>
+            <td>SATURN</td>
         </tr>
         
         <tr>
             <td>3</td>
             <td>05-27-36</td>
             <td>SAG</td>
-            <td>केत</td>
-            <td>मंग</td>
-            <td>सूर</td>
+            <td>KETU</td>
+            <td>MARS</td>
+            <td>SUN</td>
         </tr>
         
         <tr>
             <td>4</td>
             <td>01-34-13</td>
             <td>SAG</td>
-            <td>केत</td>
-            <td>शुक</td>
-            <td>मंग</td>
+            <td>KETU</td>
+            <td>VENUS</td>
+            <td>MARS</td>
         </tr>
         
         <tr>
             <td>5</td>
             <td>05-27-36</td>
             <td>SAG</td>
-            <td>केत</td>
-            <td>मंग</td>
-            <td>सूर</td>
+            <td>KETU</td>
+            <td>MARS</td>
+            <td>SUN</td>
         </tr>
         
         <tr>
             <td>6</td>
             <td>09-20-00</td>
             <td>SAG</td>
-            <td>केत</td>
-            <td>शनि</td>
-            <td>शनि</td>
+            <td>KETU</td>
+            <td>SATURN</td>
+            <td>SATURN</td>
         </tr>
         
         <tr>
             <td>7</td>
             <td>01-41-48</td>
             <td>PIS</td>
-            <td>गुर</td>
-            <td>राह</td>
-            <td>गुर</td>
+            <td>JUPITER</td>
+            <td>RAHU</td>
+            <td>JUPITER</td>
         </tr>
         
         <tr>
             <td>8</td>
             <td>09-20-00</td>
             <td>GEM</td>
-            <td>राह</td>
-            <td>गुर</td>
-            <td>बुध</td>
+            <td>RAHU</td>
+            <td>JUPITER</td>
+            <td>MERCURY</td>
         </tr>
         
         <tr>
             <td>9</td>
             <td>05-27-36</td>
             <td>GEM</td>
-            <td>मंग</td>
-            <td>सूर</td>
-            <td>शुक</td>
+            <td>MARS</td>
+            <td>SUN</td>
+            <td>VENUS</td>
         </tr>
         
         <tr>
             <td>10</td>
             <td>01-34-13</td>
             <td>GEM</td>
-            <td>मंग</td>
-            <td>बुध</td>
-            <td>गुर</td>
+            <td>MARS</td>
+            <td>MERCURY</td>
+            <td>JUPITER</td>
         </tr>
         
         <tr>
             <td>11</td>
             <td>05-27-36</td>
             <td>GEM</td>
-            <td>मंग</td>
-            <td>सूर</td>
-            <td>शुक</td>
+            <td>MARS</td>
+            <td>SUN</td>
+            <td>VENUS</td>
         </tr>
         
         <tr>
             <td>12</td>
             <td>09-20-00</td>
             <td>GEM</td>
-            <td>राह</td>
-            <td>गुर</td>
-            <td>बुध</td>
+            <td>RAHU</td>
+            <td>JUPITER</td>
+            <td>MERCURY</td>
         </tr>
         
                 </table>
@@ -2806,12 +2581,7 @@
             </div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 44</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 44</span></div></div>
     
         <div class="page">
             
@@ -3009,12 +2779,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 45</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 45</span></div></div>
         
         <div class="page">
             
@@ -3212,12 +2977,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 46</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 46</span></div></div>
         
         <div class="page">
             
@@ -3415,12 +3175,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 47</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 47</span></div></div>
         
         <div class="page">
             
@@ -3618,12 +3373,7 @@
             
             </div>
             
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 48</span>
-        </div>
-        
-        </div>
+        <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 48</span></div></div>
         
     <div class="page">
         
@@ -3658,12 +3408,7 @@
         </table>
         
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 49</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 49</span></div></div>
     
     <div class="page">
         
@@ -3704,12 +3449,7 @@
             <tr><td>Relative Rank</td><td>9</td><td>4</td><td>8</td><td>2</td><td>11</td><td>12</td><td>3</td><td>6</td><td>5</td><td>10</td><td>7</td><td>1</td></tr>
         </table>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 50</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 50</span></div></div>
     
     <div class="page">
         
@@ -3728,12 +3468,7 @@
         <div style="font-weight: bold; margin-top: 8px;">Note :</div>
         <p style="font-size: 7.2pt;">Aspects and orbs taken for computation: CONJ (0°, orb 15°), OPPN (180°, orb 15°), TRIN (120°, orb 6°), SQUR (90°, orb 6°), SEXT (60°, orb 6°), SSQU (45°, orb 1°), NONL (40°, orb 1°), QUIN (72°, orb 1°), SQQD (135°, orb 1°), QCUN (150°, orb 1°).</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 51</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 51</span></div></div>
     
     <div class="page">
         
@@ -3752,12 +3487,7 @@
         <div style="font-weight: bold; margin-top: 8px;">Note :</div>
         <p style="font-size: 7.2pt;">Bhava-madhya degrees of the Chalit chart have been taken as the cusp degree to compute aspectual strengths.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 52</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 52</span></div></div>
     
     <div class="page">
         
@@ -3776,12 +3506,7 @@
         <div style="font-weight: bold; margin-top: 8px;">Note :</div>
         <p style="font-size: 7.2pt;">Cusp degrees computed under Placidus KP System have been taken as target points to evaluate planetary aspects.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 53</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 53</span></div></div>
     
     <div class="page">
         
@@ -3838,12 +3563,7 @@
             <svg width="280" height="280" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff;"><rect x="1" y="1" width="278" height="278" fill="#ffffff" stroke="#000000" stroke-width="1.4"/><line x1="0" y1="0" x2="280" y2="280" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="280" x2="280" y2="0" stroke="#000000" stroke-width="1.0"/><line x1="140.0" y1="0" x2="280" y2="140.0" stroke="#000000" stroke-width="1.0"/><line x1="280" y1="140.0" x2="140.0" y2="280" stroke="#000000" stroke-width="1.0"/><line x1="140.0" y1="280" x2="0" y2="140.0" stroke="#000000" stroke-width="1.0"/><line x1="0" y1="140.0" x2="140.0" y2="0" stroke="#000000" stroke-width="1.0"/><text x="140.0" y="60.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">6</text><text x="140.0" y="76.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">27</text><text x="80.0" y="31.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">7</text><text x="60.0" y="37.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">24</text><text x="45.0" y="62.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">8</text><text x="31.0" y="80.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">38</text><text x="70.0" y="132.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">9</text><text x="70.0" y="148.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">29</text><text x="45.0" y="202.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">10</text><text x="31.0" y="220.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">27</text><text x="80.0" y="241.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">11</text><text x="60.0" y="249.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">32</text><text x="140.0" y="220.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">12</text><text x="140.0" y="202.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">31</text><text x="200.0" y="241.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">1</text><text x="220.0" y="249.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">26</text><text x="235.0" y="202.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">2</text><text x="249.0" y="220.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">23</text><text x="210.0" y="132.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">3</text><text x="210.0" y="148.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">30</text><text x="235.0" y="62.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">4</text><text x="249.0" y="80.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">25</text><text x="200.0" y="31.0" font-family="Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#000000" text-anchor="middle">5</text><text x="220.0" y="37.0" font-family="Arial, sans-serif" font-size="8.4" font-weight="normal" fill="#000000" text-anchor="middle">25</text></svg>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 54</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 54</span></div></div>
     
     <div class="page">
         
@@ -3932,27 +3652,13 @@
             </div>
         </div>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 55</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 55</span></div></div>
     
     <div class="page" style="text-align: center; padding-top: 30mm;">
-        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin-bottom: 8px;">
-            Computed Vedic Kundli Analysis
-        </div>
-        <p style="font-size: 10pt; color: #4a5568; width: 80%; margin: 0 auto 25px auto;">
-            This report is based on classical calculations. Interpret results as indications, not certainties.
-        </p>
+        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin-bottom: 8px;">Computed Vedic Kundli Analysis</div>
+        <p style="font-size: 10pt; color: #4a5568; width: 80%; margin: 0 auto 25px auto;">This report is based on classical calculations. Interpret results as indications, not certainties.</p>
         
-        <div class="as-footer">
-            <span>Printing Date: 01/11/2026 11:01:32 PM</span>
-            <span>Page No. 56</span>
-        </div>
-        
-    </div>
+    <div class="as-footer"><span>Printing Date: 02/11/2026 12:06:19 AM</span><span>Page No. 56</span></div></div>
     
     </body>
     </html>

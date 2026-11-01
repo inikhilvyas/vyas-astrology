@@ -228,26 +228,21 @@ def generate_56_page_publication_html(
         _timed_rows = []
     timed_html = ""
     if _timed_rows:
-        _hdr = ("<tr><th>अवधि</th><th>दशा</th><th>क्षेत्र</th><th>निर्णय</th><th>प्रमाण-श्रृंखला</th></tr>"
-                if is_hi else
-                "<tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr>")
+        _hdr = "<tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr>"
         _rows = "".join(
             f"<tr><td>{r['period']}</td><td>{r['dasha']}</td>"
-            f"<td>{r['domain_hi'] if is_hi else r['domain_en']}</td>"
-            f"<td>{r['verdict_hi'] if is_hi else r['verdict_en']}</td>"
-            f"<td style='font-size:0.8rem'>{r['evidence_hi'] if is_hi else r['evidence_en']}</td></tr>"
+            f"<td>{r['domain_en']}</td>"
+            f"<td>{r['verdict_en']}</td>"
+            f"<td style='font-size:0.8rem'>{r['evidence_en']}</td></tr>"
             for r in _timed_rows)
         timed_html = (
             "<div class='as-sub-title'>"
             + ("दिनांकित भविष्यवाणियाँ (दशा-गोचर-अष्टकवर्ग प्रमाण सहित)" if is_hi
                else "Dated Predictions (with Dasha / transit / Ashtakavarga evidence)")
             + f"</div><table class='as-table'>{_hdr}{_rows}</table>"
-            + ("<p style='font-size:0.85rem'>प्रत्येक पंक्ति में: चल रही महादशा → अंतर्दशा, "
-               "जिस भाव को सक्रिय करती है, और गोचर राशि के अष्टकवर्ग बिन्दु (28+ अनुकूल, 22- प्रतिकूल)।</p>"
-               if is_hi else
-               "<p style='font-size:0.85rem'>Each row states: running Mahadasha → Antardasha, "
-               "the house it activates, and the Ashtakavarga bindus of the transited sign "
-               "(28+ favourable, below 22 unfavourable).</p>"))
+            + "<p style='font-size:0.85rem'>Each row states: running Mahadasha &rarr; Antardasha, "
+              "the house it activates, and the Ashtakavarga bindus of the transited sign "
+              "(28+ favourable, below 22 unfavourable).</p>")
     career_prediction = synthesize_sutra(report_ctx, "career")
     marriage_prediction = synthesize_sutra(report_ctx, "marriage")
     health_prediction = synthesize_sutra(report_ctx, "health")
@@ -299,18 +294,15 @@ def generate_56_page_publication_html(
                 f"<td><b>{_sb.total_rupas:.2f}</b></td><td>{_sb.min_required/60:.1f}</td>"
                 f"<td>{_sb.strength_ratio:.2f}</td><td>{_sb.rank}</td></tr>")
         if _sb_rows:
-            _lbl = (["ग्रह", "स्थान", "दिक्", "काल", "चेष्टा", "नैसर्गिक", "दृक्",
-                     "कुल रूप", "न्यूनतम", "अनुपात", "क्रम"] if is_hi else
-                    ["Planet", "Sthana", "Dig", "Kala", "Chesta", "Naisargika", "Drik",
-                     "Total Rupas", "Required", "Ratio", "Rank"])
+            _lbl = ["Planet", "Sthana", "Dig", "Kala", "Chesta", "Naisargika", "Drik",
+                    "Total Rupas", "Required", "Ratio", "Rank"]
             _hdr = "".join(f"<th>{h}</th>" for h in _lbl)
             shadbala_evidence_html = (
                 "<div class='as-sub-title'>"
-                + ("षड्बल प्रमाण-तालिका (रूपों में)" if is_hi else "Shadbala Evidence (in rupas)")
+                + "Shadbala Evidence (in rupas)"
                 + f"</div><table class='as-table'><tr>{_hdr}</tr>{''.join(_sb_rows)}</table>"
-                + ("<p style='font-size:0.8rem'>कुल रूप &gt; न्यूनतम = बली; अनुपात 1.0 से अधिक होने पर ग्रह अपना पूर्ण फल देने में सक्षम माना जाता है।</p>"
-                   if is_hi else
-                   "<p style='font-size:0.8rem'>Total above the required rupas = strong. A ratio above 1.0 means the planet can deliver its full result.</p>"))
+                + "<p style='font-size:0.8rem'>Total above the required rupas = strong. "
+                  "A ratio above 1.0 means the planet can deliver its full result.</p>")
     except Exception:
         shadbala_evidence_html = ""
 
@@ -519,7 +511,7 @@ def generate_56_page_publication_html(
         return f"""
         <div class="as-header">
             <span>{name}</span>
-            <span>{"जन्म कुण्डली" if is_hi else "Vedic Kundli"}</span>
+            <span>Vedic Kundli</span>
         </div>
         """
 
@@ -543,25 +535,23 @@ def generate_56_page_publication_html(
             {svg_d1}
         </div>
 
-        <div style="font-size: 24pt; font-weight: 800; color: #8b0000; margin-bottom: 4px; letter-spacing: 1px;">{"वैदिक कुण्डली" if is_hi else "Vedic Kundli"}</div>
-        <div style="font-size: 11pt; font-weight: bold; color: #333333; margin-bottom: 15px;">{"सम्पूर्ण वैदिक कुण्डली एवं जीवन विश्लेषण" if is_hi else "Comprehensive Vedic Kundli & Life Analysis"}</div>
+        <div style="font-size: 24pt; font-weight: 800; color: #8b0000; margin-bottom: 4px; letter-spacing: 1px;">Vedic Kundli</div>
+        <div style="font-size: 11pt; font-weight: bold; color: #333333; margin-bottom: 15px;">Comprehensive Vedic Kundli & Life Analysis</div>
 
         <div style="border-top: 1.5px solid #000000; border-bottom: 1.5px solid #000000; padding: 12px 0; width: 85%; margin: 0 auto 30px auto;">
             <div style="font-size: 14pt; font-weight: bold; margin-bottom: 6px;">{name}</div>
             <div style="font-size: 9.5pt; color: #222222;">
-                दिनांक: {birth_dt.strftime('%d/%m/%Y')} | समय: {birth_dt.strftime('%H:%M:%S')} | स्थान: {city}
+                Date: {birth_dt.strftime('%d/%m/%Y')} | Time: {birth_dt.strftime('%H:%M:%S')} | Place: {city}
             </div>
             <div style="font-size: 9pt; color: #444444; margin-top: 4px;">
-                अक्षांश: {lat:.2f}° N | रेखांश: {lon:.2f}° E | अयनांश: {panch_obj.ayanamsa}
+                Latitude: {lat:.2f}&deg; N | Longitude: {lon:.2f}&deg; E | Ayanamsa: {panch_obj.ayanamsa}
             </div>
         </div>
 
         <div style="font-size: 16pt; font-weight: bold; color: #000000;">
             Price: <span style="text-decoration: line-through; color: #777777;">$10</span> <span style="color: #c53030;">FREE</span>
         </div>
-        <div style="font-size: 8.5pt; color: #666666; margin-top: 30px;">
-            {"जन्म कुण्डली - गणना एवं विश्लेषण" if is_hi else "Birth Chart - Calculation & Analysis"}
-        </div>
+        <div style="font-size: 8.5pt; color: #666666; margin-top: 30px;">Birth Chart - Calculation & Analysis</div>
         {page_footer(1)}
     </div>
     """
@@ -683,67 +673,67 @@ def generate_56_page_publication_html(
         {page_header()}
         <div class="two-col">
             <div class="col-half">
-                <div class="as-sub-title">{"अवकहड़ा चक्र" if is_hi else "Avkahada Chakra"}</div>
+                <div class="as-sub-title">Avkahada Chakra</div>
                 <table class="as-table as-table-left">
-                    <tr><td>{"पाया" if is_hi else "Paya (Nakshatra Based)"}</td><td>{avakhada.get('Paya', 'Silver')}</td></tr>
-                    <tr><td>{"वर्ण" if is_hi else "Varna"}</td><td>{avakhada.get('Varna', 'Bramhin')}</td></tr>
-                    <tr><td>{"योनि" if is_hi else "Yoni"}</td><td>{avakhada.get('Yoni', 'Mriga')}</td></tr>
-                    <tr><td>{"गण" if is_hi else "Gana"}</td><td>{avakhada.get('Gana', 'Devta')}</td></tr>
-                    <tr><td>{"वश्य" if is_hi else "Vasya"}</td><td>{avakhada.get('Vashya', 'Keeta')}</td></tr>
-                    <tr><td>{"नाड़ी" if is_hi else "Nadi"}</td><td>{avakhada.get('Nadi', 'Madhya')}</td></tr>
-                    <tr><td>{"दशा भोग्य" if is_hi else "Dasa Balance"}</td><td>{dasha_engine.balance_str}</td></tr>
-                    <tr><td>{"लग्न" if is_hi else "Lagna"}</td><td>{constants.SIGNS[asc_sign_idx]}</td></tr>
-                    <tr><td>{"लग्नेश" if is_hi else "Lagna Lord"}</td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3]}</td></tr>
-                    <tr><td>{"राशि" if is_hi else "Rasi"}</td><td>{constants.SIGNS[moon_sign_idx]}</td></tr>
-                    <tr><td>{"राशि स्वामी" if is_hi else "Rasi Lord"}</td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '')[:3]}</td></tr>
-                    <tr><td>{"नक्षत्र-पद" if is_hi else "Nakshatra-Pada"}</td><td>{panch_obj.nakshatra} {panch_obj.nakshatra_pada}</td></tr>
-                    <tr><td>{"नक्षत्र स्वामी" if is_hi else "Nakshatra Lord"}</td><td>{constants.PLANETS_HI.get(constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9], '')[:3]}</td></tr>
-                    <tr><td>{"जूलियन डे" if is_hi else "Julian Day"}</td><td>{p2_jd_ut:.4f}</td></tr>
-                    <tr><td>{"सूर्य राशि (भारतीय)" if is_hi else "SunSign (Indian)"}</td><td>{constants.SIGNS[chart.planets['Sun'].sign_index]}</td></tr>
-                    <tr><td>{"सूर्य राशि (पाश्चात्य)" if is_hi else "SunSign (Western)"}</td><td>{p2_west_sun_sign}</td></tr>
-                    <tr><td>{"अयनांश" if is_hi else "Ayanamsa"}</td><td>{panch_obj.ayanamsa_value}</td></tr>
-                    <tr><td>{"अयनांश नाम" if is_hi else "Ayanamsa Name"}</td><td>{panch_obj.ayanamsa}</td></tr>
-                    <tr><td>{"क्रांति कोण" if is_hi else "Obliquity"}</td><td>{p2_obliq}</td></tr>
-                    <tr><td>{"नाक्षत्रिक काल" if is_hi else "Sideral Time"}</td><td>{p2_sidereal_time}</td></tr>
+                    <tr><td>Paya (Nakshatra Based)</td><td>{avakhada.get('Paya', 'Silver')}</td></tr>
+                    <tr><td>Varna</td><td>{avakhada.get('Varna', 'Bramhin')}</td></tr>
+                    <tr><td>Yoni</td><td>{avakhada.get('Yoni', 'Mriga')}</td></tr>
+                    <tr><td>Gana</td><td>{avakhada.get('Gana', 'Devta')}</td></tr>
+                    <tr><td>Vasya</td><td>{avakhada.get('Vashya', 'Keeta')}</td></tr>
+                    <tr><td>Nadi</td><td>{avakhada.get('Nadi', 'Madhya')}</td></tr>
+                    <tr><td>Dasa Balance</td><td>{dasha_engine.balance_str}</td></tr>
+                    <tr><td>Lagna</td><td>{constants.SIGNS[asc_sign_idx]}</td></tr>
+                    <tr><td>Lagna Lord</td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3] if is_hi else str(constants.SIGN_LORD[asc_sign_idx]))}</td></tr>
+                    <tr><td>Rasi</td><td>{constants.SIGNS[moon_sign_idx]}</td></tr>
+                    <tr><td>Rasi Lord</td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '')[:3] if is_hi else str(constants.SIGN_LORD[moon_sign_idx]))}</td></tr>
+                    <tr><td>Nakshatra-Pada</td><td>{panch_obj.nakshatra} {panch_obj.nakshatra_pada}</td></tr>
+                    <tr><td>Nakshatra Lord</td><td>{((constants.PLANETS_HI.get(constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9], '')[:3] if is_hi else str(constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9])) if is_hi else constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9])}</td></tr>
+                    <tr><td>Julian Day</td><td>{p2_jd_ut:.4f}</td></tr>
+                    <tr><td>SunSign (Indian)</td><td>{constants.SIGNS[chart.planets['Sun'].sign_index]}</td></tr>
+                    <tr><td>SunSign (Western)</td><td>{p2_west_sun_sign}</td></tr>
+                    <tr><td>Ayanamsa</td><td>{panch_obj.ayanamsa_value}</td></tr>
+                    <tr><td>Ayanamsa Name</td><td>{panch_obj.ayanamsa}</td></tr>
+                    <tr><td>Obliquity</td><td>{p2_obliq}</td></tr>
+                    <tr><td>Sideral Time</td><td>{p2_sidereal_time}</td></tr>
                 </table>
             </div>
             <div class="col-half">
-                <div class="as-sub-title">{"मूलभूत विवरण" if is_hi else "Basic Details"}</div>
+                <div class="as-sub-title">Basic Details</div>
                 <table class="as-table as-table-left">
-                    <tr><td>{"लिंग" if is_hi else "Sex"}</td><td>{_p2_sex}</td></tr>
-                    <tr><td>{"जन्म दिनांक" if is_hi else "Date of Birth"}</td><td>{birth_dt.strftime('%d : %m : %Y')}</td></tr>
-                    <tr><td>{"जन्म समय" if is_hi else "Time of Birth"}</td><td>{birth_dt.strftime('%H : %M : %S')}</td></tr>
-                    <tr><td>{"जन्म वार" if is_hi else "Day of Birth"}</td><td>{panch_obj.vara}</td></tr>
-                    <tr><td>{"इष्टकाल" if is_hi else "Ishtkaal"}</td><td>{p2_ishtkaal}</td></tr>
-                    <tr><td>{"जन्म स्थान" if is_hi else "Place of Birth"}</td><td>{city}</td></tr>
-                    <tr><td>{"समय क्षेत्र" if is_hi else "Time Zone"}</td><td>{tz}</td></tr>
-                    <tr><td>{"अक्षांश" if is_hi else "Latitude"}</td><td>{int(lat)} : {int((lat%1)*60)} : {int((((lat%1)*60)%1)*60)} : {'N' if lat >= 0 else 'S'}</td></tr>
-                    <tr><td>{"रेखांश" if is_hi else "Longitude"}</td><td>{int(lon)} : {int((lon%1)*60)} : {int((((lon%1)*60)%1)*60)} : {'E' if lon >= 0 else 'W'}</td></tr>
-                    <tr><td>{"स्थानीय समय संस्कार" if is_hi else "Local Time Correction"}</td><td>{p2_lmc}</td></tr>
-                    <tr><td>{"युद्ध समय संस्कार" if is_hi else "War Time Correction"}</td><td>00.00.00</td></tr>
-                    <tr><td>{"स्थानीय मध्यम काल" if is_hi else "LMT at Birth"}</td><td>{p2_lmt}</td></tr>
-                    <tr><td>{"ग्रीनविच मध्यम काल" if is_hi else "GMT at Birth"}</td><td>{p2_gmt}</td></tr>
-                    <tr><td>{"तिथि" if is_hi else "Tithi"}</td><td>{panch_obj.tithi}</td></tr>
-                    <tr><td>{"हिन्दू वार" if is_hi else "Hindu Week Day"}</td><td>{panch_obj.vara}</td></tr>
-                    <tr><td>{"पक्ष" if is_hi else "Paksha"}</td><td>{panch_obj.paksha}</td></tr>
-                    <tr><td>{"योग" if is_hi else "Yoga"}</td><td>{panch_obj.yoga}</td></tr>
-                    <tr><td>{"करण" if is_hi else "Karan"}</td><td>{panch_obj.karana}</td></tr>
-                    <tr><td>{"सूर्योदय" if is_hi else "Sunrise"}</td><td>{panch_obj.sunrise}</td></tr>
-                    <tr><td>{"सूर्यास्त" if is_hi else "Sunset"}</td><td>{panch_obj.sunset}</td></tr>
-                    <tr><td>{"दिनमान" if is_hi else "Day Duration"}</td><td>{panch_obj.day_length}</td></tr>
+                    <tr><td>'Sex'</td><td>{_p2_sex}</td></tr>
+                    <tr><td>Date of Birth</td><td>{birth_dt.strftime('%d : %m : %Y')}</td></tr>
+                    <tr><td>Time of Birth</td><td>{birth_dt.strftime('%H : %M : %S')}</td></tr>
+                    <tr><td>Day of Birth</td><td>{panch_obj.vara}</td></tr>
+                    <tr><td>Ishtkaal</td><td>{p2_ishtkaal}</td></tr>
+                    <tr><td>Place of Birth</td><td>{city}</td></tr>
+                    <tr><td>Time Zone</td><td>{tz}</td></tr>
+                    <tr><td>Latitude</td><td>{int(lat)} : {int((lat%1)*60)} : {int((((lat%1)*60)%1)*60)} : {'N' if lat >= 0 else 'S'}</td></tr>
+                    <tr><td>Longitude</td><td>{int(lon)} : {int((lon%1)*60)} : {int((((lon%1)*60)%1)*60)} : {'E' if lon >= 0 else 'W'}</td></tr>
+                    <tr><td>Local Time Correction</td><td>{p2_lmc}</td></tr>
+                    <tr><td>War Time Correction</td><td>00.00.00</td></tr>
+                    <tr><td>LMT at Birth</td><td>{p2_lmt}</td></tr>
+                    <tr><td>GMT at Birth</td><td>{p2_gmt}</td></tr>
+                    <tr><td>Tithi</td><td>{panch_obj.tithi}</td></tr>
+                    <tr><td>Hindu Week Day</td><td>{panch_obj.vara}</td></tr>
+                    <tr><td>Paksha</td><td>{panch_obj.paksha}</td></tr>
+                    <tr><td>Yoga</td><td>{panch_obj.yoga}</td></tr>
+                    <tr><td>Karan</td><td>{panch_obj.karana}</td></tr>
+                    <tr><td>Sunrise</td><td>{panch_obj.sunrise}</td></tr>
+                    <tr><td>Sunset</td><td>{panch_obj.sunset}</td></tr>
+                    <tr><td>Day Duration</td><td>{panch_obj.day_length}</td></tr>
                 </table>
             </div>
         </div>
 
         <div class="two-col">
             <div class="col-half">
-                <div class="as-sub-title">{"अनुकूल बिन्दु" if is_hi else "Favourable Points"}</div>
+                <div class="as-sub-title">Favourable Points</div>
                 <table class="as-table as-table-left">
                     {_p2_fav_rows}
                 </table>
             </div>
             <div class="col-half">
-                <div class="as-sub-title">{"घातक चक्र" if is_hi else "Ghatak (Malefics)"}</div>
+                <div class="as-sub-title">Ghatak (Malefics)</div>
                 <table class="as-table as-table-left">
                     {_p2_ghatak_rows}
                 </table>
@@ -846,13 +836,13 @@ def generate_56_page_publication_html(
             if key in running:
                 info = running[key]
                 rows_cur.append(
-                    f"<tr><td>{'महादशा' if is_hi and key=='MD' else 'अन्तर्दशा' if is_hi and key=='AD' else 'प्रत्यन्तर' if is_hi and key=='PD' else 'सूक्ष्म' if is_hi and key=='SD' else 'प्राण' if is_hi else key}</td><td>{info['lord']}</td><td>{info['start']}</td><td>{info['end']}</td></tr>"
+                    f"<tr><td>{key}</td><td>{info['lord']}</td><td>{info['start']}</td><td>{info['end']}</td></tr>"
                 )
         if rows_cur:
             current_dasha_html = f"""
-            <div class="as-sub-title">{"वर्तमान दशा (प्राण दशा तक)" if is_hi else "Current Dasha (up to Prana Dasha)"}</div>
+            <div class="as-sub-title">Current Dasha (up to Prana Dasha)</div>
             <table class="as-table as-table-left">
-                <tr><th>{"स्तर" if is_hi else "Level"}</th><th>{"स्वामी" if is_hi else "Lord"}</th><th>{"प्रारम्भ" if is_hi else "Start"}</th><th>{"समाप्त" if is_hi else "End"}</th></tr>
+                <tr><th>Level</th><th>Lord</th><th>Start</th><th>'End'</th></tr>
                 {''.join(rows_cur)}
             </table>
             """
@@ -874,13 +864,13 @@ def generate_56_page_publication_html(
     p3 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| वैदिक परम्परानुसार ||</div>
+        <div class="as-title">|| Vedic Tradition ||</div>
         
         <table class="as-table as-table-dense as-table-left" style="margin-bottom: 8px;">
             <tr>
                 <td><b>Name</b></td><td>{name}</td>
                 <td><b>Julian Day</b></td><td>{julian_day_val:.4f}</td>
-                <td><b>Asc Lord</b></td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx],'')[:3].upper()}</td>
+                <td><b>Asc Lord</b></td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[asc_sign_idx]).upper())}</td>
                 <td><b>Bal. Dasa</b></td><td>{dasha_engine.balance_str}</td>
             </tr>
             <tr>
@@ -905,7 +895,7 @@ def generate_56_page_publication_html(
                 <td><b>Time of Birth</b></td><td>{birth_dt.strftime('%H.%M.%S')}</td>
                 <td><b>Longitude</b></td><td>{lon:.2f}.E</td>
                 <td><b>Sunset</b></td><td>{panch_obj.sunset}</td>
-                <td><b>Rasi Lord</b></td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx],'')[:3].upper()}</td>
+                <td><b>Rasi Lord</b></td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[moon_sign_idx]).upper())}</td>
             </tr>
             <tr>
                 <td><b>SID</b></td><td>{sid_val}</td>
@@ -928,7 +918,7 @@ def generate_56_page_publication_html(
 
         <div class="two-col">
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8.5pt; text-align: center; margin-bottom: 2px;">विंशोत्तरी दशा</div>
+                <div style="font-weight: bold; font-size: 8.5pt; text-align: center; margin-bottom: 2px;">Vimshottari Dasha</div>
                 <div style="font-size: 7pt; display: flex; flex-wrap: wrap; gap: 4px; border: 1px solid #000; padding: 4px;">
                     {dasha_box_html}
                 </div>
@@ -958,13 +948,13 @@ def generate_56_page_publication_html(
     asc_text_en = astrosage_content.ASCENDANT_READINGS_EN.get(asc_sign_idx, astrosage_content.ASCENDANT_READINGS_EN[0])
     asc_text_hi = astrosage_content.ASCENDANT_READINGS_HI.get(asc_sign_idx, astrosage_content.ASCENDANT_READINGS_HI[0])
 
-    asc_curr_name = asc_text_hi['name'] if is_hi else asc_text_en['name']
-    asc_health_hdr = 'लग्न स्वास्थ्य फलकथन' if is_hi else f"Health for {asc_text_en['name']} Ascendant"
-    asc_temp_hdr = 'स्वभाव एवं व्यक्तित्व' if is_hi else f"Temperament & Personality For {asc_text_en['name']} Ascendant"
-    asc_app_hdr = 'शारीरिक स्वरूप' if is_hi else f"Physical Appearance For {asc_text_en['name']} Ascendant"
-    asc_health_txt = asc_text_hi['health'] if is_hi else asc_text_en['health']
-    asc_temp_txt = asc_text_hi['temperament'] if is_hi else asc_text_en['temperament']
-    asc_app_txt = asc_text_hi['appearance'] if is_hi else asc_text_en['appearance']
+    asc_curr_name = asc_text_en['name']
+    asc_health_hdr = f"Health for {asc_text_en['name']} Ascendant"
+    asc_temp_hdr = f"Temperament & Personality For {asc_text_en['name']} Ascendant"
+    asc_app_hdr = f"Physical Appearance For {asc_text_en['name']} Ascendant"
+    asc_health_txt = asc_text_en['health']
+    asc_temp_txt = asc_text_en['temperament']
+    asc_app_txt = asc_text_en['appearance']
 
     if is_hi:
         what_is_asc = "वैदिक ज्योतिष में लग्न भाव अत्यंत महत्वपूर्ण माना जाता है। जन्म के समय पूर्व दिशा में जो राशि उदित हो रही होती है, उसे लग्न राशि कहा जाता है। यह व्यक्ति के शारीरिक गठन, स्वास्थ्य, मूल स्वभाव और जीवन की समग्र दिशा का निर्धारण करती है।"
@@ -974,12 +964,12 @@ def generate_56_page_publication_html(
     p4 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'आपका लग्न' if is_hi else 'Your Ascendant'} ||</div>
+        <div class="as-title">|| Your Ascendant ||</div>
         
-        <div class="as-sub-title">{'लग्न क्या है?' if is_hi else 'What is Ascendant?'}</div>
+        <div class="as-sub-title">What is Ascendant?</div>
         <p>{what_is_asc}</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">{'आपकी लग्न राशि है:' if is_hi else 'Your Ascendant is:'} {asc_curr_name}</p>
+        <p style="font-weight: bold; margin: 8px 0;">'Your Ascendant is:' {asc_curr_name}</p>
 
         <div class="as-sub-title">{asc_health_hdr}</div>
         <p>{asc_health_txt}</p>
@@ -991,8 +981,8 @@ def generate_56_page_publication_html(
         <p>{asc_app_txt}</p>
 
         <div class="ad-box">
-            <div style="font-size: 11pt; font-weight: bold; color: #8b0000;">VYAS • वैदिक परामर्श</div>
-            <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">शास्त्रीय गणना एवं गहन विश्लेषण</div>
+            <div style="font-size: 11pt; font-weight: bold; color: #8b0000;">VYAS • Vedic Advisory</div>
+            <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">Classical Computation &amp; Deep Analysis</div>
         </div>
         {page_footer(4)}
     </div>
@@ -1006,23 +996,20 @@ def generate_56_page_publication_html(
     p5 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'नक्षत्र फल' if is_hi else 'Nakshatra Phal'} ||</div>
+        <div class="as-title">|| Nakshatra Phal ||</div>
         
-        <p>
-            {'नक्षत्र चंद्र-मार्ग (क्रांतिवृत्त) के 27 प्रमुख भागों में से एक है। प्रत्येक नक्षत्र 13 अंश 20 कला में विस्तृत होता है और इसके चार चरण होते हैं। जन्म के समय चंद्रमा जिस नक्षत्र और चरण में स्थित होता है, वह जातक के अंतःकरण, संस्कारों और जीवन के बुनियादी दृष्टिकोण को गहराई से प्रभावित करता है।' if is_hi else
-            'Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 (sometimes also 28) sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a role in popular Hindu astrology, where each pada is associated with a syllable, conventionally chosen as the first syllable of the given name of a child born when the moon was in the corresponding pada.'}
-        </p>
+        <p>Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 (sometimes also 28) sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a role in popular Hindu astrology, where each pada is associated with a syllable, conventionally chosen as the first syllable of the given name of a child born when the moon was in the corresponding pada.</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">{'आपका नक्षत्र:' if is_hi else 'Your Nakshatra :'} {panch_obj.nakshatra.upper()}</p>
-        <p style="font-weight: bold; margin: 4px 0;">{'नक्षत्र चरण:' if is_hi else 'Your Nakshatra Pada :'} {panch_obj.nakshatra_pada}</p>
+        <p style="font-weight: bold; margin: 8px 0;">'Your Nakshatra :' {panch_obj.nakshatra.upper()}</p>
+        <p style="font-weight: bold; margin: 4px 0;">'Your Nakshatra Pada :' {panch_obj.nakshatra_pada}</p>
 
-        <div class="as-sub-title">{'नक्षत्र फलादेश' if is_hi else f'{panch_obj.nakshatra} Nakshatra Prediction :'}</div>
+        <div class="as-sub-title">{panch_obj.nakshatra} Nakshatra Prediction :</div>
         <p>{nak_content['prediction']}</p>
 
-        <div class="as-sub-title">{'शिक्षा एवं आय' if is_hi else 'Education & Income :'}</div>
+        <div class="as-sub-title">Education & Income :</div>
         <p>{nak_content['education_income']}</p>
 
-        <div class="as-sub-title">{'पारिवारिक जीवन' if is_hi else 'Family Life :'}</div>
+        <div class="as-sub-title">Family Life :</div>
         <p>{nak_content['family']}</p>
         {page_footer(5)}
     </div>
@@ -1036,27 +1023,23 @@ def generate_56_page_publication_html(
     p6 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'जीवन फलादेश' if is_hi else 'Life Predictions'} ||</div>
+        <div class="as-title">|| Life Predictions ||</div>
         
-        <div class="as-sub-title">{'समेकित जीवन विश्लेषण' if is_hi else 'Integrated Life Analysis'}</div>
+        <div class="as-sub-title">Integrated Life Analysis</div>
         <p>{overall_prediction}</p>
         {timed_html}
 
         {shadbala_evidence_html}
-        <div class="as-sub-title">{'चरित्र एवं आंतरिक शक्ति' if is_hi else 'Character'}</div>
+        <div class="as-sub-title">Character</div>
         <p>{asc_temp_txt}</p>
 
-        <div class="as-sub-title">{'प्रसन्नता एवं आत्म-संतुष्टि' if is_hi else 'Happiness And Fulfillment'}</div>
+        <div class="as-sub-title">Happiness And Fulfillment</div>
         <p>
-            {'आप आदर्शवादी और दूसरों को प्रेरित करने वाले व्यक्ति हैं। आपमें जन्मजात आध्यात्मिक निष्ठा विद्यमान है। संवेदनशील होने के कारण आप दूसरों की भावनाओं का पूरा सम्मान करते हैं। जीवन की बाधाओं को आप ईश्वर की दी हुई सीख के रूप में स्वीकार करते हैं, जिससे आपका व्यक्तित्व निरंतर निखरता है।' if is_hi else
-            "You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual."}
+            "You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual."
         </p>
 
-        <div class="as-sub-title">{'जीवन शैली एवं अभिप्रेरणा' if is_hi else 'Life Style'}</div>
-        <p>
-            {'आप जीवन में श्रेष्ठ भौतिक संपदा, प्रतिष्ठा एवं सुख-साधनों के अर्जन हेतु सदैव प्रेरित रहते हैं। महत्वाकांक्षा आपके प्रयासों की मुख्य संचालक शक्ति है। अपनी ऊर्जा को सही दिशा में नियोजित करने से आप जीवन के प्रत्येक क्षेत्र में विशिष्ट सफलता अर्जित करते हैं।' if is_hi else
-            'You are motivated to enhance your personal and material life. If other factors make you feel that material possessions are a requirement, you are motivated to gain much money. Your core driving force is your ambition and desire for excellence. Recognise this, and rather than fight it, use it to best advantage.'}
-        </p>
+        <div class="as-sub-title">Life Style</div>
+        <p>You are motivated to enhance your personal and material life. If other factors make you feel that material possessions are a requirement, you are motivated to gain much money. Your core driving force is your ambition and desire for excellence. Recognise this, and rather than fight it, use it to best advantage.</p>
         {page_footer(6)}
     </div>
     """
@@ -1066,18 +1049,15 @@ def generate_56_page_publication_html(
     p7 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'जीवन फलादेश' if is_hi else 'Life Predictions'} ||</div>
+        <div class="as-title">|| Life Predictions ||</div>
         
-        <div class="as-sub-title">{'कार्यक्षेत्र एवं करियर (सूत्र-संयोजन)' if is_hi else 'Career (Sutra-Synthesis)'}</div>
+        <div class="as-sub-title">Career (Sutra-Synthesis)</div>
         <p>{career_prediction}</p>
 
-        <div class="as-sub-title">{'अनुकूल आजीविका' if is_hi else 'Occupation'}</div>
-        <p>
-            {'सामान्य नीरस व रूढ़िवादी कार्यों की अपेक्षा आप रचनात्मक, बौद्धिक एवं परामर्शदात्री क्षेत्रों में अत्यधिक सफल रहते हैं। कानून, चिकित्सा, विज्ञान, साहित्य, शोध, प्रशासन, और परामर्श जैसे प्रतिष्ठित क्षेत्रों में आप अपनी प्रतिभा का उत्कृष्ट प्रदर्शन कर सकते हैं।' if is_hi else
-            'You are not particularly well suited to a routine commercial life, since these demand a monotonous nature which you do not possess. There are plenty of occupations in which you ought to do remarkably well. Generally speaking, you have an aptitude for several of the highest professions: law, medicine, advisory consultancy, literature, executive management, and research.'}
-        </p>
+        <div class="as-sub-title">Occupation</div>
+        <p>You are not particularly well suited to a routine commercial life, since these demand a monotonous nature which you do not possess. There are plenty of occupations in which you ought to do remarkably well. Generally speaking, you have an aptitude for several of the highest professions: law, medicine, advisory consultancy, literature, executive management, and research.</p>
 
-        <div class="as-sub-title">{'स्वास्थ्य एवं दीर्घायु (सूत्र-संयोजन)' if is_hi else 'Health & Longevity (Sutra-Synthesis)'}</div>
+        <div class="as-sub-title">Health & Longevity (Sutra-Synthesis)</div>
         <p>{health_prediction}</p>
         {page_footer(7)}
     </div>
@@ -1088,22 +1068,16 @@ def generate_56_page_publication_html(
     p8 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'जीवन फलादेश' if is_hi else 'Life Predictions'} ||</div>
+        <div class="as-title">|| Life Predictions ||</div>
         
-        <div class="as-sub-title">{'रुचियां एवं शौक' if is_hi else 'Hobbies'}</div>
-        <p>
-            {'प्राकृतिक वातावरण में भ्रमण, यात्राएं और पुस्तकों का अध्ययन आपको विशेष आनंद प्रदान करता है। तीव्र गति के वाहन और लंबी यात्राएं आपको प्रिय हैं। ज्ञानवर्धन हेतु शैक्षिक व ऐतिहासिक स्थलों का भ्रमण करना आपकी मुख्य रुचि है।' if is_hi else
-            'Outdoor pursuits engage much of your leisure time and you find them exceedingly beneficial. You love movement in the open, enjoy the pleasures of travel and long journeys, as well as educational visits. You take a keen interest in educating yourself using books and research.'}
-        </p>
+        <div class="as-sub-title">Hobbies</div>
+        <p>Outdoor pursuits engage much of your leisure time and you find them exceedingly beneficial. You love movement in the open, enjoy the pleasures of travel and long journeys, as well as educational visits. You take a keen interest in educating yourself using books and research.</p>
 
-        <div class="as-sub-title">{'प्रेम व वैवाहिक संबंध (D9-आधारित)' if is_hi else 'Love & Marriage (D9-based)'}</div>
+        <div class="as-sub-title">Love & Marriage (D9-based)</div>
         <p>{marriage_prediction}</p>
 
-        <div class="as-sub-title">{'आर्थिक स्थिति एवं वित्त' if is_hi else 'Finance'}</div>
-        <p>
-            {'आप अपने भाग्य के स्वयं निर्माता हैं। तीक्ष्ण बुद्धि और अवसर पहचानने की क्षमता से आप विपुल धन संचित करने में सफल होंगे। आय में उतार-चढ़ाव आ सकते हैं, किंतु आपकी बचत व निवेश की सूझबूझ आपको अंततः अत्यंत संपन्न बनाएगी।' if is_hi else
-            'You are more likely to be architect of your own fortune than receive much help from others. In matters of finance, your quick-witted clever brain will give you great opportunities. There is no reason for you not to eventually succeed and even become wealthy. Holding impulsive expenditures in check will guarantee enormous prosperity.'}
-        </p>
+        <div class="as-sub-title">Finance</div>
+        <p>You are more likely to be architect of your own fortune than receive much help from others. In matters of finance, your quick-witted clever brain will give you great opportunities. There is no reason for you not to eventually succeed and even become wealthy. Holding impulsive expenditures in check will guarantee enormous prosperity.</p>
         {page_footer(8)}
     </div>
     """
@@ -1113,12 +1087,11 @@ def generate_56_page_publication_html(
     p9 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'जीवन फलादेश' if is_hi else 'Life Predictions'} ||</div>
+        <div class="as-title">|| Life Predictions ||</div>
         
-        <div class="as-sub-title">{'विद्या एवं उच्च शिक्षा' if is_hi else 'Education'}</div>
+        <div class="as-sub-title">Education</div>
         <p>
-            {'आपमें गूढ़ और असाधारण विषयों को गहराई से समझने की विलक्षण क्षमता है। औपचारिक शिक्षा में प्रारंभिक चुनौतियों के उपरांत भी आपकी लगन और स्वाध्याय आपको उच्च शैक्षणिक प्रतिष्ठा दिलाते हैं। नियमित अभ्यास और एकाग्रता से आप अनुसंधान व विशेषज्ञता के उच्च शिखर पर पहुंचते हैं।' if is_hi else
-            "You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits."}
+            "You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits."
         </p>
         {page_footer(9)}
     </div>
@@ -1151,43 +1124,36 @@ def generate_56_page_publication_html(
     if mangal_data["cancellations"]:
         _canc_items = "".join(f"<li>{c}</li>" for c in mangal_data["cancellations"])
         _manglik_cancellation_html = (
-            f'<div class="as-sub-title">{"शास्त्रीय परिहार (Cancellations)" if is_hi else "Classical Cancellations"}</div>'
+            f'<div class="as-sub-title">Classical Cancellations</div>'
             f'<ul style="margin: 2px 0 6px 16px; font-size: 8pt;">{_canc_items}</ul>'
         )
 
     p10 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'मांगलिक विचार / मंगल दोष' if is_hi else 'Manglik Details / Mangal Dosha'} ||</div>
+        <div class="as-title">|| Manglik Details / Mangal Dosha ||</div>
         
+        <p>Generally Manglik Dosha is considered from the position of Lagna and Moon in the birth chart.</p>
         <p>
-            {'सामान्यतः जन्म कुण्डली में मंगल दोष का विचार लग्न एवं चन्द्र दोनों से मंगल की स्थिति के आधार पर किया जाता है।' if is_hi else
-            'Generally Manglik Dosha is considered from the position of Lagna and Moon in the birth chart.'}
-        </p>
-        <p>
-            {'आपकी जन्म कुण्डली में मंगल लग्न से ' + str(mars_h_lagna) + 'वें भाव में, चन्द्र कुण्डली से ' + str(mars_h_moon) + 'वें भाव में तथा शुक्र से ' + str(mars_h_venus) + 'वें भाव में स्थित है।' if is_hi else
-            f'In the birth chart, Mangal is placed in {mars_h_lagna}th house from Lagna, {mars_h_moon}th house from Moon and {mars_h_venus}th house from Venus.'}
+            {f'In the birth chart, Mangal is placed in {mars_h_lagna}th house from Lagna, {mars_h_moon}th house from Moon and {mars_h_venus}th house from Venus.'}
         </p>
         {_manglik_cancellation_html}
         <p style="font-weight: bold; margin: 8px 0;">
-            {_manglik_verdict_hi if is_hi else _manglik_verdict_en}
+            {_manglik_verdict_en}
         </p>
-        <p>
-            {'ज्योतिष शास्त्र में मंगल दोष दांपत्य जीवन में विलम्ब या विवाद का कारण माना जाता है। किंतु यदि मंगल अपनी उच्च राशि, स्वराशि या केंद्र में शुभ युत/दृष्ट हो अथवा परिहार प्राप्त हो तो यह दोष निष्प्रभावी हो जाता है।' if is_hi else
-            'Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.'}
-        </p>
+        <p>Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.</p>
 
-        <div class="as-sub-title">{'मंगल शांति एवं कल्याणकारी उपाय' if is_hi else 'Some Remedies (in case Mangal Dosha is present)'}</div>
+        <div class="as-sub-title">Some Remedies (in case Mangal Dosha is present)</div>
         
-        <div style="font-weight: bold; margin-top: 6px;">{'विवाह पूर्व उपाय:' if is_hi else 'Remedies (needs to be performed before marriage)'}</div>
+        <div style="font-weight: bold; margin-top: 6px;">Remedies (needs to be performed before marriage)</div>
         <p>Kumbha Vivah, Vishnu Vivah and Ashwatha Vivah are the most popular classical remedies for Mangal Dosha.</p>
 
-        <div style="font-weight: bold; margin-top: 6px;">{'विवाह उपरांत उपाय:' if is_hi else 'Remedies (can be performed after marriage)'}</div>
+        <div style="font-weight: bold; margin-top: 6px;">Remedies (can be performed after marriage)</div>
         <p>1. Keep Kesariya Ganapati (Orange coloured idol of Lord Ganesha) in worship room and worship daily.<br/>
            2. Worship Lord Hanuman by reciting Hanuman Chalisa daily.<br/>
            3. Mahamrityunjaya paath (recitation of Mahamrityunjaya mantra).</p>
 
-        <div style="font-weight: bold; margin-top: 6px;">{'लाल किताब विशेष उपाय:' if is_hi else 'Remedies (based on Lal Kitab, can be performed after marriage)'}</div>
+        <div style="font-weight: bold; margin-top: 6px;">Remedies (based on Lal Kitab, can be performed after marriage)</div>
         <p>1. Feed birds with something sweet.<br/>
            2. Keep ivory or copper article in home.<br/>
            3. Worship banyan tree with milk mixed with sweetness.</p>
@@ -1316,19 +1282,19 @@ def generate_56_page_publication_html(
     p15 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| {'कालसर्प दोष' if is_hi else 'Kalsarpa Dosh'} ||</div>
+        <div class="as-title">|| Kalsarpa Dosh ||</div>
         
-        <div class="as-sub-title">{'कालसर्प दोष / योग' if is_hi else 'Kalsarpa Dosh / Yog'}</div>
+        <div class="as-sub-title">Kalsarpa Dosh / Yog</div>
         <p>
-            {_kalsarp_desc_hi if is_hi else _kalsarp_desc_en}
+            {_kalsarp_desc_en}
         </p>
 
         <p style="font-weight: bold; font-size: 9.5pt; margin: 10px 0; color: {_kalsarp_color};">
-            {_kalsarp_result_hi if is_hi else _kalsarp_result_en}
+            {_kalsarp_result_en}
         </p>
 
         <div style="text-align: center; margin: 20px 0;">
-            <div style="font-weight: bold; margin-bottom: 6px;">{'लग्न कुण्डली' if is_hi else 'Lagna Chart'}:</div>
+            <div style="font-weight: bold; margin-bottom: 6px;">'Lagna Chart':</div>
             {svg_d1}
         </div>
         {page_footer(15)}
@@ -1401,7 +1367,7 @@ def generate_56_page_publication_html(
             <tr><td>{panch_obj.sunrise}</td><td>Sunrise</td><td>{_varsh_rise}</td></tr>
             <tr><td>{panch_obj.sunset}</td><td>Sunset</td><td>{_varsh_set}</td></tr>
             <tr><td>{constants.SIGNS[asc_sign_idx]}</td><td>Lagna</td><td>{varshphal_data['varsha_lagna']}</td></tr>
-            <tr><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx],'')[:3].upper()}</td><td>Lagna Lord</td><td>{varshphal_data['varshesh'][:3].upper()}</td></tr>
+            <tr><td>{((constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[asc_sign_idx]).upper()) if is_hi else constants.SIGN_LORD[asc_sign_idx][:3].upper())}</td><td>Lagna Lord</td><td>{varshphal_data['varshesh'][:3].upper()}</td></tr>
             <tr><td>{constants.SIGNS[moon_sign_idx]}</td><td>Rasi</td><td>{_varsh_rasi}</td></tr>
             <tr><td>{constants.SIGN_LORD[moon_sign_idx][:3].upper()}</td><td>Rasi Lord</td><td>{_varsh_rasi_lord}</td></tr>
             <tr><td>{panch_obj.nakshatra}</td><td>Nakshatra</td><td>{_varsh_nak}</td></tr>
@@ -2176,9 +2142,9 @@ def generate_56_page_publication_html(
             <td>{c.cusp_num}</td>
             <td>{format_dms_clean(c.longitude)}</td>
             <td>{constants.SIGNS[c.sign_index][:3].upper()}</td>
-            <td>{constants.PLANETS_HI.get(c.star_lord, '')[:3].upper()}</td>
-            <td>{constants.PLANETS_HI.get(c.sub_lord, '')[:3].upper()}</td>
-            <td>{constants.PLANETS_HI.get(c.sub_sub_lord, '')[:3].upper()}</td>
+            <td>{(constants.PLANETS_HI.get(c.star_lord, '')[:3] if is_hi else str(c.star_lord)).upper()}</td>
+            <td>{(constants.PLANETS_HI.get(c.sub_lord, '')[:3] if is_hi else str(c.sub_lord)).upper()}</td>
+            <td>{(constants.PLANETS_HI.get(c.sub_sub_lord, '')[:3] if is_hi else str(c.sub_sub_lord)).upper()}</td>
         </tr>
         """)
 
@@ -2593,12 +2559,8 @@ def generate_56_page_publication_html(
     # =========================================================================
     p56 = f"""
     <div class="page" style="text-align: center; padding-top: 30mm;">
-        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin-bottom: 8px;">
-            {"संगणित वैदिक कुण्डली विश्लेषण" if is_hi else "Computed Vedic Kundli Analysis"}
-        </div>
-        <p style="font-size: 10pt; color: #4a5568; width: 80%; margin: 0 auto 25px auto;">
-            {"यह रिपोर्ट शास्त्रीय गणनाओं पर आधारित है। फलों का तात्पर्य संकेतों के रूप में समझें।" if is_hi else "This report is based on classical calculations. Interpret results as indications, not certainties."}
-        </p>
+        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin-bottom: 8px;">Computed Vedic Kundli Analysis</div>
+        <p style="font-size: 10pt; color: #4a5568; width: 80%; margin: 0 auto 25px auto;">This report is based on classical calculations. Interpret results as indications, not certainties.</p>
         {page_footer(56)}
     </div>
     """
@@ -2609,8 +2571,8 @@ def generate_56_page_publication_html(
     # closed exactly once, so Chrome paginates 1 page = 1 sheet.
     _footer_tpl = (
         '<div class="as-footer">'
-        '<span>' + ("प्रिन्ट दिनांक" if is_hi else "Printing Date") + ': {d}</span>'
-        '<span>' + ("पृष्ठ संख्या" if is_hi else "Page No.") + ' {n}</span>'
+        '<span>Printing Date: {d}</span>'
+        '<span>Page No. {n}</span>'
         '</div>'
     )
     _assembled = []

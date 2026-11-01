@@ -655,24 +655,43 @@ def synthesize(ctx: ChartContext, domain: Optional[str] = None) -> str:
     top_support = scored["supporting"][:3]
     top_blocking = scored["blocking"][:2]
 
-    # Build a concise factors string from supporting sutras' text_hi
+    # Build the evidence paragraph from the highest-scoring sutras.
+    # Hindi and English must never mix: in English mode the Devanagari text is
+    # dropped entirely rather than falling back to it (which is what produced
+    # half-Hindi, half-English pages).
     factors_parts: List[str] = []
     for entry in top_support:
-        txt = entry.get("text_hi") if is_hi else entry.get("text_en") or entry.get("text_hi") or ""
-        if txt and isinstance(txt, str):
-            # Take first sentence
+        if is_hi:
+            txt = entry.get("text_hi") or ""
+        else:
+            txt = entry.get("text_en") or ""
+        if not txt or not isinstance(txt, str):
+            continue
+        if is_hi:
             sents = txt.replace('\n', ' ').split('।')
             first = sents[0].strip() if sents and sents[0].strip() else txt.strip()
-            factors_parts.append(first + '।' if not first.endswith('।') and is_hi else first)
-            if len(factors_parts) >= 3:
-                break
+            factors_parts.append(first + '।' if not first.endswith('।') else first)
+        else:
+            # Take the first two sentences of the English rendering.
+            flat = " ".join(txt.split())
+            parts = [x.strip() for x in flat.replace('! ', '. ').split('. ') if x.strip()]
+            factors_parts.append('. '.join(parts[:2]) + '.')
+        if len(factors_parts) >= 3:
+            break
 
-    factors = " ".join(factors_parts) if factors_parts else ("शास्त्रीय विश्लेषण के अनुसार सामान्य प्रभाव।" if is_hi else "Classical analysis indicates balanced effects.")
+    factors = " ".join(factors_parts) if factors_parts else (
+        "शास्त्रीय विश्लेषण के अनुसार सामान्य प्रभाव।" if is_hi
+        else "Classical analysis indicates balanced effects.")
+    factors = factors.replace("..", ".").replace("।।", "।")
 
     # Gather contextual data for the paragraph body
     rd = _ctx_running_dasha_info(ctx)
-    md_lord = rd.get("MD", {}).get("lord", "महादशा") if rd else "महादशा"
-    ad_lord = rd.get("AD", {}).get("lord", "अन्तर्दशा") if rd else "अन्तर्दशा"
+    md_lord = rd.get("MD", {}).get("lord") if rd else None
+    ad_lord = rd.get("AD", {}).get("lord") if rd else None
+    if not md_lord:
+        md_lord = "महादशा" if is_hi else "current"
+    if not ad_lord:
+        ad_lord = "अन्तर्दशा" if is_hi else ""
     pd_lord = rd.get("PD", {}).get("lord", "प्रत्यान्तर") if rd else "प्रत्यन्तर"
     sd_lord = rd.get("SD", {}).get("lord", "सूक्ष्म") if rd else "सूक्ष्म"
     prd_lord = rd.get("PrD", {}).get("lord", "प्राण") if rd else "प्राण"
@@ -689,16 +708,20 @@ def synthesize(ctx: ChartContext, domain: Optional[str] = None) -> str:
             _ctx_d9_chart_has_planet(ctx, p, ctx.planets[p].sign_index)
             for p in ctx.planets
         )
-        d9_factors = "नवमांश में कई ग्रह बलवान" if d9_ctx else "नवमांश बल सामान्य"
+        d9_factors = ("नवमांश में कई ग्रह बलवान" if d9_ctx else "नवमांश बल सामान्य") if is_hi \
+            else ("several planets are strong in the Navamsa" if d9_ctx else "Navamsa strength is moderate")
     except Exception:
-        d9_factors = "नवमांश जानकारी अपर्याप्त"
+        d9_factors = "नवमांश जानकारी अपर्याप्त" if is_hi else "Navamsa data is limited"
 
     d10_status = ""
     try:
         d10_h = _ctx_d10_house(ctx)
-        d10_status = f"{d10_h} भाव में सूर्य" if d10_h else "जानकारी अपर्याप्त"
+        if d10_h:
+            d10_status = f"{d10_h} भाव में सूर्य" if is_hi else f"Sun in D10 house {d10_h}"
+        else:
+            d10_status = "जानकारी अपर्याप्त" if is_hi else "D10 data is limited"
     except Exception:
-        d10_status = "जानकारी अपर्याप्त"
+        d10_status = "जानकारी अपर्याप्त" if is_hi else "D10 data is limited"
 
     # Bhava analysis (simple)
     bhava_chain = _ctx_bhava_lord_chain(ctx, 7)  # 7th house for marriage
@@ -726,21 +749,25 @@ def synthesize(ctx: ChartContext, domain: Optional[str] = None) -> str:
 
         out = "। ".join(out_parts) + "।"
     else:
-        # English version
+        # English version: one clean paragraph, no mixed scripts, no dangling
+        # fragments. Each sentence states a fact and where it comes from.
         out_parts: List[str] = []
 
         if factors_parts:
             out_parts.append(factors)
 
-        out_parts.append(f"Under current {md_lord} Mahadasha")
+        out_parts.append(
+            f"These readings are being carried by the running {md_lord} Mahadasha"
+            + (f" and {ad_lord} Antardasha" if ad_lord and ad_lord != md_lord else "")
+        )
+        out_parts.append(f"Divisional cross-check: {d9_factors}; {d10_status}")
+        out_parts.append(f"The Lagna lord {lagnesh_name} sits in house {lagnesh_house}")
+        out_parts.append(
+            "The strength of each yoga decides how fully it delivers: "
+            "read the Shadbala table and the Ashtakavarga bindus alongside this paragraph"
+        )
 
-        out_parts.append(f"D9/D10 cross-checks: {d9_factors}; {d10_status}")
-
-        out_parts.append(f"Lagnesh {lagnesh_name} in house {lagnesh_house}")
-
-        out_parts.append("Results favorable per yoga-strength.")
-
-        out = ". ".join(out_parts) + "."
+        out = ". ".join(x.rstrip('.') for x in out_parts if x) + "."
 
     return out
 

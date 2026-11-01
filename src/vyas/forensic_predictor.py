@@ -464,13 +464,13 @@ def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float,
     # Signs involved in Sade Sati: Moon-1 (12th from Moon), Moon (1st), Moon+1 (2nd from Moon)
     # Dhaiya (Kantaka / Ashtama): 4th from Moon, 8th from Moon
     sade_sati_signs = {
-        (moon_sign_idx - 1) % 12: ("साढ़े साती", "उदय", "उदय चरण (चन्द्र से 12H) - व्यय, प्रवास व आंतरिक अनुशासन"),
-        moon_sign_idx: ("साढ़े साती", "शिखर", "शिखर चरण (जन्म चन्द्र पर शनि) - मानसिक मंथन, दायित्व व आत्म-साक्षात्कार"),
-        (moon_sign_idx + 1) % 12: ("साढ़े साती", "अस्त", "अस्त चरण (चन्द्र से 2H) - धन-कुटुंब पर प्रभाव, स्थिरता व लाभ")
+        (moon_sign_idx - 1) % 12: ("Sade Sati", "Uday", "Rising phase (12th from Moon): expenditure, travel and inner discipline"),
+        moon_sign_idx: ("Sade Sati", "Shikhar", "Peak phase (Saturn on the natal Moon): mental churn, responsibility and self-reckoning"),
+        (moon_sign_idx + 1) % 12: ("Sade Sati", "Ast", "Setting phase (2nd from Moon): effects on wealth and family, then stability and gain")
     }
     dhaiya_signs = {
-        (moon_sign_idx + 3) % 12: ("छोटी पनौती", "ढैय्या (4H)", "चतुर्थ ढैय्या (कंटक शनि) - गृह, सुख व कार्यक्षेत्र में कर्म फल"),
-        (moon_sign_idx + 7) % 12: ("छोटी पनौती", "ढैय्या (8H)", "अष्टम ढैय्या (अष्टम शनि) - गूढ़ चिंतन, स्वास्थ्य सतर्कता व परिवर्तन")
+        (moon_sign_idx + 3) % 12: ("Dhaiya", "Dhaiya (4H)", "Kantaka Shani (4th from Moon): effects on home, comfort and workplace"),
+        (moon_sign_idx + 7) % 12: ("Dhaiya", "Dhaiya (8H)", "Ashtama Shani (8th from Moon): deep reflection, health caution and change")
     }
 
     phases = []
