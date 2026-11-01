@@ -3771,7 +3771,11 @@ if st.session_state.get('data_generated'):
         sav = av_res["sav"]
         dignities = forensic_predictor.analyze_all_planetary_dignities(chart, vargas_matrix)
         bhavas = forensic_predictor.analyze_all_12_bhavas(chart, dignities)
-        overall_forecast = forensic_predictor.compute_overall_life_forecast(chart, dignities, bhavas, sav, vargas_matrix)
+        overall_forecast = forensic_predictor.compute_overall_life_forecast(
+            chart, dignities, bhavas, sav, vargas_matrix,
+            dasha_engine=st.session_state.get('dasha_engine'),
+            birth=st.session_state.get('birth'),
+        )
 
         _lz_p_tab = lazy_sections([
             "🌟 समग्र जीवन फलादेश (Senior Master Forecast)" if is_hi else "Master Overall Life Forecast",

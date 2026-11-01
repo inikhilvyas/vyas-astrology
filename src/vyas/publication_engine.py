@@ -209,6 +209,45 @@ def generate_56_page_publication_html(
     )
     report_ctx.birth = {**birth, "lang": lang}
     overall_prediction = synthesize_sutra(report_ctx, "overall")
+    # Dated predictions, each with its Dasha -> house -> transit -> AV chain.
+    # The chart context does not expose the SAV array, so recompute it here --
+    # it is cheap (pure arithmetic over the 337 bindu rules) and keeps the
+    # evidence column honest instead of silently empty.
+    _timed_rows = []
+    try:
+        # `dignities` is not bound yet at this point in the generator (it is
+        # computed further down), so derive it here from the shared context.
+        _av_for_timed = ashtakavarga.compute_ashtakavarga(
+            {n: p.sign_index for n, p in chart.planets.items()}, chart.ascendant_sign)
+        _timed_rows = forensic_predictor.build_timed_predictions(
+            chart, report_ctx.dignities, _av_for_timed["sav"], dasha_engine, birth,
+            horizon_years=10.0, limit=10)
+    except Exception as _e:
+        import builtins as _b
+        _b._vyas_last_timed_error = repr(_e)
+        _timed_rows = []
+    timed_html = ""
+    if _timed_rows:
+        _hdr = ("<tr><th>अवधि</th><th>दशा</th><th>क्षेत्र</th><th>निर्णय</th><th>प्रमाण-श्रृंखला</th></tr>"
+                if is_hi else
+                "<tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr>")
+        _rows = "".join(
+            f"<tr><td>{r['period']}</td><td>{r['dasha']}</td>"
+            f"<td>{r['domain_hi'] if is_hi else r['domain_en']}</td>"
+            f"<td>{r['verdict_hi'] if is_hi else r['verdict_en']}</td>"
+            f"<td style='font-size:0.8rem'>{r['evidence_hi'] if is_hi else r['evidence_en']}</td></tr>"
+            for r in _timed_rows)
+        timed_html = (
+            "<div class='as-sub-title'>"
+            + ("दिनांकित भविष्यवाणियाँ (दशा-गोचर-अष्टकवर्ग प्रमाण सहित)" if is_hi
+               else "Dated Predictions (with Dasha / transit / Ashtakavarga evidence)")
+            + f"</div><table class='as-table'>{_hdr}{_rows}</table>"
+            + ("<p style='font-size:0.85rem'>प्रत्येक पंक्ति में: चल रही महादशा → अंतर्दशा, "
+               "जिस भाव को सक्रिय करती है, और गोचर राशि के अष्टकवर्ग बिन्दु (28+ अनुकूल, 22- प्रतिकूल)।</p>"
+               if is_hi else
+               "<p style='font-size:0.85rem'>Each row states: running Mahadasha → Antardasha, "
+               "the house it activates, and the Ashtakavarga bindus of the transited sign "
+               "(28+ favourable, below 22 unfavourable).</p>"))
     career_prediction = synthesize_sutra(report_ctx, "career")
     marriage_prediction = synthesize_sutra(report_ctx, "marriage")
     health_prediction = synthesize_sutra(report_ctx, "health")
@@ -969,6 +1008,7 @@ def generate_56_page_publication_html(
         
         <div class="as-sub-title">{'समेकित जीवन विश्लेषण' if is_hi else 'Integrated Life Analysis'}</div>
         <p>{overall_prediction}</p>
+        {timed_html}
 
         <div class="as-sub-title">{'चरित्र एवं आंतरिक शक्ति' if is_hi else 'Character'}</div>
         <p>{asc_temp_txt}</p>

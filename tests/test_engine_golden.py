@@ -178,3 +178,28 @@ def test_end_to_end_chart():
     av = ashtakavarga.compute_ashtakavarga(
         {n: p.sign_index for n, p in chart.planets.items()}, chart.ascendant_sign)
     assert sum(av["sav"]) == 337
+
+
+# --------------------------------------------------------------------------
+# Timed predictions must always carry their evidence chain
+# --------------------------------------------------------------------------
+def test_timed_predictions_carry_evidence():
+    from vyas import forensic_predictor
+    utc = ephem.local_to_utc(dt.datetime(1990, 5, 15, 14, 35), 5.5)
+    pos = ephem.planet_positions(utc)
+    asc = ephem.ascendant_sidereal(utc, 26.9124, 75.7873)
+    chart = Chart(asc, {n: PlanetState(n, p.longitude, p.speed) for n, p in pos.items()})
+    vd = varga.get_all_vargas_matrix(chart)
+    dig = forensic_predictor.analyze_all_planetary_dignities(chart, vd)
+    av = ashtakavarga.compute_ashtakavarga(
+        {n: p.sign_index for n, p in chart.planets.items()}, chart.ascendant_sign)
+    de = dasha.VimshottariDasha(chart.planets["Moon"].longitude, utc)
+    rows = forensic_predictor.build_timed_predictions(
+        chart, dig, av["sav"], de, {"tz": 5.5})
+    assert rows, "no timed predictions produced"
+    for r in rows:
+        assert r["period"] and r["dasha"] and "/" in r["dasha"]
+        # evidence must name the activated house and the bindu count
+        assert "house" in r["evidence_en"]
+        assert "bindus" in r["evidence_en"]
+        assert r["verdict_en"] in ("Excellent", "Favourable", "Mixed", "Caution")
