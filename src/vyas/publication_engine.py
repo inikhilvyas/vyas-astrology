@@ -287,6 +287,34 @@ def generate_56_page_publication_html(
         birth_utc=_ephem_shad.local_to_utc(birth_dt, float(tz)), tz_hours=float(tz),
     )
 
+    # --- Shadbala evidence table: the six limbs, per planet, in rupas -------
+    shadbala_evidence_html = ""
+    try:
+        _sb_rows = []
+        for _p, _sb in sorted(final_shadbala.items(), key=lambda kv: -kv[1].total_rupas):
+            _sb_rows.append(
+                f"<tr><td>{_p}</td><td>{_sb.sthana_bala:.1f}</td><td>{_sb.dig_bala:.1f}</td>"
+                f"<td>{_sb.kala_bala:.1f}</td><td>{_sb.chesta_bala:.1f}</td>"
+                f"<td>{_sb.naisargika_bala:.1f}</td><td>{_sb.drik_bala:+.1f}</td>"
+                f"<td><b>{_sb.total_rupas:.2f}</b></td><td>{_sb.min_required/60:.1f}</td>"
+                f"<td>{_sb.strength_ratio:.2f}</td><td>{_sb.rank}</td></tr>")
+        if _sb_rows:
+            _lbl = (["ग्रह", "स्थान", "दिक्", "काल", "चेष्टा", "नैसर्गिक", "दृक्",
+                     "कुल रूप", "न्यूनतम", "अनुपात", "क्रम"] if is_hi else
+                    ["Planet", "Sthana", "Dig", "Kala", "Chesta", "Naisargika", "Drik",
+                     "Total Rupas", "Required", "Ratio", "Rank"])
+            _hdr = "".join(f"<th>{h}</th>" for h in _lbl)
+            shadbala_evidence_html = (
+                "<div class='as-sub-title'>"
+                + ("षड्बल प्रमाण-तालिका (रूपों में)" if is_hi else "Shadbala Evidence (in rupas)")
+                + f"</div><table class='as-table'><tr>{_hdr}</tr>{''.join(_sb_rows)}</table>"
+                + ("<p style='font-size:0.8rem'>कुल रूप &gt; न्यूनतम = बली; अनुपात 1.0 से अधिक होने पर ग्रह अपना पूर्ण फल देने में सक्षम माना जाता है।</p>"
+                   if is_hi else
+                   "<p style='font-size:0.8rem'>Total above the required rupas = strong. A ratio above 1.0 means the planet can deliver its full result.</p>"))
+    except Exception:
+        shadbala_evidence_html = ""
+
+
     # KP & Chalit
     significators = kp.compute_kp_significators(chart.planets, kp_cusps)
     ruling_planets = kp.get_ruling_planets(birth_dt, lat, lon, tz, moon_lon, chart.ascendant_longitude)
@@ -390,7 +418,12 @@ def generate_56_page_publication_html(
         }
         .page {
             page-break-after: always;
-            height: 278mm;
+            /* A4 is 297mm; the @page box already subtracts 10mm top + 12mm
+               bottom, so the printable content height is 275mm.  The old 278mm
+               was 3mm taller than the sheet, which pushed an empty overflow
+               page after EVERY page (56 pages printed as 112 sheets). */
+            height: 273mm;
+            /* No overflow:hidden -- long tables would be silently cut off. */
             position: relative;
             padding-bottom: 8mm;
             box-sizing: border-box;
@@ -491,12 +524,11 @@ def generate_56_page_publication_html(
         """
 
     def page_footer(pg_num: int):
-        return f"""
-        <div class="as-footer">
-            <span>{"प्रिन्ट दिनांक" if is_hi else "Printing Date"}: {print_date_str}</span>
-            <span>{"पृष्ठ संख्या" if is_hi else "Page No."} {pg_num}</span>
-        </div>
-        """
+        # Kept for call-site compatibility only. The footer is emitted ONCE per
+        # page by the final assembly below; emitting it from inside the page
+        # bodies left an unbalanced <div> that swallowed every following page
+        # into page 1 (56 pages printed as 112 sheets).
+        return ""
 
     pages = []
 
@@ -1010,6 +1042,7 @@ def generate_56_page_publication_html(
         <p>{overall_prediction}</p>
         {timed_html}
 
+        {shadbala_evidence_html}
         <div class="as-sub-title">{'चरित्र एवं आंतरिक शक्ति' if is_hi else 'Character'}</div>
         <p>{asc_temp_txt}</p>
 
@@ -2571,6 +2604,24 @@ def generate_56_page_publication_html(
     """
     pages.append(p56)
 
+    # Assemble with one footer per page. Injecting the footer here (instead of
+    # inside each page body) guarantees balanced markup: every .page div is
+    # closed exactly once, so Chrome paginates 1 page = 1 sheet.
+    _footer_tpl = (
+        '<div class="as-footer">'
+        '<span>' + ("प्रिन्ट दिनांक" if is_hi else "Printing Date") + ': {d}</span>'
+        '<span>' + ("पृष्ठ संख्या" if is_hi else "Page No.") + ' {n}</span>'
+        '</div>'
+    )
+    _assembled = []
+    for _idx, _pg in enumerate(pages, start=1):
+        _footer = _footer_tpl.format(d=print_date_str, n=_idx)
+        _pos = _pg.rfind("</div>")
+        if _pos == -1:
+            _assembled.append(_pg + _footer)
+        else:
+            _assembled.append(_pg[:_pos] + _footer + _pg[_pos:])
+
     full_html = f"""<!DOCTYPE html>
     <html lang="{lang}">
     <head>
@@ -2579,7 +2630,7 @@ def generate_56_page_publication_html(
         {css_styles}
     </head>
     <body>
-        {''.join(pages)}
+        {''.join(_assembled)}
     </body>
     </html>
     """
