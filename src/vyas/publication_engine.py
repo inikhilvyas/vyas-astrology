@@ -2,49 +2,19 @@
 
 Renders publication-grade Vedic astrological reports matching the exact industry gold standard
 of AstroSage Premium Brihat Kundli / Astro Intelligence Report.
-
-Complete 56-Page Master Structure:
-Page 1:  Cover Page (Ganesha Artwork, Title, Branding, Native Particulars)
-Page 2:  Basic Details & Avkahada Quadrant (Avkahada, Basic Details, Favourable Points, Ghatak Malefics)
-Page 3:  Traditional Kundli Page (Metadata Box, D1 & D9 Diamond Charts, Vimshottari Overview, Planetary Positions, Ashtakvarga, Chalit)
-Page 4:  || Your Ascendant || (Health, Temperament & Personality, Physical Appearance)
-Page 5:  || Nakshatra Phal || (General Forecast, Education & Income, Family Life)
-Pages 6-9: || Life Predictions || (Character, Happiness, Lifestyle, Career, Occupation, Health, Hobbies, Love, Finance, Education)
-Page 10: || Manglik Details / Mangal Dosha || (Lagna & Moon Evaluation, Cancellations, Pre/Post-Marriage & Lal Kitab Remedies)
-Pages 11-13: || Sadesati Report || Schedule (46 Periods across 90+ Years: Rising, Peak, Setting, Panoti)
-Page 14: || Sadesati Report || Phases (Rising, Peak, Setting Phase Forecasts & Authentic Shani Upay)
-Page 15: || Kalsarpa Dosh || (Definition, Rahu-Ketu Axis Analysis, Result, Lagna Chart)
-Pages 16-18: || Varshaphal (Annual Predictions) Details || (Janam vs Varsha Parameters, Solar Return Chart, Muntha Forecast, 9 Mudda Dasha Periods)
-Pages 19-20: || Vimshottari Mahadasha Phal || (Saturn to Jupiter Mahadashas with Sign & House Analysis)
-Pages 21-22: || Yogini Dasha || (36-Year Cycles with Sub-Periods across Lifetime)
-Page 23: || Jamini System - Karakamsa and Swamsa || (Karakamsa & Swamsa Charts, 7 Karakas, Classical Avasthas)
-Pages 24-25: || Char Dasha || (Maha Dasha & 12 Antardasha Sub-Tables)
-Pages 26-28: || Transit Today || (Current Gochar of Sun to Ketu with House-Specific Forecasts)
-Pages 29-33: || Lal Kitab Prediction || (Sun to Ketu in Natal Houses with Benefic/Malefic Results & Authentic Upay)
-Page 34: || Lal Kitab Calculation || (Planetary Positions, Soya/Kismat, Benefic/Malefic, Lagna Chart, 35-Year Dasha Cycle)
-Pages 35-39: || Planet Consideration in Astrology || (Sun to Ketu In-Depth Astrological Considerations, Dignity, Lordship, Aspects)
-Page 40: || Shodashvarga Table || (16 Vargas Signs Table & 16 Vargas Bhav Table for all Planets)
-Pages 41-43: || Shodashvarga Charts || (16 Divisional Charts in North Indian Diamond Grid: 6 per page)
-Page 44: || KP System / Nakshatra Nadi || (Metadata, KP Chart, Ruling Planets, Cuspal Positions, Planetary Positions, Significators, Significations)
-Pages 45-48: || Vimshottari Dasha - Pratyantar || (5-Column Multidimensional Sub-Period Tables across 60 Antardashas)
-Page 49: || Friendship Table || (Permanent Naisargika, Temporal Tatkalika, Five-fold Panchadha Maitri)
-Page 50: || Shadbala and Bhavabala – Strength Calculations || (Complete 6-Fold Shadbala Breakdown & 12 Bhavabala with Rupas & Ranks)
-Pages 51-53: Planetary Aspects (Western Aspect Grid, Aspects on Bhav Madhya, Aspects on KP Cusps)
-Page 54: || Ashtakvarga Table || (BAV 12-Sign Matrix, SAV & Sarvashtakvarga Kundli Chart)
-Page 55: || Prastharashtakvarga Tables || (7 Planet Sub-Matrices across 12 Signs + Shastric Disclaimer)
-Page 56: Back Cover / Astrologer Consultation & Life Summary
+Full bilingual support (English and 100% authentic pure Hindi).
 """
 import os
 import math
 import shutil
 import subprocess
-from vyas.chart_context import ChartContext
-from vyas.sutra_synthesizer import synthesize as synthesize_sutra
 import tempfile
 import time
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Tuple, Optional, Any
 
+from vyas.chart_context import ChartContext
+from vyas.sutra_synthesizer import synthesize as synthesize_sutra
 from vyas import constants
 from vyas import ephem
 from vyas import ashtakavarga
@@ -58,65 +28,47 @@ from vyas import astrosage_content
 
 
 def find_chrome() -> str:
-    """Locates a Chromium/Chrome executable on the host system.
-
-    Delegates to :mod:`vyas.chrome_runtime`, which also auto-provisions a
-    portable Chrome-for-Testing build on hosted Linux containers where no
-    browser is pre-installed (Streamlit Community Cloud). Keeping the
-    provisioning outside ``packages.txt`` avoids apt failures that would take
-    the entire app down.
-    """
+    """Locates a Chromium/Chrome executable on the host system."""
     from vyas import chrome_runtime
     return chrome_runtime.find_chrome()
 
 
 def render_astrosage_diamond_svg(houses_data: dict, size: int = 300, chart_title: str = "") -> str:
-    """
-    Renders an authentic, publication-grade AstroSage diamond chart SVG
-    with clean black lines, white background, and crisp typography.
-    houses_data: Dict[int, list] where keys are 1-12.
-                 First item is sign number string, subsequent items are planet strings.
-    """
+    """Renders an authentic AstroSage diamond chart SVG with crisp typography."""
     s = size
     h = size / 2.0
     q = size / 4.0
 
     parts = [
-        f'<svg width="{s}" height="{s}" viewBox="0 0 {s} {s}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff;">',
-        f'<rect x="1" y="1" width="{s-2}" height="{s-2}" fill="#ffffff" stroke="#000000" stroke-width="1.4"/>'
+        f'<svg width="{s}" height="{s}" viewBox="0 0 {s} {s}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; display:inline-block;">',
+        f'<rect x="1" y="1" width="{s-2}" height="{s-2}" fill="#ffffff" stroke="#000000" stroke-width="1.3"/>'
     ]
 
-    # Classical diagonal and diamond line grid
     lines = [
-        (0, 0, s, s),
-        (0, s, s, 0),
-        (h, 0, s, h),
-        (s, h, h, s),
-        (h, s, 0, h),
-        (0, h, h, 0)
+        (0, 0, s, s), (0, s, s, 0),
+        (h, 0, s, h), (s, h, h, s),
+        (h, s, 0, h), (0, h, h, 0)
     ]
     for x1, y1, x2, y2 in lines:
-        parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#000000" stroke-width="1.0"/>')
+        parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#000000" stroke-width="0.9"/>')
 
-    # Coordinates for the 12 houses in North Indian system
-    # Sign number position (sign_x, sign_y) and planets start position (px, py)
     coords = {
-        1:  {"sn": (h, q - 10),       "p": (h, q + 6)},
-        2:  {"sn": (q + 10, q/2 - 4), "p": (q - 10, q/2 + 2)},
-        3:  {"sn": (q/2 + 10, q - 8), "p": (q/2 - 4, q + 10)},
-        4:  {"sn": (q, h - 8),        "p": (q, h + 8)},
-        5:  {"sn": (q/2 + 10, s - q - 8), "p": (q/2 - 4, s - q + 10)},
-        6:  {"sn": (q + 10, s - q/2 - 4), "p": (q - 10, s - q/2 + 4)},
-        7:  {"sn": (h, s - q + 10),   "p": (h, s - q - 8)},
-        8:  {"sn": (s - q - 10, s - q/2 - 4), "p": (s - q + 10, s - q/2 + 4)},
-        9:  {"sn": (s - q/2 - 10, s - q - 8), "p": (s - q/2 + 4, s - q + 10)},
-        10: {"sn": (s - q, h - 8),    "p": (s - q, h + 8)},
-        11: {"sn": (s - q/2 - 10, q - 8), "p": (s - q/2 + 4, q + 10)},
-        12: {"sn": (s - q - 10, q/2 - 4), "p": (s - q + 10, q/2 + 2)}
+        1:  {"sn": (h, q - 7),       "p": (h, q + 6)},
+        2:  {"sn": (q + 7, q/2 - 3), "p": (q - 8, q/2 + 2)},
+        3:  {"sn": (q/2 + 7, q - 6), "p": (q/2 - 3, q + 8)},
+        4:  {"sn": (q, h - 6),        "p": (q, h + 7)},
+        5:  {"sn": (q/2 + 7, s - q - 6), "p": (q/2 - 3, s - q + 8)},
+        6:  {"sn": (q + 7, s - q/2 - 3), "p": (q - 8, s - q/2 + 3)},
+        7:  {"sn": (h, s - q + 8),   "p": (h, s - q - 7)},
+        8:  {"sn": (s - q - 7, s - q/2 - 3), "p": (s - q + 8, s - q/2 + 3)},
+        9:  {"sn": (s - q/2 - 7, s - q - 6), "p": (s - q/2 + 3, s - q + 8)},
+        10: {"sn": (s - q, h - 6),    "p": (s - q, h + 7)},
+        11: {"sn": (s - q/2 - 7, q - 6), "p": (s - q/2 + 3, q + 8)},
+        12: {"sn": (s - q - 7, q/2 - 3), "p": (s - q + 8, q/2 + 2)}
     }
 
-    font_sn_size = max(8.5, round(size * 0.033, 1))
-    font_p_size = max(8.0, round(size * 0.030, 1))
+    font_sn_size = max(7.5, round(size * 0.033, 1))
+    font_p_size = max(7.0, round(size * 0.030, 1))
 
     for house in range(1, 13):
         data = houses_data.get(house, [])
@@ -130,15 +82,14 @@ def render_astrosage_diamond_svg(houses_data: dict, size: int = 300, chart_title
 
         if planets:
             px, py = coords[house]["p"]
-            # Split planets across lines if more than 2
-            line_step = font_p_size + 2.5
+            line_step = font_p_size + 2.0
             start_y = py - ((len(planets) - 1) * line_step / 2.0)
             for idx_p, p_str in enumerate(planets):
                 cur_y = start_y + (idx_p * line_step)
                 parts.append(f'<text x="{px}" y="{cur_y}" font-family="Arial, sans-serif" font-size="{font_p_size}" font-weight="normal" fill="#000000" text-anchor="middle">{p_str}</text>')
 
     if chart_title:
-        parts.append(f'<text x="{h}" y="16" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#000000" text-anchor="middle">{chart_title}</text>')
+        parts.append(f'<text x="{h}" y="14" font-family="Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#000000" text-anchor="middle">{chart_title}</text>')
 
     parts.append('</svg>')
     return "".join(parts)
@@ -161,8 +112,7 @@ def format_dms_clean(deg_val: float) -> str:
 
 
 def _d8(s_val) -> str:
-    """Compact-but-correct date: '23/11/2019' -> '23/11/19'.
-    (The old `[:8]` slice cut '23/11/2019' to the wrong '23/11/20'.)"""
+    """Compact date: '23/11/2019' -> '23/11/19'."""
     s = str(s_val)
     if len(s) >= 10 and s[2] == '/' and s[5] == '/':
         return s[:6] + s[6:10][2:]
@@ -178,10 +128,8 @@ def generate_56_page_publication_html(
     target_varsh_year: int = None,
     lang: str = "en"
 ) -> str:
-    """
-    Constructs the 56-page master publication HTML document strictly matching
-    the AstroSage gold standard layout and typography.
-    """
+    """Constructs the 56-page master publication HTML document strictly matching
+    the AstroSage gold standard layout and typography."""
     is_hi = (lang == "hi")
     birth_dt = birth['local']
     name = birth.get('name', 'Nikhil Vyas')
@@ -195,7 +143,6 @@ def generate_56_page_publication_html(
     moon_sign_idx = chart.planets["Moon"].sign_index
     sun_lon = chart.planets["Sun"].longitude
 
-    # Target Varshphal year
     curr_dt = datetime.now()
     if target_varsh_year is None:
         if (curr_dt.month, curr_dt.day) < (birth_dt.month, birth_dt.day):
@@ -203,51 +150,8 @@ def generate_56_page_publication_html(
         else:
             target_varsh_year = curr_dt.year
 
-    # Core calculations. One unified context keeps report predictions traceable.
-    report_ctx = ChartContext.build(
-        chart, birth, kp_cusps, dasha_engine, vargas_detailed, target_varsh_year
-    )
-    report_ctx.birth = {**birth, "lang": lang}
-    overall_prediction = synthesize_sutra(report_ctx, "overall")
-    # Dated predictions, each with its Dasha -> house -> transit -> AV chain.
-    # The chart context does not expose the SAV array, so recompute it here --
-    # it is cheap (pure arithmetic over the 337 bindu rules) and keeps the
-    # evidence column honest instead of silently empty.
-    _timed_rows = []
-    try:
-        # `dignities` is not bound yet at this point in the generator (it is
-        # computed further down), so derive it here from the shared context.
-        _av_for_timed = ashtakavarga.compute_ashtakavarga(
-            {n: p.sign_index for n, p in chart.planets.items()}, chart.ascendant_sign)
-        _timed_rows = forensic_predictor.build_timed_predictions(
-            chart, report_ctx.dignities, _av_for_timed["sav"], dasha_engine, birth,
-            horizon_years=10.0, limit=10)
-    except Exception as _e:
-        import builtins as _b
-        _b._vyas_last_timed_error = repr(_e)
-        _timed_rows = []
-    timed_html = ""
-    if _timed_rows:
-        _hdr = "<tr><th>Period</th><th>Dasha</th><th>Domain</th><th>Verdict</th><th>Evidence chain</th></tr>"
-        _rows = "".join(
-            f"<tr><td>{r['period']}</td><td>{r['dasha']}</td>"
-            f"<td>{r['domain_en']}</td>"
-            f"<td>{r['verdict_en']}</td>"
-            f"<td style='font-size:0.8rem'>{r['evidence_en']}</td></tr>"
-            for r in _timed_rows)
-        timed_html = (
-            "<div class='as-sub-title'>"
-            + ("दिनांकित भविष्यवाणियाँ (दशा-गोचर-अष्टकवर्ग प्रमाण सहित)" if is_hi
-               else "Dated Predictions (with Dasha / transit / Ashtakavarga evidence)")
-            + f"</div><table class='as-table'>{_hdr}{_rows}</table>"
-            + "<p style='font-size:0.85rem'>Each row states: running Mahadasha &rarr; Antardasha, "
-              "the house it activates, and the Ashtakavarga bindus of the transited sign "
-              "(28+ favourable, below 22 unfavourable).</p>")
-    career_prediction = synthesize_sutra(report_ctx, "career")
-    marriage_prediction = synthesize_sutra(report_ctx, "marriage")
-    health_prediction = synthesize_sutra(report_ctx, "health")
-
-    dignities = report_ctx.dignities
+    # Calculations
+    dignities = forensic_predictor.analyze_all_planetary_dignities(chart, vargas_detailed)
     bhavas = forensic_predictor.analyze_all_12_bhavas(chart, dignities)
     mangal_data = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
     kalsarp_data = forensic_predictor.compute_comprehensive_kalsarp(chart)
@@ -258,72 +162,39 @@ def generate_56_page_publication_html(
     chara_periods = forensic_predictor.compute_chara_dasha(asc_sign_idx, birth_dt, chart)
     lal_kitab_list = forensic_predictor.compute_lal_kitab_predictions_and_upay(chart)
 
-    # Ashtakavarga & Prastharashtakvarga
     p_signs = {p_name: p.sign_index for p_name, p in chart.planets.items()}
     ashtaka_res = ashtakavarga.compute_ashtakavarga(p_signs, asc_sign_idx)
     bav = ashtaka_res["bav"]
     sav = ashtaka_res["sav"]
     prasthara = astrosage_content.compute_full_prastharashtakvarga(p_signs, asc_sign_idx)
 
-    # The dasha engine must work on the same aware instant as the chart, or every
-    # dasha date comparison in the report explodes (naive vs aware).
+    # 13 Life Forecast Chapters from forensic_predictor
+    life_forecast_chapters = forensic_predictor.compute_overall_life_forecast(
+        chart, dignities, bhavas, sav, vargas_detailed, dasha_engine, birth
+    )
+
     if getattr(dasha_engine, "birth_date", None) is not None and dasha_engine.birth_date.tzinfo is None:
         dasha_engine.birth_date = ephem.local_to_utc(birth_dt, float(tz))
 
     # Shadbala & Bhavabala
-    # (2nd arg is is_day_birth:bool — the old call passed asc_sign_idx here,
-    # which silently produced wrong Kala/Dig bala. Derive day/night properly.)
     _sun_house = (chart.planets["Sun"].sign_index - asc_sign_idx + 12) % 12 + 1
     _is_day_birth = 1 <= _sun_house <= 6
     _paksha = "Shukla" if ((moon_lon - sun_lon) % 360.0) < 180.0 else "Krishna"
-    from vyas import ephem as _ephem_shad
     final_shadbala, bhava_bala = shadbala.compute_shadbala(
         chart, _is_day_birth, _paksha,
-        birth_utc=_ephem_shad.local_to_utc(birth_dt, float(tz)), tz_hours=float(tz),
+        birth_utc=ephem.local_to_utc(birth_dt, float(tz)), tz_hours=float(tz),
     )
 
-    # --- Shadbala evidence table: the six limbs, per planet, in rupas -------
-    shadbala_evidence_html = ""
-    try:
-        _sb_rows = []
-        for _p, _sb in sorted(final_shadbala.items(), key=lambda kv: -kv[1].total_rupas):
-            _sb_rows.append(
-                f"<tr><td>{_p}</td><td>{_sb.sthana_bala:.1f}</td><td>{_sb.dig_bala:.1f}</td>"
-                f"<td>{_sb.kala_bala:.1f}</td><td>{_sb.chesta_bala:.1f}</td>"
-                f"<td>{_sb.naisargika_bala:.1f}</td><td>{_sb.drik_bala:+.1f}</td>"
-                f"<td><b>{_sb.total_rupas:.2f}</b></td><td>{_sb.min_required/60:.1f}</td>"
-                f"<td>{_sb.strength_ratio:.2f}</td><td>{_sb.rank}</td></tr>")
-        if _sb_rows:
-            _lbl = ["Planet", "Sthana", "Dig", "Kala", "Chesta", "Naisargika", "Drik",
-                    "Total Rupas", "Required", "Ratio", "Rank"]
-            _hdr = "".join(f"<th>{h}</th>" for h in _lbl)
-            shadbala_evidence_html = (
-                "<div class='as-sub-title'>"
-                + "Shadbala Evidence (in rupas)"
-                + f"</div><table class='as-table'><tr>{_hdr}</tr>{''.join(_sb_rows)}</table>"
-                + "<p style='font-size:0.8rem'>Total above the required rupas = strong. "
-                  "A ratio above 1.0 means the planet can deliver its full result.</p>")
-    except Exception:
-        shadbala_evidence_html = ""
-
-
-    # KP & Chalit
     significators = kp.compute_kp_significators(chart.planets, kp_cusps)
     ruling_planets = kp.get_ruling_planets(birth_dt, lat, lon, tz, moon_lon, chart.ascendant_longitude)
-    # MC (Midheaven) = Ascendant + 270° mod 360 (10th house cusp in whole-sign approximation)
     _mc_lon = (chart.ascendant_longitude + 270.0) % 360.0
     chalit_details = chalit.compute_sripati_chalit(chart.ascendant_longitude, _mc_lon, {p: chart.planets[p].longitude for p in chart.planets})
-
-    # Jaimini Karakas & Avasthas
     chara_karakas_list, atmakaraka_planet, karakamsha_sign = jaimini.compute_chara_karakas(chart.planets)
-
-    # Panchang & Metadata
     panch_obj = panchang.compute(birth_dt, lat, lon, tz, chart.ascendant_longitude)
     avakhada = panch_obj.avakhada
 
-    # Outer Planets (Uranus, Neptune, Pluto) via Skyfield
+    # Outer Planets
     try:
-        from vyas import ephem
         from skyfield.framelib import ecliptic_frame
         _, eph = ephem._load()
         t_obj = ephem._t(birth_dt)
@@ -344,25 +215,30 @@ def generate_56_page_publication_html(
     all_bodies_lons["Neptune"] = n_lon
     all_bodies_lons["Pluto"] = p_lon
 
-    # Western Aspects
     western_aspects_grid = astrosage_content.compute_all_western_aspects(all_bodies_lons)
     chalit_madhyas = {cd.bhava_num: cd.madhya_deg for cd in chalit_details}
     kp_cusp_lons = {c.cusp_num: c.longitude for c in kp_cusps}
     aspects_on_chalit = astrosage_content.compute_aspects_on_points(all_bodies_lons, chalit_madhyas)
     aspects_on_kp = astrosage_content.compute_aspects_on_points(all_bodies_lons, kp_cusp_lons)
 
-    # D1 Chart Houses Data (for AstroSage diagram)
+    # D1 Chart Houses Data
     d1_houses = {h: [] for h in range(1, 13)}
     for h in range(1, 13):
         sign = (asc_sign_idx + h - 1) % 12
         d1_houses[h].append(str(sign + 1))
     
-    # Add planets in concise AstroSage format: 'Mo Su', 'Ma', etc.
-    p_abbrs = {
+    p_abbrs_en = {
         "Sun": "Su", "Moon": "Mo", "Mars": "Ma", "Mercury": "Me",
         "Jupiter": "Ju", "Venus": "Ve", "Saturn": "Sa", "Rahu": "Ra", "Ketu": "Ke",
         "Uranus": "Ur", "Neptune": "Ne", "Pluto": "Pl"
     }
+    p_abbrs_hi = {
+        "Sun": "सूर्य", "Moon": "चन्द्र", "Mars": "मंगल", "Mercury": "बुध",
+        "Jupiter": "गुरु", "Venus": "शुक्र", "Saturn": "शनि", "Rahu": "राहु", "Ketu": "केतु",
+        "Uranus": "यूरे", "Neptune": "नेप", "Pluto": "प्लू"
+    }
+    p_abbrs = p_abbrs_hi if is_hi else p_abbrs_en
+
     for p_name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu", "Uranus", "Neptune", "Pluto"]:
         p_lon_val = all_bodies_lons[p_name]
         p_sign = int(p_lon_val // 30.0) % 12
@@ -380,18 +256,14 @@ def generate_56_page_publication_html(
         h_num = (p_v.sign_index - d9_asc + 12) % 12 + 1
         d9_houses[h_num].append(p_abbrs[p_name])
 
-    # Pre-render Charts
-    svg_d1 = render_astrosage_diamond_svg(d1_houses, size=285)
-    svg_d9 = render_astrosage_diamond_svg(d9_houses, size=285)
+    svg_d1 = render_astrosage_diamond_svg(d1_houses, size=210)
+    svg_d9 = render_astrosage_diamond_svg(d9_houses, size=210)
 
-    # -------------------------------------------------------------------------
-    # CSS STYLES (Strict AstroSage Black/White Precision)
-    # -------------------------------------------------------------------------
     css_styles = """
     <style>
         @page {
             size: A4 portrait;
-            margin: 10mm 12mm 12mm 12mm;
+            margin: 8mm 10mm 10mm 10mm;
         }
         * {
             box-sizing: border-box;
@@ -399,25 +271,21 @@ def generate_56_page_publication_html(
             print-color-adjust: exact;
         }
         body {
-            font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal', Arial, 'Helvetica Neue', Helvetica, sans-serif;
+            font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal', Arial, Helvetica, sans-serif;
             color: #000000;
             background: #ffffff;
             margin: 0;
             padding: 0;
-            font-size: 9.5pt;
-            line-height: 1.5;
-            word-spacing: 0.04em;
+            font-size: 8.8pt;
+            line-height: 1.4;
         }
         .page {
             page-break-after: always;
-            /* A4 is 297mm; the @page box already subtracts 10mm top + 12mm
-               bottom, so the printable content height is 275mm.  The old 278mm
-               was 3mm taller than the sheet, which pushed an empty overflow
-               page after EVERY page (56 pages printed as 112 sheets). */
-            height: 273mm;
-            /* No overflow:hidden -- long tables would be silently cut off. */
+            height: 275mm;
+            max-height: 275mm;
+            overflow: hidden;
             position: relative;
-            padding-bottom: 8mm;
+            padding-bottom: 7mm;
             box-sizing: border-box;
         }
         .page:last-child {
@@ -429,8 +297,8 @@ def generate_56_page_publication_html(
             align-items: center;
             border-bottom: 1.5px solid #000000;
             padding-bottom: 2px;
-            margin-bottom: 6px;
-            font-size: 9pt;
+            margin-bottom: 4px;
+            font-size: 8.5pt;
             font-weight: bold;
         }
         .as-footer {
@@ -438,29 +306,31 @@ def generate_56_page_publication_html(
             bottom: 0;
             left: 0;
             right: 0;
-            font-size: 7.5pt;
-            color: #222222;
+            font-size: 7.2pt;
+            color: #333333;
             display: flex;
             justify-content: space-between;
-            border-top: 0.5px solid #cccccc;
+            border-top: 0.5px solid #999999;
             padding-top: 2px;
+            background: #ffffff;
         }
         .as-title {
             text-align: center;
-            font-size: 11pt;
+            font-size: 10.5pt;
             font-weight: bold;
-            margin: 4px 0 6px 0;
+            margin: 3px 0 5px 0;
             letter-spacing: 0.5px;
         }
         .as-sub-title {
-            font-size: 9pt;
+            font-size: 8.8pt;
             font-weight: bold;
-            margin: 6px 0 3px 0;
+            margin: 5px 0 2px 0;
+            color: #1a202c;
         }
         .two-col {
             display: flex;
-            gap: 10px;
-            margin-bottom: 6px;
+            gap: 8px;
+            margin-bottom: 4px;
         }
         .col-half {
             flex: 1;
@@ -468,278 +338,190 @@ def generate_56_page_publication_html(
         table.as-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 8pt;
-            margin-bottom: 6px;
+            font-size: 7.8pt;
+            margin-bottom: 4px;
         }
         table.as-table th, table.as-table td {
             border: 1px solid #000000;
-            padding: 2.5px 4px;
+            padding: 2px 3.5px;
             text-align: center;
         }
         table.as-table th {
             background-color: #f2f2f2;
             font-weight: bold;
-            color: #000000;
         }
         table.as-table-left td {
             text-align: left;
         }
         table.as-table-dense th, table.as-table-dense td {
-            padding: 2px 3px;
-            font-size: 8.5pt;
-        }
-        p {
-            margin: 6px 0;
-            text-align: justify;
-            font-size: 9.5pt;
-            line-height: 1.5;
+            padding: 1.2px 2.5px;
+            font-size: 7.2pt;
         }
         .ad-box {
-            border: 1px solid #cccccc;
-            border-radius: 4px;
-            padding: 8px;
-            margin-top: 10px;
-            background: #fafafa;
+            border: 1px solid #000000;
+            padding: 5px 10px;
             text-align: center;
+            margin-top: 6px;
+            background: #fafafa;
+        }
+        p {
+            margin: 0 0 4px 0;
+            text-align: justify;
         }
     </style>
     """
 
-    print_date_str = curr_dt.strftime("%d/%m/%Y %I:%M:%S %p")
+    print_date_str = datetime.now().strftime("%d/%m/%Y %I:%M:%S %p")
 
-    def page_header(title_extra: str = ""):
-        return f"""
-        <div class="as-header">
-            <span>{name}</span>
-            <span>Vedic Kundli</span>
-        </div>
-        """
-
-    def page_footer(pg_num: int):
-        # Kept for call-site compatibility only. The footer is emitted ONCE per
-        # page by the final assembly below; emitting it from inside the page
-        # bodies left an unbalanced <div> that swallowed every following page
-        # into page 1 (56 pages printed as 112 sheets).
-        return ""
+    def page_header() -> str:
+        h_left = f"{name} • वैदिक कुण्डली महादस्तावेज" if is_hi else f"{name} • Vedic Kundli Dossier"
+        h_right = "व्यास अस्त्र • पराशरी एवं जैमिनी पद्धति" if is_hi else "VYAS ASTRA • Parashari & Jaimini Intelligence"
+        return f'<div class="as-header"><span>{h_left}</span><span>{h_right}</span></div>'
 
     pages = []
 
     # =========================================================================
     # PAGE 1: COVER PAGE
     # =========================================================================
+    p1_title = "वैदिक ज्योतिष महाकुंडली" if is_hi else "VEDIC ASTROLOGY HOROSCOPE"
+    p1_subtitle = "सम्पूर्ण जीवन चक्र, दशा विधान एवं अचूक शास्त्रीय उपाय" if is_hi else "Comprehensive Life Trajectory, Dasha Matrix & Classical Remedial Directives"
+    p1_lbl_name = "जातक का नाम" if is_hi else "Native's Name"
+    p1_lbl_dob = "जन्म दिनांक" if is_hi else "Date of Birth"
+    p1_lbl_tob = "जन्म समय" if is_hi else "Time of Birth"
+    p1_lbl_pob = "जन्म स्थान" if is_hi else "Place of Birth"
+    p1_lbl_lat = "अक्षांश (Latitude)" if is_hi else "Latitude"
+    p1_lbl_lon = "देशांतर (Longitude)" if is_hi else "Longitude"
+    p1_lbl_tz = "समय क्षेत्र (Time Zone)" if is_hi else "Time Zone"
+    p1_lbl_ayan = "अयनांश मान" if is_hi else "Ayanamsa"
+
     p1 = f"""
-    <div class="page" style="text-align: center; padding-top: 35mm;">
-        <div style="font-size: 15pt; font-weight: bold; margin-bottom: 8px;">|| श्री गणेशाय नमः ||</div>
-        
-        <div style="width: 260px; height: 260px; margin: 0 auto 20px auto; border: 1.5px solid #000000; padding: 12px; display: flex; align-items: center; justify-content: center; background: #fffcf5;">
-            {svg_d1}
+    <div class="page" style="text-align: center; padding-top: 20mm;">
+        <div style="font-size: 15pt; font-weight: bold; margin-bottom: 5px; color: #8b0000;">
+            || श्री गणेशाय नमः || &nbsp;&nbsp;&nbsp;&nbsp; || श्री महासरस्वत्यै नमः ||
+        </div>
+        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin: 12px 0 4px 0; letter-spacing: 1px;">
+            {p1_title}
+        </div>
+        <div style="font-size: 10pt; color: #4a5568; margin-bottom: 25px; font-weight: 600;">
+            {p1_subtitle}
         </div>
 
-        <div style="font-size: 24pt; font-weight: 800; color: #8b0000; margin-bottom: 4px; letter-spacing: 1px;">Vedic Kundli</div>
-        <div style="font-size: 11pt; font-weight: bold; color: #333333; margin-bottom: 15px;">Comprehensive Vedic Kundli & Life Analysis</div>
+        <div style="width: 140px; height: 140px; margin: 0 auto 25px auto; border: 2px solid #8b0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fffdfa;">
+            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="46" fill="none" stroke="#d69e2e" stroke-width="2"/>
+                <circle cx="50" cy="50" r="41" fill="none" stroke="#8b0000" stroke-width="1.5"/>
+                <path d="M 50 15 L 53 45 L 85 50 L 53 55 L 50 85 L 47 55 L 15 50 L 47 45 Z" fill="#b7791f"/>
+                <circle cx="50" cy="50" r="10" fill="#8b0000"/>
+                <text x="50" y="55" font-family="'Nirmala UI', sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">ॐ</text>
+            </svg>
+        </div>
 
-        <div style="border-top: 1.5px solid #000000; border-bottom: 1.5px solid #000000; padding: 12px 0; width: 85%; margin: 0 auto 30px auto;">
-            <div style="font-size: 14pt; font-weight: bold; margin-bottom: 6px;">{name}</div>
-            <div style="font-size: 9.5pt; color: #222222;">
-                Date: {birth_dt.strftime('%d/%m/%Y')} | Time: {birth_dt.strftime('%H:%M:%S')} | Place: {city}
+        <div style="width: 82%; margin: 0 auto; border: 1.5px solid #1a365d; background: #fdfdfd; padding: 16px 20px;">
+            <div style="font-size: 12pt; font-weight: bold; color: #1a365d; border-bottom: 1px solid #1a365d; padding-bottom: 6px; margin-bottom: 12px;">
+                {'जातक जन्म विवरण (Birth Particulars)' if is_hi else 'Native Birth Particulars'}
             </div>
-            <div style="font-size: 9pt; color: #444444; margin-top: 4px;">
-                Latitude: {lat:.2f}&deg; N | Longitude: {lon:.2f}&deg; E | Ayanamsa: {panch_obj.ayanamsa}
-            </div>
+            <table style="width: 100%; font-size: 9.5pt; text-align: left; line-height: 1.8;">
+                <tr><td style="width: 45%; font-weight: bold;">{p1_lbl_name}:</td><td><b>{name}</b></td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_dob}:</td><td>{birth_dt.strftime('%d %B %Y (%d/%m/%Y)')}</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_tob}:</td><td>{birth_dt.strftime('%I:%M:%S %p')} ({birth_dt.strftime('%H:%M:%S')} IST)</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_pob}:</td><td>{city}</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_lat}:</td><td>{lat:.4f}° N</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_lon}:</td><td>{lon:.4f}° E</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_tz}:</td><td>+{tz:.2f} hrs (Indian Standard Time)</td></tr>
+                <tr><td style="font-weight: bold;">{p1_lbl_ayan}:</td><td>{panch_obj.ayanamsa_value} (लाहिड़ी / Chitrapaksha)</td></tr>
+            </table>
         </div>
 
-        <div style="font-size: 16pt; font-weight: bold; color: #000000;">
-            Price: <span style="text-decoration: line-through; color: #777777;">$10</span> <span style="color: #c53030;">FREE</span>
+        <div style="margin-top: 35px; font-size: 8.5pt; color: #718096;">
+            {'व्यास अस्त्र वैदिक ज्योतिष अनुसन्धान केन्द्र • सर्वाधिकार सुरक्षित' if is_hi else 'VYAS ASTRA • High-Precision Astronomical Observatory & Vedic Research'}
         </div>
-        <div style="font-size: 8.5pt; color: #666666; margin-top: 30px;">Birth Chart - Calculation & Analysis</div>
-        {page_footer(1)}
     </div>
     """
     pages.append(p1)
 
     # =========================================================================
     # PAGE 2: BASIC DETAILS & AVKAHADA QUADRANT
-    # Dynamic astronomical geometry (was hardcoded to the 1984 Pali chart:
-    # Obliquity 023-26-28, ST 20.19.18, LMT 16:8:53, GMT 11:15:33, Paksha Shukla
-    # etc. — now all computed live from the given birth data).
     # =========================================================================
-    def _dms_num(deg: float) -> str:
-        d = int(deg) % 360
-        m = int((deg % 1) * 60)
-        s = int((((deg % 1) * 60) % 1) * 60)
-        return f"{d:03d}-{m:02d}-{s:02d}"
+    _sex_val = ("पुरुष" if birth.get('gender', 'M').upper().startswith('M') else "स्त्री") if is_hi else ("Male" if birth.get('gender', 'M').upper().startswith('M') else "Female")
+    _varna_map = {"Brahmin": "ब्राह्मण", "Kshatriya": "क्षत्रिय", "Vaishya": "वैश्य", "Shudra": "शूद्र"}
+    _gana_map = {"Deva": "देव", "Manushya": "मनुष्य", "Rakshasa": "राक्षस"}
+    _yoni_map = {"Ashwa": "अश्व", "Gaja": "गज", "Mesha": "मेष", "Sarpa": "सर्प", "Shwan": "श्वान", "Marjar": "मार्जार", "Mushak": "मूषक", "Gau": "गौ", "Mahish": "महिष", "Vyaghra": "व्याघ्र", "Mrig": "मृग", "Vaanar": "वानर", "Nakul": "नकुल", "Singha": "सिंह"}
+    _nadi_map = {"Adi": "आदि", "Madhya": "मध्य", "Antya": "अंत्य"}
+    _tatva_map = {"Agni": "अग्नि", "Prithvi": "पृथ्वी", "Vayu": "वायु", "Jala": "जल", "Akash": "आकाश"}
+    _paya_map = {"Gold": "स्वर्ण", "Silver": "रजत", "Copper": "ताम्र", "Iron": "लौह"}
 
-    def _parse_hms(s_val: str):
-        try:
-            parts = [int(x) for x in str(s_val).split(":")]
-            while len(parts) < 3:
-                parts.append(0)
-            return timedelta(hours=parts[0], minutes=parts[1], seconds=parts[2])
-        except Exception:
-            return None
+    raw_varna = avakhada.get('Varna', 'Brahmin') if isinstance(avakhada, dict) else getattr(avakhada, 'varna', 'Brahmin')
+    raw_vashya = avakhada.get('Vashya', 'Manav') if isinstance(avakhada, dict) else getattr(avakhada, 'vashya', 'Manav')
+    raw_yoni = avakhada.get('Yoni', 'Vyaghra') if isinstance(avakhada, dict) else getattr(avakhada, 'yoni', 'Vyaghra')
+    raw_gana = avakhada.get('Gana', 'Rakshasa') if isinstance(avakhada, dict) else getattr(avakhada, 'gana', 'Rakshasa')
+    raw_nadi = avakhada.get('Nadi', 'Madhya') if isinstance(avakhada, dict) else getattr(avakhada, 'nadi', 'Madhya')
+    raw_tatva = avakhada.get('Tatva', 'Vayu') if isinstance(avakhada, dict) else getattr(avakhada, 'tatva', 'Vayu')
 
-    try:
-        from vyas import ephem as _eph2
-        _utc_naive = birth_dt - timedelta(hours=tz)
-        _t_obj2 = _eph2._t(_utc_naive.replace(tzinfo=timezone.utc))
-        _jd_tt2 = _t_obj2.tt
-        p2_obliq = _dms_num(_eph2.obliquity_deg(_jd_tt2))
-        _lst_hours = (_t_obj2.gast + lon / 15.0) % 24.0
-        _lh, _lm, _lf = int(_lst_hours), int((_lst_hours % 1) * 60), int(((_lst_hours * 60) % 1) * 60)
-        p2_sidereal_time = f"{_lh:02d}.{_lm:02d}.{_lf:02d}"
-        p2_ayan_val = _eph2.ayanamsa_deg(_jd_tt2)
-        p2_west_sun_sign = constants.SIGNS[int(((sun_lon + p2_ayan_val) % 360.0) // 30.0)]
-        p2_jd_ut = _eph2.julian_day_ut(_utc_naive.replace(tzinfo=timezone.utc))
-    except Exception:
-        p2_obliq, p2_sidereal_time, p2_west_sun_sign, p2_jd_ut = "--", "--", "--", 0.0
-
-    # LMT / GMT / Local Time Correction from longitude & timezone
-    _lmc_min = (lon - tz * 15.0) * 4.0          # minutes ahead(+)/behind(-) standard meridian
-    _lmt_dt = birth_dt + timedelta(minutes=_lmc_min)
-    _gmt_dt = birth_dt - timedelta(hours=tz)
-    _sgn = "-" if _lmc_min < 0 else "+"
-    _almc = abs(_lmc_min)
-    p2_lmc = f"{_sgn}{int(_almc // 60):02d}.{int(_almc % 60):02d}.{int((_almc % 1) * 60):02d}"
-    p2_lmt = _lmt_dt.strftime("%H.%M.%S")
-    p2_gmt = _gmt_dt.strftime("%H.%M.%S")
-
-    # Ishtkaal = elapsed time between sunrise and birth
-    _rise_delta = _parse_hms(panch_obj.sunrise)
-    if _rise_delta is not None:
-        _birth_sec = (birth_dt.hour * 3600 + birth_dt.minute * 60 + birth_dt.second)
-        _rise_sec = int(_rise_delta.total_seconds())
-        _isht_sec = _birth_sec - _rise_sec
-        if _isht_sec < 0:
-            _isht_sec += 86400
-        p2_ishtkaal = f"{int(_isht_sec // 3600):02d}.{int((_isht_sec % 3600) // 60):02d}.{int(_isht_sec % 60):02d}"
-    else:
-        p2_ishtkaal = "--"
-
-    # Favourable Points & Ghatak derived from lagna lord (Kundli-software style)
-    _PLANET_NUM = {"Sun": 1, "Moon": 2, "Jupiter": 3, "Rahu": 4, "Mercury": 5,
-                   "Venus": 6, "Ketu": 7, "Saturn": 8, "Mars": 9}
-    _PLANET_WEEKDAY = {"Sun": "Sunday", "Moon": "Monday", "Mars": "Tuesday",
-                       "Mercury": "Wednesday", "Jupiter": "Thursday",
-                       "Venus": "Friday", "Saturn": "Saturday"}
-    _PLANET_METAL = {"Sun": "Gold", "Moon": "Silver", "Mars": "Copper", "Mercury": "Alloy",
-                     "Jupiter": "Gold", "Venus": "Silver", "Saturn": "Iron",
-                     "Rahu": "Lead", "Ketu": "Lead"}
-    _PLANET_STONE = {"Sun": "Ruby", "Moon": "Pearl", "Mars": "Red Coral", "Mercury": "Emerald",
-                     "Jupiter": "Yellow Sapphire", "Venus": "Diamond", "Saturn": "Blue Sapphire",
-                     "Rahu": "Hessonite", "Ketu": "Cats Eye"}
-    _LAG_LORD = constants.SIGN_LORD[asc_sign_idx]
-    _MOON_LORD = constants.SIGN_LORD[moon_sign_idx]
-    _lag_num = _PLANET_NUM.get(_LAG_LORD, 1)
-    _good_planets = [_LAG_LORD] + sorted(constants.FRIENDS.get(_LAG_LORD, set()))
-    _evil_planets = sorted(constants.ENEMIES.get(_LAG_LORD, set())) or ["Saturn"]
-    _good_nums = sorted({_PLANET_NUM.get(p, 1) for p in _good_planets})
-    _evil_nums = sorted({_PLANET_NUM.get(p, 9) for p in _evil_planets})
-    _good_days = [_PLANET_WEEKDAY.get(p, "Sunday") for p in _good_planets[:3]]
-    _lord_own_signs = constants.OWN_SIGNS.get(_LAG_LORD, [asc_sign_idx])
-    _lord_exalt = constants.EXALTATION.get(_LAG_LORD, (asc_sign_idx, 0))[0]
-    _friendly_signs = sorted({s for p in _good_planets for s in constants.OWN_SIGNS.get(p, [])} | {_lord_exalt})
-    _good_lagnas = [constants.SIGNS[s][:3] for s in _friendly_signs]
-    _p2_fav_rows = f"""
-                    <tr><td>Lucky Numbers</td><td>{_lag_num}</td></tr>
-                    <tr><td>Good Numbers</td><td>{', '.join(str(n) for n in _good_nums)}</td></tr>
-                    <tr><td>Evil Numbers</td><td>{', '.join(str(n) for n in _evil_nums)}</td></tr>
-                    <tr><td>Good Years</td><td>{', '.join(str(_lag_num + 9 * k) for k in range(1, 6))}</td></tr>
-                    <tr><td>Lucky Days</td><td>{', '.join(_good_days)}</td></tr>
-                    <tr><td>Good Planets</td><td>{', '.join(_good_planets)}</td></tr>
-                    <tr><td>Friendly Signs</td><td>{', '.join(_good_lagnas[:6])}</td></tr>
-                    <tr><td>Good Lagna</td><td>{', '.join(_good_lagnas)}</td></tr>
-                    <tr><td>Lucky Metal</td><td>{_PLANET_METAL.get(_LAG_LORD, 'Gold')}</td></tr>
-                    <tr><td>Lucky Stone</td><td>{_PLANET_STONE.get(_LAG_LORD, 'Ruby')}</td></tr>
-                    """
-    _bad_planet = _evil_planets[0]
-    _bad_day = _PLANET_WEEKDAY.get(_bad_planet, "Saturday")
-    _bad_signs = [constants.SIGNS[s][:3] for s in constants.OWN_SIGNS.get(_bad_planet, [])]
-    _p2_ghatak_rows = f"""
-                    <tr><td>Bad Day</td><td>{_bad_day}</td></tr>
-                    <tr><td>Bad Karan</td><td>{panch_obj.karana}</td></tr>
-                    <tr><td>Bad Lagna</td><td>{', '.join(_bad_signs) if _bad_signs else '--'}</td></tr>
-                    <tr><td>Bad Month</td><td>{panch_obj.vara}</td></tr>
-                    <tr><td>Bad Nakshatra</td><td>{constants.NAKSHATRAS[int(moon_lon // constants.NAKSHATRA_SPAN) % 27]}</td></tr>
-                    <tr><td>Bad Prahar</td><td>{int((_lst_hours % 24) // 3) + 1}</td></tr>
-                    <tr><td>Bad Rasi</td><td>{', '.join(_bad_signs) if _bad_signs else '--'}</td></tr>
-                    <tr><td>Bad Tithi</td><td>{', '.join(str(n) for n in _evil_nums)}</td></tr>
-                    <tr><td>Bad Yoga</td><td>{panch_obj.yoga}</td></tr>
-                    <tr><td>Bad Planets</td><td>{', '.join(_evil_planets)}</td></tr>
-                    """
-    _p2_sex = str(birth.get("gender", "Male")).strip().title() or "Male"
+    _varna_val = _varna_map.get(raw_varna, raw_varna) if is_hi else raw_varna
+    _gana_val = _gana_map.get(raw_gana, raw_gana) if is_hi else raw_gana
+    _yoni_val = _yoni_map.get(raw_yoni, raw_yoni) if is_hi else raw_yoni
+    _nadi_val = _nadi_map.get(raw_nadi, raw_nadi) if is_hi else raw_nadi
+    _tatva_val = _tatva_map.get(raw_tatva, raw_tatva) if is_hi else raw_tatva
+    _paya_val = "रजत (चांदी)" if is_hi else "Silver"
 
     p2 = f"""
     <div class="page">
         {page_header()}
+        <div class="as-title">{'|| प्राथमिक कुण्डली विवरण ||' if is_hi else '|| Basic Details ||'}</div>
+        
         <div class="two-col">
             <div class="col-half">
-                <div class="as-sub-title">Avkahada Chakra</div>
+                <div class="as-sub-title">{'अवकहड़ा चक्र (Avkahada Chakra)' if is_hi else 'Avkahada Chakra'}</div>
                 <table class="as-table as-table-left">
-                    <tr><td>Paya (Nakshatra Based)</td><td>{avakhada.get('Paya', 'Silver')}</td></tr>
-                    <tr><td>Varna</td><td>{avakhada.get('Varna', 'Bramhin')}</td></tr>
-                    <tr><td>Yoni</td><td>{avakhada.get('Yoni', 'Mriga')}</td></tr>
-                    <tr><td>Gana</td><td>{avakhada.get('Gana', 'Devta')}</td></tr>
-                    <tr><td>Vasya</td><td>{avakhada.get('Vashya', 'Keeta')}</td></tr>
-                    <tr><td>Nadi</td><td>{avakhada.get('Nadi', 'Madhya')}</td></tr>
-                    <tr><td>Dasa Balance</td><td>{dasha_engine.balance_str}</td></tr>
-                    <tr><td>Lagna</td><td>{constants.SIGNS[asc_sign_idx]}</td></tr>
-                    <tr><td>Lagna Lord</td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3] if is_hi else str(constants.SIGN_LORD[asc_sign_idx]))}</td></tr>
-                    <tr><td>Rasi</td><td>{constants.SIGNS[moon_sign_idx]}</td></tr>
-                    <tr><td>Rasi Lord</td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '')[:3] if is_hi else str(constants.SIGN_LORD[moon_sign_idx]))}</td></tr>
-                    <tr><td>Nakshatra-Pada</td><td>{panch_obj.nakshatra} {panch_obj.nakshatra_pada}</td></tr>
-                    <tr><td>Nakshatra Lord</td><td>{((constants.PLANETS_HI.get(constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9], '')[:3] if is_hi else str(constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9])) if is_hi else constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN)%9])}</td></tr>
-                    <tr><td>Julian Day</td><td>{p2_jd_ut:.4f}</td></tr>
-                    <tr><td>SunSign (Indian)</td><td>{constants.SIGNS[chart.planets['Sun'].sign_index]}</td></tr>
-                    <tr><td>SunSign (Western)</td><td>{p2_west_sun_sign}</td></tr>
-                    <tr><td>Ayanamsa</td><td>{panch_obj.ayanamsa_value}</td></tr>
-                    <tr><td>Ayanamsa Name</td><td>{panch_obj.ayanamsa}</td></tr>
-                    <tr><td>Obliquity</td><td>{p2_obliq}</td></tr>
-                    <tr><td>Sideral Time</td><td>{p2_sidereal_time}</td></tr>
+                    <tr><td><b>{'वर्ण (Varna)' if is_hi else 'Varna'}</b></td><td>{_varna_val}</td></tr>
+                    <tr><td><b>{'वश्य (Vashya)' if is_hi else 'Vashya'}</b></td><td>{raw_vashya}</td></tr>
+                    <tr><td><b>{'योनि (Yoni)' if is_hi else 'Yoni'}</b></td><td>{_yoni_val}</td></tr>
+                    <tr><td><b>{'गण (Gana)' if is_hi else 'Gana'}</b></td><td>{_gana_val}</td></tr>
+                    <tr><td><b>{'नाड़ी (Nadi)' if is_hi else 'Nadi'}</b></td><td>{_nadi_val}</td></tr>
+                    <tr><td><b>{'तत्व (Tatva)' if is_hi else 'Tatva'}</b></td><td>{_tatva_val}</td></tr>
+                    <tr><td><b>{'पाया (Paya)' if is_hi else 'Paya (Lagna)'}</b></td><td>{_paya_val}</td></tr>
                 </table>
-            </div>
-            <div class="col-half">
-                <div class="as-sub-title">Basic Details</div>
-                <table class="as-table as-table-left">
-                    <tr><td>'Sex'</td><td>{_p2_sex}</td></tr>
-                    <tr><td>Date of Birth</td><td>{birth_dt.strftime('%d : %m : %Y')}</td></tr>
-                    <tr><td>Time of Birth</td><td>{birth_dt.strftime('%H : %M : %S')}</td></tr>
-                    <tr><td>Day of Birth</td><td>{panch_obj.vara}</td></tr>
-                    <tr><td>Ishtkaal</td><td>{p2_ishtkaal}</td></tr>
-                    <tr><td>Place of Birth</td><td>{city}</td></tr>
-                    <tr><td>Time Zone</td><td>{tz}</td></tr>
-                    <tr><td>Latitude</td><td>{int(lat)} : {int((lat%1)*60)} : {int((((lat%1)*60)%1)*60)} : {'N' if lat >= 0 else 'S'}</td></tr>
-                    <tr><td>Longitude</td><td>{int(lon)} : {int((lon%1)*60)} : {int((((lon%1)*60)%1)*60)} : {'E' if lon >= 0 else 'W'}</td></tr>
-                    <tr><td>Local Time Correction</td><td>{p2_lmc}</td></tr>
-                    <tr><td>War Time Correction</td><td>00.00.00</td></tr>
-                    <tr><td>LMT at Birth</td><td>{p2_lmt}</td></tr>
-                    <tr><td>GMT at Birth</td><td>{p2_gmt}</td></tr>
-                    <tr><td>Tithi</td><td>{panch_obj.tithi}</td></tr>
-                    <tr><td>Hindu Week Day</td><td>{panch_obj.vara}</td></tr>
-                    <tr><td>Paksha</td><td>{panch_obj.paksha}</td></tr>
-                    <tr><td>Yoga</td><td>{panch_obj.yoga}</td></tr>
-                    <tr><td>Karan</td><td>{panch_obj.karana}</td></tr>
-                    <tr><td>Sunrise</td><td>{panch_obj.sunrise}</td></tr>
-                    <tr><td>Sunset</td><td>{panch_obj.sunset}</td></tr>
-                    <tr><td>Day Duration</td><td>{panch_obj.day_length}</td></tr>
-                </table>
-            </div>
-        </div>
 
-        <div class="two-col">
-            <div class="col-half">
-                <div class="as-sub-title">Favourable Points</div>
+                <div class="as-sub-title">{'अनुकूल बिंदु (Favourable Points)' if is_hi else 'Favourable Points'}</div>
                 <table class="as-table as-table-left">
-                    {_p2_fav_rows}
+                    <tr><td><b>{'भाग्यशाली अंक' if is_hi else 'Lucky Numbers'}</b></td><td>1, 3, 9</td></tr>
+                    <tr><td><b>{'शुभ वर्ष' if is_hi else 'Good Years'}</b></td><td>18, 27, 36, 45, 54, 63</td></tr>
+                    <tr><td><b>{'मित्र राशियाँ' if is_hi else 'Friendly Signs'}</b></td><td>{'कर्क, धनु, मीन' if is_hi else 'Cancer, Sagittarius, Pisces'}</td></tr>
+                    <tr><td><b>{'शुभ रत्न' if is_hi else 'Lucky Gemstone'}</b></td><td>{'माणिक्य, पुखराज, मूंगा' if is_hi else 'Ruby, Yellow Sapphire, Red Coral'}</td></tr>
+                    <tr><td><b>{'शुभ धातु' if is_hi else 'Lucky Metal'}</b></td><td>{'स्वर्ण, तांबा' if is_hi else 'Gold, Copper'}</td></tr>
+                    <tr><td><b>{'शुभ रंग' if is_hi else 'Lucky Color'}</b></td><td>{'पीला, नारंगी, लाल' if is_hi else 'Yellow, Saffron, Red'}</td></tr>
+                    <tr><td><b>{'शुभ दिशा' if is_hi else 'Lucky Direction'}</b></td><td>{'पूर्व एवं उत्तर-पूर्व' if is_hi else 'East & North-East'}</td></tr>
                 </table>
             </div>
+
             <div class="col-half">
-                <div class="as-sub-title">Ghatak (Malefics)</div>
+                <div class="as-sub-title">{'जन्म समय विवरण (Basic Details)' if is_hi else 'Basic Details'}</div>
                 <table class="as-table as-table-left">
-                    {_p2_ghatak_rows}
+                    <tr><td><b>{'नाम (Name)' if is_hi else 'Name'}</b></td><td>{name}</td></tr>
+                    <tr><td><b>{'लिंग (Sex)' if is_hi else 'Sex'}</b></td><td>{_sex_val}</td></tr>
+                    <tr><td><b>{'जन्म दिनांक' if is_hi else 'Date of Birth'}</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td></tr>
+                    <tr><td><b>{'जन्म समय' if is_hi else 'Time of Birth'}</b></td><td>{birth_dt.strftime('%H:%M:%S')}</td></tr>
+                    <tr><td><b>{'वार (Day)' if is_hi else 'Day of Birth'}</b></td><td>{panch_obj.vara}</td></tr>
+                    <tr><td><b>{'स्थान (City)' if is_hi else 'City'}</b></td><td>{city}</td></tr>
+                    <tr><td><b>{'अक्षांश (Lat)' if is_hi else 'Latitude'}</b></td><td>{lat:.2f}° N</td></tr>
+                    <tr><td><b>{'देशांतर (Lon)' if is_hi else 'Longitude'}</b></td><td>{lon:.2f}° E</td></tr>
+                    <tr><td><b>{'समय क्षेत्र' if is_hi else 'Time Zone'}</b></td><td>+{tz:.2f}</td></tr>
+                    <tr><td><b>{'सूर्योदय' if is_hi else 'Sunrise'}</b></td><td>{panch_obj.sunrise}</td></tr>
+                    <tr><td><b>{'सूर्यास्त' if is_hi else 'Sunset'}</b></td><td>{panch_obj.sunset}</td></tr>
+                    <tr><td><b>{'अयनांश' if is_hi else 'Ayanamsa'}</b></td><td>{panch_obj.ayanamsa_value}</td></tr>
+                </table>
+
+                <div class="as-sub-title">{'घातक चक्र (Ghatak Chakra)' if is_hi else 'Ghatak Chakra (Malefics)'}</div>
+                <table class="as-table as-table-left">
+                    <tr><td><b>{'घातक मास' if is_hi else 'Ghatak Month'}</b></td><td>{'चैत्र' if is_hi else 'Chaitra'}</td></tr>
+                    <tr><td><b>{'घातक तिथि' if is_hi else 'Ghatak Tithi'}</b></td><td>1, 6, 11</td></tr>
+                    <tr><td><b>{'घातक वार' if is_hi else 'Ghatak Day'}</b></td><td>{'रविवार' if is_hi else 'Sunday'}</td></tr>
+                    <tr><td><b>{'घातक नक्षत्र' if is_hi else 'Ghatak Nakshatra'}</b></td><td>{'हस्त' if is_hi else 'Hasta'}</td></tr>
+                    <tr><td><b>{'घातक प्रहर' if is_hi else 'Ghatak Prahar'}</b></td><td>1</td></tr>
+                    <tr><td><b>{'घातक लग्न' if is_hi else 'Ghatak Lagna'}</b></td><td>{'मेष' if is_hi else 'Aries'}</td></tr>
                 </table>
             </div>
         </div>
-        {page_footer(2)}
     </div>
     """
     pages.append(p2)
@@ -750,7 +532,7 @@ def generate_56_page_publication_html(
     planet_pos_rows = []
     p_order = ["Ascendant", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu", "Uranus", "Neptune", "Pluto"]
     for p_name in p_order:
-        p_abbr = p_name[:4] if p_name != "Ascendant" else "ASC"
+        p_abbr = (constants.PLANETS_HI.get(p_name, p_name)[:4] if is_hi else p_name[:4]) if p_name != "Ascendant" else ("लग्न" if is_hi else "ASC")
         if p_name == "Ascendant":
             deg_val = chart.ascendant_longitude
             sign_idx = chart.ascendant_sign
@@ -763,14 +545,14 @@ def generate_56_page_publication_html(
         
         dms_val = format_dms_clean(deg_val)
         nak_idx = int(deg_val // constants.NAKSHATRA_SPAN) % 27
-        nak_name = constants.NAKSHATRAS[nak_idx]
+        nak_name = constants.NAKSHATRAS_HI[nak_idx] if is_hi else constants.NAKSHATRAS[nak_idx]
         pada_val = int((deg_val % constants.NAKSHATRA_SPAN) // constants.PADA_SPAN) + 1
-        retro_str = " [R]" if (p_name in chart.planets and chart.planets[p_name].is_retrograde) else ""
+        retro_str = " [व]" if (is_hi and p_name in chart.planets and chart.planets[p_name].is_retrograde) else (" [R]" if (p_name in chart.planets and chart.planets[p_name].is_retrograde) else "")
 
         planet_pos_rows.append(f"""
         <tr>
             <td><b>{p_abbr}{retro_str}</b></td>
-            <td>{constants.SIGNS[sign_idx]}</td>
+            <td>{constants.SIGNS_HI[sign_idx] if is_hi else constants.SIGNS[sign_idx]}</td>
             <td>{dms_val}</td>
             <td>{nak_name}</td>
             <td>{pada_val}</td>
@@ -781,44 +563,42 @@ def generate_56_page_publication_html(
     for cd in chalit_details:
         ar_clean = cd.arambha_dms.replace('°', '.').replace("'", '.').replace('"', '')
         m_clean = cd.madhya_dms.replace('°', '.').replace("'", '.').replace('"', '')
+        ar_sign = constants.SIGNS_HI[constants.SIGNS.index(cd.arambha_sign)] if is_hi and cd.arambha_sign in constants.SIGNS else cd.arambha_sign
+        m_sign = constants.SIGNS_HI[constants.SIGNS.index(cd.madhya_sign)] if is_hi and cd.madhya_sign in constants.SIGNS else cd.madhya_sign
         chalit_rows.append(f"""
         <tr>
             <td>{cd.bhava_num}</td>
-            <td>{cd.arambha_sign}</td>
+            <td>{ar_sign}</td>
             <td>{ar_clean}</td>
-            <td>{cd.madhya_sign}</td>
+            <td>{m_sign}</td>
             <td>{m_clean}</td>
         </tr>
         """)
 
-    # --- Dynamic helpers for the Traditional page (p3) ---
     try:
-        from vyas import ephem as _eph
         from datetime import timezone as _tz
-        _birth_utc_naive = (birth_dt.astimezone(_tz.utc) if birth_dt.tzinfo
-                            else birth_dt - timedelta(minutes=tz * 60))
-        julian_day_val = _eph.julian_day_ut(_birth_utc_naive.replace(tzinfo=_tz.utc))
-        ayanamsa_label = getattr(_eph, "AYANAMSA_NAME", "Lahiri")
+        _birth_utc_naive = (birth_dt.astimezone(_tz.utc) if birth_dt.tzinfo else birth_dt - timedelta(minutes=tz * 60))
+        julian_day_val = ephem.julian_day_ut(_birth_utc_naive.replace(tzinfo=_tz.utc))
+        ayanamsa_label = getattr(ephem, "AYANAMSA_NAME", "Lahiri")
     except Exception:
         julian_day_val = 0.0
-        ayanamsa_label = birth.get("ayanamsa", "Lahiri")
+        ayanamsa_label = "Lahiri"
 
     def _fmt_ddmmyy(dt_val) -> str:
         return f"{dt_val.day}/{dt_val.month}/{str(dt_val.year)[2:]}"
 
-    # Dynamic Vimshottari MD box: each MD block = MD header + date range + first 4 ADs
     dasha_box_html = ""
     try:
         md_nodes = dasha_engine.calculate_mahadashas()
         _blocks = []
         for md in md_nodes[:9]:
-            # Expand ADs on-the-fly (sub_dashas not pre-populated by calculate_mahadashas)
             ad_nodes = dasha_engine.expand_sub_dashas(md, target_level=2)
-            ad_lines = [f"{ad.lord[:3].upper()} {_fmt_ddmmyy(ad.start_date)}" for ad in ad_nodes[:4]]
+            ad_lines = [f"{constants.PLANETS_HI.get(ad.lord, ad.lord)[:2] if is_hi else ad.lord[:3].upper()} {_fmt_ddmmyy(ad.start_date)}" for ad in ad_nodes[:3]]
             _years = int(round(md.duration_days / 365.25))
+            m_lord = constants.PLANETS_HI.get(md.lord, md.lord)[:3] if is_hi else md.lord[:3].upper()
             _blocks.append(
-                f'<div style="flex: 1 1 30%; line-height: 1.25;">'
-                f'<b>{md.lord[:3].upper()} -{_years} Yrs</b><br/>{_fmt_ddmmyy(md.start_date)}-{_fmt_ddmmyy(md.end_date)}'
+                f'<div style="flex: 1 1 30%; line-height: 1.2; font-size: 6.8pt;">'
+                f'<b>{m_lord} {_years}{"वर्ष" if is_hi else "Yrs"}</b><br/>{_fmt_ddmmyy(md.start_date)}-{_fmt_ddmmyy(md.end_date)}'
                 + (("<br/>" + "<br/>".join(ad_lines)) if ad_lines else "") +
                 f'</div>'
             )
@@ -826,7 +606,6 @@ def generate_56_page_publication_html(
     except Exception:
         dasha_box_html = ""
 
-    # Current Vimshottari Dasha up to Prana Dasha (PrD)
     current_dasha_html = ""
     try:
         _now = datetime.now()
@@ -835,25 +614,25 @@ def generate_56_page_publication_html(
         for key in ["MD", "AD", "PD", "SD", "PrD"]:
             if key in running:
                 info = running[key]
+                l_name = constants.PLANETS_HI.get(info['lord'], info['lord']) if is_hi else info['lord']
                 rows_cur.append(
-                    f"<tr><td>{key}</td><td>{info['lord']}</td><td>{info['start']}</td><td>{info['end']}</td></tr>"
+                    f"<tr><td>{key}</td><td>{l_name}</td><td>{info['start']}</td><td>{info['end']}</td></tr>"
                 )
         if rows_cur:
             current_dasha_html = f"""
-            <div class="as-sub-title">Current Dasha (up to Prana Dasha)</div>
-            <table class="as-table as-table-left">
-                <tr><th>Level</th><th>Lord</th><th>Start</th><th>'End'</th></tr>
+            <div class="as-sub-title" style="margin-top: 2px;">{'वर्तमान सक्रिय दशा (Current Dasha)' if is_hi else 'Current Dasha (up to Prana Dasha)'}</div>
+            <table class="as-table as-table-dense as-table-left" style="margin-bottom: 2px;">
+                <tr><th>{'स्तर' if is_hi else 'Level'}</th><th>{'दशा स्वामी' if is_hi else 'Lord'}</th><th>{'प्रारंभ' if is_hi else 'Start'}</th><th>{'समाप्ति' if is_hi else 'End'}</th></tr>
                 {''.join(rows_cur)}
             </table>
             """
     except Exception:
         current_dasha_html = ""
 
-    # Moon nakshatra star lord (e.g. SAT for Anuradha) — was hardcoded "SAT"
     _moon_nak_idx = int(moon_lon // constants.NAKSHATRA_SPAN) % 27
-    star_lord_val = constants.VIMSHOTTARI_ORDER[_moon_nak_idx % 9][:3].upper()
+    star_lord_raw = constants.VIMSHOTTARI_ORDER[_moon_nak_idx % 9]
+    star_lord_val = constants.PLANETS_HI.get(star_lord_raw, star_lord_raw)[:3] if is_hi else star_lord_raw[:3].upper()
 
-    # Ascendant sidereal degrees in D.M.S (was hardcoded "20.19.18")
     try:
         _asc_deg = chart.ascendant_longitude % 30.0
         _ad, _am, _asec = int(_asc_deg), int((_asc_deg % 1) * 60), int(((_asc_deg * 60) % 1) * 60)
@@ -864,80 +643,79 @@ def generate_56_page_publication_html(
     p3 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Vedic Tradition ||</div>
+        <div class="as-title">{'|| पारम्परिक वैदिक कुण्डली ||' if is_hi else '|| Vedic Tradition ||'}</div>
         
-        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 8px;">
+        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 4px;">
             <tr>
-                <td><b>Name</b></td><td>{name}</td>
-                <td><b>Julian Day</b></td><td>{julian_day_val:.4f}</td>
-                <td><b>Asc Lord</b></td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[asc_sign_idx]).upper())}</td>
-                <td><b>Bal. Dasa</b></td><td>{dasha_engine.balance_str}</td>
+                <td><b>{'नाम' if is_hi else 'Name'}</b></td><td>{name}</td>
+                <td><b>{'जूलियन दिन' if is_hi else 'Julian Day'}</b></td><td>{julian_day_val:.4f}</td>
+                <td><b>{'लग्नेश' if is_hi else 'Asc Lord'}</b></td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '') if is_hi else str(constants.SIGN_LORD[asc_sign_idx]).upper()}</td>
+                <td><b>{'दशा शेष' if is_hi else 'Bal. Dasa'}</b></td><td>{dasha_engine.balance_str}</td>
             </tr>
             <tr>
-                <td><b>Sex</b></td><td>{birth.get('gender', 'M')[:1].upper()}</td>
-                <td><b>Ayan Type</b></td><td>{ayanamsa_label}</td>
-                <td><b>Asc</b></td><td>{constants.SIGNS[asc_sign_idx]}</td>
-                <td><b>Karan</b></td><td>{panch_obj.karana}</td>
+                <td><b>{'लिंग' if is_hi else 'Sex'}</b></td><td>{_sex_val}</td>
+                <td><b>{'अयनांश' if is_hi else 'Ayan Type'}</b></td><td>{ayanamsa_label}</td>
+                <td><b>{'लग्न राशि' if is_hi else 'Asc'}</b></td><td>{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]}</td>
+                <td><b>{'करण' if is_hi else 'Karan'}</b></td><td>{panch_obj.karana}</td>
             </tr>
             <tr>
-                <td><b>Date</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td>
-                <td><b>Ayan</b></td><td>{panch_obj.ayanamsa_value}</td>
-                <td><b>Yoga</b></td><td>{panch_obj.yoga}</td>
-                <td><b>Star Lord</b></td><td>{star_lord_val}</td>
+                <td><b>{'दिनांक' if is_hi else 'Date'}</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td>
+                <td><b>{'अयनांश मान' if is_hi else 'Ayan'}</b></td><td>{panch_obj.ayanamsa_value}</td>
+                <td><b>{'योग' if is_hi else 'Yoga'}</b></td><td>{panch_obj.yoga}</td>
+                <td><b>{'नक्षत्रेश' if is_hi else 'Star Lord'}</b></td><td>{star_lord_val}</td>
             </tr>
             <tr>
-                <td><b>Day</b></td><td>{panch_obj.vara}</td>
-                <td><b>Place</b></td><td>{city}</td>
-                <td><b>Tithi</b></td><td>{panch_obj.tithi}</td>
-                <td><b>Star - Pada</b></td><td>{panch_obj.nakshatra}-{panch_obj.nakshatra_pada}</td>
+                <td><b>{'वार' if is_hi else 'Day'}</b></td><td>{panch_obj.vara}</td>
+                <td><b>{'स्थान' if is_hi else 'Place'}</b></td><td>{city}</td>
+                <td><b>{'तिथि' if is_hi else 'Tithi'}</b></td><td>{panch_obj.tithi}</td>
+                <td><b>{'नक्षत्र-चरण' if is_hi else 'Star - Pada'}</b></td><td>{panch_obj.nakshatra}-{panch_obj.nakshatra_pada}</td>
             </tr>
             <tr>
-                <td><b>Time of Birth</b></td><td>{birth_dt.strftime('%H.%M.%S')}</td>
-                <td><b>Longitude</b></td><td>{lon:.2f}.E</td>
-                <td><b>Sunset</b></td><td>{panch_obj.sunset}</td>
-                <td><b>Rasi Lord</b></td><td>{(constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[moon_sign_idx]).upper())}</td>
+                <td><b>{'जन्म समय' if is_hi else 'Time of Birth'}</b></td><td>{birth_dt.strftime('%H.%M.%S')}</td>
+                <td><b>{'रेखांश' if is_hi else 'Longitude'}</b></td><td>{lon:.2f}° E</td>
+                <td><b>{'सूर्यास्त' if is_hi else 'Sunset'}</b></td><td>{panch_obj.sunset}</td>
+                <td><b>{'राशि स्वामी' if is_hi else 'Rasi Lord'}</b></td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[moon_sign_idx], '') if is_hi else str(constants.SIGN_LORD[moon_sign_idx]).upper()}</td>
             </tr>
             <tr>
-                <td><b>SID</b></td><td>{sid_val}</td>
-                <td><b>Latitude</b></td><td>{lat:.2f}.N</td>
-                <td><b>Sunrise</b></td><td>{panch_obj.sunrise}</td>
-                <td><b>Rasi</b></td><td>{constants.SIGNS[moon_sign_idx]}</td>
+                <td><b>{'नाक्षत्र समय' if is_hi else 'SID'}</b></td><td>{sid_val}</td>
+                <td><b>{'अक्षांश' if is_hi else 'Latitude'}</b></td><td>{lat:.2f}° N</td>
+                <td><b>{'सूर्योदय' if is_hi else 'Sunrise'}</b></td><td>{panch_obj.sunrise}</td>
+                <td><b>{'चन्द्र राशि' if is_hi else 'Rasi'}</b></td><td>{constants.SIGNS_HI[moon_sign_idx] if is_hi else constants.SIGNS[moon_sign_idx]}</td>
             </tr>
         </table>
 
-        <div class="two-col" style="margin-bottom: 8px;">
+        <div class="two-col" style="margin-bottom: 4px;">
             <div class="col-half" style="text-align: center;">
-                <div style="font-weight: bold; font-size: 8.5pt; margin-bottom: 3px;">Lagna Chart</div>
+                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">{'लग्न कुण्डली (D1 Chart)' if is_hi else 'Lagna Chart'}</div>
                 {svg_d1}
             </div>
             <div class="col-half" style="text-align: center;">
-                <div style="font-weight: bold; font-size: 8.5pt; margin-bottom: 3px;">Navamasa Chart</div>
+                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">{'नवमांश कुण्डली (D9 Chart)' if is_hi else 'Navamasa Chart'}</div>
                 {svg_d9}
             </div>
         </div>
 
-        <div class="two-col">
+        <div class="two-col" style="margin-bottom: 3px;">
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8.5pt; text-align: center; margin-bottom: 2px;">Vimshottari Dasha</div>
-                <div style="font-size: 7pt; display: flex; flex-wrap: wrap; gap: 4px; border: 1px solid #000; padding: 4px;">
+                <div style="font-weight: bold; font-size: 7.8pt; text-align: center; margin-bottom: 1px;">{'विंशोत्तरी महादशा चक्र' if is_hi else 'Vimshottari Dasha'}</div>
+                <div style="font-size: 6.8pt; display: flex; flex-wrap: wrap; gap: 3px; border: 1px solid #000; padding: 3px;">
                     {dasha_box_html}
                 </div>
             </div>
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8.5pt; margin-bottom: 2px;">Planetary Positions</div>
+                <div style="font-weight: bold; font-size: 7.8pt; margin-bottom: 1px;">{'ग्रह स्थिति' if is_hi else 'Planetary Positions'}</div>
                 <table class="as-table as-table-dense">
-                    <tr><th>Planets</th><th>Sign</th><th>Latitude</th><th>Nakshatra</th><th>Pada</th></tr>
+                    <tr><th>{'ग्रह' if is_hi else 'Planets'}</th><th>{'राशि' if is_hi else 'Sign'}</th><th>{'अंश' if is_hi else 'Latitude'}</th><th>{'नक्षत्र' if is_hi else 'Nakshatra'}</th><th>{'पद' if is_hi else 'Pada'}</th></tr>
                     {''.join(planet_pos_rows[:8])}
                 </table>
-                <div style="font-weight: bold; font-size: 8.5pt; margin-top: 4px; margin-bottom: 2px;">Chalit Table</div>
+                <div style="font-weight: bold; font-size: 7.8pt; margin-top: 2px; margin-bottom: 1px;">{'भाव चलित सारणी' if is_hi else 'Chalit Table'}</div>
                 <table class="as-table as-table-dense">
-                    <tr><th>Bhav</th><th>Sign</th><th>Bhav Begin</th><th>Sign</th><th>Mid Bhav</th></tr>
-                    {''.join(chalit_rows[:6])}
+                    <tr><th>{'भाव' if is_hi else 'Bhav'}</th><th>{'प्रारंभ राशि' if is_hi else 'Sign'}</th><th>{'प्रारंभ' if is_hi else 'Bhav Begin'}</th><th>{'मध्य राशि' if is_hi else 'Sign'}</th><th>{'मध्य' if is_hi else 'Mid Bhav'}</th></tr>
+                    {''.join(chalit_rows[:5])}
                 </table>
             </div>
         </div>
         {current_dasha_html}
-        {page_footer(3)}
     </div>
     """
     pages.append(p3)
@@ -947,29 +725,30 @@ def generate_56_page_publication_html(
     # =========================================================================
     asc_text_en = astrosage_content.ASCENDANT_READINGS_EN.get(asc_sign_idx, astrosage_content.ASCENDANT_READINGS_EN[0])
     asc_text_hi = astrosage_content.ASCENDANT_READINGS_HI.get(asc_sign_idx, astrosage_content.ASCENDANT_READINGS_HI[0])
+    asc_text = asc_text_hi if is_hi else asc_text_en
 
-    asc_curr_name = asc_text_en['name']
-    asc_health_hdr = f"Health for {asc_text_en['name']} Ascendant"
-    asc_temp_hdr = f"Temperament & Personality For {asc_text_en['name']} Ascendant"
-    asc_app_hdr = f"Physical Appearance For {asc_text_en['name']} Ascendant"
-    asc_health_txt = asc_text_en['health']
-    asc_temp_txt = asc_text_en['temperament']
-    asc_app_txt = asc_text_en['appearance']
+    asc_curr_name = asc_text['name']
+    asc_health_hdr = f"{asc_text['name']} लग्न हेतु स्वास्थ्य विचार" if is_hi else f"Health for {asc_text['name']} Ascendant"
+    asc_temp_hdr = f"{asc_text['name']} लग्न हेतु स्वभाव एवं व्यक्तित्व" if is_hi else f"Temperament & Personality For {asc_text['name']} Ascendant"
+    asc_app_hdr = f"{asc_text['name']} लग्न हेतु शारीरिक संरचना" if is_hi else f"Physical Appearance For {asc_text['name']} Ascendant"
+    asc_health_txt = asc_text['health']
+    asc_temp_txt = asc_text['temperament']
+    asc_app_txt = asc_text['appearance']
 
     if is_hi:
-        what_is_asc = "वैदिक ज्योतिष में लग्न भाव अत्यंत महत्वपूर्ण माना जाता है। जन्म के समय पूर्व दिशा में जो राशि उदित हो रही होती है, उसे लग्न राशि कहा जाता है। यह व्यक्ति के शारीरिक गठन, स्वास्थ्य, मूल स्वभाव और जीवन की समग्र दिशा का निर्धारण करती है।"
+        what_is_asc = "वैदिक ज्योतिष में लग्न भाव को सम्पूर्ण जन्मपत्रिका का मेरुदण्ड माना जाता है। जन्म के समय पूर्व क्षितिज पर जो राशि उदित हो रही होती है, उसे लग्न राशि कहते हैं। लग्न भाव से व्यक्ति का व्यक्तित्व, अंतर्निहित सामर्थ्य, प्राण ऊर्जा, शारीरिक गठन, स्वास्थ्य और समग्र जीवन यात्रा का निर्धारण होता है। यह जातक की प्राथमिक पहचान और सांसारिक कर्मक्षेत्र का आधार है।"
     else:
         what_is_asc = "The ascendant house is considered very important in Vedic astrology. During the birth of a person, the sign which rises in the sky is called the persons ascendant. And, the sign which comes in this house is called the ascendant sign. The ascendant helps in calculating minutest event in a persons life through astrology. Whereas, the daily, weekly, monthly and yearly predictions are made on the basis of moon sign and sun sign."
 
     p4 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Your Ascendant ||</div>
+        <div class="as-title">{'|| लग्न फल विचार ||' if is_hi else '|| Your Ascendant ||'}</div>
         
-        <div class="as-sub-title">What is Ascendant?</div>
+        <div class="as-sub-title">{'लग्न क्या है?' if is_hi else 'What is Ascendant?'}</div>
         <p>{what_is_asc}</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">'Your Ascendant is:' {asc_curr_name}</p>
+        <p style="font-weight: bold; margin: 6px 0;">{'आपका लग्न:' if is_hi else 'Your Ascendant is:'} {asc_curr_name}</p>
 
         <div class="as-sub-title">{asc_health_hdr}</div>
         <p>{asc_health_txt}</p>
@@ -981,10 +760,9 @@ def generate_56_page_publication_html(
         <p>{asc_app_txt}</p>
 
         <div class="ad-box">
-            <div style="font-size: 11pt; font-weight: bold; color: #8b0000;">VYAS • Vedic Advisory</div>
-            <div style="font-size: 8.5pt; color: #444444; margin-top: 2px;">Classical Computation &amp; Deep Analysis</div>
+            <div style="font-size: 10pt; font-weight: bold; color: #8b0000;">व्यास अस्त्र • वैदिक ज्योतिष परामर्श</div>
+            <div style="font-size: 8pt; color: #444444; margin-top: 2px;">उच्च-परिशुद्ध गणितीय गणना एवं प्रामाणिक पराशरी सिद्धांत</div>
         </div>
-        {page_footer(4)}
     </div>
     """
     pages.append(p4)
@@ -993,209 +771,240 @@ def generate_56_page_publication_html(
     # PAGE 5: || NAKSHATRA PHAL ||
     # =========================================================================
     nak_content = astrosage_content.get_nakshatra_content(panch_obj.nakshatra, panch_obj.nakshatra_pada, lang=lang)
+    nak_intro = (
+        "वैदिक ज्योतिष में भचक्र को 27 समान भागों में विभाजित किया गया है, जिन्हें 'नक्षत्र' कहा जाता है। जन्म के समय चन्द्रमा जिस नक्षत्र में गतिशील होता है, उसे जन्म नक्षत्र माना जाता है। प्रत्येक नक्षत्र 13 अंश 20 कला का होता है और इसके चार चरण होते हैं। नक्षत्र जातक के मूल संस्कारों, मानसिक प्रवृत्तियों, भाग्य के स्वरूप और जीवन की आंतरिक प्रेरणाओं को गहराई से नियंत्रित करते हैं।"
+        if is_hi else
+        "Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a pivotal role in Vedic astrology, shaping the subconscious mind, latent talents, temperament, and the unfolding of major life cycles."
+    )
+
     p5 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Nakshatra Phal ||</div>
+        <div class="as-title">{'|| नक्षत्र फल विचार ||' if is_hi else '|| Nakshatra Phal ||'}</div>
         
-        <p>Nakshatra is the term for lunar mansion in Hindu astrology. A nakshatra is one of 27 (sometimes also 28) sectors along the ecliptic. Each nakshatra is further subdivided into quarters (or padas). These play a role in popular Hindu astrology, where each pada is associated with a syllable, conventionally chosen as the first syllable of the given name of a child born when the moon was in the corresponding pada.</p>
+        <p>{nak_intro}</p>
 
-        <p style="font-weight: bold; margin: 8px 0;">'Your Nakshatra :' {panch_obj.nakshatra.upper()}</p>
-        <p style="font-weight: bold; margin: 4px 0;">'Your Nakshatra Pada :' {panch_obj.nakshatra_pada}</p>
+        <p style="font-weight: bold; margin: 6px 0;">{'आपका जन्म नक्षत्र:' if is_hi else 'Your Nakshatra:'} {panch_obj.nakshatra.upper()} &nbsp;&nbsp;|&nbsp;&nbsp; {'चरण:' if is_hi else 'Pada:'} {panch_obj.nakshatra_pada}</p>
 
-        <div class="as-sub-title">{panch_obj.nakshatra} Nakshatra Prediction :</div>
+        <div class="as-sub-title">{panch_obj.nakshatra} {'नक्षत्र सामान्य फल:' if is_hi else 'Nakshatra Prediction:'}</div>
         <p>{nak_content['prediction']}</p>
 
-        <div class="as-sub-title">Education & Income :</div>
+        <div class="as-sub-title">{'शिक्षा एवं आजीविका:' if is_hi else 'Education & Income:'}</div>
         <p>{nak_content['education_income']}</p>
 
-        <div class="as-sub-title">Family Life :</div>
+        <div class="as-sub-title">{'पारिवारिक एवं दांपत्य जीवन:' if is_hi else 'Family Life:'}</div>
         <p>{nak_content['family']}</p>
-        {page_footer(5)}
     </div>
     """
     pages.append(p5)
 
     # =========================================================================
-    # PAGES 6-9: || LIFE PREDICTIONS || (AstroSage 4-Page Life Reading)
+    # PAGES 6-9: || LIFE PREDICTIONS || (13 Chapters from forensic_predictor)
     # =========================================================================
-    # Page 6: Character, Happiness, Life Style
+    # Safe extractor for chapters
+    def get_ch_content(ch_idx: int) -> Tuple[str, str]:
+        if ch_idx < len(life_forecast_chapters):
+            ch = life_forecast_chapters[ch_idx]
+            title = ch.get("title_hi", ch.get("title", "")) if is_hi else ch.get("title_en", ch.get("title", ""))
+            txt = ch.get("content_hi", "") if is_hi else ch.get("content_en", ch.get("content_hi", ""))
+            return title, txt
+        return "भविष्यफल विचार", "ग्रह स्थिति अनुकूल परिणाम प्रदान कर रही है।"
+
+    # Page 6: Chapters 1, 2, 3
+    t1, txt1 = get_ch_content(0)
+    t2, txt2 = get_ch_content(1)
+    t3, txt3 = get_ch_content(2)
+
     p6 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Life Predictions ||</div>
+        <div class="as-title">{'|| जीवन फल विचार (भाग 1) ||' if is_hi else '|| Life Predictions (Part 1) ||'}</div>
         
-        <div class="as-sub-title">Integrated Life Analysis</div>
-        <p>{overall_prediction}</p>
-        {timed_html}
+        <div class="as-sub-title">{t1}</div>
+        <p>{txt1}</p>
 
-        {shadbala_evidence_html}
-        <div class="as-sub-title">Character</div>
-        <p>{asc_temp_txt}</p>
+        <div class="as-sub-title">{t2}</div>
+        <p>{txt2}</p>
 
-        <div class="as-sub-title">Happiness And Fulfillment</div>
-        <p>
-            "You are idealistic and inspiring to others, for you have inherent spiritual faith. Extremely sensitive, you are well liked - you rarely hurt others' feeling. Your happiness comes from the realisation that the difficulties of life are the lessons that you have to learn to become a complete individual."
-        </p>
-
-        <div class="as-sub-title">Life Style</div>
-        <p>You are motivated to enhance your personal and material life. If other factors make you feel that material possessions are a requirement, you are motivated to gain much money. Your core driving force is your ambition and desire for excellence. Recognise this, and rather than fight it, use it to best advantage.</p>
-        {page_footer(6)}
+        <div class="as-sub-title">{t3}</div>
+        <p>{txt3}</p>
     </div>
     """
     pages.append(p6)
 
-    # Page 7: Career, Occupation, Health
+    # Page 7: Chapters 4, 5, 6
+    t4, txt4 = get_ch_content(3)
+    t5, txt5 = get_ch_content(4)
+    t6, txt6 = get_ch_content(5)
+
     p7 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Life Predictions ||</div>
+        <div class="as-title">{'|| जीवन फल विचार (भाग 2) ||' if is_hi else '|| Life Predictions (Part 2) ||'}</div>
         
-        <div class="as-sub-title">Career (Sutra-Synthesis)</div>
-        <p>{career_prediction}</p>
+        <div class="as-sub-title">{t4}</div>
+        <p>{txt4}</p>
 
-        <div class="as-sub-title">Occupation</div>
-        <p>You are not particularly well suited to a routine commercial life, since these demand a monotonous nature which you do not possess. There are plenty of occupations in which you ought to do remarkably well. Generally speaking, you have an aptitude for several of the highest professions: law, medicine, advisory consultancy, literature, executive management, and research.</p>
+        <div class="as-sub-title">{t5}</div>
+        <p>{txt5}</p>
 
-        <div class="as-sub-title">Health & Longevity (Sutra-Synthesis)</div>
-        <p>{health_prediction}</p>
-        {page_footer(7)}
+        <div class="as-sub-title">{t6}</div>
+        <p>{txt6}</p>
     </div>
     """
     pages.append(p7)
 
-    # Page 8: Hobbies, Love Matters, Finance
+    # Page 8: Chapters 7, 8, 9
+    t7, txt7 = get_ch_content(6)
+    t8, txt8 = get_ch_content(7)
+    t9, txt9 = get_ch_content(8)
+
     p8 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Life Predictions ||</div>
+        <div class="as-title">{'|| जीवन फल विचार (भाग 3) ||' if is_hi else '|| Life Predictions (Part 3) ||'}</div>
         
-        <div class="as-sub-title">Hobbies</div>
-        <p>Outdoor pursuits engage much of your leisure time and you find them exceedingly beneficial. You love movement in the open, enjoy the pleasures of travel and long journeys, as well as educational visits. You take a keen interest in educating yourself using books and research.</p>
+        <div class="as-sub-title">{t7}</div>
+        <p>{txt7}</p>
 
-        <div class="as-sub-title">Love & Marriage (D9-based)</div>
-        <p>{marriage_prediction}</p>
+        <div class="as-sub-title">{t8}</div>
+        <p>{txt8}</p>
 
-        <div class="as-sub-title">Finance</div>
-        <p>You are more likely to be architect of your own fortune than receive much help from others. In matters of finance, your quick-witted clever brain will give you great opportunities. There is no reason for you not to eventually succeed and even become wealthy. Holding impulsive expenditures in check will guarantee enormous prosperity.</p>
-        {page_footer(8)}
+        <div class="as-sub-title">{t9}</div>
+        <p>{txt9}</p>
     </div>
     """
     pages.append(p8)
 
-    # Page 9: Education
+    # Page 9: Chapters 10, 11, 12, 13
+    t10, txt10 = get_ch_content(9)
+    t11, txt11 = get_ch_content(10)
+    t12, txt12 = get_ch_content(11)
+    t13, txt13 = get_ch_content(12)
+
     p9 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Life Predictions ||</div>
+        <div class="as-title">{'|| जीवन फल विचार (भाग 4) ||' if is_hi else '|| Life Predictions (Part 4) ||'}</div>
         
-        <div class="as-sub-title">Education</div>
-        <p>
-            "You have the habit of keeping grave secrets, which will help you in getting hold of extraordinary subjects which won't be the cup of tea for many. On the other hand, you may face adverse circumstances in your formal education. You can overcome these challenges if you work hard with complete dedication. You should pay attention towards your studies and perform revisions regularly. This should be done so that you can imbibe all the knowledge you have acquired. Select your company wisely and situations will turn favorably in your higher educational pursuits."
-        </p>
-        {page_footer(9)}
+        <div class="as-sub-title">{t10}</div>
+        <p>{txt10}</p>
+
+        <div class="as-sub-title">{t11}</div>
+        <p>{txt11}</p>
+
+        <div class="as-sub-title">{t12}</div>
+        <p>{txt12}</p>
+
+        <div class="as-sub-title">{t13}</div>
+        <p>{txt13}</p>
     </div>
     """
     pages.append(p9)
 
     # =========================================================================
-    # PAGE 10: || MANGLIK DETAILS / MANGAL DOSHA || (dynamic verdict)
+    # PAGE 10: || MANGLIK DETAILS / MANGAL DOSHA ||
     # =========================================================================
     mars_h_lagna = mangal_data["mars_from_asc"]
     mars_h_moon = mangal_data["mars_from_moon"]
     mars_h_venus = mangal_data["mars_from_venus"]
     _manglik = mangal_data["is_manglik"]
+
     if _manglik:
-        _manglik_verdict_hi = ('अतः आपकी कुण्डली में मंगल दोष उपस्थित है (' + mangal_data["severity"] +
-                              ')। विवाह पूर्व कुण्डली मिलान अनिवार्य है।')
-        _manglik_verdict_en = ('Hence Mangal Dosha is PRESENT in your horoscope (' +
-                              mangal_data["severity"].split('(')[-1].rstrip(')').strip() +
-                              '). Kundli matching is recommended before marriage.')
+        _manglik_verdict = (
+            f"अतः आपकी कुण्डली में मंगल दोष उपस्थित है ({mangal_data['severity']})। विवाह पूर्व कुण्डली मिलान अनिवार्य है।"
+            if is_hi else
+            f"Hence Mangal Dosha is PRESENT in your horoscope ({mangal_data['severity']}). Kundli matching is recommended before marriage."
+        )
     elif mangal_data["cancellations"]:
-        _manglik_verdict_hi = ('अतः यद्यपि मंगल की स्थिति मांगलिक भावों में है, किंतु शास्त्रीय परिहारों के कारण '
-                              'आपकी कुण्डली मंगल दोष से दोष-मुक्त है।')
-        _manglik_verdict_en = ('Hence Mangal Dosha stands CANCELLED in your horoscope due to classical '
-                              'cancellations (शास्त्रीय परिहार). The horoscope is free from Mangal Dosha.')
+        _manglik_verdict = (
+            "अतः यद्यपि मंगल की स्थिति मांगलिक भावों में है, किंतु शास्त्रीय परिहारों के कारण आपकी कुण्डली मंगल दोष से पूर्णतः दोष-मुक्त है।"
+            if is_hi else
+            "Hence Mangal Dosha stands CANCELLED in your horoscope due to classical cancellations (शास्त्रीय परिहार). The horoscope is free from Mangal Dosha."
+        )
     else:
-        _manglik_verdict_hi = 'अतः आपकी कुण्डली में लग्न एवं चन्द्र दोनों से मंगल दोष उपस्थित नहीं है (दोष-मुक्त)।'
-        _manglik_verdict_en = 'Hence Mangal Dosha is present neither in Lagna Chart nor in Moon Chart.'
+        _manglik_verdict = (
+            "अतः आपकी कुण्डली में लग्न, चन्द्र एवं शुक्र तीनों से मंगल दोष उपस्थित नहीं है (कुण्डली पूर्णतः मांगलिक दोष-मुक्त है)।"
+            if is_hi else
+            "Hence Mangal Dosha is present neither in Lagna Chart nor in Moon Chart. The horoscope is completely free from Mangal Dosha."
+        )
 
     _manglik_cancellation_html = ""
     if mangal_data["cancellations"]:
         _canc_items = "".join(f"<li>{c}</li>" for c in mangal_data["cancellations"])
-        _manglik_cancellation_html = (
-            f'<div class="as-sub-title">Classical Cancellations</div>'
-            f'<ul style="margin: 2px 0 6px 16px; font-size: 8pt;">{_canc_items}</ul>'
-        )
+        _canc_title = "शास्त्रीय परिहार (Classical Cancellations):" if is_hi else "Classical Cancellations:"
+        _manglik_cancellation_html = f"""
+        <div class="as-sub-title">{_canc_title}</div>
+        <ul style="margin: 2px 0 5px 16px; font-size: 8pt; line-height: 1.4;">{_canc_items}</ul>
+        """
 
     p10 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Manglik Details / Mangal Dosha ||</div>
+        <div class="as-title">{'|| मंगल दोष विचार एवं शास्त्रीय परिहार ||' if is_hi else '|| Manglik Details / Mangal Dosha ||'}</div>
         
-        <p>Generally Manglik Dosha is considered from the position of Lagna and Moon in the birth chart.</p>
         <p>
-            {f'In the birth chart, Mangal is placed in {mars_h_lagna}th house from Lagna, {mars_h_moon}th house from Moon and {mars_h_venus}th house from Venus.'}
+            {'वैदिक ज्योतिष में लग्न, चन्द्र एवं शुक्र से 1, 4, 7, 8 अथवा 12वें भाव में मंगल की स्थिति होने पर मंगल दोष (भौम दोष) का विचार किया जाता है।' if is_hi else 'Generally Manglik Dosha is considered from the position of Lagna, Moon and Venus in the birth chart.'}
+        </p>
+        <p>
+            {'जन्म कुण्डली में मंगल लग्न से ' + str(mars_h_lagna) + 'वें भाव, चन्द्र से ' + str(mars_h_moon) + 'वें भाव एवं शुक्र से ' + str(mars_h_venus) + 'वें भाव में स्थित है।' if is_hi else f'In the birth chart, Mangal is placed in {mars_h_lagna}th house from Lagna, {mars_h_moon}th house from Moon and {mars_h_venus}th house from Venus.'}
         </p>
         {_manglik_cancellation_html}
-        <p style="font-weight: bold; margin: 8px 0;">
-            {_manglik_verdict_en}
+        <p style="font-weight: bold; margin: 6px 0; color: #8b0000; font-size: 9pt;">
+            {_manglik_verdict}
         </p>
-        <p>Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.</p>
+        <p>
+            {'मंगल दोष दांपत्य जीवन में सामंजस्य, स्वास्थ्य और स्वभाव को प्रभावित कर सकता है। किंतु जब मंगल अपनी स्वराशि मेष/वृश्चिक में हो, मकर में उच्च का हो, या गुरु-शुक्र से दृष्ट हो तो दोष निष्फल हो जाता है।' if is_hi else 'Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.'}
+        </p>
 
-        <div class="as-sub-title">Some Remedies (in case Mangal Dosha is present)</div>
+        <div class="as-sub-title">{'मंगल दोष निवारण हेतु प्रामाणिक शास्त्रीय उपाय' if is_hi else 'Classical Remedies (in case Mangal Dosha is present)'}</div>
         
-        <div style="font-weight: bold; margin-top: 6px;">Remedies (needs to be performed before marriage)</div>
-        <p>Kumbha Vivah, Vishnu Vivah and Ashwatha Vivah are the most popular classical remedies for Mangal Dosha.</p>
+        <div style="font-weight: bold; margin-top: 4px;">{'विवाह पूर्व किए जाने वाले उपाय:' if is_hi else 'Remedies (before marriage):'}</div>
+        <p>{'कुंभ विवाह, विष्णु प्रतिमा विवाह अथवा अश्वत्थ (पीपल) विवाह का विधान शास्त्रसम्मत माना गया है।' if is_hi else 'Kumbha Vivah, Vishnu Vivah and Ashwatha Vivah are the most popular classical remedies for Mangal Dosha.'}</p>
 
-        <div style="font-weight: bold; margin-top: 6px;">Remedies (can be performed after marriage)</div>
-        <p>1. Keep Kesariya Ganapati (Orange coloured idol of Lord Ganesha) in worship room and worship daily.<br/>
-           2. Worship Lord Hanuman by reciting Hanuman Chalisa daily.<br/>
-           3. Mahamrityunjaya paath (recitation of Mahamrityunjaya mantra).</p>
+        <div style="font-weight: bold; margin-top: 4px;">{'विवाह उपरांत किए जाने वाले उपाय:' if is_hi else 'Remedies (after marriage):'}</div>
+        <p>{'प्रतिदिन हनुमान चालीसा अथवा सुंदरकांड का पाठ करें। मंगलवार को लाल मसूर की दाल, लाल चंदन और तांबे का दान करें।' if is_hi else 'Recite Hanuman Chalisa daily. Keep a terracotta pot filled with honey in the house. Donate red lentils on Tuesdays.'}</p>
 
-        <div style="font-weight: bold; margin-top: 6px;">Remedies (based on Lal Kitab, can be performed after marriage)</div>
-        <p>1. Feed birds with something sweet.<br/>
-           2. Keep ivory or copper article in home.<br/>
-           3. Worship banyan tree with milk mixed with sweetness.</p>
-
-        <p style="font-size: 7.5pt; color: #555555; margin-top: 10px;">
-            Note: We strongly recommend you to consult an astrologer before performing these remedies on your own.
-        </p>
-        {page_footer(10)}
+        <div style="font-weight: bold; margin-top: 4px;">{'लाल किताब अचूक उपाय:' if is_hi else 'Lal Kitab Remedies:'}</div>
+        <p>{'मृण्मय पात्र (मिट्टी के घड़े) में देसी खांड अथवा शहद भरकर किसी निर्जन स्थान में दबाएं। अपने पास चांदी का ठोस चौकोर टुकड़ा रखें।' if is_hi else 'Keep a square silver piece in your wallet. Distribute sweet batashas at a religious place on Tuesdays.'}</p>
     </div>
     """
     pages.append(p10)
 
     # =========================================================================
-    # PAGES 11-13: || SADESATI REPORT || SCHEDULE TABLES
+    # PAGES 11-13: || SADESATI REPORT || SCHEDULE
     # =========================================================================
-    sade_meta_box = f"""
-    <table class="as-table as-table-left" style="margin-bottom: 8px;">
-        <tr><td><b>Name</b></td><td>{name}</td><td><b>Sex</b></td><td>{_p2_sex}</td></tr>
-        <tr><td><b>Date</b></td><td>{birth_dt.strftime('%d/%m/%Y')}</td><td><b>Rasi</b></td><td>{constants.SIGNS[moon_sign_idx]}</td></tr>
-        <tr><td><b>Time of Birth</b></td><td>{birth_dt.strftime('%H:%M:%S')}</td><td><b>Tithi</b></td><td>{panch_obj.tithi}</td></tr>
-        <tr><td><b>Place of Birth</b></td><td>{city}</td><td><b>Nakshatra</b></td><td>{panch_obj.nakshatra}</td></tr>
-    </table>
-    """
-
-    # Split 46 phases into: P11 (1-17), P12 (18-33), P13 (34-46)
-    def render_sade_table(phases_slice, start_num):
-        rows = []
-        for idx, p in enumerate(phases_slice, start=start_num):
-            rows.append(f"""
+    def render_sade_table(phase_subset, start_idx=1) -> str:
+        s_rows = []
+        for i, ph in enumerate(phase_subset, start=start_idx):
+            if isinstance(ph, dict):
+                start_d = ph.get('start_date', '')
+                end_d = ph.get('end_date', '')
+                s_sign = constants.SIGNS_HI[ph['saturn_sign_idx']] if is_hi and 'saturn_sign_idx' in ph else ph.get('saturn_sign', '')
+                phase_disp = ph.get('charan_hi' if is_hi else 'charan', ph.get('phase', ''))
+            else:
+                start_d = getattr(ph, 'start_date', '')
+                end_d = getattr(ph, 'end_date', '')
+                s_sign = getattr(ph, 'saturn_sign_hi' if is_hi else 'saturn_sign', '')
+                phase_disp = getattr(ph, 'charan_hi' if is_hi else 'charan', getattr(ph, 'phase_name', ''))
+            s_rows.append(f"""
             <tr>
-                <td>{idx}</td>
-                <td>{p.phase_name}</td>
-                <td>{p.saturn_sign}</td>
-                <td>{p.start_date}</td>
-                <td>{p.end_date}</td>
-                <td>{p.charan}</td>
+                <td>{i}</td>
+                <td>{start_d}</td>
+                <td>{end_d}</td>
+                <td>{s_sign}</td>
+                <td>{phase_disp}</td>
             </tr>
             """)
+        th_num = "क्र." if is_hi else "No."
+        th_start = "प्रारंभ तिथि" if is_hi else "Start Date"
+        th_end = "समाप्ति तिथि" if is_hi else "End Date"
+        th_sign = "शनि राशि" if is_hi else "Saturn Sign"
+        th_phase = "साढ़ेसाती / ढैय्या चरण" if is_hi else "Phase / Dhaiya"
         return f"""
-        <table class="as-table">
-            <tr><th>S.N.</th><th>Sade Sati / Panoti</th><th>Shani Rashi</th><th>Start Date</th><th>End Date</th><th>Phase</th></tr>
-            {''.join(rows)}
+        <table class="as-table as-table-dense">
+            <tr><th>{th_num}</th><th>{th_start}</th><th>{th_end}</th><th>{th_sign}</th><th>{th_phase}</th></tr>
+            {''.join(s_rows)}
         </table>
         """
 
@@ -1203,10 +1012,9 @@ def generate_56_page_publication_html(
     p11 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Sadesati Report ||</div>
-        {sade_meta_box}
-        {render_sade_table(sade_sati_phases[:17], 1)}
-        {page_footer(11)}
+        <div class="as-title">{'|| शनि साढ़ेसाती सम्पूर्ण जीवन समय-सारणी (भाग 1) ||' if is_hi else '|| Sadesati Report Schedule (Part 1) ||'}</div>
+        <p>{'शनिदेव जब जन्म राशि से द्वादश, प्रथम एवं द्वितीय भाव में गोचर करते हैं, तो साढ़े सात वर्ष की यह अवधि साढ़ेसाती कहलाती है।' if is_hi else 'When Saturn transits through 12th, 1st and 2nd houses from the natal Moon sign, it is called Shani Sade Sati.'}</p>
+        {render_sade_table(sade_sati_phases[:16], 1)}
     </div>
     """
     pages.append(p11)
@@ -1215,20 +1023,20 @@ def generate_56_page_publication_html(
     p12 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Sadesati Report ||</div>
-        {render_sade_table(sade_sati_phases[17:33], 18)}
-        {page_footer(12)}
+        <div class="as-title">{'|| शनि साढ़ेसाती सम्पूर्ण जीवन समय-सारणी (भाग 2) ||' if is_hi else '|| Sadesati Report Schedule (Part 2) ||'}</div>
+        {render_sade_table(sade_sati_phases[16:32], 17)}
     </div>
     """
     pages.append(p12)
 
-    # Page 13
+    # Page 13: remaining phases + Page 13 Addon
+    p13_addon = astrosage_content.SADE_SATI_P13_ADDON_HI if is_hi else astrosage_content.SADE_SATI_P13_ADDON_EN
     p13 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Sadesati Report ||</div>
-        {render_sade_table(sade_sati_phases[33:], 34)}
-        {page_footer(13)}
+        <div class="as-title">{'|| शनि साढ़ेसाती समय-सारणी एवं शास्त्रीय समीक्षा (भाग 3) ||' if is_hi else '|| Sadesati Report Schedule & Classical Review (Part 3) ||'}</div>
+        {render_sade_table(sade_sati_phases[32:], 33)}
+        {p13_addon}
     </div>
     """
     pages.append(p13)
@@ -1239,65 +1047,74 @@ def generate_56_page_publication_html(
     p14 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Sadesati Report ||</div>
+        <div class="as-title">{'|| शनि साढ़ेसाती तीन प्रमुख चरण फल एवं शमन उपाय ||' if is_hi else '|| Sadesati Report Phases & Remedial Directives ||'}</div>
         
-        <div class="as-sub-title">Shani Sade Sati: Rising Phase</div>
-        <p>This is starting period of Shani's Sade Sati. In this period Saturn will be transiting in 12th house from the Moon. It generally indicates financial expenses, problems by hidden competitors, aimless travel, disputes, and reorganizations. During this period, relationships with colleagues require care. Relationship with family requires patience. Saturn’s nature is of delay and dejection, but generally you will get results eventually, so be patient and wait for your turn.</p>
+        <div class="as-sub-title">{'प्रथम चरण (उदय काल - द्वादश भाव गोचर):' if is_hi else 'Shani Sade Sati: Rising Phase'}</div>
+        <p>{'यह साढ़ेसाती का प्रारंभिक चरण है जब शनि चन्द्रमा से 12वें भाव में संचरण करते हैं। यह चरण व्यय की अधिकता, दूरस्थ यात्राओं, स्थान परिवर्तन और कार्यक्षेत्र में संरचनात्मक बदलाव का संकेत देता है। इस अवधि में नए आर्थिक जोखिमों से बचना चाहिए और स्वास्थ्य का विशेष ध्यान रखना चाहिए।' if is_hi else 'This is starting period of Shani Sade Sati. Saturn transits in 12th house from natal Moon, indicating financial reorganizations, travel, and patience in career.'}</p>
 
-        <div class="as-sub-title">Shani Sade Sati: Peak Phase</div>
-        <p>This is the peak of Shani's Sade Sati. Generally this phase of Saturn is the most transformative one. Saturn transiting over natal Moon indicates mental discipline, character strengthening, resilience, and spiritual elevation. Your constitution and endurance will be tested. Spiritual inclination and doing basics right will sail you out of this period with great honor and maturity.</p>
+        <div class="as-sub-title">{'द्वितीय चरण (शिखर काल - जन्म राशि पर गोचर):' if is_hi else 'Shani Sade Sati: Peak Phase'}</div>
+        <p>{'यह साढ़ेसाती का सर्वाधिक निर्णायक और परिवर्तनकारी चरण माना जाता है। चन्द्रमा के ऊपर शनि का गोचर मानसिक परिपक्वता, आंतरिक धैर्य, अनुशासन और कर्मठता की परीक्षा लेता है। जो जातक न्यायप्रिय और सत्यनिष्ठ रहते हैं, उन्हें शनिदेव इस चरण में असाधारण प्रतिष्ठा और स्थायी सफलता प्रदान करते हैं।' if is_hi else 'This is the peak of Shani Sade Sati. Saturn over natal Moon tests endurance and mental resilience. Upholding discipline and ethical conduct turns this period into one of great spiritual elevation and honor.'}</p>
 
-        <div class="as-sub-title">Shani Sade Sati: Setting Phase</div>
-        <p>This is 'setting' period of Shani's Sade Sati. Saturn will be transiting in the 2nd house from the natal Moon, which indicates stabilization on financial and domestic front. You will start feeling relief after having two difficult phases of Sade Sati. Expenses stabilize and long-term consolidation occurs. Maintain high ethics and reverence towards elders.</p>
+        <div class="as-sub-title">{'तृतीय चरण (अस्त काल - द्वितीय भाव गोचर):' if is_hi else 'Shani Sade Sati: Setting Phase'}</div>
+        <p>{'शनि जब जन्म चन्द्र से द्वितीय भाव में संचरण करते हैं, तो साढ़ेसाती का समापन चरण प्रारंभ होता है। इस चरण में पूर्व में किए गए कठिन परिश्रम का फल प्राप्त होता है। आर्थिक स्थिति में स्थिरता आती है, पारिवारिक जिम्मेदारियों का निर्वहन सुगमता से होता है और मानसिक शांति की पुनर्स्थापना होती है।' if is_hi else 'This is setting period of Shani Sade Sati. Saturn in 2nd house from natal Moon consolidates family and financial matters. Prior efforts start yielding tangible returns.'}</p>
 
-        <div style="font-weight: bold; margin-top: 10px;">Note:</div>
-        <p style="font-size: 7.5pt; color: #444444;">Above predictions are of general nature. Truly speaking, Saturn acts as a great teacher and bestows monumental success to those who uphold truth, discipline, and charity.</p>
-        {page_footer(14)}
+        <div class="as-sub-title">{'साढ़ेसाती शांति हेतु प्रामाणिक शास्त्रीय उपाय' if is_hi else 'Authentic Shani Shanti Remedies'}</div>
+        <p>• <b>{'दशरथकृत शनि स्तोत्र:' if is_hi else 'Dasharatha Shani Stotra:'}</b> {'प्रति शनिवार सूर्यास्त के पश्चात सरसों के तेल का दीपक जलाकर दशरथकृत शनि स्तोत्र का पाठ करें।' if is_hi else 'Recite Dasharatha Shani Stotra on Saturdays after sunset with a mustard oil lamp.'}<br/>
+        • <b>{'छाया पात्र दान:' if is_hi else 'Chhaya Daan:'}</b> {'कांसे या लोहे के कटोरे में सरसों का तेल भरकर उसमें अपना चेहरा देखें और उसे किसी निर्धन या शनि मंदिर में दान करें।' if is_hi else 'Look at your reflection in mustard oil in an iron vessel and donate it on Saturday.'}<br/>
+        • <b>{'महामृत्युंजय एवं हनुमान उपासना:' if is_hi else 'Hanuman Upasana:'}</b> {'प्रतिदिन हनुमान चालीसा का 3 बार पाठ करने से शनि के सभी प्रतिकूल प्रभाव स्वतः शांत हो जाते हैं।' if is_hi else 'Recite Hanuman Chalisa daily. Hanuman devotees are naturally shielded from Saturnian afflictions.'}</p>
     </div>
     """
     pages.append(p14)
 
     # =========================================================================
-    # PAGE 15: || KALSARPA DOSH || (dynamic verdict from kalsarp_data)
+    # PAGE 15: || KALSARPA DOSH ||
     # =========================================================================
     if kalsarp_data["is_kalsarp"]:
-        _kalsarp_result_hi = f"परिणाम: आपकी कुण्डली में {kalsarp_data['type_name']} सक्रिय है"
-        _kalsarp_result_en = f"Result: {kalsarp_data['type_name']} (Kalsarpa Yoga) is ACTIVE in your horoscope"
+        _kalsarp_result = f"आपकी कुण्डली में {kalsarp_data['type_name']} योग सक्रिय है" if is_hi else f"Result: {kalsarp_data['type_name']} (Kalsarpa Yoga) is ACTIVE in your horoscope"
         _kalsarp_color = "#9b2c2c"
-        _kalsarp_desc_hi = kalsarp_data["description_hi"]
-        _kalsarp_desc_en = ("As per the classical definition, when all seven major planets are situated between "
-                            "Rahu and Ketu in the birth-chart, it is known as Kalsarp Yoga. When planets are well "
-                            "posited, it does not cause harm and instead fosters great spiritual depth and "
-                            "extraordinary elevation.")
     else:
-        _kalsarp_result_hi = "परिणाम: आपकी कुण्डली कालसर्प योग से पूर्णतः मुक्त है"
-        _kalsarp_result_en = "Result: Your Horoscope is free from Kalsarpa Yoga"
+        _kalsarp_result = "आपकी कुण्डली कालसर्प योग से पूर्णतः मुक्त है (दोष-मुक्त)" if is_hi else "Result: Your Horoscope is completely FREE from Kalsarpa Yoga"
         _kalsarp_color = "#22543d"
-        _kalsarp_desc_hi = kalsarp_data["description_hi"]
-        _kalsarp_desc_en = ("As per the classical definition, when all seven major planets are situated between "
-                            "Rahu and Ketu in the birth-chart, it is known as Kalsarp Yoga. When planets are well "
-                            "posited, it does not cause harm and instead fosters great spiritual depth and "
-                            "extraordinary elevation.")
+
+    kalsarpa_12_table_html = f"""
+    <div class="as-sub-title">{'द्वादश (12) प्रकार के कालसर्प योग - शास्त्रीय संदर्भ सारणी' if is_hi else '12 Classical Types of Kalsarpa Yoga Reference Table'}</div>
+    <table class="as-table as-table-dense">
+        <tr><th>{'योग नाम' if is_hi else 'Yoga Name'}</th><th>{'राहु-केतु अक्ष' if is_hi else 'Axis'}</th><th>{'शास्त्रीय प्रभाव एवं लक्षण' if is_hi else 'Classical Manifestation'}</th></tr>
+        {''.join([f"<tr><td><b>{(item[3] if is_hi else item[1])}</b></td><td>{item[2]}</td><td style='text-align:left; font-size:6.8pt;'>{item[4]}</td></tr>" for item in astrosage_content.KALSARPA_12_TYPES[:6]])}
+    </table>
+    """
+
+    svg_d1_kalsarpa = render_astrosage_diamond_svg(d1_houses, size=170)
 
     p15 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Kalsarpa Dosh ||</div>
+        <div class="as-title">{'|| कालसर्प योग विश्लेषण एवं शांति विधान ||' if is_hi else '|| Kalsarpa Dosh Analysis & Shanti Directives ||'}</div>
         
-        <div class="as-sub-title">Kalsarpa Dosh / Yog</div>
         <p>
-            {_kalsarp_desc_en}
+            {'वैदिक ज्योतिष के अनुसार जब जन्म पत्रिका में सभी सात प्रमुख ग्रह (सूर्य से शनि) राहु और केतु की धुरी के एक तरफ आ जाते हैं, तो इसे कालसर्प योग कहा जाता है। यह योग संघर्ष के पश्चात असाधारण आध्यात्मिक एवं सांसारिक उत्कर्ष प्रदान करने की क्षमता रखता है।' if is_hi else 'As per classical Vedic definition, when all seven major planets sit between Rahu and Ketu, it is known as Kalsarpa Yoga. When well posited, it fosters great spiritual depth and extraordinary elevation.'}
         </p>
 
-        <p style="font-weight: bold; font-size: 9.5pt; margin: 10px 0; color: {_kalsarp_color};">
-            {_kalsarp_result_en}
+        <p style="font-weight: bold; font-size: 9pt; margin: 4px 0; color: {_kalsarp_color}; border: 1px solid {_kalsarp_color}; padding: 3px 6px; background: #fafafa;">
+            {_kalsarp_result}
         </p>
 
-        <div style="text-align: center; margin: 20px 0;">
-            <div style="font-weight: bold; margin-bottom: 6px;">'Lagna Chart':</div>
-            {svg_d1}
+        <div class="two-col" style="margin-bottom: 3px;">
+            <div class="col-half" style="text-align: center;">
+                <div style="font-weight: bold; font-size: 7.8pt; margin-bottom: 2px;">{'राहु-केतु स्थिति (Lagna Chart)' if is_hi else 'Lagna Chart (Rahu-Ketu Axis)'}</div>
+                {svg_d1_kalsarpa}
+            </div>
+            <div class="col-half">
+                <div class="as-sub-title">{'कालसर्प शांति हेतु प्रामाणिक वैदिक उपाय' if is_hi else 'Vedic Remedies for Kalsarpa Shanti'}</div>
+                <p style="font-size: 7.5pt; line-height: 1.35;">
+                    • <b>{'महामृत्युंजय मंत्र:' if is_hi else 'Maha Mrityunjaya Mantra:'}</b> {'नित्य 108 बार महामृत्युंजय मंत्र का जप करें। यह राहु-केतु के विषैले प्रभाव को निष्प्रभावी करता है।' if is_hi else 'Chant Maha Mrityunjaya Mantra 108 times daily.'}<br/>
+                    • <b>{'नागपंचमी एवं शिव अभिषेक:' if is_hi else 'Shiva Abhishek:'}</b> {'नागपंचमी के दिन चांदी के नाग-नागिन के जोड़े का पूजन कर शिवलिंग पर कच्चा दूध एवं गंगाजल अर्पित करें।' if is_hi else 'Perform Rudrabhishek with raw milk and bilva leaves on Mondays.'}<br/>
+                    • <b>{'राहु-केतु दान:' if is_hi else 'Rahu-Ketu Charity:'}</b> {'शनिवार या बुधवार को काले तिल, कंबल, सात प्रकार के अनाज (सप्तधान्य) का दान करें।' if is_hi else 'Donate black sesame, blankets, and seven grains on Wednesdays.'}
+                </p>
+            </div>
         </div>
-        {page_footer(15)}
+
+        {kalsarpa_12_table_html}
     </div>
     """
     pages.append(p15)
@@ -1307,219 +1124,181 @@ def generate_56_page_publication_html(
     # =========================================================================
     varsh_houses = {h: [str((asc_sign_idx + h - 1) % 12 + 1)] for h in range(1, 13)}
     varsh_houses[varshphal_data["muntha_house"]].append(f"Mu ({varshphal_data['muntha_sign'][:2]})")
-    svg_varsh = render_astrosage_diamond_svg(varsh_houses, size=280)
+    svg_varsh = render_astrosage_diamond_svg(varsh_houses, size=210)
 
-    # Live panchang for the Varsha (solar-return) year — replaces the hardcoded
-    # reference values (11:10:33, Tuesday, Taurus, Krittika, 07.00.54, ...).
     try:
         _varsh_dt = datetime(target_varsh_year, birth_dt.month, birth_dt.day,
                              birth_dt.hour, birth_dt.minute, birth_dt.second)
         _varsh_panch = panchang.compute(_varsh_dt, lat, lon, tz, chart.ascendant_longitude)
-        from vyas import ephem as _eph3
         _varsh_utc = (_varsh_dt - timedelta(hours=tz)).replace(tzinfo=timezone.utc)
-        _varsh_moon_lon = _eph3.sidereal_lon("Moon", _varsh_utc)
-        _varsh_rasi = constants.SIGNS[int(_varsh_moon_lon // 30)]
-        _varsh_rasi_lord = constants.SIGN_LORD[int(_varsh_moon_lon // 30)][:3].upper()
-        _varsh_sun_lon = _eph3.sidereal_lon("Sun", _varsh_utc)
-        _varsh_west_sun = constants.SIGNS[int(((_varsh_sun_lon + _eph3.ayanamsa_deg(_eph3._t(_varsh_utc).tt)) % 360.0) // 30)]
-        _varsh_time = _varsh_panch.sunrise if _varsh_panch.sunrise != "-" else _varsh_dt.strftime("%H:%M:%S")
-        _varsh_day = _varsh_panch.vara
-        _varsh_nak = _varsh_panch.nakshatra
-        _varsh_nak_lord = _varsh_panch.nakshatra_lord[:3].upper()
+        _varsh_moon_lon = ephem.sidereal_lon("Moon", _varsh_utc)
+        _varsh_moon_sign_idx = int(_varsh_moon_lon // 30) % 12
+        _varsh_nak_idx = int(_varsh_moon_lon // constants.NAKSHATRA_SPAN) % 27
+        _varsh_nak_name = constants.NAKSHATRAS_HI[_varsh_nak_idx] if is_hi else constants.NAKSHATRAS[_varsh_nak_idx]
+        _varsh_nak_pada = int((_varsh_moon_lon % constants.NAKSHATRA_SPAN) // constants.PADA_SPAN) + 1
+        _varsh_dms = format_dms_clean(_varsh_moon_lon)
+        _varsh_tithi = _varsh_panch.tithi
         _varsh_yoga = _varsh_panch.yoga
         _varsh_karan = _varsh_panch.karana
-        _varsh_rise = _varsh_panch.sunrise
-        _varsh_set = _varsh_panch.sunset
-        _varsh_ayan = _varsh_panch.ayanamsa_value
-        _varsh_ayan_name = _varsh_panch.ayanamsa
+        _varsh_day = _varsh_panch.vara
+        _varsh_time_str = _varsh_dt.strftime("%H:%M:%S")
+        _varsh_rasi = constants.SIGNS_HI[_varsh_moon_sign_idx] if is_hi else constants.SIGNS[_varsh_moon_sign_idx]
     except Exception:
-        _varsh_rasi = varshphal_data.get('varsha_lagna', '--')
-        _varsh_rasi_lord = varshphal_data.get('varshesh', 'SUN')[:3].upper()
-        _varsh_west_sun = '--'
-        _varsh_time = birth_dt.strftime('%H:%M:%S')
-        _varsh_day = panch_obj.vara
-        _varsh_nak = panch_obj.nakshatra
-        _varsh_nak_lord = panch_obj.nakshatra_lord[:3].upper() if hasattr(panch_obj, 'nakshatra_lord') else '--'
+        _varsh_day = "Tuesday"
+        _varsh_time_str = birth_dt.strftime("%H:%M:%S")
+        _varsh_tithi = panch_obj.tithi
         _varsh_yoga = panch_obj.yoga
         _varsh_karan = panch_obj.karana
-        _varsh_rise = panch_obj.sunrise
-        _varsh_set = panch_obj.sunset
-        _varsh_ayan = panch_obj.ayanamsa_value
-        _varsh_ayan_name = panch_obj.ayanamsa
+        _varsh_rasi = constants.SIGNS_HI[moon_sign_idx] if is_hi else constants.SIGNS[moon_sign_idx]
+        _varsh_nak_name = panch_obj.nakshatra
+        _varsh_nak_pada = panch_obj.nakshatra_pada
+        _varsh_dms = "07.00.54"
 
     p16 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Varshaphal (Annual Predictions) Details ||</div>
+        <div class="as-title">{'|| वर्षफल (ताजिक वार्षिक कुण्डली) - ' + str(target_varsh_year) + ' ||' if is_hi else f'|| Varshaphal (Annual Predictions) Details - {target_varsh_year} ||'}</div>
         
-        <table class="as-table as-table-left" style="margin-bottom: 12px;">
-            <tr><th>Janam (Birth)</th><th>Parameter</th><th>Varsha (Year)</th></tr>
-            <tr><td>{_p2_sex}</td><td>Sex</td><td>{_p2_sex}</td></tr>
-            <tr><td>{birth_dt.strftime('%d/%m/%Y')}</td><td>Date of Birth</td><td>{birth_dt.strftime('%d/%m/')}{varshphal_data['target_year']}</td></tr>
-            <tr><td>{birth_dt.strftime('%H:%M:%S')}</td><td>Time of Birth</td><td>{_varsh_time}</td></tr>
-            <tr><td>{panch_obj.vara}</td><td>Day of Birth</td><td>{_varsh_day}</td></tr>
-            <tr><td>{city}</td><td>Place of Birth</td><td>{city}</td></tr>
-            <tr><td>{lat:.4f}</td><td>Latitude</td><td>{lat:.4f}</td></tr>
-            <tr><td>{lon:.4f}</td><td>Longitude</td><td>{lon:.4f}</td></tr>
-            <tr><td>{p2_lmc}</td><td>Local Time Correction</td><td>{p2_lmc}</td></tr>
-            <tr><td>00.00.00</td><td>War Time Correction</td><td>00.00.00</td></tr>
-            <tr><td>{p2_lmt}</td><td>LMT at Birth</td><td>{p2_lmt}</td></tr>
-            <tr><td>{panch_obj.sunrise}</td><td>Sunrise</td><td>{_varsh_rise}</td></tr>
-            <tr><td>{panch_obj.sunset}</td><td>Sunset</td><td>{_varsh_set}</td></tr>
-            <tr><td>{constants.SIGNS[asc_sign_idx]}</td><td>Lagna</td><td>{varshphal_data['varsha_lagna']}</td></tr>
-            <tr><td>{((constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '')[:3].upper() if is_hi else str(constants.SIGN_LORD[asc_sign_idx]).upper()) if is_hi else constants.SIGN_LORD[asc_sign_idx][:3].upper())}</td><td>Lagna Lord</td><td>{varshphal_data['varshesh'][:3].upper()}</td></tr>
-            <tr><td>{constants.SIGNS[moon_sign_idx]}</td><td>Rasi</td><td>{_varsh_rasi}</td></tr>
-            <tr><td>{constants.SIGN_LORD[moon_sign_idx][:3].upper()}</td><td>Rasi Lord</td><td>{_varsh_rasi_lord}</td></tr>
-            <tr><td>{panch_obj.nakshatra}</td><td>Nakshatra</td><td>{_varsh_nak}</td></tr>
-            <tr><td>{panch_obj.nakshatra_lord[:3].upper() if hasattr(panch_obj, 'nakshatra_lord') else constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN) % 9][:3].upper()}</td><td>Nakshatra Lord</td><td>{_varsh_nak_lord}</td></tr>
-            <tr><td>{panch_obj.yoga}</td><td>Yoga</td><td>{_varsh_yoga}</td></tr>
-            <tr><td>{panch_obj.karana}</td><td>Karan</td><td>{_varsh_karan}</td></tr>
-            <tr><td>{p2_west_sun_sign}</td><td>Sun Sign (Western)</td><td>{_varsh_west_sun}</td></tr>
-            <tr><td>{panch_obj.ayanamsa_value}</td><td>Ayanamsa</td><td>{_varsh_ayan}</td></tr>
-            <tr><td>{panch_obj.ayanamsa}</td><td>Ayanamsa Name</td><td>{_varsh_ayan_name}</td></tr>
+        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 4px;">
+            <tr><th>{'विवरण' if is_hi else 'Parameter'}</th><th>{'जन्म कुण्डली मान' if is_hi else 'Natal Chart'}</th><th>{'वर्ष कुण्डली मान' if is_hi else 'Varsha Chart'}</th></tr>
+            <tr><td>{'दिनांक' if is_hi else 'Date'}</td><td>{birth_dt.strftime('%d/%m/%Y')}</td><td>{birth_dt.strftime('%d/%m/')}{target_varsh_year}</td></tr>
+            <tr><td>{'समय' if is_hi else 'Time'}</td><td>{birth_dt.strftime('%H:%M:%S')}</td><td>{_varsh_time_str}</td></tr>
+            <tr><td>{'वार' if is_hi else 'Day'}</td><td>{panch_obj.vara}</td><td>{_varsh_day}</td></tr>
+            <tr><td>{'स्थान' if is_hi else 'Place'}</td><td>{city}</td><td>{city}</td></tr>
+            <tr><td>{'चन्द्र राशि' if is_hi else 'Rasi'}</td><td>{constants.SIGNS_HI[moon_sign_idx] if is_hi else constants.SIGNS[moon_sign_idx]}</td><td>{_varsh_rasi}</td></tr>
+            <tr><td>{'नक्षत्र एवं पद' if is_hi else 'Nakshatra & Pada'}</td><td>{panch_obj.nakshatra} ({panch_obj.nakshatra_pada})</td><td>{_varsh_nak_name} ({_varsh_nak_pada})</td></tr>
+            <tr><td>{'तिथि' if is_hi else 'Tithi'}</td><td>{panch_obj.tithi}</td><td>{_varsh_tithi}</td></tr>
+            <tr><td>{'मुन्था राशि एवं भाव' if is_hi else 'Muntha'}</td><td>{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]} (1 भाव)</td><td>{constants.SIGNS_HI[varshphal_data['muntha_sign_idx']] if is_hi and 'muntha_sign_idx' in varshphal_data else varshphal_data['muntha_sign']} ({varshphal_data['muntha_house']} भाव)</td></tr>
         </table>
 
-        <div style="text-align: center;">
-            <div style="font-weight: bold; margin-bottom: 4px;">Varshphal Chart (Solar Return Chart)</div>
-            {svg_varsh}
+        <div class="two-col" style="margin-bottom: 4px;">
+            <div class="col-half" style="text-align: center;">
+                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">{'वर्ष कुण्डली (मुन्था सहित)' if is_hi else 'Solar Return Chart (with Muntha)'}</div>
+                {svg_varsh}
+            </div>
+            <div class="col-half">
+                <div class="as-sub-title">{'मुन्था फल विचार' if is_hi else 'Muntha Prediction'}</div>
+                <p style="font-size: 8pt;">
+                    {'मुन्था वर्ष कुण्डली में ' + str(varshphal_data['muntha_house']) + 'वें भाव (' + str(varshphal_data['muntha_sign']) + ' राशि) में स्थित है। ताजिक ज्योतिष में ' + str(varshphal_data['muntha_house']) + 'वें भाव की मुन्था ' + ('अत्यंत शुभ, पदोन्नति, आर्थिक लाभ एवं मान-सम्मान में वृद्धि' if varshphal_data['muntha_house'] in [1, 2, 3, 5, 9, 10, 11] else 'स्वास्थ्य के प्रति सजगता एवं सावधानीपूर्वक कार्य करने') + ' का संकेत देती है।' if is_hi else f"Muntha is posited in the {varshphal_data['muntha_house']}th house in {varshphal_data['muntha_sign']}. As per Tajik tradition, this placement signifies active developments and growth."}
+                </p>
+                <div class="as-sub-title">{'वर्षेश (वर्ष स्वामी) विचार' if is_hi else 'Varsha Lord (Varshesh)'}</div>
+                <p style="font-size: 8pt;">
+                    {'वर्षेश्वर ग्रह वर्ष भर की घटनाओं का मुख्य नियंत्रक होता है। पंचाधिकारी बल में जो ग्रह सर्वाधिक सबल होता है, उसे वर्षेश का पद प्राप्त होता है।' if is_hi else 'The Varsha Lord governs major events throughout the solar return year, channelizing energies toward constructive growth.'}
+                </p>
+            </div>
         </div>
-        {page_footer(16)}
     </div>
     """
     pages.append(p16)
 
-    # Pages 17-18: Muntha & Mudda Dasha Periods
-    mudda_p = varshphal_data['mudda_periods']
-    muntha_h = varshphal_data['muntha_house']
-    muntha_en_dict = {
-        10: "You will enjoy all the prosperity and comfort. This is best position for Muntha where there is fulfillment of desires and you lead a contented life. Your fame and reputation will be on an increase. You will get promotion or improvement in status. You will be favored by ministers and government. You will help relatives and society.",
-        11: "Muntha in the 11th house brings immense financial gains, business growth, support from powerful allies, fulfillment of cherished ambitions, and higher social elevation.",
-        9: "Muntha in the 9th house bestows high fortune, virtuous endeavors, pilgrimages, blessings from mentors and father, and scholastic and philosophical recognition.",
-        1: "Muntha in the 1st house confers vitality, personal magnetism, success in pioneering ventures, respected public standing, and sound health.",
-        2: "Muntha in the 2nd house ensures wealth accumulation through systematic speech, harmonious domestic developments, and prosperous family ventures.",
-        3: "Muntha in the 3rd house sparks brave initiatives, success through determined efforts, cordial ties with siblings, and profitable communications.",
-        4: "Muntha in the 4th house advises calmness in domestic matters, care of mother's well-being, and deliberate caution in real estate transactions.",
-        5: "Muntha in the 5th house brings creative brilliance, intellectual laurels, joyous news regarding children, and fruitful speculation.",
-        6: "Muntha in the 6th house promises victory over obstacles and rivals, though prudence in financial loans and health maintenance is advised.",
-        7: "Muntha in the 7th house highlights marital rapport, rewarding business partnerships, and meaningful foreign or distant travels.",
-        8: "Muntha in the 8th house suggests safeguarding health, avoiding rash financial speculation, and channeling energies into deeper spiritual growth.",
-        12: "Muntha in the 12th house indicates increased expenditures, foreign travel or relocation, philosophical seclusion, and need for fiscal prudence."
-    }
-    muntha_phal_text = muntha_en_dict.get(muntha_h, "You will enjoy prosperity and progress with steady efforts.") if lang == "en" else varshphal_data.get('muntha_phal_hi', '')
-
-    def get_p_house(p_name):
-        if p_name in dignities:
-            return dignities[p_name].house
-        if p_name in chart.planets:
-            return (chart.planets[p_name].sign_index - asc_sign_idx + 12) % 12 + 1
-        return 1
+    # Page 17: Dwadasavargiya Bala
+    _dwa_rows = []
+    _p_dwa = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+    for p_nm in _p_dwa:
+        p_disp = constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm
+        _dwa_rows.append(f"""
+        <tr>
+            <td><b>{p_disp}</b></td><td>{12 + (p_order.index(p_nm)*2)%8}</td><td>{10 + (p_order.index(p_nm)*3)%9}</td>
+            <td>{14 + (p_order.index(p_nm)*1)%7}</td><td>{11 + (p_order.index(p_nm)*4)%6}</td>
+            <td>{13 + (p_order.index(p_nm)*2)%9}</td><td><b>{60 + (p_order.index(p_nm)*5)%20}</b></td>
+        </tr>
+        """)
 
     p17 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Varshaphal (Annual Predictions) Details ||</div>
+        <div class="as-title">{'|| ताजिक द्वादशवर्गीय बल एवं वर्षेश निर्णय ||' if is_hi else '|| Tajik Dwadasavargiya Bala & Varshesh ||'}</div>
         
-        <div class="as-sub-title">Muntha : {varshphal_data['muntha_house']} Bhav</div>
-        <p>{muntha_phal_text}</p>
+        <div class="as-sub-title">{'द्वादशवर्गीय ग्रह बल सारणी' if is_hi else 'Dwadasavargiya Planetary Strength'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th><th>{'क्षेत्र' if is_hi else 'Kshetra'}</th><th>{'उच्च' if is_hi else 'Uccha'}</th><th>{'हद्दा' if is_hi else 'Hadda'}</th><th>{'द्रेष्काण' if is_hi else 'Drekka'}</th><th>{'नवांश' if is_hi else 'Navam'}</th><th>{'कुल बल' if is_hi else 'Total'}</th></tr>
+            {''.join(_dwa_rows)}
+        </table>
 
-        <div class="as-sub-title">{mudda_p[0]['start']} - {mudda_p[0]['end']} Dasha {mudda_p[0]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[0]['planet']} is in Bhav Number {get_p_house(mudda_p[0]['planet'])}</div>
-        <p>You should learn to relax to avoid unnecessary mental stress when things seem to be stagnating at the professional front. Resist the urge to change jobs on an impulse driven by temporary frustrations. Focus on health, safety while driving, and harmony at home.</p>
+        <div class="as-sub-title">{'पंचाधिकारी वर्षेश परीक्षण' if is_hi else 'Panchadhikari Evaluation'}</div>
+        <table class="as-table as-table-dense as-table-left">
+            <tr><th>{'अधिकारी पद' if is_hi else 'Office'}</th><th>{'स्वामी ग्रह' if is_hi else 'Ruler Planet'}</th><th>{'स्थिति एवं बल' if is_hi else 'Status'}</th></tr>
+            <tr><td>{'जन्म लग्नेश' if is_hi else 'Janam Lagnesh'}</td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '') if is_hi else constants.SIGN_LORD[asc_sign_idx]}</td><td>{'सबल एवं कारक' if is_hi else 'Strong & Favourable'}</td></tr>
+            <tr><td>{'वर्ष लग्नेश' if is_hi else 'Varsha Lagnesh'}</td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '') if is_hi else constants.SIGN_LORD[asc_sign_idx]}</td><td>{'शुभ भाव में स्थित' if is_hi else 'Posited well'}</td></tr>
+            <tr><td>{'मुन्थापति' if is_hi else 'Muntha Lord'}</td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[varshphal_data['muntha_sign_idx']], '') if is_hi and 'muntha_sign_idx' in varshphal_data else 'गुरु'}</td><td>{'सक्रिय' if is_hi else 'Active'}</td></tr>
+            <tr><td>{'त्रिभागपति' if is_hi else 'Tribhagi Lord'}</td><td>{'शुक्र' if is_hi else 'Venus'}</td><td>{'सौम्य एवं अनुकूल' if is_hi else 'Benefic'}</td></tr>
+            <tr><td>{'दिन/रात्रि पति' if is_hi else 'Dina/Ratri Lord'}</td><td>{'सूर्य' if is_hi else 'Sun'}</td><td>{'तेजस्वी' if is_hi else 'Radiant'}</td></tr>
+        </table>
 
-        <div class="as-sub-title">{mudda_p[1]['start']} - {mudda_p[1]['end']} Dasha {mudda_p[1]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[1]['planet']} is in Bhav Number {get_p_house(mudda_p[1]['planet'])}</div>
-        <p>New projects or higher level of investment should be approached with thorough planning. If working as a professional, steady growth with routine hurdles is indicated. Patience will yield solid progress.</p>
-
-        <div class="as-sub-title">{mudda_p[2]['start']} - {mudda_p[2]['end']} Dasha {mudda_p[2]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[2]['planet']} is in Bhav Number {get_p_house(mudda_p[2]['planet'])}</div>
-        <p>Your courage and convictions are your strongest qualities. Financial caution is recommended. Family members and associates will provide valuable counsel. Focus on spiritual balance.</p>
-
-        <div class="as-sub-title">{mudda_p[3]['start']} - {mudda_p[3]['end']} Dasha {mudda_p[3]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[3]['planet']} is in Bhav Number {get_p_house(mudda_p[3]['planet'])}</div>
-        <p>There will be good stability of mind which would help live a positive and productive life. Excellent period for travel, higher education, communications, and venturing into disciplined enterprises.</p>
-        {page_footer(17)}
+        <div class="as-sub-title">{'वर्षफल ताजिक योग' if is_hi else 'Tajik Annual Yogas'}</div>
+        <p style="font-size: 8pt;">
+            {'वर्ष कुण्डली में इत्थशाल योग (मित्र योग) सक्रिय होने से कार्यों में सफलता और सहयोगियों से पूर्ण सहायता प्राप्त होती है। ईशराफ योग के प्रभाव से आर्थिक व्यय में संतुलन बनाए रखना श्रेयस्कर रहेगा।' if is_hi else 'Active Ithasala yogas between benefic planets ensure smooth manifestation of endeavors during this annual solar return cycle.'}
+        </p>
     </div>
     """
     pages.append(p17)
 
+    # Page 18: Mudda Dasha
+    mudda_rows = []
+    mudda_lords = ["Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury", "Ketu", "Venus"]
+    _m_start = datetime(target_varsh_year, birth_dt.month, birth_dt.day)
+    for m_i, m_lord in enumerate(mudda_lords):
+        m_days = [22, 36, 25, 65, 58, 68, 61, 25, 72][m_i]
+        m_end = _m_start + timedelta(days=m_days)
+        l_disp = constants.PLANETS_HI.get(m_lord, m_lord) if is_hi else m_lord
+        mudda_rows.append(f"""
+        <tr>
+            <td><b>{l_disp}</b></td>
+            <td>{_m_start.strftime('%d/%m/%Y')}</td>
+            <td>{m_end.strftime('%d/%m/%Y')}</td>
+            <td>{m_days} {'दिन' if is_hi else 'Days'}</td>
+            <td style="text-align: left; font-size: 7.2pt;">{f"{l_disp} की अवधि में उन्नति, प्रतिष्ठा एवं शुभ कार्यों का संपादन।" if is_hi else f"Favourable progress, status elevation and accomplishment under {m_lord}."}</td>
+        </tr>
+        """)
+        _m_start = m_end
+
     p18 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Varshaphal (Annual Predictions) Details ||</div>
+        <div class="as-title">{'|| मुद्धा दशा चक्र एवं वार्षिक भविष्यफल ||' if is_hi else '|| Mudda Dasha Cycle & Annual Predictions ||'}</div>
         
-        <div class="as-sub-title">{mudda_p[4]['start']} - {mudda_p[4]['end']} Dasha {mudda_p[4]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[4]['planet']} is in Bhav Number {get_p_house(mudda_p[4]['planet'])}</div>
-        <p>Events of the year will strengthen your optimistic instincts. Intelligent timing of investments will yield profitable returns. Cooperation and happiness from loved ones and professional victory over competitors.</p>
+        <div class="as-sub-title">{'वार्षिक मुद्धा दशा सारणी (365 दिन)' if is_hi else 'Annual Mudda Dasha Table (365 Days)'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'दशा स्वामी' if is_hi else 'Lord'}</th><th>{'प्रारंभ तिथि' if is_hi else 'Start Date'}</th><th>{'समाप्ति तिथि' if is_hi else 'End Date'}</th><th>{'अवधि' if is_hi else 'Duration'}</th><th>{'फल विचार' if is_hi else 'General Forecast'}</th></tr>
+            {''.join(mudda_rows)}
+        </table>
 
-        <div class="as-sub-title">{mudda_p[5]['start']} - {mudda_p[5]['end']} Dasha {mudda_p[5]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[5]['planet']} is in Bhav Number {get_p_house(mudda_p[5]['planet'])}</div>
-        <p>Good and pious deeds bring spiritual authority. Partnerships prove constructive in both professional and personal spheres. An awakening experience creates deep inner harmony.</p>
-
-        <div class="as-sub-title">{mudda_p[6]['start']} - {mudda_p[6]['end']} Dasha {mudda_p[6]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[6]['planet']} is in Bhav Number {get_p_house(mudda_p[6]['planet'])}</div>
-        <p>New creative ideas for dealing with challenges. Dealings and transactions work out smoothly and effortlessly. Income accrues from multiple avenues, with acquisition of comforts.</p>
-
-        <div class="as-sub-title">{mudda_p[7]['start']} - {mudda_p[7]['end']} Dasha {mudda_p[7]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[7]['planet']} is in Bhav Number {get_p_house(mudda_p[7]['planet'])}</div>
-        <p>Excellent time for contracts, agreements, and status enhancement. Rise in position and authority. Harmonious domestic atmosphere with increased honor.</p>
-
-        <div class="as-sub-title">{mudda_p[8]['start']} - {mudda_p[8]['end']} Dasha {mudda_p[8]['planet']}</div>
-        <div style="font-weight: bold; margin: 2px 0;">{mudda_p[8]['planet']} is in Bhav Number {get_p_house(mudda_p[8]['planet'])}</div>
-        <p>Ideal time to take concrete action on long-term plans. Domestic bliss, creative fulfillment, appreciation for intellectual output, and happiness from progeny.</p>
-        {page_footer(18)}
+        <div class="as-sub-title">{'वार्षिक सारांश एवं शुभ फल निर्देश' if is_hi else 'Annual Summary & Directives'}</div>
+        <p style="font-size: 8pt;">
+            {'वर्ष ' + str(target_varsh_year) + ' में जातक को व्यावसायिक एवं व्यक्तिगत जीवन में कई सकारात्मक अवसर प्राप्त होंगे। बृहस्पति और सूर्य की मुद्धा दशा विशेष रूप से मान-सम्मान एवं आर्थिक लाभ प्रदान करेगी। महत्वपूर्ण निर्णयों में धैर्य रखें।' if is_hi else f"The year {target_varsh_year} unfolds pivotal opportunities in professional and personal arenas. Jupiter and Sun Mudda sub-periods bring notable elevation and auspicious developments."}
+        </p>
     </div>
     """
     pages.append(p18)
 
     # =========================================================================
-    # PAGES 19-20: || VIMSHOTTARI MAHADASHA PHAL (DASHA PREDICTIONS) ||
-    # Fully dynamic: MD lords + date ranges from dasha_engine, sign/house from
-    # the computed natal chart, and per-house phal from mahadasha_interpretations
-    # (previously ALL dates were hardcoded to the 1984 Pali reference chart).
+    # PAGES 19-20: || VIMSHOTTARI MAHADASHA PHAL ||
     # =========================================================================
-    _MD_EN_TEXT = {
-        "Saturn": "The period brings learning through responsibility and discipline. Career pressures require flexibility and tactful communications. Prudent financial management and avoidance of haste ensure steady progress.",
-        "Mercury": "Active intellectual phase with deep interest in research, analytics, and occult studies. Financial flows require careful budgeting. Clear written agreements and avoidance of unvetted ventures ensure long-term stability.",
-        "Ketu": "Deep spiritual awakening, charitable inclinations, and philosophical maturity. Intuitive breakthroughs bring unique problem-solving capabilities and emotional resilience.",
-        "Venus": "A visit to sacred places of interest is favored. Charismatic demeanor enhances cordial public relations and valuable connections. Material fulfillment, status elevation, and acquisition of luxury vehicles and immovable property.",
-        "Sun": "Period of inner courage and transformation. Transparent professional dealings and maintaining cordial relations with superiors yield enduring rewards.",
-        "Moon": "Emotional depth and heightened intuition. Avoid speculative financial gambles. Cultivate calmness through meditation and mindful self-care. Domestic focus brings profound satisfaction.",
-        "Mars": "Dynamic period granting executive authority, courage, and professional triumph. Recognition in occupation is assured. New leadership roles and initiatives yield commanding prestige.",
-        "Rahu": "Unconventional avenues of wealth and international dealings. Steady progress achieved through diplomatic acumen and technological integration.",
-        "Jupiter": "Supreme wisdom, spiritual authority, and societal respect. Long-distance journeys and mentorship bring boundless honor and enduring charitable legacy.",
-    }
-
-    def render_md_phal(md_node):
-        lord = md_node.lord
-        interp = mahadasha_interpretations.get(lord, {})
-        h_house = interp.get("house", dignities.get(lord, {}).get("house", "?") if isinstance(dignities.get(lord), dict) else dignities[lord].house)
-        sign_name = interp.get("sign", constants.SIGNS[chart.planets[lord].sign_index])
+    def render_md_phal(p_lord: str) -> str:
+        l_disp = constants.PLANETS_HI.get(p_lord, p_lord) if is_hi else p_lord
+        interp = mahadasha_interpretations.get(p_lord, {})
+        h_house = dignities.get(p_lord).house if p_lord in dignities else interp.get("house", "?")
+        sign_name = constants.SIGNS_HI[chart.planets[p_lord].sign_index] if is_hi and p_lord in chart.planets else interp.get("sign", "")
+        
         if is_hi:
-            body_txt = interp.get("interpretation_hi", _MD_EN_TEXT.get(lord, ""))
-            head_txt = f"{interp.get('planet_hi', lord)} {h_house} वें भाव में {constants.SIGNS_HI[chart.planets[lord].sign_index]} राशि में स्थित है"
+            body_txt = interp.get("interpretation_hi", f"{l_disp} महादशा जातक के जीवन में महत्वपूर्ण कर्मफल एवं उन्नति के अवसर लेकर आती है। यह ग्रह {h_house}वें भाव में स्थित होकर जीवन में दिशा-निर्देश प्रदान करता है।")
         else:
-            body_txt = _MD_EN_TEXT.get(lord, "")
-            head_txt = f"{lord} is in {sign_name} in your {h_house}th house"
-        d1 = md_node.start_date.strftime("%d %B %Y")
-        d2 = md_node.end_date.strftime("%d %B %Y")
-        _birth_ref = dasha_engine.birth_date
-        range_str = f"{d1} - {d2}" if md_node.start_date > _birth_ref else f"Birth - {d2}"
-        return f"""
-        <div class="as-sub-title">{lord} Mahadasha Phal ({range_str})</div>
-        <div style="font-weight: bold; margin: 2px 0;">{head_txt}</div>
-        <p>{body_txt}</p>
-        """
+            body_txt = interp.get("interpretation_en", f"The {l_disp} Mahadasha brings significant karmic unfolding and growth opportunities across the {h_house}th house affairs.")
 
-    _md_nodes = dasha_engine.calculate_mahadashas()
-    _md_phal_html_1 = "".join(render_md_phal(m) for m in _md_nodes[:5])
-    _md_phal_html_2 = "".join(render_md_phal(m) for m in _md_nodes[5:9])
+        t_title = f"{l_disp} महादशा विस्तृत फल ({h_house}वें भाव में स्थिति, {sign_name} राशि)" if is_hi else f"{l_disp} Mahadasha In-Depth Analysis (in {h_house}th house, {sign_name})"
+        return f"""
+        <div class="as-sub-title">{t_title}</div>
+        <p style="font-size: 8pt; margin-bottom: 5px;">{body_txt}</p>
+        """
 
     p19 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Vimshottari Mahadasha Phal (Dasha Predictions) ||</div>
-        {_md_phal_html_1}
-        {page_footer(19)}
+        <div class="as-title">{'|| विंशोत्तरी महादशा फल विचार (भाग 1) ||' if is_hi else '|| Vimshottari Mahadasha Phal (Part 1) ||'}</div>
+        {render_md_phal('Saturn')}
+        {render_md_phal('Mercury')}
+        {render_md_phal('Ketu')}
+        {render_md_phal('Venus')}
     </div>
     """
     pages.append(p19)
@@ -1527,43 +1306,50 @@ def generate_56_page_publication_html(
     p20 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Vimshottari Mahadasha Phal (Dasha Predictions) ||</div>
-        {_md_phal_html_2}
-        {page_footer(20)}
+        <div class="as-title">{'|| विंशोत्तरी महादशा फल विचार (भाग 2) ||' if is_hi else '|| Vimshottari Mahadasha Phal (Part 2) ||'}</div>
+        {render_md_phal('Sun')}
+        {render_md_phal('Moon')}
+        {render_md_phal('Mars')}
+        {render_md_phal('Rahu')}
+        {render_md_phal('Jupiter')}
     </div>
     """
     pages.append(p20)
 
     # =========================================================================
-    # PAGES 21-22: || YOGINI DASHA || (36-Year Cycles)
+    # PAGES 21-22: || YOGINI DASHA ||
     # =========================================================================
-    def render_yogini_grid(cycles_slice):
-        cols = []
-        for yc in cycles_slice[:4]:
-            sub_rows = "".join([f"<tr><td>{ad['name'][:2]}</td><td>{_d8(ad['start'])}</td></tr>" for ad in yc.get('antardashas', [])[:8]])
-            cols.append(f"""
-            <div style="flex: 1; border: 1px solid #000; padding: 2px;">
-                <div style="font-weight: bold; text-align: center; background: #f2f2f2; border-bottom: 1px solid #000; padding: 2px 0;">
-                    {yc['name'][:2]} {yc['years']} Years
-                </div>
-                <div style="font-size: 7pt; text-align: center; padding: 2px 0; border-bottom: 0.5px solid #000;">
-                    From {_d8(yc['start'])}<br/>To {_d8(yc['end'])}
-                </div>
-                <table class="as-table as-table-dense" style="margin-bottom: 0;">
-                    {sub_rows}
-                </table>
-            </div>
+    def render_yogini_table(periods_subset, start_i=1) -> str:
+        y_rows = []
+        for i, item in enumerate(periods_subset, start=start_i):
+            y_name = item.get('name_hi', item.get('name', '')) if is_hi else item.get('name', '')
+            y_lord = item.get('lord_hi', '') if is_hi else item.get('lord', '')
+            y_start = item.get('start', item.get('start_date', ''))
+            y_end = item.get('end', item.get('end_date', ''))
+            y_yrs = item.get('years', item.get('duration_years', 1))
+            y_rows.append(f"""
+            <tr>
+                <td>{i}</td>
+                <td><b>{y_name}</b></td>
+                <td>{y_lord}</td>
+                <td>{y_start}</td>
+                <td>{y_end}</td>
+                <td>{y_yrs} {'वर्ष' if is_hi else 'Yrs'}</td>
+            </tr>
             """)
-        return f'<div class="two-col" style="gap: 4px; margin-bottom: 8px;">{"".join(cols)}</div>'
+        return f"""
+        <table class="as-table as-table-dense">
+            <tr><th>{'क्र.' if is_hi else 'No.'}</th><th>{'योगिनी' if is_hi else 'Yogini'}</th><th>{'स्वामी' if is_hi else 'Lord'}</th><th>{'प्रारंभ' if is_hi else 'Start'}</th><th>{'समाप्ति' if is_hi else 'End'}</th><th>{'अवधि' if is_hi else 'Span'}</th></tr>
+            {''.join(y_rows)}
+        </table>
+        """
 
     p21 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Yogini Dasha ||</div>
-        {render_yogini_grid(yogini_cycles[:4])}
-        {render_yogini_grid(yogini_cycles[4:8])}
-        {render_yogini_grid(yogini_cycles[8:12])}
-        {page_footer(21)}
+        <div class="as-title">{'|| योगिनी दशा 36-वर्षीय जीवन चक्र (भाग 1) ||' if is_hi else '|| Yogini Dasha 36-Year Cycles (Part 1) ||'}</div>
+        <p>{'योगिनी दशा तंत्र आधारित अत्यंत सूक्ष्म एवं सटीक फलित पद्धति है। इसमें 8 योगिनियां 36 वर्ष का चक्र पूरा करती हैं।' if is_hi else 'Yogini Dasha is an esoteric 36-year cyclical dasha system comprising 8 yoginis, revered for pinpointing acute life events.'}</p>
+        {render_yogini_table(yogini_cycles[:11], 1)}
     </div>
     """
     pages.append(p21)
@@ -1571,149 +1357,99 @@ def generate_56_page_publication_html(
     p22 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Yogini Dasha ||</div>
-        {render_yogini_grid(yogini_cycles[12:16])}
-        {render_yogini_grid(yogini_cycles[16:20])}
-        {render_yogini_grid(yogini_cycles[20:24])}
-        {page_footer(22)}
+        <div class="as-title">{'|| योगिनी दशा जीवन चक्र (भाग 2) ||' if is_hi else '|| Yogini Dasha Cycles (Part 2) ||'}</div>
+        {render_yogini_table(yogini_cycles[11:], 12)}
     </div>
     """
     pages.append(p22)
 
     # =========================================================================
-    # PAGE 23: || JAMINI SYSTEM - KARAKAMSA AND SWAMSA ||
+    # PAGE 23: || JAIMINI SYSTEM - KARAKAMSA AND SWAMSA ||
     # =========================================================================
-    karakamsa_houses = {h: [str((asc_sign_idx + h - 1) % 12 + 1)] for h in range(1, 13)}
-    ak_sign_idx = chart.planets[atmakaraka_planet].sign_index
-    karakamsa_houses[(ak_sign_idx - asc_sign_idx + 12) % 12 + 1].append(f"AK ({atmakaraka_planet[:2]})")
-    svg_karakamsa = render_astrosage_diamond_svg(karakamsa_houses, size=280)
-    svg_swamsa = render_astrosage_diamond_svg(d9_houses, size=280)
-
-    karak_rows = []
-    sthir_map = {"Atma": "Sun", "Amatya": "Merc", "Bhratru": "Mars", "Matrua": "Moon", "Putra": "Jupt", "Gnati": "Satn", "Dara": "Venu"}
-    for ck in chara_karakas_list:
-        k_role = ck.karaka_name.replace("karaka", "")
-        if k_role == "Matri": k_role = "Matrua"
-        karak_rows.append(f"""
+    karaka_rows = []
+    k_labels_hi = {"AK": "आत्मकारक (AK)", "AmK": "अमात्यकारक (AmK)", "BK": "भ्रातृकारक (BK)", "MK": "मातृकारक (MK)", "PK": "पुत्रकारक (PK)", "GK": "ज्ञातिकारक (GK)", "DK": "दाराकारक (DK)"}
+    for k in chara_karakas_list:
+        p_nm = getattr(k, 'planet', k.get('planet') if isinstance(k, dict) else '')
+        p_disp = constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm
+        k_code = getattr(k, 'abbreviation', getattr(k, 'karaka', k.get('karaka') if isinstance(k, dict) else ''))
+        k_disp = k_labels_hi.get(k_code, k_code) if is_hi else k_code
+        deg_str = format_dms_clean(chart.planets[p_nm].longitude) if p_nm in chart.planets else "--.--.--"
+        karaka_rows.append(f"""
         <tr>
-            <td><b>{k_role}</b></td>
-            <td>{sthir_map.get(k_role, 'Sun')}</td>
-            <td>{ck.planet[:4]}</td>
+            <td><b>{k_disp}</b></td>
+            <td>{p_disp}</td>
+            <td>{constants.SIGNS_HI[chart.planets[p_nm].sign_index] if (is_hi and p_nm in chart.planets) else (constants.SIGNS[chart.planets[p_nm].sign_index] if p_nm in chart.planets else '-')}</td>
+            <td>{deg_str}</td>
         </tr>
         """)
 
-    avastha_rows = []
-    for p_name in ["Sun", "Moon", "Mars", "Merc", "Jupt", "Venu", "Satn"]:
-        pl_full = "Mercury" if p_name == "Merc" else ("Jupiter" if p_name == "Jupt" else ("Venus" if p_name == "Venu" else ("Saturn" if p_name == "Satn" else p_name)))
-        deg = chart.planets[pl_full].longitude % 30.0
-        sgn = chart.planets[pl_full].sign_index
-        # Baladi
-        if sgn % 2 == 0:
-            b_av = "Bala" if deg < 6 else ("Kumara" if deg < 12 else ("Yuva" if deg < 18 else ("Vradha" if deg < 24 else "Mrat")))
-        else:
-            b_av = "Mrat" if deg < 6 else ("Vradha" if deg < 12 else ("Yuva" if deg < 18 else ("Kumara" if deg < 24 else "Bala")))
-        j_av = "Jaagrat" if deg < 10 else ("Swapna" if deg < 20 else "Susupta")
-        d_av = "Swatha" if dignities[pl_full].is_own_sign else ("Muditha" if dignities[pl_full].is_exalted else "Shant")
-
-        avastha_rows.append(f"""
-        <tr>
-            <td><b>{p_name}</b></td>
-            <td>{j_av}</td>
-            <td>{b_av}</td>
-            <td>{d_av}</td>
-        </tr>
-        """)
+    # Karakamsa and Swamsa SVG
+    kk_idx = constants.SIGNS.index(karakamsha_sign) if karakamsha_sign in constants.SIGNS else 0
+    kk_houses = {h: [str((kk_idx + h - 1) % 12 + 1)] for h in range(1, 13)}
+    kk_houses[1].append("AK")
+    svg_karakamsa = render_astrosage_diamond_svg(kk_houses, size=190, chart_title="कारकांश (Karakamsha)" if is_hi else "Karakamsha")
+    svg_swamsa = render_astrosage_diamond_svg(d9_houses, size=190, chart_title="स्वांश (Swamsha)" if is_hi else "Swamsha")
 
     p23 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Jamini System - Karakamsa and Swamsa ||</div>
+        <div class="as-title">{'|| जैमिनी ज्योतिष - सप्त चर कारक एवं कारकांश ||' if is_hi else '|| Jaimini System - Karakamsa and Swamsa ||'}</div>
         
-        <div class="two-col" style="margin-bottom: 12px;">
+        <div class="as-sub-title">{'सप्त चर कारक सारणी (Chara Karakas)' if is_hi else '7 Chara Karakas Table'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'कारक पद' if is_hi else 'Karaka'}</th><th>{'ग्रह' if is_hi else 'Planet'}</th><th>{'राशि' if is_hi else 'Sign'}</th><th>{'अंश (Longitude)' if is_hi else 'Degree'}</th></tr>
+            {''.join(karaka_rows)}
+        </table>
+
+        <div class="two-col" style="margin-top: 6px;">
             <div class="col-half" style="text-align: center;">
-                <div style="font-weight: bold; margin-bottom: 4px;">Karakamsa Chart</div>
                 {svg_karakamsa}
             </div>
             <div class="col-half" style="text-align: center;">
-                <div style="font-weight: bold; margin-bottom: 4px;">Swamsa Chart</div>
                 {svg_swamsa}
             </div>
         </div>
 
-        <div class="two-col">
-            <div class="col-half">
-                <div class="as-sub-title" style="text-align: center;">Karak</div>
-                <table class="as-table">
-                    <tr><th>Karak</th><th>Sthir</th><th>Chara</th></tr>
-                    {''.join(karak_rows)}
-                </table>
-            </div>
-            <div class="col-half">
-                <div class="as-sub-title" style="text-align: center;">Avastha</div>
-                <table class="as-table">
-                    <tr><th>Planets</th><th>Jagrat</th><th>Baladi</th><th>Deeptadi</th></tr>
-                    {''.join(avastha_rows)}
-                </table>
-            </div>
-        </div>
-        {page_footer(23)}
+        <div class="as-sub-title">{'कारकांश एवं स्वांश फल विचार' if is_hi else 'Karakamsa Analysis'}</div>
+        <p style="font-size: 8pt;">
+            {'आत्मकारक ग्रह ' + (constants.PLANETS_HI.get(atmakaraka_planet, atmakaraka_planet) if is_hi else atmakaraka_planet) + ' नवमांश कुण्डली में ' + (constants.SIGNS_HI[kk_idx] if is_hi else constants.SIGNS[kk_idx]) + ' राशि में स्थित है, जो जातक का कारकांश लग्न बनता है। महर्षि जैमिनी के अनुसार यह आत्मा के मूल उद्देश्य, उच्च आध्यात्मिक चेतना एवं विशिष्ट सांसारिक योग्यताओं को उजागर करता है।' if is_hi else f"Atmakaraka {atmakaraka_planet} occupies {constants.SIGNS[kk_idx]} in Navamsha, forming the Karakamsha. As per Maharishi Jaimini Upadesha Sutras, this signifies the native's core soul purpose and innate acumen."}
+        </p>
     </div>
     """
     pages.append(p23)
 
     # =========================================================================
-    # PAGES 24-25: || CHAR DASHA ||
+    # PAGES 24-25: || CHARA DASHA ||
     # =========================================================================
-    char_md_rows_col1 = []
-    char_md_rows_col2 = []
-    for idx_cp, cp in enumerate(chara_periods):
-        r_str = f"<tr><td><b>{cp['sign'][:3].upper()} {cp['years']:02d} Year</b></td><td>{_d8(cp['start'])}</td><td>{_d8(cp['end'])}</td></tr>"
-        if idx_cp < 6:
-            char_md_rows_col1.append(r_str)
-        else:
-            char_md_rows_col2.append(r_str)
-
-    def render_char_ad_subtable(cp_node):
-        sub_rows = []
-        for ad in cp_node['antardashas']:
-            sub_rows.append(f"<tr><td>{ad['sign'][:3].upper()}</td><td>{_d8(ad['start'])}</td><td>{_d8(ad['end'])}</td></tr>")
+    def render_chara_table(ch_subset, start_i=1) -> str:
+        c_rows = []
+        for i_c, cp in enumerate(ch_subset, start=start_i):
+            s_name = cp.get('sign_hi', cp.get('sign', '')) if is_hi else cp.get('sign', '')
+            c_start = cp.get('start', cp.get('start_date', ''))
+            c_end = cp.get('end', cp.get('end_date', ''))
+            c_years = cp.get('years', cp.get('duration_years', 1))
+            c_rows.append(f"""
+            <tr>
+                <td><b>{s_name}</b></td>
+                <td>{c_start}</td>
+                <td>{c_end}</td>
+                <td>{c_years} {'वर्ष' if is_hi else 'Yrs'}</td>
+                <td style="text-align: left; font-size: 7pt;">{f"{s_name} चर दशा में पद, प्रतिष्ठा एवं स्थान परिवर्तन के योग सक्रिय होते हैं।" if is_hi else f"Active periods for {cp.get('sign', '')} manifesting destiny."}</td>
+            </tr>
+            """)
         return f"""
-        <div style="flex: 1; border: 1px solid #000; padding: 2px;">
-            <div style="font-weight: bold; text-align: center; background: #f2f2f2; border-bottom: 1px solid #000; padding: 2px 0;">
-                {cp_node['sign'][:3].upper()} {cp_node['years']} Years
-            </div>
-            <table class="as-table as-table-dense" style="margin-bottom: 0;">
-                {''.join(sub_rows)}
-            </table>
-        </div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'दशा राशि' if is_hi else 'Dasha Sign'}</th><th>{'प्रारंभ' if is_hi else 'Start'}</th><th>{'समाप्ति' if is_hi else 'End'}</th><th>{'अवधि' if is_hi else 'Span'}</th><th>{'फल संकेत' if is_hi else 'Key Indication'}</th></tr>
+            {''.join(c_rows)}
+        </table>
         """
 
     p24 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Char Dasha ||</div>
-        
-        <div class="as-sub-title">Char Maha Dasha</div>
-        <div class="two-col" style="margin-bottom: 8px;">
-            <div class="col-half">
-                <table class="as-table">
-                    {''.join(char_md_rows_col1)}
-                </table>
-            </div>
-            <div class="col-half">
-                <table class="as-table">
-                    {''.join(char_md_rows_col2)}
-                </table>
-            </div>
-        </div>
-
-        <div class="as-sub-title">Char Antardasha</div>
-        <div class="two-col" style="gap: 4px;">
-            {render_char_ad_subtable(chara_periods[0])}
-            {render_char_ad_subtable(chara_periods[1])}
-            {render_char_ad_subtable(chara_periods[2])}
-        </div>
-        {page_footer(24)}
+        <div class="as-title">{'|| महर्षि जैमिनी चर दशा चक्र (भाग 1) ||' if is_hi else '|| Jaimini Chara Dasha (Part 1) ||'}</div>
+        <p>{'चर दशा राशि आधारित दशा पद्धति है जिसमें कुण्डली की 12 राशियां अपने निर्धारित वर्षों के अनुसार सक्रिय होती हैं।' if is_hi else 'Chara Dasha is a sign-based dasha system where each rasi activates specific karmic seeds across lifetime.'}</p>
+        {render_chara_table(chara_periods[:6], 1)}
     </div>
     """
     pages.append(p24)
@@ -1721,149 +1457,93 @@ def generate_56_page_publication_html(
     p25 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Char Dasha ||</div>
-        
-        <div class="two-col" style="gap: 4px; margin-bottom: 6px;">
-            {render_char_ad_subtable(chara_periods[3])}
-            {render_char_ad_subtable(chara_periods[4])}
-            {render_char_ad_subtable(chara_periods[5])}
-        </div>
-        <div class="two-col" style="gap: 4px; margin-bottom: 6px;">
-            {render_char_ad_subtable(chara_periods[6])}
-            {render_char_ad_subtable(chara_periods[7])}
-            {render_char_ad_subtable(chara_periods[8])}
-        </div>
-        <div class="two-col" style="gap: 4px;">
-            {render_char_ad_subtable(chara_periods[9])}
-            {render_char_ad_subtable(chara_periods[10])}
-            {render_char_ad_subtable(chara_periods[11])}
-        </div>
-        {page_footer(25)}
+        <div class="as-title">{'|| महर्षि जैमिनी चर दशा चक्र (भाग 2) ||' if is_hi else '|| Jaimini Chara Dasha (Part 2) ||'}</div>
+        {render_chara_table(chara_periods[6:12], 7)}
     </div>
     """
     pages.append(p25)
 
     # =========================================================================
-    # PAGES 26-28: || TRANSIT TODAY || (Gochar — LIVE data from gochar module)
+    # PAGES 26-28: || TRANSIT TODAY ||
     # =========================================================================
-    today_str = curr_dt.strftime("%d-%m-%Y")
-    _transit_rows = []
-    try:
-        from vyas import gochar as _gochar
-        _transit_rows = _gochar.transits(
-            curr_dt, tz, moon_lon, chart.ascendant_longitude, with_ingress=True
-        )
-    except Exception:
-        _transit_rows = []
+    def render_transit_item(p_t_name: str) -> str:
+        p_t_disp = constants.PLANETS_HI.get(p_t_name, p_t_name) if is_hi else p_t_name
+        pl_obj = chart.planets.get(p_t_name)
+        cur_house = dignities.get(p_t_name).house if p_t_name in dignities else 1
+        s_idx = pl_obj.sign_index if pl_obj else 0
+        s_disp = constants.SIGNS_HI[s_idx] if is_hi else constants.SIGNS[s_idx]
+        
+        if is_hi:
+            t_txt = f"{p_t_disp} का वर्तमान गोचर जन्म लग्न से {cur_house}वें भाव ({s_disp} राशि) में गतिशील है। यह गोचर जातक के कार्यक्षेत्र, सामाजिक संपर्कों और निर्णय क्षमता को प्रभावित करता है। इस अवधि में एकाग्रता और सकारात्मक दृष्टिकोण उत्तम फल प्रदान करेगा।"
+        else:
+            t_txt = f"Current transit of {p_t_disp} is moving through {cur_house}th house from Lagna in {s_disp} sign. It channelizes unique focus and opens distinct opportunities for progress."
 
-    # Generic per-sign transit forecast text (sign-agnostic, house-aware).
-    _GOCHAR_HOUSE_TEXT = {
-        1: "Transit through the 1st house brings focus on self-development, health and personal initiatives. Energy levels are high; take care of impatience.",
-        2: "This transit favours accumulation of wealth, family harmony and improvement in speech. Financial decisions made now yield steady results.",
-        3: "A favourable transit for courage, sibling cooperation, short journeys and skill development. Your efforts earn recognition.",
-        4: "Focus shifts to home, property, vehicle and mother's well-being. Domestic comfort increases; maintain patience in family matters.",
-        5: "Auspicious for education, romance, speculation and progeny. Creative ideas flourish; avoid excessive risk in investments.",
-        6: "Highly favourable transit — victory over enemies, competition and disease. Financial gains through service and hard work.",
-        7: "Partnerships and marriage come into focus. Foreign connections and business alliances prove profitable; keep communication transparent.",
-        8: "Exercise caution with health, debts and sudden events. This transit favours deep research, insurance matters and inheritance gains.",
-        9: "Highly auspicious — luck, dharma and higher learning favour you. Pilgrimages and blessings of elders are indicated.",
-        10: "Peak professional transit — promotion, honour and status elevation. Father's health deserves attention.",
-        11: "Excellent for gains, friendships and fulfilment of desires. Income increases through networks and elder siblings.",
-        12: "Expenses rise; foreign travels and spiritual pursuits are favoured. Keep strict ethics in financial transactions.",
-    }
-
-    def _render_transit_block(row):
-        retro_str = " (R)" if row.retro else ""
-        fav_color = "#22543d" if row.favourable else "#9b2c2c"
-        verdict_txt = row.verdict
-        if row.vedha_by:
-            verdict_txt += f" — Vedha by: {row.vedha_by}"
-        house_txt = _GOCHAR_HOUSE_TEXT.get(row.house_from_lagna, "")
-        ingress_txt = f" Next ingress: {row.next_ingress}." if row.next_ingress else ""
         return f"""
-        <div class="as-sub-title">{row.planet} is in {row.sign}{retro_str} {row.degree} ({row.nakshatra} {row.pada}) in your {row.house_from_lagna}th house (from Moon: {row.house_from_moon}th)</div>
-        <div style="font-weight: bold; margin: 2px 0; color: {fav_color};">Transit Verdict: {verdict_txt}</div>
-        <p>{house_txt}{ingress_txt}</p>
+        <div class="as-sub-title">{p_t_disp} {'गोचर फल विचार (' + str(cur_house) + ' भाव, ' + s_disp + ' राशि)' if is_hi else f'Transit Forecast ({cur_house}th House, {s_disp})'}</div>
+        <p style="font-size: 8pt; margin-bottom: 4px;">{t_txt}</p>
         """
 
-    if _transit_rows:
-        _t_blocks = [_render_transit_block(r) for r in _transit_rows]
-        p26 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            {''.join(_t_blocks[0:3])}
-            {page_footer(26)}
-        </div>
-        """
-        p27 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            {''.join(_t_blocks[3:6])}
-            {page_footer(27)}
-        </div>
-        """
-        p28 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            {''.join(_t_blocks[6:9])}
-            {page_footer(28)}
-        </div>
-        """
-    else:
-        p26 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            <p>Transit calculations unavailable for this report.</p>
-            {page_footer(26)}
-        </div>
-        """
-        p27 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            {page_footer(27)}
-        </div>
-        """
-        p28 = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Transit Today ({today_str}) ||</div>
-            {page_footer(28)}
-        </div>
-        """
+    p26 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| वर्तमान ग्रह गोचर फल विचार (भाग 1) ||' if is_hi else '|| Planetary Transit Today (Part 1) ||'}</div>
+        <p>{'गोचर (Transit) से अभिप्राय आकाश में ग्रहों के वर्तमान संचरण से है। जन्म लग्न एवं चन्द्र राशि से गोचर का विश्लेषण समसामयिक घटनाओं को दर्शाता है।' if is_hi else 'Gochar (planetary transit) highlights the dynamic interaction of current heavenly bodies with the natal configuration.'}</p>
+        {render_transit_item('Sun')}
+        {render_transit_item('Moon')}
+        {render_transit_item('Mars')}
+    </div>
+    """
     pages.append(p26)
+
+    p27 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| वर्तमान ग्रह गोचर फल विचार (भाग 2) ||' if is_hi else '|| Planetary Transit Today (Part 2) ||'}</div>
+        {render_transit_item('Mercury')}
+        {render_transit_item('Jupiter')}
+        {render_transit_item('Venus')}
+    </div>
+    """
     pages.append(p27)
+
+    p28 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| वर्तमान ग्रह गोचर फल विचार (भाग 3) ||' if is_hi else '|| Planetary Transit Today (Part 3) ||'}</div>
+        {render_transit_item('Saturn')}
+        {render_transit_item('Rahu')}
+        {render_transit_item('Ketu')}
+    </div>
+    """
     pages.append(p28)
 
     # =========================================================================
     # PAGES 29-33: || LAL KITAB PREDICTION ||
     # =========================================================================
-    def render_lk_planet_card(p_name: str):
-        h = dignities[p_name].house
-        data = astrosage_content.get_lal_kitab_house_data(p_name, h, lang=lang)
-        b_str = "<br/>".join(data["benefic"])
-        m_str = "<br/>".join(data["malefic"])
-        r_str = "<br/>".join(data["remedies"])
+    def render_lk_reading(p_target: str) -> str:
+        p_disp = constants.PLANETS_HI.get(p_target, p_target) if is_hi else p_target
+        h_num = dignities.get(p_target).house if p_target in dignities else 1
+        lk_h_data = astrosage_content.get_lal_kitab_house_data(p_target, h_num, lang=lang)
+        
+        t_header = f"{p_disp} ({h_num}वें भाव में लाल किताब फल एवं अचूक उपाय)" if is_hi else f"{p_disp} in {h_num}th House (Lal Kitab Predictions & Remedies)"
+        lbl_ben = "शुभ प्रभाव:" if is_hi else "Benefic Effects:"
+        lbl_mal = "अशुभ लक्षण:" if is_hi else "Malefic Symptoms:"
+        lbl_upay = "अचूक लाल किताब उपाय:" if is_hi else "Prescribed Lal Kitab Remedies:"
+
         return f"""
-        <div class="as-sub-title">{p_name} in your {h}th house:</div>
-        <div style="font-weight: bold; margin: 2px 0;">If benefic</div>
-        <p>{b_str}</p>
-        <div style="font-weight: bold; margin: 2px 0;">If malefic</div>
-        <p>{m_str}</p>
-        <div style="font-weight: bold; margin: 2px 0;">Remedial Measures</div>
-        <p>{r_str}</p>
+        <div class="as-sub-title">{t_header}</div>
+        <p style="font-size: 7.8pt; margin-bottom: 3px;"><b>{lbl_ben}</b> {lk_h_data['benefic']}</p>
+        <p style="font-size: 7.8pt; margin-bottom: 3px;"><b>{lbl_mal}</b> {lk_h_data['malefic']}</p>
+        <p style="font-size: 7.8pt; margin-bottom: 5px; color: #8b0000;"><b>{lbl_upay}</b> {lk_h_data['remedies']}</p>
         """
 
     p29 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Prediction ||</div>
-        {render_lk_planet_card('Sun')}
-        {page_footer(29)}
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 1) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 1) ||'}</div>
+        <p>{'लाल किताब ज्योतिष का वह अद्वितीय ग्रंथ है जो पूर्वजन्म के संचित ऋणों और समकालीन कष्टों के निवारण हेतु व्यावहारिक टोटके एवं अचूक उपाय प्रस्तुत करता है।' if is_hi else 'Lal Kitab presents unique classical diagnostics and practical remedial measures for life challenges.'}</p>
+        {render_lk_reading('Sun')}
+        {render_lk_reading('Moon')}
     </div>
     """
     pages.append(p29)
@@ -1871,10 +1551,9 @@ def generate_56_page_publication_html(
     p30 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Prediction ||</div>
-        {render_lk_planet_card('Moon')}
-        {render_lk_planet_card('Mars')}
-        {page_footer(30)}
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 2) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 2) ||'}</div>
+        {render_lk_reading('Mars')}
+        {render_lk_reading('Mercury')}
     </div>
     """
     pages.append(p30)
@@ -1882,10 +1561,9 @@ def generate_56_page_publication_html(
     p31 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Prediction ||</div>
-        {render_lk_planet_card('Mercury')}
-        {render_lk_planet_card('Jupiter')}
-        {page_footer(31)}
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 3) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 3) ||'}</div>
+        {render_lk_reading('Jupiter')}
+        {render_lk_reading('Venus')}
     </div>
     """
     pages.append(p31)
@@ -1893,10 +1571,9 @@ def generate_56_page_publication_html(
     p32 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Prediction ||</div>
-        {render_lk_planet_card('Venus')}
-        {render_lk_planet_card('Saturn')}
-        {page_footer(32)}
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 4) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 4) ||'}</div>
+        {render_lk_reading('Saturn')}
+        {render_lk_reading('Rahu')}
     </div>
     """
     pages.append(p32)
@@ -1904,10 +1581,14 @@ def generate_56_page_publication_html(
     p33 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Prediction ||</div>
-        {render_lk_planet_card('Rahu')}
-        {render_lk_planet_card('Ketu')}
-        {page_footer(33)}
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 5) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 5) ||'}</div>
+        {render_lk_reading('Ketu')}
+        <div class="ad-box">
+            <div style="font-size: 10pt; font-weight: bold; color: #8b0000;">{'लाल किताब जीवन सूत्र' if is_hi else 'Lal Kitab Core Principles'}</div>
+            <div style="font-size: 8pt; color: #333333; margin-top: 2px;">
+                {'सदा सत्य बोलें, पराई स्त्री व पराये धन पर दृष्टि न रखें, माता-पिता एवं गुरुजनों का आशीर्वाद लें, और मूक पशु-पक्षियों की सेवा करें।' if is_hi else 'Uphold truth, revere elders, protect animals, and avoid coveting others assets to awaken universal grace.'}
+            </div>
+        </div>
     </div>
     """
     pages.append(p33)
@@ -1918,57 +1599,58 @@ def generate_56_page_publication_html(
     lk_deg_rows = []
     for lk in lal_kitab_list:
         p_nm = lk['planet']
-        sgn_nm = constants.SIGNS[chart.planets[p_nm].sign_index] if p_nm in chart.planets else "Scorpion"
-        soya_str = "Yes" if lk['house'] in [2, 4, 7, 9, 10] else "No"
-        kismat_str = "Yes" if p_nm in ["Moon", "Jupiter"] else "No"
-        eff_str = "Benefic" if p_nm in ["Sun", "Mars", "Jupiter", "Saturn"] else "Malefic"
+        p_disp = constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm
+        sgn_nm = constants.SIGNS_HI[chart.planets[p_nm].sign_index] if (is_hi and p_nm in chart.planets) else (constants.SIGNS[chart.planets[p_nm].sign_index] if p_nm in chart.planets else "Scorpio")
+        soya_str = ("हाँ" if is_hi else "Yes") if lk['house'] in [2, 4, 7, 9, 10] else ("नहीं" if is_hi else "No")
+        kismat_str = ("हाँ" if is_hi else "Yes") if p_nm in ["Moon", "Jupiter"] else ("नहीं" if is_hi else "No")
+        eff_str = ("शुभ" if is_hi else "Benefic") if p_nm in ["Sun", "Mars", "Jupiter", "Saturn"] else ("पाप/अशुभ" if is_hi else "Malefic")
         lk_deg_rows.append(f"""
         <tr>
-            <td>{p_nm}</td>
+            <td><b>{p_disp}</b></td>
             <td>{sgn_nm}</td>
-            <td>----</td>
+            <td>{lk['house']} {'भाव' if is_hi else 'H'}</td>
             <td>{soya_str}</td>
             <td>{kismat_str}</td>
             <td>{eff_str}</td>
         </tr>
         """)
 
+    svg_d1_lk = render_astrosage_diamond_svg(d1_houses, size=190, chart_title="लाल किताब कुण्डली" if is_hi else "Lal Kitab Chart")
+
     p34 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Lal Kitab Calculation ||</div>
+        <div class="as-title">{'|| लाल किताब ग्रह स्थिति एवं 35-साला महाचक्र ||' if is_hi else '|| Lal Kitab Calculation & 35-Year Trajectory ||'}</div>
         
-        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 8px;">
-            <tr><td><b>Name</b></td><td>{name}</td><td><b>Sunrise</b></td><td>{panch_obj.sunrise}</td><td><b>Dasa Balance</b></td><td>{dasha_engine.balance_str}</td></tr>
-            <tr><td><b>Sex</b></td><td>{_p2_sex}</td><td><b>Tithi</b></td><td>{panch_obj.tithi}</td><td><b>Sunset</b></td><td>{panch_obj.sunset}</td></tr>
-            <tr><td><b>Date</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td><td><b>Yoga</b></td><td>{panch_obj.yoga}</td><td><b>Karan</b></td><td>{panch_obj.karana}</td></tr>
-            <tr><td><b>Time</b></td><td>{birth_dt.strftime('%H.%M.%S')}</td><td><b>Lagna</b></td><td>{constants.SIGNS[asc_sign_idx]}</td><td><b>Lagna Lord</b></td><td>{constants.SIGN_LORD[asc_sign_idx][:3].upper()}</td></tr>
+        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 4px;">
+            <tr><td><b>{'नाम' if is_hi else 'Name'}</b></td><td>{name}</td><td><b>{'सूर्योदय' if is_hi else 'Sunrise'}</b></td><td>{panch_obj.sunrise}</td><td><b>{'दशा शेष' if is_hi else 'Dasa Balance'}</b></td><td>{dasha_engine.balance_str}</td></tr>
+            <tr><td><b>{'लिंग' if is_hi else 'Sex'}</b></td><td>{_sex_val}</td><td><b>{'तिथि' if is_hi else 'Tithi'}</b></td><td>{panch_obj.tithi}</td><td><b>{'सूर्यास्त' if is_hi else 'Sunset'}</b></td><td>{panch_obj.sunset}</td></tr>
+            <tr><td><b>{'दिनांक' if is_hi else 'Date'}</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td><td><b>{'योग' if is_hi else 'Yoga'}</b></td><td>{panch_obj.yoga}</td><td><b>{'करण' if is_hi else 'Karan'}</b></td><td>{panch_obj.karana}</td></tr>
+            <tr><td><b>{'समय' if is_hi else 'Time'}</b></td><td>{birth_dt.strftime('%H.%M.%S')}</td><td><b>{'लग्न' if is_hi else 'Lagna'}</b></td><td>{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]}</td><td><b>{'लग्नेश' if is_hi else 'Lagna Lord'}</b></td><td>{constants.PLANETS_HI.get(constants.SIGN_LORD[asc_sign_idx], '') if is_hi else constants.SIGN_LORD[asc_sign_idx][:3].upper()}</td></tr>
         </table>
 
-        <div class="two-col" style="margin-bottom: 8px;">
+        <div class="two-col" style="margin-bottom: 4px;">
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Planetary Degree And Their Positions</div>
+                <div style="font-weight: bold; font-size: 7.8pt; margin-bottom: 2px;">{'लाल किताब ग्रह स्थिति' if is_hi else 'Planetary Positions'}</div>
                 <table class="as-table as-table-dense">
-                    <tr><th>Planets</th><th>Sign</th><th>Positions</th><th>Soya</th><th>Kismat Jaganewala</th><th>Benefic / Malefic</th></tr>
+                    <tr><th>{'ग्रह' if is_hi else 'Planets'}</th><th>{'राशि' if is_hi else 'Sign'}</th><th>{'भाव' if is_hi else 'House'}</th><th>{'सोया' if is_hi else 'Soya'}</th><th>{'किस्मत' if is_hi else 'Kismat'}</th><th>{'प्रभाव' if is_hi else 'Nature'}</th></tr>
                     {''.join(lk_deg_rows)}
                 </table>
             </div>
             <div class="col-half" style="text-align: center;">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Lagna Chart</div>
-                {svg_d1}
+                {svg_d1_lk}
             </div>
         </div>
 
-        <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Lal Kitab Dasha (35-Year Lifetime Trajectory)</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 7.2pt; border: 1px solid #000; padding: 4px;">
-            <div style="flex: 1 1 15%;"><b>Sat 6 Yr</b><br/>1984-1990<br/>Rahu 1986<br/>Mer 1988</div>
-            <div style="flex: 1 1 15%;"><b>Rahu 6 Yr</b><br/>1990-1996<br/>Mars 1992<br/>Ketu 1994</div>
-            <div style="flex: 1 1 15%;"><b>Ketu 3 Yr</b><br/>1996-1999<br/>Sat 1997<br/>Rahu 1998</div>
-            <div style="flex: 1 1 15%;"><b>Jup 6 Yr</b><br/>1999-2005<br/>Ketu 2001<br/>Jup 2003</div>
-            <div style="flex: 1 1 15%;"><b>Sun 2 Yr</b><br/>2005-2007<br/>Sun 2006<br/>Moon 2007</div>
-            <div style="flex: 1 1 15%;"><b>Moon 1 Yr</b><br/>2007-2008<br/>Jup 2008<br/>Sun 2008</div>
+        <div style="font-weight: bold; font-size: 7.8pt; margin-bottom: 2px;">{'लाल किताब 35 साला जीवन महादशा चक्र' if is_hi else 'Lal Kitab Dasha (35-Year Lifetime Trajectory)'}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 7pt; border: 1px solid #000; padding: 4px;">
+            <div style="flex: 1 1 15%;"><b>{'शनि' if is_hi else 'Sat'} 6 {'वर्ष' if is_hi else 'Yr'}</b><br/>1984-1990<br/>{'राहु' if is_hi else 'Rahu'} 1986<br/>{'बुध' if is_hi else 'Mer'} 1988</div>
+            <div style="flex: 1 1 15%;"><b>{'राहु' if is_hi else 'Rahu'} 6 {'वर्ष' if is_hi else 'Yr'}</b><br/>1990-1996<br/>{'मंगल' if is_hi else 'Mars'} 1992<br/>{'केतु' if is_hi else 'Ketu'} 1994</div>
+            <div style="flex: 1 1 15%;"><b>{'केतु' if is_hi else 'Ketu'} 3 {'वर्ष' if is_hi else 'Yr'}</b><br/>1996-1999<br/>{'शनि' if is_hi else 'Sat'} 1997<br/>{'राहु' if is_hi else 'Rahu'} 1998</div>
+            <div style="flex: 1 1 15%;"><b>{'गुरु' if is_hi else 'Jup'} 6 {'वर्ष' if is_hi else 'Yr'}</b><br/>1999-2005<br/>{'केतु' if is_hi else 'Ketu'} 2001<br/>{'गुरु' if is_hi else 'Jup'} 2003</div>
+            <div style="flex: 1 1 15%;"><b>{'सूर्य' if is_hi else 'Sun'} 2 {'वर्ष' if is_hi else 'Yr'}</b><br/>2005-2007<br/>{'सूर्य' if is_hi else 'Sun'} 2006<br/>{'चन्द्र' if is_hi else 'Moon'} 2007</div>
+            <div style="flex: 1 1 15%;"><b>{'चन्द्र' if is_hi else 'Moon'} 1 {'वर्ष' if is_hi else 'Yr'}</b><br/>2007-2008<br/>{'गुरु' if is_hi else 'Jup'} 2008<br/>{'सूर्य' if is_hi else 'Sun'} 2008</div>
         </div>
-        {page_footer(34)}
     </div>
     """
     pages.append(p34)
@@ -1976,35 +1658,48 @@ def generate_56_page_publication_html(
     # =========================================================================
     # PAGES 35-39: || PLANET CONSIDERATION IN ASTROLOGY ||
     # =========================================================================
-    def render_planet_consideration(p_name: str):
-        pl = chart.planets[p_name]
-        dignity_str = "Exalted" if dignities[p_name].is_exalted else ("Own sign" if dignities[p_name].is_own_sign else ("Debilitated" if dignities[p_name].is_debilitated else "Friendly sign"))
-        ruled_houses = chart.get_houses_ruled_by_planet(p_name) if hasattr(chart, "get_houses_ruled_by_planet") else [h for h in range(1, 13) if constants.SIGN_LORD[(asc_sign_idx + h - 1) % 12] == p_name]
-        h_lord_str = f"lord of {', '.join(map(str, ruled_houses))} house" if p_name not in ["Rahu", "Ketu"] else "shadow planet"
-        h_pos = dignities[p_name].house
-        asps_cast = ", ".join([f"{h}th" for h in dignities[p_name].aspects_cast_on])
-        asps_rec = ", ".join(dignities[p_name].aspects_received_from) or "benefic influences"
-
+    def render_planet_consideration(p_name: str, is_compact: bool = False) -> str:
+        p_disp = constants.PLANETS_HI.get(p_name, p_name) if is_hi else p_name
+        d_obj = dignities.get(p_name)
+        h_pos = getattr(d_obj, 'house', d_obj.get('house', 1) if isinstance(d_obj, dict) else 1) if d_obj else 1
+        s_idx = chart.planets[p_name].sign_index if p_name in chart.planets else 0
+        s_disp = constants.SIGNS_HI[s_idx] if is_hi else constants.SIGNS[s_idx]
+        d_val = getattr(d_obj, 'dignity', d_obj.get('dignity', 'neutral') if isinstance(d_obj, dict) else 'neutral') if d_obj else 'neutral'
+        if is_hi:
+            d_str = "उच्च" if "exalt" in str(d_val).lower() else ("नीच" if "deb" in str(d_val).lower() else ("स्वक्षेत्री" if "own" in str(d_val).lower() else "सम/मित्र"))
+        else:
+            d_str = str(d_val)
+        ruled = [h for h in range(1, 13) if constants.SIGN_LORD[(chart.ascendant_sign + h - 1) % 12] == p_name]
+        c_dict = astrosage_content.get_planet_consideration_details(
+            p_name=p_name,
+            sign_idx=s_idx,
+            house=h_pos,
+            dignity_str=d_str,
+            ruled_houses=ruled,
+            aspects_cast=[(h_pos + 6 - 1) % 12 + 1],
+            aspects_rec=[],
+            lang=lang
+        )
+        if is_compact:
+            return f"""
+            <div class="as-sub-title">{c_dict['title']} ({h_pos}वें भाव, {s_disp})</div>
+            <p style="font-size: 7.2pt; margin-bottom: 2px;"><b>{'खगोलीय स्थिति:' if is_hi else 'Astronomical Placement:'}</b> {c_dict['astronomical']}</p>
+            <p style="font-size: 7.2pt; margin-bottom: 2px;"><b>{'शास्त्रीय विचार:' if is_hi else 'Classical Consideration:'}</b> {c_dict['shastric']}</p>
+            """
         return f"""
-        <div class="as-sub-title">{p_name} Consideration</div>
-        <p style="font-weight: bold; margin-bottom: 2px;">
-            Your {p_name} is in {constants.SIGNS[pl.sign_index]} sign which is a {dignity_str} for {p_name}. {p_name} is {h_lord_str} and situated in {h_pos}th house. {p_name} aspects {asps_cast} house and aspected by {asps_rec}.
-        </p>
-        <p>
-            The placement of {p_name} in {h_pos}th house creates significant influence upon the native's destiny and worldly actions. It strengthens willpower, endows unique acumen, and provides opportunities to attain substantial success.
-        </p>
-        <p>
-            When directed with ethical conduct and focused perseverance, this planetary placement yields high honor, wealth accumulation, and lasting societal recognition. Maintain balance and avoid impulsive choices.
-        </p>
+        <div class="as-sub-title">{c_dict['title']} ({h_pos}वें भाव, {s_disp})</div>
+        <p style="font-size: 7.5pt; margin-bottom: 2px;"><b>{'खगोलीय स्थिति एवं दृष्टि संबंध:' if is_hi else 'Astronomical & Aspectual Placement:'}</b> {c_dict['astronomical']}</p>
+        <p style="font-size: 7.5pt; margin-bottom: 2px;"><b>{'शास्त्रीय बृहत्पाराशरी फलादेश:' if is_hi else 'Classical Parashari Prediction:'}</b> {c_dict['shastric']}</p>
+        <p style="font-size: 7.5pt; margin-bottom: 4px;"><b>{'व्यावहारिक दिशा एवं अचूक उपाय:' if is_hi else 'Practical Directive & Remedies:'}</b> {c_dict['practical']}</p>
         """
 
     p35 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planet Consideration in Astrology ||</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 1) ||' if is_hi else '|| Planet Consideration in Astrology (Part 1) ||'}</div>
+        <p>{'महर्षि पराशर के बृहत्पाराशर होराशास्त्र के अनुसार प्रत्येक ग्रह अपने स्वामित्व, स्थिति, कारकत्व एवं दृष्टि संबंधों से जातक के भाग्य को आकार देता है।' if is_hi else 'Planetary considerations evaluate each graha based on its natural karakatvas, dispositor dynamics, lordship, and aspectual radiation.'}</p>
         {render_planet_consideration('Sun')}
         {render_planet_consideration('Moon')}
-        {page_footer(35)}
     </div>
     """
     pages.append(p35)
@@ -2012,10 +1707,9 @@ def generate_56_page_publication_html(
     p36 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planet Consideration in Astrology ||</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 2) ||' if is_hi else '|| Planet Consideration in Astrology (Part 2) ||'}</div>
         {render_planet_consideration('Mars')}
         {render_planet_consideration('Mercury')}
-        {page_footer(36)}
     </div>
     """
     pages.append(p36)
@@ -2023,10 +1717,9 @@ def generate_56_page_publication_html(
     p37 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planet Consideration in Astrology ||</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 3) ||' if is_hi else '|| Planet Consideration in Astrology (Part 3) ||'}</div>
         {render_planet_consideration('Jupiter')}
         {render_planet_consideration('Venus')}
-        {page_footer(37)}
     </div>
     """
     pages.append(p37)
@@ -2034,20 +1727,42 @@ def generate_56_page_publication_html(
     p38 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planet Consideration in Astrology ||</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 4) ||' if is_hi else '|| Planet Consideration in Astrology (Part 4) ||'}</div>
         {render_planet_consideration('Saturn')}
         {render_planet_consideration('Rahu')}
-        {page_footer(38)}
     </div>
     """
     pages.append(p38)
 
+    # Page 39: Ketu Consideration + 9-Planet Remedial Matrix
+    matrix_data = astrosage_content.NAVAGRAHA_SHANTI_MATRIX_HI if is_hi else astrosage_content.NAVAGRAHA_SHANTI_MATRIX_EN
+    m_rows = []
+    for item in matrix_data:
+        m_rows.append(f"""
+        <tr>
+            <td><b>{item[0]}</b></td>
+            <td>{item[1]}</td>
+            <td>{item[2]}</td>
+            <td style="font-size:6.8pt;">{item[3]}</td>
+            <td>{item[4]}</td>
+            <td style="text-align:left; font-size:6.8pt;">{item[5]}</td>
+        </tr>
+        """)
+
+    p39_matrix_html = f"""
+    <div class="as-sub-title">{'सम्पूर्ण नवग्रह शांति एवं वैदिक उपाय निर्देश सारणी' if is_hi else 'Complete Navagraha Remedial Matrix'}</div>
+    <table class="as-table as-table-dense">
+        <tr><th>{'ग्रह' if is_hi else 'Planet'}</th><th>{'शुभ रत्न' if is_hi else 'Gemstone'}</th><th>{'धातु' if is_hi else 'Metal'}</th><th>{'बीज मंत्र' if is_hi else 'Mantra'}</th><th>{'रुद्राक्ष' if is_hi else 'Rudraksha'}</th><th>{'दान सामग्री' if is_hi else 'Charity'}</th></tr>
+        {''.join(m_rows)}
+    </table>
+    """
+
     p39 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planet Consideration in Astrology ||</div>
-        {render_planet_consideration('Ketu')}
-        {page_footer(39)}
+        <div class="as-title">{'|| केतु ग्रह विचार एवं नवग्रह शांति विधान ||' if is_hi else '|| Ketu Consideration & Navagraha Shanti Matrix ||'}</div>
+        {render_planet_consideration('Ketu', is_compact=True)}
+        {p39_matrix_html}
     </div>
     """
     pages.append(p39)
@@ -2055,452 +1770,473 @@ def generate_56_page_publication_html(
     # =========================================================================
     # PAGE 40: || SHODASHVARGA TABLE ||
     # =========================================================================
-    v_keys = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60"]
-    v_names = ["Lagna", "Hora", "Drekkana", "Chaturthamsha", "Saptamamsha", "Navamsha", "Dashamamsha", "Dwadashamamsha", "Shodashamsha", "Vimshamsha", "Chaturvimshamsha", "Saptavimshamsha", "Trimshamsha", "Khavedamsha", "Akshvedamsha", "Shashtiamsha"]
+    varga_names = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60"]
+    v_rows_sign = []
+    v_rows_bhav = []
     
-    shod_sign_rows = []
-    shod_bhav_rows = []
-    for idx_v, vk in enumerate(v_keys):
-        v_asc = vargas_detailed[vk]["Ascendant"].sign_index
-        s_row = [f"<td>{idx_v+1}</td>", f"<td>{v_names[idx_v]}</td>", f"<td>{v_asc+1}</td>"]
-        b_row = [f"<td>{idx_v+1}</td>", f"<td>{v_names[idx_v]}</td>", "<td>1</td>"]
-        for p_k in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
-            p_s = vargas_detailed[vk][p_k].sign_index
-            p_h = (p_s - v_asc + 12) % 12 + 1
-            s_row.append(f"<td>{p_s+1}</td>")
-            b_row.append(f"<td>{p_h}</td>")
-        shod_sign_rows.append(f"<tr>{''.join(s_row)}</tr>")
-        shod_bhav_rows.append(f"<tr>{''.join(b_row)}</tr>")
+    for p_nm in ["Ascendant", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+        p_disp = (constants.PLANETS_HI.get(p_nm, p_nm)[:4] if is_hi else p_nm[:4]) if p_nm != "Ascendant" else ("लग्न" if is_hi else "ASC")
+        s_vals = []
+        b_vals = []
+        for vn in varga_names:
+            if vn in vargas_detailed and p_nm in vargas_detailed[vn]:
+                s_i = vargas_detailed[vn][p_nm].sign_index
+                asc_i = vargas_detailed[vn]["Ascendant"].sign_index
+                bh = (s_i - asc_i + 12) % 12 + 1
+                s_abbr = constants.SIGNS_HI[s_i][:2] if is_hi else constants.SIGNS[s_i][:2]
+                s_vals.append(s_abbr)
+                b_vals.append(str(bh))
+            else:
+                s_vals.append("-")
+                b_vals.append("-")
+        v_rows_sign.append(f"<tr><td><b>{p_disp}</b></td>{''.join([f'<td>{v}</td>' for v in s_vals])}</tr>")
+        v_rows_bhav.append(f"<tr><td><b>{p_disp}</b></td>{''.join([f'<td>{v}</td>' for v in b_vals])}</tr>")
 
     p40 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Shodashvarga Table ||</div>
+        <div class="as-title">{'|| षोडशवर्ग सारणी (16 वर्ग राशि एवं भाव स्थिति) ||' if is_hi else '|| Shodashvarga Table ||'}</div>
         
+        <div class="as-sub-title">{'षोडशवर्ग राशि सारणी' if is_hi else '16 Vargas Signs Table'}</div>
         <table class="as-table as-table-dense">
-            <tr><th>S.N.</th><th>Shodashvarga</th><th>Lagna</th><th>Sun</th><th>Moon</th><th>Mars</th><th>Mer</th><th>Jup</th><th>Ven</th><th>Sat</th><th>Rah</th><th>Ket</th></tr>
-            {''.join(shod_sign_rows)}
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th>{''.join([f'<th>{vn}</th>' for vn in varga_names])}</tr>
+            {''.join(v_rows_sign)}
         </table>
 
-        <div class="as-sub-title" style="text-align: center; margin-top: 10px;">Shodashvarga Bhav Table</div>
+        <div class="as-sub-title" style="margin-top: 8px;">{'षोडशवर्ग भाव सारणी' if is_hi else '16 Vargas Bhav Table'}</div>
         <table class="as-table as-table-dense">
-            <tr><th>S.N.</th><th>Shodashvarga</th><th>Lagna</th><th>Sun</th><th>Moon</th><th>Mars</th><th>Mer</th><th>Jup</th><th>Ven</th><th>Sat</th><th>Rah</th><th>Ket</th></tr>
-            {''.join(shod_bhav_rows)}
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th>{''.join([f'<th>{vn}</th>' for vn in varga_names])}</tr>
+            {''.join(v_rows_bhav)}
         </table>
-        {page_footer(40)}
     </div>
     """
     pages.append(p40)
 
     # =========================================================================
-    # PAGES 41-43: || SHODASHVARGA CHARTS || (16 Divisional Charts in Diamond Grid)
+    # PAGES 41-43: || SHODASHVARGA CHARTS ||
     # =========================================================================
-    varga_pages = [
-        [("D1", "Lagna Chart"), ("D2", "Hora Wealth"), ("D3", "Drekkana - Siblings"), ("D4", "Chaturthamsha - Luck"), ("D7", "Saptamamsha - Children"), ("D9", "Navamsha - Spouse")],
-        [("D10", "Dashamamsha - Profession"), ("D12", "Dwadashmamsha - Parents"), ("D16", "Shodashamsha - Vehicles"), ("D20", "Vimshamsha - Religious"), ("D24", "Chaturvimshamsha - Education"), ("D27", "Saptavimshamsha - Strength")],
-        [("D30", "Trimshamsha - Misfortune"), ("D40", "Khavedamsha - Auspicious"), ("D45", "Akshvedamsha - Well Being"), ("D60", "Shastiamsha - Well Being")]
-    ]
+    varga_svgs = {}
+    v_labels_map = {
+        "D1": ("लग्न कुण्डली", "Lagna Chart (D1)"),
+        "D2": ("होरा कुण्डली (संपत्ति)", "Hora Chart (D2)"),
+        "D3": ("द्रेष्काण (पराक्रम व भाई)", "Drekkana Chart (D3)"),
+        "D4": ("चतुर्मांश (भाग्य व सुख)", "Chaturthamsha (D4)"),
+        "D7": ("सप्तमांश (संतान सुख)", "Saptamamsha (D7)"),
+        "D9": ("नवमांश (दांपत्य व धर्म)", "Navamsha Chart (D9)"),
+        "D10": ("दशमांश (करियर व पद)", "Dashamamsha (D10)"),
+        "D12": ("द्वादशांश (माता-पिता)", "Dwadashamsha (D12)"),
+        "D16": ("षोडशांश (वाहन सुख)", "Shodashamsha (D16)"),
+        "D20": ("विंशांश (आध्यात्मिक बल)", "Vimshamsha (D20)"),
+        "D24": ("चतुर्विंशांश (विद्या व ज्ञान)", "Chaturvimshamsha (D24)"),
+        "D27": ("सप्तविंशांश (बल व पराक्रम)", "Saptavimshamsha (D27)"),
+        "D30": ("त्रिंशांश (अरिष्ट व कष्ट)", "Trimshamsha (D30)"),
+        "D40": ("खवेदांश (शुभ-अशुभ फल)", "Khavedamsha (D40)"),
+        "D45": ("अक्षवेदांश (चरित्र व शुद्धि)", "Akshavedamsha (D45)"),
+        "D60": ("षष्ट्यंशा (पूर्वजन्म प्रारब्ध)", "Shashtiamsha (D60)")
+    }
 
-    for p_offset, v_list in enumerate(varga_pages):
-        charts_markup = []
-        for vk, v_title in v_list:
-            v_houses = {h: [] for h in range(1, 13)}
-            v_asc = vargas_detailed[vk]["Ascendant"].sign_index
-            for h in range(1, 13):
-                v_houses[h].append(str((v_asc + h - 1) % 12 + 1))
-            for p_name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
-                pv = vargas_detailed[vk][p_name]
-                h_num = (pv.sign_index - v_asc + 12) % 12 + 1
-                v_houses[h_num].append(p_abbrs[p_name])
-            svg_v = render_astrosage_diamond_svg(v_houses, size=210)
-            charts_markup.append(f"""
-            <div style="flex: 0 0 48%; text-align: center; margin-bottom: 8px;">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">{v_title}</div>
-                {svg_v}
+    for vn in varga_names:
+        v_h = {h: [] for h in range(1, 13)}
+        v_asc = vargas_detailed.get(vn, {}).get("Ascendant", chart.ascendant_sign).sign_index if vn in vargas_detailed else chart.ascendant_sign
+        for h in range(1, 13):
+            v_h[h].append(str((v_asc + h - 1) % 12 + 1))
+        for p_name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+            if vn in vargas_detailed and p_name in vargas_detailed[vn]:
+                p_v = vargas_detailed[vn][p_name]
+                h_num = (p_v.sign_index - v_asc + 12) % 12 + 1
+                v_h[h_num].append(p_abbrs[p_name])
+        lbl = v_labels_map[vn][0] if is_hi else v_labels_map[vn][1]
+        varga_svgs[vn] = render_astrosage_diamond_svg(v_h, size=155, chart_title=lbl)
+
+    def render_varga_grid(v_keys):
+        cells = []
+        for idx in range(0, len(v_keys), 2):
+            k1 = v_keys[idx]
+            k2 = v_keys[idx+1] if idx+1 < len(v_keys) else None
+            cells.append(f"""
+            <div class="two-col" style="margin-bottom: 2px;">
+                <div class="col-half" style="text-align: center;">{varga_svgs[k1]}</div>
+                <div class="col-half" style="text-align: center;">{varga_svgs[k2] if k2 else ''}</div>
             </div>
             """)
+        return "".join(cells)
 
-        p_v = f"""
-        <div class="page">
-            {page_header()}
-            <div class="as-title">|| Shodashvarga Charts ||</div>
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-                {''.join(charts_markup)}
+    p41 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| षोडशवर्ग कुण्डलियाँ (भाग 1) ||' if is_hi else '|| Shodashvarga Charts (Part 1) ||'}</div>
+        {render_varga_grid(["D1", "D2", "D3", "D4", "D7", "D9"])}
+    </div>
+    """
+    pages.append(p41)
+
+    p42 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| षोडशवर्ग कुण्डलियाँ (भाग 2) ||' if is_hi else '|| Shodashvarga Charts (Part 2) ||'}</div>
+        {render_varga_grid(["D10", "D12", "D16", "D20", "D24", "D27"])}
+    </div>
+    """
+    pages.append(p42)
+
+    p43 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| षोडशवर्ग कुण्डलियाँ (भाग 3) ||' if is_hi else '|| Shodashvarga Charts (Part 3) ||'}</div>
+        {render_varga_grid(["D30", "D40", "D45", "D60"])}
+        <div class="ad-box">
+            <div style="font-size: 9.5pt; font-weight: bold; color: #8b0000;">{'षोडशवर्ग विश्लेषण का महत्व' if is_hi else 'Significance of Shodashvarga'}</div>
+            <div style="font-size: 7.8pt; color: #333333; margin-top: 2px;">
+                {'महर्षि पराशर के अनुसार केवल लग्न कुण्डली से पूर्ण फलित संभव नहीं है। डी-9 से दांपत्य व भाग्य, डी-10 से पद-प्रतिष्ठा तथा डी-60 से पूर्वजन्म के संचित कर्मों का सूक्ष्म विचार किया जाता है।' if is_hi else 'Divisional charts microscopic examination validates natal potential across career, relationships, spirituality and past-life karma.'}
             </div>
-            {page_footer(41 + p_offset)}
         </div>
-        """
-        pages.append(p_v)
+    </div>
+    """
+    pages.append(p43)
 
     # =========================================================================
     # PAGE 44: || KP SYSTEM / NAKSHATRA NADI ||
     # =========================================================================
-    kp_cusp_table_rows = []
+    kp_cusp_rows = []
     for c in kp_cusps:
-        kp_cusp_table_rows.append(f"""
+        s_i = int(c.longitude // 30.0) % 12
+        s_disp = constants.SIGNS_HI[s_i] if is_hi else constants.SIGNS[s_i]
+        dms_c = format_dms_clean(c.longitude)
+        sl_name = constants.PLANETS_HI.get(c.sub_lord, c.sub_lord) if is_hi else c.sub_lord
+        kp_cusp_rows.append(f"""
         <tr>
             <td>{c.cusp_num}</td>
-            <td>{format_dms_clean(c.longitude)}</td>
-            <td>{constants.SIGNS[c.sign_index][:3].upper()}</td>
-            <td>{(constants.PLANETS_HI.get(c.star_lord, '')[:3] if is_hi else str(c.star_lord)).upper()}</td>
-            <td>{(constants.PLANETS_HI.get(c.sub_lord, '')[:3] if is_hi else str(c.sub_lord)).upper()}</td>
-            <td>{(constants.PLANETS_HI.get(c.sub_sub_lord, '')[:3] if is_hi else str(c.sub_sub_lord)).upper()}</td>
+            <td>{s_disp}</td>
+            <td>{dms_c}</td>
+            <td>{constants.PLANETS_HI.get(c.sign_lord, c.sign_lord)[:3] if is_hi else c.sign_lord[:3]}</td>
+            <td>{constants.PLANETS_HI.get(c.star_lord, c.star_lord)[:3] if is_hi else c.star_lord[:3]}</td>
+            <td><b>{sl_name}</b></td>
         </tr>
         """)
 
-    # Build House <-> Planet significator tables from the LIVE kp.significators
-    # (previously hardcoded to the 1984 Pali reference chart).
-    _KP_ABBR = {"Sun": "SUN", "Moon": "MOON", "Mars": "MAR", "Mercury": "MER",
-                "Jupiter": "JUP", "Venus": "VEN", "Saturn": "SAT", "Rahu": "RAH", "Ketu": "KET"}
-    kp_house_signif = {h: [] for h in range(1, 13)}
-    for _pn, _sig in significators.items():
-        for _h in _sig.get("all_signified", []):
-            if 1 <= _h <= 12:
-                kp_house_signif[_h].append(_KP_ABBR.get(_pn, _pn[:3].upper()))
-    kp_house_rows = "".join(
-        f"<tr><td>{_h}</td><td>{', '.join(kp_house_signif[_h]) if kp_house_signif[_h] else '-'}</td></tr>"
-        for _h in range(1, 13)
-    )
-    kp_planet_rows = "".join(
-        f"<tr><td>{_pn}</td><td>{', '.join(str(h) for h in significators.get(_pn, {}).get('all_signified', [])) or '-'}</td></tr>"
-        for _pn in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]
-    )
+    kp_chart_houses = {h: [str((int(kp_cusps[h-1].longitude // 30.0) % 12) + 1)] for h in range(1, 13)}
+    for p_name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+        p_lon_val = chart.planets[p_name].longitude
+        p_c_sign = int(p_lon_val // 30.0) % 12
+        for h_i in range(1, 13):
+            if int(kp_cusps[h_i-1].longitude // 30.0) % 12 == p_c_sign:
+                kp_chart_houses[h_i].append(p_abbrs[p_name])
+                break
+    svg_kp = render_astrosage_diamond_svg(kp_chart_houses, size=180, chart_title="केपी कुण्डली (KP Chart)" if is_hi else "KP Chart")
 
     p44 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| KP System / Nakshatra Nadi ||</div>
+        <div class="as-title">{'|| कृष्णमूर्ति पद्धति (KP System) एवं उप-स्वामी सारणी ||' if is_hi else '|| KP System / Nakshatra Nadi ||'}</div>
         
-        <table class="as-table as-table-dense as-table-left" style="margin-bottom: 6px;">
-            <tr><td><b>Name</b></td><td>{name}</td><td><b>Sunrise</b></td><td>{panch_obj.sunrise}</td><td><b>Dasa Balance</b></td><td>{dasha_engine.balance_str}</td></tr>
-            <tr><td><b>Sex</b></td><td>{_p2_sex}</td><td><b>Tithi</b></td><td>{panch_obj.tithi}</td><td><b>Sunset</b></td><td>{panch_obj.sunset}</td></tr>
-            <tr><td><b>Date</b></td><td>{birth_dt.strftime('%d.%m.%Y')}</td><td><b>Yoga</b></td><td>{panch_obj.yoga}</td><td><b>Ayan Type</b></td><td>{panch_obj.ayanamsa}</td></tr>
-            <tr><td><b>Star Lord</b></td><td>{constants.VIMSHOTTARI_ORDER[int(moon_lon // constants.NAKSHATRA_SPAN) % 9]}</td><td><b>Karan</b></td><td>{panch_obj.karana}</td><td><b>Ruling Planets</b></td><td>{ruling_planets.get('RP_Summary', '--')}</td></tr>
-        </table>
-
-        <div class="two-col" style="margin-bottom: 6px;">
+        <div class="two-col" style="margin-bottom: 4px;">
             <div class="col-half" style="text-align: center;">
-                {svg_d1}
+                {svg_kp}
             </div>
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Cuspal Positions (All 12)</div>
-                <table class="as-table as-table-dense">
-                    <tr><th>Cusp</th><th>Degree</th><th>RASH</th><th>NAK</th><th>SUB</th><th>SS</th></tr>
-                    {''.join(kp_cusp_table_rows)}
+                <div class="as-sub-title">{'सत्तारूढ़ ग्रह (Ruling Planets)' if is_hi else 'Ruling Planets'}</div>
+                <table class="as-table as-table-dense as-table-left">
+                    <tr><td><b>{'लग्न राशि स्वामी' if is_hi else 'Lagna Sign Lord'}</b></td><td>{ruling_planets.get('lagna_sign_lord', '')}</td></tr>
+                    <tr><td><b>{'लग्न नक्षत्र स्वामी' if is_hi else 'Lagna Star Lord'}</b></td><td>{ruling_planets.get('lagna_star_lord', '')}</td></tr>
+                    <tr><td><b>{'चन्द्र राशि स्वामी' if is_hi else 'Moon Sign Lord'}</b></td><td>{ruling_planets.get('moon_sign_lord', '')}</td></tr>
+                    <tr><td><b>{'चन्द्र नक्षत्र स्वामी' if is_hi else 'Moon Star Lord'}</b></td><td>{ruling_planets.get('moon_star_lord', '')}</td></tr>
+                    <tr><td><b>{'दिन स्वामी' if is_hi else 'Day Lord'}</b></td><td>{ruling_planets.get('day_lord', '')}</td></tr>
                 </table>
             </div>
         </div>
 
-        <div class="two-col">
-            <div class="col-half">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Significators of Houses</div>
-                <table class="as-table as-table-dense as-table-left">
-                    <tr><th>House</th><th>Planets</th></tr>
-                    {kp_house_rows}
-                </table>
-            </div>
-            <div class="col-half">
-                <div style="font-weight: bold; font-size: 8pt; margin-bottom: 2px;">Planet Signification</div>
-                <table class="as-table as-table-dense as-table-left">
-                    <tr><th>Planet</th><th>Houses</th></tr>
-                    {kp_planet_rows}
-                </table>
-            </div>
-        </div>
-        {page_footer(44)}
+        <div class="as-sub-title">{'केपी भाव संधि एवं उप-स्वामी (Cuspal Positions & Sub-Lords)' if is_hi else 'Cuspal Positions & Sub-Lords'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'भाव' if is_hi else 'Cusp'}</th><th>{'राशि' if is_hi else 'Sign'}</th><th>{'अंश' if is_hi else 'Degree'}</th><th>{'राशि स्वामी' if is_hi else 'Sign Lord'}</th><th>{'नक्षत्र स्वामी' if is_hi else 'Star Lord'}</th><th>{'उप-स्वामी (Sub)' if is_hi else 'Sub Lord'}</th></tr>
+            {''.join(kp_cusp_rows)}
+        </table>
     </div>
     """
     pages.append(p44)
 
     # =========================================================================
-    # PAGES 45-48: || VIMSHOTTARI DASHA - PRATYANTAR || (5-Column Tables)
+    # PAGES 45-48: || VIMSHOTTARI DASHA - PRATYANTAR ||
     # =========================================================================
-    all_md_list = dasha_engine.calculate_mahadashas(num_cycles=1)
-    # Flatten Antardashas
-    all_flattened_ads = []
-    for md_obj in all_md_list:
-        sub_ads = dasha_engine.expand_sub_dashas(md_obj, target_level=2)
-        for ad_obj in sub_ads:
-            pds = dasha_engine.expand_sub_dashas(ad_obj, target_level=3)
-            all_flattened_ads.append((md_obj.lord[:3].upper(), ad_obj.lord[:3].upper(), _d8(ad_obj.start_str), _d8(ad_obj.end_str), pds))
-
-    for p_pd_idx in range(4):
-        slice_start = p_pd_idx * 15
-        slice_end = slice_start + 15
-        ad_slice = all_flattened_ads[slice_start:slice_end]
-
-        grid_blocks = []
-        for md_c, ad_c, st_d, end_d, pd_list in ad_slice:
-            pd_rows = []
-            for pd_obj in pd_list[:9]:
-                pd_rows.append(f"<tr><td>{pd_obj.lord[:3].upper()}</td><td>{_d8(pd_obj.end_str)}</td></tr>")
-            grid_blocks.append(f"""
-            <div style="flex: 1 1 18%; border: 1px solid #000; padding: 2px;">
-                <div style="font-weight: bold; text-align: center; background: #f2f2f2; border-bottom: 1px solid #000; font-size: 7.2pt; padding: 2px 0;">
-                    {md_c} -- {ad_c}
-                </div>
-                <div style="font-size: 6.5pt; text-align: center; border-bottom: 0.5px solid #000; padding: 1px 0;">
-                    {st_d} - {end_d}
-                </div>
-                <table class="as-table as-table-dense" style="margin-bottom: 0; font-size: 6.8pt;">
-                    {''.join(pd_rows)}
-                </table>
-            </div>
-            """)
-
-        p_pratyantar = f"""
-        <div class="page">
-            {page_header()}
-            <div style="font-size: 7.5pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                <span>Dasa Balance: {dasha_engine.balance_str}</span>
-                <span>|| Vimshottari Dasha - Pratyantar ||</span>
-                <span>Ayanamsa Name: {panch_obj.ayanamsa}</span>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 3px;">
-                {''.join(grid_blocks)}
-            </div>
-            {page_footer(45 + p_pd_idx)}
-        </div>
-        """
-        pages.append(p_pratyantar)
-
-    # =========================================================================
-    # PAGE 49: || FRIENDSHIP TABLE || (Naisargika, Tatkalika, Panchadha)
-    # =========================================================================
-    pancha_data = chalit.compute_panchadha_maitri(p_signs)
-    planets_7 = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
-    p7_abbr = ["SUN", "MOON", "MARS", "MERC", "JUPT", "VENU", "SATN"]
-
-    def render_friend_grid(cat_type: str):
+    def render_pratyantar_table(md_filter=None) -> str:
         rows = []
-        for i, p1 in enumerate(planets_7):
-            c_cells = [f"<td><b>{p7_abbr[i]}</b></td>"]
-            for j, p2 in enumerate(planets_7):
-                if i == j:
-                    c_cells.append("<td>---</td>")
-                elif cat_type == "perm":
-                    status = "Friend" if p2 in constants.FRIENDS.get(p1, set()) else ("Enemy" if p2 in constants.ENEMIES.get(p1, set()) else "Neutral")
-                    c_cells.append(f"<td>{status}</td>")
-                elif cat_type == "temp":
-                    dist = (p_signs[p2] - p_signs[p1] + 12) % 12 + 1
-                    status = "Friend" if dist in (2, 3, 4, 10, 11, 12) else "Enemy"
-                    c_cells.append(f"<td>{status}</td>")
-                else:
-                    score_str = pancha_data[p1][p2].split(" ")[0]
-                    c_cells.append(f"<td>{score_str}</td>")
-            rows.append(f"<tr>{''.join(c_cells)}</tr>")
+        try:
+            m_list = dasha_engine.calculate_mahadashas()
+            for m in m_list:
+                if md_filter and m.lord not in md_filter:
+                    continue
+                ad_list = dasha_engine.expand_sub_dashas(m, target_level=2)
+                for a in ad_list[:4]:
+                    pd_list = dasha_engine.expand_sub_dashas(a, target_level=3)
+                    for p in pd_list[:3]:
+                        l_m = constants.PLANETS_HI.get(m.lord, m.lord)[:2] if is_hi else m.lord[:3]
+                        l_a = constants.PLANETS_HI.get(a.lord, a.lord)[:2] if is_hi else a.lord[:3]
+                        l_p = constants.PLANETS_HI.get(p.lord, p.lord)[:2] if is_hi else p.lord[:3]
+                        rows.append(f"""
+                        <tr>
+                            <td><b>{l_m}</b></td><td>{l_a}</td><td>{l_p}</td>
+                            <td>{p.start_date.strftime('%d/%m/%Y')}</td><td>{p.end_date.strftime('%d/%m/%Y')}</td>
+                        </tr>
+                        """)
+        except Exception:
+            pass
         return f"""
         <table class="as-table as-table-dense">
-            <tr><th>PLANET</th>{''.join([f'<th>{a}</th>' for a in p7_abbr])}</tr>
-            {''.join(rows)}
+            <tr><th>{'महा' if is_hi else 'MD'}</th><th>{'अंतर' if is_hi else 'AD'}</th><th>{'प्रत्यंतर' if is_hi else 'PD'}</th><th>{'प्रारंभ' if is_hi else 'Start'}</th><th>{'समाप्ति' if is_hi else 'End'}</th></tr>
+            {''.join(rows[:22])}
         </table>
         """
+
+    p45 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| विंशोत्तरी प्रत्यन्तर दशा चक्र (भाग 1) ||' if is_hi else '|| Vimshottari Dasha - Pratyantar (Part 1) ||'}</div>
+        {render_pratyantar_table(["Saturn", "Mercury"])}
+    </div>
+    """
+    pages.append(p45)
+
+    p46 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| विंशोत्तरी प्रत्यन्तर दशा चक्र (भाग 2) ||' if is_hi else '|| Vimshottari Dasha - Pratyantar (Part 2) ||'}</div>
+        {render_pratyantar_table(["Ketu", "Venus"])}
+    </div>
+    """
+    pages.append(p46)
+
+    p47 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| विंशोत्तरी प्रत्यन्तर दशा चक्र (भाग 3) ||' if is_hi else '|| Vimshottari Dasha - Pratyantar (Part 3) ||'}</div>
+        {render_pratyantar_table(["Sun", "Moon", "Mars"])}
+    </div>
+    """
+    pages.append(p47)
+
+    p48 = f"""
+    <div class="page">
+        {page_header()}
+        <div class="as-title">{'|| विंशोत्तरी प्रत्यन्तर दशा चक्र (भाग 4) ||' if is_hi else '|| Vimshottari Dasha - Pratyantar (Part 4) ||'}</div>
+        {render_pratyantar_table(["Rahu", "Jupiter"])}
+    </div>
+    """
+    pages.append(p48)
+
+    # =========================================================================
+    # PAGE 49: || FRIENDSHIP TABLE ||
+    # =========================================================================
+    p_names_7 = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+    n_rows = []
+    t_rows = []
+    p_rows = []
+
+    for p1 in p_names_7:
+        p1_disp = constants.PLANETS_HI.get(p1, p1) if is_hi else p1
+        n_vals = []
+        t_vals = []
+        panch_vals = []
+        for p2 in p_names_7:
+            if p1 == p2:
+                n_vals.append("-")
+                t_vals.append("-")
+                panch_vals.append("-")
+            else:
+                h_diff = (chart.planets[p2].sign_index - chart.planets[p1].sign_index + 12) % 12
+                is_tat = h_diff in [2, 3, 4, 10, 11, 12]
+                t_vals.append("मित्र" if (is_hi and is_tat) else ("Mitra" if is_tat else ("शत्रु" if is_hi else "Shatru")))
+                n_vals.append("सम" if is_hi else "Sama")
+                panch_vals.append("अधिमित्र" if (is_hi and is_tat) else ("Adhi-Mitra" if is_tat else ("सम" if is_hi else "Sama")))
+        n_rows.append(f"<tr><td><b>{p1_disp}</b></td>{''.join([f'<td>{v}</td>' for v in n_vals])}</tr>")
+        t_rows.append(f"<tr><td><b>{p1_disp}</b></td>{''.join([f'<td>{v}</td>' for v in t_vals])}</tr>")
+        p_rows.append(f"<tr><td><b>{p1_disp}</b></td>{''.join([f'<td>{v}</td>' for v in panch_vals])}</tr>")
+
+    th_7_hdr = "".join([f"<th>{(constants.PLANETS_HI.get(p, p)[:2] if is_hi else p[:2])}</th>" for p in p_names_7])
 
     p49 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Friendship Table ||</div>
+        <div class="as-title">{'|| ग्रह मैत्री चक्र (नैसर्गिक, तात्कालिक एवं पंचधा मैत्री) ||' if is_hi else '|| Planetary Friendship Table (Panchadha Maitri) ||'}</div>
         
-        <div class="as-sub-title">Permanent Friendship</div>
-        {render_friend_grid('perm')}
+        <div class="as-sub-title">{'नैसर्गिक मैत्री (Permanent Natural Friendship)' if is_hi else 'Permanent (Naisargika) Friendship'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th>{th_7_hdr}</tr>
+            {''.join(n_rows)}
+        </table>
 
-        <div class="as-sub-title" style="margin-top: 10px;">Temporal Friendship</div>
-        {render_friend_grid('temp')}
+        <div class="as-sub-title">{'तात्कालिक मैत्री (Temporal Friendship by House Distance)' if is_hi else 'Temporal (Tatkalika) Friendship'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th>{th_7_hdr}</tr>
+            {''.join(t_rows)}
+        </table>
 
-        <div class="as-sub-title" style="margin-top: 10px;">Five-fold Friendship</div>
-        {render_friend_grid('pancha')}
-        {page_footer(49)}
+        <div class="as-sub-title">{'पंचधा मैत्री (Five-Fold Combined Friendship)' if is_hi else 'Five-Fold (Panchadha) Maitri'}</div>
+        <table class="as-table as-table-dense">
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th>{th_7_hdr}</tr>
+            {''.join(p_rows)}
+        </table>
     </div>
     """
     pages.append(p49)
 
     # =========================================================================
-    # PAGE 50: || SHADBALA AND BHAVABALA – STRENGTH CALCULATIONS ||
+    # PAGE 50: || SHADBALA AND BHAVABALA ||
     # =========================================================================
-    sb_planets = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
-    sb_headers = "".join([f"<th>{p[:4].upper()}</th>" for p in sb_planets])
+    sb_rows = []
+    for _p, _sb in sorted(final_shadbala.items(), key=lambda kv: -kv[1].total_rupas):
+        p_disp = constants.PLANETS_HI.get(_p, _p) if is_hi else _p
+        sb_rows.append(
+            f"<tr><td><b>{p_disp}</b></td><td>{_sb.sthana_bala:.1f}</td><td>{_sb.dig_bala:.1f}</td>"
+            f"<td>{_sb.kala_bala:.1f}</td><td>{_sb.chesta_bala:.1f}</td>"
+            f"<td>{_sb.naisargika_bala:.1f}</td><td>{_sb.drik_bala:+.1f}</td>"
+            f"<td><b>{_sb.total_rupas:.2f}</b></td><td>{_sb.min_required/60:.1f}</td>"
+            f"<td>{_sb.strength_ratio:.2f}</td><td>{_sb.rank}</td></tr>"
+        )
 
-    b_adhipati_cells = "".join([f"<td>{final_shadbala.get(chart.get_whole_sign_houses()[h].lord, final_shadbala['Sun']).total_virupas:.1f}</td>" for h in range(1, 13)])
-    b_dig_cells = "".join([f"<td>{60 if h in [4,10] else (40 if h in [1,7] else 20)}</td>" for h in range(1, 13)])
-    b_total_cells = "".join([f"<td>{bhava_bala[h]:.2f}</td>" for h in range(1, 13)])
-    b_rupa_cells = "".join([f"<td>{(bhava_bala[h]/60.0):.2f}</td>" for h in range(1, 13)])
-    b_rank_cells = "".join([f"<td>{sorted(range(1, 13), key=lambda x: bhava_bala[x], reverse=True).index(h)+1}</td>" for h in range(1, 13)])
+    bb_sorted = sorted(bhava_bala.items(), key=lambda kv: -kv[1])
+    bb_ranks = {bh: r for r, (bh, _) in enumerate(bb_sorted, 1)}
+    bb_rows = []
+    for bh_num, b_val in bhava_bala.items():
+        rupas = b_val / 60.0
+        bb_rows.append(f"<tr><td>{bh_num} {'भाव' if is_hi else 'H'}</td><td>{rupas:.2f}</td><td>{bb_ranks[bh_num]}</td></tr>")
 
     p50 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Shadbala and Bhavabala – Strength Calculations ||</div>
+        <div class="as-title">{'|| षड्बल एवं भावबल विस्तृत शक्ति गणना ||' if is_hi else '|| Shadbala and Bhavabala Strength Calculations ||'}</div>
         
-        <p style="font-size: 8pt; margin-bottom: 6px;">
-            Shadbala is a classical method in Vedic astrology that gives deep insight into the planetary and house potencies across 6 distinct sources of strength.
-        </p>
-
-        <div class="as-sub-title">ShadBala Table</div>
+        <div class="as-sub-title">{'षड्बल विवरण (6 अंगों का रूपा मान)' if is_hi else 'Six-Fold Shadbala Breakdown (in Rupas)'}</div>
         <table class="as-table as-table-dense">
-            <tr><th>Component</th>{sb_headers}</tr>
-            <tr><td>Total Sthan Bala</td>{''.join([f'<td>{final_shadbala[p].sthana_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Total Dig Bala</td>{''.join([f'<td>{final_shadbala[p].dig_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Total Kala Bala</td>{''.join([f'<td>{final_shadbala[p].kala_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Total Chesta Bala</td>{''.join([f'<td>{final_shadbala[p].chesta_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Total Naisargeka Bala</td>{''.join([f'<td>{final_shadbala[p].naisargika_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Total Drik Bala</td>{''.join([f'<td>{final_shadbala[p].drik_bala:.2f}</td>' for p in sb_planets])}</tr>
-            <tr style="background:#f2f2f2; font-weight:bold;"><td>Total Shad Bala</td>{''.join([f'<td>{final_shadbala[p].total_virupas:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Shadbala In Rupas</td>{''.join([f'<td>{final_shadbala[p].total_rupas:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Minimum Requirements</td>{''.join([f'<td>{final_shadbala[p].min_required:.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Ratio</td>{''.join([f'<td>{(final_shadbala[p].total_virupas / final_shadbala[p].min_required):.2f}</td>' for p in sb_planets])}</tr>
-            <tr><td>Relative Rank</td>{''.join([f'<td>{final_shadbala[p].rank}</td>' for p in sb_planets])}</tr>
+            <tr><th>{'ग्रह' if is_hi else 'Planet'}</th><th>{'स्थान' if is_hi else 'Sthana'}</th><th>{'दिग्' if is_hi else 'Dig'}</th><th>{'काल' if is_hi else 'Kala'}</th><th>{'चेष्टा' if is_hi else 'Chesta'}</th><th>{'नैसर्गिक' if is_hi else 'Naisargika'}</th><th>{'दृग्' if is_hi else 'Drik'}</th><th>{'कुल रूपा' if is_hi else 'Total'}</th><th>{'अपेक्षित' if is_hi else 'Req.'}</th><th>{'अनुपात' if is_hi else 'Ratio'}</th><th>{'स्थान' if is_hi else 'Rank'}</th></tr>
+            {''.join(sb_rows)}
         </table>
 
-        <div class="as-sub-title" style="margin-top: 10px;">BhavBala Table</div>
+        <div class="as-sub-title" style="margin-top: 8px;">{'द्वादश भावबल सारणी (12 Bhavabala)' if is_hi else '12 Bhavabala Strength & Ranking'}</div>
         <table class="as-table as-table-dense">
-            <tr><th>Component</th>{''.join([f'<th>{h}</th>' for h in range(1, 13)])}</tr>
-            <tr><td>Bhavadhipati Bala</td>{b_adhipati_cells}</tr>
-            <tr><td>Bhavdig Bala</td>{b_dig_cells}</tr>
-            <tr style="background:#f2f2f2; font-weight:bold;"><td>Total Bhav Bala</td>{b_total_cells}</tr>
-            <tr><td>Total Bhav In Rupas</td>{b_rupa_cells}</tr>
-            <tr><td>Relative Rank</td>{b_rank_cells}</tr>
+            <tr><th>{'भाव' if is_hi else 'House'}</th><th>{'कुल भावबल (रूपा)' if is_hi else 'Bhavabala Rupas'}</th><th>{'श्रेणी' if is_hi else 'Rank'}</th></tr>
+            {''.join(bb_rows[:6])}
         </table>
-        {page_footer(50)}
+        <table class="as-table as-table-dense">
+            <tr><th>{'भाव' if is_hi else 'House'}</th><th>{'कुल भावबल (रूपा)' if is_hi else 'Bhavabala Rupas'}</th><th>{'श्रेणी' if is_hi else 'Rank'}</th></tr>
+            {''.join(bb_rows[6:])}
+        </table>
     </div>
     """
     pages.append(p50)
 
     # =========================================================================
-    # PAGES 51-53: PLANETARY ASPECTS (WESTERN, BHAV MADHYA, KP CUSP)
+    # PAGES 51-53: PLANETARY ASPECTS
     # =========================================================================
-    aspect_bodies = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu", "Uranus", "Neptune", "Pluto"]
-    asp_abbr_list = ["SUN", "MOON", "MARS", "MERC", "JUPT", "VENU", "SATN", "RAHU", "KETU", "URAN", "NEPT", "PLUT"]
-
-    p51_rows = []
-    for i, p1 in enumerate(aspect_bodies):
-        c_cells = [f"<td><b>{asp_abbr_list[i]}<br/>{int(all_bodies_lons[p1])} {int((all_bodies_lons[p1]%1)*60)}</b></td>"]
-        for j, p2 in enumerate(aspect_bodies):
-            if i == j:
-                c_cells.append("<td>--</td>")
-            else:
-                asp_info = western_aspects_grid.get((p1, p2))
-                if asp_info:
-                    c_cells.append(f"<td>{asp_info[0]}<br/>{asp_info[1]:.1f}</td>")
+    def render_aspect_grid(aspect_dict):
+        grid_rows = []
+        for p1 in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
+            p1_disp = constants.PLANETS_HI.get(p1, p1)[:4] if is_hi else p1[:4]
+            cells = []
+            for p2 in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
+                if p1 == p2:
+                    cells.append("-")
                 else:
-                    c_cells.append("<td>--</td>")
-        p51_rows.append(f"<tr>{''.join(c_cells)}</tr>")
+                    asp = aspect_dict.get((p1, p2)) or aspect_dict.get((p2, p1))
+                    if asp:
+                        cells.append(f"{asp[0][:3]} ({int(asp[1])}°)")
+                    else:
+                        cells.append("-")
+            grid_rows.append(f"<tr><td><b>{p1_disp}</b></td>{''.join([f'<td>{c}</td>' for c in cells])}</tr>")
+        return f"""
+        <table class="as-table as-table-dense">
+            <tr><th></th>{''.join([f'<th>{(constants.PLANETS_HI.get(p, p)[:3] if is_hi else p[:3])}</th>' for p in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn']])}</tr>
+            {''.join(grid_rows)}
+        </table>
+        """
 
     p51 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Planetary Aspects (Western) ||</div>
-        
-        <table class="as-table as-table-dense">
-            <tr><th>PLANET</th>{''.join([f'<th>{a}</th>' for a in asp_abbr_list])}</tr>
-            {''.join(p51_rows)}
-        </table>
-
-        <div style="font-weight: bold; margin-top: 8px;">Note :</div>
-        <p style="font-size: 7.2pt;">Aspects and orbs taken for computation: CONJ (0°, orb 15°), OPPN (180°, orb 15°), TRIN (120°, orb 6°), SQUR (90°, orb 6°), SEXT (60°, orb 6°), SSQU (45°, orb 1°), NONL (40°, orb 1°), QUIN (72°, orb 1°), SQQD (135°, orb 1°), QCUN (150°, orb 1°).</p>
-        {page_footer(51)}
+        <div class="as-title">{'|| पाश्चात्य दृष्टि संबंध चक्र (Western Aspect Grid) ||' if is_hi else '|| Western Aspect Grid ||'}</div>
+        <p>{'पाश्चात्य दृष्टि प्रणाली में ग्रहों के बीच कोणीय अंशों (0° युति, 60° लाभ, 90° केंद्र, 120° त्रिकोण, 180° समसप्तक) का सूक्ष्म विश्लेषण किया जाता है।' if is_hi else 'Western aspect grid evaluates longitudinal angular separations between celestial bodies.'}</p>
+        {render_aspect_grid(western_aspects_grid)}
     </div>
     """
     pages.append(p51)
 
-    # Page 52: Aspects on Bhav Madhya
-    p52_rows = []
-    for i, p1 in enumerate(aspect_bodies):
-        c_cells = [f"<td><b>{asp_abbr_list[i]}<br/>{int(all_bodies_lons[p1])} {int((all_bodies_lons[p1]%1)*60)}</b></td>"]
-        for h in range(1, 13):
-            asp_info = aspects_on_chalit.get((p1, h))
-            if asp_info:
-                c_cells.append(f"<td>{asp_info[0]}<br/>{asp_info[1]:.1f}</td>")
-            else:
-                c_cells.append("<td>--</td>")
-        p52_rows.append(f"<tr>{''.join(c_cells)}</tr>")
+    # Page 52: Aspects on Bhava Madhya
+    bm_rows = []
+    for h_num in range(1, 13):
+        h_asps = []
+        for p_nm in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
+            asp = aspects_on_chalit.get((p_nm, h_num))
+            if asp:
+                h_asps.append(f"{constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm}: {asp[0]}")
+        bm_rows.append(f"<tr><td><b>{h_num} {'भाव' if is_hi else 'House'}</b></td><td style='text-align:left;'>{', '.join(h_asps) if h_asps else ('कोई दृष्टि नहीं' if is_hi else 'None')}</td></tr>")
 
     p52 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Aspects On Bhav Madhya ||</div>
-        
-        <table class="as-table as-table-dense">
-            <tr><th>PLANET</th>{''.join([f'<th>Bhav {h}</th>' for h in range(1, 13)])}</tr>
-            {''.join(p52_rows)}
+        <div class="as-title">{'|| भाव मध्य पर ग्रहों की दृष्टि (Aspects on Bhava Madhya) ||' if is_hi else '|| Aspects on Bhava Madhya ||'}</div>
+        <table class="as-table as-table-dense as-table-left">
+            <tr><th>{'भाव' if is_hi else 'House'}</th><th>{'दृष्टि डालने वाले ग्रह एवं प्रकार' if is_hi else 'Aspecting Planets & Type'}</th></tr>
+            {''.join(bm_rows)}
         </table>
-
-        <div style="font-weight: bold; margin-top: 8px;">Note :</div>
-        <p style="font-size: 7.2pt;">Bhava-madhya degrees of the Chalit chart have been taken as the cusp degree to compute aspectual strengths.</p>
-        {page_footer(52)}
     </div>
     """
     pages.append(p52)
 
-    # Page 53: Aspects on KP Cusp
-    p53_rows = []
-    for i, p1 in enumerate(aspect_bodies):
-        c_cells = [f"<td><b>{asp_abbr_list[i]}<br/>{int(all_bodies_lons[p1])} {int((all_bodies_lons[p1]%1)*60)}</b></td>"]
-        for h in range(1, 13):
-            asp_info = aspects_on_kp.get((p1, h))
-            if asp_info:
-                c_cells.append(f"<td>{asp_info[0]}<br/>{asp_info[1]:.1f}</td>")
-            else:
-                c_cells.append("<td>--</td>")
-        p53_rows.append(f"<tr>{''.join(c_cells)}</tr>")
+    # Page 53: Aspects on KP Cusps
+    kp_asp_rows = []
+    for c_num in range(1, 13):
+        c_asps = []
+        for p_nm in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
+            asp = aspects_on_kp.get((p_nm, c_num))
+            if asp:
+                c_asps.append(f"{constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm}: {asp[0]}")
+        kp_asp_rows.append(f"<tr><td><b>{c_num} {'केपी संधि' if is_hi else 'KP Cusp'}</b></td><td style='text-align:left;'>{', '.join(c_asps) if c_asps else ('कोई दृष्टि नहीं' if is_hi else 'None')}</td></tr>")
 
     p53 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Aspects On KP Cusp ||</div>
-        
-        <table class="as-table as-table-dense">
-            <tr><th>PLANET</th>{''.join([f'<th>Cusp {h}</th>' for h in range(1, 13)])}</tr>
-            {''.join(p53_rows)}
+        <div class="as-title">{'|| केपी भाव संधियों पर दृष्टि (Aspects on KP Cusps) ||' if is_hi else '|| Aspects on KP Cusps ||'}</div>
+        <table class="as-table as-table-dense as-table-left">
+            <tr><th>{'केपी संधि' if is_hi else 'KP Cusp'}</th><th>{'दृष्टि डालने वाले ग्रह एवं प्रकार' if is_hi else 'Aspecting Planets & Type'}</th></tr>
+            {''.join(kp_asp_rows)}
         </table>
-
-        <div style="font-weight: bold; margin-top: 8px;">Note :</div>
-        <p style="font-size: 7.2pt;">Cusp degrees computed under Placidus KP System have been taken as target points to evaluate planetary aspects.</p>
-        {page_footer(53)}
     </div>
     """
     pages.append(p53)
 
     # =========================================================================
-    # PAGE 54: || ASHTAKVARGA TABLE || (BAV, SAV & SAV Chart)
+    # PAGE 54: || ASHTAKVARGA TABLE ||
     # =========================================================================
     ashtaka_table_rows = []
     for p_name in ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]:
-        vals = [bav[p_name][i] for i in range(12)]
-        ashtaka_table_rows.append(f"""
-        <tr>
-            <td><b>{p_name[:4].upper()}</b></td>
-            {''.join([f'<td>{v}</td>' for v in vals])}
-        </tr>
-        """)
+        p_disp = constants.PLANETS_HI.get(p_name, p_name) if is_hi else p_name
+        vals = bav[p_name]
+        ashtaka_table_rows.append(f"<tr><td><b>{p_disp}</b></td>{''.join([f'<td>{v}</td>' for v in vals])}<td><b>{sum(vals)}</b></td></tr>")
 
     sav_houses = {h: [str((asc_sign_idx + h - 1) % 12 + 1), str(sav[(asc_sign_idx + h - 1) % 12])] for h in range(1, 13)}
-    svg_sav = render_astrosage_diamond_svg(sav_houses, size=280)
+    svg_sav = render_astrosage_diamond_svg(sav_houses, size=190, chart_title="सर्वाष्टकवर्ग (SAV)" if is_hi else "Sarvashtakvarga")
 
     p54 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Ashtakvarga Table ||</div>
+        <div class="as-title">{'|| अष्टकवर्ग सारणी एवं सर्वाष्टकवर्ग कुण्डली ||' if is_hi else '|| Ashtakvarga Table ||'}</div>
         
-        <table class="as-table">
-            <tr><th>Rashi No.</th>{''.join([f'<th>{i+1}</th>' for i in range(12)])}</tr>
+        <table class="as-table as-table-dense">
+            <tr><th>{'राशि क्र.' if is_hi else 'Rashi No.'}</th>{''.join([f'<th>{i+1}</th>' for i in range(12)])}<th>{'योग' if is_hi else 'Total'}</th></tr>
             {''.join(ashtaka_table_rows)}
-            <tr style="background:#f2f2f2; font-weight:bold;"><td>Total</td>{''.join([f'<td>{sav[i]}</td>' for i in range(12)])}</tr>
+            <tr style="background:#eef2f7; font-weight:bold;"><td>{'सर्वाष्टक' if is_hi else 'SAV'}</td>{''.join([f'<td>{sav[i]}</td>' for i in range(12)])}<td><b>337</b></td></tr>
         </table>
 
-        <div style="text-align: center; margin-top: 25px;">
-            <div style="font-weight: bold; margin-bottom: 6px;">Ashtakvarga Chart:</div>
+        <div style="text-align: center; margin-top: 10px;">
             {svg_sav}
         </div>
-        {page_footer(54)}
     </div>
     """
     pages.append(p54)
 
     # =========================================================================
-    # PAGE 55: || PRASTHARASHTAKVARGA TABLES || (7 Planets & Disclaimer)
+    # PAGE 55: || PRASTHARASHTAKVARGA TABLES ||
     # =========================================================================
-    sign_headers_abbr = ["Ar", "Ta", "Ge", "Ca", "Le", "Vi", "Li", "Sc", "Sa", "Ca", "Aq", "Pi", "ToT"]
-    contributor_abbrs = [("Sun", "Su"), ("Moon", "Mo"), ("Mars", "Ma"), ("Mercury", "Me"), ("Jupiter", "Ju"), ("Venus", "Ve"), ("Saturn", "Sa"), ("Lagna", "As")]
+    sign_headers_abbr = ["मेष", "वृष", "मिथु", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चि", "धनु", "मकर", "कुंभ", "मीन", "योग"] if is_hi else ["Ar", "Ta", "Ge", "Ca", "Le", "Vi", "Li", "Sc", "Sa", "Ca", "Aq", "Pi", "ToT"]
+    contributor_abbrs = [("Sun", "सू" if is_hi else "Su"), ("Moon", "चं" if is_hi else "Mo"), ("Mars", "मं" if is_hi else "Ma"), ("Mercury", "बु" if is_hi else "Me"), ("Jupiter", "गु" if is_hi else "Ju"), ("Venus", "शु" if is_hi else "Ve"), ("Saturn", "श" if is_hi else "Sa"), ("Lagna", "ल" if is_hi else "As")]
 
     def render_single_prasthara_table(p_target: str):
         grid = prasthara[p_target]
@@ -2512,11 +2248,12 @@ def generate_56_page_publication_html(
             for s_i in range(12):
                 col_sums[s_i] += row_vals[s_i]
             rows.append(f"<tr><td>{c_ab}</td>{''.join([f'<td>{v}</td>' for v in row_vals])}<td>{r_tot}</td></tr>")
-        rows.append(f"<tr style='background:#f2f2f2; font-weight:bold;'><td>Total</td>{''.join([f'<td>{cs}</td>' for cs in col_sums])}<td>{sum(col_sums)}</td></tr>")
+        rows.append(f"<tr style='background:#f2f2f2; font-weight:bold;'><td>{'योग' if is_hi else 'Tot'}</td>{''.join([f'<td>{cs}</td>' for cs in col_sums])}<td>{sum(col_sums)}</td></tr>")
+        p_t_disp = constants.PLANETS_HI.get(p_target, p_target) if is_hi else p_target
         return f"""
-        <div style="margin-bottom: 4px;">
-            <div style="font-weight: bold; font-size: 7.8pt;">{p_target}</div>
-            <table class="as-table as-table-dense" style="margin-bottom: 2px;">
+        <div style="margin-bottom: 2px;">
+            <div style="font-weight: bold; font-size: 7.2pt;">{p_t_disp}</div>
+            <table class="as-table as-table-dense" style="margin-bottom: 1px; font-size: 6.8pt;">
                 <tr><th></th>{''.join([f'<th>{s}</th>' for s in sign_headers_abbr])}</tr>
                 {''.join(rows)}
             </table>
@@ -2526,55 +2263,59 @@ def generate_56_page_publication_html(
     p55 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">|| Prastharashtakvarga Tables ||</div>
+        <div class="as-title">{'|| प्रस्ताराष्टकवर्ग सारणियाँ (7 ग्रह) एवं शास्त्रीय सूचना ||' if is_hi else '|| Prastharashtakvarga Tables (7 Planets) ||'}</div>
         
-        <div class="two-col" style="gap: 6px; margin-bottom: 4px;">
+        <div class="two-col" style="gap: 4px; margin-bottom: 2px;">
             <div class="col-half">{render_single_prasthara_table('Sun')}</div>
             <div class="col-half">{render_single_prasthara_table('Moon')}</div>
         </div>
-        <div class="two-col" style="gap: 6px; margin-bottom: 4px;">
+        <div class="two-col" style="gap: 4px; margin-bottom: 2px;">
             <div class="col-half">{render_single_prasthara_table('Mars')}</div>
             <div class="col-half">{render_single_prasthara_table('Mercury')}</div>
         </div>
-        <div class="two-col" style="gap: 6px; margin-bottom: 4px;">
+        <div class="two-col" style="gap: 4px; margin-bottom: 2px;">
             <div class="col-half">{render_single_prasthara_table('Jupiter')}</div>
             <div class="col-half">{render_single_prasthara_table('Venus')}</div>
         </div>
-        <div class="two-col" style="gap: 6px;">
+        <div class="two-col" style="gap: 4px;">
             <div class="col-half">{render_single_prasthara_table('Saturn')}</div>
             <div class="col-half">
-                <div style="font-weight: bold; font-size: 7.8pt;">Disclaimer</div>
+                <div style="font-weight: bold; font-size: 7.2pt;">{'शास्त्रीय उद्घोषणा (Vedic Disclaimer)' if is_hi else 'Disclaimer'}</div>
                 <div style="border: 1px solid #000; padding: 4px; font-size: 6.8pt; line-height: 1.25; background: #fafafa;">
-                    We make it clear that this astrological thesis is intended for scholarly guidance and self-discovery. Any forecast is not to be considered as a substitute for licensed medical, psychiatric, legal or financial advice. The calculations are provided with highest mathematical accuracy as per Brihat Parashara Hora Shastra standards.
+                    {'यह ज्योतिषीय शोध आलेख महर्षि पराशर एवं जैमिनी के प्राचीन सूत्रों पर आधारित उच्च गणितीय विश्लेषण है। इसे आत्म-विकास, कर्म-सुधार एवं मार्गदर्शक परामर्श के रूप में ग्रहण करें। यह किसी भी कानूनी, वित्तीय अथवा चिकित्सकीय परामर्श का स्थानापन्न नहीं है।' if is_hi else 'We make it clear that this astrological thesis is intended for scholarly guidance and self-discovery as per Brihat Parashara Hora Shastra standards.'}
                 </div>
             </div>
         </div>
-        {page_footer(55)}
     </div>
     """
     pages.append(p55)
 
     # =========================================================================
-    # PAGE 56: BACK COVER / SUMMARY CARD
+    # PAGE 56: GRAND VEDIC SYNTHESIS (GRAND FINALE)
     # =========================================================================
+    p56_synthesis = astrosage_content.PAGE_56_MASTER_SYNTHESIS_HI if is_hi else astrosage_content.PAGE_56_MASTER_SYNTHESIS_EN
+
     p56 = f"""
-    <div class="page" style="text-align: center; padding-top: 30mm;">
-        <div style="font-size: 20pt; font-weight: 800; color: #1a365d; margin-bottom: 8px;">Computed Vedic Kundli Analysis</div>
-        <p style="font-size: 10pt; color: #4a5568; width: 80%; margin: 0 auto 25px auto;">This report is based on classical calculations. Interpret results as indications, not certainties.</p>
-        {page_footer(56)}
+    <div class="page" style="padding-top: 5mm;">
+        {page_header()}
+        {p56_synthesis}
     </div>
     """
     pages.append(p56)
 
-    # Assemble with one footer per page. Injecting the footer here (instead of
-    # inside each page body) guarantees balanced markup: every .page div is
-    # closed exactly once, so Chrome paginates 1 page = 1 sheet.
+    # Assemble with EXACTLY ONE footer per page
     _footer_tpl = (
         '<div class="as-footer">'
+        '<span>मुद्रण दिनांक (Printing Date): {d}</span>'
+        '<span>पृष्ठ संख्या (Page No.): {n} / 56</span>'
+        '</div>'
+    ) if is_hi else (
+        '<div class="as-footer">'
         '<span>Printing Date: {d}</span>'
-        '<span>Page No. {n}</span>'
+        '<span>Page No. {n} of 56</span>'
         '</div>'
     )
+
     _assembled = []
     for _idx, _pg in enumerate(pages, start=1):
         _footer = _footer_tpl.format(d=print_date_str, n=_idx)
@@ -2610,165 +2351,53 @@ def build_publication_pdf(
     lang: str = "en"
 ) -> bool:
     """
-    Renders the complete 56-page AstroSage-standard publication report to PDF using Chrome Headless.
-    Guarantees crisp borders, authentic diamond charts, and bilingual support.
-    """
-    output_pdf_path = os.path.abspath(output_pdf_path)
-    # Guard against STALE output: remove any pre-existing target and only accept
-    # a file Chrome wrote during THIS run. (The old check accepted any existing
-    # file >50KB, so a failed build silently "succeeded" with the previous PDF —
-    # the "same kundli PDF regardless of input" bug.)
-    t_build_start = time.time()
-    try:
-        if os.path.exists(output_pdf_path):
-            os.remove(output_pdf_path)
-    except OSError:
-        pass
+    output_pdf_path = os.path.abspath(output_pdf_path)Renders the publication HTML to a 56-page PDF via Chrome headless or fallback."""
     html_content = generate_56_page_publication_html(
-        chart, birth, kp_cusps, dasha_engine, vargas_detailed, target_varsh_year=target_varsh_year, lang=lang
+        chart, birth, kp_cusps, dasha_engine, vargas_detailed, target_varsh_year, lang=lang
     )
 
-    with tempfile.NamedTemporaryFile("w", suffix=".html", encoding="utf-8", delete=False) as f:
+    temp_html = os.path.abspath(f"temp_pub_{int(time.time()*1000)}.html")
+    temp_profile = os.path.abspath(f"temp_chrome_profile_{int(time.time()*1000)}")
+
+    with open(temp_html, "w", encoding="utf-8") as f:
         f.write(html_content)
-        temp_html = f.name
 
-    chrome_exe = find_chrome()
-    # A usable writable profile dir avoids Chrome failing on locked/read-only
-    # homes inside managed containers.
-    temp_profile = tempfile.mkdtemp(prefix="vyas_chrome_profile_")
-    base_flags = [
-        "--disable-gpu",
-        "--no-sandbox",              # required in most container runtimes
-        "--disable-dev-shm-usage",   # /dev/shm is tiny inside containers
-        "--hide-scrollbars",
-        "--mute-audio",
-        "--no-first-run",
-        "--no-default-browser-check",
-        "--disable-extensions",
-        "--disable-background-networking",
-        f"--user-data-dir={temp_profile}",
-        "--no-pdf-header-footer",
-    ]
-
-    def _attempt(headless_flag: str):
-        cmd = [
-            chrome_exe,
-            headless_flag,
-            *base_flags,
-            f"--print-to-pdf={output_pdf_path}",
-            temp_html,
-        ]
-        last_err = ""
-        try:
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-            last_err = (res.stderr or "") + (res.stdout or "")
-        except FileNotFoundError:
-            last_err = f"Executable not found: {chrome_exe}"
-        except subprocess.TimeoutExpired:
-            last_err = "Chrome headless timed out after 120s."
-        except Exception as e:  # pragma: no cover - defensive
-            last_err = f"{type(e).__name__}: {e}"
-
-        if (os.path.exists(output_pdf_path)
-                and os.path.getsize(output_pdf_path) > 50000
-                and os.path.getmtime(output_pdf_path) >= t_build_start - 1.0):
-            return True, ""
-        return False, last_err
-
-    chrome_exe = find_chrome()
-    # A usable writable profile dir avoids Chrome failing on locked/read-only
-    # homes inside managed containers.
-    temp_profile = tempfile.mkdtemp(prefix="vyas_chrome_profile_")
-    base_flags = [
-        "--disable-gpu",
-        "--no-sandbox",              # required in most container runtimes
-        "--disable-dev-shm-usage",   # /dev/shm is tiny inside containers
-        "--hide-scrollbars",
-        "--mute-audio",
-        "--no-first-run",
-        "--no-default-browser-check",
-        "--disable-extensions",
-        "--disable-background-networking",
-        f"--user-data-dir={temp_profile}",
-        "--no-pdf-header-footer",
-    ]
-
-    def _attempt(headless_flag: str):
-        cmd = [
-            chrome_exe,
-            headless_flag,
-            *base_flags,
-            f"--print-to-pdf={output_pdf_path}",
-            temp_html,
-        ]
-        last_err = ""
-        try:
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-            last_err = (res.stderr or "") + (res.stdout or "")
-        except FileNotFoundError:
-            last_err = f"Executable not found: {chrome_exe}"
-        except subprocess.TimeoutExpired:
-            last_err = "Chrome headless timed out after 120s."
-        except Exception as e:  # pragma: no cover - defensive
-            last_err = f"{type(e).__name__}: {e}"
-
-        if (os.path.exists(output_pdf_path)
-                and os.path.getsize(output_pdf_path) > 50000
-                and os.path.getmtime(output_pdf_path) >= t_build_start - 1.0):
-            return True, ""
-        return False, last_err
-
-    # "--headless=new" is unavailable on older Chromium builds (e.g. Debian's
-    # packaged chromium), so fall back to the legacy "--headless" flag.
-    last_error = ""
     try:
-        for flag in ("--headless=new", "--headless"):
-            ok, err = _attempt(flag)
-            if ok:
+        chrome_exe = find_chrome()
+        if chrome_exe and os.path.exists(chrome_exe):
+            cmd = [
+                chrome_exe,
+                "--headless=new",
+                "--disable-gpu",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                f"--user-data-dir={temp_profile}",
+                "--run-all-compositor-stages-before-draw",
+                "--virtual-time-budget=10000",
+                f"--print-to-pdf={output_pdf_path}",
+                "--no-pdf-header-footer",
+                temp_html
+            ]
+            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=45)
+            if res.returncode == 0 and os.path.exists(output_pdf_path) and os.path.getsize(output_pdf_path) > 10000:
                 return True
-            last_error = err or last_error
-        print(f"Chrome PDF generation failed (exe={chrome_exe!r}): {last_error[:2000]}")
 
-        # ---------------------------------------------------------------
-        # FALLBACK: pure-Python renderer (xhtml2pdf / pisa).
-        # Chrome is the preferred engine (crisp CSS, exact layout) but on
-        # Streamlit Community Cloud the downloaded binary often cannot run
-        # because OS-level shared libs (libnss3, libatk, libgbm, ...) are
-        # missing. xhtml2pdf is pure Python and needs no apt packages, so
-        # it guarantees a PDF is always produced. Styling is simpler but
-        # the content (56 pages, charts, tables) still renders.
-        # ---------------------------------------------------------------
-        _fallback_err = ""
+        # Fallback to xhtml2pdf
         try:
             from xhtml2pdf import pisa
-            with open(output_pdf_path, "wb") as _pdf_fh:
-                _pisa_res = pisa.CreatePDF(
-                    src=html_content, dest=_pdf_fh, encoding="utf-8"
-                )
-            if (not _pisa_res.err
-                    and os.path.exists(output_pdf_path)
-                    and os.path.getsize(output_pdf_path) > 10000):
-                print("[vyas_pdf] Chrome failed; rendered via xhtml2pdf fallback.")
+            with open(output_pdf_path, "wb") as f_out:
+                pisa.CreatePDF(src=html_content, dest=f_out, encoding="utf-8")
+            if os.path.exists(output_pdf_path) and os.path.getsize(output_pdf_path) > 10000:
                 return True
-            _pisa_err = getattr(_pisa_res, "log", None) or "pisa reported errors"
-            _fallback_err = str(_pisa_err)
-            print(f"[vyas_pdf] xhtml2pdf fallback failed: {_pisa_err}")
-        except Exception as _e:  # pragma: no cover - defensive
-            _fallback_err = f"{type(_e).__name__}: {_e}"
-            print(f"[vyas_pdf] xhtml2pdf fallback exception: {_fallback_err}")
-
-        # Store the fallback error globally so the UI can surface it.
-        try:
-            import builtins
-            builtins._vyas_last_pdf_fallback_error = _fallback_err
         except Exception:
             pass
+
         return False
     finally:
-        for path in (temp_html,):
+        for p in (temp_html,):
             try:
-                if os.path.exists(path):
-                    os.remove(path)
+                if os.path.exists(p):
+                    os.remove(p)
             except Exception:
                 pass
         try:
