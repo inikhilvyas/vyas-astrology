@@ -7,7 +7,10 @@ Provides:
 - Worldwide major global metro cities support.
 """
 import os
-import sqlite3
+try:
+    import sqlite3
+except (ImportError, ModuleNotFoundError):
+    sqlite3 = None
 from typing import List, Dict
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data", "cities.db")
@@ -49,7 +52,7 @@ def search_cities(query: str, limit: int = 30) -> List[Dict]:
     results = []
     
     # 1. Search in local offline GeoNames database
-    if os.path.exists(DB_PATH):
+    if sqlite3 is not None and os.path.exists(DB_PATH):
         try:
             conn = sqlite3.connect(DB_PATH)
             conn.row_factory = sqlite3.Row

@@ -19,6 +19,7 @@ from . import chalit
 from . import chakras
 from . import forensic_predictor
 from . import publication_engine
+from . import city_search
 
 __all__ = [
     "constants",
@@ -37,4 +38,5 @@ __all__ = [
     "chakras",
     "forensic_predictor",
     "publication_engine",
+    "city_search",
 ]

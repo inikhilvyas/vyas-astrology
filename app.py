@@ -62,7 +62,10 @@ from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
 from vyas import match as vyas_match
 from vyas.chatbot import vyas_chatbot
-from vyas import city_search
+try:
+    from vyas import city_search
+except Exception:
+    city_search = None
 from vyas import google_drive_sync
 
 # ---------------- AUTH SESSION HELPERS ----------------
@@ -2083,7 +2086,7 @@ st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth P
 # Instant town & city search across 565,000+ Indian & Global locations
 city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
 
-matched_cities = city_search.search_cities(city_query, limit=40)
+matched_cities = city_search.search_cities(city_query, limit=40) if city_search else []
 city_options = {}
 if matched_cities:
     for c in matched_cities:
