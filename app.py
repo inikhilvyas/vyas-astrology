@@ -1,4 +1,15 @@
 import streamlit as st
+
+# Backward/forward compatibility shims across Streamlit versions
+if not hasattr(st, "dialog") and hasattr(st, "experimental_dialog"):
+    st.dialog = st.experimental_dialog
+
+if not hasattr(st, "iframe"):
+    try:
+        import streamlit.components.v1 as _comp
+        st.iframe = _comp.html
+    except Exception:
+        pass
 from datetime import datetime, timezone, timedelta, time as d_time
 import sys
 import os
@@ -1686,7 +1697,7 @@ with st.sidebar:
         <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 47, 0.95) 100%);
                     border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 10px; padding: 8px 12px; text-align: center; margin-bottom: 8px;">
             <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">👑 VIP PRO TRIAL ACTIVE</div>
-            <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{u['name']} • <b>{u['days_left']} Days Left</b></div>
+            <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{u['name']} • <b>{u.get('days_left', 30)} Days Left</b></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1875,7 +1886,9 @@ with st.sidebar:
                     st.caption(f"Last DB error: {auth_vault.LAST_DB_ERROR}")
 
             # ---- OAuth diagnostics ----
-            with st.expander("🔍 OAuth Debug (redirect URI जाँचें)", expanded=False):
+            st.markdown("---")
+            st.markdown("**🔍 OAuth Debug (redirect URI जाँचें)**")
+            with st.container():
                 _eff_redirect = google_drive_sync.resolve_redirect_uri(
                     google_drive_sync.load_google_config().get("redirect_uri", "")
                 )
@@ -1887,16 +1900,19 @@ with st.sidebar:
                 except Exception:
                     pass
 
+                _ctx = getattr(st, "context", None)
+                _ctx_headers = getattr(_ctx, "headers", {}) if _ctx else {}
+                _ctx_url = str(getattr(_ctx, "url", "") or "") if _ctx else ""
                 st.code(
                     "Effective redirect_uri : " + repr(_eff_redirect) + "\n"
                     + "Sent in auth URL     : " + repr(_sent_redirect) + "\n"
                     + "Match (code side)    : "
                     + ("OK" if _eff_redirect == _sent_redirect else "MISMATCH!") + "\n"
                     + "Registered in code   : " + repr(sorted(google_drive_sync.REGISTERED_REDIRECT_URIS)) + "\n"
-                    + "st.context.url       : " + repr(str(getattr(st.context, "url", "") or "")) + "\n"
-                    + "X-Forwarded-Host     : " + repr(st.context.headers.get("X-Forwarded-Host")) + "\n"
-                    + "X-Forwarded-Proto    : " + repr(st.context.headers.get("X-Forwarded-Proto")) + "\n"
-                    + "Host                 : " + repr(st.context.headers.get("Host")),
+                    + "st.context.url       : " + repr(_ctx_url) + "\n"
+                    + "X-Forwarded-Host     : " + repr(_ctx_headers.get("X-Forwarded-Host")) + "\n"
+                    + "X-Forwarded-Proto    : " + repr(_ctx_headers.get("X-Forwarded-Proto")) + "\n"
+                    + "Host                 : " + repr(_ctx_headers.get("Host")),
                     language="text",
                 )
                 st.caption(
