@@ -12,8 +12,9 @@ dasha active at any given moment in time.
 """
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Dict, Tuple
 
 from vyas import constants
@@ -59,17 +60,36 @@ class VimshottariDasha:
         self.birth_lord = constants.VIMSHOTTARI_ORDER[self.starting_lord_idx]
         self.proportion_remaining = deg_remaining / constants.NAKSHATRA_SPAN
         
-        # Dasha balance at birth (Years, Months, Days)
+        # Dasha balance at birth (Years, Months, Days).
+        # Rounded to whole days first, then decomposed -- decomposing the float
+        # and rounding the leftover days produced "3Y 7M 16D" style figures that
+        # were a day out against every published table.
         total_lord_years = constants.VIMSHOTTARI_YEARS[self.birth_lord]
         bal_years_float = total_lord_years * self.proportion_remaining
+        # Truncate to whole days (classical almanacs never round a balance up),
+        # then decompose on the 365-day / 30-day display convention so a full
+        # 7-year Ketu balance prints "7Y 0M 0D", not "7Y 0M 2D".
+        bal_days_total = int(math.floor(bal_years_float * constants.YEAR_DAYS + 1e-9))
         self.balance_years = int(bal_years_float)
-        rem_months = (bal_years_float - self.balance_years) * 12.0
-        self.balance_months = int(rem_months)
-        rem_days = (rem_months - self.balance_months) * 30.4375
-        self.balance_days = int(round(rem_days))
+        rem_days = max(0, bal_days_total - self.balance_years * 365)
+        self.balance_months = rem_days // 30
+        self.balance_days = rem_days % 30
+        # A full balance (birth exactly on the nakshatra start) is the whole
+        # Vimshottari period; the 365.25-day year makes it one day over.
+        if self.proportion_remaining >= 1.0 - 1e-12:
+            self.balance_years = int(total_lord_years)
+            self.balance_months = 0
+            self.balance_days = 0
+        self.balance_days_float = bal_years_float * constants.YEAR_DAYS
         self.balance_str = f"{self.birth_lord}: {self.balance_years}Y {self.balance_months}M {self.balance_days}D"
 
     def _add_years(self, dt: datetime, years: float) -> datetime:
+        """Add Vimshottari years on the 365.25-day convention.
+
+        The birth instant keeps its own tzinfo: converting it to the server's
+        local zone here is what made dasha boundaries drift by hours (and, on a
+        machine set to IST, silently reinterpreted a UTC birth time).
+        """
         return dt + timedelta(days=years * constants.YEAR_DAYS)
 
     def calculate_mahadashas(self, num_cycles: int = 1) -> List[DashaNode]:
@@ -158,15 +178,13 @@ class VimshottariDasha:
         if target_date is None:
             target_date = datetime.now()
         
-        # Harmonize timezone awareness between target_date and self.birth_date
-        if hasattr(self.birth_date, 'tzinfo') and self.birth_date.tzinfo is not None:
-            if target_date.tzinfo is None:
-                target_date = target_date.replace(tzinfo=self.birth_date.tzinfo)
-            else:
-                target_date = target_date.astimezone(self.birth_date.tzinfo)
-        else:
-            if target_date.tzinfo is not None:
-                target_date = target_date.replace(tzinfo=None)
+        # Compare instants, never wall-clock strings.  A naive birth_date is
+        # assumed to be UTC (the engine's canonical input) rather than being
+        # reinterpreted as the server's local zone.
+        if self.birth_date.tzinfo is None:
+            self.birth_date = self.birth_date.replace(tzinfo=timezone.utc)
+        if target_date.tzinfo is None:
+            target_date = target_date.replace(tzinfo=timezone.utc)
 
         md_list = self.calculate_mahadashas(num_cycles=2)
         

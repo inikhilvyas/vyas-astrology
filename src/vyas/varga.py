@@ -183,8 +183,11 @@ def calculate_vargas_detailed(longitude: float) -> Dict[str, VargaPosition]:
     add_varga("D9", 9, d9_sign, d9_deg)
 
     # 7. D10 Dashamsha (Span 3°00')
-    # BPHS: Odd signs start from the sign itself. Even signs start from the 9th from it (i.e. sign + 8).
-    d10_part = int(degree_in_sign // 3.0) # 0 to 9
+    # BPHS 6.11: for an ODD sign the ten parts start from that sign itself;
+    # for an EVEN sign they start from the 9th sign from it.  (The old code was
+    # right here, but the same rule had been duplicated -- and diverged -- in
+    # chart.PlanetState.d10_sign; that duplicate now delegates to this table.)
+    d10_part = int(degree_in_sign // 3.0)  # 0 to 9
     d10_deg = (degree_in_sign * 10.0) % 30.0
     start_d10 = planet_sign if is_odd_sign else get_sign(planet_sign + 8)
     d10_sign = get_sign(start_d10 + d10_part)
@@ -236,26 +239,39 @@ def calculate_vargas_detailed(longitude: float) -> Dict[str, VargaPosition]:
     d27_sign = get_sign(start_sign + d27_part)
     add_varga("D27", 27, d27_sign, d27_deg)
 
-    # 13. D30 Trishamsha (Span 1°)
-    d30_deg = (degree_in_sign * 30.0) % 30.0
+    # 13. D30 Trishamsha (BPHS 6.19)
+    # Odd sign : 0-5 Mars(Aries), 5-10 Saturn(Aquarius), 10-18 Jupiter(Sagittarius),
+    #            18-25 Mercury(Gemini), 25-30 Venus(Libra)
+    # Even sign: 0-5 Venus(Taurus), 5-12 Mercury(Virgo), 12-20 Jupiter(Pisces),
+    #            20-25 Saturn(Capricorn), 25-30 Mars(Scorpio)
+    # The boundaries are NOT uniform 6-degree parts -- a very common bug.
     deg = degree_in_sign
     if is_odd_sign:
-        if deg <= 5.0: d30_sign = 0   # Aries (Mars)
-        elif deg <= 10.0: d30_sign = 10 # Aquarius (Saturn)
-        elif deg <= 18.0: d30_sign = 8  # Sagittarius (Jupiter)
-        elif deg <= 25.0: d30_sign = 2  # Gemini (Mercury)
-        else: d30_sign = 6            # Libra (Venus)
+        if deg < 5.0: d30_sign = 0      # Aries
+        elif deg < 10.0: d30_sign = 10  # Aquarius
+        elif deg < 18.0: d30_sign = 8   # Sagittarius
+        elif deg < 25.0: d30_sign = 2   # Gemini
+        else: d30_sign = 6              # Libra
     else:
-        if deg <= 5.0: d30_sign = 1   # Taurus (Venus)
-        elif deg <= 12.0: d30_sign = 5 # Virgo (Mercury)
-        elif deg <= 20.0: d30_sign = 11# Pisces (Jupiter)
-        elif deg <= 25.0: d30_sign = 9 # Capricorn (Saturn)
-        else: d30_sign = 7            # Scorpio (Mars)
+        if deg < 5.0: d30_sign = 1      # Taurus
+        elif deg < 12.0: d30_sign = 5   # Virgo
+        elif deg < 20.0: d30_sign = 11  # Pisces
+        elif deg < 25.0: d30_sign = 9   # Capricorn
+        else: d30_sign = 7              # Scorpio
+    # Internal degree is the proportional position inside the 1/30 of the sign,
+    # scaled to the full 30° of the divisional sign.
+    _d30_spans_odd = ((0.0, 5.0), (5.0, 10.0), (10.0, 18.0), (18.0, 25.0), (25.0, 30.0))
+    _d30_spans_even = ((0.0, 5.0), (5.0, 12.0), (12.0, 20.0), (20.0, 25.0), (25.0, 30.0))
+    _spans = _d30_spans_odd if is_odd_sign else _d30_spans_even
+    _idx = 0 if deg < 5.0 else 1 if deg < _spans[1][1] else 2 if deg < _spans[2][1] else 3 if deg < 25.0 else 4
+    _lo, _hi = _spans[_idx]
+    d30_deg = (deg - _lo) / (_hi - _lo) * 30.0
     add_varga("D30", 30, d30_sign, d30_deg)
 
     # 14. D40 Khavedamsha (Span 0°45' = 0.75°)
     d40_part = int(degree_in_sign // 0.75)
     d40_deg = (degree_in_sign * 40.0) % 30.0
+    # BPHS 6.21: odd signs count from Aries (0), even signs from Libra (6).
     d40_sign = get_sign(0 + d40_part) if is_odd_sign else get_sign(6 + d40_part)
     add_varga("D40", 40, d40_sign, d40_deg)
 
@@ -278,12 +294,14 @@ def calculate_vargas_detailed(longitude: float) -> Dict[str, VargaPosition]:
     d60_deg = (degree_in_sign * 60.0) % 30.0
     d60_sign = get_sign(planet_sign + d60_part)
     
-    # Deity lookup:
-    # Odd sign: 0 to 59 corresponds to 1 to 60.
-    # Even sign: 0 to 59 corresponds to 60 down to 1.
+    # Deity lookup (BPHS 6.33):
+    # Odd signs run the 60 deities forward (part 0 -> #1 ... part 59 -> #60);
+    # even signs run them backward (part 0 -> #60 ... part 59 -> #1).
     deity_idx = d60_part if is_odd_sign else (59 - d60_part)
     deity_name, is_benefic = D60_DEITIES[deity_idx]
     deity_full = f"{deity_name} (#{deity_idx + 1})"
+    # Sanity: index 0 must be deity #1 and index 59 deity #60.
+    assert D60_DEITIES[0][0] == "Ghora" and D60_DEITIES[59][0] == "Chandrarekha"
 
     add_varga("D60", 60, d60_sign, d60_deg, deity=deity_full, is_ben=is_benefic)
 

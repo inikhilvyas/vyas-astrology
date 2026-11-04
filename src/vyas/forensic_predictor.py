@@ -448,23 +448,29 @@ def compute_comprehensive_kalsarp(chart) -> dict:
 # ---------------------------------------------------------------------------
 # Comprehensive Shani Sade Sati Timeline & Predictions
 # ---------------------------------------------------------------------------
-def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float) -> List[SadeSatiPhase]:
+def compute_comprehensive_sade_sati(birth_dt: datetime, moon_lon: float,
+                                    tz_hours: float = 5.5) -> List[SadeSatiPhase]:
     """
     Computes chronological lifetime Sade Sati and Dhaiya (Chhoti Panoti) cycles 
     for the native over 90+ years with exact dates and 3-phase qualitative predictions.
     """
     from vyas import ephem
+    # birth_dt is the *local wall clock* birth time with no tzinfo; Saturn's
+    # sign must be evaluated at a real instant, so anchor it to UTC.  Without
+    # this the naive value was read as server-local time (IST on a Windows box),
+    # shifting every Sade Sati boundary by ~5h30m.
+    birth_dt = ephem.ensure_utc(birth_dt, "birth_dt", assume_tz_hours=tz_hours)
     moon_sign_idx = int(moon_lon // 30) % 12
     # Signs involved in Sade Sati: Moon-1 (12th from Moon), Moon (1st), Moon+1 (2nd from Moon)
     # Dhaiya (Kantaka / Ashtama): 4th from Moon, 8th from Moon
     sade_sati_signs = {
-        (moon_sign_idx - 1) % 12: ("साढ़े साती", "उदय", "उदय चरण (चन्द्र से 12H) - व्यय, प्रवास व आंतरिक अनुशासन"),
-        moon_sign_idx: ("साढ़े साती", "शिखर", "शिखर चरण (जन्म चन्द्र पर शनि) - मानसिक मंथन, दायित्व व आत्म-साक्षात्कार"),
-        (moon_sign_idx + 1) % 12: ("साढ़े साती", "अस्त", "अस्त चरण (चन्द्र से 2H) - धन-कुटुंब पर प्रभाव, स्थिरता व लाभ")
+        (moon_sign_idx - 1) % 12: ("Sade Sati", "Uday", "Rising phase (12th from Moon): expenditure, travel and inner discipline"),
+        moon_sign_idx: ("Sade Sati", "Shikhar", "Peak phase (Saturn on the natal Moon): mental churn, responsibility and self-reckoning"),
+        (moon_sign_idx + 1) % 12: ("Sade Sati", "Ast", "Setting phase (2nd from Moon): effects on wealth and family, then stability and gain")
     }
     dhaiya_signs = {
-        (moon_sign_idx + 3) % 12: ("छोटी पनौती", "ढैय्या (4H)", "चतुर्थ ढैय्या (कंटक शनि) - गृह, सुख व कार्यक्षेत्र में कर्म फल"),
-        (moon_sign_idx + 7) % 12: ("छोटी पनौती", "ढैय्या (8H)", "अष्टम ढैय्या (अष्टम शनि) - गूढ़ चिंतन, स्वास्थ्य सतर्कता व परिवर्तन")
+        (moon_sign_idx + 3) % 12: ("Dhaiya", "Dhaiya (4H)", "Kantaka Shani (4th from Moon): effects on home, comfort and workplace"),
+        (moon_sign_idx + 7) % 12: ("Dhaiya", "Dhaiya (8H)", "Ashtama Shani (8th from Moon): deep reflection, health caution and change")
     }
 
     phases = []
@@ -1155,6 +1161,143 @@ def compute_varga_cross_analysis(d1_dignities: Dict[str, PlanetDignity], vargas_
 
 
 # ---------------------------------------------------------------------------
+# Timed predictions with an explicit evidence chain
+# ---------------------------------------------------------------------------
+DOMAIN_BY_HOUSE = {
+    1: ("स्वास्थ्य, व्यक्तित्व एवं आत्मबल", "health, identity & self-assertion"),
+    2: ("धन, परिवार एवं वाणी", "wealth, family & speech"),
+    3: ("साहस, भाई-बहन एवं संप्रेषण", "courage, siblings & communication"),
+    4: ("गृह, माता एवं मानसिक सुख", "home, mother & inner peace"),
+    5: ("संतान, विद्या एवं पूर्वजन्य पुण्य", "children, learning & creative merit"),
+    6: ("रोग, ऋण एवं प्रतिस्पर्धा", "health, debt & competition"),
+    7: ("विवाह, साझेदारी एवं व्यापार", "marriage, partnership & business"),
+    8: ("आयु, गुप्त विषय एवं आकस्मिक परिवर्तन", "longevity, the hidden & upheaval"),
+    9: ("भाग्य, धर्म एवं उच्च शिक्षा", "fortune, dharma & higher learning"),
+    10: ("करियर, पद एवं सामाजिक प्रतिष्ठा", "career, status & public standing"),
+    11: ("लाभ, आय एवं आकांक्षा-पूर्ति", "gains, income & fulfilment of desires"),
+    12: ("व्यय, विदेश एवं मोक्ष", "expenditure, foreign lands & release"),
+}
+
+BENEFIC = {"Jupiter", "Venus", "Moon", "Mercury"}
+
+
+def _verdict_from_bindus(bindus: int, benefic_lord: bool, malefic_dasha: bool) -> str:
+    """Classify a timed prediction from AV bindus + the nature of the dasha lord."""
+    score = bindus
+    if benefic_lord:
+        score += 2
+    if malefic_dasha:
+        score -= 2
+    if score >= 30:
+        return "उत्तम"
+    if score >= 26:
+        return "अनुकूल"
+    if score >= 22:
+        return "मिश्रित"
+    return "सतर्कता"
+
+
+def build_timed_predictions(chart, dignities, sav, dasha_engine, birth=None,
+                            horizon_years: float = 10.0, limit: int = 8) -> List[dict]:
+    """Dated predictions, each traceable to Dasha + house + transit + AV bindus.
+
+    This is the ASTRA-Omega convergence rule in its simplest honest form: a
+    statement is only made when the running Mahadasha/Antardasha activates a
+    house, and that house is *also* supported (or contradicted) by the
+    Ashtakavarga bindus of the sign the transiting lord occupies.
+    """
+    if dasha_engine is None or not sav:
+        return []
+
+    from datetime import timedelta
+    from vyas import constants as C
+    from vyas import ephem as _ephem
+
+    asc_sign = chart.ascendant_sign
+    planet_sign = {n: p.sign_index for n, p in chart.planets.items()}
+
+    # Start the walk at birth (or "now" for a running chart), in UTC.
+    birth_dt = getattr(dasha_engine, "birth_date", None)
+    if birth_dt is None:
+        return []
+    if birth_dt.tzinfo is None:
+        birth_dt = birth_dt.replace(tzinfo=__import__("datetime").timezone.utc)
+
+    now = __import__("datetime").datetime.now(__import__("datetime").timezone.utc)
+    start = max(birth_dt, now - timedelta(days=365))
+    end = now + timedelta(days=365.25 * horizon_years)
+
+    md_nodes = dasha_engine.calculate_mahadashas(num_cycles=2)
+    out: List[dict] = []
+
+    for md in md_nodes:
+        if md.end_date < start:
+            continue
+        if md.start_date > end:
+            break
+        ads = dasha_engine.expand_sub_dashas(md, target_level=2)
+        for ad in ads:
+            if ad.end_date < start:
+                continue
+            if ad.start_date > end:
+                break
+
+            md_house = (planet_sign[md.lord] - asc_sign) % 12 + 1
+            ad_house = (planet_sign[ad.lord] - asc_sign) % 12 + 1
+            # The activated house: the Antardasha lord's house unless it is a
+            # dusthana, in which case the Mahadasha lord's house leads.
+            focus_house = ad_house if ad_house not in (6, 8, 12) else md_house
+            dom_hi, dom_en = DOMAIN_BY_HOUSE[focus_house]
+
+            # Transit trigger: where the AD lord's sign falls from the natal Moon.
+            transit_sign = planet_sign[ad.lord]
+            bindus = sav[transit_sign]
+            benefic_lord = ad.lord in BENEFIC
+            malefic_dasha = md.lord in ("Saturn", "Rahu", "Ketu", "Mars", "Sun")
+            verdict = _verdict_from_bindus(bindus, benefic_lord, malefic_dasha)
+            verdict_en = {"उत्तम": "Excellent", "अनुकूल": "Favourable",
+                          "मिश्रित": "Mixed", "सतर्कता": "Caution"}[verdict]
+
+            lord_dig = dignities.get(ad.lord)
+            dignity_note_hi = ""
+            dignity_note_en = ""
+            if lord_dig is not None:
+                if lord_dig.is_exalted:
+                    dignity_note_hi, dignity_note_en = " (उच्च का)", " (exalted)"
+                elif lord_dig.is_debilitated:
+                    dignity_note_hi, dignity_note_en = " (नीच का)", " (debilitated)"
+                elif lord_dig.is_retrograde:
+                    dignity_note_hi, dignity_note_en = " (वक्री)", " (retrograde)"
+
+            evidence_hi = (
+                f"{C.PLANETS_HI.get(md.lord, md.lord)} महादशा → "
+                f"{C.PLANETS_HI.get(ad.lord, ad.lord)} अंतर्दशा{dignity_note_hi}; "
+                f"सक्रिय भाव {focus_house}; "
+                f"{C.SIGNS_HI[transit_sign]} में अष्टकवर्ग बिन्दु {bindus}")
+            evidence_en = (
+                f"{md.lord} MD -> {ad.lord} AD{dignity_note_en}; "
+                f"activates house {focus_house}; "
+                f"{C.SIGNS[transit_sign]} holds {bindus} AV bindus")
+
+            out.append({
+                "period": f"{ad.start_date:%d/%m/%Y} - {ad.end_date:%d/%m/%Y}",
+                "dasha": f"{md.lord} / {ad.lord}",
+                "domain_hi": dom_hi,
+                "domain_en": dom_en,
+                "verdict_hi": verdict,
+                "verdict_en": verdict_en,
+                "evidence_hi": evidence_hi,
+                "evidence_en": evidence_en,
+                "start": ad.start_date,
+            })
+
+    # Merge consecutive periods that share lord + verdict so the table reads as
+    # a forecast rather than a 9-cell dump, then keep the nearest ones.
+    out.sort(key=lambda r: r["start"])
+    return out[:limit]
+
+
+# ---------------------------------------------------------------------------
 # Master Senior Jyotishi Overall Life Forecast Engine (समग्र जीवन फलादेश)
 # ---------------------------------------------------------------------------
 def compute_overall_life_forecast(
@@ -1163,7 +1306,8 @@ def compute_overall_life_forecast(
     bhavas: List[BhavaAnalysis],
     sav: List[int],
     vargas_detailed: dict = None,
-    dasha_engine = None
+    dasha_engine = None,
+    birth: dict = None,
 ) -> List[dict]:
     """
     Generates an erudite, publication-grade multi-paragraph life forecast
@@ -1761,6 +1905,50 @@ def compute_overall_life_forecast(
         "icon": "⏳",
         "content_hi": f"<p>{p_dasha1}</p><p>{p_dasha2}</p>"
     })
+
+    # -------------------------------------------------------------------------
+    # 14. Timed predictions, each one carrying the evidence chain that produced
+    #     it: Dasha (MD/AD) -> house activated -> transit trigger -> AV bindus.
+    # -------------------------------------------------------------------------
+    timed = build_timed_predictions(chart, dignities, sav, dasha_engine, birth)
+    if timed:
+        rows_hi = []
+        rows_en = []
+        for tp in timed:
+            rows_hi.append(
+                f"<tr><td>{tp['period']}</td><td>{tp['dasha']}</td>"
+                f"<td>{tp['domain_hi']}</td><td>{tp['verdict_hi']}</td>"
+                f"<td style='font-size:0.82rem'>{tp['evidence_hi']}</td></tr>")
+            rows_en.append(
+                f"<tr><td>{tp['period']}</td><td>{tp['dasha']}</td>"
+                f"<td>{tp['domain_en']}</td><td>{tp['verdict_en']}</td>"
+                f"<td style='font-size:0.82rem'>{tp['evidence_en']}</td></tr>")
+        intro_hi = (
+            "<p>प्रत्येक फलादेश के साथ उसका <b>प्रमाण-श्रृंखला</b> दी गई है: "
+            "कौन-सी महादशा/अंतर्दशा चल रही है, वह कुण्डली का कौन-सा भाव सक्रिय करती है, "
+            "गोचर में कौन-सा ग्रह उसे ट्रिगर करता है और उस राशि में अष्टकवर्ग बिन्दु कितने हैं। "
+            "बिन्दु 28 से अधिक = अनुकूल, 22 से कम = प्रतिकूल।</p>")
+        intro_en = (
+            "<p>Every prediction below carries the <b>evidence chain</b> that produced it: "
+            "which Mahadasha/Antardasha is running, which house of the chart it activates, "
+            "which transit triggers it, and how many Ashtakavarga bindus the transited sign holds. "
+            "Above 28 bindus = favourable, below 22 = unfavourable.</p>")
+        chapters.append({
+            "id": "timed_predictions",
+            "chapter_num": 14,
+            "title": "अध्याय 14: दिनांकित भविष्यवाणियाँ एवं प्रमाण-श्रृंखला",
+            "title_hi": "दिनांकित भविष्यवाणियाँ एवं प्रमाण-श्रृंखला",
+            "title_en": "Dated Predictions & Evidence Chain",
+            "icon": "🎯",
+            "content_hi": (
+                intro_hi +
+                "<table class='as-table'><tr><th>अवधि</th><th>दशा</th><th>क्षेत्र</th>"
+                "<th>निर्णय</th><th>प्रमाण</th></tr>" + "".join(rows_hi) + "</table>"),
+            "content_en": (
+                intro_en +
+                "<table class='as-table'><tr><th>Period</th><th>Dasha</th><th>Domain</th>"
+                "<th>Verdict</th><th>Evidence</th></tr>" + "".join(rows_en) + "</table>"),
+        })
 
     return chapters
 

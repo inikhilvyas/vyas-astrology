@@ -105,73 +105,56 @@ def calculate_sub_lords(longitude: float, depth: int = 6) -> Dict[str, str]:
         
     return lords
 
-def _solve_placidus_cusp(ramc: float, lat: float, eps: float, d_offset: float, f_factor: float) -> float:
+def _solve_placidus_cusp(ramc_rad: float, lat_rad: float, eps_rad: float,
+                         fraction: float) -> float:
+    """Tropical ecliptic longitude of a Placidus cusp, given its RAMC fraction.
+
+    The intermediate cusps obey   RA_cusp = RAMC + f · SD(δ),   where
+    SD = asin(tan φ · tan δ) is the semi-diurnal arc of the cusp's own
+    declination δ.  Because δ depends on RA_cusp, this is solved by fixed-point
+    iteration on RA, seeded from the equal-division (Porphyry) longitude.
     """
-    Solves Placidus cusp longitude iteratively.
-    ramc: right ascension of MC in radians
-    lat: geographic latitude in radians
-    eps: obliquity in radians
-    d_offset: RAMC offset (e.g. +30 deg for 11th, +60 deg for 12th)
-    f_factor: 1/3 for 11th/3rd, 2/3 for 12th/2nd
-    """
-    r_target = (ramc + d_offset) % (2.0 * math.pi)
-    # Initial estimate of RA
-    ra = r_target
-    
-    for _ in range(15):
-        # Declination for this RA
-        sin_dec = math.sin(eps) * math.sin(ra)
-        dec = math.asin(max(-0.9999, min(0.9999, sin_dec)))
-        # Semidiurnal arc calculation
-        val = -math.tan(lat) * math.tan(dec)
-        val = max(-0.9999, min(0.9999, val))
-        ad = math.asin(val) # ascensional difference
-        
-        # Next RA approximation based on Placidus proportionality
-        ra_next = (r_target + f_factor * ad) % (2.0 * math.pi)
-        if abs(ra_next - ra) < 1e-6:
+    two_pi = 2.0 * math.pi
+    lon_seed = (ramc_rad + fraction * (math.pi / 2.0)) % two_pi
+    ra = math.atan2(math.sin(lon_seed) * math.cos(eps_rad), math.cos(lon_seed)) % two_pi
+    for _ in range(100):
+        dec = math.asin(max(-0.999999, min(0.999999, math.sin(eps_rad) * math.sin(ra))))
+        tan_prod = math.tan(lat_rad) * math.tan(dec)
+        if abs(tan_prod) >= 0.999999:
+            raise ValueError("Placidus undefined here (|tan phi tan delta| >= 1)")
+        ra_next = (ramc_rad + fraction * math.asin(tan_prod)) % two_pi
+        if abs((ra_next - ra + math.pi) % two_pi - math.pi) < 1e-12:
             ra = ra_next
             break
         ra = ra_next
-        
-    # Convert RA to Ecliptic Longitude
-    tan_lon = math.sin(ra) / (math.cos(ra) * math.cos(eps) - math.tan(dec) * math.sin(eps))
-    lon = math.atan2(math.sin(ra) * math.cos(eps) + math.tan(dec) * math.sin(eps), math.cos(ra))
-    return (math.degrees(lon)) % 360.0
+    return math.degrees(math.atan2(math.sin(ra), math.cos(ra) * math.cos(eps_rad))) % 360.0
+
 
 def calculate_placidus_cusps_sidereal(dt_utc: datetime, lat: float, lon: float) -> List[KPCusp]:
-    """
-    Computes the 12 Placidus house cusps sidereally using the active ayanamsa.
-    """
+    """Twelve Placidus house cusps, sidereal, using the active ayanamsa."""
     t = ephem._t(dt_utc)
     ramc_deg = (t.gast * 15.0 + lon) % 360.0
     eps_deg = ephem.obliquity_deg(t.tt)
-    ay = ephem.lahiri_ayanamsa(t.tt)
-    
+    ay = ephem.ayanamsa_deg(t.tt)
+
     ramc_rad = math.radians(ramc_deg)
     lat_rad = math.radians(lat)
     eps_rad = math.radians(eps_deg)
-    
-    # Tropical MC (10th cusp)
-    mc_trop = math.degrees(math.atan2(math.tan(ramc_rad), math.cos(eps_rad))) % 360.0
-    if abs((mc_trop - ramc_deg + 180) % 360 - 180) > 90:
-        mc_trop = (mc_trop + 180.0) % 360.0
-        
-    # Tropical Ascendant (1st cusp)
+
+    mc_trop = ephem.midheaven_tropical(ramc_deg, eps_deg)
     asc_trop = ephem.ascendant_tropical(ramc_deg, lat, eps_deg)
-    
-    # Calculate tropical intermediate cusps
+
     try:
-        # Cusp 11: offset +30°, factor 1/3
-        c11_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, math.radians(30.0), 1.0/3.0)
-        # Cusp 12: offset +60°, factor 2/3
-        c12_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, math.radians(60.0), 2.0/3.0)
-        # Cusp 2: offset +120°, factor 2/3
-        c2_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, math.radians(120.0), 2.0/3.0)
-        # Cusp 3: offset +150°, factor 1/3
-        c3_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, math.radians(150.0), 1.0/3.0)
+        # 11th: 1/3 of the semi-arc, 12th: 2/3, 2nd: 2/3, 3rd: 1/3 (from the other side).
+        c11_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, 1.0 / 3.0)
+        c12_trop = _solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, 2.0 / 3.0)
+        c2_trop = (_solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, 2.0 / 3.0) + 180.0) % 360.0
+        c3_trop = (_solve_placidus_cusp(ramc_rad, lat_rad, eps_rad, 1.0 / 3.0) + 180.0) % 360.0
+        if not (0.0 < (c11_trop - mc_trop) % 360.0 < (asc_trop - mc_trop) % 360.0 < 180.0):
+            raise ValueError("Placidus cusp ordering failed")
     except Exception:
-        # Safe Porphyry / Equal division fallback if high polar latitude causes non-convergence
+        # Porphyry fallback: exact trisection of the MC-Asc and Asc-IC quadrants.
+        # Placidus is undefined inside the polar circles; this keeps the chart usable.
         c11_trop = (mc_trop + ((asc_trop - mc_trop) % 360.0) / 3.0) % 360.0
         c12_trop = (mc_trop + 2.0 * ((asc_trop - mc_trop) % 360.0) / 3.0) % 360.0
         ic_trop = (mc_trop + 180.0) % 360.0
@@ -192,13 +175,13 @@ def calculate_placidus_cusps_sidereal(dt_utc: datetime, lat: float, lon: float) 
         11: c11_trop,
         12: c12_trop,
     }
-    
+
     results: List[KPCusp] = []
     for num in range(1, 13):
         sid_lon = (trop_cusps[num] - ay) % 360.0
         sign_idx = int(sid_lon // 30.0) % 12
         deg_in_sign = sid_lon % 30.0
-        
+
         subs = calculate_sub_lords(sid_lon, depth=6)
         c = KPCusp(
             cusp_num=num,
@@ -216,7 +199,7 @@ def calculate_placidus_cusps_sidereal(dt_utc: datetime, lat: float, lon: float) 
             sub_sub_sub_sub_sub_lord=subs.get("SSSSSL", "")
         )
         results.append(c)
-        
+
     return results
 
 def get_house_of_longitude(lon: float, cusps: List[KPCusp]) -> int:

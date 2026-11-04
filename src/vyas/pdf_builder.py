@@ -586,10 +586,10 @@ def build_pdf_report(filename: str, report_data: dict, lang: str = "hi"):
     story.append(PageBreak())
 
     # ---------------------------------------------------------------------------
-    # PAGE 5: DETAILED PREDICTIONS (per domain)
+    # DETAILED PREDICTIONS (per domain, if supplied)
     # ---------------------------------------------------------------------------
     pred_data = report_data.get("predictions", {})
-    if pred_data:
+    if pred_data and isinstance(pred_data, dict):
         story.append(PageBreak())
         sec5_title = "Detailed Predictions" if lang == "en" else "विस्तृत भविष्यफल"
         story.append(Paragraph(sec5_title, section_style))
@@ -598,10 +598,23 @@ def build_pdf_report(filename: str, report_data: dict, lang: str = "hi"):
             story.append(Paragraph(f"<b>{domain_title}</b>", bold_body_style))
             story.append(Paragraph(pred_text, body_style))
             story.append(Spacer(1, 0.08 * inch))
+
+    # =========================================================================
+    # PAGE 4: SAMUDAYA ASHTAKAVARGA & SHADBALA SIX-FOLD STRENGTH
+    # =========================================================================
+    sec4_sav = "<b>Samudaya Ashtakavarga (SAV: 337 Bindus) / समुदाय अष्टकवर्ग रेखांक</b>" if lang != "en" else "<b>Samudaya Ashtakavarga (SAV: 337 Bindus)</b>"
+    story.append(Paragraph(sec4_sav, section_style))
+
+    sav_vals = report_data.get("sav_list")
+    if not sav_vals:
+        sav_vals = report_data.get("ashtakavarga", {}).get("sav_scores", [0]*12)
+    if not sav_vals:
+        sav_vals = [0] * 12
+
+    if lang == "en":
+        sav_headers = [constants.SIGNS[i][:3] for i in range(12)] + ["Total"]
     else:
-        # placeholder if no predictions supplied
-        story.append(PageBreak())
-        story.append(Paragraph("No detailed predictions available.", body_style))
+        sav_headers = [constants.SIGNS_HI[i] for i in range(12)] + ["कुल"]
 
     sav_row = [str(sav_vals[i]) for i in range(12)] + [str(sum(sav_vals))]
     t_sav = Table([[Paragraph(f"<b>{h}</b>", bold_body_style) for h in sav_headers],
