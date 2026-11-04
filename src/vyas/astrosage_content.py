@@ -821,18 +821,18 @@ NAVAGRAHA_SHANTI_MATRIX_EN = [
 # 8. SADE SATI & KALSARPA EXPANDED DATA
 # ---------------------------------------------------------------------------
 KALSARPA_12_TYPES = [
-    ("1", "Anant Kalsarpa", "1st (Lagna) - 7th", "अनंत कालसर्प", "संघर्ष के उपरांत व्यक्तित्व निखार एवं आत्म-स्वावलंबन"),
-    ("2", "Kulik Kalsarpa", "2nd - 8th", "कुलिक कालसर्प", "वाणी संयम एवं वित्तीय नियोजन से अकूत धन संचय"),
-    ("3", "Vasuki Kalsarpa", "3rd - 9th", "वासुकि कालसर्प", "अदम्य पराक्रम, भ्रातृ सहयोग एवं भाग्योदय"),
-    ("4", "Shankhpal Kalsarpa", "4th - 10th", "शंखपाल कालसर्प", "गृह, भूमि व माता के सुख हेतु धैर्य, कार्यक्षेत्र में यश"),
-    ("5", "Padma Kalsarpa", "5th - 11th", "पद्म कालसर्प", "उच्च शिक्षा, गहन अनुसंधान एवं उत्तम संतति"),
-    ("6", "Mahapadma Kalsarpa", "6th - 12th", "महापद्म कालसर्प", "शत्रु-विजय, विदेशी सफलता एवं कानूनी विजय"),
-    ("7", "Takshak Kalsarpa", "7th - 1st", "तक्षक कालसर्प", "साझेदारी में स्पष्टता एवं दांपत्य सामंजस्य"),
-    ("8", "Karkotak Kalsarpa", "8th - 2nd", "कर्कोटक कालसर्प", "गूढ़ रहस्यों की समझ, पैतृक लाभ एवं आध्यात्मिक साधना"),
-    ("9", "Shankhachood Kalsarpa", "9th - 3rd", "शंखचूड़ कालसर्प", "धार्मिक यात्राएं, पितृ-आशीर्वाद एवं सतत भाग्य वृद्धि"),
-    ("10", "Ghatak Kalsarpa", "10th - 4th", "घातक कालसर्प", "व्यावसायिक सत्ता, प्रशासनिक अधिकार व मान-सम्मान"),
-    ("11", "Vishdhar Kalsarpa", "11th - 5th", "विषधर कालसर्प", "विपुल आय, मित्रों का सानिध्य एवं उच्च प्रतिष्ठा"),
-    ("12", "Sheshnag Kalsarpa", "12th - 6th", "शेषनाग कालसर्प", "विदेशी प्रतिष्ठा, मोक्ष मार्ग एवं परोपकार")
+    ("1", "Anant Kalsarpa", "1st (Lagna) - 7th", "अनंत कालसर्प", "संघर्ष के उपरांत व्यक्तित्व निखार एवं आत्म-स्वावलंबन", "Self-reliance, personality refinement, and elevated rise after disciplined perseverance"),
+    ("2", "Kulik Kalsarpa", "2nd - 8th", "कुलिक कालसर्प", "वाणी संयम एवं वित्तीय नियोजन से अकूत धन संचय", "Prudent speech, structured wealth accumulation, and lasting financial security"),
+    ("3", "Vasuki Kalsarpa", "3rd - 9th", "वासुकि कालसर्प", "अदम्य पराक्रम, भ्रातृ सहयोग एवं भाग्योदय", "Valour, courageous enterprise, sibling harmony, and sustained fortune"),
+    ("4", "Shankhpal Kalsarpa", "4th - 10th", "शंखपाल कालसर्प", "गृह, भूमि व माता के सुख हेतु धैर्य, कार्यक्षेत्र में यश", "Property acquisition, vehicular comforts, domestic stability, and professional renown"),
+    ("5", "Padma Kalsarpa", "5th - 11th", "पद्म कालसर्प", "उच्च शिक्षा, गहन अनुसंधान एवं उत्तम संतति", "Intellectual acumen, advanced education, creative insight, and noble progeny"),
+    ("6", "Mahapadma Kalsarpa", "6th - 12th", "महापद्म कालसर्प", "शत्रु-विजय, विदेशी सफलता एवं कानूनी विजय", "Triumph over competitors, legal victories, international opportunities, and resilience"),
+    ("7", "Takshak Kalsarpa", "7th - 1st", "तक्षक कालसर्प", "साझेदारी में स्पष्टता एवं दांपत्य सामंजस्य", "Partnership growth, commercial acumen, diplomatic finesse, and marital understanding"),
+    ("8", "Karkotak Kalsarpa", "8th - 2nd", "कर्कोटक कालसर्प", "गूढ़ रहस्यों की समझ, पैतृक लाभ एवं आध्यात्मिक साधना", "Occult mastery, intuitive depth, ancestral inheritances, and spiritual awakening"),
+    ("9", "Shankhachood Kalsarpa", "9th - 3rd", "शंखचूड़ कालसर्प", "धार्मिक यात्राएं, पितृ-आशीर्वाद एवं सतत भाग्य वृद्धि", "Dharmic righteousness, spiritual pilgrimages, parental blessings, and enduring fortune"),
+    ("10", "Ghatak Kalsarpa", "10th - 4th", "घातक कालसर्प", "व्यावसायिक सत्ता, प्रशासनिक अधिकार व मान-सम्मान", "Commanding authority, executive leadership, professional power, and public honors"),
+    ("11", "Vishdhar Kalsarpa", "11th - 5th", "विषधर कालसर्प", "विपुल आय, मित्रों का सानिध्य एवं उच्च प्रतिष्ठा", "Substantial economic gains, influential networks, ambition fulfillment, and high repute"),
+    ("12", "Sheshnag Kalsarpa", "12th - 6th", "शेषनाग कालसर्प", "विदेशी प्रतिष्ठा, मोक्ष मार्ग एवं परोपकार", "Global endeavors, charitable pursuits, expenditure control, and profound inner peace")
 ]
 
 SADE_SATI_P13_ADDON_HI = """

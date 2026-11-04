@@ -1,2 +1,6 @@
 chromium
 libsqlite3-0
+fonts-noto-core
+fonts-deva
+fonts-deva-extra
+fonts-lohit-deva

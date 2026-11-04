@@ -343,17 +343,27 @@ def compute_comprehensive_mangal_dosha(chart) -> dict:
 
     # Classical Cancellations
     cancellations = []
+    cancellations_hi = []
+    cancellations_en = []
     # 1. Mars in own sign (Aries/Scorpio) or exaltation (Capricorn)
     if mars_sign in [0, 7]:
         cancellations.append("मङ्गल स्वराशि (मेष/वृश्चिक) में स्थित होने से स्वतः दोषमुक्त है।")
+        cancellations_hi.append("मङ्गल स्वराशि (मेष/वृश्चिक) में स्थित होने से स्वतः दोषमुक्त है।")
+        cancellations_en.append("Mars posited in its own sign (Aries/Scorpio) naturally dissolves Manglik blemishes.")
     if mars_sign == 9:
         cancellations.append("मङ्गल अपनी उच्च राशि (मकर) में स्थित होने से दोषमुक्त है।")
+        cancellations_hi.append("मङ्गल अपनी उच्च राशि (मकर) में स्थित होने से दोषमुक्त है।")
+        cancellations_en.append("Mars posited in its highest exaltation sign (Capricorn) completely neutralizes Mangal Dosha.")
     # 2. Mars in 10th house gives Digbala
     if mars_from_asc == 10:
         cancellations.append("मङ्गल दशम भाव में दिग्बली व कुलदीपक योग बनाता है, यहाँ मांगलिक दोष नहीं होता।")
+        cancellations_hi.append("मङ्गल दशम भाव में दिग्बली व कुलदीपक योग बनाता है, यहाँ मांगलिक दोष नहीं होता।")
+        cancellations_en.append("Mars in the 10th house possesses peak directional strength (Digbala), conferring Kuldeepak Yoga and removing any blemish.")
     # 3. Jupiter aspects Mars or conjunct Mars
     if chart.planets["Jupiter"].sign_index == mars_sign or abs(chart.planets["Jupiter"].sign_index - mars_sign) == 6:
         cancellations.append("गुरु-मङ्गल सम्बन्ध अथवा गुरु की शुभ दृष्टि से मांगलिक दोष निष्प्रभावी हो जाता है।")
+        cancellations_hi.append("गुरु-मङ्गल सम्बन्ध अथवा गुरु की शुभ दृष्टि से मांगलिक दोष निष्प्रभावी हो जाता है।")
+        cancellations_en.append("Auspicious aspect or conjunction of benevolent Jupiter confers classical cancellation of Mangal Dosha.")
 
     is_manglik = (has_from_asc or has_from_moon) and len(cancellations) == 0
     severity = "मांगलिक दोष रहित (दोष नहीं है)" if not is_manglik else ("अल्प मांगलिक (Partial)" if not has_from_asc else "पूर्ण मांगलिक (Severe)")
@@ -374,6 +384,8 @@ def compute_comprehensive_mangal_dosha(chart) -> dict:
         "mars_from_moon": mars_from_moon,
         "mars_from_venus": mars_from_venus,
         "cancellations": cancellations,
+        "cancellations_hi": cancellations_hi,
+        "cancellations_en": cancellations_en,
         "summary_hi": summary_hi,
         "remedies_hi": [
             "प्रतिदिन हनुमान चालीसा अथवा सुंदरकांड का पाठ करें।",
@@ -748,6 +760,136 @@ MAHADASHA_HOUSE_PHAL_HI = {
     }
 }
 
+
+MAHADASHA_HOUSE_PHAL_EN = {
+    "Sun": {
+        1: "Sun in the 1st house confers extraordinary vitality, dignified self-confidence, dynamic charisma, and innate leadership ability. It strongly favors state honors, executive governance, and commanding respect in societal endeavors.",
+        2: "Sun in the 2nd house imparts commanding speech, high moral standards, and dedicated wealth accumulation. Exercising patience in domestic dialogues and conservative financial planning yields sustained prosperity.",
+        3: "Sun in the 3rd house bestows fearless courage, unwavering willpower, and relentless enterprise. The native achieves prominence through personal exertion, pioneering initiatives, and cooperative relations with kin.",
+        4: "Sun in the 4th house yields substantial ancestral land, real estate, and vehicular comforts. It emphasizes steady emotional equilibrium, respect for maternal legacy, and noble domestic heritage.",
+        5: "Sun in the 5th house fosters sharp intellectual discernment, creative genius, and strategic governance. It confers high scholarly status, success in competitive examinations, and virtuous progeny.",
+        6: "Sun in the 6th house is highly celebrated in classical texts (Shatru-Hanta). It brings decisive victory over rivals, legal triumph, robust physical resilience, and distinction in competitive services.",
+        7: "Sun in the 7th house confers a dignified, influential spouse and authoritative commercial partnerships. Maintaining mutual honor and diplomatic flexibility fosters harmonious interpersonal relations.",
+        8: "Sun in the 8th house unlocks deep esoteric insight, research acumen, and longevity. It favors gains through research, inheritance, and profound spiritual or transformative awakenings.",
+        9: "Sun in the 9th house establishes profound righteous principles (Dharma), fatherly blessings, and higher wisdom. The native gains divine fortune, global recognition, and spiritual pilgrimage opportunities.",
+        10: "Sun in the 10th house achieves peak directional strength (Digbala), generating the formidable Kuldeepak Yoga. It grants apex executive authority, government recognition, career zenith, and widespread reverence.",
+        11: "Sun in the 11th house fulfills long-cherished ambitions and generates vast, uninterrupted streams of income. It secures influential social circles, honors from superiors, and expansive financial growth.",
+        12: "Sun in the 12th house elevates spiritual contemplation, foreign voyages, and charitable philanthropy. It facilitates meditation, dissolution of worldly ego, and ultimate spiritual liberation."
+    },
+    "Moon": {
+        1: "Moon in the 1st house confers intuitive magnetism, emotional elegance, an appealing persona, and compassionate wisdom. It ensures public popularity, imaginative brilliance, and harmonious relationships.",
+        2: "Moon in the 2nd house brings delightful eloquence, refined culinary tastes, and effortless liquidity of wealth. Family lineage thrives and financial reserves grow steadily through intuitive commerce.",
+        3: "Moon in the 3rd house inspires creative arts, persuasive communication, travel, and cordial fraternal ties. The native excels in literary endeavors, advisory roles, and dynamic public interactions.",
+        4: "Moon in the 4th house possesses peak directional strength (Digbala). It bestows deep maternal happiness, luxurious residences, serene mental peace, and expansive landed properties.",
+        5: "Moon in the 5th house grants profound creative imagination, speculative intelligence, high scholarly achievements, and devoted, virtuous children. Intuition serves as a flawless guiding compass.",
+        6: "Moon in the 6th house enhances healing capabilities, medical or humanitarian empathy, and meticulous attention to duty. Adopting a balanced lifestyle ensures sustained vitality and calm amidst pressure.",
+        7: "Moon in the 7th house blesses with an attractive, empathetic spouse, successful public partnerships, and widespread business goodwill. Harmonious synergy elevates both personal and professional horizons.",
+        8: "Moon in the 8th house awakens deep psychological penetration, psychic receptivity, occult knowledge, and profound spiritual renewal. Solitude and meditative introspection reveal extraordinary wisdom.",
+        9: "Moon in the 9th house bestows supreme dharmic devotion, fortunate voyages, reverence for preceptors, and divine grace. The native becomes a lighthouse of higher ethics and philosophical clarity.",
+        10: "Moon in the 10th house propels public renown, executive popularity, social service, and professional stability. The native's career is marked by wide acclaim, empathy, and administrative success.",
+        11: "Moon in the 11th house facilitates immense financial fluidity, noble friendships, realization of dreams, and societal honors. Networks and benefactors consistently facilitate substantial prosperity.",
+        12: "Moon in the 12th house fosters tranquil spiritual solitude, philanthropic benevolence, overseas travel, and vivid dream insight. It guides the consciousness toward sublime transcendence and inner peace."
+    },
+    "Mars": {
+        1: "Mars in the 1st house creates Ruchaka Yoga when in exaltation or own sign, conferring athletic vigor, bold leadership, and an indomitable fighting spirit. The native tackles hurdles with valor and pioneering resolve.",
+        2: "Mars in the 2nd house gives decisive, forthright speech and ambitious resource accumulation. Strategic financial stewardship and measured words convert energetic drive into permanent tangible assets.",
+        3: "Mars in the 3rd house signifies monumental courage, adventurous enterprise, athletic prowess, and protective brotherhood. The native overcomes all resistance through relentless physical and mental stamina.",
+        4: "Mars in the 4th house drives vigorous acquisition of real estate, architectural developments, and mechanized vehicles. Maintaining calm patience within domestic spheres cultivates enduring peace.",
+        5: "Mars in the 5th house stimulates razor-sharp technical intellect, surgical or engineering aptitude, and tactical acumen. The native excels in high-stakes problem solving and ambitious competitive projects.",
+        6: "Mars in the 6th house is an infallible destroyer of adversaries and diseases. It grants supreme resilience, triumph in legal disputes, athletic stamina, and unmatched competitive superiority.",
+        7: "Mars in the 7th house introduces dynamic passion and vigorous enterprise into commercial collaborations. Mutual respect, clear communication, and collaborative patience ensure fruitful marital and trade alliances.",
+        8: "Mars in the 8th house unlocks investigative mastery, surgical skill, transformation, and access to subterranean or hidden resources. It fosters an unwavering, fear-free attitude towards life crises.",
+        9: "Mars in the 9th house champions righteous causes with fiery zeal. The native travels widely, vigorously defends justice, and achieves renown through principled, pioneering moral leadership.",
+        10: "Mars in the 10th house attains peak Digbala and establishes the legendary Kuldeepak and Ruchaka Yogas. It confers premier executive power, military or administrative authority, and magnificent career triumph.",
+        11: "Mars in the 11th house generates commanding financial windfalls, valuable properties, and triumphant milestone achievements. Influential allies and bold strategic ventures yield immense gains.",
+        12: "Mars in the 12th house directs martial drive toward overseas ventures, technical imports/exports, and disciplined spiritual self-mastery. Disciplined physical routines ensure channeled constructive energy."
+    },
+    "Mercury": {
+        1: "Mercury in the 1st house forms Bhadra Yoga when exalted or in own sign, bestowing intellectual brilliance, versatile wit, youthful longevity, and commercial genius. The native commands respect through articulate wisdom.",
+        2: "Mercury in the 2nd house confers captivating oratorical charm, mathematical dexterity, and prosperous mercantile investments. The voice is melodious and family relations thrive on mutual intellect.",
+        3: "Mercury in the 3rd house sparks literary brilliance, journalistic flair, technological agility, and entrepreneurial versatility. The native masters multiple communication media and networking channels.",
+        4: "Mercury in the 4th house yields an intellectually stimulating home, extensive libraries, academic distinction, and profitable real estate transactions. Maternal bonds are rooted in thoughtful wisdom.",
+        5: "Mercury in the 5th house confers exceptional analytical intellect, mastery over languages, astrology, coding, and advisory brilliance. Progeny are scholarly, accomplished, and morally upright.",
+        6: "Mercury in the 6th house excels in analytical deduction, dispute mediation, auditing, and problem diagnostics. It dismantles adversities through sharp logic, intellect, and legal precision.",
+        7: "Mercury in the 7th house bestows an intelligent, quick-witted, commercially astute life partner. Business partnerships flourish through clear contracts, honest dialogue, and diplomatic trade.",
+        8: "Mercury in the 8th house penetrates deep research, forensic analysis, financial auditing, and esoteric scriptures. The native solves complex mysteries and discovers hidden knowledge effortlessly.",
+        9: "Mercury in the 9th house inspires higher philosophical education, spiritual publications, auspicious cross-border travels, and mentorship. The native synthesizes ancient wisdom with modern logic.",
+        10: "Mercury in the 10th house is directional ruler of career intellect, establishing commanding success in commerce, governance, diplomacy, and media. Professional reputation is celebrated for intellectual integrity.",
+        11: "Mercury in the 11th house generates diverse streams of intellectual income, prosperous algorithmic investments, and friendships with scholars and titans of trade. Multiple avenues of gain remain open.",
+        12: "Mercury in the 12th house fosters contemplative research, spiritual writing, foreign intellectual collaborations, and profound subconscious insight. Charitable knowledge-sharing brings supreme peace."
+    },
+    "Jupiter": {
+        1: "Jupiter in the 1st house forms Hamsa Yoga when exalted or in own sign, conferring magnificent spiritual grace, ethical majesty, robust health, and societal reverence. The native is treated as a mentor and guide by all.",
+        2: "Jupiter in the 2nd house bestows golden speech, boundless ethical wealth, financial stability, and blessed family lineage. Words carry profound moral authority, inspiring and elevating listeners.",
+        3: "Jupiter in the 3rd house enhances noble courage, philosophical writing, mentoring siblings, and uplifting communication. The native's initiatives radiate benevolence and achieve honorable success.",
+        4: "Jupiter in the 4th house yields sublime domestic bliss, palatial residences, maternal blessings, and vast spiritual contentment. The home is an oasis of wisdom, peace, and spiritual study.",
+        5: "Jupiter in the 5th house bestows extraordinary intellect, divine spiritual mantras (Mantra Siddhi), meritorious karmic credit (Purva Punya), and distinguished progeny who achieve global fame.",
+        6: "Jupiter in the 6th house dissolves enmities through magnanimity, righteous legal victory, and philanthropic service. The native cures difficulties through ethical counsel and serene wisdom.",
+        7: "Jupiter in the 7th house bestows a noble, virtuous, spiritually anchored life partner and profoundly honorable business alliances. Marital life is consecrated with mutual respect, dignity, and longevity.",
+        8: "Jupiter in the 8th house unlocks spiritual intuition, divine protection during adversities, unexpected inheritances, and deep philosophical revelations. Longevity and inner peace are assured.",
+        9: "Jupiter in the 9th house is in its highest joy, manifesting unparalleled fortune (Bhagya), divine guru guidance, righteous integrity, and global spiritual prestige. The native walks under divine grace.",
+        10: "Jupiter in the 10th house elevates the native to prestigious judicial, advisory, ministerial, or corporate leadership posts. Career conduct is untarnished, commanding universal respect and moral authority.",
+        11: "Jupiter in the 11th house fulfills all noble desires, generating immense righteous wealth, noble friendships, and high societal impact. Prosperity multiplies exponentially with age and integrity.",
+        12: "Jupiter in the 12th house is the ultimate significator of spiritual liberation (Moksha), divine sanctuary, charitable benevolence, and overseas pilgrimages. The soul connects directly with the cosmos."
+    },
+    "Venus": {
+        1: "Venus in the 1st house creates Malavya Yoga when in own or exaltation sign, bestowing enchanting charm, radiant beauty, artistic elegance, and luxury. The native naturally attracts goodwill, wealth, and affection.",
+        2: "Venus in the 2nd house confers sweet, captivating speech, exquisite culinary connoisseurship, opulent jewelry, and expanding family wealth. The native radiates social and financial prosperity.",
+        3: "Venus in the 3rd house inspires fine artistic talents, musical harmony, theatrical creativity, and loving sibling bonds. Literary and artistic communications win prestigious public accolades.",
+        4: "Venus in the 4th house achieves peak Digbala, showering the native with palatial architectural comforts, luxury vehicles, domestic elegance, and radiant maternal affection. Life is steeped in aesthetic splendor.",
+        5: "Venus in the 5th house confers brilliant romantic and artistic creativity, refined tastes, cinematic or musical brilliance, and cultured, affectionate children. Speculative insights are exceptionally fortunate.",
+        6: "Venus in the 6th house cultivates compassionate healing, workplace harmony, and diplomatic resolution of conflicting interests. A disciplined routine maintains optimal health and serene balance.",
+        7: "Venus in the 7th house brings a devoted, extraordinarily accomplished life partner and blissful matrimonial union. Trade partnerships thrive on mutual trust, refinement, and shared prosperity.",
+        8: "Venus in the 8th house brings mysterious financial windfalls, secret artistic talents, partner's wealth, and spiritual rejuvenation through esoteric aesthetics. Longevity and comfort are enhanced.",
+        9: "Venus in the 9th house brings auspicious foreign travels, cultural expeditions, artistic patronage, and fortune through divine grace. The native is guided by high aesthetic and moral values.",
+        10: "Venus in the 10th house elevates professional status in creative, administrative, hospitality, judicial, or luxury corporate fields. Public image is magnetic, widely praised, and financially rewarding.",
+        11: "Venus in the 11th house creates extraordinary prosperity, high-value assets, affluent social networks, and effortless realization of lifelong wishes. Wealth flows from multiple creative and commercial conduits.",
+        12: "Venus in the 12th house is in its exaltation sign territory, granting sublime bedroom comforts, luxurious international travels, meditative ecstasy, and boundless charitable generosity."
+    },
+    "Saturn": {
+        1: "Saturn in the 1st house forms Sasa Yoga when exalted or in own sign, conferring unyielding perseverance, deep stoic maturity, heavy responsibility, and monumental lasting achievement. The native rises to great heights.",
+        2: "Saturn in the 2nd house cultivates frugal financial discipline, profound gravitas in speech, and conservative, solid wealth accumulation. Traditional family values and hard-earned security endure across generations.",
+        3: "Saturn in the 3rd house confers rock-solid fortitude, immense patience, manual mastery, and strategic discipline. The native builds an empire step-by-step through tireless personal grit.",
+        4: "Saturn in the 4th house yields substantial immovable properties, old ancestral estates, agricultural holdings, and a disciplined inner character. Enduring emotional roots bring deep stability over time.",
+        5: "Saturn in the 5th house bestows profound contemplative intellect, mastery over difficult sciences, deep research, and serious, responsible progeny. Creative output is structured, timeless, and profound.",
+        6: "Saturn in the 6th house is an unassailable fortress against adversaries, chronic ailments, and litigations. The native commands total victory in difficult situations through patience and tireless labor.",
+        7: "Saturn in the 7th house achieves peak directional strength (Digbala), bestowing a mature, loyal, deeply committed life partner and stable long-term partnerships. Faithfulness and mutual duty forge an unbroken bond.",
+        8: "Saturn in the 8th house is the prime guarantor of profound longevity (Ayush Karaka), inheritance of ancestral legacy, and unshakeable poise during crisis. Occult discipline yields profound wisdom.",
+        9: "Saturn in the 9th house instills ancient philosophical discipline, deep respect for traditional lineage, austere pilgrimages, and steadfast dharma. Fortune rewards persistent, ethical exertion.",
+        10: "Saturn in the 10th house forms the quintessential Karmayogi. It raises the native from humble foundations to apex positions in public administration, industry, politics, and enduring institutional leadership.",
+        11: "Saturn in the 11th house generates permanent, massive financial stability, institutional gains, and loyal, lifelong networks. Ambitions are realized through structured consistency and high integrity.",
+        12: "Saturn in the 12th house directs the soul toward ascetic discipline, secluded research, international assignments, and peaceful detachment. Material desires dissolve into profound spiritual equanimity."
+    },
+    "Rahu": {
+        1: "Rahu in the 1st house bestows unconventional brilliance, out-of-the-box thinking, magnetic charisma, and an irresistible drive for worldly distinction. The native pioneers novel paths and achieves global influence.",
+        2: "Rahu in the 2nd house drives ambitious wealth accumulation, mastery of foreign languages, and acumen in unorthodox financial investments. Measured speech and ethical investments multiply riches.",
+        3: "Rahu in the 3rd house brings heroic courage, fearless communication, media dominance, and revolutionary technological enterprise. The native achieves sudden leaps in status through bold initiative.",
+        4: "Rahu in the 4th house sparks an ambition for modern luxury residences, high-tech environments, and international relocations. Spiritual grounding at home fosters peaceful mental serenity.",
+        5: "Rahu in the 5th house confers extraordinary speculative intellect, genius in software/AI, cinema, or political strategy. The mind is perpetually inventing revolutionary concepts.",
+        6: "Rahu in the 6th house completely annihilates adversaries and competition (Shatru-Hanta). The native triumphs in foreign arenas, complex litigations, and cutting-edge specialized industries.",
+        7: "Rahu in the 7th house attracts an unconventional, cosmopolitan, or foreign spouse and dynamic international business ventures. Clear legal contracts and open dialogue ensure grand collaborative success.",
+        8: "Rahu in the 8th house reveals sudden financial windfalls, mastery of occult and cryptographic sciences, and psychological penetration. The native masters crisis management with cool detachment.",
+        9: "Rahu in the 9th house inspires pathbreaking philosophical views, foreign travels, interfaith wisdom, and innovative educational models. The native challenges dogma to discover universal truth.",
+        10: "Rahu in the 10th house propels the native into rapid public prominence, political or corporate stardom, and unconventional administrative authority. The native commands vast public attention.",
+        11: "Rahu in the 11th house is considered one of the highest placements for material wealth, fulfilling desires and bestowing sudden, massive financial windfalls through global channels and elite circles.",
+        12: "Rahu in the 12th house fosters foreign settlement, international trade, modern healthcare/hospitality achievements, and metaphysical exploration. It bridges physical distance with spiritual curiosity."
+    },
+    "Ketu": {
+        1: "Ketu in the 1st house confers deep spiritual intuition, a non-materialistic mindset, subtle philosophical awareness, and profound meditative detachment. The native possesses an aura of quiet wisdom.",
+        2: "Ketu in the 2nd house encourages profound, concise speech, spiritual study of scriptures, and detachment from material vanity. True wealth is experienced through spiritual contentment and wisdom.",
+        3: "Ketu in the 3rd house grants subtle intuitive valor, sharp technical discernment, and an ability to dismantle problems quietly without fanfare. Fraternal ties operate on spiritual wavelengths.",
+        4: "Ketu in the 4th house cultivates an inner ashram within the home. The native finds peace in tranquil environments, meditation, and detachment from ostentatious displays of property.",
+        5: "Ketu in the 5th house confers deep esoteric intellect, mastery of mathematics, cryptography, and past-life spiritual merit (Purva Punya). Insights emerge through spontaneous flashes of intuition.",
+        6: "Ketu in the 6th house effortlessly dissolves hidden enemies and ailments through spiritual fortitude and natural resilience. Obstacles vanish without direct confrontation.",
+        7: "Ketu in the 7th house bestows a spiritually inclined, quiet, detached partner who supports the soul's inner journey. Matrimonial harmony flourishes through mutual respect and spiritual communion.",
+        8: "Ketu in the 8th house is the supreme placement for acute occult perception, psychic intuition (Sixth Sense), kundalini awakening, and deep transformative research. Fear of the unknown dissolves entirely.",
+        9: "Ketu in the 9th house elevates spirituality to its highest zenith, inspiring selfless pilgrimages, association with enlightened sages, and pure divine grace without dogma.",
+        10: "Ketu in the 10th house inspires selfless, dedicated service, spiritual mentorship, medical/research contributions, and detachment from selfish power, earning genuine respect and honor.",
+        11: "Ketu in the 11th house brings unexpected, spontaneous gains with minimal attachment. Spiritual friends and humanitarian causes surround the native, fulfilling destiny naturally.",
+        12: "Ketu in the 12th house is the classical Karaka for ultimate spiritual liberation (Moksha). It dissolves karmic bonds, closes past cycles, and illuminates the path to supreme transcendence."
+    }
+}
+
 def compute_vimshottari_interpretations(chart) -> List[dict]:
     """Generates comprehensive Mahadasha qualitative interpretations for each planet in its natal house."""
     asc_sign = chart.ascendant_sign
@@ -761,6 +903,7 @@ def compute_vimshottari_interpretations(chart) -> List[dict]:
         p_hi = constants.PLANETS_HI.get(p_name, p_name)
         phal_hi = MAHADASHA_HOUSE_PHAL_HI.get(p_name, {}).get(h, f"{p_hi} भाव {h} में शुभ फल प्रदान करता है।")
         
+        phal_en = MAHADASHA_HOUSE_PHAL_EN.get(p_name, {}).get(h, f"The Mahadasha of {p_name} in house {h} ({sign_en}) activates significant life transformations and growth.")
         results.append({
             "planet": p_name,
             "planet_hi": p_hi,
@@ -768,7 +911,8 @@ def compute_vimshottari_interpretations(chart) -> List[dict]:
             "sign": sign_en,
             "sign_hi": sign_hi,
             "degree_str": f"{int(p.longitude % 30)}°{int((p.longitude % 1)*60):02d}'",
-            "interpretation_hi": phal_hi
+            "interpretation_hi": phal_hi,
+            "interpretation_en": phal_en
         })
     return results
 
@@ -977,6 +1121,7 @@ def compute_yogini_dasha(moon_lon: float, birth_dt: datetime) -> List[dict]:
             cycles.append({
                 "name": y_name,
                 "name_hi": y_name_hi,
+                "lord": lord,
                 "lord_hi": lord_hi,
                 "years": total_years,
                 "start": cur_date.strftime("%d/%m/%Y"),
