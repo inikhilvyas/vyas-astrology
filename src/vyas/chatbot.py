@@ -23,6 +23,19 @@ import re
 from vyas import constants
 from vyas import sutra_synthesizer
 
+_TRANSIT_DAY_CACHE = {}
+
+def _get_day_transit_pos() -> Dict[str, Any]:
+    today = datetime.now().strftime("%Y-%m-%d")
+    if today not in _TRANSIT_DAY_CACHE:
+        try:
+            from vyas.ephem import planet_positions
+            from datetime import timezone
+            _TRANSIT_DAY_CACHE[today] = planet_positions(datetime.now(timezone.utc))
+        except Exception:
+            _TRANSIT_DAY_CACHE[today] = {}
+    return _TRANSIT_DAY_CACHE[today]
+
 class VyasChatbotEngine:
     """Authentic Vedic Astrological Dialogue Engine."""
 
@@ -115,12 +128,7 @@ class VyasChatbotEngine:
         # Transits
         transit_info = {}
         if not transit_pos:
-            try:
-                from vyas.ephem import planet_positions
-                from datetime import timezone
-                transit_pos = planet_positions(datetime.now(timezone.utc))
-            except Exception:
-                transit_pos = {}
+            transit_pos = _get_day_transit_pos()
 
         if transit_pos:
             for p_name in ["Saturn", "Jupiter", "Rahu", "Ketu", "Mars", "Sun", "Venus", "Mercury"]:
@@ -164,10 +172,21 @@ class VyasChatbotEngine:
             "transits": transit_info
         }
 
+    def _get_gemini_api_key(self) -> Optional[str]:
+        """Discovers Gemini API Key from environment or Streamlit secrets."""
+        key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        if not key:
+            try:
+                import streamlit as st
+                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+            except Exception:
+                pass
+        return key
+
     def _call_gemini_if_available(self, query: str, fw: Dict[str, Any], name: str,
                                    chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         """Tries to call official Gemini API via google.genai if GEMINI_API_KEY is configured."""
-        api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        api_key = self._get_gemini_api_key()
         if not api_key:
             return None
 
@@ -195,8 +214,9 @@ class VyasChatbotEngine:
                 f"नियम:\n"
                 f"1. शुद्ध, गरिमामय एवं सुरुचिपूर्ण हिन्दी में उत्तर दें।\n"
                 f"2. कभी भी शब्दों की अनुचित पुनरावृत्ति न करें (जैसे 'मंगल मंगल' या 'शनि शनि')।\n"
-                f"3. जातक के प्रश्न का सीधा, तार्किक और समय-सीमा (Timeframe / Dates) सहित सटीक शास्त्रीय समाधान दें।\n"
-                f"4. यदि जातक दशा, आगामी समय, परीक्षा, करियर, वित्त या विवाह पूछे, तो स्पष्ट ज्योतिष्य फलादेश व प्रामाणिक उपाय बताएं।"
+                f"3. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'कब होगा', 'उपाय बताओ'), "
+                f"तो बातचीत के पिछले संदर्भ को ध्यान में रखते हुए सटीक शास्त्रीय विश्लेषण, स्पष्ट तिथियां (Dates) एवं समय-सीमा दें।\n"
+                f"4. जातक को सदैव स्पष्ट, तार्किक और व्यावहारिक ज्योतिष्य मार्गदर्शन प्रदान करें।"
             )
 
             # Build conversation history
@@ -225,12 +245,14 @@ class VyasChatbotEngine:
                 chat_history: Optional[List[Dict[str, str]]] = None) -> str:
         """
         Generates a direct, authentic, personalized astrological consultation response.
+        Context-aware, follow-up aware, and rooted in classical Parashari Jyotish Shastra.
         """
         fw = self._extract_chart_framework(chart, cur_dasha, transit_pos)
         name = birth_info.get("name", "जातक")
-        q_lower = query.lower()
+        q_raw = query.strip()
+        q_lower = q_raw.lower()
 
-        # 1. Try Gemini API first if configured
+        # 1. Try Gemini API first if configured in env or Streamlit secrets
         gemini_reply = self._call_gemini_if_available(query, fw, name, chat_history)
         if gemini_reply:
             return gemini_reply
@@ -241,7 +263,6 @@ class VyasChatbotEngine:
         occ = fw["house_occupants"]
         tr = fw["transits"]
 
-        # Helper: Clean placement string without repeating planet names
         def _placement(p_name: str) -> str:
             p = p_inf.get(p_name, {})
             h = p.get('house', '-')
@@ -249,38 +270,155 @@ class VyasChatbotEngine:
             retro = " (वक्री)" if p.get('is_retro') else ""
             return f"{h}वें भाव में {sign} राशि{retro}"
 
-        # Helper: Full planet description
         def _full_planet(p_name: str) -> str:
             p_hi = constants.PLANETS_HI.get(p_name, p_name)
             return f"{p_hi} देव {_placement(p_name)}"
 
-        # Dasha display text
         dasha_display = fw["dasha_md"]
         if fw["dasha_ad"]:
             dasha_display += f" में {fw['dasha_ad']}"
         if fw["dasha_pd"]:
             dasha_display += f" (प्रत्यंतर: {fw['dasha_pd']})"
 
-        # Check conversation history depth:
         user_msg_count = 0
         if chat_history:
             user_msg_count = sum(1 for m in chat_history if m.get("role") == "user")
 
-        # Conversational opening: greeting only on turn 1
         salutation = f"सादर प्रणाम {name} जी।\n\n" if user_msg_count <= 1 else f"{name} जी,\n\n"
 
         # ---------------------------------------------------------------------
-        # INTENT 1: TIMING OF EVENTS & WHEN WILL TIME IMPROVE?
-        # Keywords: 'aagami', 'kab se', 'sahi hoga', 'achha samay', 'when', 'future',
-        # 'kab theek', 'sudhar', 'badlega', 'kab aayega', 'turning point'
+        # MULTI-TURN CONTEXT RESOLUTION (पूर्व संवाद का संदर्भ विश्लेषण)
         # ---------------------------------------------------------------------
-        if any(w in q_lower for w in ["kab", "कब", "aagami", "आगामी", "sahi hoga", "सही होगा", "theek", "ठीक",
-                                     "future", "भविष्य", "sudhar", "सुधार", "badlega", "बदलेगा", "achha samay",
-                                     "अच्छा समय", "shubh", "शुभ समय", "turning point", "when will", "kab tak"]):
-            ans = [salutation]
-            ans.append(f"आपके प्रश्न — **'आगामी समय कब से अनुकूल होगा व भाग्योदय कब से होगा?'** के संबंध में ग्रहों, विंशोत्तरी दशा व गोचर का काल-विभाजन विश्लेषण इस प्रकार है:\n")
+        prior_topic = None
+        if chat_history:
+            for prev_m in reversed(chat_history):
+                if prev_m.get("role") == "user":
+                    prev_txt = prev_m.get("content", "").lower()
+                    if any(w in prev_txt for w in ["career", "job", "नौकरी", "प्रमोशन", "promotion", "आजीविका", "व्यवसाय", "business", "व्यापार", "काम", "ऑफिस", "rozgar"]):
+                        prior_topic = "career"
+                        break
+                    elif any(w in prev_txt for w in ["rhjs", "rjs", "exam", "judiciary", "judge", "न्यायिक", "परीक्षा", "प्रतियोगिता", "upsc", "selection"]):
+                        prior_topic = "exam"
+                        break
+                    elif any(w in prev_txt for w in ["धन", "money", "wealth", "पैसा", "कर्ज", "debt", "आर्थिक", "निवेश", "लाभ"]):
+                        prior_topic = "wealth"
+                        break
+                    elif any(w in prev_txt for w in ["विवाह", "शादी", "marriage", "पत्नी", "पति", "दांपत्य", "रिश्ता", "प्रेम"]):
+                        prior_topic = "marriage"
+                        break
+                    elif any(w in prev_txt for w in ["स्वास्थ्य", "health", "रोग", "बीमारी", "तबीयत", "दर्द"]):
+                        prior_topic = "health"
+                        break
+                    elif any(w in prev_txt for w in ["dasha", "दशा", "mahadasha", "महादशा", "antardasha"]):
+                        prior_topic = "dasha"
+                        break
 
-            # Phase A: Current friction / delay diagnosis
+        # Check if current query is a short follow-up or timeline query
+        is_followup = any(w in q_lower for w in [
+            "aage kya", "आगे क्या", "aage", "आगे", "ab kya", "अब क्या", "what next", "next",
+            "kab tak", "कब तक", "kab hoga", "कब होगा", "kab aayega", "कब आएगा",
+            "aur batao", "और बताओ", "aur bataiye", "और बताइए", "aur kya", "और क्या",
+            "kaisa rahega", "कैसा रहेगा", "kya hoga", "क्या होगा", "kya kare", "क्या करें",
+            "kya karein", "kya karna chahiye", "क्या करना चाहिए", "salah", "सलाह", "मार्गदर्शन"
+        ]) and len(q_lower.split()) <= 6
+
+        pd_end_str = fw["pd_end"] or "आगामी कुछ सप्ताह"
+        ad_end_str = fw["ad_end"] or "2027"
+        next_lord_hi = fw["next_ad_lord_hi"] or "बुध"
+        next_lord_en = fw["next_ad_lord_en"] or "Mercury"
+        jup_tr = tr.get("Jupiter", {})
+        sat_tr = tr.get("Saturn", {})
+
+        # ---------------------------------------------------------------------
+        # SCENARIO A: FOLLOW-UP QUESTION ON CAREER ("aage kya" after career)
+        # ---------------------------------------------------------------------
+        if is_followup and prior_topic == "career":
+            ans = [salutation]
+            ans.append(f"आपके पूर्व प्रश्न (**करियर, नौकरी एवं कार्यक्षेत्र**) के अनुक्रम में — **आगामी समय, पदोन्नति एवं भविष्य की समय-सीमा (Career Timeline & Milestones)** का सूक्ष्म शास्त्रीय विश्लेषण:\n")
+
+            ans.append(
+                f"1. **तात्कालिक कालखंड ({fw['dasha_pd']} प्रत्यंतर — समाप्ति: {pd_end_str}):**\n"
+                f"वर्तमान में सक्रिय प्रत्यन्तर्दशा कार्यक्षेत्र में धैर्य, अनुशासन और कागजी कार्यों में अत्यधिक सतर्कता की मांग कर रही है। "
+                f"इस अवधि में तात्कालिक असंतोष के कारण नौकरी बदलने या वरिष्ठों से विवाद में पड़ने से बचें। यह चरण आपके कार्य कौशल को सुदृढ़ करने का है।"
+            )
+
+            ans.append(
+                f"2. **मुख्य स्वर्णिम मोड़ एवं पदोन्नति काल ({next_lord_hi} अन्तर्दशा — प्रारंभ: {ad_end_str}):**\n"
+                f"आपकी आजीविका में वास्तविक और दीर्घकालिक सकारात्मक मोड़ **{ad_end_str}** से आएगा, जब {fw['dasha_ad']} की अन्तर्दशा पूर्ण होकर **{next_lord_hi} देव की अन्तर्दशा** प्रारंभ होगी।\n"
+                f"• जन्म कुण्डली में {next_lord_hi} देव {_placement(next_lord_en)} में स्थित हैं।\n"
+                f"• यह ग्रह विन्यास कार्यक्षेत्र में नई जिम्मेदारियों, अधिकार क्षेत्र में विस्तार, पदोन्नति तथा नए व्यावसायिक/प्रशासनिक अवसरों के स्पष्ट द्वार खोलेगा।"
+            )
+
+            ans.append(
+                f"3. **गोचर कालीन संबल (Transits of Jupiter & Saturn):**\n"
+                f"• देवगुरु बृहस्पति वर्तमान में {jup_tr.get('sign', '')} राशि में (लग्न से {jup_tr.get('h_lagna', '')}वें भाव) संचरण कर रहे हैं। गुरु का प्रभाव आपके कर्म और लाभ भाव को संबल प्रदान कर रहा है।\n"
+                f"• कर्मकारक शनि देव का गोचर {sat_tr.get('sign', '')} राशि में चल रहा है, जो यह दर्शाता है कि आपकी वर्तमान निष्ठा आने वाले समय में स्थायी प्रतिष्ठा का आधार बनेगी।"
+            )
+
+            ans.append(
+                f"4. **आचार्य मार्गदर्शन एवं कार्यनीति (Actionable Strategy):**\n"
+                f"• **वर्तमान रणनीति:** वर्तमान कार्यभार को पूर्ण निष्ठा से संभालें।\n"
+                f"• **भविष्य की तैयारी:** {ad_end_str} के आसपास वेतन वृद्धि, उच्च पद अथवा मनचाहे स्थान पर स्थानांतरण के प्रबल योग बनेंगे।"
+            )
+
+            ans.append(
+                f"**कार्यक्षेत्र सिद्धि हेतु सात्विक उपाय:**\n"
+                f"• शनिवार को संध्या समय पीपल के वृक्ष के नीचे सरसों के तेल का चौमुखा दीपक प्रज्वलित करें।\n"
+                f"• नित्य प्रातः तांबे के लोटे से सूर्य देव को जल अर्पित कर 'ॐ सूर्याय नमः' का 11 बार स्मरण करें।"
+            )
+            return "\n\n".join(ans)
+
+        # ---------------------------------------------------------------------
+        # SCENARIO B: FOLLOW-UP QUESTION ON JUDICIARY / EXAMS ("aage kya" after exams)
+        # ---------------------------------------------------------------------
+        if is_followup and prior_topic == "exam":
+            ans = [salutation]
+            ans.append(f"आपके पूर्व प्रश्न (**न्यायिक सेवा / प्रतियोगी परीक्षा**) के अनुक्रम में — **आगामी परीक्षा चक्र, तैयारी की रणनीति एवं सफलता काल (Exam Timeline)** का शास्त्रीय विवेचन:\n")
+
+            ans.append(
+                f"1. **तात्कालिक अध्ययन काल ({pd_end_str} तक):**\n"
+                f"वर्तमान प्रत्यंतर काल में अध्ययन में निरंतरता और एकाग्रता बनाए रखना प्राथमिक है। विधिक विषयों में मुख्य परीक्षा के उत्तर लेखन (Answer Writing) और केस लॉज़ के सटीक विश्लेषण पर बल दें।"
+            )
+
+            ans.append(
+                f"2. **सफलता एवं चयन का प्रबल योग ({ad_end_str} से):**\n"
+                f"आगामी {next_lord_hi} देव की अन्तर्दशा प्रारंभ होते ही बौद्धिक तीक्ष्णता और साक्षात्कार में प्रभावशाली अभिव्यक्ति के योग निर्मित होंगे। यह कालखंड परीक्षा में अंतिम चयन के लिए अत्यंत शुभ सिद्ध होगा।"
+            )
+
+            ans.append(
+                f"**आचार्य निर्देश:** नित्य प्रातः सूर्य नमस्कार करें और आदित्य हृदय स्तोत्र का पाठ करें। अध्ययन कक्ष में उत्तर या पूर्व दिशा की ओर मुख करके बैठें।"
+            )
+            return "\n\n".join(ans)
+
+        # ---------------------------------------------------------------------
+        # SCENARIO C: FOLLOW-UP QUESTION ON WEALTH / FINANCE
+        # ---------------------------------------------------------------------
+        if is_followup and prior_topic == "wealth":
+            ans = [salutation]
+            ans.append(f"आपके पूर्व प्रश्न (**आर्थिक स्थिति एवं धन संचय**) के क्रम में — **आगामी वित्तीय कालखंड एवं निवेश सलाह (Financial Outlook)**:\n")
+
+            ans.append(
+                f"1. **तात्कालिक वित्तीय स्थिति ({pd_end_str} तक):** अनावश्यक व्यय पर नियंत्रण रखें। किसी भी नए व्यक्ति पर आंख मूंदकर भरोसा न करें और जोखिम भरे सट्टे/ट्रेडिंग से बचें।"
+            )
+            ans.append(
+                f"2. **धन वृद्धि का मुख्य काल ({ad_end_str} से):** आगामी {next_lord_hi} की अन्तर्दशा धन संचय, पैतृक लाभ और नवीन आय स्रोतों के लिए अत्यधिक अनुकूल रहेगी।"
+            )
+            ans.append(
+                f"**आचार्य उपाय:** गुरुवार को श्री सूक्त का पाठ करें तथा केसर का तिलक लगाएं।"
+            )
+            return "\n\n".join(ans)
+
+        # ---------------------------------------------------------------------
+        # INTENT 1: TIMING, UPCOMING EVENTS, "AAGE KYA", TURNING POINTS
+        # ---------------------------------------------------------------------
+        if any(w in q_lower for w in ["aage", "आगे", "aage kya", "आगे क्या", "ab kya", "अब क्या", "what next", "next",
+                                     "kab", "कब", "kab se", "kab tak", "कब तक", "kab hoga", "कब होगा", "kab aayega",
+                                     "future", "भविष्य", "sudhar", "सुधार", "badlega", "बदलेगा", "achha samay",
+                                     "अच्छा समय", "shubh", "शुभ समय", "turning point", "when will", "kaisa rahega",
+                                     "कैसा रहेगा", "kya hoga", "क्या होगा", "kya kare", "क्या करें", "kya karein"]):
+            ans = [salutation]
+            ans.append(f"आपके प्रश्न — **'आगामी समय, भविष्य की दिशा एवं भाग्योदय कब से होगा?'** के संबंध में कुण्डली, विंशोत्तरी दशा व गोचर का समग्र काल-विभाजन विश्लेषण:\n")
+
             ans.append(f"1. **वर्तमान समय की स्थिति (कारण एवं प्रभाव):**")
             ans.append(
                 f"वर्तमान में आपकी विंशोत्तरी दशा **{fw['dasha_md']} महादशा में {fw['dasha_ad']} की अन्तर्दशा** "
@@ -290,18 +428,12 @@ class VyasChatbotEngine:
                 f"इस कारण वर्तमान में प्रयास अधिक और तात्कालिक परिणाम मिलने में विलंब या मानसिक दबाव अनुभव हो सकता है।"
             )
 
-            # Phase B: Exact Relief Milestone (Pratyantardasha)
-            pd_end_str = fw["pd_end"] or "आगामी कुछ सप्ताह"
             ans.append(f"2. **प्रथम राहत काल (First Relief Milestone):**")
             ans.append(
                 f"तात्कालिक मानसिक उलझनों और गतिरोध में **{pd_end_str}** से सकारात्मक परिवर्तन दृष्टिगोचर होगा, "
                 f"जब वर्तमान प्रत्यन्तर्दशा समाप्त होकर अगले अनुकूल ग्रह का प्रत्यंतर प्रारंभ होगा।"
             )
 
-            # Phase C: Major Golden Turning Point (Next Antardasha)
-            ad_end_str = fw["ad_end"] or "2027"
-            next_lord_hi = fw["next_ad_lord_hi"] or "बुध"
-            next_lord_en = fw["next_ad_lord_en"] or "Mercury"
             ans.append(f"3. **मुख्य स्वर्णिम कालखंड एवं भाग्योदय (Major Turning Point):**")
             ans.append(
                 f"आपकी कुण्डली में वास्तविक और दीर्घकालिक सकारात्मक मोड़ **{ad_end_str}** से आएगा, "
@@ -310,16 +442,12 @@ class VyasChatbotEngine:
                 f"यह अवधि आपके लिए बौद्धिक निर्णयों, कार्यक्षेत्र में गतिशीलता, नए व्यावसायिक/प्रशासनिक अवसरों तथा आर्थिक संचय के लिए अत्यधिक फलदायी सिद्ध होगी।"
             )
 
-            # Phase D: Transit support (Gochar)
-            jup_tr = tr.get("Jupiter", {})
-            sat_tr = tr.get("Saturn", {})
             ans.append(f"4. **गोचर कालीन संबल (Planetary Transits):**")
             if jup_tr:
                 ans.append(f"• देवगुरु बृहस्पति वर्तमान में {jup_tr.get('sign', '')} राशि में संचरण कर रहे हैं (लग्न से {jup_tr.get('h_lagna', '')}वें भाव में)। गुरु का यह गोचर आपके महत्वपूर्ण भावों पर शुभ प्रभाव डाल रहा है।")
             if sat_tr:
                 ans.append(f"• शनि देव का गोचर {sat_tr.get('sign', '')} राशि में चल रहा है, जो यह स्पष्ट करता है कि धैर्यपूर्वक कर्म करने पर सफलता सुनिश्चित है।")
 
-            # Phase E: Strategic Advice
             ans.append(f"**आचार्य निर्देश (मार्गदर्शन):**")
             ans.append(
                 f"वर्तमान समय संयम और आगामी बड़े कार्यों की नींव रखने का है। किसी भी नए कार्य में जल्दबाजी या निराशा से बचें। "
@@ -329,14 +457,12 @@ class VyasChatbotEngine:
 
         # ---------------------------------------------------------------------
         # INTENT 2: DASHA PREDICTIONS & VIMSHOTTARI ANALYSIS
-        # Keywords: 'dasha', 'dashao', 'mahadasha', 'antardasha', 'दशा', 'महादशा', 'अंतर्दशा'
         # ---------------------------------------------------------------------
         elif any(w in q_lower for w in ["dasha", "दशा", "mahadasha", "महादशा", "antardasha", "अन्तर्दशा", "अंतर्दशा",
                                        "pratyantar", "प्रत्यंतर", "vimshottari", "विंशोत्तरी"]):
             ans = [salutation]
             ans.append(f"आपकी कुण्डली की **सक्रिय विंशोत्तरी दशाओं का समग्र शास्त्रीय फलादेश** इस प्रकार है:\n")
 
-            # 1. Mahadasha Lord Analysis
             md_en = fw["md_lord_en"] or "Venus"
             md_hi = fw["dasha_md"]
             md_h = p_inf.get(md_en, {}).get("house", 9)
@@ -345,10 +471,9 @@ class VyasChatbotEngine:
             ans.append(
                 f"• **अवधि:** {fw['md_start']} से {fw['md_end']} तक।\n"
                 f"• **स्थिति:** {md_hi} देव कुण्डली के **{md_h}वें भाव में {md_sign} राशि** में स्थित हैं।\n"
-                f"• **शास्त्रीय फल:** यह महादशा भाग्य, धर्म, दूरस्थ यात्राओं, सामाजिक मान-सम्मान और दीर्घकालिक समृद्धि की आधारशिला रखती है। यह कालखंड जातक को ज्ञानवान और प्रतिष्ठित बनाता है।"
+                f"• **शास्त्रीय फल:** यह महादशा भाग्य, धर्म, दूरस्थ यात्राओं, सामाजिक मान-सम्मान और दीर्घकालिक समृद्धि की आधारशिला रखती है।"
             )
 
-            # 2. Antardasha Lord Analysis
             ad_en = fw["ad_lord_en"] or "Saturn"
             ad_hi = fw["dasha_ad"]
             ad_h = p_inf.get(ad_en, {}).get("house", 7)
@@ -356,15 +481,15 @@ class VyasChatbotEngine:
             if ad_en == "Saturn":
                 ad_phala = "यह अन्तर्दशा अधिकार, दायित्व और कर्मक्षेत्र में कड़े परिश्रम की मांग करती है। शनि देव जातक को धैर्य और अनुशासन की कसौटी पर परखते हैं, तत्पश्चात स्थायी सफलता व प्रतिष्ठा प्रदान करते हैं।"
             elif ad_en == "Ketu":
-                ad_phala = "केतु की अन्तर्दशा आध्यात्मिक चिंतन, गहन शोध, आत्म-मंथन और आंतरिक एकाग्रता लाती है। सांसारिक निर्णयों में जल्दबाजी से बचकर विवेक से कार्य करना चाहिए।"
+                ad_phala = "केतु की अन्तर्दशा आध्यात्मिक चिंतन, गहन शोध, आत्म-मंथन और आंतरिक एकाग्रता लाती है।"
             elif ad_en == "Rahu":
-                ad_phala = "राहु की अन्तर्दशा उच्च महत्वाकांक्षा, अप्रत्याशित अवसर और दूरगामी योजनाएं लाती है। इसमें भ्रम अथवा जल्दबाजी से बचकर विवेकपूर्ण निर्णय लेना श्रेयस्कर रहता है।"
+                ad_phala = "राहु की अन्तर्दशा उच्च महत्वाकांक्षा, अप्रत्याशित अवसर और दूरगामी योजनाएं लाती है।"
             elif ad_en in ["Jupiter", "Venus", "Mercury"]:
-                ad_phala = f"{ad_hi} देव की शुभ अन्तर्दशा बुद्धि, ज्ञान, नए व्यावसायिक/प्रशासनिक अनुबंध, वित्तीय लाभ और पारिवारिक सुख में निरंतर वृद्धि करती है।"
+                ad_phala = f"{ad_hi} देव की शुभ अन्तर्दशा बुद्धि, ज्ञान, नए व्यावसायिक अनुबंध, वित्तीय लाभ और पारिवारिक सुख में निरंतर वृद्धि करती है।"
             elif ad_en == "Sun":
                 ad_phala = "सूर्य देव की अन्तर्दशा राजपक्ष, शासन-प्रशासन, आत्मबल एवं समाज में प्रभाव क्षेत्र में वृद्धि करती है।"
             elif ad_en == "Moon":
-                ad_phala = "चन्द्रमा की अन्तर्दशा मानसिक संवेदनशीलता, रचनात्मकता, परिजनों का सहयोग तथा जनसंपर्क में विस्तार लाती है।"
+                ad_phala = "चन्द्रमा की अन्तर्दशा मानसिक संवेदनशीलता, रचनात्मकता तथा जनसंपर्क में विस्तार लाती है।"
             else:
                 ad_phala = "मंगल देव की अन्तर्दशा पराक्रम, साहस, त्वरित निर्णय क्षमता और कर्मक्षेत्र में विजय प्रदान करती है।"
 
@@ -375,25 +500,19 @@ class VyasChatbotEngine:
                 f"• **शास्त्रीय फल:** {ad_phala}"
             )
 
-            # 3. Pratyantardasha Lord Analysis
-            pd_en = fw["pd_lord_en"] or "Moon"
             pd_hi = fw["dasha_pd"]
             ans.append(f"3. **सूक्ष्म प्रत्यन्तर्दशा — {pd_hi} देव:**")
             ans.append(
                 f"• **समाप्ति तिथि:** **{fw['pd_end']}**\n"
-                f"• **प्रभाव:** तात्कालिक दैनिक निर्णय, मनोबल और मानसिक एकाग्रता को प्रभावित कर रहे हैं। इस अवधि में मन को शांत रखकर नियमित कार्य संपन्न करें।"
+                f"• **प्रभाव:** तात्कालिक दैनिक निर्णय, मनोबल और मानसिक एकाग्रता को प्रभावित कर रहे हैं।"
             )
 
-            # 4. Next Antardasha Preview
-            next_lord_hi = fw["next_ad_lord_hi"] or "बुध"
-            next_lord_en = fw["next_ad_lord_en"] or "Mercury"
             ans.append(f"4. **आगामी अन्तर्दशा — {next_lord_hi} देव का पूर्वावलोकन:**")
             ans.append(
                 f"• **प्रारंभ दिनांक:** **{fw['ad_end']}** से।\n"
                 f"• **फलकथन:** {next_lord_hi} देव की अन्तर्दशा प्रारंभ होते ही पूर्व में अटके हुए कार्यों में तीव्रता आएगी। व्यापार, नए अनुबंध, वित्तीय लाभ और पारिवारिक सौहार्द में वृद्धि होगी।"
             )
 
-            # 5. Dasha Upay
             ans.append(f"**दशा अनुकूलता हेतु सिद्ध उपाय:**")
             ans.append(
                 f"• शनिवार के दिन संध्या समय पीपल के वृक्ष के नीचे सरसों के तेल का दीपक प्रज्वलित करें।\n"
@@ -405,14 +524,10 @@ class VyasChatbotEngine:
         # INTENT 3: COMPETITIVE EXAMS / JUDICIARY / RHJS / UPSC / GOVT JOB
         # ---------------------------------------------------------------------
         elif any(w in q_lower for w in ["rhjs", "rjs", "exam", "judiciary", "judge", "judicial", "न्यायिक",
-                                       "परीक्षा", "प्रतियोगिता", "upsc", "clear", "सफलता", "निकलेगा"]):
+                                       "परीक्षा", "प्रतियोगिता", "upsc", "clear", "सफलता", "निकलेगा", "selection", "tayari"]):
             h6_sign = (fw["asc_sign"] + 5) % 12
             h6_lord = constants.SIGN_LORD[h6_sign]
             h6_lord_hi = constants.PLANETS_HI.get(h6_lord, h6_lord)
-
-            h10_sign = (fw["asc_sign"] + 9) % 12
-            h10_lord = constants.SIGN_LORD[h10_sign]
-            h10_lord_hi = constants.PLANETS_HI.get(h10_lord, h10_lord)
 
             ans = [salutation]
             ans.append(f"आपके प्रश्न — **न्यायिक सेवा (RHJS / Judiciary) अथवा उच्च प्रतियोगी परीक्षा में चयन के योग** के संबंध में कुण्डली विश्लेषण:\n")
@@ -433,7 +548,7 @@ class VyasChatbotEngine:
         # INTENT 4: CAREER / JOB / PROMOTION / BUSINESS
         # ---------------------------------------------------------------------
         elif any(w in q_lower for w in ["career", "job", "नौकरी", "प्रमोशन", "promotion", "आजीविका", "व्यवसाय",
-                                       "business", "व्यापार", "काम", "ऑफिस"]):
+                                       "business", "व्यापार", "काम", "ऑफिस", "rozgar", "kaam"]):
             h10_sign = (fw["asc_sign"] + 9) % 12
             h10_lord = constants.SIGN_LORD[h10_sign]
             h10_lord_hi = constants.PLANETS_HI.get(h10_lord, h10_lord)
@@ -446,7 +561,7 @@ class VyasChatbotEngine:
                 f"2. **कर्मकारक शनि देव की भूमिका:** कर्म के नैसर्गिक कारक शनि देव आपकी कुण्डली के {_placement('Saturn')} में विराजमान हैं। "
                 f"शनि देव यहाँ से महत्वपूर्ण भावों पर अपनी पूर्ण दृष्टि डाल रहे हैं, जिससे व्यक्ति अपनी निष्ठा और योग्यता सिद्ध करने के बाद ही उच्च पद व सम्मान प्राप्त करता है।\n"
                 f"3. **दशा व तात्कालिक स्थिति:** वर्तमान में सक्रिय **{dasha_display}** कार्यक्षेत्र में धैर्य की मांग करती है। वरिष्ठों से तालमेल बनाए रखें। "
-                f"आगामी समय में पदोन्नति एवं प्रभाव क्षेत्र में विस्तार के स्पष्ट योग निर्मित हो रहे हैं।"
+                f"आगामी अन्तर्दशा ({ad_end_str} से) में पदोन्नति एवं प्रभाव क्षेत्र में विस्तार के स्पष्ट योग निर्मित हो रहे हैं।"
             )
             ans.append(f"**परामर्श:** नौकरी व स्वतंत्र परामर्श दोनों में ही आपकी सफलता सुनिश्चित है। शनिवार को गरीबों को काले तिल या भोजन का दान करें।")
             return "\n\n".join(ans)
@@ -454,7 +569,7 @@ class VyasChatbotEngine:
         # ---------------------------------------------------------------------
         # INTENT 5: WEALTH / FINANCE / DEBT / INVESTMENT
         # ---------------------------------------------------------------------
-        elif any(w in q_lower for w in ["धन", "money", "wealth", "पैसा", "कर्ज", "debt", "आर्थिक", "निवेश", "लाभ", "रुपया"]):
+        elif any(w in q_lower for w in ["धन", "money", "wealth", "पैसा", "कर्ज", "debt", "आर्थिक", "निवेश", "लाभ", "रुपया", "kamai"]):
             h2_sign = (fw["asc_sign"] + 1) % 12
             h11_sign = (fw["asc_sign"] + 10) % 12
             h2_lord = constants.PLANETS_HI.get(constants.SIGN_LORD[h2_sign])
@@ -508,7 +623,7 @@ class VyasChatbotEngine:
         # ---------------------------------------------------------------------
         # INTENT 8: CHILDREN / PROGENY
         # ---------------------------------------------------------------------
-        elif any(w in q_lower for w in ["संतान", "बच्चे", "गर्भाधान", "पुत्र", "पुत्री", "child", "progeny"]):
+        elif any(w in q_lower for w in ["संतान", "बच्चे", "गर्भाधान", "पुत्र", "पुत्री", "child", "progeny", "garbh"]):
             h5_sign = (fw["asc_sign"] + 4) % 12
             h5_lord = constants.PLANETS_HI.get(constants.SIGN_LORD[h5_sign])
 
@@ -542,7 +657,7 @@ class VyasChatbotEngine:
         # ---------------------------------------------------------------------
         # INTENT 10: FOREIGN TRAVEL / SETTLEMENT
         # ---------------------------------------------------------------------
-        elif any(w in q_lower for w in ["विदेश", "foreign", "यात्रा", "travel", "settlement", "वीजा"]):
+        elif any(w in q_lower for w in ["विदेश", "foreign", "यात्रा", "travel", "settlement", "वीजा", "bahar"]):
             h9_sign = (fw["asc_sign"] + 8) % 12
             h12_sign = (fw["asc_sign"] + 11) % 12
             h9_lord = constants.PLANETS_HI.get(constants.SIGN_LORD[h9_sign])
@@ -560,14 +675,14 @@ class VyasChatbotEngine:
         # ---------------------------------------------------------------------
         # INTENT 11: TROUBLES / SADESATI / RELIEF / OBSTACLES
         # ---------------------------------------------------------------------
-        elif any(w in q_lower for w in ["कष्ट", "परेशानी", "समस्या", "साढ़े साती", "ढैया", "राहत", "संकट", "मुसीबत", "तनाव"]):
+        elif any(w in q_lower for w in ["कष्ट", "परेशानी", "समस्या", "साढ़े साती", "ढैया", "राहत", "संकट", "मुसीबत", "तनाव", "rukawat"]):
             ans = [salutation]
             ans.append(f"कष्ट, मानसिक तनाव एवं बाधाओं से मुक्ति के संबंध में ग्रह स्थिति व समाधान:\n")
             ans.append(
                 f"1. **मूल कारण का विश्लेषण:** वर्तमान में आपकी सक्रिय दशा ({dasha_display}) चल रही है। "
                 f"शनि देव {_placement('Saturn')} में स्थित हैं। शनि जब कुण्डली के महत्वपूर्ण भावों को प्रभावित करते हैं, "
                 f"तो वे व्यक्ति को धैर्य, अनुशासन और आंतरिक शुद्धता की परीक्षा में डालते हैं। यह कष्ट नहीं अपितु परिपक्वता का कालखंड है।\n"
-                f"2. **राहत की समय-सीमा:** प्रत्यन्तर्दशा समाप्ति ({fw['pd_end'] or 'शीघ्र'}) और आगामी अन्तर्दशा प्रारंभ ({fw['ad_end'] or '2027'}) के साथ सभी बाधाओं का निवारण स्वतः होने लगेगा।\n"
+                f"2. **राहत की समय-सीमा:** प्रत्यन्तर्दशा समाप्ति ({pd_end_str}) और आगामी अन्तर्दशा प्रारंभ ({ad_end_str}) के साथ सभी बाधाओं का निवारण स्वतः होने लगेगा।\n"
                 f"3. **शास्त्रीय शांति उपाय:**\n"
                 f"• शनिवार को सूर्यास्त के बाद हनुमान जी के सम्मुख चमेली के तेल का दीपक जलाएं और सुंदरकांड का पाठ करें।\n"
                 f"• चींटियों को आटा व पक्षियों को दाना डालें।"
@@ -584,26 +699,22 @@ class VyasChatbotEngine:
                 f"1. **लग्नेश बल संवर्धन:** आपके लग्नेश **{fw['lagnesh_hi']}** {_placement(fw['lagnesh'])} में स्थित हैं। "
                 f"लग्नेश को बलवान करने से समस्त बाधाएं दूर होती हैं। नित्य गायत्री मंत्र अथवा हनुमान चालीसा का पाठ करें।\n"
                 f"2. **दशा शांति उपाय:** चालू दशा ({dasha_display}) की अनुकूलता हेतु शनिवार को शनि स्तोत्र और शुक्रवार को लक्ष्मी स्तोत्र का पाठ परम श्रेयस्कर है।\n"
-                f"3. **रत्न परामर्श:** कुण्डली के कारक ग्रहों (लग्नेश मंगल, नवमेश गुरु) के अनुकूल रत्न ज्योतिषी के विधिवत परीक्षण के उपरांत ही धारण करें।"
+                f"3. **रत्न परामर्श:** कुण्डली के कारक ग्रहों (लग्नेश {fw['lagnesh_hi']}) के अनुकूल रत्न विधिवत परीक्षण के उपरांत ही धारण करें।"
             )
             return "\n\n".join(ans)
 
         # ---------------------------------------------------------------------
-        # INTENT 13: INTELLIGENT CONTEXTUAL SYNTHESIS (FALLBACK)
-        # Never outputs a canned robotic template!
+        # INTENT 13: CONTEXTUAL ASTROLOGICAL SYNTHESIS (DYNAMIC FALLBACK)
         # ---------------------------------------------------------------------
         else:
             ans = [salutation]
-            ans.append(f"आपके प्रश्न — *\"{query}\"* के संदर्भ में आपकी कुण्डली की विस्तृत ग्रह स्थिति का अवलोकन:\n")
+            ans.append(f"आपके प्रश्न — *\"{query}\"* के संबंध में कुण्डली एवं ग्रहों का शास्त्रीय दृष्टिकोण:\n")
             ans.append(
-                f"1. **लग्न एवं आत्मबल:** आपकी कुण्डली **{fw['asc_sign_name']} लग्न** की है और लग्नेश **{fw['lagnesh_hi']}** "
-                f"कुण्डली के {_placement(fw['lagnesh'])} में विराजमान हैं। लग्नेश की यह सुदृढ़ स्थिति यह दर्शाती है कि आपके भीतर किसी भी परिस्थिति से निपटने की अटूट आंतरिक क्षमता और दृढ़ निश्चय है।\n"
-                f"2. **चन्द्रमा एवं मन की स्थिति:** आपका चन्द्रमा **{fw['moon_sign_name']} राशि** में {fw['moon_nak_name']} नक्षत्र में संचरण कर रहा है, जो अंतर्मुखी प्रज्ञा और सूक्ष्म शोध की प्रवृत्ति प्रदान करता है।\n"
-                f"3. **वर्तमान दशा का निर्देश:** सक्रिय विंशोत्तरी दशा **{dasha_display}** चल रही है (अन्तर्दशा समाप्ति: **{fw['ad_end'] or '2027'}**)। "
-                f"यह ग्रह संयोजन यह स्पष्ट संकेत देता है कि वर्तमान समय शांत रहकर अपनी योजनाओं को परिपक्व करने का है।\n"
-                f"4. **आगामी मोड़:** आगामी अन्तर्दशा प्रारंभ होते ही आपके द्वारा सोची गई योजनाएं तीव्र गति से सफलता की ओर अग्रसर होंगी।"
+                f"1. **लग्न व मन का संबल:** आपकी कुण्डली **{fw['asc_sign_name']} लग्न** की है और लग्नेश **{fw['lagnesh_hi']}** "
+                f"कुण्डली के {_placement(fw['lagnesh'])} में सुदृढ़ स्थिति में हैं। चन्द्रमा {fw['moon_sign_name']} राशि ({fw['moon_nak_name']} नक्षत्र) में संचरण कर रहे हैं। यह ग्रह विन्यास विपरीत परिस्थितियों में भी आपको सही निर्णय लेने की क्षमता देता है।\n"
+                f"2. **सक्रिय कालखंड व समय-सीमा:** वर्तमान में **{dasha_display}** चल रही है। तात्कालिक प्रत्यंतर **{pd_end_str}** तक प्रभावी है, तत्पश्चात मुख्य मोड़ **{ad_end_str}** से {next_lord_hi} देव की अन्तर्दशा के साथ प्रारंभ होगा।\n"
+                f"3. **आचार्य परामर्श:** किसी भी संशय की स्थिति में शांत मन से निर्णय लें। अपने दैनिक आचरण में सात्विकता बनाए रखें और नित्य प्रातः सूर्य देव को जल अर्पित करें।"
             )
-            ans.append(f"**आचार्य परामर्श:** ईश्वर पर आस्था रखें, अपने दैनिक कर्म में शुचिता बनाए रखें और नित्य सूर्य नमस्कार अथवा प्राणायाम करें।")
             return "\n\n".join(ans)
 
 

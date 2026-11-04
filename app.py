@@ -851,10 +851,10 @@ st.markdown("""
         }
         div[data-testid="stRadio"] label {
             padding: 5px 8px !important;
-            font-size: 0.74rem !important;
+            font-size: 0.92rem !important;
         }
         .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
-            font-size: 0.75rem !important;
+            font-size: 0.92rem !important;
             padding: 5px 9px !important;
         }
         .block-container {
@@ -873,8 +873,8 @@ st.markdown("""
         .section-title { font-size: 0.9rem !important; }
         .block-container { padding: 0.5rem 0.25rem 2.2rem 0.25rem !important; }
         table.as-table, .as-table td, .as-table th {
-            font-size: 7.2pt !important;
-            padding: 2px 3px !important;
+            font-size: 0.88rem !important;
+            padding: 4px 6px !important;
         }
     }
 
@@ -1035,29 +1035,67 @@ st.markdown("""
         color: #f5d16e !important;
     }
 
-    /* Smoother body text */
-    p, li, label, .stMarkdown {
-        line-height: 1.8 !important;
-        letter-spacing: 0.01em;
+    /* Highly Readable Body Text & Devanagari */
+    html, body {
+        font-size: 16.5px !important;
     }
-        font-family: 'Cinzel', 'Noto Sans Devanagari', serif !important;
-        font-size: 1.38rem;
-        font-weight: 800;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        line-height: 1.4;
-        padding: 4px 0 14px 0;
-        margin-top: 16px;
-        margin-bottom: 22px;
-        color: #fff4cc;
-        border-bottom: none;
-        background-image:
-            radial-gradient(circle, rgba(255, 228, 150, 0.95) 0%, rgba(245, 209, 110, 0.5) 45%, transparent 75%),
-            linear-gradient(90deg, transparent, rgba(245, 209, 110, 0.24) 25%, rgba(245, 209, 110, 0.24) 75%, transparent);
-        background-repeat: no-repeat, no-repeat;
-        background-size: 100% 1px, 100% 1px;
-        background-position: 0 100%, 0 100%;
+    .stApp {
+        font-size: 1.05rem !important;
+    }
+    p, li, label, .stMarkdown, div[data-testid="stMarkdownContainer"] p, div[data-testid="stMarkdownContainer"] li {
+        font-size: 1.06rem !important;
+        line-height: 1.78 !important;
+        letter-spacing: 0.01em;
+        color: #f1f5f9;
+    }
+
+    .section-title {
+        font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal',
+                     'Tiro Devanagari Sanskrit', 'Segoe UI', 'Cinzel', sans-serif !important;
+        font-size: 1.35rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.5px !important;
+        line-height: 1.5 !important;
+        padding: 4px 0 12px 0 !important;
+        margin-top: 16px !important;
+        margin-bottom: 20px !important;
+        color: #fff4cc !important;
+        border-bottom: 1px solid rgba(245, 209, 110, 0.3) !important;
+        display: block !important;
         text-shadow: 0 0 28px rgba(245, 209, 110, 0.22);
+    }
+
+    /* Chat Messages - Crisp, Spacious & High-Contrast */
+    [data-testid="stChatMessage"] {
+        background: rgba(14, 23, 47, 0.92) !important;
+        border: 1px solid rgba(240, 192, 90, 0.35) !important;
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        margin-bottom: 14px !important;
+    }
+    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] li {
+        font-size: 1.08rem !important;
+        line-height: 1.82 !important;
+        color: #f8fafc !important;
+    }
+    [data-testid="stChatMessage"] b, [data-testid="stChatMessage"] strong {
+        color: #f0c05a !important;
+        font-weight: 700 !important;
+    }
+
+    /* Tables, DataFrames & Cards Legibility */
+    div[data-testid="stDataFrame"], div[data-testid="stTable"], table.as-table {
+        font-size: 0.98rem !important;
+    }
+    table.as-table td, table.as-table th {
+        font-size: 0.96rem !important;
+        padding: 8px 12px !important;
+    }
+    .glass-card {
+        font-size: 1.05rem !important;
+    }
+    .predict-card {
+        font-size: 1.05rem !important;
     }
 
     /* --- Royal Micro-interactions --- */
@@ -2206,11 +2244,17 @@ if st.session_state.get('data_generated'):
     vargas_matrix = st.session_state['vargas_matrix']
     asc_sign_idx = chart.ascendant_sign
 
-    # Global predictive and astrological precomputations
-    dignities = forensic_predictor.analyze_all_planetary_dignities(chart, vargas_matrix)
-    bhavas = forensic_predictor.analyze_all_12_bhavas(chart, dignities)
-    p_signs = {n: p.sign_index for n, p in chart.planets.items()}
-    av_res = vyas_ashtaka.compute_ashtakavarga(p_signs, asc_sign_idx)
+    # Global predictive and astrological precomputations (MEMOIZED in session_state to prevent lag)
+    if 'dignities' not in st.session_state or st.session_state.get('_calc_sig') != _birth_input_sig:
+        st.session_state['dignities'] = forensic_predictor.analyze_all_planetary_dignities(chart, vargas_matrix)
+        st.session_state['bhavas'] = forensic_predictor.analyze_all_12_bhavas(chart, st.session_state['dignities'])
+        p_signs_map = {n: p.sign_index for n, p in chart.planets.items()}
+        st.session_state['av_res'] = vyas_ashtaka.compute_ashtakavarga(p_signs_map, asc_sign_idx)
+        st.session_state['_calc_sig'] = _birth_input_sig
+
+    dignities = st.session_state['dignities']
+    bhavas = st.session_state['bhavas']
+    av_res = st.session_state['av_res']
     sav = av_res["sav"]
     cur_dasha = dasha_engine.get_running_dasha(datetime.now()) if hasattr(dasha_engine, 'get_running_dasha') else dasha_engine.get_dasha_at(datetime.now())
 
@@ -2350,16 +2394,25 @@ if st.session_state.get('data_generated'):
             transit_moon_lon = (chart.planets["Moon"].longitude + 13.2) % 360.0
         
         cur_dasha_str = cur_dasha.get("full_path", "Jupiter-Saturn") if isinstance(cur_dasha, dict) else str(cur_dasha)
-        daily_res = vyas_daily.generate_daily_horoscope(
-            chart.planets["Moon"].longitude,
-            chart.ascendant_longitude,
-            cur_dasha_str,
-            transit_moon_lon,
-            now_dt,
-            lat=birth.get('lat', 28.6139),
-            lon=birth.get('lon', 77.2090),
-            tz_hours=birth.get('tz', 5.5)
-        )
+        _today_str = now_dt.strftime("%Y-%m-%d")
+        if (st.session_state.get('_daily_cache_day') != _today_str 
+                or st.session_state.get('_daily_cache_sig') != _birth_input_sig
+                or 'daily_res' not in st.session_state):
+            daily_res = vyas_daily.generate_daily_horoscope(
+                chart.planets["Moon"].longitude,
+                chart.ascendant_longitude,
+                cur_dasha_str,
+                transit_moon_lon,
+                now_dt,
+                lat=birth.get('lat', 28.6139),
+                lon=birth.get('lon', 77.2090),
+                tz_hours=birth.get('tz', 5.5)
+            )
+            st.session_state['daily_res'] = daily_res
+            st.session_state['_daily_cache_day'] = _today_str
+            st.session_state['_daily_cache_sig'] = _birth_input_sig
+        else:
+            daily_res = st.session_state['daily_res']
 
         # Render Top Score Cards
         score = daily_res["overall_score"]
@@ -4223,8 +4276,8 @@ if st.session_state.get('data_generated'):
         </div>
         """, unsafe_allow_html=True)
 
-        # Quick chips inside popup
-        st.markdown("<div style='font-size: 0.84rem; color: #f0c05a; font-weight: 700; margin-bottom: 4px;'>त्वरित प्रश्न:</div>", unsafe_allow_html=True)
+        # Quick chips inside popup (Full text in responsive 2-column layout with clear readable fonts)
+        st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>✨ त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)
         suggested_queries = [
             "करियर, नौकरी एवं पदोन्नति के क्या योग हैं?",
             "प्रतियोगी परीक्षा / आरएचजेएस (RHJS) में सफलता की क्या संभावना है?",
@@ -4233,11 +4286,12 @@ if st.session_state.get('data_generated'):
             "स्वास्थ्य रक्षा हेतु कौन से सात्विक उपाय करें?"
         ]
         
-        chip_cols = st.columns(len(suggested_queries))
+        chip_col1, chip_col2 = st.columns(2)
         chosen_chip = None
         for i, q_chip in enumerate(suggested_queries):
-            with chip_cols[i]:
-                if st.button(q_chip[:22] + "...", key=f"dialog_chip_{i}", use_container_width=True):
+            target_col = chip_col1 if i % 2 == 0 else chip_col2
+            with target_col:
+                if st.button(q_chip, key=f"dialog_chip_{i}", use_container_width=True):
                     chosen_chip = q_chip
 
         # Initialize session state for dialog chat history
@@ -4249,8 +4303,8 @@ if st.session_state.get('data_generated'):
                 }
             ]
 
-        # Chat message log container
-        chat_container = st.container(height=360)
+        # Spacious chat message log container
+        chat_container = st.container(height=440)
         with chat_container:
             for msg in st.session_state["dialog_chat_history"]:
                 with st.chat_message(msg["role"]):
@@ -4264,7 +4318,7 @@ if st.session_state.get('data_generated'):
         if dialog_user_input:
             st.session_state["dialog_chat_history"].append({"role": "user", "content": dialog_user_input})
             try:
-                cur_raw_pos = planet_positions(datetime.now().replace(tzinfo=timezone.utc))
+                cur_raw_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
             except Exception:
                 cur_raw_pos = None
 
