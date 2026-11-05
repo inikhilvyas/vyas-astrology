@@ -274,11 +274,12 @@ class VyasChatbotEngine:
         )
         return prompt
 
-    def _call_groq(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
-                    chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
-        """Calls Groq API with automatic multi-key pool failover & model resilience."""
+    def _call_openai_compatible(self, endpoint_url: str, key_pool: List[str], models: List[str],
+                                query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                                chat_history: Optional[List[Dict[str, str]]],
+                                extra_headers: Optional[Dict[str, str]] = None) -> Optional[str]:
+        """Generic, resilient runner for OpenAI-compatible REST APIs with multi-key pool failover."""
         from vyas import ai_key_manager
-        key_pool = ai_key_manager.get_groq_key_pool(task="chat")
         if not key_pool:
             return None
 
@@ -297,13 +298,15 @@ class VyasChatbotEngine:
                         messages.append({"role": role, "content": cnt})
             messages.append({"role": "user", "content": query})
 
-            # Iterate through key pool with auto-failover
             for api_key in key_pool:
                 headers = {
                     "Authorization": f"Bearer {api_key}",
                     "Content-Type": "application/json"
                 }
-                for m_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]:
+                if extra_headers:
+                    headers.update(extra_headers)
+
+                for m_name in models:
                     payload = {
                         "model": m_name,
                         "messages": messages,
@@ -311,7 +314,7 @@ class VyasChatbotEngine:
                         "max_tokens": 1200
                     }
                     try:
-                        resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
+                        resp = requests.post(endpoint_url, json=payload, headers=headers, timeout=12)
                         if resp.status_code == 200:
                             data = resp.json()
                             text = data["choices"][0]["message"].get("content", "").strip()
@@ -319,7 +322,6 @@ class VyasChatbotEngine:
                                 ai_key_manager.mark_key_healthy(api_key)
                                 return text
                         elif resp.status_code in [429, 401, 503]:
-                            # Rate limit or quota error: mark and failover to next key in pool
                             ai_key_manager.mark_key_rate_limited(api_key)
                             break
                     except Exception:
@@ -327,6 +329,51 @@ class VyasChatbotEngine:
         except Exception:
             pass
         return None
+
+    def _call_groq(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                    chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls Groq API (ultra-fast LPU inference) with multi-key auto-failover."""
+        from vyas import ai_key_manager
+        return self._call_openai_compatible(
+            endpoint_url="https://api.groq.com/openai/v1/chat/completions",
+            key_pool=ai_key_manager.get_groq_key_pool(task="chat"),
+            models=["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"],
+            query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
+        )
+
+    def _call_deepseek(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                       chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls DeepSeek API (V3 / R1 reasoning) with multi-key auto-failover."""
+        from vyas import ai_key_manager
+        return self._call_openai_compatible(
+            endpoint_url="https://api.deepseek.com/chat/completions",
+            key_pool=ai_key_manager.get_deepseek_key_pool(task="chat"),
+            models=["deepseek-chat", "deepseek-reasoner"],
+            query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
+        )
+
+    def _call_openai(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                     chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls OpenAI API (GPT-4o / GPT-4o-mini) with multi-key auto-failover."""
+        from vyas import ai_key_manager
+        return self._call_openai_compatible(
+            endpoint_url="https://api.openai.com/v1/chat/completions",
+            key_pool=ai_key_manager.get_openai_key_pool(task="chat"),
+            models=["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
+            query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
+        )
+
+    def _call_openrouter(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                         chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls OpenRouter API (unified router for Claude, GPT, DeepSeek, etc.) with multi-key auto-failover."""
+        from vyas import ai_key_manager
+        return self._call_openai_compatible(
+            endpoint_url="https://openrouter.ai/api/v1/chat/completions",
+            key_pool=ai_key_manager.get_openrouter_key_pool(task="chat"),
+            models=["anthropic/claude-3.5-sonnet", "openai/gpt-4o-mini", "deepseek/deepseek-chat"],
+            query=query, fw=fw, birth_info=birth_info, chat_history=chat_history,
+            extra_headers={"HTTP-Referer": "https://vyas-astrology-111.streamlit.app", "X-Title": "VYAS Astrology"}
+        )
 
     def _call_gemini(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                      chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
@@ -413,23 +460,28 @@ class VyasChatbotEngine:
             except Exception:
                 pass
 
-        # 1. AI API Routing (Groq / Gemini)
+        # 1. Universal AI API Routing (Groq, DeepSeek, OpenAI, Gemini, OpenRouter)
         if selected_provider == "groq":
-            groq_reply = self._call_groq(query, fw, birth_info, chat_history)
-            if groq_reply:
-                return groq_reply
+            reply = self._call_groq(query, fw, birth_info, chat_history)
+            if reply: return reply
+        elif selected_provider == "deepseek":
+            reply = self._call_deepseek(query, fw, birth_info, chat_history)
+            if reply: return reply
+        elif selected_provider == "openai":
+            reply = self._call_openai(query, fw, birth_info, chat_history)
+            if reply: return reply
         elif selected_provider == "gemini":
-            gemini_reply = self._call_gemini(query, fw, birth_info, chat_history)
-            if gemini_reply:
-                return gemini_reply
+            reply = self._call_gemini(query, fw, birth_info, chat_history)
+            if reply: return reply
+        elif selected_provider == "openrouter":
+            reply = self._call_openrouter(query, fw, birth_info, chat_history)
+            if reply: return reply
         elif selected_provider != "classical":
-            # Auto mode: Try Groq first for extreme speed, then Gemini
-            groq_reply = self._call_groq(query, fw, birth_info, chat_history)
-            if groq_reply:
-                return groq_reply
-            gemini_reply = self._call_gemini(query, fw, birth_info, chat_history)
-            if gemini_reply:
-                return gemini_reply
+            # Auto cascade: Try available models in order of speed and capability
+            for call_fn in [self._call_groq, self._call_deepseek, self._call_openai, self._call_gemini, self._call_openrouter]:
+                reply = call_fn(query, fw, birth_info, chat_history)
+                if reply:
+                    return reply
 
                 # 2. Comprehensive Deterministic Vedic Shastra Consultation Engine
         p_inf = fw["p_info"]

@@ -1,16 +1,22 @@
 """VYAS Enterprise Multi-Key AI Pool & Auto-Failover Orchestrator.
 
 Key Capabilities:
-1. Multi-Key Backup Pool (Auto-Failover):
+1. Multi-Provider AI Model Support:
+   - Groq (Llama-3.3, Qwen-2.5/3.8, GPT-OSS)
+   - Google Gemini (Gemini 3.8 Flash, Gemini 2.5 Pro)
+   - OpenAI (GPT-4o, GPT-4o-mini)
+   - DeepSeek (DeepSeek-V3, DeepSeek-R1)
+   - OpenRouter (Unified router for 200+ models)
+   - Anthropic Claude (Claude 3.5 Sonnet, Haiku)
+2. Multi-Key Backup Pool (Auto-Failover):
    Rotates through multiple backup API keys if a primary key hits rate limits (HTTP 429),
    quota exhaustion, or network timeout.
-2. Calculation / Task Specific Segregation:
+3. Calculation / Task Specific Segregation:
    Allows different keys for different astrological computations:
-   - 'chat': Interactive live consultation with Acharya Vyas (Groq LPU / Gemini)
-   - 'report': 56-page deep publication synthesis (Gemini Pro / Flash)
+   - 'chat': Interactive live consultation with Acharya Vyas
+   - 'report': 56-page deep publication synthesis
    - 'daily': Daily horoscope, transit & Gochar synthesis
-   - 'prashna': Horary and compatibility judgement
-3. Safe Secret Discovery:
+4. Safe Secret Discovery:
    Seamlessly checks Streamlit Cloud Secrets (st.secrets), environment variables (os.environ),
    and local config with zero leaks to git.
 """
@@ -64,38 +70,41 @@ def _extract_from_env(env_name: str) -> List[str]:
     return results
 
 
-def get_groq_key_pool(task: str = "chat") -> List[str]:
+def _get_provider_key_pool(provider_prefix: str, task: str = "chat", extra_names: Optional[List[str]] = None) -> List[str]:
     """
-    Returns an ordered, deduplicated pool of Groq API keys.
-    Priority:
-    1. Dedicated task key (e.g., CHAT_GROQ_API_KEY, REPORT_GROQ_API_KEY)
-    2. Primary GROQ_API_KEY
-    3. Multi-key pool GROQ_API_KEYS (comma-separated)
-    4. Backup numbered keys: GROQ_API_KEY_1 .. GROQ_API_KEY_5, GROQ_BACKUP_KEY
+    Generic discovery for any LLM provider key pool with task-priority, backup numbered keys,
+    and automatic failover tracking.
     """
     candidates: List[str] = []
     task_upper = (task or "chat").upper()
+    prefix = provider_prefix.upper()
 
-    # 1. Dedicated task key
-    candidates.extend(_extract_from_secrets(f"{task_upper}_GROQ_API_KEY"))
-    candidates.extend(_extract_from_env(f"{task_upper}_GROQ_API_KEY"))
+    # 1. Dedicated task key (e.g. CHAT_OPENAI_API_KEY)
+    candidates.extend(_extract_from_secrets(f"{task_upper}_{prefix}_API_KEY"))
+    candidates.extend(_extract_from_env(f"{task_upper}_{prefix}_API_KEY"))
 
-    # 2. Primary key
-    candidates.extend(_extract_from_secrets("GROQ_API_KEY"))
-    candidates.extend(_extract_from_env("GROQ_API_KEY"))
+    # 2. Primary key (e.g. OPENAI_API_KEY)
+    candidates.extend(_extract_from_secrets(f"{prefix}_API_KEY"))
+    candidates.extend(_extract_from_env(f"{prefix}_API_KEY"))
 
-    # 3. Comma-separated pool
-    candidates.extend(_extract_from_secrets("GROQ_API_KEYS"))
-    candidates.extend(_extract_from_env("GROQ_API_KEYS"))
+    # 2b. Extra aliases (e.g. GOOGLE_API_KEY for Gemini, CLAUDE_API_KEY for Anthropic)
+    if extra_names:
+        for en in extra_names:
+            candidates.extend(_extract_from_secrets(en))
+            candidates.extend(_extract_from_env(en))
 
-    # 4. Numbered backups (1 to 5) + GROQ_BACKUP_KEY
+    # 3. Comma-separated pool (e.g. OPENAI_API_KEYS)
+    candidates.extend(_extract_from_secrets(f"{prefix}_API_KEYS"))
+    candidates.extend(_extract_from_env(f"{prefix}_API_KEYS"))
+
+    # 4. Numbered backups (1 to 5) + BACKUP_KEY
     for idx in range(1, 6):
-        candidates.extend(_extract_from_secrets(f"GROQ_API_KEY_{idx}"))
-        candidates.extend(_extract_from_env(f"GROQ_API_KEY_{idx}"))
-    candidates.extend(_extract_from_secrets("GROQ_BACKUP_KEY"))
-    candidates.extend(_extract_from_env("GROQ_BACKUP_KEY"))
+        candidates.extend(_extract_from_secrets(f"{prefix}_API_KEY_{idx}"))
+        candidates.extend(_extract_from_env(f"{prefix}_API_KEY_{idx}"))
+    candidates.extend(_extract_from_secrets(f"{prefix}_BACKUP_KEY"))
+    candidates.extend(_extract_from_env(f"{prefix}_BACKUP_KEY"))
 
-    # Deduplicate while preserving order
+    # Deduplicate while preserving priority order
     seen: Set[str] = set()
     pool: List[str] = []
     for k in candidates:
@@ -103,61 +112,42 @@ def get_groq_key_pool(task: str = "chat") -> List[str]:
             seen.add(k)
             pool.append(k)
 
-    # Sort so that non-cooldown keys come first
+    # Sort so healthy non-cooldown keys come first
     now = time.time()
     healthy_keys = [k for k in pool if _EXHAUSTED_KEY_COOLDOWNS.get(k, 0) < now]
     cooldown_keys = [k for k in pool if _EXHAUSTED_KEY_COOLDOWNS.get(k, 0) >= now]
 
     return healthy_keys + cooldown_keys
+
+
+def get_groq_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of Groq API keys."""
+    return _get_provider_key_pool("GROQ", task)
 
 
 def get_gemini_key_pool(task: str = "chat") -> List[str]:
-    """
-    Returns an ordered, deduplicated pool of Google Gemini API keys.
-    Priority:
-    1. Dedicated task key (e.g., REPORT_GEMINI_API_KEY, CHAT_GEMINI_API_KEY)
-    2. Primary GEMINI_API_KEY / GOOGLE_API_KEY
-    3. Multi-key pool GEMINI_API_KEYS (comma-separated)
-    4. Backup numbered keys: GEMINI_API_KEY_1 .. GEMINI_API_KEY_5, GOOGLE_API_KEY_1..3
-    """
-    candidates: List[str] = []
-    task_upper = (task or "chat").upper()
+    """Returns an ordered, deduplicated pool of Google Gemini API keys."""
+    return _get_provider_key_pool("GEMINI", task, extra_names=["GOOGLE_API_KEY", "GOOGLE_API_KEY_1", "GOOGLE_API_KEY_2"])
 
-    # 1. Dedicated task key
-    candidates.extend(_extract_from_secrets(f"{task_upper}_GEMINI_API_KEY"))
-    candidates.extend(_extract_from_env(f"{task_upper}_GEMINI_API_KEY"))
 
-    # 2. Primary keys
-    candidates.extend(_extract_from_secrets("GEMINI_API_KEY"))
-    candidates.extend(_extract_from_secrets("GOOGLE_API_KEY"))
-    candidates.extend(_extract_from_env("GEMINI_API_KEY"))
-    candidates.extend(_extract_from_env("GOOGLE_API_KEY"))
+def get_openai_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of OpenAI API keys."""
+    return _get_provider_key_pool("OPENAI", task)
 
-    # 3. Comma-separated pool
-    candidates.extend(_extract_from_secrets("GEMINI_API_KEYS"))
-    candidates.extend(_extract_from_env("GEMINI_API_KEYS"))
 
-    # 4. Numbered backups (1 to 5)
-    for idx in range(1, 6):
-        candidates.extend(_extract_from_secrets(f"GEMINI_API_KEY_{idx}"))
-        candidates.extend(_extract_from_env(f"GEMINI_API_KEY_{idx}"))
-        candidates.extend(_extract_from_secrets(f"GOOGLE_API_KEY_{idx}"))
-        candidates.extend(_extract_from_env(f"GOOGLE_API_KEY_{idx}"))
+def get_deepseek_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of DeepSeek API keys."""
+    return _get_provider_key_pool("DEEPSEEK", task)
 
-    # Deduplicate while preserving order
-    seen: Set[str] = set()
-    pool: List[str] = []
-    for k in candidates:
-        if k and k not in seen:
-            seen.add(k)
-            pool.append(k)
 
-    # Sort so that non-cooldown keys come first
-    now = time.time()
-    healthy_keys = [k for k in pool if _EXHAUSTED_KEY_COOLDOWNS.get(k, 0) < now]
-    cooldown_keys = [k for k in pool if _EXHAUSTED_KEY_COOLDOWNS.get(k, 0) >= now]
+def get_openrouter_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of OpenRouter API keys."""
+    return _get_provider_key_pool("OPENROUTER", task)
 
-    return healthy_keys + cooldown_keys
+
+def get_anthropic_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of Anthropic Claude API keys."""
+    return _get_provider_key_pool("ANTHROPIC", task, extra_names=["CLAUDE_API_KEY", "CLAUDE_API_KEY_1"])
 
 
 def mark_key_rate_limited(api_key: str, cooldown_sec: float = _COOLDOWN_DURATION_SEC) -> None:
