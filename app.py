@@ -305,7 +305,7 @@ def _cached_transit_positions(now_day: str):
 st.html("""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 """)
 
 # ---------------- GOOGLE OAUTH 2.0 CALLBACK HANDLING ----------------
@@ -402,16 +402,20 @@ st.markdown("""
         --vyas-gold-3: #b99a3d;
         --vyas-line: rgba(245, 209, 110, 0.24);
         --vyas-ease: cubic-bezier(0.22, 1, 0.36, 1);
+        --font-yatra: 'Yatra One', 'Noto Sans Devanagari', 'Cinzel', serif;
+        --font-body: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* Base Page Styling */
+    /* Base Page Styling with Fluid Typography */
     html, body {
         max-width: 100vw;
         overflow-x: hidden;
         -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
         margin: 0;
         padding: 0;
         background-color: #07090d !important;
+        font-size: 17px;
     }
 
     .stApp, [data-testid="stAppViewContainer"], .main {
@@ -420,16 +424,23 @@ st.markdown("""
             radial-gradient(120% 120% at 50% 100%, rgba(76, 110, 245, 0.08) 0%, transparent 42%),
             radial-gradient(ellipse at top, #121a36 0%, #070b1a 48%, #04050d 100%) !important;
         background-attachment: fixed !important;
-        font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif !important;
+        font-family: var(--font-body) !important;
         color: #f1f5f9 !important;
+        line-height: 1.65 !important;
+    }
+
+    /* Auto-adjust on zoom: Text wrapping & graceful resizing */
+    p, span, div, h1, h2, h3, h4, h5, h6, label {
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
     }
 
     /* Responsive Block Container */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 1.2rem !important;
         padding-bottom: 4rem !important;
-        padding-left: 0.85rem !important;
-        padding-right: 0.85rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
         max-width: 1380px !important;
         margin: 0 auto !important;
     }
@@ -442,107 +453,154 @@ st.markdown("""
         }
     }
 
-    /* Hero Banner */
+    /* -------------------------------------------------------------
+       HERO BANNER (Majestic Yatra One Header)
+       ------------------------------------------------------------- */
     .vyas-hero-banner {
         position: relative;
-        background: radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.14) 0%, transparent 60%),
-                    linear-gradient(180deg, rgba(16, 26, 52, 0.95) 0%, rgba(7, 12, 26, 0.98) 100%);
-        border: 1px solid rgba(240, 192, 90, 0.38);
-        border-radius: 18px;
-        padding: 22px 28px;
+        background: radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.16) 0%, transparent 60%),
+                    linear-gradient(180deg, rgba(16, 26, 52, 0.96) 0%, rgba(7, 12, 26, 0.98) 100%);
+        border: 1.5px solid rgba(240, 192, 90, 0.45);
+        border-radius: 20px;
+        padding: 24px 30px;
         text-align: center;
-        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(240, 192, 90, 0.3);
-        margin-bottom: 18px;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(240, 192, 90, 0.35);
+        margin-bottom: 20px;
     }
     .vyas-hero-banner::after {
         content: "";
         position: absolute;
-        top: 0; left: 15%; right: 15%; height: 1.5px;
-        background: radial-gradient(circle, rgba(255, 244, 204, 0.9) 0%, rgba(245, 209, 110, 0.5) 50%, transparent 100%);
+        top: 0; left: 15%; right: 15%; height: 2px;
+        background: radial-gradient(circle, rgba(255, 244, 204, 0.95) 0%, rgba(245, 209, 110, 0.6) 50%, transparent 100%);
     }
     .vyas-hero-kicker {
-        font-family: 'Cinzel', serif;
-        font-size: 0.85rem;
+        font-family: var(--font-yatra);
+        font-size: clamp(0.85rem, 2.5vw, 1.05rem);
         letter-spacing: 3px;
         color: #eedc9a;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
         text-transform: uppercase;
     }
     .vyas-hero-title {
-        font-family: 'Cinzel', serif;
-        font-size: 2.45rem;
+        font-family: var(--font-yatra);
+        font-size: clamp(2.3rem, 7vw, 3.5rem);
         font-weight: 900;
-        letter-spacing: 3.5px;
+        letter-spacing: 3px;
         background: linear-gradient(135deg, #fff2cc 0%, #f0c05a 50%, #d49429 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 4px;
-        text-shadow: 0 0 25px rgba(240, 192, 90, 0.35);
+        margin-bottom: 6px;
+        text-shadow: 0 0 28px rgba(240, 192, 90, 0.4);
+        line-height: 1.25;
     }
     .vyas-hero-subtitle {
-        font-family: 'Tiro Devanagari Sanskrit', 'Plus Jakarta Sans', serif;
-        font-size: 1.05rem;
-        font-weight: 600;
+        font-family: var(--font-yatra);
+        font-size: clamp(1.05rem, 3.2vw, 1.35rem);
+        font-weight: 500;
         color: #eedc9a;
         letter-spacing: 0.8px;
+        line-height: 1.45;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         .vyas-hero-banner {
-            padding: 12px 14px !important;
-            border-radius: 14px !important;
-            margin-bottom: 12px !important;
+            padding: 16px 16px !important;
+            border-radius: 16px !important;
+            margin-bottom: 14px !important;
         }
         .vyas-hero-kicker {
-            font-size: 0.65rem !important;
-            letter-spacing: 1.5px !important;
-            margin-bottom: 2px !important;
+            letter-spacing: 2px !important;
         }
         .vyas-hero-title {
-            font-size: 1.65rem !important;
             letter-spacing: 2px !important;
-            margin-bottom: 2px !important;
-        }
-        .vyas-hero-subtitle {
-            font-size: 0.82rem !important;
-            letter-spacing: 0.2px !important;
-            line-height: 1.35 !important;
         }
     }
 
-    /* Domain Suites (Radio Buttons) */
+    /* -------------------------------------------------------------
+       SECTION TITLES & HEADINGS (Large, Bold Yatra One)
+       ------------------------------------------------------------- */
+    .section-title, h1, h2, h3 {
+        font-family: var(--font-yatra) !important;
+        font-size: clamp(1.4rem, 4.5vw, 1.9rem) !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.6px !important;
+        line-height: 1.45 !important;
+        padding: 4px 0 10px 0 !important;
+        margin-top: 16px !important;
+        margin-bottom: 18px !important;
+        color: #fff4cc !important;
+        border-bottom: 2px solid rgba(245, 209, 110, 0.35) !important;
+        display: block !important;
+    }
+
+    /* Form Field Labels (Large, Crisp, High Contrast) */
+    label,
+    [data-testid="stWidgetLabel"] p,
+    [data-testid="stWidgetLabel"] span {
+        font-family: var(--font-body) !important;
+        font-size: clamp(1.05rem, 3vw, 1.18rem) !important;
+        font-weight: 700 !important;
+        color: #fef3c7 !important;
+        letter-spacing: 0.3px !important;
+        margin-bottom: 6px !important;
+    }
+
+    /* Input Fields (50px Height, 17px Text) */
+    input, select, textarea,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] input,
+    .stTextInput input,
+    .stNumberInput input,
+    .stDateInput input,
+    .stTimeInput input,
+    .stSelectbox select {
+        font-family: var(--font-body) !important;
+        font-size: clamp(1.02rem, 3vw, 1.15rem) !important;
+        min-height: 50px !important;
+        border-radius: 12px !important;
+        padding: 10px 14px !important;
+        background-color: rgba(14, 23, 42, 0.9) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(240, 192, 90, 0.3) !important;
+    }
+
+    /* -------------------------------------------------------------
+       DOMAIN SUITES (Pill Navigation with Yatra One)
+       ------------------------------------------------------------- */
     div[data-testid="stRadio"] [role="radiogroup"] {
         display: flex !important;
         flex-wrap: wrap !important;
-        gap: 8px !important;
+        gap: 10px !important;
         background: rgba(9, 14, 30, 0.9) !important;
-        padding: 8px !important;
-        border-radius: 14px !important;
-        border: 1px solid rgba(245, 209, 110, 0.25) !important;
-        margin-bottom: 16px !important;
+        padding: 10px !important;
+        border-radius: 16px !important;
+        border: 1.5px solid rgba(245, 209, 110, 0.3) !important;
+        margin-bottom: 18px !important;
     }
 
     div[data-testid="stRadio"] label {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        padding: 9px 18px !important;
+        padding: 10px 20px !important;
         border-radius: 999px !important;
-        border: 1px solid rgba(240, 192, 90, 0.25) !important;
-        background: rgba(14, 23, 42, 0.85) !important;
+        border: 1px solid rgba(240, 192, 90, 0.28) !important;
+        background: rgba(14, 23, 42, 0.88) !important;
         color: #cbd5e1 !important;
-        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif !important;
-        font-size: 0.92rem !important;
-        font-weight: 600 !important;
+        font-family: var(--font-yatra) !important;
+        font-size: clamp(0.98rem, 2.8vw, 1.12rem) !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.4px !important;
         transition: all 0.25s ease !important;
         cursor: pointer !important;
         white-space: nowrap !important;
+        min-height: 44px !important;
     }
 
     div[data-testid="stRadio"] label:hover {
-        background: rgba(240, 192, 90, 0.15) !important;
+        background: rgba(240, 192, 90, 0.18) !important;
         color: #fff4cc !important;
-        border-color: rgba(240, 192, 90, 0.5) !important;
+        border-color: rgba(240, 192, 90, 0.6) !important;
     }
 
     div[data-testid="stRadio"] label:has(input:checked),
@@ -551,7 +609,7 @@ st.markdown("""
         color: #1a1305 !important;
         font-weight: 800 !important;
         border-color: #ffd700 !important;
-        box-shadow: 0 4px 16px rgba(240, 192, 90, 0.4) !important;
+        box-shadow: 0 4px 18px rgba(240, 192, 90, 0.45) !important;
     }
     div[data-testid="stRadio"] label:has(input:checked) *,
     div[data-testid="stRadio"] label[data-checked="true"] * {
@@ -562,8 +620,45 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Mobile Responsive Optimizations (Screens <= 1024px)
-       Pure CSS3 without :has() for 100% universal support across all mobile browsers */
+    /* -------------------------------------------------------------
+       ROYAL GOLD CTA BUTTON (Grand Yatra One Button)
+       ------------------------------------------------------------- */
+    div.stButton > button[kind="primary"],
+    div.stButton > button,
+    section[data-testid="stSidebar"] div.stButton > button {
+        background: linear-gradient(135deg, #e5a93c 0%, #fcd375 50%, #c98822 100%) !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-family: var(--font-yatra) !important;
+        font-weight: 900 !important;
+        font-size: clamp(1.1rem, 3.5vw, 1.3rem) !important;
+        letter-spacing: 0.6px !important;
+        border: 2px solid #ffd97d !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 22px rgba(212, 148, 41, 0.45) !important;
+        transition: all 0.25s ease !important;
+        padding: 12px 24px !important;
+        min-height: 52px !important;
+        text-shadow: none !important;
+    }
+    div.stButton > button *,
+    section[data-testid="stSidebar"] div.stButton > button * {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-weight: 900 !important;
+    }
+    div.stButton > button:hover,
+    section[data-testid="stSidebar"] div.stButton > button:hover {
+        background: linear-gradient(135deg, #fcd375 0%, #fff2cc 50%, #e5a93c 100%) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 28px rgba(247, 213, 132, 0.65) !important;
+        color: #000000 !important;
+    }
+
+    /* -------------------------------------------------------------
+       MOBILE RESPONSIVE ENGINE (Screens <= 1024px)
+       Universal CSS3 without :has() for 100% Android / Safari Support
+       ------------------------------------------------------------- */
     @media (max-width: 1024px) {
         /* 1. Mobile Touch-Scrollable Carousel for Domain Suite Radio Pills */
         div[data-testid="stRadio"] [role="radiogroup"] {
@@ -572,10 +667,10 @@ st.markdown("""
             flex-wrap: nowrap !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
-            gap: 8px !important;
+            gap: 10px !important;
             padding: 8px 6px !important;
-            margin-bottom: 12px !important;
-            border-radius: 12px !important;
+            margin-bottom: 14px !important;
+            border-radius: 14px !important;
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
             width: 100% !important;
@@ -587,9 +682,9 @@ st.markdown("""
         div[data-testid="stRadio"] [role="radiogroup"] label {
             flex: 0 0 auto !important;
             white-space: nowrap !important;
-            padding: 9px 18px !important;
-            font-size: 0.92rem !important;
-            min-height: 42px !important;
+            padding: 10px 20px !important;
+            font-size: 1.02rem !important;
+            min-height: 46px !important;
             border-radius: 999px !important;
         }
 
@@ -603,7 +698,7 @@ st.markdown("""
             max-width: 100% !important;
         }
 
-        /* 3. Universal Column Stacking (Pure CSS3 without :has, 100% cross-browser) */
+        /* 3. Universal Column Stacking (Pure CSS3 without :has) */
         [data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-wrap: wrap !important;
@@ -618,8 +713,7 @@ st.markdown("""
             flex: 1 1 100% !important;
         }
 
-        /* Special Case: 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side!
-           Uses CSS Quantity Queries (:first-child:nth-last-child(3)) supported everywhere */
+        /* Special Case: 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side! */
         [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3),
         [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3) ~ [data-testid="stColumn"] {
             width: calc(33.333% - 9px) !important;
@@ -627,26 +721,17 @@ st.markdown("""
             flex: 1 1 calc(33.333% - 9px) !important;
         }
 
-        /* Inputs & Buttons touch friendly */
-        input, select, textarea,
-        div[data-baseweb="input"] input,
-        div[data-baseweb="select"] input,
-        .stTextInput input,
-        .stNumberInput input,
-        .stDateInput input,
-        .stTimeInput input,
-        .stSelectbox select {
-            font-size: 16px !important;
-            min-height: 46px !important;
-        }
+        /* Inputs & Buttons full touch-width */
         div.stButton > button {
-            min-height: 48px !important;
-            font-size: 1rem !important;
+            min-height: 52px !important;
+            font-size: 1.12rem !important;
             width: 100% !important;
         }
     }
 
-    /* Cards & Section Headings */
+    /* -------------------------------------------------------------
+       CARDS & PREDICTIONS (Generous Spacing & High Legibility)
+       ------------------------------------------------------------- */
     .glass-card {
         position: relative;
         background:
@@ -654,12 +739,14 @@ st.markdown("""
             linear-gradient(180deg, rgba(19, 27, 54, 0.98) 0%, rgba(8, 12, 26, 0.98) 100%);
         border: 1px solid rgba(245, 209, 110, 0.32);
         border-radius: 18px;
-        padding: 22px 26px;
+        padding: 22px 24px;
         margin-bottom: 18px;
         box-shadow: 0 1px 0 rgba(255, 246, 210, 0.08) inset,
                     0 24px 50px -24px rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+        font-size: clamp(1.02rem, 3vw, 1.15rem) !important;
+        line-height: 1.7 !important;
     }
 
     .predict-card {
@@ -667,43 +754,16 @@ st.markdown("""
         background:
             radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.08) 0%, transparent 48%),
             linear-gradient(180deg, rgba(18, 26, 52, 0.98) 0%, rgba(9, 13, 28, 0.98) 100%);
-        border-left: 4px solid var(--vyas-gold-2);
+        border-left: 5px solid var(--vyas-gold-2);
         border-top: 1px solid rgba(245, 209, 110, 0.24);
         border-right: 1px solid rgba(245, 209, 110, 0.18);
         border-bottom: 1px solid rgba(245, 209, 110, 0.18);
-        border-radius: 14px;
-        padding: 18px 22px;
+        border-radius: 16px;
+        padding: 20px 24px;
         margin-bottom: 16px;
         box-shadow: 0 20px 46px -24px rgba(0, 0, 0, 0.98);
-    }
-
-    .section-title {
-        font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal',
-                     'Tiro Devanagari Sanskrit', 'Segoe UI', 'Cinzel', sans-serif !important;
-        font-size: 1.3rem !important;
-        font-weight: 800 !important;
-        letter-spacing: 0.4px !important;
-        line-height: 1.5 !important;
-        padding: 4px 0 10px 0 !important;
-        margin-top: 14px !important;
-        margin-bottom: 18px !important;
-        color: #fff4cc !important;
-        border-bottom: 1px solid rgba(245, 209, 110, 0.3) !important;
-        display: block !important;
-    }
-
-    @media (max-width: 768px) {
-        .glass-card, .predict-card {
-            padding: 14px 12px !important;
-            border-radius: 14px !important;
-            margin-bottom: 12px !important;
-        }
-        .section-title {
-            font-size: 1.15rem !important;
-            padding-bottom: 6px !important;
-            margin-top: 8px !important;
-            margin-bottom: 12px !important;
-        }
+        font-size: clamp(1.02rem, 3vw, 1.15rem) !important;
+        line-height: 1.75 !important;
     }
 
     /* Kundli Diamond Chart */
@@ -722,7 +782,7 @@ st.markdown("""
     }
     .kundli-container img,
     .kundli-container svg {
-        max-width: 420px !important;
+        max-width: 440px !important;
         width: 100% !important;
         height: auto !important;
         display: block !important;
@@ -737,45 +797,12 @@ st.markdown("""
         }
         .kundli-container img,
         .kundli-container svg {
-            max-width: 350px !important;
+            max-width: 100% !important;
         }
     }
 
-    /* Royal Gold CTA Button */
-    div.stButton > button[kind="primary"],
-    div.stButton > button,
-    section[data-testid="stSidebar"] div.stButton > button {
-        background: linear-gradient(135deg, #e5a93c 0%, #fcd375 50%, #c98822 100%) !important;
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 900 !important;
-        font-size: 1rem !important;
-        letter-spacing: 0.4px !important;
-        border: 2px solid #ffd97d !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 18px rgba(212, 148, 41, 0.4) !important;
-        transition: all 0.25s ease !important;
-        padding: 10px 20px !important;
-        min-height: 44px !important;
-        text-shadow: none !important;
-    }
-    div.stButton > button *,
-    section[data-testid="stSidebar"] div.stButton > button * {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        font-weight: 900 !important;
-    }
-    div.stButton > button:hover,
-    section[data-testid="stSidebar"] div.stButton > button:hover {
-        background: linear-gradient(135deg, #fcd375 0%, #fff2cc 50%, #e5a93c 100%) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 26px rgba(247, 213, 132, 0.6) !important;
-        color: #000000 !important;
-    }
-
-    /* Consultation Dialog */
-    @media (max-width: 768px) {
+    /* Consultation Dialog Bottom Sheet */
+    @media (max-width: 1024px) {
         div[data-testid="stDialog"] > div {
             width: 100vw !important;
             max-width: 100vw !important;
@@ -789,28 +816,15 @@ st.markdown("""
             top: auto !important;
             border-radius: 20px 20px 0 0 !important;
             margin: 0 !important;
-            padding: 14px 10px !important;
+            padding: 16px 12px !important;
             overflow-y: auto !important;
-            border: 1px solid rgba(240, 192, 90, 0.45) !important;
+            border: 1.5px solid rgba(240, 192, 90, 0.45) !important;
             border-bottom: none !important;
             box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.95) !important;
         }
         div[data-testid="stDialog"] [data-testid="stVerticalBlock"] {
-            gap: 6px !important;
+            gap: 8px !important;
         }
-    }
-
-    /* Inputs (16px to prevent iOS auto-zoom) */
-    input, select, textarea,
-    div[data-baseweb="input"] input,
-    div[data-baseweb="select"] input,
-    .stTextInput input,
-    .stNumberInput input,
-    .stDateInput input,
-    .stTimeInput input,
-    .stSelectbox select {
-        font-size: 16px !important;
-        min-height: 44px !important;
     }
 
     /* Tables & Tabs */
@@ -823,6 +837,7 @@ st.markdown("""
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
         display: block !important;
+        font-size: clamp(0.95rem, 2.5vw, 1.05rem) !important;
     }
 
     .stTabs [data-baseweb="tab-list"], .stTabs [role="tablist"] {
@@ -833,7 +848,7 @@ st.markdown("""
         gap: 8px !important;
         padding: 6px 8px !important;
         background-color: rgba(9, 15, 30, 0.88) !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         border: 1px solid rgba(240, 192, 90, 0.25) !important;
         scrollbar-width: none !important;
     }
@@ -844,9 +859,10 @@ st.markdown("""
     .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
         flex: 0 0 auto !important;
         white-space: nowrap !important;
-        height: 40px !important;
-        padding: 6px 14px !important;
-        font-size: 0.9rem !important;
+        height: 44px !important;
+        padding: 8px 16px !important;
+        font-family: var(--font-yatra) !important;
+        font-size: 1.02rem !important;
     }
 
     /* Material Icons Ligature Fix */
@@ -1673,14 +1689,14 @@ if st.session_state.get('data_generated'):
     col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
     with col_bot_bar1:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.15) 0%, rgba(14, 23, 42, 0.95) 100%);
-                    border: 1px solid rgba(240, 192, 90, 0.4); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 14px;">
-            <div style="font-size: 1.8rem; line-height: 1; color: #f0c05a; font-weight: 800; border: 1.5px solid #f0c05a; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">ॐ</div>
+        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 42, 0.96) 100%);
+                    border: 1.5px solid rgba(240, 192, 90, 0.45); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 16px;">
+            <div style="font-family: 'Yatra One', serif; font-size: 2.2rem; line-height: 1; color: #f0c05a; font-weight: 900; border: 2px solid #f0c05a; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(240,192,90,0.3);">ॐ</div>
             <div>
-                <div style="font-weight: 800; color: #f0c05a; font-size: 1.02rem;">
+                <div style="font-family: 'Yatra One', serif; font-weight: 700; color: #f0c05a; font-size: clamp(1.15rem, 3.8vw, 1.4rem); letter-spacing: 0.4px;">
                     आचार्य व्यास • प्रत्यक्ष वैदिक संवाद (Live Consultation)
                 </div>
-                <div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 2px;">
+                <div style="color: #cbd5e1; font-size: clamp(0.92rem, 2.8vw, 1.05rem); margin-top: 4px; line-height: 1.5;">
                     आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित सीधा समाधान
                 </div>
             </div>
