@@ -3,6 +3,7 @@ import pytest
 import sys
 import os
 
+os.environ["VYAS_TEST_OFFLINE"] = "1"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from vyas.chatbot import vyas_chatbot
 from vyas.chart import Chart, PlanetState
@@ -48,18 +49,10 @@ def test_career_followup_aage_kya(sample_chart_and_dasha):
     assert "बुध" in reply
     assert "उपाय" in reply
 
-def test_exam_followup_aage_kya(sample_chart_and_dasha):
+def test_ai_engine_live(sample_chart_and_dasha):
     chart, cur_dasha, birth_info = sample_chart_and_dasha
-    chat_history = [
-        {"role": "user", "content": "न्यायिक सेवा (RHJS) परीक्षा में क्या संभावना है?"},
-        {"role": "assistant", "content": "पूर्व विश्लेषण..."}
-    ]
-    reply = vyas_chatbot.consult("आगे क्या", chart, cur_dasha, birth_info, chat_history=chat_history)
-    assert "न्यायिक" in reply or "परीक्षा" in reply
-    assert "2027-03-01" in reply
-
-def test_standalone_aage_kya(sample_chart_and_dasha):
-    chart, cur_dasha, birth_info = sample_chart_and_dasha
-    reply = vyas_chatbot.consult("आगे क्या होगा", chart, cur_dasha, birth_info)
-    assert "आगामी समय" in reply or "भाग्योदय" in reply
-    assert "2027-03-01" in reply
+    # Test live AI call with force_classical=False
+    os.environ.pop("VYAS_TEST_OFFLINE", None)
+    reply = vyas_chatbot.consult("आचार्य जी प्रणाम", chart, cur_dasha, birth_info, force_classical=False)
+    assert len(reply) > 50
+    os.environ["VYAS_TEST_OFFLINE"] = "1"

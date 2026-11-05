@@ -40,8 +40,8 @@ def _get_day_transit_pos() -> Dict[str, Any]:
 # ENGINE MASTER API KEYS (Directly configured on backend)
 # Set your keys here, or in Streamlit Secrets, or in environment variables.
 # -----------------------------------------------------------------------------
-ENGINE_GROQ_API_KEY: str = ""
-ENGINE_GEMINI_API_KEY: str = ""
+ENGINE_GROQ_API_KEY: str = os.environ.get("GROQ_API_KEY", "")
+ENGINE_GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
 
 class VyasChatbotEngine:
     """Authentic Vedic Astrological Dialogue Engine."""
@@ -211,8 +211,30 @@ class VyasChatbotEngine:
             key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         return key.strip() if key and isinstance(key, str) and key.strip() else None
 
-    def _build_astrological_system_prompt(self, fw: Dict[str, Any], name: str) -> str:
-        """Assembles a comprehensive, authentic Parashari & Jaimini chart framework prompt."""
+    def _build_astrological_system_prompt(self, fw: Dict[str, Any], birth_info: Dict[str, Any]) -> str:
+        """Assembles a comprehensive, authentic Parashari & Jaimini chart framework prompt with Desh, Kaal & Patra awareness."""
+        name = birth_info.get("name", "जातक")
+        gender = birth_info.get("gender", "अज्ञात")
+        place = birth_info.get("place") or birth_info.get("city", "अज्ञात")
+
+        b_local = birth_info.get("local")
+        birth_year = None
+        birth_date_str = ""
+        if isinstance(b_local, datetime):
+            birth_year = b_local.year
+            birth_date_str = b_local.strftime("%d/%m/%Y")
+        else:
+            dt_str = str(birth_info.get("dt", ""))
+            try:
+                parts = dt_str.split("-")
+                birth_year = int(parts[0])
+                birth_date_str = f"{parts[2]}/{parts[1]}/{parts[0]}" if len(parts) >= 3 else dt_str
+            except Exception:
+                birth_date_str = dt_str
+
+        cur_year = datetime.now().year
+        age_years = (cur_year - birth_year) if birth_year else 35
+
         p_list = [f"{v['hi']} {v['house']}वें भाव में ({v['sign_name']} {v['deg']}°{' वक्री' if v['is_retro'] else ''})" for v in fw['p_info'].values()]
         planets_summary = ", ".join(p_list)
 
@@ -223,8 +245,12 @@ class VyasChatbotEngine:
         aspects_summary = "; ".join(asp_list)
 
         prompt = (
-            f"आप आचार्य व्यास हैं—महर्षि पराशर, जैमिनी, एवं भृगु ज्योतिष के मूर्धन्य विद्वान और पूज्य वैदिक ज्योतिषी।\n"
-            f"जातक का नाम: {name}।\n\n"
+            f"आप आचार्य व्यास हैं—महर्षि पराशर, जैमिनी, एवं भृगु ज्योतिष के मूर्धन्य विद्वान और पूज्य वैदिक ज्योतिषी।\n\n"
+            f"=== जातक का व्यक्तिगत सांसारिक विवरण (देश, काल, पात्र) ===\n"
+            f"• नाम: {name}\n"
+            f"• आयु: {age_years} वर्ष (जन्म तिथि: {birth_date_str})\n"
+            f"• लिंग: {gender}\n"
+            f"• जन्म स्थान: {place}\n\n"
             f"=== जातक का संपूर्ण कुण्डली विवरण ===\n"
             f"• लग्न: {fw['asc_sign_name']} लग्न (लग्नेश: {fw['lagnesh_hi']})\n"
             f"• चन्द्र राशि: {fw['moon_sign_name']} (नक्षत्र: {fw['moon_nak_name']})\n"
@@ -235,16 +261,20 @@ class VyasChatbotEngine:
             f"• 9 ग्रह स्थितियां (भाव, राशि, अंश): {planets_summary}\n"
             f"• ग्रह दृष्टियां (Aspects): {aspects_summary}\n"
             f"• वर्तमान तात्कालिक गोचर: {transits_summary}\n\n"
-            f"=== आचार्य व्यास के परामर्श नियम ===\n"
-            f"1. जातक के प्रश्न की भाषा (हिंदी या अंग्रेजी) में ही अत्यंत शुद्ध, सुरुचिपूर्ण, आदरयुक्त एवं धाराप्रवाह उत्तर दें।\n"
-            f"2. प्रश्न का सीधा, तार्किक व प्रामाणिक समाधान करें। कुण्डली के संबंधित भाव (House), भावेश (Lord), कारक ग्रह, सक्रिय दशा और गोचर के प्रभाव को स्पष्ट उद्धृत करें।\n"
-            f"3. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'कब होगा', 'उपाय बताओ', 'कैसा रहेगा'), तो पूर्व बातचीत के संदर्भ को जोड़ते हुए स्पष्ट काल-गणना (Dates/Timelines) दें।\n"
-            f"4. किसी भी शब्द या वाक्य की अनावश्यक पुनरावृत्ति (Stammering/Repetition) कदापि न करें।\n"
+            f"=== देश, काल, पात्र एवं परिस्थिति का परम शास्त्रीय नियम (CRITICAL MANDATE) ===\n"
+            f"महर्षि पराशर का स्पष्ट विधान है कि फलित विचार सदैव 'देश, काल और पात्र' के अनुरूप ही होना चाहिए:\n"
+            f"1. जातक की वास्तविक आयु ({age_years} वर्ष) के अनुसार ही व्यावहारिक और यथार्थवादी मार्गदर्शन दें:\n"
+            f"   - यदि जातक प्रौढ़ या वरिष्ठ (आयु 50 वर्ष या अधिक) है, तो उसे सरकारी नौकरी की प्रतियोगी परीक्षा (Competitive exams / UPSC / Entrance tests) में बैठने जैसी अव्यावहारिक व हास्यास्पद बात कदापि न कहें! इस आयु में जातक के लिए कार्यक्षेत्र में वरिष्ठता, संस्थागत सम्मान, नीतिगत मार्गदर्शन, आर्थिक स्थिरता, स्वास्थ्य रक्षा, पारिवारिक सुख, संतान की प्रगति और आध्यात्मिक शांति पर केंद्रित गंभीर उत्तर दें।\n"
+            f"   - यदि जातक युवा (18-32 वर्ष) है, तब आजीविका प्रारंभ, कौशल विकास, प्रतियोगी परीक्षा, नौकरी एवं विवाह का सामयिक विचार करें।\n"
+            f"   - यदि जातक मध्यम आयु (33-50 वर्ष) का है, तो कार्यक्षेत्र विस्तार, पदोन्नति, स्थिरता, संतान दायित्व और पारिवारिक संतुलन का विचार करें।\n"
+            f"2. कुण्डली, सक्रिय विंशोत्तरी दशा और तात्कालिक गोचर (शनि, गुरु, राहु) के समन्वय से ही तर्कसंगत फलित बताएं। संबंधित भाव (House), भावेश (Lord), कारक ग्रह, सक्रिय दशा और गोचर के प्रभाव को स्पष्ट उद्धृत करें।\n"
+            f"3. जातक के प्रश्न की भाषा (हिंदी या अंग्रेजी) में ही अत्यंत शुद्ध, सुरुचिपूर्ण, आदरयुक्त एवं धाराप्रवाह उत्तर दें।\n"
+            f"4. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'कब होगा', 'उपाय बताओ', 'कैसा रहेगा'), तो पूर्व बातचीत के संदर्भ को जोड़ते हुए स्पष्ट समय-सीमा (Timelines/Dates) दें।\n"
             f"5. उत्तर के अंत में जातक के कल्याण हेतु सटीक, सात्विक वैदिक उपाय (मंत्र जप संख्या सहित, दान सामग्री, अथवा रत्न/रुद्राक्ष परामर्श) अवश्य प्रदान करें।\n"
         )
         return prompt
 
-    def _call_groq(self, query: str, fw: Dict[str, Any], name: str,
+    def _call_groq(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                     chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         """Calls Groq API (llama-3.3-70b-versatile) via REST for lightning-fast, high-intelligence consultation."""
         api_key = self._get_groq_api_key()
@@ -255,7 +285,7 @@ class VyasChatbotEngine:
             import json
             import requests
 
-            system_prompt = self._build_astrological_system_prompt(fw, name)
+            system_prompt = self._build_astrological_system_prompt(fw, birth_info)
             messages = [{"role": "system", "content": system_prompt}]
 
             if chat_history:
@@ -266,27 +296,32 @@ class VyasChatbotEngine:
                         messages.append({"role": role, "content": cnt})
             messages.append({"role": "user", "content": query})
 
-            payload = {
-                "model": "llama-3.3-70b-versatile",
-                "messages": messages,
-                "temperature": 0.6,
-                "max_tokens": 1200
-            }
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             }
-            resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
-            if resp.status_code == 200:
-                data = resp.json()
-                text = data["choices"][0]["message"]["content"].strip()
-                if text:
-                    return text
+            # Try top-tier available models on Groq
+            for m_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]:
+                payload = {
+                    "model": m_name,
+                    "messages": messages,
+                    "temperature": 0.6,
+                    "max_tokens": 1200
+                }
+                try:
+                    resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        text = data["choices"][0]["message"].get("content", "").strip()
+                        if text:
+                            return text
+                except Exception:
+                    continue
         except Exception:
             pass
         return None
 
-    def _call_gemini(self, query: str, fw: Dict[str, Any], name: str,
+    def _call_gemini(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                      chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         """Calls Google Gemini API (gemini-1.5-flash) via official REST endpoint."""
         api_key = self._get_gemini_api_key()
@@ -297,7 +332,7 @@ class VyasChatbotEngine:
             import json
             import requests
 
-            system_prompt = self._build_astrological_system_prompt(fw, name)
+            system_prompt = self._build_astrological_system_prompt(fw, birth_info)
             contents = []
 
             if chat_history:
@@ -308,7 +343,7 @@ class VyasChatbotEngine:
                         contents.append({"role": role, "parts": [{"text": cnt}]})
             contents.append({"role": "user", "parts": [{"text": query}]})
 
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            headers = {"Content-Type": "application/json"}
             payload = {
                 "system_instruction": {
                     "parts": [{"text": system_prompt}]
@@ -319,17 +354,21 @@ class VyasChatbotEngine:
                     "maxOutputTokens": 1200
                 }
             }
-            headers = {"Content-Type": "application/json"}
-            resp = requests.post(url, json=payload, headers=headers, timeout=12)
-            if resp.status_code == 200:
-                data = resp.json()
-                candidates = data.get("candidates", [])
-                if candidates:
-                    parts = candidates[0].get("content", {}).get("parts", [])
-                    if parts:
-                        text = parts[0].get("text", "").strip()
-                        if text:
-                            return text
+            for gm_model in ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-flash-latest", "gemini-1.5-flash"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{gm_model}:generateContent?key={api_key}"
+                try:
+                    resp = requests.post(url, json=payload, headers=headers, timeout=12)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        candidates = data.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts:
+                                text = parts[0].get("text", "").strip()
+                                if text:
+                                    return text
+                except Exception:
+                    continue
         except Exception:
             pass
         return None
@@ -337,7 +376,8 @@ class VyasChatbotEngine:
     def consult(self, query: str, chart, cur_dasha: Any, birth_info: Dict[str, Any],
                 transit_pos: Optional[Dict[str, Any]] = None,
                 prashna_meta: Optional[Dict[str, Any]] = None,
-                chat_history: Optional[List[Dict[str, str]]] = None) -> str:
+                chat_history: Optional[List[Dict[str, str]]] = None,
+                force_classical: bool = False) -> str:
         """
         Generates a direct, authentic, personalized astrological consultation response.
         Context-aware, follow-up aware, and rooted in classical Parashari Jyotish Shastra.
@@ -351,27 +391,30 @@ class VyasChatbotEngine:
 
         # Check AI provider preference
         selected_provider = "auto"
-        try:
-            import streamlit as st
-            selected_provider = st.session_state.get("selected_ai_provider", "auto")
-        except Exception:
-            pass
+        if force_classical or os.environ.get("VYAS_TEST_OFFLINE") == "1":
+            selected_provider = "classical"
+        else:
+            try:
+                import streamlit as st
+                selected_provider = st.session_state.get("selected_ai_provider", "auto")
+            except Exception:
+                pass
 
         # 1. AI API Routing (Groq / Gemini)
         if selected_provider == "groq":
-            groq_reply = self._call_groq(query, fw, name, chat_history)
+            groq_reply = self._call_groq(query, fw, birth_info, chat_history)
             if groq_reply:
                 return groq_reply
         elif selected_provider == "gemini":
-            gemini_reply = self._call_gemini(query, fw, name, chat_history)
+            gemini_reply = self._call_gemini(query, fw, birth_info, chat_history)
             if gemini_reply:
                 return gemini_reply
         elif selected_provider != "classical":
             # Auto mode: Try Groq first for extreme speed, then Gemini
-            groq_reply = self._call_groq(query, fw, name, chat_history)
+            groq_reply = self._call_groq(query, fw, birth_info, chat_history)
             if groq_reply:
                 return groq_reply
-            gemini_reply = self._call_gemini(query, fw, name, chat_history)
+            gemini_reply = self._call_gemini(query, fw, birth_info, chat_history)
             if gemini_reply:
                 return gemini_reply
 
@@ -643,12 +686,39 @@ class VyasChatbotEngine:
         # ---------------------------------------------------------------------
         elif any(w in q_lower for w in ["rhjs", "rjs", "exam", "judiciary", "judge", "judicial", "न्यायिक",
                                        "परीक्षा", "प्रतियोगिता", "upsc", "clear", "सफलता", "निकलेगा", "selection", "tayari"]):
+            # Calculate native age for Desh, Kaal & Patra
+            b_local_obj = birth_info.get("local")
+            b_yr = b_local_obj.year if isinstance(b_local_obj, datetime) else None
+            if not b_yr:
+                try:
+                    b_yr = int(str(birth_info.get("dt", "")).split("-")[0])
+                except Exception:
+                    b_yr = None
+            cur_age = (datetime.now().year - b_yr) if b_yr else 35
+
+            if cur_age >= 50:
+                h10_sign = (fw["asc_sign"] + 9) % 12
+                h10_lord = constants.SIGN_LORD[h10_sign]
+                h10_lord_hi = constants.PLANETS_HI.get(h10_lord, h10_lord)
+                ans = [salutation]
+                ans.append(
+                    f"**देश, काल एवं परिस्थिति का शास्त्रीय विचार:**\n"
+                    f"महर्षि पराशर के बृहत्पाराशर होराशास्त्र का मूलभूत नियम 'देशे काले च पात्रे च' है। "
+                    f"आपकी वर्तमान आयु ({cur_age} वर्ष) के परिप्रेक्ष्य में, यह समय प्रत्यक्ष प्रतियोगी परीक्षा में बैठने का नहीं, "
+                    f"अपितु आपके संचित जीवन-अनुभव, कार्यक्षेत्र में वरिष्ठता, संस्थागत सम्मान, नीतिगत परामर्श, और समाज में प्रतिष्ठित मार्गदर्शन की भूमिका का है।\n\n"
+                    f"1. **कर्म एवं प्रतिष्ठा भाव (दशम भाव):** आपके दशमेश {h10_lord_hi} देव की स्थिति यह दर्शाती है कि आपके अधिकार क्षेत्र और सामाजिक प्रतिष्ठा में स्थायित्व के पूर्ण योग हैं।\n"
+                    f"2. **दशा व गोचर का निर्देश:** वर्तमान में सक्रिय {dasha_display} वरिष्ठ पदों पर सम्मानजनक भूमिका और बौद्धिक परामर्श के लिए अत्यंत अनुकूल है।\n"
+                    f"3. **आचार्य परामर्श:** किसी भी प्रकार की प्रतिस्पर्धात्मक दौड़ के स्थान पर अपनी विशेषज्ञता और अनुभव से समाज व कार्यक्षेत्र को दिशा दें। स्वास्थ्य रक्षा एवं मानसिक शांति को प्राथमिकता दें।"
+                )
+                ans.append(f"**सात्विक उपाय:** नित्य प्रातः सूर्य नमस्कार करें अथवा ॐ नमो भगवते वासुदेवाय का शांत मन से जप करें।")
+                return "\n\n".join(ans)
+
             h6_sign = (fw["asc_sign"] + 5) % 12
             h6_lord = constants.SIGN_LORD[h6_sign]
             h6_lord_hi = constants.PLANETS_HI.get(h6_lord, h6_lord)
 
             ans = [salutation]
-            ans.append(f"आपके प्रश्न — **न्यायिक सेवा (RHJS / Judiciary) अथवा उच्च प्रतियोगी परीक्षा में चयन के योग** के संबंध में कुण्डली विश्लेषण:\n")
+            ans.append(f"आपके प्रश्न — **उच्च प्रतियोगी परीक्षा एवं विधिक/प्रशासनिक सेवा में चयन के योग** के संबंध में कुण्डली विश्लेषण:\n")
 
             ans.append(
                 f"न्यायिक सेवा एवं उच्च प्रशासनिक पदों के लिए ज्योतिष शास्त्र में **सूर्य (राजसत्ता), देवगुरु बृहस्पति (विधि व न्याय), "
