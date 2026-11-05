@@ -511,40 +511,53 @@ st.markdown("""
         overflow-wrap: break-word;
     }
 
-    /* Domain Suite Pills (Segmented Navigation Selector from reference) */
+    /* Domain Suite Pills (Segmented Responsive Grid Navigation) */
     div[data-testid="stRadio"] > div {
-        flex-wrap: wrap;
-        gap: 8px;
-        background: rgba(7, 9, 13, 0.85);
-        padding: 6px;
-        border-radius: 10px;
-        border: 1px solid rgba(229, 169, 60, 0.15);
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+        gap: 10px !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 4px 0 !important;
     }
     div[data-testid="stRadio"] label {
-        background: transparent !important;
-        border: 1px solid transparent !important;
-        border-radius: 8px !important;
-        padding: 8px 16px !important;
-        color: #94a3b8 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        min-height: 48px !important;
+        background: rgba(14, 23, 42, 0.92) !important;
+        border: 1.2px solid rgba(229, 169, 60, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        color: #cbd5e1 !important;
         font-family: 'Nirmala UI', 'Noto Sans Devanagari', 'Mangal', 'Segoe UI', sans-serif !important;
-        font-weight: 500 !important;
-        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        font-size: 0.92rem !important;
         letter-spacing: 0 !important;
-        word-spacing: 0.08em !important;
+        word-spacing: 0.04em !important;
+        line-height: 1.35 !important;
         transition: all 0.22s ease !important;
         cursor: pointer !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
     }
     div[data-testid="stRadio"] label:hover {
-        border-color: rgba(229, 169, 60, 0.3) !important;
-        color: #f1f5f9 !important;
-        background: rgba(229, 169, 60, 0.08) !important;
+        border-color: rgba(240, 192, 90, 0.7) !important;
+        color: #ffffff !important;
+        background: rgba(240, 192, 90, 0.15) !important;
+        transform: translateY(-1px) !important;
     }
+    div[data-testid="stRadio"] label:has(input:checked),
     div[data-testid="stRadio"] label[data-checked="true"] {
-        background: linear-gradient(135deg, rgba(229, 169, 60, 0.2) 0%, rgba(14, 23, 42, 0.9) 100%) !important;
-        border: 1px solid rgba(229, 169, 60, 0.6) !important;
+        background: linear-gradient(135deg, rgba(229, 169, 60, 0.35) 0%, rgba(14, 23, 42, 0.98) 100%) !important;
+        border: 2px solid #f0c05a !important;
         color: #fef3c7 !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 16px rgba(240, 192, 90, 0.3) !important;
+    }
+    /* Hide the default radio circle button */
+    div[data-testid="stRadio"] label > div:first-child {
+        display: none !important;
     }
 
     /* Tabs Styling */
@@ -761,27 +774,41 @@ st.markdown("""
         font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
     }
 
+    /* Mobile font zoom prevention: mobile browsers auto-zoom if input font < 16px */
+    input, select, textarea,
+    div[data-baseweb="input"] input,
+    div[data-baseweb="select"] input,
+    .stTextInput input,
+    .stNumberInput input,
+    .stDateInput input,
+    .stTimeInput input,
+    .stSelectbox select {
+        font-size: 16px !important;
+    }
+
     /* -------------------------------------------------------------
        MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION
        ------------------------------------------------------------- */
     @media (max-width: 768px) {
         .glass-card {
-            padding: 12px 14px !important;
+            padding: 14px 16px !important;
             margin-bottom: 12px !important;
         }
         .section-title {
-            font-size: 1.05rem !important;
+            font-size: 1.12rem !important;
             letter-spacing: 0 !important;
             word-spacing: 0.04em !important;
             line-height: 1.55 !important;
         }
         div[data-testid="stRadio"] > div {
-            gap: 4px !important;
-            padding: 4px !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            padding: 2px !important;
         }
         div[data-testid="stRadio"] label {
-            padding: 6px 10px !important;
-            font-size: 0.8rem !important;
+            padding: 10px 10px !important;
+            font-size: 0.88rem !important;
+            min-height: 48px !important;
         }
         .stTabs [data-baseweb="tab-list"], .stTabs [role="tablist"] {
             overflow-x: auto !important;
@@ -790,9 +817,9 @@ st.markdown("""
             gap: 6px !important;
         }
         .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
-            font-size: 0.82rem !important;
-            padding: 6px 12px !important;
-            height: 38px !important;
+            font-size: 0.86rem !important;
+            padding: 8px 14px !important;
+            height: 40px !important;
         }
         .kundli-container {
             padding: 8px !important;
@@ -802,20 +829,27 @@ st.markdown("""
             max-width: 100% !important;
             height: auto !important;
         }
-        /* Streamlit >=1.40 renders columns as stColumn (old data-testid="column" is dead) */
+        /* Mobile Column Wrapping: Prevents 4-card horizontal squeezing */
+        [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+        }
+        [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"] > div[data-testid="column"],
         div[data-testid="stColumn"],
         div[data-testid="column"] {
-            min-width: 100% !important;
-            width: 100% !important;
-            flex: 1 1 100% !important;
-            margin-bottom: 10px !important;
+            min-width: calc(50% - 6px) !important;
+            width: calc(50% - 6px) !important;
+            flex: 1 1 calc(50% - 6px) !important;
+            margin-bottom: 8px !important;
         }
-        /* Expander headers: .streamlit-expanderHeader is deprecated */
+        /* Expander headers */
         .streamlit-expanderHeader,
         [data-testid="stExpander"] summary,
         [data-testid="stExpander"] details > summary {
-            font-size: 0.9rem !important;
-            padding: 8px 10px !important;
+            font-size: 0.95rem !important;
+            padding: 10px 12px !important;
             white-space: normal !important;
             line-height: 1.4 !important;
             overflow-wrap: anywhere !important;
@@ -831,50 +865,43 @@ st.markdown("""
             overflow-x: auto !important;
         }
         div.stButton > button {
-            min-height: 42px !important;
+            min-height: 46px !important;
             white-space: normal !important;
-            line-height: 1.25 !important;
+            line-height: 1.3 !important;
+            font-size: 0.95rem !important;
         }
         .block-container {
-            padding: 1rem 0.5rem 3rem 0.5rem !important;
+            padding: 1rem 0.6rem 3rem 0.6rem !important;
         }
     }
 
-    /* Small phones (iPhone SE / Android ~360px) */
-    @media (max-width: 480px) {
+    /* Small phones (iPhone SE / Android ~360px - 520px) */
+    @media (max-width: 520px) {
         .section-title {
-            font-size: 0.98rem !important;
+            font-size: 1.05rem !important;
         }
         .glass-card {
-            padding: 10px 10px !important;
+            padding: 12px 12px !important;
             border-radius: 10px !important;
         }
+        div[data-testid="stRadio"] > div {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px !important;
+        }
         div[data-testid="stRadio"] label {
-            padding: 5px 8px !important;
-            font-size: 0.92rem !important;
+            padding: 8px 6px !important;
+            font-size: 0.82rem !important;
+            min-height: 44px !important;
         }
-        .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
-            font-size: 0.92rem !important;
-            padding: 5px 9px !important;
-        }
-        .block-container {
-            padding: 0.6rem 0.35rem 2.5rem 0.35rem !important;
-        }
-        h1 { font-size: 1.35rem !important; }
-        h2 { font-size: 1.15rem !important; }
-        h3 { font-size: 1.02rem !important; }
-        .kundli-container svg {
-            max-width: 100% !important;
-            height: auto !important;
-        }
-    }
-
-    @media (max-width: 360px) {
-        .section-title { font-size: 0.9rem !important; }
-        .block-container { padding: 0.5rem 0.25rem 2.2rem 0.25rem !important; }
-        table.as-table, .as-table td, .as-table th {
-            font-size: 0.88rem !important;
-            padding: 4px 6px !important;
+        /* Stack multi-columns into full-width on narrow screens */
+        [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"] > div[data-testid="column"],
+        div[data-testid="stColumn"],
+        div[data-testid="column"] {
+            min-width: 100% !important;
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            margin-bottom: 10px !important;
         }
     }
 
@@ -2424,12 +2451,12 @@ if st.session_state.get('data_generated'):
         with col_d1:
             st.markdown(f"""
             <div class="glass-card" style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">VYAS DAY INDEX</div>
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">VYAS DAY INDEX</div>
                 <div style="margin: 14px auto; position: relative; width: 100px; height: 100px; border-radius: 50%; border: 3px solid rgba(229,169,60,0.2); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(229,169,60,0.15);">
                     <div style="font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 900; color: {score_color};">{score}</div>
                 </div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: #fef3c7;">{'अनुकूल (Favourable)' if score >= 60 else 'सतर्क (Cautious)'}</div>
-                <div style="margin-top: 10px; font-size: 0.75rem; color: #94a3b8; text-align: left;">
+                <div style="font-size: 1.05rem; font-weight: 700; color: #fef3c7;">{'अनुकूल (Favourable)' if score >= 60 else 'सतर्क (Cautious)'}</div>
+                <div style="margin-top: 10px; font-size: 0.92rem; color: #cbd5e1; text-align: left;">
                     <div>ऊर्जा (Energy): <b>{daily_res['scores']['health']}%</b></div>
                     <div>एकाग्रता (Focus): <b>{daily_res['scores']['career']}%</b></div>
                     <div>वृद्धि (Growth): <b>{daily_res['scores']['wealth']}%</b></div>
@@ -2441,11 +2468,11 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
-                    <div style="font-size: 1.05rem; font-weight: 700; color: #e5a93c; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
-                    <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.5;">{daily_res['tara_desc']}</div>
+                    <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
+                    <div style="font-size: 1.18rem; font-weight: 800; color: #e5a93c; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
+                    <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.6;">{daily_res['tara_desc']}</div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 8px; margin-top: 12px; font-size: 0.78rem; color: #94a3b8;">
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: #cbd5e1;">
                     <b>सक्रिय दशा:</b> <span style="color: #fef3c7;">{daily_res['running_dasha']}</span>
                 </div>
             </div>
@@ -2458,14 +2485,14 @@ if st.session_state.get('data_generated'):
             sat_p = chart.planets.get("Saturn")
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
-                <div style="font-size: 0.82rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
+                <div style="font-size: 0.95rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 7px;">
                     <div style="display: flex; justify-content: space-between;"><span>☀️ सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>🌙 चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>🪐 गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>⚖️ शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.76rem; color: #e5a93c;">
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: #f0c05a; font-weight: 600;">
                     नक्षत्र: {daily_res['natal_nakshatra']}
                 </div>
             </div>
@@ -2480,12 +2507,12 @@ if st.session_state.get('data_generated'):
 
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.75rem; letter-spacing: 1.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
-                <div style="font-size: 0.82rem; display: flex; flex-direction: column; gap: 7px;">
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
+                <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 7px;">
                     <div><b>अभिजीत मुहूर्त:</b> <br>{abhijit_ui}</div>
                     <div><b>राहुकाल (सावधानी):</b> <br><span style="color: #f87171; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 6px; font-size: 0.78rem; color: #94a3b8;">
+                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 6px; font-size: 0.92rem; color: #cbd5e1;">
                     <b>शुभ रंग:</b> <span style="color: #fef3c7;">{daily_res['lucky_color']}</span>
                 </div>
             </div>
@@ -4275,6 +4302,49 @@ if st.session_state.get('data_generated'):
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        with st.expander("⚙️ AI मॉडल एवं API सेटिंग्स (Groq / Gemini / Classical Rules)", expanded=False):
+            col_cfg1, col_cfg2 = st.columns([1, 1.2])
+            with col_cfg1:
+                cur_prov = st.session_state.get("selected_ai_provider", "auto")
+                prov_opts = ["auto", "groq", "gemini", "classical"]
+                prov_lbls = {
+                    "auto": "⚡ स्वचालित (Groq ➔ Gemini ➔ Classical)",
+                    "groq": "🚀 Groq (Llama 3.3 70B - अत्यंत तीव्र)",
+                    "gemini": "✨ Google Gemini (1.5 Flash)",
+                    "classical": "🏛️ शास्त्रीय वैदिक इंजन (Offline Rules)"
+                }
+                st.session_state["selected_ai_provider"] = st.selectbox(
+                    "पसंदीदा AI इंजन चुनें:",
+                    options=prov_opts,
+                    format_func=lambda x: prov_lbls.get(x, x),
+                    index=prov_opts.index(cur_prov) if cur_prov in prov_opts else 0,
+                    key="dialog_ai_provider_select"
+                )
+            with col_cfg2:
+                gq_k = st.text_input(
+                    "Groq API Key (वैकल्पिक):",
+                    value=st.session_state.get("groq_api_key", ""),
+                    type="password",
+                    placeholder="gsk_...",
+                    help="Groq API key (console.groq.com से निःशुल्क प्राप्त करें)",
+                    key="dialog_groq_key_input"
+                )
+                if gq_k:
+                    st.session_state["groq_api_key"] = gq_k.strip()
+
+                gm_k = st.text_input(
+                    "Gemini API Key (वैकल्पिक):",
+                    value=st.session_state.get("gemini_api_key", ""),
+                    type="password",
+                    placeholder="AIzaSy...",
+                    help="Gemini API key (aistudio.google.com से प्राप्त करें)",
+                    key="dialog_gemini_key_input"
+                )
+                if gm_k:
+                    st.session_state["gemini_api_key"] = gm_k.strip()
+
+            st.caption("💡 बिना API Key के भी आचार्य व्यास शास्त्रीय वैदिक इंजन 100% प्रामाणिक उत्तर देता है। आप Streamlit Secrets में `GROQ_API_KEY` या `GEMINI_API_KEY` भी जोड़ सकते हैं।")
 
         # Quick chips inside popup (Full text in responsive 2-column layout with clear readable fonts)
         st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>✨ त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)

@@ -172,71 +172,155 @@ class VyasChatbotEngine:
             "transits": transit_info
         }
 
-    def _get_gemini_api_key(self) -> Optional[str]:
-        """Discovers Gemini API Key from environment or Streamlit secrets."""
-        key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    def _get_groq_api_key(self) -> Optional[str]:
+        """Discovers Groq API Key from session_state, Streamlit secrets, or environment."""
+        key = None
+        try:
+            import streamlit as st
+            key = st.session_state.get("groq_api_key")
+            if not key:
+                key = st.secrets.get("GROQ_API_KEY")
+        except Exception:
+            pass
         if not key:
-            try:
-                import streamlit as st
-                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
-            except Exception:
-                pass
-        return key
+            key = os.environ.get("GROQ_API_KEY")
+        return key.strip() if key and isinstance(key, str) and key.strip() else None
 
-    def _call_gemini_if_available(self, query: str, fw: Dict[str, Any], name: str,
-                                   chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
-        """Tries to call official Gemini API via google.genai if GEMINI_API_KEY is configured."""
+    def _get_gemini_api_key(self) -> Optional[str]:
+        """Discovers Gemini API Key from session_state, Streamlit secrets, or environment."""
+        key = None
+        try:
+            import streamlit as st
+            key = st.session_state.get("gemini_api_key")
+            if not key:
+                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+        except Exception:
+            pass
+        if not key:
+            key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        return key.strip() if key and isinstance(key, str) and key.strip() else None
+
+    def _build_astrological_system_prompt(self, fw: Dict[str, Any], name: str) -> str:
+        """Assembles a comprehensive, authentic Parashari & Jaimini chart framework prompt."""
+        p_list = [f"{v['hi']} {v['house']}वें भाव में ({v['sign_name']} {v['deg']}°{' वक्री' if v['is_retro'] else ''})" for v in fw['p_info'].values()]
+        planets_summary = ", ".join(p_list)
+
+        tr_list = [f"{k} {v['sign']} में (लग्न से {v['h_lagna']}वें भाव, चन्द्र से {v['h_moon']}वें भाव)" for k, v in fw['transits'].items()]
+        transits_summary = ", ".join(tr_list)
+
+        asp_list = [f"{p}: भाव {', '.join(str(h) for h in houses)}" for p, houses in fw['aspects_map'].items() if houses]
+        aspects_summary = "; ".join(asp_list)
+
+        prompt = (
+            f"आप आचार्य व्यास हैं—महर्षि पराशर, जैमिनी, एवं भृगु ज्योतिष के मूर्धन्य विद्वान और पूज्य वैदिक ज्योतिषी।\n"
+            f"जातक का नाम: {name}।\n\n"
+            f"=== जातक का संपूर्ण कुण्डली विवरण ===\n"
+            f"• लग्न: {fw['asc_sign_name']} लग्न (लग्नेश: {fw['lagnesh_hi']})\n"
+            f"• चन्द्र राशि: {fw['moon_sign_name']} (नक्षत्र: {fw['moon_nak_name']})\n"
+            f"• सक्रिय विंशोत्तरी दशा: महादशा {fw['dasha_md']} ({fw['md_start']} से {fw['md_end']}), "
+            f"अन्तर्दशा {fw['dasha_ad']} (समाप्ति: {fw['ad_end']}), "
+            f"प्रत्यन्तर्दशा {fw['dasha_pd']} (समाप्ति: {fw['pd_end']})\n"
+            f"• आगामी अन्तर्दशा: {fw['next_ad_lord_hi']} (प्रारंभ तिथि: {fw['ad_end']})\n"
+            f"• 9 ग्रह स्थितियां (भाव, राशि, अंश): {planets_summary}\n"
+            f"• ग्रह दृष्टियां (Aspects): {aspects_summary}\n"
+            f"• वर्तमान तात्कालिक गोचर: {transits_summary}\n\n"
+            f"=== आचार्य व्यास के परामर्श नियम ===\n"
+            f"1. जातक के प्रश्न की भाषा (हिंदी या अंग्रेजी) में ही अत्यंत शुद्ध, सुरुचिपूर्ण, आदरयुक्त एवं धाराप्रवाह उत्तर दें।\n"
+            f"2. प्रश्न का सीधा, तार्किक व प्रामाणिक समाधान करें। कुण्डली के संबंधित भाव (House), भावेश (Lord), कारक ग्रह, सक्रिय दशा और गोचर के प्रभाव को स्पष्ट उद्धृत करें।\n"
+            f"3. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'कब होगा', 'उपाय बताओ', 'कैसा रहेगा'), तो पूर्व बातचीत के संदर्भ को जोड़ते हुए स्पष्ट काल-गणना (Dates/Timelines) दें।\n"
+            f"4. किसी भी शब्द या वाक्य की अनावश्यक पुनरावृत्ति (Stammering/Repetition) कदापि न करें।\n"
+            f"5. उत्तर के अंत में जातक के कल्याण हेतु सटीक, सात्विक वैदिक उपाय (मंत्र जप संख्या सहित, दान सामग्री, अथवा रत्न/रुद्राक्ष परामर्श) अवश्य प्रदान करें।\n"
+        )
+        return prompt
+
+    def _call_groq(self, query: str, fw: Dict[str, Any], name: str,
+                    chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls Groq API (llama-3.3-70b-versatile) via REST for lightning-fast, high-intelligence consultation."""
+        api_key = self._get_groq_api_key()
+        if not api_key:
+            return None
+
+        try:
+            import json
+            import requests
+
+            system_prompt = self._build_astrological_system_prompt(fw, name)
+            messages = [{"role": "system", "content": system_prompt}]
+
+            if chat_history:
+                for msg in chat_history[-8:]:
+                    role = "assistant" if msg.get("role") in ["assistant", "model"] else "user"
+                    cnt = (msg.get("content") or "").strip()
+                    if cnt:
+                        messages.append({"role": role, "content": cnt})
+            messages.append({"role": "user", "content": query})
+
+            payload = {
+                "model": "llama-3.3-70b-versatile",
+                "messages": messages,
+                "temperature": 0.6,
+                "max_tokens": 1200
+            }
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
+            if resp.status_code == 200:
+                data = resp.json()
+                text = data["choices"][0]["message"]["content"].strip()
+                if text:
+                    return text
+        except Exception:
+            pass
+        return None
+
+    def _call_gemini(self, query: str, fw: Dict[str, Any], name: str,
+                     chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls Google Gemini API (gemini-1.5-flash) via official REST endpoint."""
         api_key = self._get_gemini_api_key()
         if not api_key:
             return None
 
         try:
-            from google import genai
-            client = genai.Client(api_key=api_key)
+            import json
+            import requests
 
-            p_list = [f"{v['hi']} {v['house']}वें भाव में ({v['sign_name']})" for v in fw['p_info'].values()]
-            planets_summary = ", ".join(p_list)
-
-            tr_list = [f"{k} {v['sign']} में (लग्न से {v['h_lagna']}वें भाव)" for k, v in fw['transits'].items()]
-            transits_summary = ", ".join(tr_list)
-
-            system_prompt = (
-                f"आप आचार्य व्यास हैं—एक परम विदुषी, प्रामाणिक, गंभीर एवं पूज्य वैदिक ज्योतिषी। "
-                f"जातक का नाम: {name}। "
-                f"कुण्डली विवरण: {fw['asc_sign_name']} लग्न, लग्नेश {fw['lagnesh_hi']}, "
-                f"{fw['moon_sign_name']} चन्द्र राशि ({fw['moon_nak_name']} नक्षत्र)। "
-                f"वर्तमान विंशोत्तरी दशा: महादशा {fw['dasha_md']} ({fw['md_start']} से {fw['md_end']}), "
-                f"अन्तर्दशा {fw['dasha_ad']} (समाप्ति: {fw['ad_end']}), "
-                f"प्रत्यन्तर्दशा {fw['dasha_pd']} (समाप्ति: {fw['pd_end']})। "
-                f"आगामी अन्तर्दशा: {fw['next_ad_lord_hi']} (प्रारंभ: {fw['ad_end']})। "
-                f"ग्रह स्थितियां: {planets_summary}। "
-                f"गोचर: {transits_summary}। "
-                f"नियम:\n"
-                f"1. शुद्ध, गरिमामय एवं सुरुचिपूर्ण हिन्दी में उत्तर दें।\n"
-                f"2. कभी भी शब्दों की अनुचित पुनरावृत्ति न करें (जैसे 'मंगल मंगल' या 'शनि शनि')।\n"
-                f"3. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'कब होगा', 'उपाय बताओ'), "
-                f"तो बातचीत के पिछले संदर्भ को ध्यान में रखते हुए सटीक शास्त्रीय विश्लेषण, स्पष्ट तिथियां (Dates) एवं समय-सीमा दें।\n"
-                f"4. जातक को सदैव स्पष्ट, तार्किक और व्यावहारिक ज्योतिष्य मार्गदर्शन प्रदान करें।"
-            )
-
-            # Build conversation history
+            system_prompt = self._build_astrological_system_prompt(fw, name)
             contents = []
-            if chat_history:
-                for msg in chat_history[-6:]:
-                    r = "user" if msg.get("role") == "user" else "model"
-                    contents.append(f"{r}: {msg.get('content', '')}")
-            contents.append(f"user: {query}")
-            full_prompt = system_prompt + "\n\n" + "\n".join(contents)
 
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=full_prompt
-            )
-            if response and response.text:
-                return response.text.strip()
+            if chat_history:
+                for msg in chat_history[-8:]:
+                    role = "model" if msg.get("role") in ["assistant", "model"] else "user"
+                    cnt = (msg.get("content") or "").strip()
+                    if cnt:
+                        contents.append({"role": role, "parts": [{"text": cnt}]})
+            contents.append({"role": "user", "parts": [{"text": query}]})
+
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+            payload = {
+                "system_instruction": {
+                    "parts": [{"text": system_prompt}]
+                },
+                "contents": contents,
+                "generationConfig": {
+                    "temperature": 0.6,
+                    "maxOutputTokens": 1200
+                }
+            }
+            headers = {"Content-Type": "application/json"}
+            resp = requests.post(url, json=payload, headers=headers, timeout=12)
+            if resp.status_code == 200:
+                data = resp.json()
+                candidates = data.get("candidates", [])
+                if candidates:
+                    parts = candidates[0].get("content", {}).get("parts", [])
+                    if parts:
+                        text = parts[0].get("text", "").strip()
+                        if text:
+                            return text
         except Exception:
             pass
-
         return None
 
     def consult(self, query: str, chart, cur_dasha: Any, birth_info: Dict[str, Any],
@@ -246,18 +330,41 @@ class VyasChatbotEngine:
         """
         Generates a direct, authentic, personalized astrological consultation response.
         Context-aware, follow-up aware, and rooted in classical Parashari Jyotish Shastra.
+        Leverages Groq / Gemini APIs when configured, with graceful fallback to the
+        deterministic classical rules engine.
         """
         fw = self._extract_chart_framework(chart, cur_dasha, transit_pos)
         name = birth_info.get("name", "जातक")
         q_raw = query.strip()
         q_lower = q_raw.lower()
 
-        # 1. Try Gemini API first if configured in env or Streamlit secrets
-        gemini_reply = self._call_gemini_if_available(query, fw, name, chat_history)
-        if gemini_reply:
-            return gemini_reply
+        # Check AI provider preference
+        selected_provider = "auto"
+        try:
+            import streamlit as st
+            selected_provider = st.session_state.get("selected_ai_provider", "auto")
+        except Exception:
+            pass
 
-        # 2. Comprehensive Deterministic Vedic Shastra Consultation Engine
+        # 1. AI API Routing (Groq / Gemini)
+        if selected_provider == "groq":
+            groq_reply = self._call_groq(query, fw, name, chat_history)
+            if groq_reply:
+                return groq_reply
+        elif selected_provider == "gemini":
+            gemini_reply = self._call_gemini(query, fw, name, chat_history)
+            if gemini_reply:
+                return gemini_reply
+        elif selected_provider != "classical":
+            # Auto mode: Try Groq first for extreme speed, then Gemini
+            groq_reply = self._call_groq(query, fw, name, chat_history)
+            if groq_reply:
+                return groq_reply
+            gemini_reply = self._call_gemini(query, fw, name, chat_history)
+            if gemini_reply:
+                return gemini_reply
+
+                # 2. Comprehensive Deterministic Vedic Shastra Consultation Engine
         p_inf = fw["p_info"]
         asp = fw["aspects_map"]
         occ = fw["house_occupants"]

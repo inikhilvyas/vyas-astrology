@@ -313,8 +313,8 @@ def generate_56_page_publication_html(
             background: #ffffff;
             margin: 0;
             padding: 0;
-            font-size: 8.8pt;
-            line-height: 1.4;
+            font-size: 10pt;
+            line-height: 1.5;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             font-feature-settings: "liga" 1, "calt" 1;
@@ -325,7 +325,7 @@ def generate_56_page_publication_html(
             max-height: 275mm;
             overflow: hidden;
             position: relative;
-            padding-bottom: 7mm;
+            padding-bottom: 8mm;
             box-sizing: border-box;
         }
         .page:last-child {
@@ -335,42 +335,44 @@ def generate_56_page_publication_html(
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1.5px solid #000000;
+            border-bottom: 1.5px solid #1a365d;
             padding-bottom: 2px;
-            margin-bottom: 4px;
-            font-size: 8.5pt;
+            margin-bottom: 5px;
+            font-size: 9.2pt;
             font-weight: bold;
+            color: #1a365d;
         }
         .as-footer {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            font-size: 7.2pt;
-            color: #333333;
+            font-size: 8.2pt;
+            color: #475569;
             display: flex;
             justify-content: space-between;
-            border-top: 0.5px solid #999999;
-            padding-top: 2px;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 3px;
             background: #ffffff;
         }
         .as-title {
             text-align: center;
-            font-size: 10.5pt;
-            font-weight: bold;
-            margin: 3px 0 5px 0;
+            font-size: 13.5pt;
+            font-weight: 800;
+            margin: 3px 0 6px 0;
             letter-spacing: 0.5px;
+            color: #1a365d;
         }
         .as-sub-title {
-            font-size: 8.8pt;
-            font-weight: bold;
-            margin: 5px 0 2px 0;
-            color: #1a202c;
+            font-size: 10.8pt;
+            font-weight: 700;
+            margin: 6px 0 3px 0;
+            color: #8b0000;
         }
         .two-col {
             display: flex;
-            gap: 8px;
-            margin-bottom: 4px;
+            gap: 10px;
+            margin-bottom: 5px;
         }
         .col-half {
             flex: 1;
@@ -378,35 +380,39 @@ def generate_56_page_publication_html(
         table.as-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 7.8pt;
-            margin-bottom: 4px;
+            font-size: 8.8pt;
+            margin-bottom: 5px;
         }
         table.as-table th, table.as-table td {
-            border: 1px solid #000000;
-            padding: 2px 3.5px;
+            border: 1px solid #94a3b8;
+            padding: 3px 5px;
             text-align: center;
         }
         table.as-table th {
-            background-color: #f2f2f2;
+            background-color: #f1f5f9;
             font-weight: bold;
+            color: #0f172a;
         }
         table.as-table-left td {
             text-align: left;
         }
         table.as-table-dense th, table.as-table-dense td {
-            padding: 1.2px 2.5px;
-            font-size: 7.2pt;
+            padding: 2px 4px;
+            font-size: 8.2pt;
         }
         .ad-box {
-            border: 1px solid #000000;
-            padding: 5px 10px;
+            border: 1.5px solid #1a365d;
+            padding: 8px 12px;
             text-align: center;
-            margin-top: 6px;
-            background: #fafafa;
+            margin-top: 8px;
+            background: #f8fafc;
+            border-radius: 4px;
         }
         p {
-            margin: 0 0 4px 0;
+            margin: 0 0 5px 0;
             text-align: justify;
+            font-size: 9.6pt;
+            line-height: 1.5;
         }
     </style>
     """
@@ -780,15 +786,29 @@ def generate_56_page_publication_html(
     else:
         what_is_asc = "The ascendant house is considered very important in Vedic astrology. During the birth of a person, the sign which rises in the sky is called the persons ascendant. And, the sign which comes in this house is called the ascendant sign. The ascendant helps in calculating minutest event in a persons life through astrology. Whereas, the daily, weekly, monthly and yearly predictions are made on the basis of moon sign and sun sign."
 
+    _lagna_lord_key = constants.SIGN_LORD[asc_sign_idx]
+    _asc_lord_name = constants.PLANETS_HI.get(_lagna_lord_key, _lagna_lord_key) if is_hi else _lagna_lord_key
+    _asc_elem = ["अग्नि (Fire)", "पृथ्वी (Earth)", "वायु (Air)", "जल (Water)"][asc_sign_idx % 4] if is_hi else ["Fire", "Earth", "Air", "Water"][asc_sign_idx % 4]
+    _asc_qual = ("चर (Chara)" if asc_sign_idx % 3 == 0 else ("स्थिर (Sthira)" if asc_sign_idx % 3 == 1 else "द्विस्वभाव (Dwisvabhava)")) if is_hi else ("Movable (Cardinal)" if asc_sign_idx % 3 == 0 else ("Fixed" if asc_sign_idx % 3 == 1 else "Dual (Mutable)"))
+
+    _asc_summary_table = f"""
+    <table class="as-table as-table-dense" style="margin: 8px 0;">
+        <tr><th>{'मापदंड' if is_hi else 'Parameter'}</th><th>{'शास्त्रीय मान' if is_hi else 'Classical Value'}</th><th>{'मापदंड' if is_hi else 'Parameter'}</th><th>{'शास्त्रीय मान' if is_hi else 'Classical Value'}</th></tr>
+        <tr><td><b>{'लग्न राशि' if is_hi else 'Ascendant Sign'}</b></td><td>{asc_curr_name}</td><td><b>{'लग्नेश (स्वामी)' if is_hi else 'Ascendant Lord'}</b></td><td>{_asc_lord_name}</td></tr>
+        <tr><td><b>{'तत्व (Element)' if is_hi else 'Element'}</b></td><td>{_asc_elem}</td><td><b>{'प्रकृति (Quality)' if is_hi else 'Modality'}</b></td><td>{_asc_qual}</td></tr>
+        <tr><td><b>{'शुभ वार' if is_hi else 'Favorable Day'}</b></td><td>{'मंगलवार, गुरुवार' if is_hi else 'Tuesday, Thursday'}</td><td><b>{'शुभ दिशा' if is_hi else 'Favorable Direction'}</b></td><td>{'पूर्व / उत्तर' if is_hi else 'East / North'}</td></tr>
+    </table>
+    """
+
     p4 = f"""
     <div class="page">
         {page_header()}
         <div class="as-title">{'|| लग्न फल विचार ||' if is_hi else '|| Your Ascendant ||'}</div>
         
-        <div class="as-sub-title">{'लग्न क्या है?' if is_hi else 'What is Ascendant?'}</div>
+        <div class="as-sub-title">{'लग्न क्या है? (What is Ascendant)' if is_hi else 'What is Ascendant?'}</div>
         <p>{what_is_asc}</p>
 
-        <p style="font-weight: bold; margin: 6px 0;">{'आपका लग्न:' if is_hi else 'Your Ascendant is:'} {asc_curr_name}</p>
+        {_asc_summary_table}
 
         <div class="as-sub-title">{asc_health_hdr}</div>
         <p>{asc_health_txt}</p>
@@ -799,9 +819,9 @@ def generate_56_page_publication_html(
         <div class="as-sub-title">{asc_app_hdr}</div>
         <p>{asc_app_txt}</p>
 
-        <div class="ad-box">
-            <div style="font-size: 10pt; font-weight: bold; color: #8b0000;">{'व्यास अस्त्र • वैदिक ज्योतिष परामर्श' if is_hi else 'VYAS ASTRA • Vedic Astrology Intelligence'}</div>
-            <div style="font-size: 8pt; color: #444444; margin-top: 2px;">{'उच्च-परिशुद्ध गणितीय गणना एवं प्रामाणिक पराशरी सिद्धांत' if is_hi else 'High-Precision Mathematical Ephemeris & Classical Parashari Principles'}</div>
+        <div class="ad-box" style="margin-top: 10px;">
+            <div style="font-size: 10.5pt; font-weight: bold; color: #8b0000;">{'व्यास अस्त्र • वैदिक ज्योतिष परामर्श' if is_hi else 'VYAS ASTRA • Vedic Astrology Intelligence'}</div>
+            <div style="font-size: 8.8pt; color: #334155; margin-top: 3px;">{'उच्च-परिशुद्ध गणितीय गणना, विंशोपक बल एवं प्रामाणिक महर्षि पराशर सिद्धांत' if is_hi else 'High-Precision Mathematical Ephemeris, Vimshopaka Bala & Classical Parashari Principles'}</div>
         </div>
     </div>
     """
@@ -979,35 +999,44 @@ def generate_56_page_publication_html(
         <ul style="margin: 2px 0 5px 16px; font-size: 8pt; line-height: 1.4;">{_canc_items}</ul>
         """
 
+    _m_lagna_status = ("दोष प्रभावी" if mars_h_lagna in [1, 2, 4, 7, 8, 12] else "दोष मुक्त") if is_hi else ("Considered" if mars_h_lagna in [1, 2, 4, 7, 8, 12] else "Free")
+    _m_moon_status = ("दोष प्रभावी" if mars_h_moon in [1, 2, 4, 7, 8, 12] else "दोष मुक्त") if is_hi else ("Considered" if mars_h_moon in [1, 2, 4, 7, 8, 12] else "Free")
+    _m_venus_status = ("दोष प्रभावी" if mars_h_venus in [1, 2, 4, 7, 8, 12] else "दोष मुक्त") if is_hi else ("Considered" if mars_h_venus in [1, 2, 4, 7, 8, 12] else "Free")
+
+    _mangal_pos_table = f"""
+    <table class="as-table as-table-dense" style="margin: 6px 0 8px 0;">
+        <tr><th>{'गणना संदर्भ' if is_hi else 'Reference Locus'}</th><th>{'मंगल की भाव स्थिति' if is_hi else 'Mars Placement'}</th><th>{'दोष स्थिति' if is_hi else 'Evaluation'}</th><th>{'शास्त्रीय प्रभाव' if is_hi else 'Manifestation'}</th></tr>
+        <tr><td><b>{'जन्म लग्न से (From Lagna)' if is_hi else 'From Natal Lagna'}</b></td><td>{mars_h_lagna}{'वें भाव' if is_hi else 'th House'}</td><td>{_m_lagna_status}</td><td>{'शारीरिक ऊर्जा व स्वभाव' if is_hi else 'Personality & Temperament'}</td></tr>
+        <tr><td><b>{'चन्द्र राशि से (From Moon)' if is_hi else 'From Moon Sign'}</b></td><td>{mars_h_moon}{'वें भाव' if is_hi else 'th House'}</td><td>{_m_moon_status}</td><td>{'मानसिक समरसता व भावनाएं' if is_hi else 'Mental Harmony & Emotions'}</td></tr>
+        <tr><td><b>{'शुक्र ग्रह से (From Venus)' if is_hi else 'From Venus'}</b></td><td>{mars_h_venus}{'वें भाव' if is_hi else 'th House'}</td><td>{_m_venus_status}</td><td>{'दांपत्य आकर्षण व सुख' if is_hi else 'Marital Chemistry & Bliss'}</td></tr>
+    </table>
+    """
+
     p10 = f"""
     <div class="page">
         {page_header()}
         <div class="as-title">{'|| मंगल दोष विचार एवं शास्त्रीय परिहार ||' if is_hi else '|| Manglik Details / Mangal Dosha ||'}</div>
         
         <p>
-            {'वैदिक ज्योतिष में लग्न, चन्द्र एवं शुक्र से 1, 4, 7, 8 अथवा 12वें भाव में मंगल की स्थिति होने पर मंगल दोष (भौम दोष) का विचार किया जाता है।' if is_hi else 'Generally Manglik Dosha is considered from the position of Lagna, Moon and Venus in the birth chart.'}
+            {'वैदिक ज्योतिष में लग्न, चन्द्र एवं शुक्र से 1, 4, 7, 8 अथवा 12वें भाव में मंगल की स्थिति होने पर मंगल दोष (भौम दोष) का विचार किया जाता है। यह योग ऊर्जा की अधिकता, स्वतंत्र विचारशीलता एवं त्वरित निर्णयों को दर्शाता है।' if is_hi else 'Generally Manglik Dosha (Kuja Dosha) is evaluated from the position of Lagna, Moon and Venus in the birth chart. It signifies high vital energy, assertive independence, and focused dynamism.'}
         </p>
-        <p>
-            {'जन्म कुण्डली में मंगल लग्न से ' + str(mars_h_lagna) + 'वें भाव, चन्द्र से ' + str(mars_h_moon) + 'वें भाव एवं शुक्र से ' + str(mars_h_venus) + 'वें भाव में स्थित है।' if is_hi else f'In the birth chart, Mangal is placed in {mars_h_lagna}th house from Lagna, {mars_h_moon}th house from Moon and {mars_h_venus}th house from Venus.'}
-        </p>
+
+        {_mangal_pos_table}
+
         {_manglik_cancellation_html}
-        <p style="font-weight: bold; margin: 6px 0; color: #8b0000; font-size: 9pt;">
+
+        <div style="font-weight: bold; margin: 6px 0; color: #8b0000; font-size: 9.6pt; background: #fff5f5; border: 1px solid #feb2b2; padding: 6px 10px; border-radius: 4px;">
             {_manglik_verdict}
-        </p>
-        <p>
-            {'मंगल दोष दांपत्य जीवन में सामंजस्य, स्वास्थ्य और स्वभाव को प्रभावित कर सकता है। किंतु जब मंगल अपनी स्वराशि मेष/वृश्चिक में हो, मकर में उच्च का हो, या गुरु-शुक्र से दृष्ट हो तो दोष निष्फल हो जाता है।' if is_hi else 'Mangal Dosha is considered to create hurdles in the married life of a person according to traditional belief. However, when Mars occupies its own sign, exaltation sign, or receives benefic aspects, the dosha stands completely cancelled.'}
-        </p>
+        </div>
 
-        <div class="as-sub-title">{'मंगल दोष निवारण हेतु प्रामाणिक शास्त्रीय उपाय' if is_hi else 'Classical Remedies (in case Mangal Dosha is present)'}</div>
+        <div class="as-sub-title">{'मंगल दोष निवारण एवं दांपत्य सुख हेतु प्रामाणिक शास्त्रीय विधान' if is_hi else 'Classical Directives & Harmonious Remedial Protocols'}</div>
         
-        <div style="font-weight: bold; margin-top: 4px;">{'विवाह पूर्व किए जाने वाले उपाय:' if is_hi else 'Remedies (before marriage):'}</div>
-        <p>{'कुंभ विवाह, विष्णु प्रतिमा विवाह अथवा अश्वत्थ (पीपल) विवाह का विधान शास्त्रसम्मत माना गया है।' if is_hi else 'Kumbha Vivah, Vishnu Vivah and Ashwatha Vivah are the most popular classical remedies for Mangal Dosha.'}</p>
-
-        <div style="font-weight: bold; margin-top: 4px;">{'विवाह उपरांत किए जाने वाले उपाय:' if is_hi else 'Remedies (after marriage):'}</div>
-        <p>{'प्रतिदिन हनुमान चालीसा अथवा सुंदरकांड का पाठ करें। मंगलवार को लाल मसूर की दाल, लाल चंदन और तांबे का दान करें।' if is_hi else 'Recite Hanuman Chalisa daily. Keep a terracotta pot filled with honey in the house. Donate red lentils on Tuesdays.'}</p>
-
-        <div style="font-weight: bold; margin-top: 4px;">{'लाल किताब अचूक उपाय:' if is_hi else 'Lal Kitab Remedies:'}</div>
-        <p>{'मृण्मय पात्र (मिट्टी के घड़े) में देसी खांड अथवा शहद भरकर किसी निर्जन स्थान में दबाएं। अपने पास चांदी का ठोस चौकोर टुकड़ा रखें।' if is_hi else 'Keep a square silver piece in your wallet. Distribute sweet batashas at a religious place on Tuesdays.'}</p>
+        <div style="font-size: 9.1pt; line-height: 1.48; margin-top: 4px;">
+            • <b>{'विवाह पूर्व शास्त्रोक्त विधान:' if is_hi else 'Pre-Marital Observances:'}</b> {'विवाह पूर्व वर-वधू की कुण्डली का सर्वांगीण गुण-मिलान (अष्टकूट मिलान) अनिवार्य है। यदि दोनों कुण्डलियों में सामंजस्य हो, तो कुंभ विवाह अथवा विष्णु प्रतिमा विवाह का विधान शास्त्रसम्मत माना गया है।' if is_hi else 'Comprehensive Ashtakoota synastry matching is recommended prior to matrimonial alliance. Where classical remedies are sought, traditional Kumbha Vivah or Vishnu Archana is observed.'}<br/>
+            • <b>{'नित्य साधना व आराधना:' if is_hi else 'Daily Sadhana & Prayers:'}</b> {'प्रतिदिन हनुमान चालीसा अथवा सुंदरकांड का पाठ करें। ' + ('ॐ क्रां क्रीं क्रौं सः भौमाय नमः' if is_hi else 'Om Kram Kreem Kroum Sah Bhaumaya Namaha') + ' मंत्र का 108 बार जप करने से मंगल देव की अनुकम्पा प्राप्त होती है।' if is_hi else 'Recite Hanuman Chalisa daily. Chanting Mars Vedic Beej Mantra harmonizes inner energy and dissolves interpersonal friction.'}<br/>
+            • <b>{'दान एवं सामाजिक धर्म:' if is_hi else 'Charitable Actions & Offerings:'}</b> {'मंगलवार को निर्धन श्रमिकों को लाल मसूर की दाल, गुड़, तांबा अथवा लाल फल दान करें। अपने भाइयों एवं सहयोगियों के साथ सदैव स्नेहपूर्ण व सम्मानजनक संबंध बनाए रखें।' if is_hi else 'Donate red lentils, jaggery, or copper utensils to needy laborers on Tuesdays. Maintaining cordial, supportive relationships with siblings pacifies Mars.'}<br/>
+            • <b>{'लाल किताब अचूक परामर्श:' if is_hi else 'Lal Kitab Guidance:'}</b> {'मिट्टी के पात्र में शुद्ध शहद भरकर सुरक्षित स्थान पर रखें। अपने पास चांदी का चौकोर टुकड़ा रखें तथा क्रोध व कटु वाणी से सर्वथा परहेज रखें।' if is_hi else 'Keep a square silver piece in your wallet. Avoid harsh words or unnecessary confrontations during critical negotiations.'}
+        </div>
     </div>
     """
     pages.append(p10)
@@ -1323,13 +1352,38 @@ def generate_56_page_publication_html(
         
         if is_hi:
             body_txt = interp.get("interpretation_hi", f"{l_disp} महादशा जातक के जीवन में महत्वपूर्ण कर्मफल एवं उन्नति के अवसर लेकर आती है। यह ग्रह {h_house}वें भाव में स्थित होकर जीवन में दिशा-निर्देश प्रदान करता है।")
+            rem_disp = {
+                "Sun": "<b>दशा साधना व उपाय:</b> नित्य सूर्य नमस्कार एवं गायत्री मंत्र जप। रविवार को गेहूं व तांबे का दान करें।",
+                "Moon": "<b>दशा साधना व उपाय:</b> सोमवार को शिवलिंग पर दूध-जल अभिषेक। माता के चरण स्पर्श एवं चन्द्र मंत्र का जप।",
+                "Mars": "<b>दशा साधना व उपाय:</b> हनुमान चालीसा पाठ एवं मंगल मंत्र। मंगलवार को लाल मसूर व तांबे का दान करें।",
+                "Mercury": "<b>दशा साधना व उपाय:</b> विष्णु सहस्रनाम पाठ। बुधवार को गाय को हरा चारा अथवा मूंग दाल का दान करें।",
+                "Jupiter": "<b>दशा साधना व उपाय:</b> गुरु मंत्र जप एवं केसर का तिलक। गुरुवार को चने की दाल व पीले फलों का दान।",
+                "Venus": "<b>दशा साधना व उपाय:</b> श्रीसूक्त पाठ एवं महालक्ष्मी आराधना। शुक्रवार को सफेद वस्त्र, चावल या खीर दान करें।",
+                "Saturn": "<b>दशा साधना व उपाय:</b> दशरथकृत शनि स्तोत्र पाठ। शनिवार को सरसों के तेल का दीपक एवं काले तिल का दान।",
+                "Rahu": "<b>दशा साधना व उपाय:</b> महामृत्युंजय मंत्र जप व भैरव आराधना। पक्षियों को सप्तधान्य व सफाईकर्मियों का सम्मान।",
+                "Ketu": "<b>दशा साधना व उपाय:</b> श्री गणेश अथर्वशीर्ष पाठ। आवारा कुत्तों को भोजन एवं निर्धनों को कंबल का दान करें।"
+            }.get(p_lord, "दशा अधिपति की नित्य आराधना करें।")
         else:
-            body_txt = interp.get("interpretation_en", f"The {l_disp} Mahadasha brings significant karmic unfolding and growth opportunities across the {h_house}th house affairs.")
+            body_txt = interp.get("interpretation_en", f"The Mahadasha of {l_disp} in the {h_house}th house ({sign_name}) activates significant life transformations, professional elevation, and spiritual maturity.")
+            rem_disp = {
+                "Sun": "<b>Remedial Sadhana:</b> Daily Surya Namaskar, Gayatri Mantra contemplation, and Sunday wheat/jaggery charity.",
+                "Moon": "<b>Remedial Sadhana:</b> Shiva Abhishek on Mondays, seeking maternal blessings, and Moon Vedic Mantra recital.",
+                "Mars": "<b>Remedial Sadhana:</b> Hanuman Chalisa recitation, Mars Beej Mantra chanting, and Tuesday red lentil charity.",
+                "Mercury": "<b>Remedial Sadhana:</b> Vishnu Sahasranama recital, feeding green fodder to cows, and Mercury Beej Mantra.",
+                "Jupiter": "<b>Remedial Sadhana:</b> Revering Lord Vishnu, wearing turmeric tilak, and Thursday chana dal/fruit charity.",
+                "Venus": "<b>Remedial Sadhana:</b> Sri Sukta recital, respecting feminine energy, and Friday white silk/rice offerings.",
+                "Saturn": "<b>Remedial Sadhana:</b> Dasharatha Shani Stotram, lighting sesame oil lamps under Peepal trees on Saturdays.",
+                "Rahu": "<b>Remedial Sadhana:</b> Maha Mrityunjaya Mantra contemplation, feeding birds, and supporting sanitation workers.",
+                "Ketu": "<b>Remedial Sadhana:</b> Lord Ganesha worship with Durva grass, feeding stray dogs, and practicing meditation."
+            }.get(p_lord, "Chant the presiding dasha lord mantra with devotion.")
 
         t_title = f"{l_disp} महादशा विस्तृत फल ({h_house}वें भाव में स्थिति, {sign_name} राशि)" if is_hi else f"{l_disp} Mahadasha In-Depth Analysis (in {h_house}th house, {sign_name})"
         return f"""
-        <div class="as-sub-title">{t_title}</div>
-        <p style="font-size: 8pt; margin-bottom: 5px;">{body_txt}</p>
+        <div style="margin-bottom: 7px; border-left: 3.5px solid #1a365d; background: #f8fafc; padding: 6px 10px; border-radius: 3px; border: 1px solid #e2e8f0; border-left-width: 3.5px; border-left-color: #1a365d;">
+            <div style="font-size: 10.2pt; font-weight: bold; color: #1a365d; margin-bottom: 3px;">{t_title}</div>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 3px;">{body_txt}</p>
+            <div style="font-size: 8.6pt; color: #8b0000; margin-top: 2px;">{rem_disp}</div>
+        </div>
         """
 
     p19 = f"""
@@ -1614,13 +1668,17 @@ def generate_56_page_publication_html(
 
         def _clean_lk_val(v):
             if isinstance(v, list):
-                return " ".join(v)
+                return "<br/>&bull; ".join(v)
             return str(v)
         return f"""
-        <div class="as-sub-title">{t_header}</div>
-        <p style="font-size: 7.8pt; margin-bottom: 3px;"><b>{lbl_ben}</b> {_clean_lk_val(lk_h_data['benefic'])}</p>
-        <p style="font-size: 7.8pt; margin-bottom: 3px;"><b>{lbl_mal}</b> {_clean_lk_val(lk_h_data['malefic'])}</p>
-        <p style="font-size: 7.8pt; margin-bottom: 5px; color: #8b0000;"><b>{lbl_upay}</b> {_clean_lk_val(lk_h_data['remedies'])}</p>
+        <div style="margin-bottom: 8px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 7px 11px; background: #ffffff;">
+            <div class="as-sub-title" style="margin-top: 2px; margin-bottom: 4px; font-size: 10.5pt; color: #8b0000; border-bottom: 1.5px solid #8b0000; padding-bottom: 2px;">{t_header}</div>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;"><b>{lbl_ben}</b><br/>&bull; {_clean_lk_val(lk_h_data['benefic'])}</p>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;"><b>{lbl_mal}</b><br/>&bull; {_clean_lk_val(lk_h_data['malefic'])}</p>
+            <div style="font-size: 8.9pt; line-height: 1.45; margin-bottom: 3px; color: #8b0000; background: #fdf2f8; border-left: 3px solid #db2777; padding: 4px 8px; border-radius: 3px;">
+                <b>{lbl_upay}</b><br/>&bull; {_clean_lk_val(lk_h_data['remedies'])}
+            </div>
+        </div>
         """
 
     p29 = f"""
@@ -1766,17 +1824,26 @@ def generate_56_page_publication_html(
             aspects_rec=[],
             lang=lang
         )
-        if is_compact:
-            return f"""
-            <div class="as-sub-title">{c_dict['title']} ({f'{h_pos}वें भाव' if is_hi else f'{h_pos}th House'}, {s_disp})</div>
-            <p style="font-size: 7.2pt; margin-bottom: 2px;"><b>{'खगोलीय स्थिति:' if is_hi else 'Astronomical Placement:'}</b> {c_dict['astronomical']}</p>
-            <p style="font-size: 7.2pt; margin-bottom: 2px;"><b>{'शास्त्रीय विचार:' if is_hi else 'Classical Consideration:'}</b> {c_dict['shastric']}</p>
-            """
+        domain_txt = c_dict.get('domain_impact', '')
         return f"""
-        <div class="as-sub-title">{c_dict['title']} ({f'{h_pos}वें भाव' if is_hi else f'{h_pos}th House'}, {s_disp})</div>
-        <p style="font-size: 7.5pt; margin-bottom: 2px;"><b>{'खगोलीय स्थिति एवं दृष्टि संबंध:' if is_hi else 'Astronomical & Aspectual Placement:'}</b> {c_dict['astronomical']}</p>
-        <p style="font-size: 7.5pt; margin-bottom: 2px;"><b>{'शास्त्रीय बृहत्पाराशरी फलादेश:' if is_hi else 'Classical Parashari Prediction:'}</b> {c_dict['shastric']}</p>
-        <p style="font-size: 7.5pt; margin-bottom: 4px;"><b>{'व्यावहारिक दिशा एवं अचूक उपाय:' if is_hi else 'Practical Directive & Remedies:'}</b> {c_dict['practical']}</p>
+        <div style="margin-bottom: 8px; border: 1.2px solid #cbd5e1; border-radius: 5px; padding: 7px 11px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div class="as-sub-title" style="font-size: 11pt; color: #8b0000; margin-top: 0; margin-bottom: 4px; border-bottom: 1.5px solid #8b0000; padding-bottom: 2px; display: flex; justify-content: space-between;">
+                <span>{c_dict['title']}</span>
+                <span style="font-size: 9.5pt; color: #1a365d;">({f'{h_pos}वें भाव' if is_hi else f'{h_pos}th House'}, {s_disp})</span>
+            </div>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+                <b>{'खगोलीय स्थिति एवं दृष्टि संबंध:' if is_hi else 'Astronomical & Aspectual Placement:'}</b> {c_dict['astronomical']}
+            </p>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+                <b>{'शास्त्रीय बृहत्पाराशरी फलादेश:' if is_hi else 'Classical Parashari Analysis:'}</b> {c_dict['shastric']}
+            </p>
+            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+                {domain_txt}
+            </p>
+            <div style="font-size: 8.8pt; line-height: 1.45; color: #1a365d; background: #f8fafc; border-left: 3px solid #1a365d; padding: 4px 8px; margin-top: 3px; border-radius: 2px;">
+                {c_dict['practical']}
+            </div>
+        </div>
         """
 
     p35 = f"""
