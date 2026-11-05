@@ -562,9 +562,10 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Mobile Responsive Optimizations (<= 768px) */
-    @media (max-width: 768px) {
-        /* Mobile Touch-Scrollable Carousel for Domain Suite Radio Pills */
+    /* Mobile Responsive Optimizations (Screens <= 1024px)
+       Pure CSS3 without :has() for 100% universal support across all mobile browsers */
+    @media (max-width: 1024px) {
+        /* 1. Mobile Touch-Scrollable Carousel for Domain Suite Radio Pills */
         div[data-testid="stRadio"] [role="radiogroup"] {
             display: flex !important;
             flex-direction: row !important;
@@ -577,6 +578,8 @@ st.markdown("""
             border-radius: 12px !important;
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
         div[data-testid="stRadio"] [role="radiogroup"]::-webkit-scrollbar {
             display: none !important;
@@ -584,36 +587,62 @@ st.markdown("""
         div[data-testid="stRadio"] [role="radiogroup"] label {
             flex: 0 0 auto !important;
             white-space: nowrap !important;
-            padding: 8px 16px !important;
-            font-size: 0.9rem !important;
-            min-height: 40px !important;
+            padding: 9px 18px !important;
+            font-size: 0.92rem !important;
+            min-height: 42px !important;
             border-radius: 999px !important;
         }
 
-        /* 3-column time input (HH : MM : SS) stays side-by-side on mobile */
-        [data-testid="stHorizontalBlock"]:has(input[aria-label*="Hour"]),
-        [data-testid="stHorizontalBlock"]:has(input[aria-label*="घंटा"]) {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 6px !important;
-        }
-        [data-testid="stHorizontalBlock"]:has(input[aria-label*="Hour"]) > [data-testid="stColumn"],
-        [data-testid="stHorizontalBlock"]:has(input[aria-label*="घंटा"]) > [data-testid="stColumn"] {
-            min-width: 0 !important;
-            flex: 1 1 33.33% !important;
-            width: 33.33% !important;
+        /* 2. Container full-width on mobile */
+        .block-container {
+            padding-left: 0.85rem !important;
+            padding-right: 0.85rem !important;
+            padding-top: 0.8rem !important;
+            padding-bottom: 3rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
-        /* All other multi-columns stack vertically for 100% readable mobile layout */
-        [data-testid="stHorizontalBlock"]:not(:has(input[aria-label*="Hour"])):not(:has(input[aria-label*="घंटा"])) {
+        /* 3. Universal Column Stacking (Pure CSS3 without :has, 100% cross-browser) */
+        [data-testid="stHorizontalBlock"] {
             display: flex !important;
-            flex-direction: column !important;
+            flex-wrap: wrap !important;
             gap: 12px !important;
+            width: 100% !important;
         }
-        [data-testid="stHorizontalBlock"]:not(:has(input[aria-label*="Hour"])):not(:has(input[aria-label*="घंटा"])) > [data-testid="stColumn"] {
+
+        /* Default: every column takes 100% width (stacks vertically) */
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
             width: 100% !important;
             min-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+
+        /* Special Case: 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side!
+           Uses CSS Quantity Queries (:first-child:nth-last-child(3)) supported everywhere */
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3),
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3) ~ [data-testid="stColumn"] {
+            width: calc(33.333% - 9px) !important;
+            min-width: 0 !important;
+            flex: 1 1 calc(33.333% - 9px) !important;
+        }
+
+        /* Inputs & Buttons touch friendly */
+        input, select, textarea,
+        div[data-baseweb="input"] input,
+        div[data-baseweb="select"] input,
+        .stTextInput input,
+        .stNumberInput input,
+        .stDateInput input,
+        .stTimeInput input,
+        .stSelectbox select {
+            font-size: 16px !important;
+            min-height: 46px !important;
+        }
+        div.stButton > button {
+            min-height: 48px !important;
+            font-size: 1rem !important;
+            width: 100% !important;
         }
     }
 
