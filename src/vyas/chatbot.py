@@ -36,6 +36,13 @@ def _get_day_transit_pos() -> Dict[str, Any]:
             _TRANSIT_DAY_CACHE[today] = {}
     return _TRANSIT_DAY_CACHE[today]
 
+# -----------------------------------------------------------------------------
+# ENGINE MASTER API KEYS (Directly configured on backend)
+# Set your keys here, or in Streamlit Secrets, or in environment variables.
+# -----------------------------------------------------------------------------
+ENGINE_GROQ_API_KEY: str = ""
+ENGINE_GEMINI_API_KEY: str = ""
+
 class VyasChatbotEngine:
     """Authentic Vedic Astrological Dialogue Engine."""
 
@@ -173,13 +180,15 @@ class VyasChatbotEngine:
         }
 
     def _get_groq_api_key(self) -> Optional[str]:
-        """Discovers Groq API Key from session_state, Streamlit secrets, or environment."""
+        """Discovers Groq API Key from engine config, Streamlit secrets, or environment."""
+        if ENGINE_GROQ_API_KEY and ENGINE_GROQ_API_KEY.strip():
+            return ENGINE_GROQ_API_KEY.strip()
         key = None
         try:
             import streamlit as st
-            key = st.session_state.get("groq_api_key")
+            key = st.secrets.get("GROQ_API_KEY")
             if not key:
-                key = st.secrets.get("GROQ_API_KEY")
+                key = st.session_state.get("groq_api_key")
         except Exception:
             pass
         if not key:
@@ -187,13 +196,15 @@ class VyasChatbotEngine:
         return key.strip() if key and isinstance(key, str) and key.strip() else None
 
     def _get_gemini_api_key(self) -> Optional[str]:
-        """Discovers Gemini API Key from session_state, Streamlit secrets, or environment."""
+        """Discovers Gemini API Key from engine config, Streamlit secrets, or environment."""
+        if ENGINE_GEMINI_API_KEY and ENGINE_GEMINI_API_KEY.strip():
+            return ENGINE_GEMINI_API_KEY.strip()
         key = None
         try:
             import streamlit as st
-            key = st.session_state.get("gemini_api_key")
+            key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
             if not key:
-                key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+                key = st.session_state.get("gemini_api_key")
         except Exception:
             pass
         if not key:

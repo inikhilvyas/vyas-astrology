@@ -4303,49 +4303,6 @@ if st.session_state.get('data_generated'):
         </div>
         """, unsafe_allow_html=True)
 
-        with st.expander("⚙️ AI मॉडल एवं API सेटिंग्स (Groq / Gemini / Classical Rules)", expanded=False):
-            col_cfg1, col_cfg2 = st.columns([1, 1.2])
-            with col_cfg1:
-                cur_prov = st.session_state.get("selected_ai_provider", "auto")
-                prov_opts = ["auto", "groq", "gemini", "classical"]
-                prov_lbls = {
-                    "auto": "⚡ स्वचालित (Groq ➔ Gemini ➔ Classical)",
-                    "groq": "🚀 Groq (Llama 3.3 70B - अत्यंत तीव्र)",
-                    "gemini": "✨ Google Gemini (1.5 Flash)",
-                    "classical": "🏛️ शास्त्रीय वैदिक इंजन (Offline Rules)"
-                }
-                st.session_state["selected_ai_provider"] = st.selectbox(
-                    "पसंदीदा AI इंजन चुनें:",
-                    options=prov_opts,
-                    format_func=lambda x: prov_lbls.get(x, x),
-                    index=prov_opts.index(cur_prov) if cur_prov in prov_opts else 0,
-                    key="dialog_ai_provider_select"
-                )
-            with col_cfg2:
-                gq_k = st.text_input(
-                    "Groq API Key (वैकल्पिक):",
-                    value=st.session_state.get("groq_api_key", ""),
-                    type="password",
-                    placeholder="gsk_...",
-                    help="Groq API key (console.groq.com से निःशुल्क प्राप्त करें)",
-                    key="dialog_groq_key_input"
-                )
-                if gq_k:
-                    st.session_state["groq_api_key"] = gq_k.strip()
-
-                gm_k = st.text_input(
-                    "Gemini API Key (वैकल्पिक):",
-                    value=st.session_state.get("gemini_api_key", ""),
-                    type="password",
-                    placeholder="AIzaSy...",
-                    help="Gemini API key (aistudio.google.com से प्राप्त करें)",
-                    key="dialog_gemini_key_input"
-                )
-                if gm_k:
-                    st.session_state["gemini_api_key"] = gm_k.strip()
-
-            st.caption("💡 बिना API Key के भी आचार्य व्यास शास्त्रीय वैदिक इंजन 100% प्रामाणिक उत्तर देता है। आप Streamlit Secrets में `GROQ_API_KEY` या `GEMINI_API_KEY` भी जोड़ सकते हैं।")
-
         # Quick chips inside popup (Full text in responsive 2-column layout with clear readable fonts)
         st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>✨ त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)
         suggested_queries = [
