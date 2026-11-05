@@ -313,8 +313,8 @@ def generate_56_page_publication_html(
             background: #ffffff;
             margin: 0;
             padding: 0;
-            font-size: 10pt;
-            line-height: 1.5;
+            font-size: 10.2pt;
+            line-height: 1.55;
             text-rendering: optimizeLegibility;
             -webkit-font-smoothing: antialiased;
             font-feature-settings: "liga" 1, "calt" 1;
@@ -1119,19 +1119,26 @@ def generate_56_page_publication_html(
         {page_header()}
         <div class="as-title">{'|| शनि साढ़ेसाती तीन प्रमुख चरण फल एवं शमन उपाय ||' if is_hi else '|| Sadesati Report Phases & Remedial Directives ||'}</div>
         
-        <div class="as-sub-title">{'प्रथम चरण (उदय काल - द्वादश भाव गोचर):' if is_hi else 'Shani Sade Sati: Rising Phase'}</div>
-        <p>{'यह साढ़ेसाती का प्रारंभिक चरण है जब शनि चन्द्रमा से 12वें भाव में संचरण करते हैं। यह चरण व्यय की अधिकता, दूरस्थ यात्राओं, स्थान परिवर्तन और कार्यक्षेत्र में संरचनात्मक बदलाव का संकेत देता है। इस अवधि में नए आर्थिक जोखिमों से बचना चाहिए और स्वास्थ्य का विशेष ध्यान रखना चाहिए।' if is_hi else 'This is starting period of Shani Sade Sati. Saturn transits in 12th house from natal Moon, indicating financial reorganizations, travel, and patience in career.'}</p>
+        <div class="as-sub-title">{'प्रथम चरण (उदय काल - द्वादश भाव गोचर):' if is_hi else 'Shani Sade Sati: Rising Phase (12th House)'}</div>
+        <p style="font-size: 9.6pt; line-height: 1.5; margin-bottom: 5px;">{'यह साढ़ेसाती का प्रारंभिक चरण है जब शनि चन्द्रमा से 12वें भाव में संचरण करते हैं। यह चरण व्यय की अधिकता, दूरस्थ यात्राओं, स्थान परिवर्तन और कार्यक्षेत्र में संरचनात्मक बदलाव का संकेत देता है। इस अवधि में नए आर्थिक जोखिमों से बचना चाहिए और स्वास्थ्य का विशेष ध्यान रखना चाहिए।' if is_hi else 'This is starting period of Shani Sade Sati. Saturn transits in 12th house from natal Moon, indicating financial reorganizations, overseas connections, and patience in career.'}</p>
 
-        <div class="as-sub-title">{'द्वितीय चरण (शिखर काल - जन्म राशि पर गोचर):' if is_hi else 'Shani Sade Sati: Peak Phase'}</div>
-        <p>{'यह साढ़ेसाती का सर्वाधिक निर्णायक और परिवर्तनकारी चरण माना जाता है। चन्द्रमा के ऊपर शनि का गोचर मानसिक परिपक्वता, आंतरिक धैर्य, अनुशासन और कर्मठता की परीक्षा लेता है। जो जातक न्यायप्रिय और सत्यनिष्ठ रहते हैं, उन्हें शनिदेव इस चरण में असाधारण प्रतिष्ठा और स्थायी सफलता प्रदान करते हैं।' if is_hi else 'This is the peak of Shani Sade Sati. Saturn over natal Moon tests endurance and mental resilience. Upholding discipline and ethical conduct turns this period into one of great spiritual elevation and honor.'}</p>
+        <div class="as-sub-title">{'द्वितीय चरण (शिखर काल - जन्म राशि पर गोचर):' if is_hi else 'Shani Sade Sati: Peak Phase (Janma Rashi)'}</div>
+        <p style="font-size: 9.6pt; line-height: 1.5; margin-bottom: 5px;">{'यह साढ़ेसाती का सर्वाधिक निर्णायक और परिवर्तनकारी चरण माना जाता है। चन्द्रमा के ऊपर शनि का गोचर मानसिक परिपक्वता, आंतरिक धैर्य, अनुशासन और कर्मठता की परीक्षा लेता है। जो जातक न्यायप्रिय और सत्यनिष्ठ रहते हैं, उन्हें शनिदेव इस चरण में असाधारण प्रतिष्ठा और स्थायी सफलता प्रदान करते हैं।' if is_hi else 'This is the peak of Shani Sade Sati. Saturn over natal Moon tests endurance and mental resilience. Upholding discipline and ethical conduct turns this period into one of great spiritual elevation and honor.'}</p>
 
-        <div class="as-sub-title">{'तृतीय चरण (अस्त काल - द्वितीय भाव गोचर):' if is_hi else 'Shani Sade Sati: Setting Phase'}</div>
-        <p>{'शनि जब जन्म चन्द्र से द्वितीय भाव में संचरण करते हैं, तो साढ़ेसाती का समापन चरण प्रारंभ होता है। इस चरण में पूर्व में किए गए कठिन परिश्रम का फल प्राप्त होता है। आर्थिक स्थिति में स्थिरता आती है, पारिवारिक जिम्मेदारियों का निर्वहन सुगमता से होता है और मानसिक शांति की पुनर्स्थापना होती है।' if is_hi else 'This is setting period of Shani Sade Sati. Saturn in 2nd house from natal Moon consolidates family and financial matters. Prior efforts start yielding tangible returns.'}</p>
+        <div class="as-sub-title">{'तृतीय चरण (अस्त काल - द्वितीय भाव गोचर):' if is_hi else 'Shani Sade Sati: Setting Phase (2nd House)'}</div>
+        <p style="font-size: 9.6pt; line-height: 1.5; margin-bottom: 5px;">{'शनि जब जन्म चन्द्र से द्वितीय भाव में संचरण करते हैं, तो साढ़ेसाती का समापन चरण प्रारंभ होता है। इस चरण में पूर्व में किए गए कठिन परिश्रम का फल प्राप्त होता है। आर्थिक स्थिति में स्थिरता आती है, पारिवारिक जिम्मेदारियों का निर्वहन सुगमता से होता है और मानसिक शांति की पुनर्स्थापना होती है।' if is_hi else 'This is setting period of Shani Sade Sati. Saturn in 2nd house from natal Moon consolidates family and financial matters. Prior efforts start yielding tangible returns.'}</p>
 
-        <div class="as-sub-title">{'साढ़ेसाती शांति हेतु प्रामाणिक शास्त्रीय उपाय' if is_hi else 'Authentic Shani Shanti Remedies'}</div>
-        <p>• <b>{'दशरथकृत शनि स्तोत्र:' if is_hi else 'Dasharatha Shani Stotra:'}</b> {'प्रति शनिवार सूर्यास्त के पश्चात सरसों के तेल का दीपक जलाकर दशरथकृत शनि स्तोत्र का पाठ करें।' if is_hi else 'Recite Dasharatha Shani Stotra on Saturdays after sunset with a mustard oil lamp.'}<br/>
-        • <b>{'छाया पात्र दान:' if is_hi else 'Chhaya Daan:'}</b> {'कांसे या लोहे के कटोरे में सरसों का तेल भरकर उसमें अपना चेहरा देखें और उसे किसी निर्धन या शनि मंदिर में दान करें।' if is_hi else 'Look at your reflection in mustard oil in an iron vessel and donate it on Saturday.'}<br/>
-        • <b>{'महामृत्युंजय एवं हनुमान उपासना:' if is_hi else 'Hanuman Upasana:'}</b> {'प्रतिदिन हनुमान चालीसा का 3 बार पाठ करने से शनि के सभी प्रतिकूल प्रभाव स्वतः शांत हो जाते हैं।' if is_hi else 'Recite Hanuman Chalisa daily. Hanuman devotees are naturally shielded from Saturnian afflictions.'}</p>
+        <div class="as-sub-title">{'साढ़ेसाती शांति हेतु प्रामाणिक शास्त्रीय उपाय व मंत्र साधना' if is_hi else 'Authentic Shani Shanti Remedies & Mantra Sadhana'}</div>
+        <p style="font-size: 9.5pt; line-height: 1.5; margin-bottom: 5px;">
+        • <b>{'दशरथकृत शनि स्तोत्र:' if is_hi else 'Dasharatha Shani Stotra:'}</b> {'प्रति शनिवार सूर्यास्त के पश्चात सरसों के तेल का दीपक जलाकर दशरथकृत शनि स्तोत्र का पाठ करें। यह स्तोत्र समस्त शनि बाधाओं का अचूक निवारक है।' if is_hi else 'Recite Dasharatha Shani Stotra on Saturdays after sunset with a mustard oil lamp to neutralize afflictions.'}<br/>
+        • <b>{'छाया पात्र दान:' if is_hi else 'Chhaya Daan:'}</b> {'कांसे या लोहे के कटोरे में सरसों का तेल भरकर उसमें अपना चेहरा देखें और उसे शनिवार को किसी निर्धन या शनि मंदिर में दान करें।' if is_hi else 'Look at your reflection in mustard oil in an iron vessel and donate it on Saturday to a needy person.'}<br/>
+        • <b>{'महामृत्युंजय एवं हनुमान उपासना:' if is_hi else 'Hanuman Upasana:'}</b> {'प्रतिदिन हनुमान चालीसा का 3 बार पाठ करने से शनि के सभी प्रतिकूल प्रभाव स्वतः शांत हो जाते हैं। महामृत्युंजय मंत्र का जप अकाल भय दूर करता है।' if is_hi else 'Recite Hanuman Chalisa daily. Hanuman devotees are naturally shielded from Saturnian afflictions.'}
+        </p>
+
+        <div class="as-sub-title">{'साढ़ेसाती में विशेष सावधानी एवं आचरण नियम (Dos and Donts)' if is_hi else 'Crucial Lifestyle Directives during Sade Sati'}</div>
+        <div style="font-size: 9.4pt; line-height: 1.5; background: #f8fafc; border-left: 3.5px solid #1a365d; padding: 6px 12px; border-radius: 3px; color: #1e293b;">
+            {'1. शनिवार को तामसिक भोजन, मदिरा एवं अनैतिक आचरण से पूर्णतः विरत रहें।<br/>2. असहाय, वृद्धजनों, श्रमिकों एवं सफाई कर्मचारियों का कभी अनादर न करें; उन्हें यथायोग्य सहायता दें।<br/>3. शनिवार को काले कुत्ते, कौवों एवं मछलियों को भोजन कराएं।<br/>4. किसी भी नए कार्य में उतावलापन न दिखाएं; धैर्य और पारदर्शिता से आगे बढ़ें।' if is_hi else '1. Avoid alcohol, non-vegetarian food, and unethical transactions, especially on Saturdays.<br/>2. Treat manual laborers, elders, and domestic helpers with deep dignity and generosity.<br/>3. Feed black dogs, crows, and fish on Saturdays with bread or grains.<br/>4. Avoid impulsive speculative risks; rely on systematic perseverance.'}
+        </div>
     </div>
     """
     pages.append(p14)
@@ -1725,13 +1732,17 @@ def generate_56_page_publication_html(
     p33 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 5) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 5) ||'}</div>
+        <div class="as-title">{'|| लाल किताब ग्रह फल एवं अचूक उपाय (भाग 5 - केतु) ||' if is_hi else '|| Lal Kitab Predictions & Remedies (Part 5 - Ketu) ||'}</div>
         {render_lk_reading('Ketu')}
-        <div class="ad-box">
-            <div style="font-size: 10pt; font-weight: bold; color: #8b0000;">{'लाल किताब जीवन सूत्र' if is_hi else 'Lal Kitab Core Principles'}</div>
-            <div style="font-size: 8pt; color: #333333; margin-top: 2px;">
-                {'सदा सत्य बोलें, पराई स्त्री व पराये धन पर दृष्टि न रखें, माता-पिता एवं गुरुजनों का आशीर्वाद लें, और मूक पशु-पक्षियों की सेवा करें।' if is_hi else 'Uphold truth, revere elders, protect animals, and avoid coveting others assets to awaken universal grace.'}
-            </div>
+        
+        <div class="as-sub-title">{'लाल किताब के 10 अटल एवं मौलिक नियम (Core Rules)' if is_hi else 'Lal Kitab 10 Golden Tenets'}</div>
+        <p style="font-size: 9.5pt; line-height: 1.5; margin-bottom: 5px;">
+        {'1. सभी उपाय दिन के समय (सूर्योदय से सूर्यास्त के मध्य) ही करें; रात्रि में उपाय वर्जित हैं।<br/>2. एक दिन में केवल एक ही ग्रह का उपाय करें; एक साथ कई उपाय न करें।<br/>3. उपाय के दौरान मन में पूर्ण श्रद्धा एवं सात्विकता रखें।<br/>4. घर में टूटे-फूटे बर्तन, बंद घड़ियां एवं कबाड़ न रखें; इससे राहु-शनि का दुष्प्रभाव बढ़ता है।' if is_hi else '1. Perform all remedies strictly between sunrise and sunset; night remedies are prohibited.<br/>2. Perform remedy for only one planet on a single day.<br/>3. Maintain pure sattvic intent and reverent conduct throughout the remedial period.<br/>4. Remove dysfunctional electronics, broken glass, and cluttered junk to pacify Rahu and Saturn.'}
+        </p>
+
+        <div class="as-sub-title">{'लाल किताब ऋण विचार एवं अचूक शास्त्रीय परिहार (Debts & Remedies)' if is_hi else 'Lal Kitab Ancestral Debts & Remedial Procedures'}</div>
+        <div style="font-size: 9.4pt; line-height: 1.5; background: #fffdf5; border-left: 3.5px solid #b45309; padding: 7px 12px; border-radius: 3px; color: #1e293b;">
+            {'• <b>पितृ ऋण परिहार:</b> परिवार के सभी रक्त संबंधियों से बराबर मात्रा में धन एकत्र कर किसी पवित्र मंदिर या गौशाला में दान करें।<br/>• <b>मातृ ऋण परिहार:</b> सभी संबंधियों से एक-एक चांदी का सिक्का लेकर पवित्र नदी के जल में प्रवाहित करें।<br/>• <b>स्व ऋण परिहार:</b> अपने परिश्रम की कमाई से गुप्त रूप से किसी अनाथालय या चिकित्सालय में औषधि दान करें।' if is_hi else '• <b>Pitri Rin (Father Debt):</b> Collect equal contributions from all family members and donate to a sacred shrine or cow shelter.<br/>• <b>Matri Rin (Mother Debt):</b> Collect equal silver coins from relatives and immerse them reverently in a sacred river.<br/>• <b>Swa Rin (Self Debt):</b> Make anonymous medical donations to orphanages or underprivileged patients.'}
         </div>
     </div>
     """
@@ -1826,21 +1837,21 @@ def generate_56_page_publication_html(
         )
         domain_txt = c_dict.get('domain_impact', '')
         return f"""
-        <div style="margin-bottom: 8px; border: 1.2px solid #cbd5e1; border-radius: 5px; padding: 7px 11px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-            <div class="as-sub-title" style="font-size: 11pt; color: #8b0000; margin-top: 0; margin-bottom: 4px; border-bottom: 1.5px solid #8b0000; padding-bottom: 2px; display: flex; justify-content: space-between;">
-                <span>{c_dict['title']}</span>
-                <span style="font-size: 9.5pt; color: #1a365d;">({f'{h_pos}वें भाव' if is_hi else f'{h_pos}th House'}, {s_disp})</span>
+        <div style="margin-bottom: 12px; border: 1.4px solid #cbd5e1; border-radius: 6px; padding: 10px 14px; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+            <div class="as-sub-title" style="font-size: 11.5pt; color: #8b0000; margin-top: 0; margin-bottom: 6px; border-bottom: 1.5px solid #8b0000; padding-bottom: 3px; display: flex; justify-content: space-between; align-items: center;">
+                <span><b>{c_dict['title']}</b></span>
+                <span style="font-size: 9.8pt; color: #1a365d; font-weight: 700;">({f'{h_pos}वें भाव' if is_hi else f'{h_pos}th House'}, {s_disp} • {d_str})</span>
             </div>
-            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+            <p style="font-size: 9.8pt; line-height: 1.52; margin-bottom: 5px; color: #1e293b;">
                 <b>{'खगोलीय स्थिति एवं दृष्टि संबंध:' if is_hi else 'Astronomical & Aspectual Placement:'}</b> {c_dict['astronomical']}
             </p>
-            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+            <p style="font-size: 9.8pt; line-height: 1.52; margin-bottom: 5px; color: #1e293b;">
                 <b>{'शास्त्रीय बृहत्पाराशरी फलादेश:' if is_hi else 'Classical Parashari Analysis:'}</b> {c_dict['shastric']}
             </p>
-            <p style="font-size: 9.1pt; line-height: 1.45; margin-bottom: 4px;">
+            <div style="font-size: 9.6pt; line-height: 1.52; margin-bottom: 5px; background: #fffbeb; border-left: 3.5px solid #d97706; padding: 6px 10px; border-radius: 3px; color: #1e293b;">
                 {domain_txt}
-            </p>
-            <div style="font-size: 8.8pt; line-height: 1.45; color: #1a365d; background: #f8fafc; border-left: 3px solid #1a365d; padding: 4px 8px; margin-top: 3px; border-radius: 2px;">
+            </div>
+            <div style="font-size: 9.5pt; line-height: 1.52; color: #1e3a8a; background: #f0f7ff; border-left: 3.5px solid #1e3a8a; padding: 6px 10px; margin-top: 4px; border-radius: 3px;">
                 {c_dict['practical']}
             </div>
         </div>
@@ -1860,7 +1871,8 @@ def generate_56_page_publication_html(
     p36 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 2) ||' if is_hi else '|| Planet Consideration in Astrology (Part 2) ||'}</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 2 - मंगल व बुध) ||' if is_hi else '|| Planet Consideration in Astrology (Part 2 - Mars & Mercury) ||'}</div>
+        <p style="font-size: 9.8pt; line-height: 1.5; margin-bottom: 8px;">{'मंगल पराक्रम, क्रियाशीलता, भूमि एवं साहस का कारक है, जबकि बुध बुद्धि, विवेक, तर्क एवं व्यापारिक प्रज्ञा का अधिपति है। यह पृष्ठ इन दोनों ग्रहों के जीवन के विभिन्न क्षेत्रों पर प्रभाव का विस्तृत विश्लेषण प्रस्तुत करता है।' if is_hi else 'Mars rules valor, kinetic energy, land, and courageous enterprise, while Mercury governs intellect, discrimination, speech, and commercial acumen. This page presents their deep astrological analysis.'}</p>
         {render_planet_consideration('Mars')}
         {render_planet_consideration('Mercury')}
     </div>
@@ -1870,7 +1882,8 @@ def generate_56_page_publication_html(
     p37 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 3) ||' if is_hi else '|| Planet Consideration in Astrology (Part 3) ||'}</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 3 - गुरु व शुक्र) ||' if is_hi else '|| Planet Consideration in Astrology (Part 3 - Jupiter & Venus) ||'}</div>
+        <p style="font-size: 9.8pt; line-height: 1.5; margin-bottom: 8px;">{'देवगुरु बृहस्पति एवं दैत्यगुरु शुक्र नवग्रहों के दो परम शुभ ग्रह हैं। गुरु ज्ञान, धर्म, संतान, भाग्य एवं ईश्वरीय अनुग्रह के कारक हैं, वहीं शुक्र सांसारिक ऐश्वर्य, कला, वाहन, दांपत्य सुख एवं विलासिता के प्रतिनिधि हैं।' if is_hi else 'Jupiter and Venus represent the two great cosmic preceptors (Deva-Guru & Asura-Guru). Jupiter confers supreme wisdom, spirituality, and divine grace, while Venus bestows material abundance, marital harmony, and aesthetic refine.'}</p>
         {render_planet_consideration('Jupiter')}
         {render_planet_consideration('Venus')}
     </div>
@@ -1880,7 +1893,8 @@ def generate_56_page_publication_html(
     p38 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 4) ||' if is_hi else '|| Planet Consideration in Astrology (Part 4) ||'}</div>
+        <div class="as-title">{'|| नवग्रह शास्त्रीय विचार एवं प्रभाव (भाग 4 - शनि व राहु) ||' if is_hi else '|| Planet Consideration in Astrology (Part 4 - Saturn & Rahu) ||'}</div>
+        <p style="font-size: 9.8pt; line-height: 1.5; margin-bottom: 8px;">{'शनि कर्म, न्याय, दीर्घायु एवं तपस्या के अधिपति हैं, जो जातक को यथार्थवादी बनाकर स्थायी सफलता प्रदान करते हैं। राहु महत्वाकांक्षा, आधुनिक तकनीक, कूटनीति एवं अचानक भाग्योदय का कारक ग्रह है।' if is_hi else 'Saturn enforces karmic discipline, endurance, and justice, forging unshakeable foundations over time. Rahu represents boundless ambition, technological breakthroughs, and unconventional worldly triumph.'}</p>
         {render_planet_consideration('Saturn')}
         {render_planet_consideration('Rahu')}
     </div>
@@ -2305,8 +2319,13 @@ def generate_56_page_publication_html(
     <div class="page">
         {page_header()}
         <div class="as-title">{'|| पाश्चात्य दृष्टि संबंध चक्र (Western Aspect Grid) ||' if is_hi else '|| Western Aspect Grid ||'}</div>
-        <p>{'पाश्चात्य दृष्टि प्रणाली में ग्रहों के बीच कोणीय अंशों (0° युति, 60° लाभ, 90° केंद्र, 120° त्रिकोण, 180° समसप्तक) का सूक्ष्म विश्लेषण किया जाता है।' if is_hi else 'Western aspect grid evaluates longitudinal angular separations between celestial bodies.'}</p>
+        <p style="font-size: 9.8pt; line-height: 1.5; margin-bottom: 6px;">{'पाश्चात्य दृष्टि प्रणाली में ग्रहों के बीच कोणीय अंशों (0° युति, 60° लाभ, 90° केंद्र, 120° त्रिकोण, 180° समसप्तक) का सूक्ष्म विश्लेषण किया जाता है।' if is_hi else 'Western aspect grid evaluates longitudinal angular separations between celestial bodies to map energetic dynamics.'}</p>
         {render_aspect_grid(western_aspects_grid)}
+        
+        <div class="as-sub-title" style="margin-top: 10px;">{'पाश्चात्य दृष्टि संबंध फलित समीक्षा (Aspect Syntheses & Psychological Blueprint)' if is_hi else 'Western Aspect Interpretations & Psychological Blueprint'}</div>
+        <div style="font-size: 9.4pt; line-height: 1.52; background: #f8fafc; border-left: 3.5px solid #1a365d; padding: 8px 12px; border-radius: 3px; color: #1e293b;">
+            {'• <b>युति (Conjunction - 0°):</b> दो ग्रहों की ऊर्जाओं का गहन एकत्रीकरण। यह जातक के स्वभाव में विशिष्ट प्रतिभा व एकाग्रता का निर्माण करता है।<br/>• <b>लाभ दृष्टि (Sextile - 60°):</b> बौद्धिक सामंजस्य, सामाजिक संपर्कों से लाभ एवं नए अवसरों का सहज प्राकट्य।<br/>• <b>केंद्र दृष्टि (Square - 90°):</b> आन्तरिक द्वंद्व व चुनौतियां, जो व्यक्ति को कठोर परिश्रम द्वारा आत्म-विकास की दिशा में प्रेरित करती हैं।<br/>• <b>त्रिकोण दृष्टि (Trine - 120°):</b> ईश्वरीय अनुग्रह, सहज रचनात्मकता एवं भाग्य का सुगम सहयोग। जीवन में बिना बाधा के सफलता मिलती है।<br/>• <b>समसप्तक दृष्टि (Opposition - 180°):</b> संतुलन व समझौते की मांग करने वाली स्थिति। यह साझेदारी एवं संबंधों में परिपक्वता लाती है।' if is_hi else '• <b>Conjunction (0°):</b> Dynamic fusion of planetary energies conferring concentrated focus and distinctive natural talent.<br/>• <b>Sextile (60°):</b> Intellectual rapport, smooth social opportunities, and mutual support in collaborative ventures.<br/>• <b>Square (90°):</b> Internal evolutionary tensions that ignite intense perseverance, overcoming obstacles to forge strength.<br/>• <b>Trine (120°):</b> Harmonious cosmic flow, divine grace, unforced creative expression, and sustained fortune.<br/>• <b>Opposition (180°):</b> Polarity demanding psychological equilibrium, teaching maturity through partnerships and negotiation.'}
+        </div>
     </div>
     """
     pages.append(p51)
@@ -2321,19 +2340,7 @@ def generate_56_page_publication_html(
                 h_asps.append(f"{constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm}: {asp[0]}")
         bm_rows.append(f"<tr><td><b>{h_num} {'भाव' if is_hi else 'House'}</b></td><td style='text-align:left;'>{', '.join(h_asps) if h_asps else ('कोई दृष्टि नहीं' if is_hi else 'None')}</td></tr>")
 
-    p52 = f"""
-    <div class="page">
-        {page_header()}
-        <div class="as-title">{'|| भाव मध्य पर ग्रहों की दृष्टि (Aspects on Bhava Madhya) ||' if is_hi else '|| Aspects on Bhava Madhya ||'}</div>
-        <table class="as-table as-table-dense as-table-left">
-            <tr><th>{'भाव' if is_hi else 'House'}</th><th>{'दृष्टि डालने वाले ग्रह एवं प्रकार' if is_hi else 'Aspecting Planets & Type'}</th></tr>
-            {''.join(bm_rows)}
-        </table>
-    </div>
-    """
-    pages.append(p52)
-
-    # Page 53: Aspects on KP Cusps
+    # Combined Page: Aspects on Bhava Madhya & KP Cusps
     kp_asp_rows = []
     for c_num in range(1, 13):
         c_asps = []
@@ -2341,19 +2348,38 @@ def generate_56_page_publication_html(
             asp = aspects_on_kp.get((p_nm, c_num))
             if asp:
                 c_asps.append(f"{constants.PLANETS_HI.get(p_nm, p_nm) if is_hi else p_nm}: {asp[0]}")
-        kp_asp_rows.append(f"<tr><td><b>{c_num} {'केपी संधि' if is_hi else 'KP Cusp'}</b></td><td style='text-align:left;'>{', '.join(c_asps) if c_asps else ('कोई दृष्टि नहीं' if is_hi else 'None')}</td></tr>")
+        kp_asp_rows.append(f"<tr><td><b>{c_num} {'संधि' if is_hi else 'Cusp'}</b></td><td style='text-align:left; font-size:7.8pt;'>{', '.join(c_asps) if c_asps else ('कोई नहीं' if is_hi else 'None')}</td></tr>")
 
-    p53 = f"""
+    p52 = f"""
     <div class="page">
         {page_header()}
-        <div class="as-title">{'|| केपी भाव संधियों पर दृष्टि (Aspects on KP Cusps) ||' if is_hi else '|| Aspects on KP Cusps ||'}</div>
-        <table class="as-table as-table-dense as-table-left">
-            <tr><th>{'केपी संधि' if is_hi else 'KP Cusp'}</th><th>{'दृष्टि डालने वाले ग्रह एवं प्रकार' if is_hi else 'Aspecting Planets & Type'}</th></tr>
-            {''.join(kp_asp_rows)}
-        </table>
+        <div class="as-title">{'|| भाव मध्य एवं केपी भाव संधियों पर दृष्टि चक्र ||' if is_hi else '|| Aspects on Bhava Madhya & KP Cusps ||'}</div>
+        <p style="font-size: 9.6pt; line-height: 1.5; margin-bottom: 6px;">{'वैदिक भाव मध्य एवं कृष्णमूर्ति पद्धति (KP) की भाव संधियों पर ग्रहों की दृष्टि का तुलनात्मक विश्लेषण जातक के जीवन में घटनाओं के सटीक प्रकटीकरण का निर्धारण करता है।' if is_hi else 'Comparative analysis of planetary aspects on Bhava Madhya (median points) and Krishnamurti Padhdhati (KP) cuspal points reveals event manifestation timings.'}</p>
+        
+        <div class="two-col" style="margin-bottom: 8px;">
+            <div class="col-half">
+                <div class="as-sub-title" style="font-size: 10pt; margin-top: 0;">{'भाव मध्य पर दृष्टि (Chalit Madhya)' if is_hi else 'Aspects on Bhava Madhya'}</div>
+                <table class="as-table as-table-dense as-table-left">
+                    <tr><th>{'भाव' if is_hi else 'House'}</th><th>{'दृष्टि ग्रह' if is_hi else 'Aspecting Planets'}</th></tr>
+                    {''.join(bm_rows)}
+                </table>
+            </div>
+            <div class="col-half">
+                <div class="as-sub-title" style="font-size: 10pt; margin-top: 0;">{'केपी भाव संधि पर दृष्टि (KP Cusps)' if is_hi else 'Aspects on KP Cusps'}</div>
+                <table class="as-table as-table-dense as-table-left">
+                    <tr><th>{'केपी संधि' if is_hi else 'KP Cusp'}</th><th>{'दृष्टि ग्रह' if is_hi else 'Aspecting Planets'}</th></tr>
+                    {''.join(kp_asp_rows)}
+                </table>
+            </div>
+        </div>
+
+        <div class="as-sub-title">{'शास्त्रीय दृष्टि फलादेश एवं संधि फल विश्लेषण' if is_hi else 'Cuspal & Median Aspect Synthesis'}</div>
+        <div style="font-size: 9.4pt; line-height: 1.52; background: #f8fafc; border-left: 3.5px solid #1a365d; padding: 7px 12px; border-radius: 3px; color: #1e293b;">
+            {'जब कोई शुभ ग्रह (गुरु, शुक्र, शुभ बुध) भाव मध्य अथवा संधि पर दृष्टि डालता है, तो वह उस भाव के फलों में गुणात्मक वृद्धि करता है। इसके विपरीत पाप ग्रहों की दृष्टि अनुशासन, संघर्ष एवं दायित्वों की वृद्धि का संकेत देती है। केपी उप-स्वामी एवं दृष्टि संबंध कार्य सिद्धि के समय का अचूक संकेत देते हैं।' if is_hi else 'Benefic aspects (Jupiter, Venus, unafflicted Mercury) on cusps or median points enhance favorable house yields. Malefic aspects call for structured discipline. The confluence of KP sub-lords and aspectual rays governs the precise crystallization of life events.'}
+        </div>
     </div>
     """
-    pages.append(p53)
+    pages.append(p52)
 
     # =========================================================================
     # PAGE 54: || ASHTAKVARGA TABLE ||
@@ -2378,8 +2404,13 @@ def generate_56_page_publication_html(
             <tr style="background:#eef2f7; font-weight:bold;"><td>{'सर्वाष्टक' if is_hi else 'SAV'}</td>{''.join([f'<td>{sav[i]}</td>' for i in range(12)])}<td><b>337</b></td></tr>
         </table>
 
-        <div style="text-align: center; margin-top: 10px;">
+        <div style="text-align: center; margin-top: 8px; margin-bottom: 8px;">
             {svg_sav}
+        </div>
+
+        <div class="as-sub-title">{'सर्वाष्टकवर्ग (SAV) बिंदु विश्लेषण एवं भाव बल निर्देश' if is_hi else 'Sarvashtakvarga (SAV) Bindu Analysis & Predictive Guidelines'}</div>
+        <div style="font-size: 9.4pt; line-height: 1.52; background: #fffdf5; border-left: 3.5px solid #b45309; padding: 7px 12px; border-radius: 3px; color: #1e293b;">
+            {'• <b>28 से अधिक बिंदु वाले भाव:</b> अत्यंत शुभ व शक्तिशाली। इन भावों से संबंधित जीवन क्षेत्रों में जातक को सहज प्रगति, सम्मान एवं प्रचुर सफलता प्राप्त होती है।<br/>• <b>28 से कम बिंदु वाले भाव:</b> यहां ऊर्जा का स्तर सामान्य रहता है। इन क्षेत्रों में योजनाबद्ध अनुशासन एवं निरंतर कर्म से ही सफलता प्राप्त होती है।<br/>• <b>आय (11वां) बनाम व्यय (12वां) संतुलन:</b> यदि 11वें भाव में 12वें भाव से अधिक बिंदु हों, तो जातक की आर्थिक स्थिति आजीवन सुदृढ़ व संचयकारी रहती है।<br/>• <b>कर्म (10वां) भाव बल:</b> दशम भाव में बली बिंदु समाज में नेतृत्व, अधिकार एवं अटूट आजीविका प्रतिष्ठा सुनिश्चित करते हैं।' if is_hi else '• <b>Houses with >28 Bindus:</b> Highly auspicious and energized. Endeavors related to these houses manifest smoothly with high rewards.<br/>• <b>Houses with <28 Bindus:</b> Require methodical perseverance, planning, and conscious cultivation to yield desired outcomes.<br/>• <b>11th vs 12th House Balance:</b> When the 11th house (income) possesses more bindus than the 12th (expenditure), lasting wealth accumulation is assured.<br/>• <b>10th House Strength:</b> High bindu count in the 10th house establishes professional distinction, authority, and societal respect.'}
         </div>
     </div>
     """

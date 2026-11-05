@@ -261,7 +261,7 @@ st.set_page_config(
     page_title="VYAS • Vedic Yield Astrology Systems",
     page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "☸️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 
@@ -787,39 +787,59 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------
-       MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION
+       MOBILE RESPONSIVENESS & TOUCH OPTIMIZATION (Mobile + PC Universal)
        ------------------------------------------------------------- */
     @media (max-width: 768px) {
-        .glass-card {
-            padding: 14px 16px !important;
+        /* Force any horizontal block to stack vertically on mobile (stops 4-card squeezing) */
+        [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+        }
+        [data-testid="stHorizontalBlock"] > div,
+        [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"] > div[data-testid="column"],
+        div[data-testid="stColumn"],
+        div[data-testid="column"] {
+            min-width: 100% !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 100% !important;
             margin-bottom: 12px !important;
         }
+        .glass-card {
+            padding: 16px 14px !important;
+            margin-bottom: 14px !important;
+            font-size: 1.05rem !important;
+        }
         .section-title {
-            font-size: 1.12rem !important;
+            font-size: 1.25rem !important;
             letter-spacing: 0 !important;
             word-spacing: 0.04em !important;
             line-height: 1.55 !important;
         }
         div[data-testid="stRadio"] > div {
-            grid-template-columns: repeat(2, 1fr) !important;
+            display: flex !important;
+            flex-direction: column !important;
             gap: 8px !important;
             padding: 2px !important;
         }
         div[data-testid="stRadio"] label {
-            padding: 10px 10px !important;
-            font-size: 0.88rem !important;
+            width: 100% !important;
+            padding: 12px 14px !important;
+            font-size: 0.98rem !important;
             min-height: 48px !important;
         }
         .stTabs [data-baseweb="tab-list"], .stTabs [role="tablist"] {
             overflow-x: auto !important;
             white-space: nowrap !important;
             padding: 6px 8px !important;
-            gap: 6px !important;
+            gap: 8px !important;
         }
         .stTabs [data-baseweb="tab"], .stTabs button[role="tab"] {
-            font-size: 0.86rem !important;
-            padding: 8px 14px !important;
-            height: 40px !important;
+            font-size: 0.95rem !important;
+            padding: 10px 16px !important;
+            height: 44px !important;
         }
         .kundli-container {
             padding: 8px !important;
@@ -829,27 +849,32 @@ st.markdown("""
             max-width: 100% !important;
             height: auto !important;
         }
-        /* Mobile Column Wrapping: Prevents 4-card horizontal squeezing */
-        [data-testid="stHorizontalBlock"] {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 12px !important;
+        /* Large touch-friendly buttons that wrap text gracefully */
+        div.stButton > button {
+            min-height: 48px !important;
+            white-space: normal !important;
+            line-height: 1.35 !important;
+            font-size: 1rem !important;
+            padding: 10px 14px !important;
+            word-break: break-word !important;
         }
-        [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
-        [data-testid="stHorizontalBlock"] > div[data-testid="column"],
-        div[data-testid="stColumn"],
-        div[data-testid="column"] {
-            min-width: calc(50% - 6px) !important;
-            width: calc(50% - 6px) !important;
-            flex: 1 1 calc(50% - 6px) !important;
-            margin-bottom: 8px !important;
+        /* Mobile input fields at 16px to prevent iOS Safari auto-zoom */
+        input, select, textarea, div[data-baseweb="select"] {
+            font-size: 16px !important;
+            min-height: 46px !important;
+        }
+        /* Dialog popup on mobile */
+        div[data-testid="stDialog"] > div {
+            width: 96vw !important;
+            max-width: 96vw !important;
+            padding: 12px 8px !important;
         }
         /* Expander headers */
         .streamlit-expanderHeader,
         [data-testid="stExpander"] summary,
         [data-testid="stExpander"] details > summary {
-            font-size: 0.95rem !important;
-            padding: 10px 12px !important;
+            font-size: 1.05rem !important;
+            padding: 12px 14px !important;
             white-space: normal !important;
             line-height: 1.4 !important;
             overflow-wrap: anywhere !important;
@@ -864,12 +889,6 @@ st.markdown("""
             max-width: 100% !important;
             overflow-x: auto !important;
         }
-        div.stButton > button {
-            min-height: 46px !important;
-            white-space: normal !important;
-            line-height: 1.3 !important;
-            font-size: 0.95rem !important;
-        }
         .block-container {
             padding: 1rem 0.6rem 3rem 0.6rem !important;
         }
@@ -878,30 +897,16 @@ st.markdown("""
     /* Small phones (iPhone SE / Android ~360px - 520px) */
     @media (max-width: 520px) {
         .section-title {
-            font-size: 1.05rem !important;
+            font-size: 1.15rem !important;
         }
         .glass-card {
-            padding: 12px 12px !important;
+            padding: 14px 12px !important;
             border-radius: 10px !important;
         }
-        div[data-testid="stRadio"] > div {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 6px !important;
-        }
         div[data-testid="stRadio"] label {
-            padding: 8px 6px !important;
-            font-size: 0.82rem !important;
-            min-height: 44px !important;
-        }
-        /* Stack multi-columns into full-width on narrow screens */
-        [data-testid="stHorizontalBlock"] > div[data-testid="stColumn"],
-        [data-testid="stHorizontalBlock"] > div[data-testid="column"],
-        div[data-testid="stColumn"],
-        div[data-testid="column"] {
-            min-width: 100% !important;
-            width: 100% !important;
-            flex: 1 1 100% !important;
-            margin-bottom: 10px !important;
+            padding: 10px 12px !important;
+            font-size: 0.92rem !important;
+            min-height: 46px !important;
         }
     }
 
@@ -4439,14 +4444,7 @@ if st.session_state.get('data_generated'):
         st.session_state["show_acharya_dialog"] = False
         show_acharya_consultation_dialog(chart, birth, cur_dasha, st.session_state.get('prashna_meta'))
 
-    # Floating Bottom-Right Launcher Widget
-    st.markdown("""
-    <div class="floating-bot-anchor">
-        <div style="font-size: 0.74rem; text-align: center; color: #ffd700; background: rgba(0,0,0,0.85); border-radius: 8px; padding: 3px 8px; margin-bottom: 4px; border: 1px solid rgba(255,215,0,0.4);">
-            आचार्य व्यास • लाइव संवाद
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Acharya Vyas Live Consultation is readily launched via top bar & sidebar
 
     with st.sidebar:
         st.markdown("---")

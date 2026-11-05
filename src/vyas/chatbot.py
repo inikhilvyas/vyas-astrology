@@ -276,9 +276,10 @@ class VyasChatbotEngine:
 
     def _call_groq(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                     chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
-        """Calls Groq API (llama-3.3-70b-versatile) via REST for lightning-fast, high-intelligence consultation."""
-        api_key = self._get_groq_api_key()
-        if not api_key:
+        """Calls Groq API with automatic multi-key pool failover & model resilience."""
+        from vyas import ai_key_manager
+        key_pool = ai_key_manager.get_groq_key_pool(task="chat")
+        if not key_pool:
             return None
 
         try:
@@ -296,36 +297,43 @@ class VyasChatbotEngine:
                         messages.append({"role": role, "content": cnt})
             messages.append({"role": "user", "content": query})
 
-            headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
-            }
-            # Try top-tier available models on Groq
-            for m_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]:
-                payload = {
-                    "model": m_name,
-                    "messages": messages,
-                    "temperature": 0.6,
-                    "max_tokens": 1200
+            # Iterate through key pool with auto-failover
+            for api_key in key_pool:
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
                 }
-                try:
-                    resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        text = data["choices"][0]["message"].get("content", "").strip()
-                        if text:
-                            return text
-                except Exception:
-                    continue
+                for m_name in ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"]:
+                    payload = {
+                        "model": m_name,
+                        "messages": messages,
+                        "temperature": 0.6,
+                        "max_tokens": 1200
+                    }
+                    try:
+                        resp = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers, timeout=12)
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            text = data["choices"][0]["message"].get("content", "").strip()
+                            if text:
+                                ai_key_manager.mark_key_healthy(api_key)
+                                return text
+                        elif resp.status_code in [429, 401, 503]:
+                            # Rate limit or quota error: mark and failover to next key in pool
+                            ai_key_manager.mark_key_rate_limited(api_key)
+                            break
+                    except Exception:
+                        continue
         except Exception:
             pass
         return None
 
     def _call_gemini(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                      chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
-        """Calls Google Gemini API (gemini-1.5-flash) via official REST endpoint."""
-        api_key = self._get_gemini_api_key()
-        if not api_key:
+        """Calls Google Gemini API with automatic multi-key pool failover & model resilience."""
+        from vyas import ai_key_manager
+        key_pool = ai_key_manager.get_gemini_key_pool(task="chat")
+        if not key_pool:
             return None
 
         try:
@@ -354,21 +362,26 @@ class VyasChatbotEngine:
                     "maxOutputTokens": 1200
                 }
             }
-            for gm_model in ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-flash-latest", "gemini-1.5-flash"]:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{gm_model}:generateContent?key={api_key}"
-                try:
-                    resp = requests.post(url, json=payload, headers=headers, timeout=12)
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        candidates = data.get("candidates", [])
-                        if candidates:
-                            parts = candidates[0].get("content", {}).get("parts", [])
-                            if parts:
-                                text = parts[0].get("text", "").strip()
-                                if text:
-                                    return text
-                except Exception:
-                    continue
+            for api_key in key_pool:
+                for gm_model in ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-flash-latest", "gemini-1.5-flash"]:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{gm_model}:generateContent?key={api_key}"
+                    try:
+                        resp = requests.post(url, json=payload, headers=headers, timeout=12)
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            candidates = data.get("candidates", [])
+                            if candidates:
+                                parts = candidates[0].get("content", {}).get("parts", [])
+                                if parts:
+                                    text = parts[0].get("text", "").strip()
+                                    if text:
+                                        ai_key_manager.mark_key_healthy(api_key)
+                                        return text
+                        elif resp.status_code in [429, 401, 503]:
+                            ai_key_manager.mark_key_rate_limited(api_key)
+                            break
+                    except Exception:
+                        continue
         except Exception:
             pass
         return None
