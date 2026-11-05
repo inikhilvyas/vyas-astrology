@@ -303,10 +303,33 @@ def _cached_transit_positions(now_day: str):
 # reflows once webfonts arrive — the page is never held hostage by fonts.google
 # .com, which is the single biggest first-paint cost on a cold Streamlit load.
 st.html("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 """)
+
+# Bulletproof Mobile Viewport Enforcer (Runs in parent document)
+try:
+    import streamlit.components.v1 as _comp_vp
+    _comp_vp.html("""
+    <script>
+    (function() {
+        try {
+            var doc = window.top ? window.top.document : document;
+            var meta = doc.querySelector('meta[name="viewport"]');
+            if (!meta) {
+                meta = doc.createElement('meta');
+                meta.name = 'viewport';
+                doc.head.appendChild(meta);
+            }
+            meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0');
+        } catch(e) {}
+    })();
+    </script>
+    """, height=0)
+except Exception:
+    pass
 
 # ---------------- GOOGLE OAUTH 2.0 CALLBACK HANDLING ----------------
 # Rules:
@@ -405,21 +428,39 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------
-       ROOT & MOBILE VIEWPORT PERFECTION (Zero Horizontal Overflow)
+       ROOT & VIEWPORT LOCK (100% Mobile & PC Responsive Framework)
        ------------------------------------------------------------- */
+    *, *::before, *::after {
+        box-sizing: border-box !important;
+    }
+
     html, body {
+        width: 100% !important;
         max-width: 100vw !important;
         overflow-x: hidden !important;
+        position: relative !important;
         -webkit-text-size-adjust: 100% !important;
+        text-size-adjust: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         scroll-behavior: smooth;
         background-color: #07090d !important;
     }
 
-    .stApp, [data-testid="stAppViewContainer"], .main {
+    .stApp,
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMainBlockContainer"],
+    .main,
+    .block-container,
+    [data-testid="stVerticalBlock"] {
+        width: 100% !important;
         max-width: 100vw !important;
+        min-width: 0 !important;
         overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .stApp, [data-testid="stAppViewContainer"], .main {
         background:
             radial-gradient(140% 140% at 50% 0%, rgba(245, 209, 110, 0.08) 0%, transparent 38%),
             radial-gradient(120% 120% at 50% 100%, rgba(76, 110, 245, 0.08) 0%, transparent 42%),
@@ -429,22 +470,14 @@ st.markdown("""
         color: #f1f5f9 !important;
     }
 
-    /* Responsive Block Container */
+    /* Large Desktop Container Defaults */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 1.6rem !important;
         padding-bottom: 4rem !important;
-        padding-left: 0.85rem !important;
-        padding-right: 0.85rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
         max-width: 1380px !important;
         margin: 0 auto !important;
-    }
-
-    @media (min-width: 992px) {
-        .block-container {
-            padding-top: 1.8rem !important;
-            padding-left: 2.2rem !important;
-            padding-right: 2.2rem !important;
-        }
     }
 
     /* -------------------------------------------------------------
@@ -460,6 +493,7 @@ st.markdown("""
         text-align: center;
         box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(240, 192, 90, 0.3);
         margin-bottom: 18px;
+        width: 100% !important;
     }
     .vyas-hero-banner::after {
         content: "";
@@ -494,44 +528,9 @@ st.markdown("""
         letter-spacing: 0.8px;
     }
 
-    @media (max-width: 768px) {
-        .vyas-hero-banner {
-            padding: 12px 14px !important;
-            border-radius: 14px !important;
-            margin-bottom: 12px !important;
-        }
-        .vyas-hero-kicker {
-            font-size: 0.65rem !important;
-            letter-spacing: 1.5px !important;
-            margin-bottom: 2px !important;
-        }
-        .vyas-hero-title {
-            font-size: 1.65rem !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 2px !important;
-        }
-        .vyas-hero-subtitle {
-            font-size: 0.82rem !important;
-            letter-spacing: 0.2px !important;
-            line-height: 1.35 !important;
-        }
-    }
-
     /* -------------------------------------------------------------
-       DOMAIN SUITES (App-Style Mobile Horizontal Touch Carousel)
+       DOMAIN SUITES (Pill Navigation for Desktop & Mobile)
        ------------------------------------------------------------- */
-    div[data-testid="stRadio"] > div,
-    div[data-testid="stRadio"] > div[role="radiogroup"] {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-        background: rgba(9, 14, 30, 0.9) !important;
-        padding: 8px !important;
-        border-radius: 14px !important;
-        border: 1px solid rgba(245, 209, 110, 0.25) !important;
-        margin-bottom: 16px !important;
-    }
-
     div[data-testid="stRadio"] label {
         display: flex !important;
         align-items: center !important;
@@ -572,91 +571,202 @@ st.markdown("""
         display: none !important;
     }
 
-    @media (max-width: 768px) {
-        /* Mobile Touch-Scrollable Carousel for Radio Tabs */
-        div[data-testid="stRadio"] > div,
-        div[data-testid="stRadio"] > div[role="radiogroup"] {
+    /* Desktop Navigation Pill Group */
+    @media (min-width: 1025px) {
+        div[data-testid="stRadio"] [role="radiogroup"] {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            background: rgba(9, 14, 30, 0.9) !important;
+            padding: 8px !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(245, 209, 110, 0.25) !important;
+            margin-bottom: 16px !important;
+        }
+    }
+
+    /* -------------------------------------------------------------
+       MOBILE & TABLET RESPONSIVE ENGINE (Screens <= 1024px)
+       Guarantees Native App Layout Without Any Need For Zooming
+       ------------------------------------------------------------- */
+    @media (max-width: 1024px) {
+        /* Container fits phone screen without desktop overview zoom */
+        .block-container {
+            padding-top: 0.8rem !important;
+            padding-bottom: 3.5rem !important;
+            padding-left: 0.85rem !important;
+            padding-right: 0.85rem !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* Hero Banner Scales Gracefully */
+        .vyas-hero-banner {
+            padding: 14px 16px !important;
+            border-radius: 14px !important;
+            margin-bottom: 12px !important;
+        }
+        .vyas-hero-kicker {
+            font-size: 0.7rem !important;
+            letter-spacing: 1.5px !important;
+            margin-bottom: 2px !important;
+        }
+        .vyas-hero-title {
+            font-size: 1.85rem !important;
+            letter-spacing: 2px !important;
+            margin-bottom: 2px !important;
+        }
+        .vyas-hero-subtitle {
+            font-size: 0.85rem !important;
+            letter-spacing: 0.3px !important;
+            line-height: 1.35 !important;
+        }
+
+        /* 1. ALL MULTI-COLUMN BLOCKS STACK VERTICALLY INTO 100% WIDTH CARDS */
+        [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            gap: 12px !important;
+        }
+
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+
+        /* 2. ONLY EXCEPTION: 3-Column Time of Birth (Hour : Min : Sec) stays in 1 row */
+        [data-testid="stHorizontalBlock"]:has(input[aria-label*="Hour"]),
+        [data-testid="stHorizontalBlock"]:has(input[aria-label*="घंटा"]) {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 6px !important;
+        }
+        [data-testid="stHorizontalBlock"]:has(input[aria-label*="Hour"]) > [data-testid="stColumn"],
+        [data-testid="stHorizontalBlock"]:has(input[aria-label*="घंटा"]) > [data-testid="stColumn"] {
+            width: 33.33% !important;
+            min-width: 0 !important;
+            flex: 1 1 33.33% !important;
+        }
+
+        /* 3. DOMAIN SUITES: Frictionless Mobile Touch Carousel (Zero Horizontal Blowout) */
+        div[data-testid="stRadio"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+        }
+        div[data-testid="stRadio"] [role="radiogroup"] {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
             gap: 8px !important;
-            padding: 6px 4px !important;
-            margin-bottom: 12px !important;
-            border-radius: 12px !important;
+            padding: 8px 4px 10px 4px !important;
+            margin-bottom: 14px !important;
+            border-radius: 14px !important;
+            background: rgba(9, 14, 30, 0.9) !important;
+            border: 1px solid rgba(245, 209, 110, 0.25) !important;
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
-        div[data-testid="stRadio"] > div::-webkit-scrollbar,
-        div[data-testid="stRadio"] > div[role="radiogroup"]::-webkit-scrollbar {
+        div[data-testid="stRadio"] [role="radiogroup"]::-webkit-scrollbar {
             display: none !important;
         }
-        div[data-testid="stRadio"] label {
+        div[data-testid="stRadio"] [role="radiogroup"] label {
             flex: 0 0 auto !important;
             white-space: nowrap !important;
-            padding: 8px 14px !important;
-            font-size: 0.86rem !important;
-            min-height: 38px !important;
-            border-radius: 20px !important;
+            padding: 10px 18px !important;
+            font-size: 0.92rem !important;
+            min-height: 42px !important;
+            border-radius: 999px !important;
+        }
+
+        /* 4. Large Touch Targets for Form Inputs & Buttons */
+        input, select, textarea,
+        div[data-baseweb="input"] input,
+        div[data-baseweb="select"] input,
+        .stTextInput input,
+        .stNumberInput input,
+        .stDateInput input,
+        .stTimeInput input,
+        .stSelectbox select {
+            font-size: 16px !important;
+            min-height: 46px !important;
+            border-radius: 10px !important;
+        }
+        div.stButton > button {
+            font-size: 1.05rem !important;
+            min-height: 48px !important;
+            padding: 12px 18px !important;
+            width: 100% !important;
+            font-weight: 800 !important;
+        }
+
+        /* 5. Astrological Kundli Diamond Chart Container */
+        .kundli-container {
+            padding: 10px 4px !important;
+            border-radius: 14px !important;
+            margin-bottom: 14px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .kundli-container img,
+        .kundli-container svg {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        /* 6. Cards & Section Headings */
+        .glass-card, .predict-card {
+            padding: 16px 14px !important;
+            border-radius: 14px !important;
+            margin-bottom: 14px !important;
+            width: 100% !important;
+        }
+        .section-title {
+            font-size: 1.22rem !important;
+            padding-bottom: 6px !important;
+            margin-top: 10px !important;
+            margin-bottom: 12px !important;
+        }
+
+        /* 7. Acharya Vyas Consultation Dialog Bottom Sheet */
+        div[data-testid="stDialog"] > div {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 100vw !important;
+            height: 92vh !important;
+            max-height: 92vh !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: auto !important;
+            border-radius: 20px 20px 0 0 !important;
+            margin: 0 !important;
+            padding: 14px 10px !important;
+            overflow-y: auto !important;
+            border: 1px solid rgba(240, 192, 90, 0.45) !important;
+            border-bottom: none !important;
+            box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.95) !important;
+        }
+        div[data-testid="stDialog"] [data-testid="stVerticalBlock"] {
+            gap: 6px !important;
         }
     }
 
     /* -------------------------------------------------------------
-       SMART RESPONSIVE COLUMNS (Inputs side-by-side, Cards in 2x2)
-       ------------------------------------------------------------- */
-    @media (max-width: 768px) {
-        /* Keep 3-column time inputs (HH:MM:SS) side-by-side on 1 line */
-        [data-testid="stHorizontalBlock"]:has(input[type="number"]) {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 8px !important;
-        }
-        [data-testid="stHorizontalBlock"]:has(input[type="number"]) > div {
-            min-width: 0 !important;
-            flex: 1 1 33% !important;
-            width: 33% !important;
-        }
-
-        /* 2-column inputs (Coordinates, Ayanamsa, PDF download buttons) */
-        [data-testid="stHorizontalBlock"]:has(> div:nth-child(2):last-child) {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            gap: 8px !important;
-        }
-        [data-testid="stHorizontalBlock"]:has(> div:nth-child(2):last-child) > div {
-            min-width: 0 !important;
-            flex: 1 1 50% !important;
-            width: 50% !important;
-        }
-
-        /* 4-card Daily Score dashboard: 2x2 grid */
-        [data-testid="stHorizontalBlock"]:has(> div:nth-child(4)) {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 8px !important;
-        }
-        [data-testid="stHorizontalBlock"]:has(> div:nth-child(4)) > div {
-            width: 100% !important;
-            min-width: 0 !important;
-        }
-
-        /* Large content blocks stack gracefully (Chart on top, Table below) */
-        [data-testid="stHorizontalBlock"]:not(:has(input)):not(:has(button)):not(:has(> div:nth-child(4))) {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 12px !important;
-        }
-        [data-testid="stHorizontalBlock"]:not(:has(input)):not(:has(button)):not(:has(> div:nth-child(4))) > div {
-            width: 100% !important;
-            min-width: 100% !important;
-        }
-    }
-
-    /* -------------------------------------------------------------
-       CARDS & SECTION HEADINGS
+       GENERAL CARDS & SECTION HEADINGS
        ------------------------------------------------------------- */
     .glass-card {
         position: relative;
@@ -703,20 +813,6 @@ st.markdown("""
         display: block !important;
     }
 
-    @media (max-width: 768px) {
-        .glass-card, .predict-card {
-            padding: 14px 12px !important;
-            border-radius: 14px !important;
-            margin-bottom: 12px !important;
-        }
-        .section-title {
-            font-size: 1.15rem !important;
-            padding-bottom: 6px !important;
-            margin-top: 8px !important;
-            margin-bottom: 12px !important;
-        }
-    }
-
     /* -------------------------------------------------------------
        KUNDLI DIAMOND CHART (Centered & Responsive)
        ------------------------------------------------------------- */
@@ -740,18 +836,6 @@ st.markdown("""
         height: auto !important;
         display: block !important;
         margin: 0 auto !important;
-    }
-
-    @media (max-width: 768px) {
-        .kundli-container {
-            padding: 8px 2px !important;
-            border-radius: 14px !important;
-            margin-bottom: 14px !important;
-        }
-        .kundli-container img,
-        .kundli-container svg {
-            max-width: 350px !important;
-        }
     }
 
     /* -------------------------------------------------------------
@@ -787,49 +871,6 @@ st.markdown("""
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 26px rgba(247, 213, 132, 0.6) !important;
         color: #000000 !important;
-    }
-
-    /* -------------------------------------------------------------
-       ACHARYA VYAS CONSULTATION DIALOG (Mobile App Bottom Sheet)
-       ------------------------------------------------------------- */
-    @media (max-width: 768px) {
-        div[data-testid="stDialog"] > div {
-            width: 100vw !important;
-            max-width: 100vw !important;
-            min-width: 100vw !important;
-            height: 92vh !important;
-            max-height: 92vh !important;
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            top: auto !important;
-            border-radius: 20px 20px 0 0 !important;
-            margin: 0 !important;
-            padding: 14px 10px !important;
-            overflow-y: auto !important;
-            border: 1px solid rgba(240, 192, 90, 0.45) !important;
-            border-bottom: none !important;
-            box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.95) !important;
-        }
-        div[data-testid="stDialog"] [data-testid="stVerticalBlock"] {
-            gap: 6px !important;
-        }
-    }
-
-    /* -------------------------------------------------------------
-       MOBILE INPUT FIELDS (16px to Prevent iOS Safari Auto-Zoom)
-       ------------------------------------------------------------- */
-    input, select, textarea,
-    div[data-baseweb="input"] input,
-    div[data-baseweb="select"] input,
-    .stTextInput input,
-    .stNumberInput input,
-    .stDateInput input,
-    .stTimeInput input,
-    .stSelectbox select {
-        font-size: 16px !important;
-        min-height: 44px !important;
     }
 
     /* -------------------------------------------------------------
@@ -894,7 +935,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Master Header (100% Responsive, Zero Iframe Lag)
 st.html("""
 <div class="vyas-hero-banner">
     <div class="vyas-hero-kicker">YOUR CELESTIAL PATTERN HAS A STRUCTURE</div>
