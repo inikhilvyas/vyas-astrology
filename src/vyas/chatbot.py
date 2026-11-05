@@ -375,6 +375,17 @@ class VyasChatbotEngine:
             extra_headers={"HTTP-Referer": "https://vyas-astrology-111.streamlit.app", "X-Title": "VYAS Astrology"}
         )
 
+    def _call_kilo(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                   chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """Calls Kilo AI Gateway (OpenAI-compatible) with multi-key auto-failover."""
+        from vyas import ai_key_manager
+        return self._call_openai_compatible(
+            endpoint_url="https://ai-gateway.kilo.ai/api/v1/chat/completions",
+            key_pool=ai_key_manager.get_kilo_key_pool(task="chat"),
+            models=["kilo-auto/free", "anthropic/claude-sonnet-4.5", "meta-llama/llama-3.3-70b-instruct:free", "openrouter/free"],
+            query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
+        )
+
     def _call_gemini(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                      chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         """Calls Google Gemini API with automatic multi-key pool failover & model resilience."""
@@ -476,9 +487,12 @@ class VyasChatbotEngine:
         elif selected_provider == "openrouter":
             reply = self._call_openrouter(query, fw, birth_info, chat_history)
             if reply: return reply
+        elif selected_provider == "kilo":
+            reply = self._call_kilo(query, fw, birth_info, chat_history)
+            if reply: return reply
         elif selected_provider != "classical":
             # Auto cascade: Try available models in order of speed and capability
-            for call_fn in [self._call_groq, self._call_deepseek, self._call_openai, self._call_gemini, self._call_openrouter]:
+            for call_fn in [self._call_groq, self._call_deepseek, self._call_openai, self._call_gemini, self._call_kilo, self._call_openrouter]:
                 reply = call_fn(query, fw, birth_info, chat_history)
                 if reply:
                     return reply

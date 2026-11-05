@@ -140,6 +140,11 @@ def get_deepseek_key_pool(task: str = "chat") -> List[str]:
     return _get_provider_key_pool("DEEPSEEK", task)
 
 
+def get_kilo_key_pool(task: str = "chat") -> List[str]:
+    """Returns an ordered, deduplicated pool of Kilo AI Gateway keys."""
+    return _get_provider_key_pool("KILO", task)
+
+
 def get_openrouter_key_pool(task: str = "chat") -> List[str]:
     """Returns an ordered, deduplicated pool of OpenRouter API keys."""
     return _get_provider_key_pool("OPENROUTER", task)
