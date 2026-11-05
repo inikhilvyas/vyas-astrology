@@ -56,3 +56,13 @@ def test_ai_engine_live(sample_chart_and_dasha):
     reply = vyas_chatbot.consult("आचार्य जी प्रणाम", chart, cur_dasha, birth_info, force_classical=False)
     assert len(reply) > 50
     os.environ["VYAS_TEST_OFFLINE"] = "1"
+
+def test_aspect_query_zero_hallucination(sample_chart_and_dasha):
+    chart, cur_dasha, birth_info = sample_chart_and_dasha
+    reply = vyas_chatbot.consult("mere guru, mangal aur shani teeno lagna ko dekh rahe hai iska kya prabhav padta hai", chart, cur_dasha, birth_info, force_classical=True)
+    # Validate exact Parashari lordships
+    assert "लग्नेश" in reply or "1H" in reply or "1वें व 8वें" in reply
+    assert "मंगल 4वें भाव का नहीं" in reply or "1वें व 8वें भाव का स्वामी" in reply
+    assert "शनि 7वें या 12वें भाव के स्वामी नहीं हैं" in reply or "10H" in reply or "कर्मेश" in reply
+    assert "गुरु" in reply and "अमृत दृष्टि" in reply
+    assert "उपाय" in reply
