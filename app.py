@@ -455,7 +455,7 @@ st.markdown("""
         margin: 0;
         padding: 0;
         background-color: #07090d !important;
-        font-size: var(--app-font-size, 19.5px) !important;
+        font-size: var(--app-font-size, 20.5px) !important;
     }
 
     .stApp, [data-testid="stAppViewContainer"], .main {
@@ -466,13 +466,27 @@ st.markdown("""
         background-attachment: fixed !important;
         font-family: var(--font-body) !important;
         color: #f1f5f9 !important;
-        line-height: 1.65 !important;
+        line-height: 1.75 !important;
     }
 
-    /* Auto-adjust on zoom: Text wrapping & graceful resizing */
-    p, span, div, h1, h2, h3, h4, h5, h6, label {
+    /* Universal bold typography & high readability */
+    p, span, li, label,
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] span,
+    [data-testid="stMarkdownContainer"] li {
+        font-size: var(--app-font-size, 20.5px) !important;
+        line-height: 1.75 !important;
+        color: #f8fafc !important;
+        font-family: var(--font-body) !important;
         overflow-wrap: break-word !important;
         word-break: break-word !important;
+    }
+
+    /* Force override any hardcoded inline micro-fonts (0.6rem - 0.88rem) */
+    [style*="font-size: 0."],
+    [style*="font-size:0."] {
+        font-size: calc(var(--app-font-size, 20.5px) * 0.95) !important;
+        line-height: 1.65 !important;
     }
 
     /* Responsive Block Container */
@@ -757,44 +771,54 @@ st.markdown("""
             border-radius: 999px !important;
         }
 
-        /* 2. Container full-width on mobile */
+        /* 2. Container full-width on mobile with comfortable edge padding */
         .block-container {
-            padding-left: 0.85rem !important;
-            padding-right: 0.85rem !important;
-            padding-top: 0.8rem !important;
-            padding-bottom: 3rem !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-top: 10px !important;
+            padding-bottom: 2.5rem !important;
             width: 100% !important;
             max-width: 100% !important;
         }
 
-        /* 3. Universal Column Stacking (Pure CSS3 without :has) */
+        /* 3. Universal Mobile Responsive Columns */
         [data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-wrap: wrap !important;
-            gap: 12px !important;
+            gap: 10px !important;
             width: 100% !important;
         }
 
-        /* Default: every column takes 100% width (stacks vertically) */
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        /* 2-column rows (Action buttons, Language & Font) stay side-by-side on mobile! */
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(2),
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(2) ~ [data-testid="stColumn"] {
+            width: calc(50% - 6px) !important;
+            min-width: 0 !important;
+            flex: 1 1 calc(50% - 6px) !important;
+        }
+
+        /* 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side! */
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3),
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3) ~ [data-testid="stColumn"] {
+            width: calc(33.333% - 8px) !important;
+            min-width: 0 !important;
+            flex: 1 1 calc(33.333% - 8px) !important;
+        }
+
+        /* 4 or more columns stack cleanly */
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(n+4),
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(n+4) ~ [data-testid="stColumn"] {
             width: 100% !important;
             min-width: 100% !important;
             flex: 1 1 100% !important;
         }
 
-        /* Special Case: 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side! */
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3),
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3) ~ [data-testid="stColumn"] {
-            width: calc(33.333% - 9px) !important;
-            min-width: 0 !important;
-            flex: 1 1 calc(33.333% - 9px) !important;
-        }
-
-        /* Inputs & Buttons full touch-width */
+        /* Inputs & Buttons full touch-width and generous height */
         div.stButton > button {
-            min-height: 52px !important;
+            min-height: 48px !important;
             font-size: 1.12rem !important;
             width: 100% !important;
+            border-radius: 10px !important;
         }
     }
 
@@ -1553,8 +1577,52 @@ with st.sidebar:
     saved_list = auth_vault.get_saved_kundlis(u["id"]) if is_logged_in_now else []
     active_lp = st.session_state.get('loaded_profile')
 
-    ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
-    is_hi = "हिन्दी" in ui_lang
+    col_top_lang, col_top_font = st.columns([1.1, 1.4])
+    with col_top_lang:
+        ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
+        is_hi = "हिन्दी" in ui_lang
+    with col_top_font:
+        _font_scale_choice = st.radio(
+            "🔤 फ़ॉन्ट आकार (Text Size):",
+            ["मध्यम (18.5px)", "बड़ा (20.5px)", "अति विशाल (24px)"],
+            index=1,
+            horizontal=True,
+            key="main_font_scale_choice_radio",
+            help="अक्षरों का आकार छोटा या बड़ा करें"
+        )
+
+    if "विशाल" in _font_scale_choice:
+        chosen_font_px = "24px"
+    elif "मध्यम" in _font_scale_choice:
+        chosen_font_px = "18.5px"
+    else:
+        chosen_font_px = "20.5px"
+
+    st.markdown(f"""
+    <style>
+    :root {{
+        --app-font-size: {chosen_font_px} !important;
+    }}
+    html, body {{
+        font-size: {chosen_font_px} !important;
+    }}
+    p, span, li, label, .stMarkdown, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span {{
+        font-size: {chosen_font_px} !important;
+        line-height: 1.75 !important;
+    }}
+    .glass-card, .predict-card {{
+        font-size: calc({chosen_font_px} * 1.02) !important;
+        line-height: 1.75 !important;
+    }}
+    [style*="font-size: 0."], [style*="font-size:0."] {{
+        font-size: calc({chosen_font_px} * 0.95) !important;
+        line-height: 1.65 !important;
+    }}
+    .section-title, h1, h2, h3 {{
+        font-size: calc({chosen_font_px} * 1.35) !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
     # If user has an active loaded profile, show active status bar & quick action controls
     if is_logged_in_now and active_lp:
@@ -1997,20 +2065,38 @@ if st.session_state.get('data_generated'):
 
         st.button("👉 आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
 
-    # Active Suite Header on Main Screen
+    # -------------------------------------------------------------------------
+    # MAIN SCREEN DOMAIN SUITE SELECTOR (Native Mobile Nav & Desktop Quick Nav)
+    # -------------------------------------------------------------------------
+    cur_suite_idx = 0
+    if selected_suite in suite_options:
+        cur_suite_idx = suite_options.index(selected_suite)
+
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.12) 0%, rgba(14, 23, 42, 0.95) 100%);
-                border: 1.5px solid rgba(240, 192, 90, 0.35); border-radius: 14px; padding: 12px 18px; margin: 12px 0 20px;
+    <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.16) 0%, rgba(14, 23, 42, 0.96) 100%);
+                border: 1.5px solid rgba(240, 192, 90, 0.45); border-radius: 14px; padding: 12px 18px; margin: 12px 0 12px;
                 display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
         <div>
-            <div style="font-size: 0.78rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase;">सक्रिय अनुसंधान प्रभाग / Active Domain Suite</div>
-            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 700; color: #f0c05a; margin-top: 2px;">{selected_suite}</div>
+            <div style="font-size: 0.82rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;">🧭 ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
+            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 800; color: #f0c05a; margin-top: 2px;">{selected_suite}</div>
         </div>
-        <div style="font-size: 0.85rem; color: #94a3b8; background: rgba(0,0,0,0.35); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);">
-            👈 अन्य प्रभाग (Tabs) साइडबार में उपलब्ध हैं
+        <div style="font-size: 0.88rem; color: #cbd5e1; background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(240,192,90,0.25);">
+            👇 यहाँ से प्रभाग बदलें (Mobile Friendly)
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    def _sync_suite_from_main():
+        st.session_state["domain_suite_sidebar_radio"] = st.session_state["main_screen_suite_select"]
+
+    st.selectbox(
+        "मुख्य अनुसंधान प्रभाग चुनें (Select Domain Suite):",
+        suite_options,
+        index=cur_suite_idx,
+        key="main_screen_suite_select",
+        on_change=_sync_suite_from_main,
+        label_visibility="collapsed"
+    )
 
     # -------------------------------------------------------------------------
     # PRASHNA KUNDLI HORARY JUDGEMENT (तात्कालिक प्रश्न विचार व फलित)
