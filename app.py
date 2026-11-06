@@ -1654,6 +1654,7 @@ with st.sidebar:
         except Exception:
             pass
 
+    mode = "Natal Kundli (जन्म कुण्डली)"
     generate = False
     if show_form:
         st.markdown("""
@@ -1794,6 +1795,7 @@ with st.sidebar:
                 }
     else:
         # Form is collapsed: use active profile data directly
+        mode = "Natal Kundli (जन्म कुण्डली)"
         name = lp.get('name', 'जातक')
         city_name = default_city
         lat = default_lat
