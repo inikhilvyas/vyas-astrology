@@ -541,6 +541,233 @@ def synthesize_knowledge_predictions(chart, current_dasha: Optional[Tuple[str, s
         "by_category": by_category,
     }
 
+
+# =========================================================================
+# DOMAIN SCRIPT SYNTHESIZERS (Poori Script Ki Tarah Phalit Nirman)
+# =========================================================================
+
+def synthesize_varga_scripts(chart, vargas_matrix=None):
+    matched = evaluate_chart_sutras(chart)
+    varga_cats = {
+        "Navamsha (D9) & Divisional Vargas", "Shodashavargas (16 Divisional Charts)",
+        "Shodashavarga Micro-Deities: D60 Shashtiamsha & D45 Soul Destiny",
+        "Rashi-Tulya Navamsha & C.S. Patel Techniques"
+    }
+    v_sutras = [m for m in matched if m.category in varga_cats or "navamsha" in m.planetary_condition.lower() or "varga" in m.category.lower()]
+
+    vargottama_planets = []
+    if vargas_matrix and "D9" in vargas_matrix:
+        for p_name, p in chart.planets.items():
+            d9_sign = vargas_matrix["D9"][p_name].sign_index
+            if p.sign_index == d9_sign:
+                vargottama_planets.append((constants.PLANETS_HI.get(p_name, p_name), constants.SIGNS_HI[p.sign_index]))
+
+    d1_sign_hi = constants.SIGNS_HI[chart.ascendant_sign]
+    d9_asc_sign_idx = (int(chart.ascendant_longitude / (30.0 / 9.0))) % 12
+    d9_sign_hi = constants.SIGNS_HI[d9_asc_sign_idx]
+
+    script_d1_d9 = f"""### लग्न एवं नवमांश (D1-D9) आधारशिला महा-विश्लेषण
+- **जन्म लग्न (D1):** {d1_sign_hi} लग्न | **भाग्य नवमांश लग्न (D9):** {d9_sign_hi} नवमांश
+- **शास्त्रीय सिद्धांत:** महर्षि पराशर के अनुसार D-1 स्थूल देह, बाह्य वातावरण व प्रारम्भिक बीज है, जबकि D-9 नवमांश उस बीज का अंकुरित वृक्ष, वास्तविक आंतरिक सामर्थ्य व भाग्य का अंतिम निर्णय है।"""
+    if vargottama_planets:
+        pl_str = ", ".join([f"**{p}** ({s} राशि)" for p, s in vargottama_planets])
+        script_d1_d9 += f"\n- **परम बली वर्गोत्तम स्थिति:** आपकी कुण्डली में {pl_str} वर्गोत्तम हैं। फलदीपिका का सूत्र है कि वर्गोत्तम ग्रह स्वराशि तुल्य शुभ फल, स्थायी आरोग्यता, मानसिक दृढ़ता एवं प्रतिकूल दशाओं में भी जातक की प्रतिष्ठा की रक्षा करते हैं।"
+    else:
+        script_d1_d9 += "\n- **नवमांश बल गतिशीलता:** ग्रह जन्म कुण्डली से नवमांश में जाकर जिन भावों व राशियों में संचरण कर रहे हैं, वह जीवन के उत्तरार्ध (32 वर्ष के उपरांत) में प्राथमिक रूप से सक्रिय होंगे।"
+
+    if v_sutras:
+        script_d1_d9 += "\n\n**सक्रिय शास्त्रीय वर्ग-सूत्र:**\n"
+        for s in v_sutras[:5]:
+            script_d1_d9 += f"- **[{s.source}] {s.sub_category}:** {s.prediction_hi} *(सत्यापन: {s.matched_detail})*\n"
+
+    script_d10 = """### दशमांश चक्र (D10) कर्म, प्रतिष्ठा एवं आजीविका विश्लेषण
+- **दशमांश का महत्व:** बृहत्पाराशर होराशास्त्र में दशम भाव की सूक्ष्म शक्ति एवं समाज में मिलने वाले मान-सम्मान व प्रभाव का परीक्षण D-10 चक्र से ही किया जाता है।
+- **कर्म रेखा विश्लेषण:** जन्म कुण्डली के दशमेश का दशमांश में उच्च, स्वराशि अथवा शुभ वर्ग में होना प्रशासनिक नेतृत्व, व्यापारिक उन्नति व स्थिर आजीविका का मार्ग प्रशस्त करता है।
+- **विशेष निर्देश:** यदि दशमांश में गुरु, बुध या शुक्र की स्थिति केंद्र/त्रिकोण में हो तो बौद्धिक संपदा, प्रबंधन व स्वतंत्र परामर्श में जातक शीर्ष सफलता प्राप्त करता है।"""
+
+    script_d60 = """### षष्ट्यंश (D60) संचित प्रारब्ध एवं आत्मिक कर्म विश्लेषण
+- **पराशर आज्ञा:** *'सर्वेषामपि वर्गाणां षष्ट्यंशोऽधिकमुच्यते'* — समस्त 16 वर्ग कुण्डलियों में षष्ट्यंश का स्थान सर्वोपरि है। यह पूर्वजन्म के अवशिष्ट ऋण, प्रारब्ध एवं आध्यात्मिक संस्कारों का दर्पण है।
+- **देवता प्रभाव:** शुभ षष्ट्यंश देवताओं (अमृत, सुधा, पद्म, देव, गन्धर्व) में स्थित ग्रह पूर्व जन्म के पुण्य कर्मों का पुरस्कार देते हैं, जबकि शोधन योग्य देवताओं में स्थित ग्रह इस जन्म में विशिष्ट तपस्या व सेवा द्वारा शुद्धि की अपेक्षा रखते हैं।"""
+
+    return {
+        "d1_d9_script": script_d1_d9.strip(),
+        "d10_script": script_d10.strip(),
+        "d60_script": script_d60.strip(),
+        "matched_count": len(v_sutras),
+        "vargottama_planets": vargottama_planets,
+    }
+
+def synthesize_ashtakavarga_scripts(chart, av_res=None):
+    matched = evaluate_chart_sutras(chart)
+    av_cats = {
+        "Ashtakavarga & Kakshya Timing", "Advanced Ashtakavarga: Kakshya Sphuta, Ekadhipatya & Shodhya Pinda",
+        "Ashtakavarga Shodhana & Longevity", "Ashtakavarga Shodhya Pinda & Ayurdaya",
+        "Transit Vedha & Ashtakavarga Triggers"
+    }
+    av_sutras = [m for m in matched if m.category in av_cats or "ashtakavarga" in m.planetary_condition.lower() or "bindu" in m.planetary_condition.lower()]
+
+    sav = av_res.get("sav", [28]*12) if av_res else [28]*12
+    asc_idx = chart.ascendant_sign
+
+    h_sav = {h: sav[(asc_idx + h - 1) % 12] for h in range(1, 13)}
+    h11_pts = h_sav.get(11, 28)
+    h12_pts = h_sav.get(12, 28)
+    h1_pts = h_sav.get(1, 28)
+    h10_pts = h_sav.get(10, 28)
+
+    wealth_ratio = "अति उत्तम (आय > व्यय)" if h11_pts > h12_pts else "सतर्कता (आय की तुलना में व्यय अधिक)"
+    
+    script = f"""### अष्टकवर्ग (SAV 337 बिंदु) शास्त्रीय फलित महा-विश्लेषण
+- **सिद्धांत:** महर्षि पराशर प्रणीत अष्टकवर्ग प्रणाली ग्रहों के सापेक्षिक शुभ-अशुभ बिंदुओं का अचूक गणित है। किसी भाव में 28 या अधिक बिंदु उसे सक्षम, जबकि 28 से कम बिंदु उसे अतिरिक्त संबल की आवश्यकता दर्शाते हैं।
+- **धन एवं संचय समीकरण (11वें बनाम 12वें भाव का संतुलन):** 
+  - एकादश (लाभ) भाव: **{h11_pts} बिंदु** | द्वादश (व्यय) भाव: **{h12_pts} बिंदु**
+  - **शास्त्रीय निर्णय:** {wealth_ratio}। जब एकादश भाव के बिंदु द्वादश से अधिक हों, तो जातक जितना भी अर्जित करता है, उसमें से संचय स्थायी रूप से बढ़ता है।
+- **कर्म एवं प्रतिष्ठा सामर्थ्य:**
+  - लग्न (व्यक्तित्व व स्वास्थ्य): **{h1_pts} बिंदु** | दशम (आजीविका व समाज): **{h10_pts} बिंदु**
+  - दशम भाव में 30+ बिंदु जातक को अपने कार्यक्षेत्र में स्वतः सम्मान, स्वतंत्र निर्णय लेने की शक्ति एवं दीर्घकालिक प्रभावशीलता प्रदान करते हैं।"""
+
+    if av_sutras:
+        script += "\n\n**सक्रिय अष्टकवर्ग शास्त्रीय सूत्र:**\n"
+        for s in av_sutras[:6]:
+            script += f"- **[{s.source}] {s.sub_category}:** {s.prediction_hi} *(स्थिति: {s.matched_detail})*\n"
+
+    return {
+        "ashtakavarga_script": script.strip(),
+        "matched_count": len(av_sutras),
+        "h11_pts": h11_pts,
+        "h12_pts": h12_pts,
+    }
+
+def synthesize_lal_kitab_scripts(chart, lk_analysis=None):
+    matched = evaluate_chart_sutras(chart)
+    lk_cats = {
+        "Lal Kitab Advanced Grammar & Farman Mechanics", "Lal Kitab Esoteric Farmaan",
+        "Karmic Debts (Rina) & D60 Past Life"
+    }
+    lk_sutras = [m for m in matched if m.category in lk_cats or "lal kitab" in m.source.lower() or "farman" in m.sub_category.lower()]
+
+    script = """### लाल किताब प्रामाणिक फरमान एवं अचूक उपाय महा-विश्लेषण
+- **लाल किताब का मूल दर्शन:** पंडित रूपचंद जोशी कृत लाल किताब में कुंडली को 'तेवा' और ग्रहों को जातक के कर्म-ऋण का संवाहक माना गया है। इसमें ग्रहों की स्थिति के आधार पर बंद किस्मत के दरवाजों को खोलने के सटीक व सरल घरेलू उपाय दिए गए हैं।
+- **किस्मत जगाने का स्वर्णिम नियम:** जो भाव खाली या सोए हुए हों, उनके स्वामी ग्रह के कारक पदार्थों को अनुकूल भाव में स्थापित करके उन भावों को जाग्रत किया जाता है।"""
+
+    if lk_sutras:
+        script += "\n\n**सक्रिय लाल किताब गुप्त फरमान:**\n"
+        for s in lk_sutras[:6]:
+            script += f"- **फरमान [{s.sutra_id}]:** {s.prediction_hi}\n  - *सत्यापित स्थिति:* {s.matched_detail}\n  - *नियम व संशोधन:* {s.strength_modifiers or 'यथावत पालन करें'}\n"
+
+    return {
+        "lal_kitab_script": script.strip(),
+        "matched_count": len(lk_sutras),
+    }
+
+def synthesize_kp_scripts(chart, kp_cusps=None):
+    matched = evaluate_chart_sutras(chart)
+    kp_cats = {"KP Cuspal Sub-Lord Dynamics", "4-Tier KP Stellar Hierarchy & Ruling Planets"}
+    kp_sutras = [m for m in matched if m.category in kp_cats or "kp" in m.category.lower() or "cuspal" in m.category.lower()]
+
+    script = """### कृष्णमूर्ति पद्धति (KP System) कस्प उप-स्वामी प्रॉमिस महा-विश्लेषण
+- **केपी स्वर्णिम नियम:** 'Planet proposes, Star Lord disposes, Sub Lord decides.' ग्रह केवल घटना का संकेत देता है, नक्षत्र स्वामी उसका मार्ग निर्धारित करता है, और कस्प का उप-स्वामी (Sub-Lord) यह अंतिम निर्णय करता है कि घटना घटित होगी अथवा नहीं।
+- **जीवन के 4 प्रमुख स्तंभों का प्रॉमिस परीक्षण:**
+  1. **प्रथम कस्प उप-स्वामी (आरोग्यता व जीवन शक्ति):** लग्न कस्प का उप-स्वामी यदि 1, 5, 9, 11 भावों से जुड़े तो दीर्घायु व सुदृढ़ स्वास्थ्य; यदि 6, 8, 12 से जुड़े तो विशेष स्वास्थ्य सतर्कता।
+  2. **द्वितीय व एकादश कस्प उप-स्वामी (धन व समृद्धि):** 2, 6, 10, 11 भावों का संबंध जातक को कभी भी आर्थिक रूप से पराश्रित नहीं होने देता।
+  3. **सप्तम कस्प उप-स्वामी (विवाह व साझेदारी):** 2, 7, 11 भावों का संयोग सुखी दांपत्य एवं विश्वसनीय व्यापारिक साझेदार प्रदान करता है।
+  4. **दशम कस्प उप-स्वामी (पद-प्रतिष्ठा व कॅरियर):** 6, 10, 11 भावों के कार्येश जातक को नेतृत्व व प्रतिष्ठा प्रदान करते हैं।"""
+
+    if kp_sutras:
+        script += "\n\n**सक्रिय केपी शास्त्रीय सूत्र:**\n"
+        for s in kp_sutras[:6]:
+            script += f"- **[{s.source}] {s.sub_category}:** {s.prediction_hi} *(सत्यापन: {s.matched_detail})*\n"
+
+    return {
+        "kp_script": script.strip(),
+        "matched_count": len(kp_sutras),
+    }
+
+def synthesize_jaimini_scripts(chart):
+    matched = evaluate_chart_sutras(chart)
+    j_cats = {
+        "Jaimini Upadesha Sutras", "Jaimini Karakamsha Bhava Phala, Arudha Padas & Upapada Marital Dynamics",
+        "Jaimini Arudha Dhana Yogas & Argala", "Karakamsha & Swamsha Mastery",
+        "Jaimini Arudha Lagna (AL) Dynamics"
+    }
+    j_sutras = [m for m in matched if m.category in j_cats or "jaimini" in m.category.lower() or "karakamsha" in m.category.lower()]
+
+    script = """### महर्षि जैमिनी प्रणीत उपदेश सूत्र एवं कारकांश महा-विश्लेषण
+- **जैमिनी सिद्धांत:** महर्षि जैमिनी के अनुसार कुण्डली में सर्वाधिक अंशों वाला ग्रह 'आत्मकारक' (AK) बनकर आत्मा की इस जन्म की यात्रा को नियंत्रित करता है। आत्मकारक जिस नवमांश राशि में बैठता है, उसे 'कारकांश' कहते हैं।
+- **अमात्यकारक (AmK) व पद प्रभाव:** जब आत्मकारक एवं आमात्यकारक परस्पर केंद्र/त्रिकोण या एकादश भाव में सम्बद्ध हों, तो यह सर्वोच्च कोटि का जैमिनी राजयोग निर्मित करता है, जो उच्च पद व प्रभाव दिलाता है।
+- **आरूढ़ लग्न (AL):** आरूढ़ लग्न जातक की सांसारिक छवि (Image & Status in Society) को दर्शाता है। AL से 11वें भाव में शुभ ग्रह निरंतर धन लाभ एवं सम्मान प्रदान करते हैं।"""
+
+    if j_sutras:
+        script += "\n\n**सक्रिय जैमिनी उपदेश सूत्र:**\n"
+        for s in j_sutras[:6]:
+            script += f"- **[{s.source}] {s.sub_category}:** {s.prediction_hi} *(सत्यापन: {s.matched_detail})*\n"
+
+    return {
+        "jaimini_script": script.strip(),
+        "matched_count": len(j_sutras),
+    }
+
+def synthesize_nadi_chakra_scripts(chart):
+    matched = evaluate_chart_sutras(chart)
+    n_cats = {
+        "Bhrigu Nandi Nadi", "Bhrigu Chakra Paddhati (BCP)", "Chakra Jyotish & Kundalini Subtle Body",
+        "Bhrigu Nandi Nadi Transit Modulations & Double-Transit Secrets", "Nadi Round Progressions"
+    }
+    n_sutras = [m for m in matched if m.category in n_cats or "nadi" in m.category.lower() or "chakra" in m.category.lower()]
+
+    script = """### भृगु नन्दी नाड़ी एवं सूक्ष्म चक्र फलित महा-विश्लेषण
+- **नाड़ी का मूल आधार:** नाड़ी ज्योतिष में लग्न की अपेक्षा 'जीव कारक' (बृहस्पति) और 'कर्म कारक' (शनि) के पारस्परिक त्रिकोणीय (1-5-9) सम्बंधों को जातक के जीवन की मुख्य दिशा माना गया है।
+- **दिशा त्रिकोण का गूढ़ नियम:** पूर्व (1-5-9), दक्षिण (2-6-10), पश्चिम (3-7-11) एवं उत्तर (4-8-12) त्रिकोणों में ग्रहों की युति परस्पर ऊर्जाओं का सम्मिश्रण करती है।
+- **चक्र ज्योतिष एवं कुण्डलिनी संरेखण:** कुण्डली के 12 भाव मानव शरीर के मूलाधार, स्वाधिष्ठान, मणिपुर, अनाहत, विशुद्ध, आज्ञा एवं सहस्रार चक्रों से जुड़े होते हैं। शुभ ग्रहों का प्रभाव संबंधित चक्र में ऊर्जा का प्रवाह निर्बाध करता है।"""
+
+    if n_sutras:
+        script += "\n\n**सक्रिय नाड़ी एवं चक्र सूत्र:**\n"
+        for s in n_sutras[:6]:
+            script += f"- **[{s.source}] {s.sub_category}:** {s.prediction_hi} *(सत्यापन: {s.matched_detail})*\n"
+
+    return {
+        "nadi_chakra_script": script.strip(),
+        "matched_count": len(n_sutras),
+    }
+
+def synthesize_bhava_and_yogas_scripts(chart):
+    matched = evaluate_chart_sutras(chart)
+    bhava_sutras = [m for m in matched if "bhrigu sutram" in m.category.lower() or "bhavadhipati" in m.category.lower()]
+    yoga_sutras = [m for m in matched if "yoga" in m.category.lower() or "classical vedic sutras" in m.category.lower()]
+
+    bhava_map = {h: [] for h in range(1, 13)}
+    for s in bhava_sutras:
+        m_h = re.search(r"(\d+)(?:st|nd|rd|th)?\s+House", s.sub_category + " " + s.matched_detail, re.I)
+        if m_h:
+            h_num = int(m_h.group(1))
+            if 1 <= h_num <= 12:
+                bhava_map[h_num].append(s)
+
+    script_yogas = """### कुण्डली पर सक्रिय विशिष्ट शास्त्रीय राजयोग, धनयोग एवं महापुरुष योग
+- **शास्त्रीय प्रामाणिकता:** महर्षि पराशर (बृहत्पाराशर होराशास्त्र), वराहमिहिर (बृहज्जातक) एवं कल्याणवर्मा (सारावली) की परंपरा के अनुसार जन्म कुण्डली में निर्मित दुर्लभ योग जातक के भाग्य के वास्तविक उत्प्रेरक होते हैं।
+- **फलित नियम:** योग केवल नाम मात्र नहीं होते; उनका वास्तविक शुभ फल तभी प्रस्फुटित होता है जब योगकारक ग्रह की विंशोत्तरी महादशा, अन्तर्दशा या गोचर अनुकूल स्थिति में आते हैं।"""
+
+    if yoga_sutras:
+        script_yogas += "\n\n**सत्यापित विशिष्ट शास्त्रीय योग:**\n"
+        for y in yoga_sutras:
+            mod_str = f'<div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">बल व काल प्रभाव: {y.strength_modifiers}</div>' if y.strength_modifiers else ''
+            script_yogas += f"""
+<div style="background: var(--card-bg); border-left: 4px solid var(--gold-accent); padding: 12px 16px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--card-border);">
+    <div style="color: var(--gold-primary); font-weight: bold; font-size: 1.05rem;">[{y.sutra_id}] {y.sub_category} — <span style="color: var(--text-muted); font-size: 0.85rem;">स्रोत: {y.source}</span></div>
+    <div style="color: var(--text-main); font-size: 0.92rem; margin: 6px 0;">सत्यापित खगोलीय स्थिति: <b>{y.matched_detail}</b></div>
+    <div style="color: var(--accent-emerald); font-size: 0.98rem; line-height: 1.6;"><b>शास्त्रीय फलादेश:</b> {y.prediction_hi}</div>
+    {mod_str}
+</div>"""
+    else:
+        script_yogas += "\n\n*कुण्डली में सामान्य सौम्य योग निर्मित हैं। जीवन में स्वावलंबन एवं पुरुषार्थ से निरंतर उन्नति होगी।*\n"
+
+    return {
+        "bhava_map": bhava_map,
+        "yogas_script": script_yogas.strip(),
+        "total_bhava_sutras": len(bhava_sutras),
+        "total_yoga_sutras": len(yoga_sutras),
+    }
+
 def search_knowledge_bank(query: str, max_results: int = 8) -> List[Dict[str, Any]]:
     """
     Fast keyword and thematic search across all 13,000+ classical sutras in the knowledge bank.

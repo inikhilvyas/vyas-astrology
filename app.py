@@ -446,6 +446,93 @@ st.markdown("""
         --font-body: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
     }
 
+    /* Automatic System Light Mode Adaptation for PC & Mobile */
+    @media (prefers-color-scheme: light) {
+        :root {
+            --gold-primary: #b45309;
+            --gold-light: #78350f;
+            --gold-accent: #d97706;
+            --bg-deep: #f8fafc;
+            --bg-surface: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --card-border: rgba(180, 130, 40, 0.32);
+            --card-border-hover: rgba(180, 130, 40, 0.75);
+            --accent-ruby: #dc2626;
+            --accent-emerald: #059669;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --vyas-gold-1: #78350f;
+            --vyas-gold-2: #b45309;
+            --vyas-gold-3: #92400e;
+            --vyas-line: rgba(180, 130, 40, 0.28);
+        }
+
+        html, body {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+        }
+
+        .stApp, [data-testid="stAppViewContainer"], .main {
+            background: radial-gradient(ellipse at top, #faf7f2 0%, #f3ece0 100%) !important;
+            background-attachment: fixed !important;
+            color: #0f172a !important;
+        }
+
+        p, span, li, label,
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] span,
+        [data-testid="stMarkdownContainer"] li {
+            color: #0f172a !important;
+        }
+
+        .glass-card, .predict-card {
+            background: #ffffff !important;
+            border-color: rgba(180, 130, 40, 0.32) !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
+            color: #0f172a !important;
+        }
+
+        .glass-card p, .predict-card p, .predict-card div {
+            color: #1e293b !important;
+        }
+
+        .vyas-hero-banner {
+            background: linear-gradient(180deg, #ffffff 0%, #faf5ea 100%) !important;
+            border-color: rgba(180, 130, 40, 0.45) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
+        }
+
+        .vyas-hero-kicker {
+            color: #92400e !important;
+        }
+
+        .vyas-hero-title {
+            background: linear-gradient(135deg, #78350f 0%, #b45309 60%, #92400e 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-shadow: none !important;
+        }
+
+        .section-title {
+            color: #92400e !important;
+            border-bottom-color: rgba(180, 130, 40, 0.35) !important;
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #fdfbf7 !important;
+            border-right: 1px solid rgba(180, 130, 40, 0.25) !important;
+        }
+
+        [data-testid="stExpander"] {
+            background: #ffffff !important;
+            border-color: rgba(180, 130, 40, 0.28) !important;
+        }
+
+        [data-testid="stExpander"] summary {
+            color: #0f172a !important;
+        }
+    }
+
     /* Base Page Styling with Fluid Typography */
     html, body {
         max-width: 100vw;
@@ -1092,10 +1179,10 @@ if not is_logged_in_now:
                 🪔 <b style="color:#f7d584;">पूर्ण कुण्डली</b> — लग्न, नवांश, ग्रह-दशा, योग एवं भाव विश्लेषण
             </div>
             <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
-                🔮 <b style="color:#f7d584;">के.पी. सूट</b> — सब-लॉर्ड, रूलिंग प्लैनेट्स एवं 4-फोल्ड सिग्निफिकेटर
+                <b style="color:#f7d584;">के.पी. सूट</b> — सब-लॉर्ड, रूलिंग प्लैनेट्स एवं 4-फोल्ड सिग्निफिकेटर
             </div>
             <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
-                📜 <b style="color:#f7d584;">56-पृष्ठ PDF</b> — प्रिंट-रेडी रिपोर्ट, Google Drive में सुरक्षित
+                <b style="color:#f7d584;">56-पृष्ठ PDF</b> — प्रिंट-रेडी रिपोर्ट, Google Drive में सुरक्षित
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1109,7 +1196,7 @@ if not is_logged_in_now:
             unsafe_allow_html=True,
         )
 
-        _tab_login, _tab_register = st.tabs(["🔑 लॉगिन", "✨ नया खाता"])
+        _tab_login, _tab_register = st.tabs(["लॉगिन", "नया खाता"])
 
         with _tab_login:
             with st.form("vyas_login_form", clear_on_submit=False):
@@ -1148,7 +1235,7 @@ if not is_logged_in_now:
                         st.rerun()
                     else:
                         st.error(_msg_up)
-            st.caption("✨ नए खाते पर **30 दिन का VIP Pro ट्रायल निःशुल्क**।")
+            st.caption("नए खाते पर **30 दिन का VIP Pro ट्रायल निःशुल्क**।")
 
         _google_login_url = google_drive_sync.get_google_auth_url(include_drive=False)
         if _google_login_url:
@@ -1158,7 +1245,7 @@ if not is_logged_in_now:
             )
             st.link_button("Google से साइन इन करें", _google_login_url, use_container_width=True)
 
-    with st.expander("🛠️ साइन-इन में समस्या? / Sign-in help", expanded=False):
+    with st.expander("साइन-इन में समस्या? / Sign-in help", expanded=False):
         _diag = google_drive_sync.oauth_diagnostics()
         _bad = []
         if _diag["client_id_configured"] != "yes":
@@ -1209,9 +1296,46 @@ with st.sidebar:
     <hr style="border-color: rgba(229, 169, 60, 0.16); margin: 10px 0;">
     """, unsafe_allow_html=True)
 
-    # ---------------- FONT SIZE ACCESSIBILITY CONTROL ----------------
+    # ---------------- THEME & ACCESSIBILITY CONTROLS ----------------
+    _theme_choice = st.radio(
+        "थीम स्वरूप (Display Theme):",
+        options=["सिस्टम अनुसार (Auto System)", "डार्क थीम (Dark)", "लाइट थीम (Light)"],
+        index=0,
+        horizontal=True,
+        key="_user_theme_mode",
+        help="डिवाइस सिस्टम के अनुसार स्वतः अथवा मनपसंद डार्क/लाइट थीम चुनें"
+    )
+    if "लाइट" in _theme_choice:
+        st.markdown("""<style>
+        :root {
+            --gold-primary: #b45309 !important; --gold-light: #78350f !important; --gold-accent: #d97706 !important;
+            --bg-deep: #f8fafc !important; --bg-surface: #ffffff !important; --card-bg: rgba(255, 255, 255, 0.98) !important;
+            --card-border: rgba(180, 130, 40, 0.32) !important; --text-main: #0f172a !important; --text-muted: #475569 !important;
+        }
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+            background: radial-gradient(ellipse at top, #faf7f2 0%, #f3ece0 100%) !important; color: #0f172a !important;
+        }
+        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span { color: #0f172a !important; }
+        .glass-card, .predict-card { background: #ffffff !important; color: #0f172a !important; border-color: rgba(180, 130, 40, 0.32) !important; }
+        .glass-card p, .predict-card p, .predict-card div { color: #1e293b !important; }
+        section[data-testid="stSidebar"] { background: #fdfbf7 !important; border-right: 1px solid rgba(180, 130, 40, 0.25) !important; }
+        </style>""", unsafe_allow_html=True)
+    elif "डार्क" in _theme_choice:
+        st.markdown("""<style>
+        :root {
+            --gold-primary: #e5a93c !important; --gold-light: #fef3c7 !important; --gold-accent: #f59e0b !important;
+            --bg-deep: #07090d !important; --bg-surface: #0b1220 !important; --card-bg: rgba(11, 18, 32, 0.88) !important;
+            --card-border: rgba(229, 169, 60, 0.22) !important; --text-main: #f1f5f9 !important; --text-muted: #94a3b8 !important;
+        }
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+            background: radial-gradient(ellipse at top, #121a36 0%, #070b1a 48%, #04050d 100%) !important; color: #f1f5f9 !important;
+        }
+        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span { color: #f8fafc !important; }
+        .glass-card, .predict-card { background: rgba(11, 18, 32, 0.88) !important; color: #f8fafc !important; }
+        </style>""", unsafe_allow_html=True)
+
     _font_scale_choice = st.select_slider(
-        "🔤 फ़ॉन्ट आकार (Text Size):",
+        "अक्षर आकार (Text Size):",
         options=["सामान्य (17px)", "बड़ा (19.5px - डिफ़ॉल्ट)", "अति विशाल (22px)"],
         value=st.session_state.get("_user_font_scale", "बड़ा (19.5px - डिफ़ॉल्ट)"),
         key="_user_font_scale",
@@ -1341,7 +1465,7 @@ with st.sidebar:
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 47, 0.95) 100%);
                     border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 10px; padding: 8px 12px; text-align: center; margin-bottom: 8px;">
-            <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">👑 VIP PRO TRIAL ACTIVE</div>
+            <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">VIP PRO TRIAL ACTIVE</div>
             <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{u['name']} • <b>{u.get('days_left', 30)} Days Left</b></div>
         </div>
         """, unsafe_allow_html=True)
@@ -1638,7 +1762,7 @@ if is_logged_in_now and active_lp:
             </div>
             <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 3px;">
                 🗓️ <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
-                📍 <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
+                <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
                 📐 <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
             </div>
         </div>
@@ -1759,9 +1883,9 @@ if show_form:
             "प्रश्न विषय (Prashna Subject / Category)",
             [
                 "💼 नौकरी / कार्य सफलता (Career & Job)",
-                "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
+                "विवाह एवं प्रेम संबंध (Marriage & Romance)",
                 "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
-                "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
+                "कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
                 "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
                 "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
                 "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
@@ -2000,7 +2124,7 @@ if st.session_state.get('data_generated'):
         st.markdown("""
         <div style="margin: 16px 0 6px; padding: 10px 14px; background: linear-gradient(135deg, rgba(240,192,90,0.2) 0%, rgba(14,23,42,0.92) 100%); border-left: 4px solid #f0c05a; border-radius: 8px;">
             <div style="font-family: var(--font-yatra); font-size: 1.05rem; font-weight: 700; color: #f0c05a;">
-                🧭 ज्योतिष अनुसंधान प्रभाग (Domain Suites)
+                ज्योतिष अनुसंधान प्रभाग (Domain Suites)
             </div>
             <div style="font-size: 0.74rem; color: #cbd5e1;">(यहाँ से मुख्य प्रभाग / टैब चुनें)</div>
         </div>
@@ -2013,7 +2137,7 @@ if st.session_state.get('data_generated'):
         )
 
         if is_logged_in_now and len(saved_list) > 1:
-            with st.expander(f"📁 कुण्डली बदलें ({len(saved_list)})", expanded=False):
+            with st.expander(f"कुण्डली बदलें ({len(saved_list)})", expanded=False):
                 sb_k_map = {f"{k['name']} ({k.get('dob')})": k for k in saved_list}
                 cur_k_id = active_lp.get('id') if active_lp else None
                 cur_k_idx = 0
@@ -2024,7 +2148,7 @@ if st.session_state.get('data_generated'):
                 sb_sel_lbl = st.selectbox("कुण्डली चुनें:", list(sb_k_map.keys()), index=cur_k_idx, key="sb_kundli_switcher")
                 sb_sel_k = sb_k_map[sb_sel_lbl]
                 if sb_sel_k.get('id') != cur_k_id:
-                    if st.button("📂 खोलें", key="sb_switch_btn", use_container_width=True):
+                    if st.button("खोलें", key="sb_switch_btn", use_container_width=True):
                         _load_kundli_into_session(sb_sel_k, user_id=u["id"])
                         st.rerun()
 
@@ -2140,7 +2264,7 @@ if st.session_state.get('data_generated'):
         st.markdown(f"""
         <div class="glass-card" style="border: 2px solid #f0c05a; background: linear-gradient(135deg, rgba(229, 169, 60, 0.15) 0%, rgba(11, 18, 32, 0.95) 100%);">
             <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center;">
-                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; min-width: 0;">🔮 प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
+                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; min-width: 0;">प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
                 <span style="background: {'#10b981' if verdict_positive else '#f59e0b'}; color: black; font-weight: 800; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; white-space: normal;">
                     {'कार्य सिद्धि के प्रबल योग (Success Likely)' if verdict_positive else 'प्रयास व समय की आवश्यकता (Requires Effort)'}
                 </span>
@@ -2249,7 +2373,7 @@ if st.session_state.get('data_generated'):
                     <div style="display: flex; justify-content: space-between;"><span>☀️ सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>🌙 चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>🪐 गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span>⚖️ शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
                 </div>
                 <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: #f0c05a; font-weight: 600;">
                     नक्षत्र: {daily_res['natal_nakshatra']}
@@ -2278,7 +2402,7 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
         # Location-specific Chaughadiya, Horas & Muhurtas (Directly rendered from daily_res)
-        with st.expander("⏱️ जातक के स्थान अनुसार आज का चौघड़िया, 24 होरा चक्र एवं शुभ-अशुभ मुहूर्त", expanded=True):
+        with st.expander("जातक के स्थान अनुसार आज का चौघड़िया, 24 होरा चक्र एवं शुभ-अशुभ मुहूर्त", expanded=True):
             col_m1, col_m2 = st.columns([1, 1.4])
             with col_m1:
                 amrit_v_exp = daily_res.get('amrit_vela', '-')
@@ -2302,10 +2426,10 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
             _lz_tab_ch = lazy_sections([
-                "☀️ दिन का चौघड़िया",
-                "🌙 रात्रि का चौघड़िया",
-                "🪐 24 कालहोरा चक्र (Planetary Horas)",
-                "🌟 शास्त्रोक्त शुभ-अशुभ मुहूर्त (Drik Muhurtas)",
+                "दिन का चौघड़िया",
+                "रात्रि का चौघड़िया",
+                "24 कालहोरा चक्र (Horas)",
+                "शुभ-अशुभ मुहूर्त (Muhurtas)",
             ], key="tab_ch")
             if _lz_tab_ch[0]:
                 day_chs = daily_res.get('chaughadiya_day', [])
@@ -2384,12 +2508,12 @@ if st.session_state.get('data_generated'):
         # In-depth Comprehensive Daily Forecast (4 Life Pillars & Gochar Synthesis)
         narrs = daily_res.get("narratives", {})
         if narrs:
-            st.markdown(f'<div class="section-title">{"🔮 आज का विस्तृत 4-स्तंभ फलादेश एवं गोचर मीमांसा" if is_hi else "Comprehensive 4-Pillar Daily Forecast"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"आज का विस्तृत 4-स्तंभ फलादेश एवं गोचर मीमांसा" if is_hi else "Comprehensive 4-Pillar Daily Forecast"}</div>', unsafe_allow_html=True)
             
             st.markdown(f"""
             <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 16px;">
                 <div style="font-size: 1.1rem; font-weight: 800; color: #f0c05a; margin-bottom: 6px;">
-                    📜 {narrs.get('chandra_gochar_title', 'दैनिक गोचर सारांश')} (जन्म राशि से {narrs.get('chandra_gochar_house')}वाँ भाव)
+                    {narrs.get('chandra_gochar_title', 'दैनिक गोचर सारांश')} (जन्म राशि से {narrs.get('chandra_gochar_house')}वाँ भाव)
                 </div>
                 <p style="font-size: 0.95rem; color: #f8fafc; line-height: 1.7; margin: 0;">
                     {narrs.get('synthesis', '')}
@@ -2424,7 +2548,7 @@ if st.session_state.get('data_generated'):
 
             st.markdown(f"""
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 10px; padding: 12px 16px; margin-top: 8px;">
-                <div style="color: #34d399; font-weight: 700; font-size: 0.92rem;">✨ आज का अचूक सात्विक उपाय (Target Daily Remedy):</div>
+                <div style="color: #34d399; font-weight: 700; font-size: 0.92rem;">आज का अचूक सात्विक उपाय (Target Daily Remedy):</div>
                 <div style="color: #f0fdf4; font-size: 0.9rem; margin-top: 4px;">{daily_res['remedy']}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -2432,10 +2556,10 @@ if st.session_state.get('data_generated'):
     # (Chatbot is now integrated as a Floating Popup Dialog with Acharya Vyas)
 
     # =========================================================================
-    # SUITE: 📕 LAL KITAB SYSTEM & REMEDIES
+    # SUITE: LAL KITAB SYSTEM & REMEDIES
     # =========================================================================
     if "लाल किताब" in selected_suite or "Lal Kitab" in selected_suite:
-        st.markdown(f'<div class="section-title">{"📕 लाल किताब संपूर्ण विश्लेषण एवं अचूक घरेलू उपाय (पं. रूपचंद जोशी व जी.डी. वशिष्ठ)" if is_hi else "📕 Lal Kitab System & Authentic Remedies"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{"लाल किताब संपूर्ण विश्लेषण एवं अचूक घरेलू उपाय (पं. रूपचंद जोशी व जी.डी. वशिष्ठ)" if is_hi else "Lal Kitab System & Authentic Remedies"}</div>', unsafe_allow_html=True)
         
         planets_dict = {n: {"sign_index": p.sign_index, "longitude": p.longitude} for n, p in chart.planets.items()}
         lk_res = vyas_lalkitab.analyze_lalkitab(planets_dict, asc_sign_idx)
@@ -2462,15 +2586,18 @@ if st.session_state.get('data_generated'):
         if lk_res['sleeping_planets']:
             st.warning(f"🌙 **सोए हुए ग्रह (Sleeping Planets):** {', '.join(lk_res['sleeping_planets'])} — यह ग्रह अपनी पूर्ण क्षमता से फल देने में असमर्थ हैं।")
 
-        st.markdown("#### 🪐 9 ग्रहों की भाव स्थिति एवं अचूक लाल किताब उपाय")
+        st.markdown("#### 9 ग्रहों की भाव स्थिति एवं अचूक लाल किताब उपाय")
         st.dataframe(pd.DataFrame(lk_res["planet_details"]), use_container_width=True, hide_index=True)
 
+        lk_script_res = vyas_knowledge_engine.synthesize_lal_kitab_scripts(chart, lk_res)
+        st.markdown(lk_script_res["lal_kitab_script"], unsafe_allow_html=True)
+
     # =========================================================================
-    # SUITE: ⏳ BIRTH TIME RECTIFICATION (BTR)
+    # SUITE: BIRTH TIME RECTIFICATION (BTR)
     # =========================================================================
     if ("जन्म समय शुद्धि" in selected_suite or "BTR" in selected_suite
             or "Rectification" in selected_suite):
-        st.markdown(f'<div class="section-title">{"⏳ जन्म समय शुद्धि (Birth Time Rectification - कुन्द व तत्व शोधन)" if is_hi else "⏳ Birth Time Rectification (BTR Engine)"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{"जन्म समय शुद्धि (Birth Time Rectification - कुन्द व तत्व शोधन)" if is_hi else "Birth Time Rectification (BTR Engine)"}</div>', unsafe_allow_html=True)
         st.info("ऋषि पराशर एवं आधुनिक KP अनुसंधान के अनुसार जन्म समय में 1-2 मिनट का भी अंतर लग्न कस्प, D60 और सब-लॉर्ड्स को बदल देता है। नीचे दिए गए शास्त्रीय परीक्षणों से अपने समय की प्रामाणिकता जांचें:")
 
         k_ok, k_nak, k_msg = vyas_btr.kunda_shodhana(chart.ascendant_longitude, chart.planets["Moon"].longitude)
@@ -2512,7 +2639,7 @@ if st.session_state.get('data_generated'):
         # LIFE EVENTS CORRELATION & VERIFICATION (जीवन की प्रमुख घटनाओं से समय शुद्धि)
         # -------------------------------------------------------------
         st.markdown("---")
-        st.markdown("#### 📜 जीवन की वास्तविक घटनाओं द्वारा जन्म समय सत्यापन (Life Events Cross-Verification)")
+        st.markdown("#### जीवन की वास्तविक घटनाओं द्वारा जन्म समय सत्यापन (Life Events Cross-Verification)")
         st.markdown("""
         <div style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 12px;">
             <b>वैदिक एवं केपी शोधन सिद्धांत:</b> यदि जन्म समय 1-2 मिनट भी आगे-पीछे हो, तो विंशोत्तरी दशा व वर्ग कुंडलियों (D9, D10, D7) 
@@ -2535,7 +2662,7 @@ if st.session_state.get('data_generated'):
             ev_date_input = st.date_input("घटना दिनांक (Event Date)", value=datetime(2020, 1, 1).date(),
                                          min_value=datetime(1950, 1, 1).date(), max_value=datetime.now().date())
 
-        if st.button("🎯 Verify Event Alignment (दशा व वर्ग कुण्डली से घटना का मिलान करें)", use_container_width=True):
+        if st.button("घटना मिलान सत्यापित करें (Verify Event) (दशा व वर्ग कुण्डली से घटना का मिलान करें)", use_container_width=True):
             test_events = [{"type": ev_type_input, "date": ev_date_input.strftime("%Y-%m-%d")}]
             ev_res = vyas_btr.verify_life_events(
                 birth['local'], chart.planets['Moon'].longitude, chart.ascendant_longitude, test_events
@@ -2557,18 +2684,18 @@ if st.session_state.get('data_generated'):
 
 
     # =========================================================================
-    # SUITE 1: 🌟 CHARTS & 16 VARGAS
+    # SUITE 1: CHARTS & 16 VARGAS
     # =========================================================================
     if "कुण्डली" in selected_suite or "Charts" in selected_suite:
         _lz_sub_tab = lazy_sections([
-            "लग्न एवं नवमांश (D1 & D9 Charts)" if is_hi else "D1 & D9 Natal Charts",
-            "षोडशवर्ग 16 चक्र (All 16 Vargas)" if is_hi else "All 16 Divisional Charts",
-            "षष्ट्यंश देवता (D60 Shashtyamsha & Deities)" if is_hi else "D60 Shashtyamsha Deities",
-            "📜 प्रामाणिक शास्त्रीय सूत्र फलादेश (Classical Sutras)" if is_hi else "Classical Vedic Sutras",
+            "लग्न एवं नवमांश (D1 & D9)" if is_hi else "D1 & D9 Charts",
+            "षोडशवर्ग 16 चक्र" if is_hi else "16 Divisional Charts",
+            "षष्ट्यंश देवता (D60)" if is_hi else "D60 Deities",
+            "वर्ग कुण्डली शास्त्रीय सूत्र फलित" if is_hi else "Divisional Vargas Script",
         ], key="sub_tab")
 
         if _lz_sub_tab[0]:
-            st.markdown(f'<div class="section-title">{"✨ वैदिक ग्रह स्थिति एवं जन्म कुण्डली" if is_hi else "✨ Vedic Planetary Positions & Natal Charts"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"वैदिक ग्रह स्थिति एवं जन्म कुण्डली" if is_hi else "Vedic Planetary Positions & Natal Charts"}</div>', unsafe_allow_html=True)
             
             # Overview metric cards (Reference Style)
             st.markdown(f"""
@@ -2699,7 +2826,7 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="glass-card" style="margin-top: 15px; border-left: 4px solid #f0c05a;">
                 <div style="font-weight: 800; font-size: 1.1rem; color: #f0c05a; margin-bottom: 6px;">
-                    📜 {varga_sel} वर्ग फलित एवं लग्न सापेक्ष विश्लेषण (Automated Synthesis)
+                    {varga_sel} वर्ग फलित एवं लग्न सापेक्ष विश्लेषण (Automated Synthesis)
                 </div>
                 <div style="color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;">
                     {v_pred['narrative']}
@@ -2723,66 +2850,23 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
 
         if _lz_sub_tab[3]:
-            st.markdown(f'<div class="section-title">{"🔮 प्रामाणिक वैदिक एवं नाड़ी सूत्र फलादेश" if is_hi else "Classical Vedic & Nadi Sutras"}</div>', unsafe_allow_html=True)
-            
-            # Evaluate from knowledge bank
-            kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
+            st.markdown(f'<div class="section-title">{"वर्ग कुण्डली शास्त्रीय सूत्र फलित (D1, D9, D10 व D60 महा-विश्लेषण)" if is_hi else "Divisional Vargas Script Synthesis"}</div>', unsafe_allow_html=True)
+            v_scripts = vyas_knowledge_engine.synthesize_varga_scripts(chart, vargas_matrix)
             st.markdown(f"""
-            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
-                <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
-                    ✨ आपकी जन्म कुण्डली पर सक्रिय प्रामाणिक शास्त्रीय सूत्र एवं योग ({len(kb_eval)} सूत्र सक्रिय)
+            <div class="glass-card" style="margin-bottom: 16px; border-left: 4px solid var(--gold-accent);">
+                <div style="font-weight: 700; color: var(--gold-primary); font-size: 1.1rem;">
+                    13,000+ आंतरिक शास्त्रीय ज्ञानकोष से आपकी कुण्डली के वर्ग-चक्रों पर सक्रिय सूत्र
                 </div>
-                <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
-                    यह विश्लेषण भृगु सूत्रम्, पाराशरी भावाधिपति फल, नाड़ी योग, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का प्रत्यक्ष समन्वय करके फलित प्रदर्शित करता है।
+                <div style="color: var(--text-main); font-size: 0.95rem; margin-top: 4px;">
+                    वर्ग कुण्डलियों (षोडशवर्ग) के आधार पर लग्न-नवमांश संतुलन, दशमांश कर्म रेखा एवं षष्ट्यंश प्रारब्ध का सम्पूर्ण एकीकृत शास्त्रीय विश्लेषण:
                 </div>
             </div>
             """, unsafe_allow_html=True)
+            st.markdown(v_scripts["d1_d9_script"], unsafe_allow_html=True)
+            st.markdown(v_scripts["d10_script"], unsafe_allow_html=True)
+            st.markdown(v_scripts["d60_script"], unsafe_allow_html=True)
 
-            # Filter options for the knowledge bank
-            kb_categories = sorted(list(set(k.category for k in kb_eval)))
-            col_f1, col_f2 = st.columns([1.5, 1])
-            with col_f1:
-                if kb_categories:
-                    selected_cat = st.selectbox(
-                        "श्रेणी अनुसार सूत्र देखें (Filter by Category):" if is_hi else "Filter Sutras by Category:",
-                        ["समस्त श्रेणियाँ (All Categories)"] + kb_categories,
-                        index=0,
-                        key="kb_cat_filter_subtab4"
-                    )
-                    filtered_kb = [k for k in kb_eval if selected_cat == "समस्त श्रेणियाँ (All Categories)" or k.category == selected_cat]
-                else:
-                    filtered_kb = kb_eval
-            with col_f2:
-                search_q = st.text_input("🔍 सक्रिय सूत्र खोजें (Search Active Sutras)", placeholder="ग्रह, योग या भाव लिखें...", key="kb_srch_subtab4")
-                if search_q:
-                    filtered_kb = [k for k in filtered_kb if search_q.lower() in k.prediction_hi.lower() or search_q.lower() in k.matched_detail.lower() or search_q.lower() in k.sub_category.lower()]
-
-            st.markdown(f"<small style='color: #94a3b8;'>प्रदर्शित सक्रिय सूत्र: <b>{len(filtered_kb)}</b> / कुल {len(kb_eval)}</small>", unsafe_allow_html=True)
-
-            for k in filtered_kb:
-                domain_badge = f'<span style="background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 8px;">{k.life_domain}</span>'
-                st.markdown(f"""
-                <div class="predict-card" style="margin-bottom: 14px; border-left: 4px solid #facc15;">
-                    <div class="predict-header" style="font-size: 1.05rem; color: #fde047;">
-                        📜 [{k.sutra_id}] {k.sub_category} {domain_badge}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 2px;">
-                        <b>स्रोत:</b> {k.source} &nbsp;|&nbsp; <b>वर्गीकरण:</b> {k.category}
-                    </div>
-                    <div style="color: #e2e8f0; font-size: 0.95rem; margin: 6px 0; background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 6px;">
-                        🔍 <b>सत्यापित खगोलीय स्थिति:</b> {k.matched_detail}
-                    </div>
-                    <div style="color: #4ade80; font-size: 1rem; line-height: 1.6;">
-                        <b>फलकथन (फलादेश):</b> {k.prediction_hi}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
-                        <i><b>English:</b> {k.prediction_en}</i>
-                    </div>
-                    {f'<div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">⚖️ <b>बल व संशोधन:</b> {k.strength_modifiers}</div>' if k.strength_modifiers else ''}
-                </div>
-                """, unsafe_allow_html=True)
-
-            # Classical treatises direct search
+            # Classical treatises direct search # Classical treatises direct search
             with st.expander("📚 समस्त शास्त्रीय ग्रंथ एवं पुस्तकें प्रत्यक्ष खोज (Search Classical Astrological Library)", expanded=False):
                 try:
                     import vyas.book_reader as vyas_books
@@ -2813,11 +2897,11 @@ if st.session_state.get('data_generated'):
                     st.warning(f"पुस्तक खोज में त्रुटि: {e}")
 
     # =========================================================================
-    # SUITE: 💍 ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
+    # SUITE: ASHTAKOOTA MILAN & DOSHA CANCELLATIONS
     # =========================================================================
     elif ("अष्टकूट" in selected_suite or "Ashtakoota" in selected_suite
           or "Compatibility" in selected_suite):
-        st.markdown(f'<div class="section-title">{"💍 अष्टकूट गुण मिलान (36 गुण) एवं शास्त्रीय दोष परिहार विश्लेषण" if is_hi else "💍 Ashtakoota 36 Gunas Match & Classical Dosha Cancellation"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{"अष्टकूट गुण मिलान (36 गुण) एवं शास्त्रीय दोष परिहार विश्लेषण" if is_hi else "Ashtakoota 36 Gunas Match & Classical Dosha Cancellation"}</div>', unsafe_allow_html=True)
         st.info("विवाह मिलान केवल 36 में से 18 गुण मिलाने तक सीमित नहीं है। ऋषि पराशर एवं मुहुर्त चिंतामणि के अनुसार यदि नाड़ी या भकूट में शास्त्रीय परिहार (Exceptions) लागू हो जाएं, तो शून्य अंक भी दोषमुक्त होकर शुभ फल प्रदान करते हैं।")
 
         col_m1, col_m2 = st.columns(2)
@@ -2855,7 +2939,7 @@ if st.session_state.get('data_generated'):
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown(f"#### 📜 8 कूटों का विस्तृत परीक्षण एवं दोष परिहार सारणी")
+        st.markdown(f"#### 8 कूटों का विस्तृत परीक्षण एवं दोष परिहार सारणी")
         st.dataframe(pd.DataFrame(match_res["kootas"]), use_container_width=True, hide_index=True)
     elif "दशा" in selected_suite or "Dasha" in selected_suite:
         _lz_d_tab = lazy_sections([
@@ -2889,7 +2973,7 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="predict-card" style="border-left-color: #ffd97d; margin-top: 15px; margin-bottom: 20px;">
                 <div class="predict-header" style="color: #ffd97d; font-size: 1.15rem;">
-                    👑 वर्तमान सक्रिय विंशोत्तरी दशा महा-फलित (Active MD-AD-PD Synthesis)
+                    वर्तमान सक्रिय विंशोत्तरी दशा महा-फलित (Active MD-AD-PD Synthesis)
                 </div>
                 <div style="font-size: 1.02rem; line-height: 1.7; color: #f8fafc; white-space: pre-line; margin-top: 8px;">
                     {active_dasha_synth['synthesis_hi']}
@@ -3018,13 +3102,14 @@ if st.session_state.get('data_generated'):
 
 
     # =========================================================================
-    # SUITE 3: ⚖️ ASHTAKAVARGA, SHADBALA & MAITRI
+    # SUITE 3: ASHTAKAVARGA, SHADBALA & MAITRI
     # =========================================================================
     elif "अष्टकवर्ग" in selected_suite or "Ashtakavarga" in selected_suite:
         _lz_b_tab = lazy_sections([
             "अष्टकवर्ग चक्र एवं शोधन (SAV & BAV)" if is_hi else "Ashtakavarga Matrix",
             "षड्बल एवं भावबल (Shadbala & Bhavabala)" if is_hi else "Shadbala & Bhavabala",
             "भाव चलित एवं पञ्चधा मैत्री (Chalit & Maitri)" if is_hi else "Chalit & Maitri",
+            "अष्टकवर्ग शास्त्रीय सूत्र महा-विश्लेषण" if is_hi else "Ashtakavarga Sutras Script",
         ], key="b_tab")
 
         p_signs = {n: p.sign_index for n, p in chart.planets.items()}
@@ -3127,16 +3212,21 @@ if st.session_state.get('data_generated'):
                 pm_rows.append(row)
             st.dataframe(pd.DataFrame(pm_rows), use_container_width=True, hide_index=True)
 
+        if _lz_b_tab[3]:
+            st.markdown(f'<div class="section-title">{"अष्टकवर्ग शास्त्रीय सूत्र एवं काक्ष्य फलित" if is_hi else "Ashtakavarga Sutras Script"}</div>', unsafe_allow_html=True)
+            av_script_res = vyas_knowledge_engine.synthesize_ashtakavarga_scripts(chart, av_res)
+            st.markdown(av_script_res["ashtakavarga_script"], unsafe_allow_html=True)
+
     # =========================================================================
-    # SUITE 4: 👑 KP, JAIMINI, NADI & CHAKRAS
+    # SUITE 4: KP, JAIMINI, NADI & CHAKRAS
     # =========================================================================
     elif "केपी" in selected_suite or "KP" in selected_suite:
         _lz_k_tab = lazy_sections([
-            "🎯 केपी सूक्ष्म प्रणाली (KP SSSSSL & Promises)" if is_hi else "KP SSSSSL & Promises",
-            "👑 जैमिनी चर कारक (Jaimini Chara Karakas)" if is_hi else "Jaimini Karakas",
-            "🧬 भृगु नन्दी नाड़ी (Nadi Combinations)" if is_hi else "Bhrigu Nandi Nadi",
-            "☸️ वैदिक चक्र (Sudarshan, SBC, Kota & Navatara)" if is_hi else "Classical Chakras",
-            "📜 पंचांग एवं अवकहड़ा (Panchang & Avakhada)" if is_hi else "Panchang & Avakhada",
+            "केपी सूक्ष्म प्रणाली (KP System)" if is_hi else "KP System",
+            "जैमिनी चर कारक" if is_hi else "Jaimini Karakas",
+            "भृगु नन्दी नाड़ी" if is_hi else "Bhrigu Nandi Nadi",
+            "वैदिक चक्र (Sudarshan & SBC)" if is_hi else "Classical Chakras",
+            "पंचांग एवं अवकहड़ा" if is_hi else "Panchang & Avakhada",
         ], key="k_tab")
 
         if _lz_k_tab[0]:
@@ -3151,7 +3241,7 @@ if st.session_state.get('data_generated'):
             dasha_active = evaluate_active_houses_by_dasha(cur_dasha, planet_significators, kp_cusps)
 
             # --- SUB-SECTION 1: KAB KAUNSA BHAV ACTIVE HO RAHA HAI ---
-            st.markdown(f"#### {'⚡ वर्तमान सक्रिय भाव एवं घटना कालक्रम (Active Houses by Dasha)' if is_hi else 'Active Houses by Running Dasha'}")
+            st.markdown(f"#### {'वर्तमान सक्रिय भाव एवं घटना कालक्रम (Active Houses by Dasha)' if is_hi else 'Active Houses by Running Dasha'}")
             
             md_hi = dasha_active['mahadasha_lord_hi']
             ad_hi = dasha_active['antardasha_lord_hi']
@@ -3162,7 +3252,7 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="glass-card" style="border-left: 4px solid #38bdf8; margin-bottom: 18px;">
                 <div style="font-size: 1.15rem; font-weight: bold; color: #38bdf8;">
-                    ⏳ वर्तमान सक्रिय दशा चक्र: महादशा [{md_hi}] ➔ अन्तर्दशा [{ad_hi}] ➔ प्रत्यन्तर्दशा [{pd_hi}]
+                    वर्तमान सक्रिय दशा चक्र: महादशा [{md_hi}] ➔ अन्तर्दशा [{ad_hi}] ➔ प्रत्यन्तर्दशा [{pd_hi}]
                 </div>
                 <div style="margin-top: 8px; font-size: 0.98rem; line-height: 1.7; color: #f8fafc;">
                     <b>🔥 अत्यंत तीव्र सक्रिय भाव (MD + AD सह-कार्येश):</b> <span style="color: #4ade80; font-weight: bold; font-size: 1.05rem;">{co_active_str}</span><br>
@@ -3196,7 +3286,7 @@ if st.session_state.get('data_generated'):
             st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 25px 0;'>", unsafe_allow_html=True)
 
             # --- SUB-SECTION 2: KIS BAAT KA KYA PROMISE HAI KUNDLI MEIN ---
-            st.markdown(f"#### {'🏆 कुण्डली में किस बात का प्रॉमिस है और क्या नहीं (KP Life Promises Verification)' if is_hi else 'KP Life Promises Verification'}")
+            st.markdown(f"#### {'कुण्डली में किस बात का प्रॉमिस है और क्या नहीं (KP Life Promises Verification)' if is_hi else 'KP Life Promises Verification'}")
             st.markdown("""
             <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 15px;">
                 कृष्णमूर्ति पद्धति का अकाट्य नियम: किसी भी जीवन प्रसंग की सिद्धि या निषेध उस भाव के <b>कस्प उप-स्वामी (Cusp Sub-Lord)</b> तथा उसके <b>नक्षत्र स्वामी</b> द्वारा सिग्निफाई किए जाने वाले भावों पर निर्भर करती है।
@@ -3249,7 +3339,7 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(kp_table), use_container_width=True, hide_index=True)
 
             # --- SUB-SECTION 4: 9 PLANETARY KP TABLE (DOWN TO SSSSSL) ---
-            st.markdown(f"#### {'🪐 नवग्रह केपी स्पष्ट एवं SSSSSL तालिका (Planetary KP Table down to SSSSSL)' if is_hi else 'Planetary KP Table (down to SSSSSL)'}")
+            st.markdown(f"#### {'नवग्रह केपी स्पष्ट एवं SSSSSL तालिका (Planetary KP Table down to SSSSSL)' if is_hi else 'Planetary KP Table (down to SSSSSL)'}")
             kp_pl_table = []
             for pl in planet_kp_lords:
                 kp_pl_table.append({
@@ -3268,7 +3358,7 @@ if st.session_state.get('data_generated'):
             st.dataframe(pd.DataFrame(kp_pl_table), use_container_width=True, hide_index=True)
 
             # --- SUB-SECTION 5: 4-FOLD SIGNIFICATORS (चतुर्विध कार्येश) ---
-            st.markdown(f"#### {'📊 केपी 4-Step कार्येश तालिका (KP 4-Fold Significators Matrix)' if is_hi else 'KP 4-Fold Significators Matrix'}")
+            st.markdown(f"#### {'केपी 4-Step कार्येश तालिका (KP 4-Fold Significators Matrix)' if is_hi else 'KP 4-Fold Significators Matrix'}")
             
             _lz_sig_tab = lazy_sections([
                 "ग्रह अनुसार कार्येश (Planet-wise Significators)" if is_hi else "Planet-wise Significators",
@@ -3308,6 +3398,10 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(h_sig_rows), use_container_width=True, hide_index=True)
 
+            # KP Synthesized Script from 13,000 Sutras
+            kp_script_res = vyas_knowledge_engine.synthesize_kp_scripts(chart, kp_cusps)
+            st.markdown(kp_script_res["kp_script"], unsafe_allow_html=True)
+
             # KP Predictions & Dasha Event Timing Synthesis
             kp_preds = forensic_predictor.compute_kp_predictions_and_dasha_phala(chart, kp_cusps, cur_dasha)
             st.markdown(f"#### {'केपी कस्प उप-स्वामी सूक्ष्म फलकथन (Cusp Sub-Lord Predictions)' if is_hi else 'KP Cusp Sub-Lord Predictions'}")
@@ -3315,7 +3409,7 @@ if st.session_state.get('data_generated'):
             for i, ce in enumerate(kp_preds['cusp_evaluations']):
                 target_col = col_k1 if i % 2 == 0 else col_k2
                 with target_col:
-                    with st.expander(f"📍 {ce['title_hi']} [SL: {ce['sub_lord_hi']}]", expanded=(ce['cusp_num'] in [1, 2, 10])):
+                    with st.expander(f"{ce['title_hi']} [SL: {ce['sub_lord_hi']}]", expanded=(ce['cusp_num'] in [1, 2, 10])):
                         st.markdown(f"""
                         <div style="font-size: 0.85rem; color: #eedc9a; margin-bottom: 4px;">
                             राशि स्वामी: <b>{ce['sign_lord_hi']}</b> | नक्षत्र स्वामी: <b>{ce['star_lord_hi']}</b> | उप-स्वामी: <b>{ce['sub_lord_hi']}</b>
@@ -3343,10 +3437,13 @@ if st.session_state.get('data_generated'):
             chara_dashas = forensic_predictor.compute_chara_dasha(chart.ascendant_sign, birth['local'], chart)
             j_preds = forensic_predictor.compute_jaimini_predictions_and_chara_dasha_phala(chart, j_karakas, ak_p, chara_dashas, birth['local'])
 
+            j_script_res = vyas_knowledge_engine.synthesize_jaimini_scripts(chart)
+            st.markdown(j_script_res["jaimini_script"], unsafe_allow_html=True)
+
             st.markdown(f"""
-            <div class="predict-card" style="border-left-color: #f0c05a; margin-top: 15px;">
-                <div class="predict-header" style="color: #f0c05a; font-size: 1.15rem;">
-                    👑 आत्मकारक (AK) एवं अमात्यकारक (AmK) जैमिनी राजयोग
+            <div class="predict-card" style="border-left-color: var(--gold-accent); margin-top: 15px;">
+                <div class="predict-header" style="color: var(--gold-primary); font-size: 1.15rem;">
+                    आत्मकारक (AK) एवं अमात्यकारक (AmK) जैमिनी राजयोग
                 </div>
                 <p style="font-size: 1.02rem; line-height: 1.7; color: #f8fafc; margin-top: 8px;">
                     {j_preds['ak_synthesis_hi']}
@@ -3358,7 +3455,7 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="glass-card" style="border-left: 4px solid #a855f7; margin-top: 12px; margin-bottom: 15px;">
                 <div style="font-weight: bold; color: #c084fc; font-size: 1.1rem;">
-                    🔮 वर्तमान सक्रिय चर महादशा फलित: {cd_info['sign_hi']} राशि ({cd_info['start']} से {cd_info['end']})
+                    वर्तमान सक्रिय चर महादशा फलित: {cd_info['sign_hi']} राशि ({cd_info['start']} से {cd_info['end']})
                 </div>
                 <p style="font-size: 1.02rem; line-height: 1.7; color: #e2e8f0; margin-top: 6px;">
                     {cd_info['prediction_hi']}
@@ -3385,15 +3482,15 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; margin-top: 15px; margin-bottom: 20px;">
                 <div class="glass-card" style="border-left: 4px solid #eab308;">
-                    <div style="font-weight: bold; color: #facc15; font-size: 1.05rem;">🧬 जीव कारक (Jeeva Karaka - देवगुरु)</div>
+                    <div style="font-weight: bold; color: #facc15; font-size: 1.05rem;">जीव कारक (Jeeva Karaka - देवगुरु)</div>
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['jeeva_karaka_hi']}</p>
                 </div>
                 <div class="glass-card" style="border-left: 4px solid #3b82f6;">
-                    <div style="font-weight: bold; color: #60a5fa; font-size: 1.05rem;">⚖️ कर्म कारक (Karma Karaka - शनिदेव)</div>
+                    <div style="font-weight: bold; color: #60a5fa; font-size: 1.05rem;">कर्म कारक (Karma Karaka - शनिदेव)</div>
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['karma_karaka_hi']}</p>
                 </div>
                 <div class="glass-card" style="border-left: 4px solid #10b981;">
-                    <div style="font-weight: bold; color: #34d399; font-size: 1.05rem;">🔮 बुद्धि एवं गूढ़ विद्या कारक (Mercury-Ketu)</div>
+                    <div style="font-weight: bold; color: #34d399; font-size: 1.05rem;">बुद्धि एवं गूढ़ विद्या कारक (Mercury-Ketu)</div>
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['occult_mercury_hi']}</p>
                 </div>
                 <div class="glass-card" style="border-left: 4px solid #ec4899;">
@@ -3422,7 +3519,7 @@ if st.session_state.get('data_generated'):
 
 
         if _lz_k_tab[3]:
-            st.markdown(f'<div class="section-title">{"☸️ वैदिक चक्र अनुसंधान: सुदर्शन चक्र, कोटा, सर्वतोभद्र एवं 27 नवतारा" if is_hi else "Classical Vedic Chakras Engine"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"वैदिक चक्र अनुसंधान: सुदर्शन चक्र, कोटा, सर्वतोभद्र एवं 27 नवतारा" if is_hi else "Classical Vedic Chakras Engine"}</div>', unsafe_allow_html=True)
             
             pl_lons = {n: p.longitude for n, p in chart.planets.items()}
             sudarshan_analysis = vyas_chakras.compute_sudarshan_chakra(chart)
@@ -3431,17 +3528,17 @@ if st.session_state.get('data_generated'):
             navatara_items = vyas_chakras.compute_navatara_chakra(chart.planets['Moon'].longitude, pl_lons)
 
             _lz_ch_sub = lazy_sections([
-                "🌟 सुदर्शन चक्र (Sudarshan Tri-Wheel)" if is_hi else "Sudarshan Chakra",
-                "🛡️ कोटा चक्र (Kota Fortress Chart)" if is_hi else "Kota Chakra",
-                "🔮 सर्वतोभद्र चक्र (Sarvatobhadra Chakra)" if is_hi else "Sarvatobhadra Chakra",
-                "✨ 27 नवतारा चक्र (27 Navatara System)" if is_hi else "27 Navatara Chakra",
+                "सुदर्शन चक्र" if is_hi else "Sudarshan Chakra",
+                "कोटा चक्र" if is_hi else "Kota Chakra",
+                "सर्वतोभद्र चक्र" if is_hi else "Sarvatobhadra Chakra",
+                "27 नवतारा चक्र" if is_hi else "27 Navatara Chakra",
             ], key="ch_sub")
 
             if _lz_ch_sub[0]:
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #f59e0b; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #fbbf24;">
-                        ☸️ महर्षि पाराशर प्रणीत सुदर्शन चक्र • त्रिविध संगम विश्लेषण
+                        महर्षि पाराशर प्रणीत सुदर्शन चक्र • त्रिविध संगम विश्लेषण
                     </div>
                     <p style="font-size: 0.98rem; line-height: 1.7; color: #f8fafc; margin-top: 8px;">
                         {sudarshan_analysis.sudarshan_verdict_hi}
@@ -3505,7 +3602,7 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #8b5cf6; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #a78bfa;">
-                        🔮 सर्वतोभद्र चक्र (28 नक्षत्र एवं 7 संवेदी मर्म बिंदु)
+                        सर्वतोभद्र चक्र (28 नक्षत्र एवं 7 संवेदी मर्म बिंदु)
                     </div>
                     <p style="font-size: 0.95rem; color: #cbd5e1; margin-top: 6px;">
                         सर्वतोभद्र चक्र में अभिजित सहित 28 नक्षत्रों का प्रयोग होता है। जन्म नक्षत्र से 1, 10, 16, 18, 23, 25 एवं 26वें नक्षत्र विशेष संवेदी बिंदु होते हैं जिन पर क्रूर ग्रहों का गोचर अथवा वेध संकटकारक और शुभ ग्रहों का वेध कल्याणकारी होता है।
@@ -3528,7 +3625,7 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid #06b6d4; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: #22d3ee;">
-                        ✨ 27 नवतारा चक्र (3 पर्य्याय: शारीरिक, कर्मिक एवं पारलौकिक)
+                        27 नवतारा चक्र (3 पर्य्याय: शारीरिक, कर्मिक एवं पारलौकिक)
                     </div>
                     <p style="font-size: 0.95rem; color: #cbd5e1; margin-top: 6px;">
                         जन्मनक्षत्र से 9 ताराओं का तीन आवृत्तियों में विभाजन: प्रथम पर्य्याय (व्यक्तिगत), द्वितीय पर्य्याय (कर्म व समाज), तृतीय पर्य्याय (आंतरिक व प्रारब्ध)।
@@ -3555,7 +3652,7 @@ if st.session_state.get('data_generated'):
             with col_p1:
                 st.markdown(f"""
                 <div class="glass-card" style="height: 100%;">
-                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">📜 पंचांग मुख्य अंग:</div>
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">पंचांग मुख्य अंग:</div>
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>वार:</b> {panch_obj.vara} ({panch_obj.vara_lord})<br>
                         <b>तिथि:</b> {panch_obj.tithi} ({panch_obj.tithi_hi})<br>
@@ -3571,7 +3668,7 @@ if st.session_state.get('data_generated'):
                 av = panch_obj.avakhada
                 st.markdown(f"""
                 <div class="glass-card" style="height: 100%;">
-                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">🔮 अवकहड़ा चक्र (Avakhada):</div>
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">अवकहड़ा चक्र (Avakhada):</div>
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>वर्ण:</b> {av.get('Varna', 'Brahmin')}<br>
                         <b>वश्य:</b> {av.get('Vashya', 'Keet')}<br>
@@ -3636,23 +3733,22 @@ if st.session_state.get('data_generated'):
         )
 
         _lz_p_tab = lazy_sections([
-            "🌟 समग्र जीवन फलादेश (Senior Master Forecast)" if is_hi else "Master Overall Life Forecast",
-            "द्वादश भाव विस्तृत फलित (12 Bhavas)" if is_hi else "12 Bhavas In-Depth",
-            "🏛️ भावत् भावम् सूक्ष्म विश्लेषण (Bhavat Bhavam)" if is_hi else "Bhavat Bhavam Matrix",
-            "ग्रह अवस्था एवं दृष्टि (Dignities & Aspects)" if is_hi else "Dignities & Aspects",
-            "मंगल दोष सम्पूर्ण विवेचन (Mangal Dosha)" if is_hi else "Mangal Dosha Analysis",
-            "शनि साढ़े साती एवं ढैय्या (Sade Sati Report)" if is_hi else "Sade Sati Report",
-            "कालसर्प दोष परीक्षण (Kalsarp Dosha)" if is_hi else "Kalsarp Dosha",
-            "लाल किताब फलित एवं उपाय (Lal Kitab & Upay)" if is_hi else "Lal Kitab & Remedies",
-            "शास्त्रीय सूत्र डेटाबैंक (Classical Sutras)" if is_hi else "Classical Sutras",
+            "समग्र जीवन महा-फलादेश (13 जीवन अध्याय)" if is_hi else "Master Overall Life Forecast",
+            "द्वादश भाव विस्तृत फलादेश (12 Bhavas)" if is_hi else "12 Bhavas In-Depth",
+            "भावत् भावम् सूक्ष्म विश्लेषण (Bhavat Bhavam)" if is_hi else "Bhavat Bhavam Matrix",
+            "ग्रह अवस्था एवं दृष्टि बल (Dignities & Aspects)" if is_hi else "Dignities & Aspects",
+            "मंगल दोष सम्पूर्ण विवेचन एवं परिहार (Mangal Dosha)" if is_hi else "Mangal Dosha Analysis",
+            "शनि साढ़े साती एवं ढैय्या 46-चरणीय चक्र (Sade Sati)" if is_hi else "Sade Sati Report",
+            "कालसर्प दोष 12 भेदों की सूक्ष्म जाँच (Kalsarp Dosha)" if is_hi else "Kalsarp Dosha",
+            "विशिष्ट शास्त्रीय योग एवं दुर्लभ फलित (Classical Yogas)" if is_hi else "Classical Rare Yogas",
         ], key="p_tab")
 
         if _lz_p_tab[0]:
-            st.markdown(f'<div class="section-title">{"🌟 महर्षि पाराशर व कल्याणवर्मा परंपरा: समग्र जीवन महा-फलादेश (13 जीवन अध्याय)" if is_hi else "Comprehensive Classical Life Horoscope Synthesis"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"महर्षि पाराशर व कल्याणवर्मा परंपरा: समग्र जीवन महा-फलादेश (13 जीवन अध्याय)" if is_hi else "Comprehensive Classical Life Horoscope Synthesis"}</div>', unsafe_allow_html=True)
             st.markdown("""
-            <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 20px;">
-                <div style="font-size: 1.15rem; font-weight: bold; color: #f0c05a;">📜 फलित ज्योतिष शोध प्रबन्ध • वरिष्ठ ज्योतिषी दृष्टिकोण</div>
-                <p style="color: #e2e8f0; margin-top: 6px; font-size: 0.98rem; line-height: 1.6;">
+            <div class="glass-card" style="border-left: 4px solid var(--gold-accent); margin-bottom: 20px;">
+                <div style="font-size: 1.15rem; font-weight: bold; color: var(--gold-primary);">फलित ज्योतिष शोध प्रबन्ध • वरिष्ठ ज्योतिषी दृष्टिकोण</div>
+                <p style="color: var(--text-main); margin-top: 6px; font-size: 0.98rem; line-height: 1.6;">
                     यह फलादेश केवल सतही ग्रह स्थिति नहीं, अपितु बृहत्पाराशर होराशास्त्र, फलदीपिका, सारावली, जातक पारिजात एवं सर्वार्थचिंतामणि के संयुक्त शास्त्रीय नियमों पर आधारित 13 विस्तृत अध्यायों का महा-संश्लेषण है।
                 </p>
             </div>
@@ -3661,38 +3757,50 @@ if st.session_state.get('data_generated'):
             for _chap in overall_forecast:
                 ch_num = _chap.get('chapter_num', 1)
                 ch_title = _chap.get('title_hi', _chap.get('title', 'जीवन अध्याय'))
-                ch_icon = _chap.get('icon', '📜')
-                with st.expander(f"{ch_icon} अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
+                with st.expander(f"अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
                     st.markdown(f"""
-                    <div class="predict-card" style="border-left-color: #ffd97d;">
-                        <div class="predict-header" style="font-size: 1.15rem; color: #ffd97d;">{ch_icon} {ch_title}</div>
-                        <p style="font-size: 1.05rem; line-height: 1.75; color: #f8fafc; text-align: justify; margin-top: 10px;">
+                    <div class="predict-card" style="border-left-color: var(--gold-accent);">
+                        <div class="predict-header" style="font-size: 1.15rem; color: var(--gold-primary);">{ch_title}</div>
+                        <p style="font-size: 1.05rem; line-height: 1.75; color: var(--text-main); text-align: justify; margin-top: 10px;">
                             {_chap.get('content_hi', '')}
                         </p>
                     </div>
                     """, unsafe_allow_html=True)
 
-        if _lz_p_tab[0]:
-            st.markdown(f'<div class="section-title">{"द्वादश भाव गहन ज्योतिषीय फलित (Bhava-by-Bhava Analysis)" if is_hi else "12 Houses Forensic Interpretation"}</div>', unsafe_allow_html=True)
+        if _lz_p_tab[1]:
+            st.markdown(f'<div class="section-title">{"द्वादश भाव गहन ज्योतिषीय फलित (12 Houses Forensic Interpretation)" if is_hi else "12 Houses Forensic Interpretation"}</div>', unsafe_allow_html=True)
+            bhava_scripts_data = vyas_knowledge_engine.synthesize_bhava_and_yogas_scripts(chart)
+            bhava_map = bhava_scripts_data.get("bhava_map", {})
             for bh in bhavas:
-                with st.expander(f"🏛️ भाव {bh.bhava_num}: {bh.sign_hi} राशि (स्वामी: {bh.lord_hi}) — [{bh.strength_type}]", expanded=(bh.bhava_num in [1, 7, 10])):
+                with st.expander(f"भाव {bh.bhava_num}: {bh.sign_hi} राशि (स्वामी: {bh.lord_hi}) — [{bh.strength_type}]", expanded=(bh.bhava_num in [1, 7, 10])):
                     st.markdown(f"""
                     <div class="predict-card">
-                        <div style="color: #eedc9a; font-weight: bold; margin-bottom: 6px;">
+                        <div style="color: var(--gold-primary); font-weight: bold; margin-bottom: 6px;">
                             भावाधिपति स्थिति: भाव {bh.lord_house} ({bh.lord_sign_hi}) | 
                             भावस्थ ग्रह: {', '.join(bh.occupants_hi) or 'कोई नहीं (रिक्त)'} | 
                             दृष्टि डालने वाले ग्रह: {', '.join(bh.aspecting_planets_hi) or 'कोई नहीं'}
                         </div>
-                        <p style="font-size: 1.05rem; line-height: 1.6; color: #f8fafc;">{bh.prediction_hi}</p>
+                        <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main);">{bh.prediction_hi}</p>
                     </div>
                     """, unsafe_allow_html=True)
+                    # Weave matched Bhrigu Sutram & Bhavadhipati sutras into this house
+                    m_sutras_in_bh = bhava_map.get(bh.bhava_num, [])
+                    if m_sutras_in_bh:
+                        st.markdown(f"**भाव {bh.bhava_num} पर सक्रिय प्रामाणिक शास्त्रीय सूत्र:**")
+                        for s in m_sutras_in_bh:
+                            st.markdown(f"""
+                            <div style="background: var(--card-bg); border-left: 3px solid var(--gold-accent); padding: 8px 12px; margin-top: 6px; border-radius: 6px; border: 1px solid var(--card-border);">
+                                <div style="font-weight: 600; color: var(--gold-primary); font-size: 0.92rem;">[{s.source}] {s.sub_category}</div>
+                                <div style="color: var(--text-main); font-size: 0.90rem; margin-top: 2px;">{s.prediction_hi}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
 
-        if _lz_p_tab[1]:
-            st.markdown(f'<div class="section-title">{"🏛️ भावत् भावम् सूक्ष्म सिद्धांत एवं फलित (Bhavat Bhavam Recursive Matrix)" if is_hi else "Bhavat Bhavam Matrix"}</div>', unsafe_allow_html=True)
+        if _lz_p_tab[2]:
+            st.markdown(f'<div class="section-title">{"भावत् भावम् सूक्ष्म सिद्धांत एवं फलित (Bhavat Bhavam Recursive Matrix)" if is_hi else "Bhavat Bhavam Matrix"}</div>', unsafe_allow_html=True)
             st.markdown("""
-            <div class="glass-card" style="border-left: 4px solid #f0c05a; margin-bottom: 20px;">
-                <div style="font-size: 1.15rem; font-weight: bold; color: #f0c05a;">📜 भावत् भावम् सिद्धांत • बृहत्पाराशर होराशास्त्र एवं फलदीपिका</div>
-                <p style="color: #e2e8f0; margin-top: 6px; font-size: 0.98rem; line-height: 1.6;">
+            <div class="glass-card" style="border-left: 4px solid var(--gold-accent); margin-bottom: 20px;">
+                <div style="font-size: 1.15rem; font-weight: bold; color: var(--gold-primary);">भावत् भावम् सिद्धांत • बृहत्पाराशर होराशास्त्र एवं फलदीपिका</div>
+                <p style="color: var(--text-main); margin-top: 6px; font-size: 0.98rem; line-height: 1.6;">
                     वैदिक ज्योतिष का अमर नियम: किसी भी भाव का सूक्ष्म फल जानने के लिए उस भाव से उतनी ही दूरी वाले भाव (H-from-H) का परीक्षण करना अनिवार्य है।
                     उदा. द्वितीय का द्वितीय = तृतीय भाव (धन की सुरक्षा व पराक्रम), अष्टम का अष्टम = तृतीय भाव (आयु का आधार), दशम का दशम = सप्तम भाव (व्यापार व प्रतिष्ठा)।
                 </p>
@@ -3700,7 +3808,6 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
             bb_data = forensic_predictor.compute_bhavat_bhavam_analysis(chart, dignities, bhavas, sav)
-            
             bb_table = []
             for b in bb_data:
                 bb_table.append({
@@ -3719,19 +3826,19 @@ if st.session_state.get('data_generated'):
             for idx_bb, b in enumerate(bb_data):
                 target_col = col_bb1 if idx_bb % 2 == 0 else col_bb2
                 with target_col:
-                    with st.expander(f"🏛️ {b['title_hi']} [{b['status_verdict']}]", expanded=(b['primary_house'] in [1, 2, 7, 10])):
+                    with st.expander(f"{b['title_hi']} [{b['status_verdict']}]", expanded=(b['primary_house'] in [1, 2, 7, 10])):
                         st.markdown(f"""
-                        <div style="font-size: 0.9rem; color: #eedc9a; margin-bottom: 6px;">
+                        <div style="font-size: 0.9rem; color: var(--gold-primary); margin-bottom: 6px;">
                             <b>मूल कारकत्व:</b> {b['karakatwa_hi']}<br>
                             प्राथमिक भाव {b['primary_house']} ({b['prim_sign_hi']} - {b['prim_sav']} SAV) | 
                             द्वितीयक भाव {b['secondary_house']} ({b['sec_sign_hi']} - {b['sec_sav']} SAV)
                         </div>
-                        <p style="font-size: 0.98rem; line-height: 1.65; color: #f8fafc; text-align: justify;">
+                        <p style="font-size: 0.98rem; line-height: 1.65; color: var(--text-main); text-align: justify;">
                             {b['verdict_hi']}
                         </p>
                         """, unsafe_allow_html=True)
 
-        if _lz_p_tab[2]:
+        if _lz_p_tab[3]:
             st.markdown(f'<div class="section-title">{"ग्रह अवस्था, अस्त/वक्री एवं दृष्टि बल विश्लेषण" if is_hi else "Planetary Dignities & States"}</div>', unsafe_allow_html=True)
             dig_rows = []
             for p_name, dig in dignities.items():
@@ -3747,20 +3854,20 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(dig_rows), use_container_width=True, hide_index=True)
 
-        if _lz_p_tab[3]:
+        if _lz_p_tab[4]:
             st.markdown(f'<div class="section-title">{"मंगल दोष सम्पूर्ण शास्त्रीय विवेचन एवं परिहार" if is_hi else "Mangal Dosha Assessment"}</div>', unsafe_allow_html=True)
             m_dosha = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
             st.markdown(f"""
             <div class="glass-card">
-                <div style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">स्थिति: {m_dosha['severity']}</div>
-                <p style="margin-top: 8px; font-size: 1.05rem; line-height: 1.6;">{m_dosha['summary_hi']}</p>
+                <div style="font-size: 1.2rem; font-weight: bold; color: var(--accent-emerald);">स्थिति: {m_dosha['severity']}</div>
+                <p style="margin-top: 8px; font-size: 1.05rem; line-height: 1.6; color: var(--text-main);">{m_dosha['summary_hi']}</p>
             </div>
             """, unsafe_allow_html=True)
             st.markdown("#### सर्वकल्याणकारी मङ्गल शांति उपाय:")
             for r in m_dosha['remedies_hi']:
                 st.markdown(f"• {r}")
 
-        if _lz_p_tab[4]:
+        if _lz_p_tab[5]:
             st.markdown(f'<div class="section-title">{"शनि साढ़े साती एवं ढैय्या 46-चरणीय जीवन चक्र" if is_hi else "Shani Sade Sati Full Report"}</div>', unsafe_allow_html=True)
             sade_phases = forensic_predictor.compute_comprehensive_sade_sati(birth["local"], chart.planets["Moon"].longitude, tz_hours=float(birth.get("tz", 5.5)))
             s_table = []
@@ -3775,77 +3882,20 @@ if st.session_state.get('data_generated'):
                 })
             st.dataframe(pd.DataFrame(s_table), use_container_width=True, hide_index=True)
 
-        if _lz_p_tab[5]:
+        if _lz_p_tab[6]:
             st.markdown(f'<div class="section-title">{"कालसर्प दोष 12 भेदों की सूक्ष्म जाँच" if is_hi else "Kalsarp Dosha Analysis"}</div>', unsafe_allow_html=True)
             k_dosha = forensic_predictor.compute_comprehensive_kalsarp(chart)
             st.markdown(f"""
             <div class="glass-card">
-                <div style="font-size: 1.2rem; font-weight: bold; color: #4ade80;">निर्णय: {k_dosha['status_hi']}</div>
-                <p style="margin-top: 8px; font-size: 1.05rem; line-height: 1.6;">{k_dosha['description_hi']}</p>
+                <div style="font-size: 1.2rem; font-weight: bold; color: var(--accent-emerald);">निर्णय: {k_dosha['status_hi']}</div>
+                <p style="margin-top: 8px; font-size: 1.05rem; line-height: 1.6; color: var(--text-main);">{k_dosha['description_hi']}</p>
             </div>
             """, unsafe_allow_html=True)
-
-        if _lz_p_tab[6]:
-            st.markdown(f'<div class="section-title">{"लाल किताब भाव फलकथन एवं अचूक उपाय" if is_hi else "Lal Kitab Predictions & Remedies"}</div>', unsafe_allow_html=True)
-            lk_items = forensic_predictor.compute_lal_kitab_predictions_and_upay(chart)
-            for item in lk_items:
-                with st.expander(f"📕 {item['planet_hi']} (भाव {item['house']} - {item['sign_hi']} राशि)"):
-                    st.markdown(f"<p style='font-size: 1.05rem; line-height: 1.6;'>{item['phal_hi']}</p>", unsafe_allow_html=True)
-                    st.markdown("<b>लाल किताब अचूक उपाय:</b>", unsafe_allow_html=True)
-                    for u in item["upay_hi"]:
-                        st.markdown(f"✓ {u}")
 
         if _lz_p_tab[7]:
-            total_kb_all = len(vyas_knowledge_engine.load_knowledge_bank())
-            st.markdown(f'<div class="section-title">{"🔮 " + f"{total_kb_all:,}+ AI ज्योतिष ज्ञानकोष एवं शास्त्रीय सूत्र महा-डेटाबैंक" if is_hi else f"{total_kb_all:,}+ Classical Vedic & Nadi Sutras Knowledge Bank"}</div>', unsafe_allow_html=True)
-            
-            # Evaluate from knowledge bank
-            kb_eval = vyas_knowledge_engine.evaluate_chart_sutras(chart)
-            st.markdown(f"""
-            <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 10px; padding: 14px; margin-bottom: 20px;">
-                <div style="color: #facc15; font-size: 1.15rem; font-weight: bold;">
-                    ✨ AI ज्ञानकोष ({total_kb_all:,}+ शास्त्रीय सूत्रों के महा-संग्रह) से आपकी कुण्डली पर {len(kb_eval)} प्रामाणिक सूत्र सक्रिय पाए गए!
-                </div>
-                <div style="color: #cbd5e1; font-size: 0.95rem; margin-top: 4px;">
-                    यह प्रणाली भृगु सूत्रम् (432 भाव-फल), पाराशरी भावाधिपति (144 भाव सम्बंध), 210 शास्त्रीय राज/धन/रोग योग, जैमिनी उपदेश सूत्र, केपी नक्षत्र सिद्धांत, अष्टकवर्ग, लाल किताब एवं भृगु नंदी नाड़ी सूत्रों का स्वचालित गणितीय विश्लेषण करती है।
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Filter options for the knowledge bank
-            kb_categories = sorted(list(set(k.category for k in kb_eval)))
-            if kb_categories:
-                selected_cat = st.selectbox(
-                    "श्रेणी अनुसार सूत्र देखें (Filter by Category):" if is_hi else "Filter Sutras by Category:",
-                    ["समस्त श्रेणियाँ (All Categories)"] + kb_categories,
-                    index=0
-                )
-                filtered_kb = [k for k in kb_eval if selected_cat == "समस्त श्रेणियाँ (All Categories)" or k.category == selected_cat]
-            else:
-                filtered_kb = kb_eval
-
-            for k in filtered_kb:
-                domain_badge = f'<span style="background: #3b82f6; color: #fff; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-left: 8px;">{k.life_domain}</span>'
-                st.markdown(f"""
-                <div class="predict-card" style="margin-bottom: 14px; border-left: 4px solid #facc15;">
-                    <div class="predict-header" style="font-size: 1.05rem; color: #fde047;">
-                        📜 [{k.sutra_id}] {k.sub_category} {domain_badge}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 2px;">
-                        <b>स्रोत:</b> {k.source} &nbsp;|&nbsp; <b>वर्गीकरण:</b> {k.category}
-                    </div>
-                    <div style="color: #e2e8f0; font-size: 0.95rem; margin: 6px 0; background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 6px;">
-                        🔍 <b>सत्यापित खगोलीय स्थिति:</b> {k.matched_detail}
-                    </div>
-                    <div style="color: #4ade80; font-size: 1rem; line-height: 1.6;">
-                        <b>फलकथन (फलादेश):</b> {k.prediction_hi}
-                    </div>
-                    <div style="color: #94a3b8; font-size: 0.88rem; margin-top: 4px;">
-                        <i><b>English:</b> {k.prediction_en}</i>
-                    </div>
-                    {f'<div style="color: #cbd5e1; font-size: 0.82rem; margin-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 4px;">⚖️ <b>बल व संशोधन:</b> {k.strength_modifiers}</div>' if k.strength_modifiers else ''}
-                </div>
-                """, unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{"विशिष्ट शास्त्रीय योग एवं दुर्लभ फलित" if is_hi else "Classical Rare Yogas & Forensic Timing"}</div>', unsafe_allow_html=True)
+            yoga_scripts_data = vyas_knowledge_engine.synthesize_bhava_and_yogas_scripts(chart)
+            st.markdown(yoga_scripts_data["yogas_script"], unsafe_allow_html=True)
 
             st.markdown("---")
             st.markdown(f'<div class="section-title">{"पारंपरिक पाराशरी सूत्र बैंक (Deterministic Sutra Bank)" if is_hi else "Traditional Parashari Sutras"}</div>', unsafe_allow_html=True)
@@ -3853,15 +3903,15 @@ if st.session_state.get('data_generated'):
             for se in sutra_eval:
                 st.markdown(f"""
                 <div class="predict-card">
-                    <div class="predict-header">📜 {se.name} — <span style="font-size: 0.9rem; color: #a0aec0;">[{se.source}]</span></div>
-                    <div style="font-family: 'Tiro Devanagari Sanskrit', serif; color: #ffd97d; font-weight: bold; margin: 4px 0;">{se.shloka_sanskrit}</div>
-                    <div style="color: #cbd5e1; font-size: 0.95rem;"><b>सत्यापित स्थिति:</b> {se.condition_description}</div>
-                    <div style="color: #4ade80; font-size: 0.95rem; margin-top: 4px;"><b>फलकथन:</b> {se.deterministic_result}</div>
+                    <div class="predict-header">{se.name} — <span style="font-size: 0.9rem; color: var(--text-muted);">[{se.source}]</span></div>
+                    <div style="font-family: 'Tiro Devanagari Sanskrit', serif; color: var(--gold-primary); font-weight: bold; margin: 4px 0;">{se.shloka_sanskrit}</div>
+                    <div style="color: var(--text-main); font-size: 0.95rem;"><b>सत्यापित स्थिति:</b> {se.condition_description}</div>
+                    <div style="color: var(--accent-emerald); font-size: 0.95rem; margin-top: 4px;"><b>फलकथन:</b> {se.deterministic_result}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
     # =========================================================================
-    # SUITE 6: 📄 43+ PAGE PUBLICATION PDF (VYAS-Class Publication)
+    # SUITE 6: 📄 43+ PAGE PUBLICATION PDF   # SUITE 6: 📄 43+ PAGE PUBLICATION PDF (VYAS-Class Publication)
     # =========================================================================
     elif "PDF" in selected_suite or "शोध प्रबंध" in selected_suite:
         st.markdown(f'<div class="section-title">{"📄 56-पेज सम्पूर्ण वैदिक कुण्डली महा-शोध प्रबंध (VYAS Gold Standard PDF)" if is_hi else "📄 56-Page Executive Vedic Kundli Dossier (VYAS Gold Standard PDF)"}</div>', unsafe_allow_html=True)
@@ -4135,7 +4185,7 @@ if st.session_state.get('data_generated'):
             )
 
         # Quick chips inside popup
-        st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>✨ त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)
         
         chip_col1, chip_col2 = st.columns(2)
         chosen_chip = None
