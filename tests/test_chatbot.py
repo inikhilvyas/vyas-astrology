@@ -66,3 +66,30 @@ def test_aspect_query_zero_hallucination(sample_chart_and_dasha):
     assert "शनि 7वें या 12वें भाव के स्वामी नहीं हैं" in reply or "10H" in reply or "कर्मेश" in reply
     assert "गुरु" in reply and "अमृत दृष्टि" in reply
     assert "उपाय" in reply
+
+
+def test_rahu_ketu_transit_motion_laws(sample_chart_and_dasha):
+    chart, cur_dasha, birth_info = sample_chart_and_dasha
+    reply = vyas_chatbot.consult("राहु और केतु का गोचर और चाल कैसी है?", chart, cur_dasha, birth_info, force_classical=True)
+    # 1. Rahu and Ketu are always retrograde
+    assert "सदा वक्री" in reply or "उल्टी चाल" in reply
+    assert "मकर" in reply  # Rahu moves backwards towards Capricorn
+    assert "कर्क" in reply  # Ketu moves backwards towards Cancer
+    # 2. Sun and Moon are always direct
+    assert "सदा मार्गी" in reply
+    # 3. Tara grahas can be direct or retrograde
+    assert "वक्री" in reply and "मार्गी" in reply
+    # 4. Classical authority & Remedies
+    assert "फलदीपिका" in reply or "बृहत्पाराशर" in reply
+    assert "उपाय" in reply
+
+def test_transit_followup_memory(sample_chart_and_dasha):
+    chart, cur_dasha, birth_info = sample_chart_and_dasha
+    history = [
+        {"role": "user", "content": "राहु-केतु का गोचर कैसा चल रहा है?"},
+        {"role": "assistant", "content": "राहु वर्तमान में कुंभ राशि में सदा वक्री हैं..."}
+    ]
+    reply = vyas_chatbot.consult("aage kya", chart, cur_dasha, birth_info, chat_history=history, force_classical=True)
+    assert "गोचर" in reply or "राशि परिवर्तन" in reply
+    assert "मकर" in reply
+    assert "कर्क" in reply
