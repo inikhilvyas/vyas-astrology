@@ -256,11 +256,11 @@ def _end_user_session() -> None:
 
 
 def render_kundli(svg_str: str):
-    """Render astrological SVG cleanly via base64 data URI to prevent DOMPurify stripping."""
+    """Render astrological SVG cleanly via base64 data URI with crisp high-DPI scaling."""
     clean = re.sub(r'<!--.*?-->', '', svg_str, flags=re.DOTALL)
     clean = re.sub(r'\s+', ' ', clean).strip()
     b64 = base64.b64encode(clean.encode('utf-8')).decode('utf-8')
-    st.html(f'<div class="kundli-container"><img src="data:image/svg+xml;base64,{b64}" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" /></div>')
+    st.markdown(f'<div class="kundli-container" style="text-align: center; margin: 8px auto;"><img src="data:image/svg+xml;base64,{b64}" style="width: 100%; max-width: 540px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.65)); border-radius: 12px;" /></div>', unsafe_allow_html=True)
 
 
 def lazy_sections(labels, key: str):
@@ -298,7 +298,7 @@ def lazy_sections(labels, key: str):
 _VYAS_LOGO_ICON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo_icon.png")
 st.set_page_config(
     page_title="VYAS • Vedic Yield Astrology Systems",
-    page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "☸️",
+    page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "",
     layout="wide",
     initial_sidebar_state="auto",
 )
@@ -407,7 +407,7 @@ elif _oauth_code and not st.session_state.get("user_google_processed"):
                 google_drive_sync.record_oauth_error(_login_err)
                 st.error(f"Google लॉगिन विफल — {_login_err}")
             else:
-                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}! Google Drive कनेक्ट हो गया।", icon="☁️")
+                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}! Google Drive कनेक्ट हो गया।", icon="")
             st.query_params.clear()
             st.session_state.pop("oauth_state", None)
             st.rerun()
@@ -1082,7 +1082,7 @@ st.html("""
     <div class="vyas-hero-title">VYAS ASTRA</div>
     <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
     <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: rgba(238, 220, 154, 0.9); margin-top: 8px;">
-        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color:#f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color:#93c5fd; text-decoration:none;">inikhilvyas@gmail.com</a> &bull; 📞 <a href="tel:+919414121172" style="color:#93c5fd; text-decoration:none;">+91 94141 21172</a>
+        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color:#f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull;  <a href="mailto:inikhilvyas@gmail.com" style="color:#93c5fd; text-decoration:none;">inikhilvyas@gmail.com</a> &bull;  <a href="tel:+919414121172" style="color:#93c5fd; text-decoration:none;">+91 94141 21172</a>
     </div>
 </div>
 """)
@@ -1185,7 +1185,7 @@ if not is_logged_in_now:
         st.markdown("""
         <div style="margin-top: 16px; display: grid; gap: 10px;">
             <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
-                🪔 <b style="color:#f7d584;">पूर्ण कुण्डली</b> — लग्न, नवांश, ग्रह-दशा, योग एवं भाव विश्लेषण
+                 <b style="color:#f7d584;">पूर्ण कुण्डली</b> — लग्न, नवांश, ग्रह-दशा, योग एवं भाव विश्लेषण
             </div>
             <div style="background: rgba(19,27,54,0.72); border: 1px solid rgba(245,209,110,0.18); border-radius: 12px; padding: 12px 14px; color: #e2e8f0; font-size: 0.9rem;">
                 <b style="color:#f7d584;">के.पी. सूट</b> — सब-लॉर्ड, रूलिंग प्लैनेट्स एवं 4-फोल्ड सिग्निफिकेटर
@@ -1358,7 +1358,7 @@ with st.sidebar:
         st.markdown("<style>:root { --app-font-size: 19.5px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 19.5px !important; }</style>", unsafe_allow_html=True)
 
     # ---------------- 7:00 AM DAILY HOROSCOPE NOTIFICATION WIDGET ----------------
-    with st.expander("🔔 7:00 AM दैनिक राशिफल अलर्ट", expanded=False):
+    with st.expander(" 7:00 AM दैनिक राशिफल अलर्ट", expanded=False):
         st.markdown("""
         <div style="font-size: 0.8rem; color: #eedc9a; line-height: 1.5; margin-bottom: 8px;">
             <b>प्रातःकालीन व्यक्तिगत राशिफल:</b><br/>
@@ -1368,7 +1368,7 @@ with st.sidebar:
         st.components.v1.html("""
         <div style="text-align: center; font-family: sans-serif;">
             <button id="notif-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
-                🔔 7:00 AM अलर्ट चालू करें
+                 7:00 AM अलर्ट चालू करें
             </button>
             <div id="notif-status" style="font-size: 0.74rem; color: #94a3b8; margin-top: 6px;"></div>
         </div>
@@ -1378,17 +1378,17 @@ with st.sidebar:
 
             function updateStatus() {
                 if (!("Notification" in window)) {
-                    status.innerHTML = "⚠️ ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
+                    status.innerHTML = "️ ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
                     btn.disabled = true;
                     return;
                 }
                 if (Notification.permission === "granted") {
-                    status.innerHTML = "✅ 7:00 AM दैनिक राशिफल अलर्ट सक्रिय है!";
+                    status.innerHTML = " 7:00 AM दैनिक राशिफल अलर्ट सक्रिय है!";
                     status.style.color = "#34d399";
-                    btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily)";
+                    btn.innerText = " अलर्ट सक्रिय है (7:00 AM Daily)";
                     checkMorningAlert();
                 } else if (Notification.permission === "denied") {
-                    status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र सेटिंग्स में अनुमति दें।";
+                    status.innerHTML = " नोटिफिकेशन ब्लॉक है। ब्राउज़र सेटिंग्स में अनुमति दें।";
                     status.style.color = "#f87171";
                 } else {
                     status.innerHTML = "ℹ️ सुबह 7 बजे दैनिक फलादेश पाने हेतु बटन दबाएं।";
@@ -1400,7 +1400,7 @@ with st.sidebar:
                 const lastNotif = localStorage.getItem('vyas_last_7am_notif');
                 const now = new Date();
                 if (now.getHours() >= 7 && lastNotif !== today) {
-                    new Notification("🌅 VYAS • आज का व्यक्तिगत दैनिक राशिफल", {
+                    new Notification(" VYAS • आज का व्यक्तिगत दैनिक राशिफल", {
                         body: "नमस्ते! आपके जन्मनक्षत्र (नवतारा चक्र), गोचर व चालू दशा के अनुसार आज का दिन फल तैयार है।",
                         icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
                     });
@@ -1413,7 +1413,7 @@ with st.sidebar:
                     const perm = await Notification.requestPermission();
                     if (perm === "granted") {
                         localStorage.setItem('vyas_daily_notif_enabled', 'true');
-                        new Notification("🌅 VYAS ASTRA • 7:00 AM अलर्ट चालू", {
+                        new Notification(" VYAS ASTRA • 7:00 AM अलर्ट चालू", {
                             body: "दैनिक राशिफल अलर्ट सक्रिय हो गया है। हर सुबह 7:00 बजे आपको दिन फल प्राप्त होगा।",
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
                         });
@@ -1433,10 +1433,10 @@ with st.sidebar:
         st.components.v1.html("""
         <div id="pwa-install-container" style="display: none; background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(14, 23, 47, 0.95) 100%);
                     border: 1px solid rgba(96, 165, 250, 0.5); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center;">
-            <div style="font-size: 0.9rem; font-weight: 800; color: #93c5fd; font-family: sans-serif;">📲 VYAS ASTRA ऐप इंस्टॉल करें</div>
+            <div style="font-size: 0.9rem; font-weight: 800; color: #93c5fd; font-family: sans-serif;"> VYAS ASTRA ऐप इंस्टॉल करें</div>
             <div style="font-size: 0.76rem; color: #cbd5e1; margin: 4px 0 10px 0; font-family: sans-serif;">अपने फोन की होम स्क्रीन पर सीधे 1-क्लिक में ऐप जोड़ें।</div>
             <button id="pwa-install-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: 1px solid #60a5fa; border-radius: 8px; padding: 8px 18px; font-weight: 700; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
-                ⚡ अभी इंस्टॉल करें (Install Now)
+                 अभी इंस्टॉल करें (Install Now)
             </button>
         </div>
 
@@ -1481,16 +1481,16 @@ with st.sidebar:
 
     # Hybrid Payment & Upgrade VIP Modal
     if is_logged_in_now:
-        with st.expander("💳 Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
+        with st.expander(" Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
             st.markdown("""
             <div style="font-size: 0.82rem; color: #eedc9a; margin-bottom: 8px;">
                 <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, विस्तृत रिपोर्ट्स, लाल किताब व BTR का पूर्ण एक्सेस।
             </div>
             """, unsafe_allow_html=True)
             plan_sel = st.selectbox("चुनें प्लान (Select Plan)", [
-                "🥈 वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
-                "🥉 मासिक (Monthly Starter) - ₹199 / माह",
-                "🥇 लाइफटाइम एलीट (Lifetime Elite) - ₹2,499"
+                " वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
+                " मासिक (Monthly Starter) - ₹199 / माह",
+                " लाइफटाइम एलीट (Lifetime Elite) - ₹2,499"
             ])
             
             plan_key = "annual"
@@ -1511,7 +1511,7 @@ with st.sidebar:
 
             st.markdown(f"""
             <div style="text-align: center; background: rgba(10, 16, 32, 0.9); border: 1px solid #f0c05a; border-radius: 12px; padding: 12px; margin-top: 8px;">
-                <div style="color: #f0c05a; font-weight: 800; font-size: 0.9rem;">📲 Scan & Pay ₹{amount}</div>
+                <div style="color: #f0c05a; font-weight: 800; font-size: 0.9rem;"> Scan & Pay ₹{amount}</div>
                 <div style="color: #eedc9a; font-size: 0.76rem;">(PhonePe, GPay, Paytm, BHIM)</div>
                 <div style="margin: 10px 0;">
                     <img src="{qr_url}" width="160" height="160" style="border-radius: 10px; border: 2px solid #eedc9a; background: white; padding: 6px;"/>
@@ -1526,7 +1526,7 @@ with st.sidebar:
             
             col_pay1, col_pay2 = st.columns(2)
             with col_pay1:
-                if st.button("✅ Confirm Payment", use_container_width=True):
+                if st.button(" Confirm Payment", use_container_width=True):
                     if txn_input and len(txn_input) >= 6:
                         ok, up_msg = auth_vault.upgrade_vip(u["id"], plan_key, txn_input)
                         if ok:
@@ -1544,7 +1544,7 @@ with st.sidebar:
                 st.markdown(f"""
                 <a href="{wa_url}" target="_blank" style="text-decoration: none;">
                     <button style="width: 100%; background: #25D366; color: white; border: none; border-radius: 6px; padding: 7px; font-weight: 700; font-size: 0.82rem; cursor: pointer;">
-                        💬 WhatsApp Help
+                         WhatsApp Help
                     </button>
                 </a>
                 """, unsafe_allow_html=True)
@@ -1563,7 +1563,7 @@ with st.sidebar:
             </div>
             """ if has_gdrive else """
             <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
-                ⚠️ Google Drive कनेक्ट नहीं है (नीचे से कनेक्ट करें)
+                ️ Google Drive कनेक्ट नहीं है (नीचे से कनेक्ट करें)
             </div>
             """
 
@@ -1579,13 +1579,13 @@ with st.sidebar:
                 auth_url = google_drive_sync.get_google_auth_url(include_drive=True)
                 if auth_url:
                     st.link_button(
-                        "☁️ Google Drive से कनेक्ट करें",
+                        " Google Drive से कनेक्ट करें",
                         auth_url,
                         use_container_width=True,
                         help="Drive में PDF सुरक्षित करने के लिए अनुमति दें।",
                     )
 
-            if st.button("🚪 Logout (लॉगआउट)", key="sidebar_logout_btn", use_container_width=True):
+            if st.button(" Logout (लॉगआउट)", key="sidebar_logout_btn", use_container_width=True):
                 _end_user_session()
                 st.query_params.clear()
                 # Drop the durable OAuth copies too, otherwise a stale nonce or
@@ -1612,12 +1612,12 @@ with st.sidebar:
                     type="primary",
                     help="सुरक्षित OAuth 2.0 — Google लॉगिन नई विंडो में खुलेगा।",
                 )
-                st.caption("🔒 साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
+                st.caption(" साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
             else:
                 st.markdown(
                     '<div style="background: rgba(250,204,21,0.10); border:1px solid #facc15; '
                     'border-radius:8px; padding:10px 12px; font-size:0.78rem; line-height:1.5;">'
-                    '<b>🔑 Google Login सेटअप आवश्यक</b><br/>'
+                    '<b> Google Login सेटअप आवश्यक</b><br/>'
                     'Google लॉगिन के लिए Admin ने क्रेडेंशियल्स कॉन्फ़िगर करने होंगे।'
                     '</div>',
                     unsafe_allow_html=True
@@ -1625,14 +1625,14 @@ with st.sidebar:
 
     # Hide admin/debug panels from non-logged-in users for cleaner landing page
     if is_logged_in:
-        with st.expander("⚙️ Google Cloud API Credentials (Admin Only)", expanded=False):
+        with st.expander(" Google Cloud API Credentials (Admin Only)", expanded=False):
             g_cfg = google_drive_sync.load_google_config()
             # Never render stored OAuth secrets in the browser.
             cfg_cid = st.text_input("Google Client ID", value="", key="cfg_cid_in", placeholder="Leave blank to keep current Client ID")
             cfg_csec = st.text_input("Google Client Secret", value="", type="password", key="cfg_csec_in", placeholder="Leave blank to keep current secret")
             st.caption("Stored credentials remain server-side. Enter new values only when rotating them.")
             cfg_ruri = st.text_input("Redirect URI", value=g_cfg.get("redirect_uri", "http://localhost:8501"), key="cfg_ruri_in")
-            if st.button("💾 Save Credentials", key="save_g_cfg_btn", use_container_width=True):
+            if st.button(" Save Credentials", key="save_g_cfg_btn", use_container_width=True):
                 if google_drive_sync.save_google_config(cfg_cid, cfg_csec, cfg_ruri):
                     st.success("Google OAuth सेटिंग्स सुरक्षित हुईं!")
                     st.rerun()
@@ -1665,7 +1665,7 @@ with st.sidebar:
 
             # ---- OAuth diagnostics ----
             st.markdown("---")
-            st.markdown("**🔍 OAuth Debug (redirect URI जाँचें)**")
+            st.markdown("** OAuth Debug (redirect URI जाँचें)**")
             with st.container():
                 _eff_redirect = google_drive_sync.resolve_redirect_uri(
                     google_drive_sync.load_google_config().get("redirect_uri", "")
@@ -1699,7 +1699,7 @@ with st.sidebar:
                     "(trailing slash, http vs https, www — कुछ भी अलग नहीं)।"
                 )
 
-                if st.button("🔬 Google क्रेडेंशियल्स जाँचें", key="test_g_creds_btn", use_container_width=True):
+                if st.button(" Google क्रेडेंशियल्स जाँचें", key="test_g_creds_btn", use_container_width=True):
                     _ok_gc, _msg_gc = google_drive_sync.test_google_credentials()
                     if _ok_gc:
                         st.success(_msg_gc)
@@ -1712,11 +1712,11 @@ active_lp = st.session_state.get('loaded_profile')
 
 col_top_lang, col_top_font = st.columns([1.1, 1.4])
 with col_top_lang:
-    ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
+    ui_lang = st.radio(" भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
     is_hi = "हिन्दी" in ui_lang
 with col_top_font:
     _font_scale_choice = st.radio(
-        "🔤 फ़ॉन्ट आकार (Text Size):",
+        " फ़ॉन्ट आकार (Text Size):",
         ["मध्यम (18.5px)", "बड़ा (20.5px)", "अति विशाल (24px)"],
         index=1,
         horizontal=True,
@@ -1770,28 +1770,28 @@ if is_logged_in_now and active_lp:
                 {active_lp.get('name', 'जातक')}
             </div>
             <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 3px;">
-                🗓️ <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
+                 <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
                 <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
-                📐 <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
+                 <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
             </div>
         </div>
         """, unsafe_allow_html=True)
     with col_act2:
         c_btn_a, c_btn_b = st.columns(2)
         with c_btn_a:
-            if st.button("➕ नई कुण्डली", key="new_k_top_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
+            if st.button(" नई कुण्डली", key="new_k_top_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
                 st.session_state['show_birth_form'] = True
                 st.session_state.pop('loaded_profile', None)
                 st.rerun()
         with c_btn_b:
-            toggle_btn_txt = "❌ फॉर्म बंद करें" if st.session_state.get('show_birth_form') else "✏️ विवरण बदलें"
+            toggle_btn_txt = " फॉर्म बंद करें" if st.session_state.get('show_birth_form') else " विवरण बदलें"
             if st.button(toggle_btn_txt, key="toggle_edit_k_btn", use_container_width=True, help="समय/स्थान संशोधित करें"):
                 st.session_state['show_birth_form'] = not st.session_state.get('show_birth_form', False)
                 st.rerun()
 
     # If user has multiple saved kundlis, show a quick switch drawer
     if len(saved_list) > 1:
-        with st.expander(f"📂 कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
+        with st.expander(f" कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
             k_disp_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')})": k for k in saved_list}
             cur_id = active_lp.get('id')
             def_idx = 0
@@ -1805,13 +1805,13 @@ if is_logged_in_now and active_lp:
             col_k1, col_k2, col_k3 = st.columns([1.2, 1, 1.2])
             with col_k1:
                 if chosen_k.get('id') != active_lp.get('id'):
-                    if st.button("📂 यह कुण्डली खोलें", key="switch_k_btn", use_container_width=True):
+                    if st.button(" यह कुण्डली खोलें", key="switch_k_btn", use_container_width=True):
                         _load_kundli_into_session(chosen_k, user_id=u["id"])
                         st.rerun()
                 else:
-                    st.caption("✅ यह कुण्डली अभी सक्रिय है")
+                    st.caption(" यह कुण्डली अभी सक्रिय है")
             with col_k2:
-                if st.button("🗑️ हटाएं", key="del_k_btn", use_container_width=True):
+                if st.button(" हटाएं", key="del_k_btn", use_container_width=True):
                     ok_del, del_msg = auth_vault.delete_kundli(u["id"], chosen_k["id"])
                     if ok_del:
                         st.success(del_msg)
@@ -1828,7 +1828,7 @@ if is_logged_in_now and active_lp:
                     st.rerun()
 
 # Determine whether to show birth input form:
-# Only show if user has no loaded profile OR clicked '➕ नई कुण्डली' / '✏️ विवरण बदलें'
+# Only show if user has no loaded profile OR clicked ' नई कुण्डली' / ' विवरण बदलें'
 show_form = st.session_state.get('show_birth_form', False) or (active_lp is None)
 
 lp = st.session_state.get('loaded_profile', {})
@@ -1864,7 +1864,7 @@ if show_form:
                             linear-gradient(135deg, rgba(19,27,54,0.96) 0%, rgba(8,12,26,0.96) 100%);
                 border: 1px solid rgba(229,169,60,0.38); box-shadow: 0 18px 40px -24px #000;">
         <div style="font-family: 'Cinzel', serif; font-size: 1.45rem; font-weight: 800; color: #fef3c7; letter-spacing: 0.5px;">
-            🪔 अपनी कुण्डली बनाएं / विवरण भरें
+             अपनी कुण्डली बनाएं / विवरण भरें
         </div>
         <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 5px;">
             जन्म विवरण भरें, फिर नीचे <b style="color:#f7d584;">“कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं”</b> दबाएं।
@@ -1891,13 +1891,13 @@ if show_form:
         prashna_category = st.selectbox(
             "प्रश्न विषय (Prashna Subject / Category)",
             [
-                "💼 नौकरी / कार्य सफलता (Career & Job)",
+                " नौकरी / कार्य सफलता (Career & Job)",
                 "विवाह एवं प्रेम संबंध (Marriage & Romance)",
-                "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
+                " रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
                 "कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
-                "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
-                "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
-                "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
+                " धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
+                "️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
+                " खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
             ]
         )
         prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
@@ -1959,7 +1959,7 @@ if show_form:
     # Save to vault and Generate buttons
     col_sv1, col_sv2 = st.columns([1, 1.2])
     with col_sv1:
-        if st.button("💾 कुण्डली सुरक्षित करें", use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं"):
+        if st.button(" कुण्डली सुरक्षित करें", use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं"):
             k_payload = {
                 "name": name,
                 "dob": date_val.strftime("%Y-%m-%d"),
@@ -2167,8 +2167,8 @@ if st.session_state.get('data_generated'):
             <div style="font-size: 0.72rem; color: #eedc9a; letter-spacing: 0.8px; text-transform: uppercase; font-weight: 600;">शोध एवं निर्माण (Creator):</div>
             <div style="font-family: var(--font-yatra); font-size: 1.05rem; font-weight: 700; color: #f0c05a; margin-top: 2px;">निखिल व्यास (Nikhil Vyas)</div>
             <div style="font-size: 0.76rem; color: #cbd5e1; margin-top: 4px; line-height: 1.5;">
-                ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a><br/>
-                📞 <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+                 <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a><br/>
+                 <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2181,7 +2181,7 @@ if st.session_state.get('data_generated'):
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(14, 23, 42, 0.95) 100%);
                     border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px;">
-            <span style="font-size: 2rem;">🌅</span>
+            <span style="font-size: 2rem;"></span>
             <div>
                 <div style="font-family: var(--font-yatra); font-weight: 700; color: #fbbf24; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
                     प्रातः 7:00 AM दैनिक राशिफल अलर्ट • {birth.get('name', 'जातक')}
@@ -2196,7 +2196,7 @@ if st.session_state.get('data_generated'):
         def _jump_to_daily_suite_cb():
             st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
 
-        st.button("👉 आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
+        st.button(" आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
 
     # -------------------------------------------------------------------------
     # MAIN SCREEN DOMAIN SUITE SELECTOR (Native Mobile Nav & Desktop Quick Nav)
@@ -2210,11 +2210,11 @@ if st.session_state.get('data_generated'):
                 border: 1.5px solid rgba(240, 192, 90, 0.45); border-radius: 14px; padding: 12px 18px; margin: 12px 0 12px;
                 display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
         <div>
-            <div style="font-size: 0.82rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;">🧭 ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
+            <div style="font-size: 0.82rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;"> ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
             <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 800; color: #f0c05a; margin-top: 2px;">{selected_suite}</div>
         </div>
         <div style="font-size: 0.88rem; color: #cbd5e1; background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(240,192,90,0.25);">
-            👇 यहाँ से प्रभाग बदलें (Mobile Friendly)
+             यहाँ से प्रभाग बदलें (Mobile Friendly)
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -2236,7 +2236,7 @@ if st.session_state.get('data_generated'):
     # -------------------------------------------------------------------------
     if "Prashna" in mode:
         pm = st.session_state.get('prashna_meta', {})
-        cat = pm.get("category", "💼 नौकरी / कार्य सफलता")
+        cat = pm.get("category", " नौकरी / कार्य सफलता")
         q_text = pm.get("text", "क्या मेरा कार्य सिद्ध होगा?")
         
         # Horary analysis: Lagnesh, Karyesh and Moon relation
@@ -2297,10 +2297,10 @@ if st.session_state.get('data_generated'):
         """, unsafe_allow_html=True)
 
     # =========================================================================
-    # SUITE 0: 🌞 HYPER-PERSONALISED DAILY HOROSCOPE
+    # SUITE 0:  HYPER-PERSONALISED DAILY HOROSCOPE
     # =========================================================================
     if "दैनिक" in selected_suite or "Daily" in selected_suite:
-        st.markdown(f'<div class="section-title">{"🌞 जातक का व्यक्तिगत दैनिक राशिफल (नवतारा चक्र + गोचर + चालू दशा)" if is_hi else "🌞 Personalised Daily Horoscope (Navatara + Transit + Active Dasha)"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{" जातक का व्यक्तिगत दैनिक राशिफल (नवतारा चक्र + गोचर + चालू दशा)" if is_hi else " Personalised Daily Horoscope (Navatara + Transit + Active Dasha)"}</div>', unsafe_allow_html=True)
         
         # Calculate daily horoscope using native location timezone
         target_tz = timezone(timedelta(hours=birth.get('tz', 5.5)))
@@ -2379,9 +2379,9 @@ if st.session_state.get('data_generated'):
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
                 <div style="font-size: 0.95rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 7px;">
-                    <div style="display: flex; justify-content: space-between;"><span>☀️ सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span>🌙 चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span>🪐 गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span> सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span> चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span> गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
                 </div>
                 <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: #f0c05a; font-weight: 600;">
@@ -2393,7 +2393,7 @@ if st.session_state.get('data_generated'):
         with col_d4:
             amrit_v = daily_res.get('amrit_vela', '-')
             if "कोई नहीं" in amrit_v or "वर्जित" in amrit_v or "Prohibited" in amrit_v or "बुधवार" in amrit_v:
-                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;">🚫 कोई नहीं (बुधवार को नहीं होता)</span>'
+                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;"> कोई नहीं (बुधवार को नहीं होता)</span>'
             else:
                 abhijit_ui = f'<span style="color: #38bdf8; font-weight: 600;">{amrit_v}</span>'
 
@@ -2416,7 +2416,7 @@ if st.session_state.get('data_generated'):
             with col_m1:
                 amrit_v_exp = daily_res.get('amrit_vela', '-')
                 if "कोई नहीं" in amrit_v_exp or "वर्जित" in amrit_v_exp or "Prohibited" in amrit_v_exp or "बुधवार" in amrit_v_exp:
-                    abhijit_exp_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>'
+                    abhijit_exp_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;"> कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>'
                 else:
                     abhijit_exp_ui = f"<span style='color: #38bdf8; font-weight: 700;'>{amrit_v_exp}</span>"
 
@@ -2428,7 +2428,7 @@ if st.session_state.get('data_generated'):
             with col_m2:
                 st.markdown("""
                 <div style="font-size: 0.82rem; color: #cbd5e1; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229, 169, 60, 0.2); border-radius: 8px; padding: 10px;">
-                    <b>💡 चौघड़िया नियम:</b> 
+                    <b> चौघड़िया नियम:</b> 
                     <span style="color: #10b981; font-weight: 700;">शुभ, लाभ, अमृत, चर = हरा (शुभ/कार्य सिद्धि)</span> | 
                     <span style="color: #ef4444; font-weight: 700;">उद्वेग, काल, रोग = लाल (वर्जित/सावधानी)</span>
                 </div>
@@ -2494,7 +2494,7 @@ if st.session_state.get('data_generated'):
             if _lz_tab_ch[3]:
                 col_m_shubh, col_m_ashubh = st.columns(2)
                 with col_m_shubh:
-                    st.markdown("##### 🟢 शास्त्रोक्त शुभ मुहूर्त (Auspicious Timings)")
+                    st.markdown("#####  शास्त्रोक्त शुभ मुहूर्त (Auspicious Timings)")
                     m_shubh_data = [
                         {"मुहूर्त नाम": "ब्रह्म मुहूर्त (Brahma Muhurta)", "समय सीमा": daily_res.get("brahma_muhurta", "-"), "महत्व": "ध्यान, योग, अध्ययन एवं ईश-स्मरण हेतु सर्वश्रेष्ठ"},
                         {"मुहूर्त नाम": "प्रातः संध्या (Pratah Sandhya)", "समय सीमा": daily_res.get("pratah_sandhya", "-"), "महत्व": "गायत्री जप एवं सूर्योपासना का मुख्य काल"},
@@ -2506,7 +2506,7 @@ if st.session_state.get('data_generated'):
                     ]
                     st.dataframe(pd.DataFrame(m_shubh_data), use_container_width=True, hide_index=True)
                 with col_m_ashubh:
-                    st.markdown("##### 🔴 शास्त्रोक्त अशुभ/वर्जित काल (Inauspicious Windows)")
+                    st.markdown("#####  शास्त्रोक्त अशुभ/वर्जित काल (Inauspicious Windows)")
                     m_ashubh_data = [
                         {"वर्जित काल": "राहु काल (Rahu Kaal)", "समय सीमा": daily_res.get("rahu_kalam", "-"), "नियम": "नया व्यापार, क्रय एवं यात्रा सर्वथा वर्जित"},
                         {"वर्जित काल": "यमगण्ड (Yamaganda)", "समय सीमा": daily_res.get("yamaganda", "-"), "नियम": "अप्रिय परिणाम सूचक, महत्वपूर्ण निर्णय टालें"},
@@ -2534,11 +2534,11 @@ if st.session_state.get('data_generated'):
             with col_narr1:
                 st.markdown(f"""
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #3b82f6;">
-                    <div style="font-weight: 700; color: #60a5fa; font-size: 1rem; margin-bottom: 4px;">💼 आजीविका एवं कार्यक्षेत्र (Career & Profession) • {daily_res['scores']['career']}%</div>
+                    <div style="font-weight: 700; color: #60a5fa; font-size: 1rem; margin-bottom: 4px;"> आजीविका एवं कार्यक्षेत्र (Career & Profession) • {daily_res['scores']['career']}%</div>
                     <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('career', '')}</div>
                 </div>
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #10b981;">
-                    <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 4px;">💰 धन, व्यापार एवं निवेश (Wealth & Finance) • {daily_res['scores']['wealth']}%</div>
+                    <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 4px;"> धन, व्यापार एवं निवेश (Wealth & Finance) • {daily_res['scores']['wealth']}%</div>
                     <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('wealth', '')}</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -2546,11 +2546,11 @@ if st.session_state.get('data_generated'):
             with col_narr2:
                 st.markdown(f"""
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #ec4899;">
-                    <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">❤️ संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
+                    <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">️ संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
                     <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('love', '')}</div>
                 </div>
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #f59e0b;">
-                    <div style="font-weight: 700; color: #fbbf24; font-size: 1rem; margin-bottom: 4px;">🌿 स्वास्थ्य, ऊर्जा व मनोबल (Health & Vitality) • {daily_res['scores']['health']}%</div>
+                    <div style="font-weight: 700; color: #fbbf24; font-size: 1rem; margin-bottom: 4px;"> स्वास्थ्य, ऊर्जा व मनोबल (Health & Vitality) • {daily_res['scores']['health']}%</div>
                     <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('health', '')}</div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -2591,9 +2591,9 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
         if lk_res['sleeping_houses']:
-            st.info(f"😴 **सोए हुए घर (Sleeping Houses):** भाव {', '.join(str(h) for h in lk_res['sleeping_houses'])} — इन भावों के फलों को जाग्रत करने हेतु संबंधित उपायों की आवश्यकता है।")
+            st.info(f" **सोए हुए घर (Sleeping Houses):** भाव {', '.join(str(h) for h in lk_res['sleeping_houses'])} — इन भावों के फलों को जाग्रत करने हेतु संबंधित उपायों की आवश्यकता है।")
         if lk_res['sleeping_planets']:
-            st.warning(f"🌙 **सोए हुए ग्रह (Sleeping Planets):** {', '.join(lk_res['sleeping_planets'])} — यह ग्रह अपनी पूर्ण क्षमता से फल देने में असमर्थ हैं।")
+            st.warning(f" **सोए हुए ग्रह (Sleeping Planets):** {', '.join(lk_res['sleeping_planets'])} — यह ग्रह अपनी पूर्ण क्षमता से फल देने में असमर्थ हैं।")
 
         st.markdown("#### 9 ग्रहों की भाव स्थिति एवं अचूक लाल किताब उपाय")
         st.dataframe(pd.DataFrame(lk_res["planet_details"]), use_container_width=True, hide_index=True)
@@ -2631,8 +2631,8 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("#### 🔍 ±10 मिनट विंडो ऑटोमैटिक सेकंड्स स्कैनर (Automated Time Rectifier)")
-        if st.button("🚀 Run Multi-Factor BTR Scanner (सटीक समय की खोज करें)", use_container_width=True):
+        st.markdown("####  ±10 मिनट विंडो ऑटोमैटिक सेकंड्स स्कैनर (Automated Time Rectifier)")
+        if st.button(" Run Multi-Factor BTR Scanner (सटीक समय की खोज करें)", use_container_width=True):
             with st.spinner("Scanning micro-time variations across Kunda & Tattva matrices..."):
                 candidates = vyas_btr.scan_rectification_window(
                     birth['local'], birth['lat'], birth['lon'], birth['tz'],
@@ -2677,7 +2677,7 @@ if st.session_state.get('data_generated'):
                 birth['local'], chart.planets['Moon'].longitude, chart.ascendant_longitude, test_events
             )
             if ev_res:
-                st.markdown("##### 📊 घटना एवं दशा समन्वय परिणाम (Event Alignment Report)")
+                st.markdown("#####  घटना एवं दशा समन्वय परिणाम (Event Alignment Report)")
                 for r in ev_res:
                     st.markdown(f"""
                     <div class="glass-card" style="border-left: 4px solid #2a9d8f; padding: 14px 18px; margin-bottom: 10px;">
@@ -2740,13 +2740,20 @@ if st.session_state.get('data_generated'):
                         if p.is_retrograde:
                             abbr += " (व)" if is_hi else " (R)"
                         si_data[p.sign_index].append(abbr)
-                    svg_d1 = get_south_indian_chart_svg(si_data, asc_sign_idx, size=430, chart_title=title_txt)
+                    svg_d1 = get_south_indian_chart_svg(si_data, asc_sign_idx, size=520, chart_title=title_txt)
                 else:
-                    svg_d1 = get_north_indian_chart_svg(d1_houses, size=430, chart_title=title_txt)
+                    svg_d1 = get_north_indian_chart_svg(d1_houses, size=520, chart_title=title_txt)
                 render_kundli(svg_d1)
                 
+                with st.expander("विशाल कुण्डली चार्ट (Zoom In / 650px Ultra HD View)", expanded=False):
+                    if "South" in chart_style:
+                        svg_d1_large = get_south_indian_chart_svg(si_data, asc_sign_idx, size=650, chart_title=title_txt)
+                    else:
+                        svg_d1_large = get_north_indian_chart_svg(d1_houses, size=650, chart_title=title_txt)
+                    render_kundli(svg_d1_large)
+                
             with col2:
-                st.markdown(f"#### {'🪐 ग्रह स्पष्ट एवं अधिपति तालिका' if is_hi else '🪐 Planetary Degrees & Dispositor Matrix'}")
+                st.markdown(f"#### {' ग्रह स्पष्ट एवं अधिपति तालिका' if is_hi else ' Planetary Degrees & Dispositor Matrix'}")
                 p_data = []
                 asc_nak = int(chart.ascendant_longitude // constants.NAKSHATRA_SPAN) % 27
                 asc_pada = int((chart.ascendant_longitude % constants.NAKSHATRA_SPAN) // constants.PADA_SPAN) + 1
@@ -2802,7 +2809,7 @@ if st.session_state.get('data_generated'):
             vcol1, vcol2 = st.columns([1, 1.2])
             with vcol1:
                 st.markdown(f"<h4 style='text-align: center; color: #f0c05a;'>{varga_sel} {'कुण्डली' if is_hi else 'Kundli'}</h4>", unsafe_allow_html=True)
-                svg_v = get_north_indian_chart_svg(v_houses, size=400, chart_title=f"{varga_sel} Lagna: {asc_v_pos.sign_name} {asc_v_pos.dms_str}")
+                svg_v = get_north_indian_chart_svg(v_houses, size=500, chart_title=f"{varga_sel} Lagna: {asc_v_pos.sign_name} {asc_v_pos.dms_str}")
                 render_kundli(svg_v)
                 
             with vcol2:
@@ -2876,7 +2883,7 @@ if st.session_state.get('data_generated'):
             st.markdown(v_scripts["d60_script"], unsafe_allow_html=True)
 
             # Classical treatises direct search # Classical treatises direct search
-            with st.expander("📚 समस्त शास्त्रीय ग्रंथ एवं पुस्तकें प्रत्यक्ष खोज (Search Classical Astrological Library)", expanded=False):
+            with st.expander(" समस्त शास्त्रीय ग्रंथ एवं पुस्तकें प्रत्यक्ष खोज (Search Classical Astrological Library)", expanded=False):
                 try:
                     import vyas.book_reader as vyas_books
                     all_bks = vyas_books.list_available_books()
@@ -2896,7 +2903,7 @@ if st.session_state.get('data_generated'):
                             for sr in search_res:
                                 st.markdown(f"""
                                 <div style="background: rgba(15, 23, 42, 0.7); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;">
-                                    <div style="font-weight: 700; color: #38bdf8; font-size: 0.92rem;">📖 {sr['book']} &nbsp;<span style="color: #94a3b8; font-size: 0.82rem;">({sr['page']})</span></div>
+                                    <div style="font-weight: 700; color: #38bdf8; font-size: 0.92rem;"> {sr['book']} &nbsp;<span style="color: #94a3b8; font-size: 0.82rem;">({sr['page']})</span></div>
                                     <div style="color: #f1f5f9; font-size: 0.88rem; margin-top: 4px; font-family: monospace;">{sr['snippet']}</div>
                                 </div>
                                 """, unsafe_allow_html=True)
@@ -2915,14 +2922,14 @@ if st.session_state.get('data_generated'):
 
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.markdown("<h4 style='color: #48cae4;'>👦 वर विवरण (Boy Details)</h4>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color: #48cae4;'> वर विवरण (Boy Details)</h4>", unsafe_allow_html=True)
             boy_name = st.text_input("वर का नाम (Boy Name)", birth.get('name', 'वर (Groom)'), key="match_boy_name")
             boy_m_lon = chart.planets["Moon"].longitude
             boy_mars_h = (chart.planets["Mars"].sign_index - asc_sign_idx + 12) % 12 + 1
             st.markdown(f"<b>चन्द्र राशि:</b> {constants.SIGNS_HI[int(boy_m_lon // 30) % 12]} | <b>नक्षत्र:</b> {constants.NAKSHATRAS_HI[int(boy_m_lon // constants.NAKSHATRA_SPAN) % 27]} | <b>मंगल भाव:</b> भाव {boy_mars_h}", unsafe_allow_html=True)
 
         with col_m2:
-            st.markdown("<h4 style='color: #ff858d;'>👧 कन्या विवरण (Girl Details)</h4>", unsafe_allow_html=True)
+            st.markdown("<h4 style='color: #ff858d;'> कन्या विवरण (Girl Details)</h4>", unsafe_allow_html=True)
             girl_name = st.text_input("कन्या का नाम (Girl Name)", "कन्या (Bride)", key="match_girl_name")
             girl_sign_choice = st.selectbox("कन्या की चन्द्र राशि (Girl Moon Sign)", constants.SIGNS_HI, index=(int(boy_m_lon // 30) + 4) % 12, key="match_girl_sign")
             girl_sign_idx = constants.SIGNS_HI.index(girl_sign_choice)
@@ -3034,7 +3041,7 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="margin-top: 10px;">
                     <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem;">
-                        📅 वर्ष चक्र: {v_data.get('target_year', varsh_choice)}-{int(v_data.get('target_year', varsh_choice))+1} (आयु {v_data.get('age', 0)} वर्ष)
+                         वर्ष चक्र: {v_data.get('target_year', varsh_choice)}-{int(v_data.get('target_year', varsh_choice))+1} (आयु {v_data.get('age', 0)} वर्ष)
                     </div>
                     <div style="color: #cbd5e1; font-size: 0.92rem; margin-top: 4px;">
                         अवधि: {v_data.get('varsha_start', '')} से {v_data.get('varsha_end', '')} | वर्ष लग्न: <b>{v_data.get('varsha_lagna_hi', 'लग्न')}</b> | वर्षेश: <b>{v_data.get('varshesh_hi', 'वर्षेश')}</b>
@@ -3044,13 +3051,13 @@ if st.session_state.get('data_generated'):
 
             st.markdown(f"""
             <div class="predict-card">
-                <div class="predict-header">🎯 मुन्था स्थिति एवं वार्षिक महा-फलादेश:</div>
+                <div class="predict-header"> मुन्था स्थिति एवं वार्षिक महा-फलादेश:</div>
                 <div style="font-size: 1.15rem; font-weight: bold; color: #4ade80;">{v_data.get('annual_summary_hi', '')}</div>
                 <p style="margin-top: 8px; color: #e2e8f0; line-height: 1.6;">
                     मुन्था जन्म लग्न से <b>{v_data.get('muntha_house', 1)}वें भाव ({v_data.get('muntha_sign_hi', '')} राशि)</b> में संचरण कर रही है। {v_data.get('muntha_phal_hi', '')}
                 </p>
                 <div style="background: rgba(240, 192, 90, 0.1); border-left: 3px solid #f0c05a; padding: 8px 12px; border-radius: 4px; margin-top: 6px; color: #ffd97d; font-size: 0.9rem;">
-                    📖 <b>ताजिक नीलकण्ठी सूत्र:</b> यदि मुन्था 1, 2, 3, 5, 9, 10, 11 भावों में हो तो वर्ष अत्यंत शुभ, पदोन्नति, धन लाभ एवं यश प्रदायक होता है। त्रिक भावों (6, 8, 12) में स्वास्थ्य व विवादों से सतर्कता अपेक्षित है।
+                     <b>ताजिक नीलकण्ठी सूत्र:</b> यदि मुन्था 1, 2, 3, 5, 9, 10, 11 भावों में हो तो वर्ष अत्यंत शुभ, पदोन्नति, धन लाभ एवं यश प्रदायक होता है। त्रिक भावों (6, 8, 12) में स्वास्थ्य व विवादों से सतर्कता अपेक्षित है।
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -3194,10 +3201,10 @@ if st.session_state.get('data_generated'):
             ch_col1, ch_col2 = st.columns([1, 1.2])
             with ch_col1:
                 st.markdown(f"<h4 style='text-align: center; color: #f0c05a;'>{'श्रीपति भाव-चलित चक्र' if is_hi else 'Sripati Bhava Chalit Chart'}</h4>", unsafe_allow_html=True)
-                svg_chalit = get_north_indian_chart_svg(chalit_houses, size=410, chart_title="श्रीपति भाव चलित चक्र" if is_hi else "Sripati Bhava Chalit")
+                svg_chalit = get_north_indian_chart_svg(chalit_houses, size=500, chart_title="श्रीपति भाव चलित चक्र" if is_hi else "Sripati Bhava Chalit")
                 render_kundli(svg_chalit)
             with ch_col2:
-                st.markdown(f"#### {'📐 भाव आरम्भ, मध्य (संधि) एवं अन्त सारणी' if is_hi else 'Bhava Sandhi & Cuspal Table'}")
+                st.markdown(f"#### {' भाव आरम्भ, मध्य (संधि) एवं अन्त सारणी' if is_hi else 'Bhava Sandhi & Cuspal Table'}")
                 chalit_table = []
                 for cd in chalit_data:
                     chalit_table.append({
@@ -3210,7 +3217,7 @@ if st.session_state.get('data_generated'):
                 st.dataframe(pd.DataFrame(chalit_table), use_container_width=True, hide_index=True)
 
             # Panchadha Maitri Matrix
-            st.markdown(f"#### {'🤝 सप्तग्रह पञ्चधा मैत्री चक्र (Compound 5-Fold Friendship Matrix)' if is_hi else 'Panchadha Maitri Matrix'}")
+            st.markdown(f"#### {' सप्तग्रह पञ्चधा मैत्री चक्र (Compound 5-Fold Friendship Matrix)' if is_hi else 'Panchadha Maitri Matrix'}")
             pm_matrix = vyas_chalit.compute_panchadha_maitri(p_signs)
             pm_rows = []
             for p1, rels in pm_matrix.items():
@@ -3239,7 +3246,7 @@ if st.session_state.get('data_generated'):
         ], key="k_tab")
 
         if _lz_k_tab[0]:
-            st.markdown(f'<div class="section-title">{"🎯 कृष्णमूर्ति पद्धति (KP System) • SSSSSL गणना, 4-Step कार्येश एवं जीवन प्रॉमिस" if is_hi else "Krishnamurti Paddhati (KP System) Master Engine"}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-title">{" कृष्णमूर्ति पद्धति (KP System) • SSSSSL गणना, 4-Step कार्येश एवं जीवन प्रॉमिस" if is_hi else "Krishnamurti Paddhati (KP System) Master Engine"}</div>', unsafe_allow_html=True)
             
             # Precompute KP 4-fold significators and planet lords
             kp_sigs = compute_kp_4fold_house_significators(chart.planets, kp_cusps)
@@ -3261,11 +3268,11 @@ if st.session_state.get('data_generated'):
             st.markdown(f"""
             <div class="glass-card" style="border-left: 4px solid #38bdf8; margin-bottom: 18px;">
                 <div style="font-size: 1.15rem; font-weight: bold; color: #38bdf8;">
-                    वर्तमान सक्रिय दशा चक्र: महादशा [{md_hi}] ➔ अन्तर्दशा [{ad_hi}] ➔ प्रत्यन्तर्दशा [{pd_hi}]
+                    वर्तमान सक्रिय दशा चक्र: महादशा [{md_hi}] -> अन्तर्दशा [{ad_hi}] -> प्रत्यन्तर्दशा [{pd_hi}]
                 </div>
                 <div style="margin-top: 8px; font-size: 0.98rem; line-height: 1.7; color: #f8fafc;">
-                    <b>🔥 अत्यंत तीव्र सक्रिय भाव (MD + AD सह-कार्येश):</b> <span style="color: #4ade80; font-weight: bold; font-size: 1.05rem;">{co_active_str}</span><br>
-                    <b>🌐 समस्त सक्रिय भाव स्पेक्ट्रम (Total Active Spectrum):</b> <span style="color: #93c5fd;">{all_active_str}</span>
+                    <b> अत्यंत तीव्र सक्रिय भाव (MD + AD सह-कार्येश):</b> <span style="color: #4ade80; font-weight: bold; font-size: 1.05rem;">{co_active_str}</span><br>
+                    <b> समस्त सक्रिय भाव स्पेक्ट्रम (Total Active Spectrum):</b> <span style="color: #93c5fd;">{all_active_str}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -3279,7 +3286,7 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
             # Active houses breakdown grid
-            with st.expander("🔍 सक्रिय भावों का विस्तृत कार्येश प्रभाव (Active Houses Influence Details)"):
+            with st.expander(" सक्रिय भावों का विस्तृत कार्येश प्रभाव (Active Houses Influence Details)"):
                 col_act1, col_act2 = st.columns(2)
                 for i, ad_item in enumerate(dasha_active['active_details']):
                     target_c = col_act1 if i % 2 == 0 else col_act2
@@ -3330,7 +3337,7 @@ if st.session_state.get('data_generated'):
             st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 25px 0;'>", unsafe_allow_html=True)
 
             # --- SUB-SECTION 3: KP PLACIDUS 12 CUSPS TABLE (DOWN TO SSSSSL) ---
-            st.markdown(f"#### {'📐 केपी 12 भाव कस्प स्पष्ट तालिका (Placidus Cusps down to SSSSSL)' if is_hi else 'KP Placidus Cusps (down to SSSSSL)'}")
+            st.markdown(f"#### {' केपी 12 भाव कस्प स्पष्ट तालिका (Placidus Cusps down to SSSSSL)' if is_hi else 'KP Placidus Cusps (down to SSSSSL)'}")
             kp_table = []
             for c in kp_cusps:
                 kp_table.append({
@@ -3503,7 +3510,7 @@ if st.session_state.get('data_generated'):
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['occult_mercury_hi']}</p>
                 </div>
                 <div class="glass-card" style="border-left: 4px solid #ec4899;">
-                    <div style="font-weight: bold; color: #f472b6; font-size: 1.05rem;">🧭 नाड़ी दिशा संयोजन (Directional Trines)</div>
+                    <div style="font-weight: bold; color: #f472b6; font-size: 1.05rem;"> नाड़ी दिशा संयोजन (Directional Trines)</div>
                     <p style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc; margin-top: 6px;">{bnn_life['directional_trines_hi']}</p>
                 </div>
             </div>
@@ -3521,7 +3528,7 @@ if st.session_state.get('data_generated'):
             for comb in nadi_res.get("combinations", [])[:6]:
                 st.markdown(f"""
                 <div class="predict-card">
-                    <div class="predict-header">⚡ नाड़ी संयोजन: {comb.get('name', 'ग्रह युति')}</div>
+                    <div class="predict-header"> नाड़ी संयोजन: {comb.get('name', 'ग्रह युति')}</div>
                     <p>{comb.get('result', 'नाड़ी प्रभाव')}</p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -3572,7 +3579,7 @@ if st.session_state.get('data_generated'):
                     })
                 st.dataframe(pd.DataFrame(sd_table), use_container_width=True, hide_index=True)
 
-                with st.expander("📖 सुदर्शन चक्र द्वादश भाव विस्तृत फलादेश"):
+                with st.expander(" सुदर्शन चक्र द्वादश भाव विस्तृत फलादेश"):
                     for sh in sudarshan_analysis.houses:
                         st.markdown(f"""
                         <div style="margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px;">
@@ -3585,7 +3592,7 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="border-left: 4px solid {'#ef4444' if kota_res.is_fort_under_siege else '#22c55e'}; margin-bottom: 16px;">
                     <div style="font-size: 1.15rem; font-weight: bold; color: {'#f87171' if kota_res.is_fort_under_siege else '#4ade80'};">
-                        🛡️ कोटा चक्र (दुर्ग सुरक्षा व आक्रमण परीक्षण)
+                         कोटा चक्र (दुर्ग सुरक्षा व आक्रमण परीक्षण)
                     </div>
                     <p style="font-size: 0.98rem; line-height: 1.7; color: #f8fafc; margin-top: 8px;">
                         {kota_res.summary}
@@ -3695,7 +3702,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
                         <b>दिनमान:</b> {panch_obj.day_length}<br>
-                        <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;">🚫 कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>' if ('कोई नहीं' in panch_obj.abhijit_muhurta or 'वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta or 'बुधवार' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
+                        <b>अभिजीत मुहूर्त:</b> {'<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px;"> कोई नहीं (बुधवार को अभिजीत मुहूर्त नहीं होता)</span>' if ('कोई नहीं' in panch_obj.abhijit_muhurta or 'वर्जित' in panch_obj.abhijit_muhurta or 'Prohibited' in panch_obj.abhijit_muhurta or 'बुधवार' in panch_obj.abhijit_muhurta) else f'<span style="color: #38bdf8; font-weight: 700;">{panch_obj.abhijit_muhurta}</span>'}<br>
                         <b>ब्रह्म मुहूर्त:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.brahma_muhurta}</span><br>
                         <b>विजय मुहूर्त:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.vijaya_muhurta}</span> | <b>गोधूलि:</b> <span style="color: #4ade80; font-weight: 600;">{panch_obj.godhuli_muhurta}</span><br>
                         <b>राहु काल:</b> <span style="color: #ef4444; font-weight: 700;">{panch_obj.rahu_kalam}</span><br>
@@ -3726,7 +3733,7 @@ if st.session_state.get('data_generated'):
                         } for c in panch_obj.chaughadiya_night]), use_container_width=True, hide_index=True)
 
     # =========================================================================
-    # SUITE 5: 📖 DEEP FORENSIC PREDICTIONS (Extensive Classical Analysis)
+    # SUITE 5:  DEEP FORENSIC PREDICTIONS (Extensive Classical Analysis)
     # =========================================================================
     elif ("फलित" in selected_suite or "Predictions" in selected_suite
           or "Forecast" in selected_suite):
@@ -3820,7 +3827,7 @@ if st.session_state.get('data_generated'):
             bb_table = []
             for b in bb_data:
                 bb_table.append({
-                    "सम्बद्ध भाव": f"भाव {b['primary_house']} ➔ भाव {b['secondary_house']}",
+                    "सम्बद्ध भाव": f"भाव {b['primary_house']} -> भाव {b['secondary_house']}",
                     "शास्त्रीय सूत्र": b["title_hi"],
                     "प्राथमिक स्वामी": f"{b['prim_lord_hi']} ({b['prim_sign_hi']})",
                     "प्राथमिक SAV": b["prim_sav"],
@@ -3920,10 +3927,10 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
     # =========================================================================
-    # SUITE 6: 📄 43+ PAGE PUBLICATION PDF   # SUITE 6: 📄 43+ PAGE PUBLICATION PDF (VYAS-Class Publication)
+    # SUITE 6:  43+ PAGE PUBLICATION PDF   # SUITE 6:  43+ PAGE PUBLICATION PDF (VYAS-Class Publication)
     # =========================================================================
     elif "PDF" in selected_suite or "शोध प्रबंध" in selected_suite:
-        st.markdown(f'<div class="section-title">{"📄 56-पेज सम्पूर्ण वैदिक कुण्डली महा-शोध प्रबंध (VYAS Gold Standard PDF)" if is_hi else "📄 56-Page Executive Vedic Kundli Dossier (VYAS Gold Standard PDF)"}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-title">{" 56-पेज सम्पूर्ण वैदिक कुण्डली महा-शोध प्रबंध (VYAS Gold Standard PDF)" if is_hi else " 56-Page Executive Vedic Kundli Dossier (VYAS Gold Standard PDF)"}</div>', unsafe_allow_html=True)
         st.info("यह रिपोर्ट एस्ट्रोसेज की 56-पृष्ठ प्रीमियम कुण्डली के समकक्ष व उससे भी अधिक शुद्ध गणितीय गणनाओं, पाश्चात्य दृष्टि तालिकाओं, षोडशवर्ग चक्रों, सूक्ष्म प्रत्यंतर दशाओं और 100% प्रामाणिक वैदिक फलित से युक्त है।")
         
         # Unique per-run output path. The old fixed filename meant a FAILED
@@ -3951,7 +3958,7 @@ if st.session_state.get('data_generated'):
                 step=1,
                 key="suite6_varsh_year"
             )
-            if st.button("🚀 56-पेज VYAS स्टैंडर्ड महा-रिपोर्ट PDF तैयार करें", type="primary", use_container_width=True):
+            if st.button(" 56-पेज VYAS स्टैंडर्ड महा-रिपोर्ट PDF तैयार करें", type="primary", use_container_width=True):
                 with st.spinner("Compiling 56-Page VYAS Gold Standard Dossier with Crisp Diamond Charts, Pratyantar Matrices & Western Aspects..."):
                     success = publication_engine.build_publication_pdf(
                         chart, birth, kp_cusps, dasha_engine, vargas_matrix, pdf_out_path, target_varsh_year=int(varsh_choice_pdf), lang=selected_pdf_lang
@@ -3966,7 +3973,7 @@ if st.session_state.get('data_generated'):
                                 pass
                         st.session_state['pdf_out_path'] = pdf_out_path
                         st.session_state['pdf_input_sig'] = st.session_state.get('_birth_input_sig')
-                        st.success(f"🎉 56-पेज VYAS स्टैंडर्ड कुण्डली PDF सफलतापूर्वक तैयार हो गया है! (आकार: {os.path.getsize(pdf_out_path)/1024/1024:.2f} MB)")
+                        st.success(f" 56-पेज VYAS स्टैंडर्ड कुण्डली PDF सफलतापूर्वक तैयार हो गया है! (आकार: {os.path.getsize(pdf_out_path)/1024/1024:.2f} MB)")
                     else:
                         from vyas import chrome_runtime
                         _chrome = publication_engine.find_chrome()
@@ -4026,14 +4033,14 @@ if st.session_state.get('data_generated'):
                     with open(pdf_out_path, "rb") as f:
                         pdf_bytes = f.read()
                     st.download_button(
-                        label="📥 PDF डाउनलोड (Local)",
+                        label=" PDF डाउनलोड (Local)",
                         data=pdf_bytes,
                         file_name=f"VYAS_Kundli_{birth.get('name', 'Native').replace(' ', '_')}_56_Pages_{selected_pdf_lang}.pdf",
                         mime="application/pdf",
                         use_container_width=True
                     )
                 with col_btn2:
-                    if st.button("☁️ Save to Google Drive", type="secondary", use_container_width=True):
+                    if st.button(" Save to Google Drive", type="secondary", use_container_width=True):
                         u_curr = st.session_state.get("user", {})
                         u_toks = auth_vault.get_google_tokens(u_curr.get("id", 1))
                         active_tok = st.session_state.get("google_access_token") or (u_toks.get("access_token") if u_toks else None)
@@ -4042,9 +4049,9 @@ if st.session_state.get('data_generated'):
                             auth_g_url = google_drive_sync.get_google_auth_url()
                             if auth_g_url:
                                 st.warning("पहले Google से लॉगिन करें ताकि कुण्डली आपके Google Drive में सुरक्षित हो सके:")
-                                st.markdown(f'<a href="{auth_g_url}" target="_top" rel="noopener"><button style="background: #ffffff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; padding: 6px 12px; font-weight: 700; width: 100%; cursor: pointer;">🔗 Connect Google Drive</button></a>', unsafe_allow_html=True)
+                                st.markdown(f'<a href="{auth_g_url}" target="_top" rel="noopener"><button style="background: #ffffff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; padding: 6px 12px; font-weight: 700; width: 100%; cursor: pointer;"> Connect Google Drive</button></a>', unsafe_allow_html=True)
                             else:
-                                st.info("कृपया साइडबार के '⚙️ Google Cloud API Credentials' में अपनी Google Client ID दर्ज करें।")
+                                st.info("कृपया साइडबार के ' Google Cloud API Credentials' में अपनी Google Client ID दर्ज करें।")
                         else:
                             with st.spinner("Google Drive पर फ़ोल्डर 'VYAS Kundli & Horoscopes' में अपलोड किया जा रहा है..."):
                                 f_display = f"VYAS_Kundli_{birth.get('name', 'Native').replace(' ', '_')}_56_Pages_{selected_pdf_lang}.pdf"
@@ -4062,7 +4069,7 @@ if st.session_state.get('data_generated'):
                                         )
                                 if ok_up and res_up:
                                     st.session_state["gdrive_last_link"] = res_up.get("web_view_link")
-                                    st.toast("Google Drive पर सुरक्षित हो गया!", icon="☁️")
+                                    st.toast("Google Drive पर सुरक्षित हो गया!", icon="")
                                     st.rerun()
                                 else:
                                     st.error(f"Google Drive अपलोड विफल: {msg_up}")
@@ -4070,15 +4077,15 @@ if st.session_state.get('data_generated'):
                 if st.session_state.get("gdrive_last_link"):
                     st.markdown(f"""
                     <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 8px; padding: 10px 14px; margin-top: 10px; text-align: center;">
-                        <div style="color: #6ee7b7; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">🎉 कुण्डली Google Drive पर सुरक्षित हो गई है!</div>
+                        <div style="color: #6ee7b7; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;"> कुण्डली Google Drive पर सुरक्षित हो गई है!</div>
                         <a href="{st.session_state['gdrive_last_link']}" target="_blank" style="color: #f0c05a; font-weight: 800; text-decoration: underline; font-size: 0.95rem;">
-                            📂 Google Drive में खोलें (Open in Google Drive)
+                             Google Drive में खोलें (Open in Google Drive)
                         </a>
                     </div>
                     """, unsafe_allow_html=True)
 
         if (not _dl_ok) and st.session_state.get('pdf_out_path') and os.path.exists(st.session_state['pdf_out_path']):
-            st.caption("⚠️ पिछली बार बना PDF अलग इनपुट का है — नया रिपोर्ट देखने के लिए ऊपर फिर से जनरेट करें।")
+            st.caption("️ पिछली बार बना PDF अलग इनपुट का है — नया रिपोर्ट देखने के लिए ऊपर फिर से जनरेट करें।")
 
         with col_gen2:
             st.markdown("""
@@ -4096,9 +4103,9 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
     # =========================================================================
-    # 🧘‍♂️ ACHARYA VYAS LIVE VEDIC BOT POPUP MODAL (आचार्य व्यास AI ज्योतिषी)
+    #  ACHARYA VYAS LIVE VEDIC BOT POPUP MODAL (आचार्य व्यास AI ज्योतिषी)
     # =========================================================================
-    @st.dialog("🧘‍♂️ आचार्य व्यास • प्रत्यक्ष वैदिक AI परामर्श (Live Consultation)", width="large")
+    @st.dialog(" आचार्य व्यास • प्रत्यक्ष वैदिक AI परामर्श (Live Consultation)", width="large")
     def show_acharya_consultation_dialog(ch, b_info, c_dasha, p_meta):
         # Header profile card
         st.markdown(f"""
@@ -4247,7 +4254,7 @@ if st.session_state.get('data_generated'):
 
         col_act1, col_act2 = st.columns([4, 1])
         with col_act2:
-            if st.button("🗑️ साफ करें", key="clear_dialog_chat_btn", use_container_width=True):
+            if st.button(" साफ करें", key="clear_dialog_chat_btn", use_container_width=True):
                 st.session_state["dialog_chat_history"] = []
                 st.rerun()
 
@@ -4294,7 +4301,7 @@ st.markdown("""
 <footer style="text-align: center; margin-top: 45px; padding: 22px 10px; border-top: 1px solid rgba(240, 192, 90, 0.22); font-size: 0.85rem; color: #94a3b8; line-height: 1.7;">
     <b>VYAS ASTRA</b> &bull; Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence<br/>
     वेबसाइट निर्माण एवं शोधकर्ता: <b style="color: #f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; 
-    ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
-    📞 <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+     <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
+     <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
 </footer>
 """, unsafe_allow_html=True)
