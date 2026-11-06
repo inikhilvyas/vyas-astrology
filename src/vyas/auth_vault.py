@@ -823,9 +823,69 @@ def save_kundli(user_id: int, kundli_dict: Dict) -> Tuple[bool, str]:
                 now
             ))
             conn.commit()
+            new_id = getattr(cursor, "lastrowid", None)
+            if not new_id:
+                try:
+                    cursor.execute("SELECT id FROM saved_kundlis WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
+                    _r = cursor.fetchone()
+                    if _r:
+                        new_id = _r["id"] if isinstance(_r, dict) else _r[0]
+                except Exception:
+                    pass
+            if new_id:
+                set_default_kundli(user_id, int(new_id))
             return True, f"कुंडली '{kundli_dict.get('name')}' वॉल्ट में सफलतापूर्वक सेव हो गई।"
     except Exception as e:
         return False, f"सेव करने में त्रुटि: {str(e)}"
+
+
+def set_default_kundli(user_id: int, kundli_id: int) -> bool:
+    """Marks a specific saved kundli as default for auto-loading on login/startup."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO app_state (key, value, updated_at) VALUES (?, ?, ?)
+                ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at
+            """, (f"default_kundli:{user_id}", str(int(kundli_id)), datetime.now().isoformat()))
+            conn.commit()
+            return True
+    except Exception:
+        return False
+
+
+def get_default_kundli_id(user_id: int) -> Optional[int]:
+    """Returns the default kundli ID for a user if set."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM app_state WHERE key = ?", (f"default_kundli:{user_id}",))
+            row = cursor.fetchone()
+            if row:
+                return int(row["value"] if isinstance(row, dict) else row[0])
+    except Exception:
+        pass
+    return None
+
+
+def get_default_or_latest_kundli(user_id: int) -> Optional[Dict]:
+    """Retrieves the user's default saved kundli, or the most recent one if no default is explicitly marked."""
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            def_id = get_default_kundli_id(user_id)
+            if def_id:
+                cursor.execute("SELECT * FROM saved_kundlis WHERE id = ? AND user_id = ?", (def_id, user_id))
+                row = cursor.fetchone()
+                if row:
+                    return dict(row)
+            cursor.execute("SELECT * FROM saved_kundlis WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
+            row = cursor.fetchone()
+            if row:
+                return dict(row)
+    except Exception:
+        pass
+    return None
 
 def get_saved_kundlis(user_id: int) -> List[Dict]:
     """Fetches all saved kundlis for a user."""

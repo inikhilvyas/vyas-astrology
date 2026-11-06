@@ -18,8 +18,12 @@ import platform
 import re
 import urllib.parse
 import pandas as pd
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+try:
+    from geopy.geocoders import Nominatim
+    from geopy.exc import GeocoderTimedOut
+except ImportError:
+    Nominatim = None
+    GeocoderTimedOut = Exception
 import base64
 
 # Ensure the vyas module is in the path
@@ -385,6 +389,7 @@ st.markdown("""
     }
 
     :root {
+        --app-font-size: 19.5px;
         --gold-primary: #e5a93c;
         --gold-light: #fef3c7;
         --gold-accent: #f59e0b;
@@ -415,7 +420,7 @@ st.markdown("""
         margin: 0;
         padding: 0;
         background-color: #07090d !important;
-        font-size: 17px;
+        font-size: var(--app-font-size, 19.5px) !important;
     }
 
     .stApp, [data-testid="stAppViewContainer"], .main {
@@ -892,6 +897,9 @@ st.html("""
     <div class="vyas-hero-kicker">YOUR CELESTIAL PATTERN HAS A STRUCTURE</div>
     <div class="vyas-hero-title">VYAS ASTRA</div>
     <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
+    <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: rgba(238, 220, 154, 0.9); margin-top: 8px;">
+        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color:#f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color:#93c5fd; text-decoration:none;">inikhilvyas@gmail.com</a> &bull; 📞 <a href="tel:+919414121172" style="color:#93c5fd; text-decoration:none;">+91 94141 21172</a>
+    </div>
 </div>
 """)
 
@@ -949,6 +957,21 @@ if st.query_params.get("uid"):
 
 u = st.session_state["user"]
 is_logged_in_now = (u.get("email") != "seeker@vyasastro.com")
+
+# Auto-load the default or last saved kundli into loaded_profile on fresh session
+if 'loaded_profile' not in st.session_state:
+    try:
+        _auto_k = auth_vault.get_default_or_latest_kundli(u["id"])
+        if _auto_k:
+            st.session_state['loaded_profile'] = dict(_auto_k)
+            st.session_state['lat'] = float(_auto_k.get('lat', 28.6139))
+            st.session_state['lon'] = float(_auto_k.get('lon', 77.2090))
+            st.session_state['city_name'] = _auto_k.get('city', 'New Delhi, India')
+            st.session_state['city_search_input'] = _auto_k.get('city', 'New Delhi, India')
+            st.session_state['_last_chosen_city'] = _auto_k.get('city', 'New Delhi, India')
+            st.session_state.pop('selected_city_dropdown', None)
+    except Exception:
+        pass
 
 
 # ---------------- LOGGED-OUT LANDING: EMAIL LOGIN / REGISTRATION ----------------
@@ -1099,7 +1122,90 @@ with st.sidebar:
     </div>
     <hr style="border-color: rgba(229, 169, 60, 0.16); margin: 10px 0;">
     """, unsafe_allow_html=True)
-    
+
+    # ---------------- FONT SIZE ACCESSIBILITY CONTROL ----------------
+    _font_scale_choice = st.select_slider(
+        "🔤 फ़ॉन्ट आकार (Text Size):",
+        options=["सामान्य (17px)", "बड़ा (19.5px - डिफ़ॉल्ट)", "अति विशाल (22px)"],
+        value=st.session_state.get("_user_font_scale", "बड़ा (19.5px - डिफ़ॉल्ट)"),
+        key="_user_font_scale",
+        help="वेबसाइट पर अक्षरों का आकार छोटा या बड़ा करें"
+    )
+    if "विशाल" in _font_scale_choice:
+        st.markdown("<style>:root { --app-font-size: 22px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 22px !important; }</style>", unsafe_allow_html=True)
+    elif "सामान्य" in _font_scale_choice:
+        st.markdown("<style>:root { --app-font-size: 17px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 17px !important; }</style>", unsafe_allow_html=True)
+    else:
+        st.markdown("<style>:root { --app-font-size: 19.5px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 19.5px !important; }</style>", unsafe_allow_html=True)
+
+    # ---------------- 7:00 AM DAILY HOROSCOPE NOTIFICATION WIDGET ----------------
+    with st.expander("🔔 7:00 AM दैनिक राशिफल अलर्ट", expanded=False):
+        st.markdown("""
+        <div style="font-size: 0.8rem; color: #eedc9a; line-height: 1.5; margin-bottom: 8px;">
+            <b>प्रातःकालीन व्यक्तिगत राशिफल:</b><br/>
+            रोज़ाना सुबह 7:00 बजे आपके ब्राउज़र/फ़ोन पर नवतारा चक्र, गोचरस्थ चन्द्रमा व चालू विंशोत्तरी दशा का दैनिक फलादेश अलर्ट प्राप्त करें।
+        </div>
+        """, unsafe_allow_html=True)
+        st.components.v1.html("""
+        <div style="text-align: center; font-family: sans-serif;">
+            <button id="notif-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
+                🔔 7:00 AM अलर्ट चालू करें
+            </button>
+            <div id="notif-status" style="font-size: 0.74rem; color: #94a3b8; margin-top: 6px;"></div>
+        </div>
+        <script>
+            const btn = document.getElementById('notif-btn');
+            const status = document.getElementById('notif-status');
+
+            function updateStatus() {
+                if (!("Notification" in window)) {
+                    status.innerHTML = "⚠️ ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
+                    btn.disabled = true;
+                    return;
+                }
+                if (Notification.permission === "granted") {
+                    status.innerHTML = "✅ 7:00 AM दैनिक राशिफल अलर्ट सक्रिय है!";
+                    status.style.color = "#34d399";
+                    btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily)";
+                    checkMorningAlert();
+                } else if (Notification.permission === "denied") {
+                    status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र सेटिंग्स में अनुमति दें।";
+                    status.style.color = "#f87171";
+                } else {
+                    status.innerHTML = "ℹ️ सुबह 7 बजे दैनिक फलादेश पाने हेतु बटन दबाएं।";
+                }
+            }
+
+            function checkMorningAlert() {
+                const today = new Date().toISOString().slice(0, 10);
+                const lastNotif = localStorage.getItem('vyas_last_7am_notif');
+                const now = new Date();
+                if (now.getHours() >= 7 && lastNotif !== today) {
+                    new Notification("🌅 VYAS • आज का व्यक्तिगत दैनिक राशिफल", {
+                        body: "नमस्ते! आपके जन्मनक्षत्र (नवतारा चक्र), गोचर व चालू दशा के अनुसार आज का दिन फल तैयार है।",
+                        icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
+                    });
+                    localStorage.setItem('vyas_last_7am_notif', today);
+                }
+            }
+
+            btn.addEventListener('click', async () => {
+                if ("Notification" in window) {
+                    const perm = await Notification.requestPermission();
+                    if (perm === "granted") {
+                        localStorage.setItem('vyas_daily_notif_enabled', 'true');
+                        new Notification("🌅 VYAS ASTRA • 7:00 AM अलर्ट चालू", {
+                            body: "दैनिक राशिफल अलर्ट सक्रिय हो गया है। हर सुबह 7:00 बजे आपको दिन फल प्राप्त होगा।",
+                            icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
+                        });
+                    }
+                    updateStatus();
+                }
+            });
+            updateStatus();
+        </script>
+        """, height=105)
+
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     # `u` and `is_logged_in_now` are resolved once, above the sidebar.
     
@@ -1412,7 +1518,7 @@ if is_logged_in_now:
                 chosen_k_label = st.selectbox("कुण्डली चुनें:", list(k_display_map.keys()), key="saved_k_picker")
                 chosen_k = k_display_map[chosen_k_label]
 
-                col_kv1, col_kv2 = st.columns(2)
+                col_kv1, col_kv2, col_kv3 = st.columns([1.1, 1, 1.2])
                 with col_kv1:
                     if st.button("📂 खोलें (Open)", key="open_k_btn", use_container_width=True):
                         st.session_state['loaded_profile'] = dict(chosen_k)
@@ -1436,6 +1542,11 @@ if is_logged_in_now:
                             st.rerun()
                         else:
                             st.error(del_msg)
+                with col_kv3:
+                    if st.button("⭐ डिफ़ॉल्ट बनाएं", key="set_def_k_btn", use_container_width=True, help="हर बार ऐप खोलने पर यह कुण्डली अपने आप खुली मिलेगी"):
+                        auth_vault.set_default_kundli(u["id"], chosen_k["id"])
+                        st.success(f"'{chosen_k['name']}' को प्राथमिक कुण्डली बनाया गया!")
+                        st.rerun()
             else:
                 st.info("💡 अभी कोई कुण्डली सुरक्षित नहीं है। नीचे जन्म विवरण भरकर **'💾 कुण्डली सुरक्षित करें'** बटन दबाएं।")
     # Hide saved kundlis expander for non-logged users for cleaner UI
@@ -1598,7 +1709,8 @@ if st.button("💾 कुण्डली सुरक्षित करें (
     }
     ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
     if ok:
-        st.success(f"'{name}' की कुण्डली सुरक्षित हो गई! यह ऊपर 'मेरी सुरक्षित कुण्डलियाँ' में उपलब्ध है।")
+        st.session_state['loaded_profile'] = dict(k_payload)
+        st.success(f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।")
         st.rerun()
     else:
         st.warning(s_msg)
@@ -1707,7 +1819,7 @@ if st.session_state.get('data_generated'):
             st.session_state["show_acharya_dialog"] = True
 
     # -------------------------------------------------------------------------
-    # DOMAIN SUITE NAVIGATION (Pure Astrology & Research Suites)
+    # DOMAIN SUITE NAVIGATION (Moved to Sidebar to keep interface clean and compact)
     # -------------------------------------------------------------------------
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
@@ -1721,8 +1833,73 @@ if st.session_state.get('data_generated'):
         "केपी, जैमिनी, नाड़ी एवं चक्र" if is_hi else "KP, Jaimini, Nadi & Chakras",
         "शोध प्रबंध PDF" if is_hi else "Publication PDF"
     ]
-    
-    selected_suite = st.radio("चयनित ज्योतिषीय अनुसंधान प्रभाग (Select Domain Suite):", suite_options, horizontal=True)
+
+    with st.sidebar:
+        st.markdown("""
+        <div style="margin: 16px 0 6px; padding: 10px 14px; background: linear-gradient(135deg, rgba(240,192,90,0.2) 0%, rgba(14,23,42,0.92) 100%); border-left: 4px solid #f0c05a; border-radius: 8px;">
+            <div style="font-family: var(--font-yatra); font-size: 1.05rem; font-weight: 700; color: #f0c05a;">
+                🧭 ज्योतिष अनुसंधान प्रभाग (Domain Suites)
+            </div>
+            <div style="font-size: 0.74rem; color: #cbd5e1;">(यहाँ से मुख्य प्रभाग / टैब चुनें)</div>
+        </div>
+        """, unsafe_allow_html=True)
+        selected_suite = st.radio(
+            "चयनित ज्योतिषीय अनुसंधान प्रभाग (Select Domain Suite):",
+            suite_options,
+            key="domain_suite_sidebar_radio",
+            label_visibility="collapsed"
+        )
+
+        # Creator Info in Sidebar Footer (subtle & dignified)
+        st.markdown("""
+        <div style="margin-top: 25px; padding: 12px 14px; background: rgba(14, 23, 42, 0.85); border: 1px solid rgba(240, 192, 90, 0.28); border-radius: 10px; text-align: center;">
+            <div style="font-size: 0.72rem; color: #eedc9a; letter-spacing: 0.8px; text-transform: uppercase; font-weight: 600;">शोध एवं निर्माण (Creator):</div>
+            <div style="font-family: var(--font-yatra); font-size: 1.05rem; font-weight: 700; color: #f0c05a; margin-top: 2px;">निखिल व्यास (Nikhil Vyas)</div>
+            <div style="font-size: 0.76rem; color: #cbd5e1; margin-top: 4px; line-height: 1.5;">
+                ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a><br/>
+                📞 <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # MORNING 7:00 AM DAILY HOROSCOPE BANNER & ACTIVE SUITE BADGE
+    # -------------------------------------------------------------------------
+    col_m_banner1, col_m_banner2 = st.columns([3.5, 1.5])
+    with col_m_banner1:
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(14, 23, 42, 0.95) 100%);
+                    border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 2rem;">🌅</span>
+            <div>
+                <div style="font-family: var(--font-yatra); font-weight: 700; color: #fbbf24; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
+                    प्रातः 7:00 AM दैनिक राशिफल अलर्ट • {birth.get('name', 'जातक')}
+                </div>
+                <div style="font-size: clamp(0.85rem, 2.5vw, 0.95rem); color: #cbd5e1; margin-top: 2px;">
+                    नवतारा चक्र, गोचरस्थ चन्द्रमा एवं चालू विंशोत्तरी दशा के आधार पर आज का दिन फल उपलब्ध है।
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_m_banner2:
+        if st.button("👉 आज का राशिफल देखें", key="jump_daily_horo_top_btn", use_container_width=True):
+            st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
+            st.rerun()
+
+    # Active Suite Header on Main Screen
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.12) 0%, rgba(14, 23, 42, 0.95) 100%);
+                border: 1.5px solid rgba(240, 192, 90, 0.35); border-radius: 14px; padding: 12px 18px; margin: 12px 0 20px;
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <div style="font-size: 0.78rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase;">सक्रिय अनुसंधान प्रभाग / Active Domain Suite</div>
+            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 700; color: #f0c05a; margin-top: 2px;">{selected_suite}</div>
+        </div>
+        <div style="font-size: 0.85rem; color: #94a3b8; background: rgba(0,0,0,0.35); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08);">
+            👈 अन्य प्रभाग (Tabs) साइडबार में उपलब्ध हैं
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
     # PRASHNA KUNDLI HORARY JUDGEMENT (तात्कालिक प्रश्न विचार व फलित)
@@ -3855,3 +4032,13 @@ if _timing_enabled():
 
 st.session_state["_vyas_script_start"] = _time_mod.perf_counter()
 
+
+# Main Page Bottom Footer
+st.markdown("""
+<footer style="text-align: center; margin-top: 45px; padding: 22px 10px; border-top: 1px solid rgba(240, 192, 90, 0.22); font-size: 0.85rem; color: #94a3b8; line-height: 1.7;">
+    <b>VYAS ASTRA</b> &bull; Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence<br/>
+    वेबसाइट निर्माण एवं शोधकर्ता: <b style="color: #f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; 
+    ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
+    📞 <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+</footer>
+""", unsafe_allow_html=True)
