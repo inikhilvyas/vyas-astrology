@@ -451,6 +451,57 @@ def evaluate_chart_sutras(chart, current_dasha: Optional[Tuple[str, str]] = None
                         is_hit = True
                         detail = f"{p2} is in {target_rel}th house from {p1}."
 
+        # ---------------------------------------------------------
+        # 7. Universal Multi-Category Matcher (Covering All 22 Parts & 13,000 Sutras)
+        # ---------------------------------------------------------
+        if not is_hit:
+            # 7a. Planet in House
+            m_gen_h = re.search(r"\b(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\b\s+(?:in|placed\s+in|posited\s+in|occupies)\s+(?:the\s+)?(\d+)(?:st|nd|rd|th)?\s+house", cond_str, re.I)
+            if m_gen_h:
+                pl_g, h_target = m_gen_h.group(1).capitalize(), int(m_gen_h.group(2))
+                if p_house.get(pl_g) == h_target:
+                    is_hit = True
+                    detail = f"{pl_g} is posited in House {h_target}."
+
+            # 7b. Planet in Sign
+            if not is_hit:
+                m_gen_s = re.search(r"\b(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\b\s+(?:is\s+)?in\s+([A-Za-z]+)\b", cond_str)
+                if m_gen_s:
+                    pl_g, s_n = m_gen_s.group(1).capitalize(), m_gen_s.group(2).lower()
+                    if s_n in SIGN_MAP and p_sign.get(pl_g) == SIGN_MAP[s_n]:
+                        is_hit = True
+                        detail = f"{pl_g} is in {SIGNS_EN[SIGN_MAP[s_n]]}."
+
+            # 7c. Navamsha Placements (D9)
+            if not is_hit and "Navamsha" in cond_str:
+                m_nav = re.search(r"\b(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\b.*?in\s+([A-Za-z]+)\s+Navamsha", cond_str, re.I)
+                if m_nav:
+                    pl_g, s_nav = m_nav.group(1).capitalize(), m_nav.group(2).lower()
+                    p_obj = planets.get(pl_g)
+                    if p_obj and s_nav in SIGN_MAP:
+                        d9_idx = int(p_obj.longitude / (30.0 / 9.0)) % 12
+                        if d9_idx == SIGN_MAP[s_nav]:
+                            is_hit = True
+                            detail = f"{pl_g} occupies {SIGNS_EN[SIGN_MAP[s_nav]]} Navamsha (D9)."
+
+            # 7d. Mutual Conjunctions
+            if not is_hit:
+                m_cj_gen = re.search(r"\b(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\b\s+(?:conjunct|with|and)\s+\b(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu)\b", cond_str, re.I)
+                if m_cj_gen:
+                    p1_g, p2_g = m_cj_gen.group(1).capitalize(), m_cj_gen.group(2).capitalize()
+                    if p1_g in p_house and p2_g in p_house and p_house[p1_g] == p_house[p2_g]:
+                        is_hit = True
+                        detail = f"{p1_g} and {p2_g} are conjunct in House {p_house[p1_g]}."
+
+            # 7e. Retrograde Planet Placement
+            if not is_hit and "retrograde" in cond_str.lower():
+                for pl_r, p_obj in planets.items():
+                    if getattr(p_obj, "is_retrograde", False) or getattr(p_obj, "speed", 1.0) < 0:
+                        if pl_r.lower() in cond_str.lower():
+                            is_hit = True
+                            detail = f"{pl_r} is in retrograde motion in House {p_house.get(pl_r, 1)}."
+                            break
+
         if is_hit and sid not in seen_ids:
             seen_ids.add(sid)
             matched.append(MatchedSutra(
@@ -489,3 +540,36 @@ def synthesize_knowledge_predictions(chart, current_dasha: Optional[Tuple[str, s
         "by_domain": by_domain,
         "by_category": by_category,
     }
+
+def search_knowledge_bank(query: str, max_results: int = 8) -> List[Dict[str, Any]]:
+    """
+    Fast keyword and thematic search across all 13,000+ classical sutras in the knowledge bank.
+    Returns the most relevant sutras with bilingual predictions and source citations.
+    """
+    if not query or not query.strip():
+        return []
+
+    q_tokens = [t.lower() for t in query.strip().split() if len(t) >= 2]
+    if not q_tokens:
+        return []
+
+    kb = load_knowledge_bank()
+    results = []
+
+    for item in kb:
+        text_corpus = (
+            item.get("category", "") + " " +
+            item.get("sub_category", "") + " " +
+            item.get("planetary_condition", "") + " " +
+            item.get("condition_hi", "") + " " +
+            item.get("prediction_hi", "") + " " +
+            item.get("prediction_en", "") + " " +
+            item.get("source", "")
+        ).lower()
+
+        matches = sum(1 for tok in q_tokens if tok in text_corpus)
+        if matches > 0:
+            results.append((matches, item))
+
+    results.sort(key=lambda x: x[0], reverse=True)
+    return [item for _, item in results[:max_results]]

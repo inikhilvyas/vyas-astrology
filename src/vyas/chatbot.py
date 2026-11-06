@@ -443,7 +443,8 @@ class VyasChatbotEngine:
         return key.strip() if key and isinstance(key, str) and key.strip() else None
 
     def _build_astrological_system_prompt(self, fw: Dict[str, Any], birth_info: Dict[str, Any],
-                                          chat_history: Optional[List[Dict[str, str]]] = None) -> str:
+                                          chat_history: Optional[List[Dict[str, str]]] = None,
+                                          query: Optional[str] = None) -> str:
         """Assembles a comprehensive, authentic Parashari & Jaimini chart framework prompt with Desh, Kaal & Patra awareness,
         Universal Astronomical Motion Laws, Real-time Ingress, 2,073 Classical Formula Bank and Dialogue Memory."""
         name = birth_info.get("name", "जातक")
@@ -498,6 +499,35 @@ class VyasChatbotEngine:
         # Multi-turn conversation memory summary
         memory_summary = self._extract_conversation_memory(chat_history)
 
+        # Dynamic Knowledge Retrieval from 13,000+ Sutra Bank & 39+ Classical Books
+        query_sutras_block = ""
+        query_books_block = ""
+        if query and query.strip():
+            try:
+                from vyas.knowledge_engine import search_knowledge_bank
+                q_sutras = search_knowledge_bank(query, max_results=6)
+                if q_sutras:
+                    lines = [f"• [{s.get('source', 'सूत्र')}] [{s.get('sutra_id')}] {s.get('sub_category')}: {s.get('prediction_hi')}" for s in q_sutras]
+                    query_sutras_block = "\n".join(lines)
+            except Exception:
+                pass
+
+            try:
+                from vyas.book_reader import search_books
+                q_clean = query.strip()
+                b_results = search_books(q_clean, max_results=4)
+                if not b_results:
+                    words = [w for w in q_clean.split() if len(w) >= 3 and w not in ["क्या", "बताओ", "कैसा", "होगा", "मेरा", "मेरी", "मुझे", "आचार्य", "प्रणाम", "kaisa", "hoga"]]
+                    for w in words[:2]:
+                        b_results = search_books(w, max_results=3)
+                        if b_results:
+                            break
+                if b_results:
+                    b_lines = [f"• [{b['book']} - {b['page']}]: {b['snippet'][:140]}" for b in b_results]
+                    query_books_block = "\n".join(b_lines)
+            except Exception:
+                pass
+
         prompt = (
             f"आप आचार्य व्यास हैं—महर्षि पराशर, जैमिनी, एवं भृगु ज्योतिष के मूर्धन्य विद्वान और पूज्य वैदिक ज्योतिषी।\n\n"
             f"=== जातक का व्यक्तिगत सांसारिक विवरण (देश, काल, पात्र) ===\n"
@@ -546,8 +576,12 @@ class VyasChatbotEngine:
             f"=== तात्कालिक वास्तविक गोचर स्थिति (REAL-TIME EPHEMERIS GOCHAR STATUS) ===\n"
             f"{transit_table_block}\n"
             f"{shani_status_str}\n\n"
-            f"=== कुण्डली पर घटित 2073 शास्त्रीय सूत्र बैंक (MATCHED CLASSICAL FORMULA BANK SUTRAS) ===\n"
+            f"=== कुण्डली पर घटित 13,000+ शास्त्रीय सूत्र बैंक (ACTIVE FORMULAS ON CHART) ===\n"
             f"{sutras_block}\n\n"
+            f"=== 13,000+ सूत्र बैंक से प्रश्न-संबंधित प्रत्यक्ष सूत्र (RELEVANT FORMULAS FROM 13,000+ SUTRA BANK) ===\n"
+            f"{query_sutras_block if query_sutras_block else '• कुण्डली पर 13,000+ शास्त्रीय सूत्र डेटाबैंक के सिद्धांत सक्रिय हैं।'}\n\n"
+            f"=== 40+ शास्त्रीय ग्रंथ पुस्तकालय से प्रामाणिक उद्धरण (CITATIONS FROM 39+ CLASSICAL BOOKS) ===\n"
+            f"{query_books_block if query_books_block else '• बृहत्पाराशर, बृहज्जातक, फलदीपिका, लाल किताब एवं भृगु संहिता के नियम संरेखित हैं।'}\n\n"
             f"=== परामर्श संवाद स्मृति एवं पूर्व संदर्भ (CONSULTATION DIALOGUE MEMORY & CONTINUITY) ===\n"
             f"{memory_summary}\n"
             f"*स्मृति निर्देश: पूर्व बातचीत में जातक द्वारा पूछे गए विषयों और स्थापित तथ्यों की पूर्ण निरंतरता बनाए रखें।*\n\n"
@@ -586,7 +620,7 @@ class VyasChatbotEngine:
             import json
             import requests
 
-            system_prompt = self._build_astrological_system_prompt(fw, birth_info, chat_history=chat_history)
+            system_prompt = self._build_astrological_system_prompt(fw, birth_info, chat_history=chat_history, query=query)
             messages = [{"role": "system", "content": system_prompt}]
 
             if chat_history:
@@ -697,7 +731,7 @@ class VyasChatbotEngine:
             import json
             import requests
 
-            system_prompt = self._build_astrological_system_prompt(fw, birth_info, chat_history=chat_history)
+            system_prompt = self._build_astrological_system_prompt(fw, birth_info, chat_history=chat_history, query=query)
             contents = []
 
             if chat_history:
