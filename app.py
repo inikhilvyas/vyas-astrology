@@ -255,12 +255,42 @@ def _end_user_session() -> None:
         st.session_state.pop(_sk, None)
 
 
+
+def get_svg_vector(name: str, size: int = 18, color: str = "#f0c05a") -> str:
+    """Returns crisp inline SVG vector graphics (replacing emojis with store-grade iconography)."""
+    n = (name or "").lower().strip()
+    s = size
+    if n in ("career", "work", "job", "profession", "business"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>'
+    elif n in ("wealth", "money", "finance", "dhana"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="9"></circle><path d="M12 6v12M15 9.5H9.5a2.5 2.5 0 0 1 0-5H14M10 19.5h4.5a2.5 2.5 0 0 0 0-5H9"></path></svg>'
+    elif n in ("intellect", "brain", "mind", "buddhi"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"></path></svg>'
+    elif n in ("health", "ayurveda", "body", "leaf"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><path d="M11 20A7 7 0 0 1 4 13a8 8 0 0 1 12-7 8 8 0 0 1 7 12 7 7 0 0 1-7 7M2 21c0-5 3.5-9 9-9"></path></svg>'
+    elif n in ("marriage", "spouse", "partner", "union"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><circle cx="8" cy="12" r="5"></circle><circle cx="16" cy="12" r="5"></circle></svg>'
+    elif n in ("education", "learning", "knowledge", "vidya"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>'
+    elif n in ("children", "family", "santana"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="7" r="4"></circle><path d="M5.5 21a6.5 6.5 0 0 1 13 0"></path></svg>'
+    elif n in ("protection", "defense", "shield"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>'
+    elif n in ("travel", "foreign", "globe"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>'
+    elif n in ("spirituality", "dharma", "moksha", "temple"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18M3 12h18"></path><circle cx="12" cy="12" r="3"></circle></svg>'
+    elif n in ("destiny", "luck", "fortune", "star"):
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'
+    else:
+        return f'<svg width="{s}" height="{s}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; display: inline-block;"><polygon points="12 2 22 12 12 22 2 12 12 2"></polygon></svg>'
+
 def render_kundli(svg_str: str):
     """Render astrological SVG cleanly via base64 data URI with crisp high-DPI scaling."""
     clean = re.sub(r'<!--.*?-->', '', svg_str, flags=re.DOTALL)
     clean = re.sub(r'\s+', ' ', clean).strip()
     b64 = base64.b64encode(clean.encode('utf-8')).decode('utf-8')
-    st.markdown(f'<div class="kundli-container" style="text-align: center; margin: 8px auto;"><img src="data:image/svg+xml;base64,{b64}" style="width: 100%; max-width: 540px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.65)); border-radius: 12px;" /></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="kundli-container" style="text-align: center; margin: 8px auto;"><img src="data:image/svg+xml;base64,{b64}" style="width: 100%; max-width: 650px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.65)); border-radius: 12px;" /></div>', unsafe_allow_html=True)
 
 
 def lazy_sections(labels, key: str):
@@ -1764,7 +1794,7 @@ if is_logged_in_now and active_lp:
         st.markdown(f"""
         <div style="background: linear-gradient(135deg, rgba(240,192,90,0.18) 0%, rgba(14,23,42,0.96) 100%); border: 1.8px solid #f0c05a; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.4);">
             <div style="font-size: 0.74rem; color: #ffd700; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-                ⭐ आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)
+                 आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)
             </div>
             <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: #ffffff; font-weight: 800; margin-top: 2px;">
                 {active_lp.get('name', 'जातक')}
@@ -1822,7 +1852,7 @@ if is_logged_in_now and active_lp:
                     else:
                         st.error(del_msg)
             with col_k3:
-                if st.button("⭐ इसे डिफ़ॉल्ट बनाएं", key="set_def_k_btn", use_container_width=True, help="हर बार ऐप खोलने पर यह कुण्डली स्वतः खुली मिलेगी"):
+                if st.button(" इसे डिफ़ॉल्ट बनाएं", key="set_def_k_btn", use_container_width=True, help="हर बार ऐप खोलने पर यह कुण्डली स्वतः खुली मिलेगी"):
                     auth_vault.set_default_kundli(u["id"], chosen_k["id"])
                     st.success(f"'{chosen_k['name']}' को प्राथमिक डिफ़ॉल्ट कुण्डली सेट किया गया!")
                     st.rerun()
@@ -2730,7 +2760,7 @@ if st.session_state.get('data_generated'):
 
             chart_style = st.radio("Kundli Style (कुंडली प्रारूप)", ["North Indian (उत्तर भारतीय हीरा शैली)", "South Indian (दक्षिण भारतीय चौकोर शैली)"], horizontal=True)
 
-            col1, col2 = st.columns([1.1, 1.3])
+            col1, col2 = st.columns([1.35, 1.0])
             with col1:
                 title_txt = f"{'लग्न चक्र: ' if is_hi else 'D1 Lagna: '}{constants.SIGNS_HI[asc_sign_idx] if is_hi else constants.SIGNS[asc_sign_idx]} {format_varga_dms(chart.ascendant_longitude)}"
                 if "South" in chart_style:
@@ -2740,9 +2770,9 @@ if st.session_state.get('data_generated'):
                         if p.is_retrograde:
                             abbr += " (व)" if is_hi else " (R)"
                         si_data[p.sign_index].append(abbr)
-                    svg_d1 = get_south_indian_chart_svg(si_data, asc_sign_idx, size=520, chart_title=title_txt)
+                    svg_d1 = get_south_indian_chart_svg(si_data, asc_sign_idx, size=560, chart_title=title_txt)
                 else:
-                    svg_d1 = get_north_indian_chart_svg(d1_houses, size=520, chart_title=title_txt)
+                    svg_d1 = get_north_indian_chart_svg(d1_houses, size=560, chart_title=title_txt)
                 render_kundli(svg_d1)
                 
                 with st.expander("विशाल कुण्डली चार्ट (Zoom In / 650px Ultra HD View)", expanded=False):
@@ -3698,7 +3728,7 @@ if st.session_state.get('data_generated'):
             with col_p3:
                 st.markdown(f"""
                 <div class="glass-card" style="height: 100%;">
-                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;">⏱️ स्थानीय खगोलीय काल ({birth.get('city', 'New Delhi')}):</div>
+                    <div style="font-weight: bold; color: #f0c05a; font-size: 1.05rem; margin-bottom: 6px;"> स्थानीय खगोलीय काल ({birth.get('city', 'New Delhi')}):</div>
                     <div style="font-size: 0.88rem; line-height: 1.8; color: #e2e8f0;">
                         <b>सूर्योदय:</b> <span style="color: #fde047;">{panch_obj.sunrise}</span> | <b>सूर्यास्त:</b> <span style="color: #fde047;">{panch_obj.sunset}</span><br>
                         <b>दिनमान:</b> {panch_obj.day_length}<br>
@@ -3713,7 +3743,7 @@ if st.session_state.get('data_generated'):
 
             # Chaughadiya Grid inside Panchang tab
             if panch_obj.chaughadiya_day:
-                with st.expander("⏱️ शुद्ध अक्षांशीय चौघड़िया चक्र (Day & Night Chaughadiya Grid)", expanded=False):
+                with st.expander(" शुद्ध अक्षांशीय चौघड़िया चक्र (Day & Night Chaughadiya Grid)", expanded=False):
                     ch_col1, ch_col2 = st.columns(2)
                     with ch_col1:
                         st.markdown("**दिन का चौघड़िया (Day):**")
@@ -3773,10 +3803,13 @@ if st.session_state.get('data_generated'):
             for _chap in overall_forecast:
                 ch_num = _chap.get('chapter_num', 1)
                 ch_title = _chap.get('title_hi', _chap.get('title', 'जीवन अध्याय'))
+                ch_icon = _chap.get('icon', 'destiny')
                 with st.expander(f"अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
                     st.markdown(f"""
                     <div class="predict-card" style="border-left-color: var(--gold-accent);">
-                        <div class="predict-header" style="font-size: 1.15rem; color: var(--gold-primary);">{ch_title}</div>
+                        <div class="predict-header" style="font-size: 1.15rem; color: var(--gold-primary); display: flex; align-items: center; gap: 8px;">
+                            {get_svg_vector(ch_icon, 20)} <span>{ch_title}</span>
+                        </div>
                         <p style="font-size: 1.05rem; line-height: 1.75; color: var(--text-main); text-align: justify; margin-top: 10px;">
                             {_chap.get('content_hi', '')}
                         </p>
@@ -4291,7 +4324,7 @@ if _timing_enabled():
     if "_vyas_script_start" in st.session_state:
         _elapsed = _time_mod.perf_counter() - st.session_state["_vyas_script_start"]
         with st.sidebar:
-            st.caption(f"⏱️ Rerun: {_elapsed * 1000:.0f} ms")
+            st.caption(f" Rerun: {_elapsed * 1000:.0f} ms")
 
 st.session_state["_vyas_script_start"] = _time_mod.perf_counter()
 

@@ -310,7 +310,7 @@ def build_pdf_report(filename: str, report_data: dict, lang: str = "hi"):
     if os.path.exists(LOGO_PATH):
         img_logo = Image(LOGO_PATH, width=0.85*inch, height=0.85*inch)
     else:
-        img_logo = Paragraph("<b>☸️ VYAS</b>", header_title_style)
+        img_logo = Paragraph("<b>VYAS</b>", header_title_style)
 
     top_invocation = "|| श्री गणेशाय नमः ||" if lang in ["hi", "bi"] else "|| OM SRI GANESHAYA NAMAHA ||"
     sub_heading = "Vedic, KP, Nadi & Multi-System Research-Grade Jyotisha Thesis" if lang == "en" else "वैदिक, केपी, नाड़ी एवं बहु-पद्धति शोध-स्तरीय ज्योतिष शोध प्रबंध"
@@ -732,7 +732,7 @@ def build_pdf_report(filename: str, report_data: dict, lang: str = "hi"):
         for pd_item in pd_list:
             is_cur = pd_item.get("is_active", False)
             p_lord_str = translate_planet(pd_item.get("lord",""), lang=lang)
-            status_str = "🔴 सक्रिय (ACTIVE)" if is_cur else "-"
+            status_str = "[ACTIVE] सक्रिय (ACTIVE)" if is_cur else "-"
             pd_table_rows.append([
                 Paragraph(f"<b>{p_lord_str} PD</b>", bold_body_style),
                 Paragraph(pd_item.get("start",""), body_style),
@@ -793,7 +793,7 @@ def build_pdf_report(filename: str, report_data: dict, lang: str = "hi"):
         lbl_res = "फलकथन (Result):" if lang != "en" else "Deterministic Result:"
 
         s_block = [
-            [Paragraph(f"<b>✨ {s_item.get('name','')}</b> [{s_item.get('category','')}] — <i>{s_item.get('source','')}</i>", bold_body_style)],
+            [Paragraph(f"<b>{s_item.get('name','')}</b> [{s_item.get('category','')}] — <i>{s_item.get('source','')}</i>", bold_body_style)],
             [Paragraph(f"<b>{lbl_shloka}</b> <i>{s_item.get('shloka_sanskrit','')}</i>", body_style)],
             [Paragraph(f"<b>{lbl_cond}</b> {s_item.get('condition_description','')}", body_style)],
             [Paragraph(f"<b>{lbl_res}</b> {s_item.get('deterministic_result','')}", body_style)]

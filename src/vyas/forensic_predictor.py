@@ -1565,7 +1565,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 1: व्यक्तित्व, शारीरिक गठन, आत्मबल एवं जीवन ऊर्जा",
         "title_hi": "व्यक्तित्व, शारीरिक गठन, आत्मबल एवं जीवन ऊर्जा",
         "title_en": "Personality, Physical Demeanor & Soul Constitution",
-        "icon": "👤",
+        "icon": "user",
         "content_hi": f"<p>{p1}</p><p>{p2}</p>"
     })
 
@@ -1624,7 +1624,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 2: स्वभाव, मानसिकता, मनोबल एवं विचार पद्धति",
         "title_hi": "स्वभाव, मानसिकता, मनोबल एवं विचार पद्धति",
         "title_en": "Mental Temperament, Psychology & Cognitive Resilience",
-        "icon": "🧠",
+        "icon": "intellect",
         "content_hi": f"<p>{p_mind1}</p><p>{p_mind2}</p>"
     })
 
@@ -1661,7 +1661,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 3: विद्या, उच्च शिक्षा, बौद्धिक कुशाग्रता एवं अनुसंधान क्षमता",
         "title_hi": "विद्या, उच्च शिक्षा, बौद्धिक कुशाग्रता एवं अनुसंधान क्षमता",
         "title_en": "Intellect, Higher Education & Scholarly Research",
-        "icon": "🎓",
+        "icon": "education",
         "content_hi": f"<p>{p_edu1}</p><p>{p_edu2}</p>"
     })
 
@@ -1708,7 +1708,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 4: आजीविका, करियर, व्यावसायिक उत्कर्ष एवं सामाजिक प्रतिष्ठा",
         "title_hi": "आजीविका, करियर, व्यावसायिक उत्कर्ष एवं सामाजिक प्रतिष्ठा",
         "title_en": "Career, Business, Authority & Social Leadership",
-        "icon": "💼",
+        "icon": "career",
         "content_hi": f"<p>{p_car1}</p><p>{p_car2}</p>"
     })
 
@@ -1752,7 +1752,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 5: धन, वित्तीय स्थिति, अचल संपत्ति एवं पैतृक समृद्धि",
         "title_hi": "धन, वित्तीय स्थिति, अचल संपत्ति एवं पैतृक समृद्धि",
         "title_en": "Wealth, Financial Yogas & Immovable Property",
-        "icon": "💰",
+        "icon": "wealth",
         "content_hi": f"<p>{p_fin1}</p><p>{p_fin2}</p>"
     })
 
@@ -1799,7 +1799,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 6: दांपत्य जीवन, विवाह, जीवनसाथी एवं पारिवारिक सुख",
         "title_hi": "दांपत्य जीवन, विवाह, जीवनसाथी एवं पारिवारिक सुख",
         "title_en": "Marriage, Spouse Characteristics & Domestic Harmony",
-        "icon": "💍",
+        "icon": "marriage",
         "content_hi": f"<p>{p_mar1}</p><p>{p_mar2}</p>"
     })
 
@@ -1829,7 +1829,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 7: संतान सुख, वंश वृद्धि एवं भावी पीढ़ी का भविष्य",
         "title_hi": "संतान सुख, वंश वृद्धि एवं भावी पीढ़ी का भविष्य",
         "title_en": "Progeny, Lineage Expansion & Future Generation",
-        "icon": "👶",
+        "icon": "children",
         "content_hi": f"<p>{p_prog1}</p><p>{p_prog2}</p>"
     })
 
@@ -1860,7 +1860,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 8: भाग्य, धर्म, तीर्थाटन एवं आध्यात्मिक उन्नति",
         "title_hi": "भाग्य, धर्म, तीर्थाटन एवं आध्यात्मिक उन्नति",
         "title_en": "Fortune, Dharma, Pilgrimages & Spiritual Destiny",
-        "icon": "🌟",
+        "icon": "destiny",
         "content_hi": f"<p>{p_fort1}</p><p>{p_fort2}</p>"
     })
 
@@ -1888,7 +1888,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 9: स्वास्थ्य, रोग प्रतिरोधक क्षमता, व्याधियां एवं सुरक्षा उपाय",
         "title_hi": "स्वास्थ्य, रोग प्रतिरोधक क्षमता, व्याधियां एवं सुरक्षा उपाय",
         "title_en": "Health, Immunity, Vitality & Preventative Wellness",
-        "icon": "🌿",
+        "icon": "health",
         "content_hi": f"<p>{p_health1}</p><p>{p_health2}</p>"
     })
 
@@ -1922,7 +1922,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 10: शत्रु, ऋण, कानूनी विवाद एवं आकस्मिक संकट निवारण",
         "title_hi": "शत्रु, ऋण, कानूनी विवाद एवं आकस्मिक संकट निवारण",
         "title_en": "Enemies, Debts, Litigation & Crisis Management",
-        "icon": "🛡️",
+        "icon": "protection",
         "content_hi": f"<p>{p_lit1}</p><p>{p_lit2}</p>"
     })
 
@@ -1951,7 +1951,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 11: विदेश यात्रा, दूरस्थ संपर्क व स्थान परिवर्तन योग",
         "title_hi": "विदेश यात्रा, दूरस्थ संपर्क व स्थान परिवर्तन योग",
         "title_en": "Foreign Travel, Overseas Settlements & Mobility",
-        "icon": "✈️",
+        "icon": "travel",
         "content_hi": f"<p>{p_trav1}</p><p>{p_trav2}</p>"
     })
 
@@ -1976,7 +1976,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 12: मोक्ष, पूर्वजन्म संचित प्रारब्ध एवं पारलौकिक ज्ञान",
         "title_hi": "मोक्ष, पूर्वजन्म संचित प्रारब्ध एवं पारलौकिक ज्ञान",
         "title_en": "Moksha, Past Life Karma & Esoteric Liberation",
-        "icon": "🕉️",
+        "icon": "spirituality",
         "content_hi": f"<p>{p_mok1}</p><p>{p_mok2}</p>"
     })
 
@@ -2047,7 +2047,7 @@ def compute_overall_life_forecast(
         "title": "अध्याय 13: दशा-गोचर समन्वय एवं आगामी 5 वर्षों का रणनीतिक मार्गदर्शन",
         "title_hi": "दशा-गोचर समन्वय एवं आगामी 5 वर्षों का रणनीतिक मार्गदर्शन",
         "title_en": "5-Year Strategic Life Forecast & Contemporary Dasha Matrix",
-        "icon": "⏳",
+        "icon": "timing",
         "content_hi": f"<p>{p_dasha1}</p><p>{p_dasha2}</p>"
     })
 
@@ -2084,7 +2084,7 @@ def compute_overall_life_forecast(
             "title": "अध्याय 14: दिनांकित भविष्यवाणियाँ एवं प्रमाण-श्रृंखला",
             "title_hi": "दिनांकित भविष्यवाणियाँ एवं प्रमाण-श्रृंखला",
             "title_en": "Dated Predictions & Evidence Chain",
-            "icon": "🎯",
+            "icon": "goal",
             "content_hi": (
                 intro_hi +
                 "<table class='as-table'><tr><th>अवधि</th><th>दशा</th><th>क्षेत्र</th>"

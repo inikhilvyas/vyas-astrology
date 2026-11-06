@@ -120,4 +120,15 @@ def search_cities(query: str, limit: int = 30) -> List[Dict]:
                 "pop": 1000000
             })
 
+    # 3. RapidAPI Hub & Global Geocoding Integration (When local search is sparse)
+    if len(results) < 5:
+        try:
+            from vyas.rapidapi_client import search_global_cities
+            rapid_res = search_global_cities(q, limit=8)
+            for r in rapid_res:
+                if not any(abs(r["lat"] - ex["lat"]) < 0.05 and abs(r["lon"] - ex["lon"]) < 0.05 for ex in results):
+                    results.append(r)
+        except Exception:
+            pass
+
     return results

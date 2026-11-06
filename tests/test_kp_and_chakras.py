@@ -95,7 +95,7 @@ def test_full_pipeline():
     print(f"PASS: Kota, Sarvatobhadra (28-nakshatra), and Navatara Chakras verified.")
 
     print("\n==========================================")
-    print("🌟 ALL 10 ASTROLOGICAL VERIFICATION TESTS PASSED!")
+    print("[SUCCESS] ALL 10 ASTROLOGICAL VERIFICATION TESTS PASSED!")
     print("==========================================")
 
 if __name__ == "__main__":

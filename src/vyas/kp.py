@@ -429,7 +429,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "marriage",
             "title_hi": "विवाह एवं दाम्पत्य जीवन (Marriage & Union)",
-            "icon": "💍",
+            "icon": "marriage",
             "primary_cusp": 7,
             "favorable_houses": [2, 7, 11],
             "detrimental_houses": [1, 6, 10],
@@ -438,7 +438,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "career",
             "title_hi": "आजीविका, पदोन्नति एवं व्यापार (Career & Profession)",
-            "icon": "💼",
+            "icon": "career",
             "primary_cusp": 10,
             "favorable_houses": [2, 6, 10, 11],
             "detrimental_houses": [5, 9],
@@ -447,7 +447,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "wealth",
             "title_hi": "धन संचय, समृद्धि एवं वित्तीय स्थिति (Wealth & Finance)",
-            "icon": "💰",
+            "icon": "wealth",
             "primary_cusp": 2,
             "favorable_houses": [2, 6, 11],
             "detrimental_houses": [5, 8, 12],
@@ -456,7 +456,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "progeny",
             "title_hi": "संतान सुख एवं संतति प्राप्ति (Progeny & Children)",
-            "icon": "👶",
+            "icon": "children",
             "primary_cusp": 5,
             "favorable_houses": [2, 5, 11],
             "detrimental_houses": [1, 4, 10],
@@ -465,7 +465,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "education",
             "title_hi": "उच्च विद्या, अनुसंधान एवं बौद्धिक सिद्धि (Education & Academics)",
-            "icon": "🎓",
+            "icon": "education",
             "primary_cusp": 4,
             "favorable_houses": [4, 9, 11],
             "detrimental_houses": [3, 8],
@@ -474,7 +474,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "foreign_travel",
             "title_hi": "विदेश गमन, सुदूर प्रवास एवं विदेश वास (Foreign Travel & Settlement)",
-            "icon": "✈️",
+            "icon": "travel",
             "primary_cusp": 12,
             "favorable_houses": [3, 9, 12],
             "detrimental_houses": [4, 11],
@@ -483,7 +483,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "health",
             "title_hi": "स्वास्थ्य, रोग मुक्ति एवं दीर्घायु (Health & Vitality)",
-            "icon": "🌿",
+            "icon": "health",
             "primary_cusp": 1,
             "favorable_houses": [1, 5, 11],
             "detrimental_houses": [6, 8, 12],
@@ -492,7 +492,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "property_vehicle",
             "title_hi": "भूमि, भवन, अचल सम्पत्ति व वाहन सुख (Property & Vehicles)",
-            "icon": "🏠",
+            "icon": "property",
             "primary_cusp": 4,
             "favorable_houses": [4, 11, 12],
             "detrimental_houses": [3, 10],
@@ -501,7 +501,7 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         {
             "id": "litigation",
             "title_hi": "मुकदमा, शत्रु दमन एवं प्रतियोगी विजय (Litigation & Competition)",
-            "icon": "⚖️",
+            "icon": "balance",
             "primary_cusp": 6,
             "favorable_houses": [6, 11],
             "detrimental_houses": [5, 12],
@@ -617,17 +617,17 @@ def evaluate_active_houses_by_dasha(cur_dasha: dict, planet_significators: dict,
         
     triggers = []
     if any(h in co_active for h in [2, 7, 11]) or (set([2, 11]).issubset(set(all_active)) and 7 in all_active):
-        triggers.append("💍 **विवाह एवं साझेदारी की सक्रियता:** सप्तम, द्वितीय एवं एकादश भावों की सम्मिलित सक्रियता नए प्रेम प्रसंग, विवाह वार्ता अथवा व्यापारिक साझेदारी के लिए स्वर्णिम योग बना रही है।")
+        triggers.append("[विवाह] **विवाह एवं साझेदारी की सक्रियता:** सप्तम, द्वितीय एवं एकादश भावों की सम्मिलित सक्रियता नए प्रेम प्रसंग, विवाह वार्ता अथवा व्यापारिक साझेदारी के लिए स्वर्णिम योग बना रही है।")
     if any(h in co_active for h in [2, 6, 10, 11]) or (set([10, 11]).issubset(set(all_active))):
-        triggers.append("💼 **करियर एवं धन लाभ की सक्रियता:** कर्म भाव (10), सेवा (6) एवं लाभ (11) सक्रिय हैं। यह समय पदोन्नति, नई नौकरी, वेतन वृद्धि अथवा व्यापार विस्तार के लिए सर्वाधिक फलदायी है।")
+        triggers.append("[करियर] **करियर एवं धन लाभ की सक्रियता:** कर्म भाव (10), सेवा (6) एवं लाभ (11) सक्रिय हैं। यह समय पदोन्नति, नई नौकरी, वेतन वृद्धि अथवा व्यापार विस्तार के लिए सर्वाधिक फलदायी है।")
     if any(h in co_active for h in [3, 9, 12]) or (set([9, 12]).issubset(set(all_active))):
-        triggers.append("✈️ **विदेश यात्रा एवं स्थान परिवर्तन:** नवम, द्वादश एवं तृतीय भाव सक्रिय हैं। सुदूर यात्रा, विदेश गमन, पासपोर्ट/वीजा कार्य अथवा शहर परिवर्तन के प्रबल संकेत हैं।")
+        triggers.append("[यात्रा] **विदेश यात्रा एवं स्थान परिवर्तन:** नवम, द्वादश एवं तृतीय भाव सक्रिय हैं। सुदूर यात्रा, विदेश गमन, पासपोर्ट/वीजा कार्य अथवा शहर परिवर्तन के प्रबल संकेत हैं।")
     if any(h in co_active for h in [4, 11, 12]) or (4 in all_active and 11 in all_active):
-        triggers.append("🏠 **सम्पत्ति एवं वाहन क्रय:** चतुर्थ एवं एकादश भावों की सक्रियता नया मकान, फ्लैट, भूमि अथवा वाहन क्रय करने के लिए अनुकूल परिस्थितियां बना रही है।")
+        triggers.append("[सम्पत्ति] **सम्पत्ति एवं वाहन क्रय:** चतुर्थ एवं एकादश भावों की सक्रियता नया मकान, फ्लैट, भूमि अथवा वाहन क्रय करने के लिए अनुकूल परिस्थितियां बना रही है।")
     if any(h in co_active for h in [6, 8, 12]) or (set([6, 8]).issubset(set(all_active))):
-        triggers.append("⚠️ **स्वास्थ्य एवं अनावश्यक व्यय के प्रति सतर्कता:** 6, 8 अथवा 12 भाव सक्रिय होने के कारण मौसमी रोग, अनावश्यक कानूनी वाद-विवाद अथवा व्यर्थ के खर्चों से बचाव अपेक्षित है। खान-पान व वाहन चलाने में सावधानी रखें।")
+        triggers.append("[सतर्कता] **स्वास्थ्य एवं अनावश्यक व्यय के प्रति सतर्कता:** 6, 8 अथवा 12 भाव सक्रिय होने के कारण मौसमी रोग, अनावश्यक कानूनी वाद-विवाद अथवा व्यर्थ के खर्चों से बचाव अपेक्षित है। खान-पान व वाहन चलाने में सावधानी रखें।")
     if not triggers:
-        triggers.append("⚖️ **संतुलित दिनचर्या एवं स्थिर प्रगति:** वर्तमान दशाएं मिश्रित भावों को सक्रिय कर रही हैं। यह समय धैर्यपूर्वक पूर्व-निर्धारित कार्यों को आगे बढ़ाने एवं योजनाबद्ध कर्म का है।")
+        triggers.append("[संतुलन] **संतुलित दिनचर्या एवं स्थिर प्रगति:** वर्तमान दशाएं मिश्रित भावों को सक्रिय कर रही हैं। यह समय धैर्यपूर्वक पूर्व-निर्धारित कार्यों को आगे बढ़ाने एवं योजनाबद्ध कर्म का है।")
 
     return {
         "mahadasha_lord": md,

@@ -29,11 +29,11 @@ def launch_server():
         "--theme.base=dark"
     ]
 
-    print(f"🚀 Starting VYAS Web Terminal Server on http://{host}:{port} ...")
+    print(f"[VYAS] Starting Web Terminal Server on http://{host}:{port} ...")
     try:
         subprocess.run(cmd)
     except KeyboardInterrupt:
-        print("\n⏹️ VYAS Server stopped.")
+        print("\n[VYAS] Server stopped.")
 
 if __name__ == "__main__":
     launch_server()
