@@ -171,6 +171,27 @@ def _mount_session_bridge(action: str = "read", token: str = "") -> str:
         return ""
 
 
+def _load_kundli_into_session(chosen_k, make_default=False, user_id=None):
+    """Loads a saved kundli profile into active session and marks data ready."""
+    if not chosen_k:
+        return
+    st.session_state['loaded_profile'] = dict(chosen_k)
+    st.session_state['lat'] = float(chosen_k.get('lat', 28.6139))
+    st.session_state['lon'] = float(chosen_k.get('lon', 77.2090))
+    st.session_state['city_name'] = chosen_k.get('city', 'New Delhi, India')
+    st.session_state['city_search_input'] = chosen_k.get('city', 'New Delhi, India')
+    st.session_state['_last_chosen_city'] = chosen_k.get('city', 'New Delhi, India')
+    st.session_state.pop('selected_city_dropdown', None)
+    st.session_state.pop('_birth_input_sig', None)
+    st.session_state['data_generated'] = True
+    st.session_state['show_birth_form'] = False
+    if make_default and user_id:
+        try:
+            auth_vault.set_default_kundli(user_id, chosen_k["id"])
+        except Exception:
+            pass
+
+
 def _start_user_session(u_obj) -> None:
     """Marks the user signed in for this session and remembers this browser."""
     if not u_obj:
@@ -191,6 +212,18 @@ def _start_user_session(u_obj) -> None:
         # the current run.
         st.session_state["_vyas_store_pending"] = token
         st.session_state["_vyas_cookie_pending"] = True
+
+    # Automatically load user's default/saved kundli
+    try:
+        _auto_k = auth_vault.get_default_or_latest_kundli(u_obj["id"])
+        if _auto_k:
+            _load_kundli_into_session(_auto_k, user_id=u_obj["id"])
+        else:
+            st.session_state.pop('loaded_profile', None)
+            st.session_state['show_birth_form'] = True
+            st.session_state['data_generated'] = False
+    except Exception:
+        pass
 
 
 def _end_user_session() -> None:
@@ -216,7 +249,9 @@ def _end_user_session() -> None:
     }
     for _sk in ("loaded_profile", "google_access_token", "user_google_processed",
                 "oauth_state", "gdrive_last_link", "saved_k_picker",
-                "oauth_code_verifier"):
+                "oauth_code_verifier", "data_generated", "show_birth_form",
+                "_birth_input_sig", "chart", "birth", "kp_cusps", "dasha_engine",
+                "vargas_matrix", "panchang", "gochar", "predictions"):
         st.session_state.pop(_sk, None)
 
 
@@ -250,7 +285,7 @@ def lazy_sections(labels, key: str):
     reruns triggered by widgets elsewhere on the page.
     """
     active = st.radio(
-        "section",
+        "",
         options=list(range(len(labels))),
         format_func=lambda i: labels[i],
         index=0,
@@ -570,8 +605,17 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------
-       DOMAIN SUITES (Pill Navigation with Yatra One)
+       DOMAIN SUITES & SUB-TABS (Pill Navigation with Yatra One)
        ------------------------------------------------------------- */
+    div[data-testid="stRadio"] > label,
+    div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] {
+        display: none !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+    }
+
     div[data-testid="stRadio"] [role="radiogroup"] {
         display: flex !important;
         flex-wrap: wrap !important;
@@ -583,7 +627,7 @@ st.markdown("""
         margin-bottom: 18px !important;
     }
 
-    div[data-testid="stRadio"] label {
+    div[data-testid="stRadio"] [role="radiogroup"] label {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -602,27 +646,47 @@ st.markdown("""
         min-height: 44px !important;
     }
 
-    div[data-testid="stRadio"] label:hover {
+    div[data-testid="stRadio"] [role="radiogroup"] label:hover {
         background: rgba(240, 192, 90, 0.18) !important;
         color: #fff4cc !important;
         border-color: rgba(240, 192, 90, 0.6) !important;
     }
 
-    div[data-testid="stRadio"] label:has(input:checked),
-    div[data-testid="stRadio"] label[data-checked="true"] {
+    div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked),
+    div[data-testid="stRadio"] [role="radiogroup"] label[data-checked="true"] {
         background: linear-gradient(135deg, #f5d16e 0%, #b99a3d 100%) !important;
         color: #1a1305 !important;
         font-weight: 800 !important;
         border-color: #ffd700 !important;
         box-shadow: 0 4px 18px rgba(240, 192, 90, 0.45) !important;
     }
-    div[data-testid="stRadio"] label:has(input:checked) *,
-    div[data-testid="stRadio"] label[data-checked="true"] * {
+    div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) *,
+    div[data-testid="stRadio"] [role="radiogroup"] label[data-checked="true"] * {
         color: #1a1305 !important;
         font-weight: 800 !important;
     }
-    div[data-testid="stRadio"] label > div:first-child {
+    div[data-testid="stRadio"] [role="radiogroup"] label > div:first-child {
         display: none !important;
+    }
+
+    /* Sidebar Suite Navigation vertical list */
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] {
+        flex-direction: column !important;
+        background: rgba(10, 16, 32, 0.7) !important;
+        padding: 8px !important;
+        gap: 6px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(240, 192, 90, 0.2) !important;
+    }
+    section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        border-radius: 8px !important;
+        padding: 8px 12px !important;
+        font-size: 0.95rem !important;
+        white-space: normal !important;
+        line-height: 1.3 !important;
+        min-height: 40px !important;
     }
 
     /* -------------------------------------------------------------
@@ -959,19 +1023,17 @@ u = st.session_state["user"]
 is_logged_in_now = (u.get("email") != "seeker@vyasastro.com")
 
 # Auto-load the default or last saved kundli into loaded_profile on fresh session
-if 'loaded_profile' not in st.session_state:
-    try:
-        _auto_k = auth_vault.get_default_or_latest_kundli(u["id"])
-        if _auto_k:
-            st.session_state['loaded_profile'] = dict(_auto_k)
-            st.session_state['lat'] = float(_auto_k.get('lat', 28.6139))
-            st.session_state['lon'] = float(_auto_k.get('lon', 77.2090))
-            st.session_state['city_name'] = _auto_k.get('city', 'New Delhi, India')
-            st.session_state['city_search_input'] = _auto_k.get('city', 'New Delhi, India')
-            st.session_state['_last_chosen_city'] = _auto_k.get('city', 'New Delhi, India')
-            st.session_state.pop('selected_city_dropdown', None)
-    except Exception:
-        pass
+if is_logged_in_now:
+    cur_lp = st.session_state.get('loaded_profile')
+    if not cur_lp or cur_lp.get('user_id') != u["id"]:
+        try:
+            _auto_k = auth_vault.get_default_or_latest_kundli(u["id"])
+            if _auto_k:
+                _load_kundli_into_session(_auto_k, user_id=u["id"])
+            else:
+                st.session_state['show_birth_form'] = True
+        except Exception:
+            pass
 
 
 # ---------------- LOGGED-OUT LANDING: EMAIL LOGIN / REGISTRATION ----------------
@@ -1487,236 +1549,261 @@ with st.sidebar:
                     else:
                         st.error(_msg_gc)
 
-    # ---------------- SAVED KUNDLIS VAULT (FULL MANAGEMENT) ----------------
-    if is_logged_in_now:
-        saved_list = auth_vault.get_saved_kundlis(u["id"])  # retrieve saved profiles
-# Quick open saved Kundli button (outside expander)
-if is_logged_in_now:
-    if st.button("🔓 Open Saved Kundli", use_container_width=True):
-        if not saved_list:
-            st.info("कोई सुरक्षित कुण्डली नहीं है। पहले 'कुण्डली सुरक्षित करें' बटन से सेव करें.")
-        else:
-            k_map = {f"{k['name']} ({k['dob']})": k for k in saved_list}
-            sel = st.selectbox("कुण्डली चुनें:", list(k_map.keys()))
-            chosen = k_map[sel]
-            st.session_state['loaded_profile'] = dict(chosen)
-            st.session_state['lat'] = float(chosen.get('lat', 28.6139))
-            st.session_state['lon'] = float(chosen.get('lon', 77.2090))
-            st.session_state['city_name'] = chosen.get('city', 'New Delhi, India')
-            st.session_state['city_search_input'] = chosen.get('city', 'New Delhi, India')
-            st.session_state['_last_chosen_city'] = chosen.get('city', 'New Delhi, India')
-            st.session_state.pop('selected_city_dropdown', None)
-            st.session_state['data_generated'] = False
-            for _stale_key in ('chart', 'birth', 'kp_cusps', 'dasha_engine', 'vargas_matrix', 'panchang', 'gochar', 'predictions', '_birth_input_sig'):
-                st.session_state.pop(_stale_key, None)
-            st.success(f"'{chosen['name']}' की कुण्डली लोड हो गई! अब 'Generate' दबाएँ.")
-            st.rerun()
-        
-        with st.expander(f"📁 मेरी सुरक्षित कुण्डलियाँ ({len(saved_list)}) — खोलें / Open saved Kundli", expanded=True):
-            if saved_list:
-                k_display_map = {f"{k['name']} ({k['dob']} - {k.get('city', '')})": k for k in saved_list}
-                chosen_k_label = st.selectbox("कुण्डली चुनें:", list(k_display_map.keys()), key="saved_k_picker")
-                chosen_k = k_display_map[chosen_k_label]
+    # ---------------- SAVED KUNDLIS VAULT & ACTIVE KUNDLI BAR ----------------
+    saved_list = auth_vault.get_saved_kundlis(u["id"]) if is_logged_in_now else []
+    active_lp = st.session_state.get('loaded_profile')
 
-                col_kv1, col_kv2, col_kv3 = st.columns([1.1, 1, 1.2])
-                with col_kv1:
-                    if st.button("📂 खोलें (Open)", key="open_k_btn", use_container_width=True):
-                        st.session_state['loaded_profile'] = dict(chosen_k)
-                        st.session_state['lat'] = float(chosen_k.get('lat', 28.6139))
-                        st.session_state['lon'] = float(chosen_k.get('lon', 77.2090))
-                        st.session_state['city_name'] = chosen_k.get('city', 'New Delhi, India')
-                        st.session_state['city_search_input'] = chosen_k.get('city', 'New Delhi, India')
-                        st.session_state['_last_chosen_city'] = chosen_k.get('city', 'New Delhi, India')
-                        st.session_state.pop('selected_city_dropdown', None)
-                        st.session_state['data_generated'] = False
-                        for _stale_key in ('chart', 'birth', 'kp_cusps', 'dasha_engine', 'vargas_matrix', 'panchang', 'gochar', 'predictions', '_birth_input_sig'):
-                            st.session_state.pop(_stale_key, None)
-                        st.rerun()
-                with col_kv2:
-                    if st.button("🗑️ हटाएं (Delete)", key="del_k_btn", use_container_width=True):
+    ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
+    is_hi = "हिन्दी" in ui_lang
+
+    # If user has an active loaded profile, show active status bar & quick action controls
+    if is_logged_in_now and active_lp:
+        col_act1, col_act2 = st.columns([2.4, 1.4])
+        with col_act1:
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, rgba(240,192,90,0.18) 0%, rgba(14,23,42,0.96) 100%); border: 1.8px solid #f0c05a; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.4);">
+                <div style="font-size: 0.74rem; color: #ffd700; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+                    ⭐ आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)
+                </div>
+                <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: #ffffff; font-weight: 800; margin-top: 2px;">
+                    {active_lp.get('name', 'जातक')}
+                </div>
+                <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 3px;">
+                    🗓️ <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
+                    📍 <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
+                    📐 <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_act2:
+            c_btn_a, c_btn_b = st.columns(2)
+            with c_btn_a:
+                if st.button("➕ नई कुण्डली", key="new_k_top_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
+                    st.session_state['show_birth_form'] = True
+                    st.session_state.pop('loaded_profile', None)
+                    st.rerun()
+            with c_btn_b:
+                toggle_btn_txt = "❌ फॉर्म बंद करें" if st.session_state.get('show_birth_form') else "✏️ विवरण बदलें"
+                if st.button(toggle_btn_txt, key="toggle_edit_k_btn", use_container_width=True, help="समय/स्थान संशोधित करें"):
+                    st.session_state['show_birth_form'] = not st.session_state.get('show_birth_form', False)
+                    st.rerun()
+
+        # If user has multiple saved kundlis, show a quick switch drawer
+        if len(saved_list) > 1:
+            with st.expander(f"📂 कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
+                k_disp_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')})": k for k in saved_list}
+                cur_id = active_lp.get('id')
+                def_idx = 0
+                for idx, k in enumerate(saved_list):
+                    if k.get('id') == cur_id:
+                        def_idx = idx
+                        break
+                chosen_label = st.selectbox("सुरक्षित कुण्डली चुनें:", list(k_disp_map.keys()), index=def_idx, key="active_k_selector")
+                chosen_k = k_disp_map[chosen_label]
+
+                col_k1, col_k2, col_k3 = st.columns([1.2, 1, 1.2])
+                with col_k1:
+                    if chosen_k.get('id') != active_lp.get('id'):
+                        if st.button("📂 यह कुण्डली खोलें", key="switch_k_btn", use_container_width=True):
+                            _load_kundli_into_session(chosen_k, user_id=u["id"])
+                            st.rerun()
+                    else:
+                        st.caption("✅ यह कुण्डली अभी सक्रिय है")
+                with col_k2:
+                    if st.button("🗑️ हटाएं", key="del_k_btn", use_container_width=True):
                         ok_del, del_msg = auth_vault.delete_kundli(u["id"], chosen_k["id"])
                         if ok_del:
-                            if st.session_state.get('loaded_profile', {}).get('id') == chosen_k["id"]:
-                                st.session_state.pop('loaded_profile', None)
                             st.success(del_msg)
+                            if active_lp.get('id') == chosen_k["id"]:
+                                st.session_state.pop('loaded_profile', None)
+                                st.session_state['data_generated'] = False
                             st.rerun()
                         else:
                             st.error(del_msg)
-                with col_kv3:
-                    if st.button("⭐ डिफ़ॉल्ट बनाएं", key="set_def_k_btn", use_container_width=True, help="हर बार ऐप खोलने पर यह कुण्डली अपने आप खुली मिलेगी"):
+                with col_k3:
+                    if st.button("⭐ इसे डिफ़ॉल्ट बनाएं", key="set_def_k_btn", use_container_width=True, help="हर बार ऐप खोलने पर यह कुण्डली स्वतः खुली मिलेगी"):
                         auth_vault.set_default_kundli(u["id"], chosen_k["id"])
-                        st.success(f"'{chosen_k['name']}' को प्राथमिक कुण्डली बनाया गया!")
+                        st.success(f"'{chosen_k['name']}' को प्राथमिक डिफ़ॉल्ट कुण्डली सेट किया गया!")
                         st.rerun()
-            else:
-                st.info("💡 अभी कोई कुण्डली सुरक्षित नहीं है। नीचे जन्म विवरण भरकर **'💾 कुण्डली सुरक्षित करें'** बटन दबाएं।")
-    # Hide saved kundlis expander for non-logged users for cleaner UI
 
-st.markdown("""
-<div style="margin: 4px 0 16px; padding: 18px 22px; border-radius: 14px;
-            background: radial-gradient(circle at 8% 0%, rgba(229,169,60,0.20) 0%, transparent 55%),
-                        linear-gradient(135deg, rgba(19,27,54,0.96) 0%, rgba(8,12,26,0.96) 100%);
-            border: 1px solid rgba(229,169,60,0.38); box-shadow: 0 18px 40px -24px #000;">
-    <div style="font-family: 'Cinzel', serif; font-size: 1.45rem; font-weight: 800; color: #fef3c7; letter-spacing: 0.5px;">
-        🪔 अपनी कुण्डली बनाएं
-    </div>
-    <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 5px;">
-        जन्म विवरण भरें, फिर नीचे <b style="color:#f7d584;">“कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं”</b> दबाएं।
-        चाहें तो <b style="color:#f7d584;">“कुण्डली सुरक्षित करें”</b> से प्रोफ़ाइल वॉल्ट में भी रख सकते हैं।
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    # Determine whether to show birth input form:
+    # Only show if user has no loaded profile OR clicked '➕ नई कुण्डली' / '✏️ विवरण बदलें'
+    show_form = st.session_state.get('show_birth_form', False) or (active_lp is None)
 
-if is_logged_in_now and saved_list:
-    st.info("📂 आपकी सुरक्षित कुण्डलियाँ ऊपर खुली हैं। सूची से कुण्डली चुनकर **खोलें / Open** दबाएँ; नई कुण्डली नीचे बनाएं।")
+    lp = st.session_state.get('loaded_profile', {})
+    default_name = lp.get('name', 'जातक / Seeker' if not is_logged_in_now else u.get('name', 'जातक'))
+    default_city = lp.get('city', 'New Delhi, India')
+    default_lat = float(lp.get('lat', 28.6139))
+    default_lon = float(lp.get('lon', 77.2090))
+    default_tz = float(lp.get('tz', 5.5))
 
-ui_lang = st.radio("🌐 भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True)
-is_hi = "हिन्दी" in ui_lang
+    default_dob = datetime(1995, 1, 1).date()
+    if lp.get('dob'):
+        try:
+            default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
+        except Exception:
+            pass
 
-if is_logged_in_now:
-    st.subheader("Native Details / जातक विवरण" if is_hi else "Native Details")
-    mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
-else:
-    st.markdown("""
-    <div style="text-align: center; padding: 40px 20px; background: radial-gradient(circle at 50% 0%, rgba(245, 209, 110, 0.12) 0%, transparent 60%), linear-gradient(180deg, rgba(19, 27, 54, 0.98) 0%, rgba(8, 12, 26, 0.98) 100%); border: 1px solid rgba(245, 209, 110, 0.32); border-radius: 18px; margin-top: 30px; box-shadow: 0 28px 60px -26px rgba(0,0,0,0.98);">
-        <div style="font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 800; background: linear-gradient(90deg, #fff4cc 0%, #f5d16e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px;">VYAS ASTRA</div>
-        <div style="font-size: 1.1rem; color: #f7d584; margin-bottom: 8px; font-weight: 600;">वैदिक ज्योतिष • के.पी. प्रणाली • शोध प्रबंध</div>
-        <div style="color: #cbd5e1; font-size: 0.95rem; margin-bottom: 24px;">सटीक जन्मकुंडली विश्लेषण, विंशोत्तरी दशा, के.पी. फलादेश एवं विस्तृत PDF रिपोर्ट</div>
-        <div style="color: #94a3b8; font-size: 0.9rem;">कुण्डली बनाना शुरू करने के लिए ऊपर 'Google से साइन इन करें' पर क्लिक करें</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.stop()
+    def_h, def_m, def_s = 12, 0, 0
+    if lp.get('tob'):
+        try:
+            parts = [int(p) for p in lp['tob'].split(':')]
+            if len(parts) >= 1: def_h = parts[0]
+            if len(parts) >= 2: def_m = parts[1]
+            if len(parts) >= 3: def_s = parts[2]
+        except Exception:
+            pass
 
-lp = st.session_state.get('loaded_profile', {})
-default_name = lp.get('name', 'जातक / Seeker')
-default_city = lp.get('city', 'New Delhi, India')
-default_lat = float(lp.get('lat', 28.6139))
-default_lon = float(lp.get('lon', 77.2090))
-default_tz = float(lp.get('tz', 5.5))
+    generate = False
+    if show_form:
+        st.markdown("""
+        <div style="margin: 4px 0 16px; padding: 18px 22px; border-radius: 14px;
+                    background: radial-gradient(circle at 8% 0%, rgba(229,169,60,0.20) 0%, transparent 55%),
+                                linear-gradient(135deg, rgba(19,27,54,0.96) 0%, rgba(8,12,26,0.96) 100%);
+                    border: 1px solid rgba(229,169,60,0.38); box-shadow: 0 18px 40px -24px #000;">
+            <div style="font-family: 'Cinzel', serif; font-size: 1.45rem; font-weight: 800; color: #fef3c7; letter-spacing: 0.5px;">
+                🪔 अपनी कुण्डली बनाएं / विवरण भरें
+            </div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 5px;">
+                जन्म विवरण भरें, फिर नीचे <b style="color:#f7d584;">“कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं”</b> दबाएं।
+                चाहें तो <b style="color:#f7d584;">“कुण्डली सुरक्षित करें”</b> से प्रोफ़ाइल वॉल्ट में भी रख सकते हैं।
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-default_dob = datetime(1995, 1, 1).date()
-if lp.get('dob'):
-    try:
-        default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
-    except Exception:
-        pass
+        mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
 
-def_h, def_m, def_s = 12, 0, 0
-if lp.get('tob'):
-    try:
-        parts = [int(p) for p in lp['tob'].split(':')]
-        if len(parts) >= 1: def_h = parts[0]
-        if len(parts) >= 2: def_m = parts[1]
-        if len(parts) >= 3: def_s = parts[2]
-    except Exception:
-        pass
+        if "Natal" in mode:
+            name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
+            date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
+            
+            # Exact HH:MM:SS input for ultra micro-precision
+            st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
+            t_col1, t_col2, t_col3 = st.columns(3)
+            tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
+            tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
+            tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
+            time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
+        else:
+            name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
+            prashna_category = st.selectbox(
+                "प्रश्न विषय (Prashna Subject / Category)",
+                [
+                    "💼 नौकरी / कार्य सफलता (Career & Job)",
+                    "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
+                    "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
+                    "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
+                    "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
+                    "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
+                    "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
+                ]
+            )
+            prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
+            st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
+            st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
+            now = datetime.now()
+            date_val = now.date()
+            time_val = now.time()
 
-if "Natal" in mode:
-    name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
-    date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
-    
-    # Exact HH:MM:SS input for ultra micro-precision
-    st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
-    t_col1, t_col2, t_col3 = st.columns(3)
-    tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
-    tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
-    tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
-    time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
-else:
-    name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
-    prashna_category = st.selectbox(
-        "प्रश्न विषय (Prashna Subject / Category)",
-        [
-            "💼 नौकरी / कार्य सफलता (Career & Job)",
-            "💍 विवाह एवं प्रेम संबंध (Marriage & Romance)",
-            "🏥 रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
-            "⚖️ कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
-            "💰 धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
-            "✈️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
-            "🔍 खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
-        ]
-    )
-    prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
-    st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
-    st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
-    now = datetime.now()
-    date_val = now.date()
-    time_val = now.time()
+        st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
 
-st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
+        city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
 
-# Instant town & city search across 565,000+ Indian & Global locations
-city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
+        matched_cities = city_search.search_cities(city_query, limit=40) if city_search else []
+        city_options = {}
+        if matched_cities:
+            for c in matched_cities:
+                city_options[c["label"]] = c
+        else:
+            fallback_label = f"{city_query or default_city} (स्थान)"
+            city_options[fallback_label] = {
+                "label": fallback_label,
+                "name": city_query or default_city,
+                "lat": float(st.session_state.get('lat', default_lat)),
+                "lon": float(st.session_state.get('lon', default_lon))
+            }
 
-matched_cities = city_search.search_cities(city_query, limit=40) if city_search else []
-city_options = {}
-if matched_cities:
-    for c in matched_cities:
-        city_options[c["label"]] = c
-else:
-    # Default fallback option
-    fallback_label = f"{city_query or default_city} (स्थान)"
-    city_options[fallback_label] = {
-        "label": fallback_label,
-        "name": city_query or default_city,
-        "lat": float(st.session_state.get('lat', default_lat)),
-        "lon": float(st.session_state.get('lon', default_lon))
-    }
+        selected_city_label = st.selectbox(
+            "नगर चुनें (Select Town / City from List):",
+            options=list(city_options.keys()),
+            index=0,
+            key="selected_city_dropdown"
+        )
 
-selected_city_label = st.selectbox(
-    "नगर चुनें (Select Town / City from List):",
-    options=list(city_options.keys()),
-    index=0,
-    key="selected_city_dropdown"
-)
+        sel_city_data = city_options.get(selected_city_label)
+        if sel_city_data and ('lat' in sel_city_data) and ('lon' in sel_city_data):
+            if st.session_state.get('_last_chosen_city') != selected_city_label:
+                st.session_state['lat'] = sel_city_data['lat']
+                st.session_state['lon'] = sel_city_data['lon']
+                st.session_state['city_name'] = sel_city_data['name']
+                st.session_state['_last_chosen_city'] = selected_city_label
 
-# Automatically set lat/lon from selected town/city
-sel_city_data = city_options.get(selected_city_label)
-if sel_city_data and ('lat' in sel_city_data) and ('lon' in sel_city_data):
-    # Update session state if user selects a different city from search
-    if st.session_state.get('_last_chosen_city') != selected_city_label:
-        st.session_state['lat'] = sel_city_data['lat']
-        st.session_state['lon'] = sel_city_data['lon']
-        st.session_state['city_name'] = sel_city_data['name']
-        st.session_state['_last_chosen_city'] = selected_city_label
+        city_name = st.session_state.get('city_name', sel_city_data.get('name', default_city) if sel_city_data else default_city)
+                
+        coord_col1, coord_col2 = st.columns(2)
+        lat = coord_col1.number_input("Latitude (°N) / अक्षांश" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
+        lon = coord_col2.number_input("Longitude (°E) / रेखांश" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
+        st.session_state['lat'] = lat
+        st.session_state['lon'] = lon
 
-city_name = st.session_state.get('city_name', sel_city_data.get('name', default_city) if sel_city_data else default_city)
-        
-coord_col1, coord_col2 = st.columns(2)
-lat = coord_col1.number_input("Latitude (°N) / अक्षांश" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
-lon = coord_col2.number_input("Longitude (°E) / रेखांश" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
-st.session_state['lat'] = lat
-st.session_state['lon'] = lon
+        tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=default_tz, step=0.5)
 
-tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=5.5, step=0.5)
+        col_ay1, col_ay2 = st.columns(2)
+        with col_ay1:
+            ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
+        with col_ay2:
+            node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
 
-col_ay1, col_ay2 = st.columns(2)
-with col_ay1:
-    ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
-with col_ay2:
-    node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
+        # Save to vault and Generate buttons
+        col_sv1, col_sv2 = st.columns([1, 1.2])
+        with col_sv1:
+            if st.button("💾 कुण्डली सुरक्षित करें", use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं"):
+                k_payload = {
+                    "name": name,
+                    "dob": date_val.strftime("%Y-%m-%d"),
+                    "tob": time_val.strftime("%H:%M:%S"),
+                    "city": city_name,
+                    "lat": lat,
+                    "lon": lon,
+                    "tz": tz_offset,
+                    "ayanamsa": ayan_choice
+                }
+                ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
+                if ok:
+                    _load_kundli_into_session(k_payload, make_default=True, user_id=u["id"])
+                    st.success(f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।")
+                    st.rerun()
+                else:
+                    st.warning(s_msg)
 
-# Save to vault button
-if st.button("💾 कुण्डली सुरक्षित करें (Save Profile to Vault)", use_container_width=True):
-    k_payload = {
-        "name": name,
-        "dob": date_val.strftime("%Y-%m-%d"),
-        "tob": time_val.strftime("%H:%M:%S"),
-        "city": city_name,
-        "lat": lat,
-        "lon": lon,
-        "tz": tz_offset,
-        "ayanamsa": ayan_choice
-    }
-    ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
-    if ok:
-        st.session_state['loaded_profile'] = dict(k_payload)
-        st.success(f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।")
-        st.rerun()
+        with col_sv2:
+            btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
+            generate = st.button(btn_lbl, type="primary", use_container_width=True)
+            if generate:
+                st.session_state['show_birth_form'] = False
+                st.session_state['data_generated'] = True
+                st.session_state['loaded_profile'] = {
+                    "name": name,
+                    "dob": date_val.strftime("%Y-%m-%d"),
+                    "tob": time_val.strftime("%H:%M:%S"),
+                    "city": city_name,
+                    "lat": lat,
+                    "lon": lon,
+                    "tz": tz_offset,
+                    "ayanamsa": ayan_choice
+                }
     else:
-        st.warning(s_msg)
-
-btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
-generate = st.button(btn_lbl, type="primary", use_container_width=True)
+        # Form is collapsed: use active profile data directly
+        name = lp.get('name', 'जातक')
+        city_name = default_city
+        lat = default_lat
+        lon = default_lon
+        tz_offset = default_tz
+        date_val = default_dob
+        time_val = d_time(def_h, def_m, def_s)
+        ayan_choice = lp.get('ayanamsa', 'Lahiri')
+        node_choice = lp.get('node', 'Mean (औसत)')
+        generate = False
 
 # Calculate Core Structures
 # Input signature: the cached chart must be invalidated whenever ANY birth-input
@@ -1727,7 +1814,8 @@ _birth_input_sig = (
     round(float(lon), 6), round(float(tz_offset), 4), ayan_choice, node_choice,
 )
 if (generate or 'data_generated' not in st.session_state
-        or st.session_state.get('_birth_input_sig') != _birth_input_sig):
+        or st.session_state.get('_birth_input_sig') != _birth_input_sig
+        or 'chart' not in st.session_state):
     dt = datetime.combine(date_val, time_val)
     dt_utc = dt - timedelta(hours=tz_offset)
     dt_utc = dt_utc.replace(tzinfo=timezone.utc)
@@ -1834,6 +1922,10 @@ if st.session_state.get('data_generated'):
         "शोध प्रबंध PDF" if is_hi else "Publication PDF"
     ]
 
+    # Pre-select Daily Horoscope if triggered
+    if st.session_state.pop("_jump_to_daily_suite", False):
+        st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
+
     with st.sidebar:
         st.markdown("""
         <div style="margin: 16px 0 6px; padding: 10px 14px; background: linear-gradient(135deg, rgba(240,192,90,0.2) 0%, rgba(14,23,42,0.92) 100%); border-left: 4px solid #f0c05a; border-radius: 8px;">
@@ -1849,6 +1941,22 @@ if st.session_state.get('data_generated'):
             key="domain_suite_sidebar_radio",
             label_visibility="collapsed"
         )
+
+        if is_logged_in_now and len(saved_list) > 1:
+            with st.expander(f"📁 कुण्डली बदलें ({len(saved_list)})", expanded=False):
+                sb_k_map = {f"{k['name']} ({k.get('dob')})": k for k in saved_list}
+                cur_k_id = active_lp.get('id') if active_lp else None
+                cur_k_idx = 0
+                for idx, k in enumerate(saved_list):
+                    if k.get('id') == cur_k_id:
+                        cur_k_idx = idx
+                        break
+                sb_sel_lbl = st.selectbox("कुण्डली चुनें:", list(sb_k_map.keys()), index=cur_k_idx, key="sb_kundli_switcher")
+                sb_sel_k = sb_k_map[sb_sel_lbl]
+                if sb_sel_k.get('id') != cur_k_id:
+                    if st.button("📂 खोलें", key="sb_switch_btn", use_container_width=True):
+                        _load_kundli_into_session(sb_sel_k, user_id=u["id"])
+                        st.rerun()
 
         # Creator Info in Sidebar Footer (subtle & dignified)
         st.markdown("""
@@ -1882,9 +1990,10 @@ if st.session_state.get('data_generated'):
         </div>
         """, unsafe_allow_html=True)
     with col_m_banner2:
-        if st.button("👉 आज का राशिफल देखें", key="jump_daily_horo_top_btn", use_container_width=True):
+        def _jump_to_daily_suite_cb():
             st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
-            st.rerun()
+
+        st.button("👉 आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
 
     # Active Suite Header on Main Screen
     st.markdown(f"""
