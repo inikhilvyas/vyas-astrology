@@ -412,6 +412,15 @@ elif _oauth_code and not st.session_state.get("user_google_processed"):
             st.session_state.pop("oauth_state", None)
             st.rerun()
 
+# PWA Manifest & App Store Meta
+st.markdown('''
+<link rel="manifest" href="static/manifest.json">
+<meta name="theme-color" content="#e5a93c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+''', unsafe_allow_html=True)
+
 # Global Luxury Vedic Styling & Mobile-First Responsive Framework
 st.markdown("""
 <style>

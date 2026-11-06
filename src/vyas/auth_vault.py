@@ -286,7 +286,12 @@ def _get_connection():
                 "Falling back to ephemeral SQLite for this run.",
                 flush=True,
             )
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30.0)
+    try:
+        conn.execute('PRAGMA journal_mode=WAL;')
+        conn.execute('PRAGMA synchronous=NORMAL;')
+    except Exception:
+        pass
     conn.row_factory = sqlite3.Row
     return conn
 
