@@ -65,6 +65,7 @@ from vyas import daily_horoscope as vyas_daily
 from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
 from vyas import match as vyas_match
+from vyas import prashna as vyas_prashna
 from vyas.chatbot import vyas_chatbot
 try:
     from vyas import city_search
@@ -2208,6 +2209,7 @@ if st.session_state.get('data_generated'):
     # -------------------------------------------------------------------------
     suite_options = [
         "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing",
+        "दिव्य प्रश्न कुण्डली (Horary & Mook Prashna)" if is_hi else "Horary & Mook Prashna",
         "कुण्डली एवं षोडशवर्ग" if is_hi else "Birth Charts & 16 Vargas",
         "वैदिक फलित एवं शास्त्रीय सूत्र" if is_hi else "Vedic Forecast & Classical Sutras",
         "अष्टकूट मिलान एवं परिहार" if is_hi else "Compatibility & Dosha Parihara",
@@ -2328,67 +2330,150 @@ if st.session_state.get('data_generated'):
     # -------------------------------------------------------------------------
     # PRASHNA KUNDLI HORARY JUDGEMENT (तात्कालिक प्रश्न विचार व फलित)
     # -------------------------------------------------------------------------
-    if "Prashna" in mode:
-        pm = st.session_state.get('prashna_meta', {})
-        cat = pm.get("category", " नौकरी / कार्य सफलता")
-        q_text = pm.get("text", "क्या मेरा कार्य सिद्ध होगा?")
+    if "Prashna" in mode or "प्रश्न" in selected_suite or "Prashna" in selected_suite:
+        st.markdown(f'<div class="section-title">{"दिव्य प्रश्न कुण्डली एवं मूक प्रश्न विचार (Horary & Thought Detection)" if is_hi else "Horary & Thought Detection"}</div>', unsafe_allow_html=True)
         
-        # Horary analysis: Lagnesh, Karyesh and Moon relation
-        lagna_lord = constants.SIGN_LORD[asc_sign_idx]
-        moon_lord = constants.SIGN_LORD[chart.planets["Moon"].sign_index]
+        # Method selection (Dual Mode: KP 1-249 Horary Seed + Real-Time Prana Lagna)
+        col_pr1, col_pr2, col_pr3 = st.columns([1.2, 1.2, 1.6])
+        with col_pr1:
+            horary_method = st.radio(
+                "प्रश्न निर्धारण पद्धति (Horary Method):",
+                ["के.पी. होरारी (1-249 अंक)", "तात्कालिक प्राण लग्न (24-Sec Clock)", "संयुक्त महा-संगम (Dual Synthesis)"],
+                index=2,
+                key="horary_method_choice"
+            )
+        with col_pr2:
+            seed_input = st.number_input(
+                "के.पी. होरारी सीड अंक (1-249):",
+                min_value=1,
+                max_value=249,
+                value=int(st.session_state.get('prashna_kp_seed', 108)),
+                step=1,
+                key="kp_seed_num_input"
+            )
+            st.session_state['prashna_kp_seed'] = seed_input
+            if st.button("🎲 अंतर्ज्ञान से अंक रोल करें (Roll Random Seed)", use_container_width=True):
+                import random
+                new_seed = random.randint(1, 249)
+                st.session_state['prashna_kp_seed'] = new_seed
+                st.session_state['prashna_active_domain_id'] = None
+                st.rerun()
+        with col_pr3:
+            s_seed_data = vyas_prashna.get_kp_seed_data(seed_input)
+            st.markdown(f"""
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229,169,60,0.25); border-radius: 8px; padding: 10px; font-size: 0.85rem; color: #cbd5e1;">
+                <b>के.पी. अंक {seed_input} विवरण:</b><br/>
+                राशि: <b>{s_seed_data.sign_name}</b> ({constants.PLANETS_HI.get(s_seed_data.sign_lord, s_seed_data.sign_lord)}) | 
+                नक्षत्र: <b>{s_seed_data.star_name}</b> ({constants.PLANETS_HI.get(s_seed_data.star_lord, s_seed_data.star_lord)})<br/>
+                उप-स्वामी (SL): <b style='color: #facc15;'>{constants.PLANETS_HI.get(s_seed_data.sub_lord, s_seed_data.sub_lord)}</b><br/>
+                विस्तार: <code>{s_seed_data.span_str}</code>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Detect Mook Prashna Intent
+        target_seed = seed_input if ("249" in horary_method or "संयुक्त" in horary_method) else None
+        mook_res = vyas_prashna.detect_mook_prashna_intent(chart, kp_seed_num=target_seed, dt_local=birth.get('local', datetime.now()))
         
-        # Target house based on question category
-        cat_house_map = {
-            "नौकरी": (10, "दशम भाव (करियर व आजीविका)", ["Sun", "Saturn", "Jupiter"]),
-            "विवाह": (7, "सप्तम भाव (दांपत्य व साझेदार)", ["Venus", "Jupiter"]),
-            "रोग": (6, "षष्ठ भाव (रोग व उपशम)", ["Sun", "Mars"]),
-            "कोर्ट": (6, "षष्ठ व एकादश भाव (जीत व न्याय)", ["Mars", "Jupiter"]),
-            "धन": (2, "द्वितीय व एकादश भाव (धन लाभ)", ["Jupiter", "Mercury", "Venus"]),
-            "विदेश": (9, "नवम व द्वादश भाव (दूरस्थ यात्रा)", ["Moon", "Rahu", "Saturn"]),
-            "खोई": (4, "चतुर्थ भाव (पुनः प्राप्ति)", ["Moon", "Mercury"])
-        }
-        target_h, target_desc, karaka_list = (10, "दशम भाव (कर्म)", ["Jupiter"])
-        for k_word, val in cat_house_map.items():
-            if k_word in cat:
-                target_h, target_desc, karaka_list = val
-                break
-                
-        target_sign = (asc_sign_idx + target_h - 1) % 12
-        karyesh = constants.SIGN_LORD[target_sign]
-        
-        # Check Ithasala / mutual relation between Lagnesh and Karyesh
-        lagnesh_p = chart.planets.get(lagna_lord)
-        karyesh_p = chart.planets.get(karyesh)
-        moon_p = chart.planets.get("Moon")
-        
-        is_benefic_lagna = lagna_lord in ["Jupiter", "Venus", "Mercury", "Moon"]
-        verdict_positive = (lagna_lord == karyesh) or (lagnesh_p and karyesh_p and abs(lagnesh_p.longitude - karyesh_p.longitude) <= 60)
+        # Mook Prashna Display Card
+        top_domain = mook_res["top_domain"]
+        active_domain_id = st.session_state.get("prashna_active_domain_id", top_domain["id"])
+        active_domain = next((d for d in vyas_prashna.QUESTION_DOMAINS if d["id"] == active_domain_id), top_domain)
         
         st.markdown(f"""
-        <div class="glass-card" style="border: 2px solid #f0c05a; background: linear-gradient(135deg, rgba(229, 169, 60, 0.15) 0%, rgba(11, 18, 32, 0.95) 100%);">
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center;">
-                <span style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; min-width: 0;">प्रश्न कुण्डली फलित एवं निर्णय (Prashna Tantra Decision)</span>
-                <span style="background: {'#10b981' if verdict_positive else '#f59e0b'}; color: black; font-weight: 800; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; white-space: normal;">
-                    {'कार्य सिद्धि के प्रबल योग (Success Likely)' if verdict_positive else 'प्रयास व समय की आवश्यकता (Requires Effort)'}
+        <div class="glass-card" style="border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%); margin-top: 15px; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div style="font-size: 1.18rem; font-weight: 800; color: #fbbf24;">
+                    मूक प्रश्न: मनोगत विचार संसूचक (Mook Prashna Thought Detector)
+                </div>
+                <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;">
+                    {mook_res['confidence_pct']}% खगोलीय सामंजस्य
                 </span>
             </div>
-            <div style="font-size: 0.95rem; color: #fef3c7; margin-top: 8px;"><b>पूछा गया प्रश्न:</b> "{q_text}" ({cat})</div>
-            <hr style="border-color: rgba(240, 192, 90, 0.25); margin: 10px 0;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.85rem; color: #cbd5e1;">
-                <div><b>प्रच्छक (लग्न):</b> {constants.SIGNS_HI[asc_sign_idx]} (स्वामी: {constants.PLANETS_HI.get(lagna_lord, lagna_lord)})</div>
-                <div><b>कार्य भाव:</b> {target_desc}</div>
-                <div><b>कार्येश ग्रह:</b> {constants.PLANETS_HI.get(karyesh, karyesh)} (राशि: {constants.SIGNS_HI[target_sign]})</div>
-                <div><b>चन्द्रमा (कार्यवाहक):</b> {constants.SIGNS_HI[moon_p.sign_index]} ({constants.PLANETS_HI.get(moon_lord, moon_lord)})</div>
+            <div style="font-size: 1.05rem; color: #fef3c7; margin-top: 10px; line-height: 1.6;">
+                हमारी खगोलीय व के.पी. गणना के अनुसार, इस क्षण आपका मन मुख्यतः 
+                <b style="color: #38bdf8; font-size: 1.15rem;">'{top_domain['title_hi']}'</b> 
+                से सम्बद्ध प्रतीत होता है।
             </div>
-            <div style="margin-top: 10px; font-size: 0.9rem; color: #e2e8f0; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px; border-left: 3px solid #f0c05a;">
-                <b>शास्त्रीय निर्णय (Classical Horary Synthesis):</b> {
-                    'लग्न एवं कार्येश में शुभ दृष्टि व संबंध स्थापित हो रहा है। प्रश्नकर्ता का अभीष्ट कार्य अनुकूल परिस्थितियों में सिद्ध होगा। चन्द्रमा की स्थिति कार्य में गति का संकेत देती है।'
-                    if verdict_positive else
-                    'लग्न और कार्येश के मध्य तात्कालिक अवरोध है अथवा कार्येश वक्री/अस्त स्थिति में है। कार्य में थोड़ा विलंब संभावित है; धैर्य एवं अतिरिक्त प्रयास से ही सफलता संभव होगी।'
-                }
+            <div style="font-size: 0.88rem; color: #cbd5e1; margin-top: 8px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                <b>शास्त्रीय प्रमाण:</b> {mook_res['reasoning_hi']}
             </div>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Interactive Question Chips / Selection
+        st.markdown("<b>क्या यही आपका प्रश्न है, अथवा कोई अन्य विषय चुनना चाहते हैं?</b>", unsafe_allow_html=True)
+        chip_cols = st.columns(3)
+        for idx, dom in enumerate(vyas_prashna.QUESTION_DOMAINS):
+            col_target = chip_cols[idx % 3]
+            is_active = (dom["id"] == active_domain_id)
+            btn_label = f"{'✅ ' if is_active else ''}{dom['title_hi'].split('(')[0].strip()}"
+            if col_target.button(btn_label, key=f"chip_dom_{dom['id']}", use_container_width=True, type="primary" if is_active else "secondary"):
+                st.session_state["prashna_active_domain_id"] = dom["id"]
+                st.rerun()
+
+        # Custom Question Text
+        custom_q = st.text_input(
+            "अपना विशिष्ट प्रश्न दर्ज करें (या डिफ़ॉल्ट रहने दें):",
+            value=active_domain.get("default_question", "क्या मेरा कार्य सिद्ध होगा?"),
+            key=f"prashna_custom_q_{active_domain_id}"
+        )
+
+        # Evaluate Horary Decision for Active Domain
+        tajik_res = vyas_prashna.evaluate_tajik_horary_judgement(chart, target_house=active_domain["prime_house"], kp_seed_num=target_seed)
+
+        # Horary Verdict Card
+        st.markdown(f"""
+        <div class="glass-card" style="border: 2px solid {tajik_res['verdict_color']}; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%); margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <span style="font-size: 1.25rem; font-weight: 800; color: #f0c05a;">
+                        ताजिक एवं के.पी. प्रश्न निर्णय (Final Horary Judgement)
+                    </span>
+                    <div style="font-size: 0.92rem; color: #fef3c7; margin-top: 4px;">
+                        <b>विषय:</b> {active_domain['title_hi']} | <b>प्रश्न:</b> "{custom_q}"
+                    </div>
+                </div>
+                <span style="background: {tajik_res['verdict_color']}; color: black; font-weight: 800; padding: 6px 16px; border-radius: 20px; font-size: 0.92rem;">
+                    {tajik_res['verdict_hi']}
+                </span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.88rem; color: #cbd5e1; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                <div><b>प्रच्छक (लग्न):</b> {tajik_res['lagna_sign_hi']} (स्वामी: {tajik_res['lagnesh_hi']})</div>
+                <div><b>कार्य भाव:</b> भाव {tajik_res['target_house']} ({tajik_res['target_sign_hi']})</div>
+                <div><b>कार्येश ग्रह:</b> {tajik_res['karyesh_hi']}</div>
+                <div><b>चन्द्रमा (कार्यवाहक):</b> {tajik_res['moon_sign_hi']} ({tajik_res['moon_hi']})</div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.35); padding: 12px 14px; border-radius: 8px; border-left: 4px solid {tajik_res['verdict_color']}; margin-top: 14px;">
+                <div style="font-weight: 700; color: #facc15; font-size: 1.02rem; margin-bottom: 4px;">
+                    {tajik_res['yoga_name']}
+                </div>
+                <div style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc;">
+                    {tajik_res['yoga_desc']}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; font-size: 0.92rem;">
+                <div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">कार्य सिद्धि की समय सीमा (Timeline)</div>
+                    <div style="font-size: 1.02rem; font-weight: 700; color: #38bdf8; margin-top: 2px;">{tajik_res['timeline_str']}</div>
+                </div>
+                <div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">अनुकूल दिशा सूचक (Direction)</div>
+                    <div style="font-size: 1.02rem; font-weight: 700; color: #4ade80; margin-top: 2px;">{tajik_res['direction_info']}</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">{tajik_res['direction_desc']}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_pr_btn1, col_pr_btn2 = st.columns([1.5, 1])
+        with col_pr_btn1:
+            if st.button("आचार्य व्यास से इस प्रश्न पर सीधे संवाद करें (Chat Now)", type="primary", use_container_width=True, key="prashna_live_chat_btn"):
+                st.session_state['prashna_meta'] = {"category": active_domain['title_hi'], "text": custom_q}
+                st.session_state["show_acharya_dialog"] = True
+                st.rerun()
 
     # =========================================================================
     # SUITE 0:  HYPER-PERSONALISED DAILY HOROSCOPE
