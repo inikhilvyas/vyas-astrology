@@ -2631,6 +2631,13 @@ if st.session_state.get('data_generated'):
             vara_str = now_dt.strftime("%A")
             vikram_str = "विक्रम संवत 2083"
 
+        # Collect daytime Shubh Horas for the panchang card
+        shubh_horas_summary = []
+        for h in daily_res.get('horas_day', []):
+            if h.get('color') == '#10b981':
+                shubh_horas_summary.append(f"<b>{h['lord_hi']}</b> ({h['start']}-{h['end']})")
+        shubh_horas_summary_str = " | ".join(shubh_horas_summary) if shubh_horas_summary else "गुरु, शुक्र, बुध, चन्द्र होरा"
+
         panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid #f59e0b;">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
 <div style="font-weight: 800; color: #fbbf24; font-size: 1.15rem;">आज का सम्पूर्ण दैनिक पंचांग एवं विशिष्ट मुहूर्त ({birth.get('city', 'New Delhi')})</div>
@@ -2651,6 +2658,9 @@ if st.session_state.get('data_generated'):
 <div><b>राहुकाल (सावधानी):</b> <span style="color: #f87171;">{daily_res.get('rahu_kalam', '-')}</span></div>
 <div><b>यमगण्ड:</b> <span style="color: #fbbf24;">{daily_res.get('yamaganda', '-')}</span></div>
 <div><b>गुलिक काल:</b> <span style="color: #e2e8f0;">{daily_res.get('gulika_kalam', '-')}</span></div>
+</div>
+<div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 0.88rem; color: #cbd5e1;">
+<b>दिन की प्रमुख शुभ होरा (Auspicious Horas):</b> <span style="color: #4ade80;">{shubh_horas_summary_str}</span>
 </div>
 </div>"""
         st.markdown(panchang_card_html, unsafe_allow_html=True)
@@ -2680,6 +2690,7 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
             _lz_tab_ch = lazy_sections([
+                "🌟 जातक-विशिष्ट मुहूर्त (Personal Muhurta)",
                 "दिन का चौघड़िया",
                 "रात्रि का चौघड़िया",
                 "24 कालहोरा चक्र (Horas)",
@@ -2698,6 +2709,149 @@ if st.session_state.get('data_generated'):
                     return False
 
             if _lz_tab_ch[0]:
+                asc_idx = chart.ascendant_sign_index
+                l_sign = constants.SIGNS_HI[asc_idx]
+                l_lord = constants.SIGN_LORD[asc_idx]
+                l_lord_hi = constants.PLANETS_HI.get(l_lord, l_lord)
+                
+                b_lord = constants.SIGN_LORD[(asc_idx + 8) % 12]
+                b_lord_hi = constants.PLANETS_HI.get(b_lord, b_lord)
+                
+                p_lord = constants.SIGN_LORD[(asc_idx + 4) % 12]
+                p_lord_hi = constants.PLANETS_HI.get(p_lord, p_lord)
+                
+                a_lord = constants.SIGN_LORD[(asc_idx + 7) % 12]
+                a_lord_hi = constants.PLANETS_HI.get(a_lord, a_lord)
+                
+                sh_lord = constants.SIGN_LORD[(asc_idx + 5) % 12]
+                sh_lord_hi = constants.PLANETS_HI.get(sh_lord, sh_lord)
+                
+                natal_m_p = chart.planets.get("Moon")
+                natal_m_sign = natal_m_p.sign_index
+                natal_m_sign_hi = constants.SIGNS_HI[natal_m_sign]
+                
+                transit_m_sign = int(transit_moon_lon // 30)
+                h_from_m = ((transit_m_sign - natal_m_sign) % 12) + 1
+                
+                if h_from_m == 8:
+                    ch_status_color = "#ef4444"
+                    ch_badge = "⚠️ चन्द्राष्टम दोष (अति सावधान)"
+                    ch_desc = "गोचर चन्द्र आपकी जन्म राशि से 8वें भाव में संचरण कर रहे हैं। आज कोई भी नवीन अनुबंध, जोखिमपूर्ण निवेश, बड़ी खरीदारी या लंबी यात्रा टालें।"
+                elif h_from_m in [1, 3, 6, 7, 10, 11]:
+                    ch_status_color = "#10b981"
+                    ch_badge = f"अनुकूल चन्द्रबल ({h_from_m}वाँ भाव)"
+                    ch_desc = f"गोचर चन्द्र जन्म राशि से {h_from_m}वें भाव में हैं। कार्य सिद्धि, मानसिक एकाग्रता, वार्ता व प्रतिष्ठा संवर्धन हेतु उत्तम समय।"
+                elif h_from_m in [4, 12]:
+                    ch_status_color = "#f59e0b"
+                    ch_badge = f"मध्यम चन्द्रबल ({h_from_m}वाँ भाव)"
+                    ch_desc = f"गोचर चन्द्र {h_from_m}वें भाव में हैं। अनावश्यक व्यय व मानसिक उद्वेग से बचें, शांत रहकर नियमित कार्य निपटाएं।"
+                else:
+                    ch_status_color = "#38bdf8"
+                    ch_badge = f"सामान्य चन्द्रबल ({h_from_m}वाँ भाव)"
+                    ch_desc = f"गोचर चन्द्र जन्म राशि से {h_from_m}वें भाव में स्थित हैं।"
+
+                p_overview_html = f"""<div class="glass-card" style="border-left: 4px solid #f59e0b; margin-bottom: 14px;">
+<div style="font-weight: 800; font-size: 1.05rem; color: #fbbf24; margin-bottom: 6px;">जातक कुण्डली खगोलीय सामंजस्य (Native Muhurta Alignment) — {birth.get('name', 'जातक')}</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; font-size: 0.88rem; color: #cbd5e1;">
+<div><b>लग्न:</b> {l_sign} (लग्नेश: <b style="color: #38bdf8;">{l_lord_hi}</b>)</div>
+<div><b>जन्म राशि:</b> {natal_m_sign_hi} (राशि स्वामी: <b style="color: #38bdf8;">{constants.PLANETS_HI.get(constants.SIGN_LORD[natal_m_sign], '')}</b>)</div>
+<div><b>भाग्येश:</b> <b style="color: #facc15;">{b_lord_hi}</b> | <b>पंचमेश:</b> <b style="color: #4ade80;">{p_lord_hi}</b></div>
+<div><b>अष्टमेश (सावधानी):</b> <b style="color: #f87171;">{a_lord_hi}</b></div>
+</div>
+<div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.88rem;">
+<span style="color: #fbbf24; font-weight: 700;">दैनिक ताराबल:</span> {daily_res['tara_name']} ({daily_res['tara_desc']})<br/>
+<span style="color: {ch_status_color}; font-weight: 700;">दैनिक चन्द्रबल:</span> <span style="background: {ch_status_color}22; color: {ch_status_color}; border: 1px solid {ch_status_color}44; padding: 1px 6px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;">{ch_badge}</span> — <span style="color: #cbd5e1;">{ch_desc}</span>
+</div>
+</div>"""
+                st.markdown(p_overview_html, unsafe_allow_html=True)
+
+                col_pj1, col_pj2 = st.columns(2)
+                with col_pj1:
+                    st.markdown("##### 🟢 जातक के लिए आज के सर्वश्रेष्ठ शुभ मुहूर्त (Peak Lucky Windows)")
+                    p_shubh_items = []
+                    am_v = daily_res.get('amrit_vela', '-')
+                    if not ("कोई नहीं" in am_v or "वर्जित" in am_v or "Prohibited" in am_v or "बुधवार" in am_v):
+                        p_shubh_items.append({
+                            "title": "अभिजीत मुहूर्त (Universal Victory Window)",
+                            "time": am_v,
+                            "desc": "दिन का मध्याह्न काल — किसी भी नवीन कार्य, खरीद व महत्वपूर्ण निर्णय हेतु अचूक सिद्धि योग।"
+                        })
+                    ak_v = daily_res.get('amrit_kalam', '-')
+                    if ak_v and ak_v != '-':
+                        p_shubh_items.append({
+                            "title": "अमृत कालम् (Amrit Kalam)",
+                            "time": ak_v,
+                            "desc": "चिरस्थायी मांगलिक व आर्थिक अनुबंधों हेतु अत्यंत शुभ समय।"
+                        })
+                    
+                    b_planets = {l_lord: f"लग्नेश {l_lord_hi} की सिद्धि होरा", b_lord: f"भाग्येश {b_lord_hi} की महा-शुभ होरा", p_lord: f"पंचमेश {p_lord_hi} की होरा"}
+                    for h in daily_res.get('horas_day', []):
+                        if h['lord'] in b_planets:
+                            p_shubh_items.append({
+                                "title": f"#{h['num']} {b_planets[h['lord']]}",
+                                "time": f"{h['start']} - {h['end']}",
+                                "desc": f"{h['nature']} | जातक की कुण्डली अनुसार आत्मबल, आर्थिक लाभ व नए शुभारंभ हेतु सर्वश्रेष्ठ।"
+                            })
+                    
+                    sh_cards = []
+                    for item in p_shubh_items:
+                        act = False
+                        if " - " in item["time"]:
+                            parts = item["time"].split(" - ")
+                            if len(parts) == 2:
+                                act = _is_time_window_active(parts[0], parts[1])
+                        act_border = "border: 2px solid #38bdf8; box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);" if act else "border: 1px solid rgba(16, 185, 129, 0.25);"
+                        act_pill = '<span style="background: #38bdf8; color: #020617; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">● सक्रिय</span>' if act else ''
+                        sh_cards.append(f"""<div style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; {act_border}">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+<div style="font-weight: 800; font-size: 0.95rem; color: #4ade80;">{item['title']}{act_pill}</div>
+<span style="font-size: 0.88rem; font-weight: 700; color: #38bdf8; background: rgba(15,23,42,0.85); padding: 2px 8px; border-radius: 4px;">{item['time']}</span>
+</div>
+<div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 4px;">{item['desc']}</div>
+</div>""")
+                    st.markdown("".join(sh_cards) if sh_cards else "<p style='color: #94a3b8;'>आज का दिन सामान्य है।</p>", unsafe_allow_html=True)
+
+                with col_pj2:
+                    st.markdown("##### 🔴 जातक के लिए आज के टालने योग्य काल (Windows to Avoid)")
+                    p_avoid_items = []
+                    p_avoid_items.append({
+                        "title": "राहु काल (Rahu Kaal)",
+                        "time": daily_res.get('rahu_kalam', '-'),
+                        "desc": "महत्वपूर्ण अनुबंध, नवीन वाहन क्रय, बड़ी खरीदारी व यात्रा सर्वथा टालें।"
+                    })
+                    p_avoid_items.append({
+                        "title": "यमगण्ड काल (Yamaganda)",
+                        "time": daily_res.get('yamaganda', '-'),
+                        "desc": "अप्रिय परिणाम की आशंका, जोखिमपूर्ण निर्णय न लें।"
+                    })
+                    m_planets = {a_lord: f"अष्टमेश {a_lord_hi} की होरा", sh_lord: f"षष्ठेश {sh_lord_hi} की होरा"}
+                    for h in daily_res.get('horas_day', []):
+                        if h['lord'] in m_planets and h['lord'] != l_lord and h['lord'] != b_lord:
+                            p_avoid_items.append({
+                                "title": f"#{h['num']} {m_planets[h['lord']]} (सावधानी)",
+                                "time": f"{h['start']} - {h['end']}",
+                                "desc": f"{h['nature']} | इस समय विवाद, बहस, कानूनी वार्ता या जोखिमपूर्ण लेन-देन टालें।"
+                            })
+                    
+                    av_cards = []
+                    for item in p_avoid_items:
+                        act = False
+                        if " - " in item["time"]:
+                            parts = item["time"].split(" - ")
+                            if len(parts) == 2:
+                                act = _is_time_window_active(parts[0], parts[1])
+                        act_border = "border: 2px solid #ef4444; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);" if act else "border: 1px solid rgba(239, 68, 68, 0.25);"
+                        act_pill = '<span style="background: #ef4444; color: #ffffff; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">⚠️ चालू (सावधान)</span>' if act else ''
+                        av_cards.append(f"""<div style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; {act_border}">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
+<div style="font-weight: 800; font-size: 0.95rem; color: #f87171;">{item['title']}{act_pill}</div>
+<span style="font-size: 0.88rem; font-weight: 700; color: #fca5a5; background: rgba(15,23,42,0.85); padding: 2px 8px; border-radius: 4px;">{item['time']}</span>
+</div>
+<div style="font-size: 0.78rem; color: #fecaca; margin-top: 4px;">{item['desc']}</div>
+</div>""")
+                    st.markdown("".join(av_cards), unsafe_allow_html=True)
+
+            if _lz_tab_ch[1]:
                 day_chs = daily_res.get('chaughadiya_day', [])
                 if day_chs:
                     ch_cards = []
@@ -2720,7 +2874,7 @@ if st.session_state.get('data_generated'):
 </div>""")
                     st.markdown('<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px;">' + "".join(ch_cards) + '</div>', unsafe_allow_html=True)
 
-            if _lz_tab_ch[1]:
+            if _lz_tab_ch[2]:
                 night_chs = daily_res.get('chaughadiya_night', [])
                 if night_chs:
                     ch_cards = []
@@ -2743,7 +2897,7 @@ if st.session_state.get('data_generated'):
 </div>""")
                     st.markdown('<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 8px;">' + "".join(ch_cards) + '</div>', unsafe_allow_html=True)
 
-            if _lz_tab_ch[2]:
+            if _lz_tab_ch[3]:
                 h_day = daily_res.get('horas_day', [])
                 h_night = daily_res.get('horas_night', [])
 
@@ -2787,7 +2941,7 @@ if st.session_state.get('data_generated'):
                     if h_night:
                         st.markdown(_render_hora_grid(h_night), unsafe_allow_html=True)
 
-            if _lz_tab_ch[3]:
+            if _lz_tab_ch[4]:
                 col_m_shubh, col_m_ashubh = st.columns(2)
                 with col_m_shubh:
                     st.markdown("#####  शास्त्रोक्त शुभ मुहूर्त (Auspicious Timings)")
@@ -2844,6 +2998,24 @@ if st.session_state.get('data_generated'):
 <div style="font-size: 0.78rem; color: #fecaca; margin-top: 4px;"><b>नियम:</b> {m['rule']}</div>
 </div>""")
                     st.markdown("".join(ashubh_cards), unsafe_allow_html=True)
+
+                st.markdown("<div style='margin-top: 14px; font-weight: 800; font-size: 1.05rem; color: #fbbf24;'>दिन की सर्वमान्य शुभ कालहोरा (Universal Auspicious Planetary Horas)</div>", unsafe_allow_html=True)
+                st.markdown("<p style='font-size: 0.85rem; color: #94a3b8; margin-top: 2px;'>शास्त्रानुसार गुरु, शुक्र, बुध एवं चन्द्रमा की होरा में किए गए कार्य सर्वकार्य सिद्धिदायक व सफल होते हैं:</p>", unsafe_allow_html=True)
+                sh_uni_cards = []
+                for h in daily_res.get('horas_day', []):
+                    if h.get('color') == '#10b981':
+                        act = _is_time_window_active(h['start'], h['end'])
+                        act_border = "border: 2px solid #38bdf8; box-shadow: 0 0 10px rgba(56,189,248,0.35);" if act else "border: 1px solid rgba(16, 185, 129, 0.25);"
+                        act_pill = '<span style="background: #38bdf8; color: #020617; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">● चालू</span>' if act else ''
+                        sh_uni_cards.append(f"""<div style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10b981; border-radius: 8px; padding: 8px 12px; {act_border}">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<div style="font-weight: 800; font-size: 0.95rem; color: #4ade80;">#{h['num']} {h['lord_hi']} ({h['lord']}){act_pill}</div>
+<span style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; background: rgba(15,23,42,0.85); padding: 2px 8px; border-radius: 4px;">{h['start']} - {h['end']}</span>
+</div>
+<div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 4px;">{h['nature']}</div>
+</div>""")
+                if sh_uni_cards:
+                    st.markdown("<div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 8px;'>" + "".join(sh_uni_cards) + "</div>", unsafe_allow_html=True)
 
         # In-depth Comprehensive Daily Forecast (4 Life Pillars & Gochar Synthesis)
         narrs = daily_res.get("narratives", {})
