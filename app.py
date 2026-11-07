@@ -2610,12 +2610,34 @@ if st.session_state.get('data_generated'):
         }
         shool_dir, shool_rem = disha_map.get(wd, ("पूर्व", "ईश्वर स्मरण कर प्रस्थान करें"))
 
+        def _safe_panchang_time_fmt(val):
+            if not val:
+                return ""
+            if isinstance(val, str):
+                parts = val.split()
+                if len(parts) == 2:
+                    try:
+                        return datetime.strptime(parts[1], "%H:%M:%S").strftime("%I:%M %p")
+                    except Exception:
+                        return parts[1]
+                elif len(parts) == 1:
+                    try:
+                        return datetime.strptime(parts[0], "%H:%M:%S").strftime("%I:%M %p")
+                    except Exception:
+                        return parts[0]
+                return val
+            if hasattr(val, 'strftime'):
+                return val.strftime("%I:%M %p")
+            return str(val)
+
         if daily_panchang:
-            tithi_str = f"{daily_panchang.tithi_hi} (तक {daily_panchang.tithi_end.strftime('%I:%M %p')})"
+            t_end_fmt = _safe_panchang_time_fmt(daily_panchang.tithi_end)
+            tithi_str = f"{daily_panchang.tithi_hi}" + (f" (तक {t_end_fmt})" if t_end_fmt else "")
             nak_str = f"{daily_panchang.nakshatra_hi} पद {daily_panchang.nakshatra_pada} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.nakshatra_lord, daily_panchang.nakshatra_lord)})"
-            yoga_str = f"{daily_panchang.yoga} (तक {daily_panchang.yoga_end.strftime('%I:%M %p')})"
-            sunrise_str = daily_panchang.sunrise.strftime("%I:%M %p")
-            sunset_str = daily_panchang.sunset.strftime("%I:%M %p")
+            y_end_fmt = _safe_panchang_time_fmt(daily_panchang.yoga_end)
+            yoga_str = f"{daily_panchang.yoga}" + (f" (तक {y_end_fmt})" if y_end_fmt else "")
+            sunrise_str = _safe_panchang_time_fmt(daily_panchang.sunrise) or "06:30 AM"
+            sunset_str = _safe_panchang_time_fmt(daily_panchang.sunset) or "05:45 PM"
             vara_str = f"{daily_panchang.vara} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.vara_lord, daily_panchang.vara_lord)})"
             vikram_str = f"विक्रम संवत {daily_panchang.vikram_samvat} | शक संवत {daily_panchang.shaka_samvat}"
         else:
