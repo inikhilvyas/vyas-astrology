@@ -388,7 +388,7 @@ st.set_page_config(
     page_title="VYAS • Vedic Yield Astrology Systems",
     page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -500,13 +500,28 @@ elif _oauth_code and not st.session_state.get("user_google_processed"):
             st.session_state.pop("oauth_state", None)
             st.rerun()
 
-# PWA Manifest & App Store Meta
+# PWA Manifest & Native Mobile Responsive Viewport Engine
 st.markdown('''
 <link rel="manifest" href="static/manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#e5a93c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
+<script>
+(function() {
+    try {
+        var pDoc = window.parent.document;
+        var meta = pDoc.querySelector('meta[name="viewport"]');
+        if (!meta) {
+            meta = pDoc.createElement('meta');
+            meta.name = 'viewport';
+            pDoc.head.appendChild(meta);
+        }
+        meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
+    } catch(e) {}
+})();
+</script>
 ''', unsafe_allow_html=True)
 
 # Global Luxury Vedic Styling & Mobile-First Responsive Framework
@@ -923,86 +938,108 @@ st.markdown("""
     }
 
     /* -------------------------------------------------------------
-       MOBILE RESPONSIVE ENGINE (Screens <= 1024px)
-       Universal CSS3 without :has() for 100% Android / Safari Support
+       MODERN ADAPTIVE RESPONSIVE ENGINE (Mobile / Tablet / PC Auto-Reflow)
        ------------------------------------------------------------- */
-    @media (max-width: 1024px) {
-        /* 1. Mobile Touch-Scrollable Carousel for Domain Suite Radio Pills */
+    @media (max-width: 768px) {
+        /* 1. Prevent desktop zoom-out; force true 100vw mobile width */
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* 2. On Mobile, sidebar is an overlay slide-in drawer, NEVER side-by-side! */
+        section[data-testid="stSidebar"] {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            height: 100vh !important;
+            width: 85vw !important;
+            max-width: 320px !important;
+            z-index: 999999 !important;
+            box-shadow: 6px 0 32px rgba(0,0,0,0.85) !important;
+            background: #0b1220 !important;
+        }
+        
+        /* 3. Main container takes full 100% screen with zero side-cramping */
+        .block-container {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-top: 24px !important;
+            padding-bottom: 3.5rem !important;
+            box-sizing: border-box !important;
+        }
+
+        /* 4. Column vertical stack on mobile: 1 column so elements are large and legible */
+        [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            width: 100% !important;
+        }
+        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+
+        /* 5. Mobile Typography & Touch-Friendly Dimensions */
+        :root {
+            --app-font-size: 18.5px !important;
+        }
+        p, span, li, label, div, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span {
+            font-size: 1.05rem !important;
+            line-height: 1.65 !important;
+        }
+        .section-title {
+            font-size: 1.38rem !important;
+            padding: 4px 0 8px 0 !important;
+            margin-top: 12px !important;
+            margin-bottom: 12px !important;
+        }
+        .glass-card, .predict-card {
+            padding: 14px 14px !important;
+            border-radius: 12px !important;
+            margin-bottom: 12px !important;
+            font-size: 1.02rem !important;
+        }
+        div.stButton > button {
+            min-height: 50px !important;
+            font-size: 1.15rem !important;
+            width: 100% !important;
+            border-radius: 10px !important;
+            padding: 10px 14px !important;
+        }
+        input, select, textarea, div[data-baseweb="input"] input, div[data-baseweb="select"] input {
+            min-height: 48px !important;
+            font-size: 1.05rem !important;
+        }
+
+        /* 6. Mobile Horizontal Scrollable Pills for Domain Suites */
         div[data-testid="stRadio"] [role="radiogroup"] {
             display: flex !important;
             flex-direction: row !important;
             flex-wrap: nowrap !important;
             overflow-x: auto !important;
             -webkit-overflow-scrolling: touch !important;
-            gap: 10px !important;
+            gap: 8px !important;
             padding: 8px 6px !important;
-            margin-bottom: 14px !important;
-            border-radius: 14px !important;
-            scrollbar-width: none !important;
-            -ms-overflow-style: none !important;
+            margin-bottom: 12px !important;
+            border-radius: 12px !important;
             width: 100% !important;
-            max-width: 100% !important;
-        }
-        div[data-testid="stRadio"] [role="radiogroup"]::-webkit-scrollbar {
-            display: none !important;
         }
         div[data-testid="stRadio"] [role="radiogroup"] label {
             flex: 0 0 auto !important;
             white-space: nowrap !important;
-            padding: 10px 20px !important;
-            font-size: 1.02rem !important;
-            min-height: 46px !important;
+            padding: 10px 18px !important;
+            font-size: 1rem !important;
+            min-height: 44px !important;
             border-radius: 999px !important;
-        }
-
-        /* 2. Container full-width on mobile with comfortable edge padding */
-        .block-container {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-            padding-top: 10px !important;
-            padding-bottom: 2.5rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-
-        /* 3. Universal Mobile Responsive Columns */
-        [data-testid="stHorizontalBlock"] {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 10px !important;
-            width: 100% !important;
-        }
-
-        /* 2-column rows (Action buttons, Language & Font) stay side-by-side on mobile! */
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(2),
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(2) ~ [data-testid="stColumn"] {
-            width: calc(50% - 6px) !important;
-            min-width: 0 !important;
-            flex: 1 1 calc(50% - 6px) !important;
-        }
-
-        /* 3-column rows (Time of Birth: Hour, Min, Sec) stay side-by-side! */
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3),
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(3) ~ [data-testid="stColumn"] {
-            width: calc(33.333% - 8px) !important;
-            min-width: 0 !important;
-            flex: 1 1 calc(33.333% - 8px) !important;
-        }
-
-        /* 4 or more columns stack cleanly */
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(n+4),
-        [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:first-child:nth-last-child(n+4) ~ [data-testid="stColumn"] {
-            width: 100% !important;
-            min-width: 100% !important;
-            flex: 1 1 100% !important;
-        }
-
-        /* Inputs & Buttons full touch-width and generous height */
-        div.stButton > button {
-            min-height: 48px !important;
-            font-size: 1.12rem !important;
-            width: 100% !important;
-            border-radius: 10px !important;
         }
     }
 
