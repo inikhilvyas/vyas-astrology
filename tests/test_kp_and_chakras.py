@@ -66,11 +66,11 @@ def test_full_pipeline():
 
     # 7. KP House Promises Verification
     promises = vyas.kp.evaluate_kp_house_promises(cusps, sigs['planet_significators'], chart.planets)
-    assert len(promises) == 9, f"Expected 9 promises, got {len(promises)}"
+    assert len(promises) == 10, f"Expected 10 promises, got {len(promises)}"
     for p in promises:
         assert p["status"] in ("PROMISED", "MODERATE_DELAY", "RESTRICTED")
         assert len(p["verdict_text"]) > 20
-    print(f"PASS: KP House Promises evaluated across 9 life categories.")
+    print(f"PASS: KP House Promises evaluated across 10 life categories.")
 
     # 8. Active Houses by Dasha
     d_act = vyas.kp.evaluate_active_houses_by_dasha({'mahadasha': 'Jupiter', 'antardasha': 'Saturn', 'pratyantardasha': 'Mercury'}, sigs['planet_significators'])

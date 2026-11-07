@@ -2316,58 +2316,31 @@ def compute_jaimini_predictions_and_chara_dasha_phala(chart, j_karakas: list, ak
 # ---------------------------------------------------------------------------
 # Bhrigu Nandi Nadi (BNN) In-Depth Life Predictions (भृगु नन्दी नाड़ी महा-फलित)
 # ---------------------------------------------------------------------------
-def compute_bnn_detailed_life_predictions(chart) -> dict:
+def compute_bnn_detailed_life_predictions(chart, birth_dt=None) -> dict:
     """
-    Computes authentic Bhrigu Nandi Nadi (BNN) qualitative predictions based on:
+    Computes authentic Bhrigu Nandi Nadi (BNN) qualitative predictions dynamically:
     - Jeeva Karaka (Jupiter) & trinal/directional planetary combinations
-    - Karma Karaka (Saturn)
-    - Wealth & Luxury Karaka (Venus)
-    - Intellect Karaka (Mercury)
-    - Directional Trines (1-5-9, 2-10-6, 3-7-11, 4-8-12)
+    - Karma Karaka (Saturn) & profession destiny
+    - Wealth & Luxury Karaka (Venus & Mercury)
+    - Directional Trines (Dharma, Artha, Kama, Moksha)
+    - Bhrigu 12-Year Progression Cycle (भृगु 12 वर्षीय चक्र भ्रमण)
     """
-    planets = chart.planets
-
-    jup_sign = planets["Jupiter"].sign_name
-    sat_sign = planets["Saturn"].sign_name
-    ven_sign = planets["Venus"].sign_name
-    merc_sign = planets["Mercury"].sign_name
-
-    # 1. Jeeva Karaka (Jupiter)
-    jeeva_hi = (
-        f"भृगु नन्दी नाड़ी में देवगुरु बृहस्पति को 'जीव कारक' (Jeeva Karaka - स्वयं जातक का प्राण) माना गया है। "
-        f"आपकी कुण्डली में गुरु धनु राशि (स्वक्षेत्र) में शुक्र के साथ विराजमान हैं। "
-        f"**गुरु + शुक्र युति (जीव-कलत्र/संजीवनी योग):** यह नाड़ी ज्योतिष का अत्यंत पावन योग है। यह जातक को उच्च संस्कार, सौम्य स्वभाव, "
-        f"आध्यात्मिक एवं परामानसिक विषयों में रुचि, तथा निरंतर ईश्वरीय संरक्षण प्रदान करता है। जातक का जीवन परामर्श, शिक्षण, लेखन व मार्गदर्शन से जगमगाता है।"
-    )
-
-    # 2. Karma Karaka (Saturn)
-    karma_hi = (
-        f"नाड़ी ज्योतिष में शनि को 'कर्म कारक' (Karma Karaka) कहा गया है। "
-        f"शनि तुला राशि (उच्च क्षेत्र) में स्थित हैं। "
-        f"**उच्च शनि कर्म प्रभाव:** कर्म कारक का उच्च राशि में होना यह सिद्ध करता है कि जातक को प्रारंभिक जीवन में कठोर परिश्रम करना पड़ता है, "
-        f"किंतु परिपक्व आयु में वह शीर्ष प्रशासनिक, संगठनात्मक अथवा प्रतिष्ठित शोध-क्षेत्र में स्थापित होता है। "
-        f"शनि से तृतीय व एकादश संबंध तकनीकी एवं बौद्धिक कौशल से आजीविका में अभूतपूर्व उन्नति का योग बनाते हैं।"
-    )
-
-    # 3. Buddhi & Occult Karakas (Mercury + Ketu + Sun + Moon in Scorpio)
-    occult_hi = (
-        f"वृश्चिक राशि में बुध, सूर्य, चंद्र एवं केतु का समागम नाड़ी ज्योतिष के अनुसार 'गूढ़ विद्या एवं शोध योग' की रचना करता है। "
-        f"केतु परा-विद्या का कारक है और बुध तर्क एवं ज्योतिषीय गणनाओं का कारक है। "
-        f"इनका जल राशि में मिलन जातक को अंतर्ज्ञान, प्राचीन शास्त्रों की गुप्त व्याख्या करने की क्षमता एवं अदृश्य सत्यों को उद्घाटित करने वाली दिव्य मेधा प्रदान करता है।"
-    )
-
-    # 4. Directional Trines (दिक् संयोजन)
-    trine_hi = (
-        f"नाड़ी के 1-5-9 (धर्म), 2-6-10 (अर्थ), 3-7-11 (काम) एवं 4-8-12 (मोक्ष) दिशा संयोजन में: "
-        f"मोक्ष त्रिकोण (4-8-12) एवं धर्म त्रिकोण (1-5-9) अत्यंत शक्तिशाली हैं। "
-        f"यह जातक को सांसारिक दायित्वों को निष्ठापूर्वक निभाते हुए आध्यात्मिक पूर्णता की ओर अग्रसर करता है।"
-    )
+    from vyas import nadi
+    from datetime import timezone
+    k_synth = nadi.compute_bnn_karaka_synthesis(chart.planets)
+    
+    jup_p = chart.planets.get("Jupiter")
+    jup_sign = getattr(jup_p, 'sign_index', 0) if jup_p else 0
+    if birth_dt is None:
+        birth_dt = getattr(chart, 'birth_time', datetime(1990, 1, 1, tzinfo=timezone.utc))
+    bnn_prog = nadi.compute_bhrigu_progression(jup_sign, birth_dt)
 
     return {
-        "jeeva_karaka_hi": jeeva_hi,
-        "karma_karaka_hi": karma_hi,
-        "occult_mercury_hi": occult_hi,
-        "directional_trines_hi": trine_hi
+        "jeeva_karaka_hi": k_synth["jeeva_karaka_hi"],
+        "karma_karaka_hi": k_synth["karma_karaka_hi"],
+        "occult_mercury_hi": k_synth["dhana_karaka_hi"],
+        "directional_trines_hi": k_synth["directional_trines_hi"],
+        "bhrigu_progression": bnn_prog
     }
 
 

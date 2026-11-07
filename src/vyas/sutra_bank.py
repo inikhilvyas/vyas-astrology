@@ -10,6 +10,7 @@ Contains comprehensive, verified classical sutras from:
 Evaluates charts mathematically with authentic Sanskrit shlokas and precise deterministic rules.
 """
 from typing import Dict, List, NamedTuple, Optional, Tuple
+from datetime import datetime, timezone
 from vyas import constants
 
 class EvaluatedSutra(NamedTuple):
@@ -549,3 +550,151 @@ def evaluate_classical_sutras(chart) -> List[EvaluatedSutra]:
         ))
 
     return results
+
+
+def compute_yoga_activation_timeline(
+    chart,
+    sutras: List[EvaluatedSutra],
+    dasha_engine=None,
+    current_dt: Optional[datetime] = None
+) -> Dict[str, dict]:
+    """
+    Computes exact Vimshottari Dasha, Antardasha, and Gochar activation windows
+    for every classical yoga evaluated in the chart.
+    """
+    if current_dt is None:
+        current_dt = datetime.now(timezone.utc)
+    elif current_dt.tzinfo is None:
+        current_dt = current_dt.replace(tzinfo=timezone.utc)
+
+    if dasha_engine is None:
+        from vyas import dasha
+        birth_time = getattr(chart, 'birth_time', None)
+        if birth_time is None:
+            birth_time = current_dt
+        elif birth_time.tzinfo is None:
+            birth_time = birth_time.replace(tzinfo=timezone.utc)
+        dasha_engine = dasha.VimshottariDasha(chart.planets["Moon"].longitude, birth_time)
+
+    cur_dasha = dasha_engine.get_running_dasha(current_dt, max_depth=3)
+    md_lord = cur_dasha.get("MD", {}).get("lord", "")
+    ad_lord = cur_dasha.get("AD", {}).get("lord", "")
+    pd_lord = cur_dasha.get("PD", {}).get("lord", "")
+
+    md_list = dasha_engine.calculate_mahadashas(num_cycles=2)
+    for md in md_list:
+        dasha_engine.expand_sub_dashas(md, target_level=2)
+
+    timeline_map: Dict[str, dict] = {}
+
+    for sutra in sutras:
+        planets_inv = sutra.planets_involved
+        if not planets_inv:
+            planets_inv = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+
+        # 1. Current Active Status
+        if md_lord in planets_inv and ad_lord in planets_inv:
+            is_active_now = True
+            status_badge = "🟢 परम सक्रिय (Active Peak)"
+            status_color = "#22c55e"
+            status_label_hi = "परम स्वर्ण काल (Peak Manifestation)"
+            active_now_desc = (
+                f"वर्तमान में {constants.PLANETS_HI.get(md_lord, md_lord)} महादशा के अंतर्गत "
+                f"{constants.PLANETS_HI.get(ad_lord, ad_lord)} अन्तर्दशा चल रही है। दोनों ग्रह इस योग के मुख्य सूत्रधार हैं, "
+                f"अतः यह योग इस समय अपने 100% शिखर फल पर सक्रिय है!"
+            )
+        elif md_lord in planets_inv:
+            is_active_now = True
+            status_badge = "🟢 सक्रिय (MD Active)"
+            status_color = "#10b981"
+            status_label_hi = "महादशा स्तर पर सक्रिय (Active Under MD)"
+            active_now_desc = (
+                f"वर्तमान में मुख्य योगकारक {constants.PLANETS_HI.get(md_lord, md_lord)} की महादशा प्रभावी है। "
+                f"यह कालखंड इस योग के लिए अत्यंत अनुकूल व फलदायी पृष्ठभूमि निर्मित कर रहा है।"
+            )
+        elif ad_lord in planets_inv:
+            is_active_now = True
+            status_badge = "🔵 जाग्रत (AD Triggered)"
+            status_color = "#3b82f6"
+            status_label_hi = "अन्तर्दशा स्तर पर जाग्रत (Triggered Under AD)"
+            active_now_desc = (
+                f"वर्तमान में योग से सम्बद्ध ग्रह {constants.PLANETS_HI.get(ad_lord, ad_lord)} की अन्तर्दशा सक्रिय है, "
+                f"जो इस योग के शुभ प्रभाव को तात्कालिक रूप से उद्दीप्त कर रही है।"
+            )
+        else:
+            is_active_now = False
+            status_badge = "⏳ सुप्त (Dormant)"
+            status_color = "#94a3b8"
+            status_label_hi = "सुप्त अवस्था (Dormant - Awaiting Dasha)"
+            active_now_desc = (
+                f"वर्तमान दशा-अन्तर्दशा ({constants.PLANETS_HI.get(md_lord, md_lord)}-{constants.PLANETS_HI.get(ad_lord, ad_lord)}) "
+                f"इस योग के ग्रहों से सीधे संबद्ध नहीं है। फलदीपिका अनुसार योगकारक ग्रह की दशा प्राप्त होने पर ही योग फलित होता है।"
+            )
+
+        # 2. Next Upcoming Antardasha Window
+        next_window_desc = ""
+        for md in md_list:
+            for ad in md.sub_dashas:
+                ad_end = ad.end_date if ad.end_date.tzinfo else ad.end_date.replace(tzinfo=timezone.utc)
+                if ad_end > current_dt:
+                    if ad.lord in planets_inv or md.lord in planets_inv:
+                        ad_s_str = ad.start_date.strftime("%d-%m-%Y")
+                        ad_e_str = ad.end_date.strftime("%d-%m-%Y")
+                        next_window_desc = (
+                            f"{constants.PLANETS_HI.get(md.lord, md.lord)} महादशा में "
+                            f"{constants.PLANETS_HI.get(ad.lord, ad.lord)} अन्तर्दशा "
+                            f"({ad_s_str} से {ad_e_str})"
+                        )
+                        break
+            if next_window_desc:
+                break
+
+        if not next_window_desc:
+            next_window_desc = "आगामी 120 वर्षीय चक्र में कोई प्रत्यक्ष अन्तर्दशा शेष नहीं"
+
+        # 3. Peak Mahadasha Window
+        peak_mahadasha_desc = ""
+        for md in md_list:
+            md_end = md.end_date if md.end_date.tzinfo else md.end_date.replace(tzinfo=timezone.utc)
+            if md.lord in planets_inv and md_end > current_dt:
+                md_s_str = md.start_date.strftime("%d-%m-%Y")
+                md_e_str = md.end_date.strftime("%d-%m-%Y")
+                peak_mahadasha_desc = f"{constants.PLANETS_HI.get(md.lord, md.lord)} महादशा ({md_s_str} से {md_e_str})"
+                break
+
+        if not peak_mahadasha_desc:
+            first_p = planets_inv[0]
+            peak_mahadasha_desc = f"पूर्व में व्यतीत ({constants.PLANETS_HI.get(first_p, first_p)} महादशा)"
+
+        # 4. Transit Trigger
+        p_names_hi = ", ".join([constants.PLANETS_HI.get(p, p) for p in planets_inv])
+        gochar_trigger_desc = (
+            f"गोचर सक्रियता नियम (फलदीपिका अ. 26): जब देवगुरु बृहस्पति गोचरवश आपकी कुण्डली के 1, 5, या 9वें भाव (त्रिकोण) में संचरण करेंगे, "
+            f"अथवा शनिदेव योगकारक ग्रह ({p_names_hi}) पर दृष्टि अथवा युति संबंध बनाएंगे, तब यह योग गोचरवश तत्काल फलित होगा।"
+        )
+
+        # 5. Classical Citation & Reasoning
+        classical_reasoning_hi = (
+            f"[{sutra.source}] — 'योगे विद्यमानेऽपि दशां विना न सिद्ध्यति'। "
+            f"शास्त्रीय मान्यतानुसार जब तक योगकारक ग्रह की विंशोत्तरी दशा या अन्तर्दशा का समर्थन नहीं मिलता, "
+            f"तब तक योग फल अप्रत्यक्ष रहता है; दशा व गोचर का समर्थन प्राप्त होते ही योग पूर्ण सामर्थ्य से अभ्युदय कराता है।"
+        )
+
+        cur_dasha_str = f"{constants.PLANETS_HI.get(md_lord, md_lord)}-{constants.PLANETS_HI.get(ad_lord, ad_lord)}-{constants.PLANETS_HI.get(pd_lord, pd_lord)}"
+
+        timeline_map[sutra.sutra_id] = {
+            "sutra_id": sutra.sutra_id,
+            "name": sutra.name,
+            "is_active_now": is_active_now,
+            "status_badge": status_badge,
+            "status_color": status_color,
+            "status_label_hi": status_label_hi,
+            "current_dasha_str": cur_dasha_str,
+            "active_now_desc": active_now_desc,
+            "next_window_desc": next_window_desc,
+            "peak_mahadasha_desc": peak_mahadasha_desc,
+            "gochar_trigger_desc": gochar_trigger_desc,
+            "classical_reasoning_hi": classical_reasoning_hi
+        }
+
+    return timeline_map

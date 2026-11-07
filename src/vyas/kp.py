@@ -506,6 +506,15 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
             "favorable_houses": [6, 11],
             "detrimental_houses": [5, 12],
             "description": "षष्ठ भाव का उप-स्वामी जब 6 (शत्रु पराजय) और 11 (अंतिम विजय) भावों को सिग्निफाई करे, तो जातक प्रतियोगी परीक्षाओं व मुकदमों में सदैव विजयी रहता है। 5 व 12 भाव समझौते या व्यय को दर्शाते हैं।"
+        },
+        {
+            "id": "business_partnership",
+            "title_hi": "स्वतंत्र व्यवसाय, व्यापार एवं साझेदारियां (Business & Partnerships)",
+            "icon": "briefcase",
+            "primary_cusp": 7,
+            "favorable_houses": [2, 7, 10, 11],
+            "detrimental_houses": [5, 6, 12],
+            "description": "सप्तम व दशम भाव के कस्प उप-स्वामी 2 (धन), 7 (साझेदारी/ग्राहक वर्ग), 10 (व्यापार/प्रतिष्ठा) व 11 (लाभ) के कार्येश हों तो स्वतंत्र व्यवसाय, नवीन उद्यम व लाभदायक साझेदारियों का अटूट प्रॉमिस बनता है। 5, 6, 12 भाव व्यापार में अनावश्यक ऋण या विच्छेद दर्शाते हैं।"
         }
     ]
     
@@ -527,6 +536,18 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
         
         fav_count = len(fav_present)
         det_count = len(det_present)
+
+        fav_significators = []
+        for p_name, s_data in planet_significators.items():
+            p_sig = set(s_data.get("all_signified", []))
+            if any(h in p_sig for h in ev["favorable_houses"]):
+                fav_significators.append(constants.PLANETS_HI.get(p_name, p_name))
+
+        timing_text = (
+            f"केपी नियमानुसार यह घटना अनुकूल भावों {ev['favorable_houses']} के प्रमुख कार्येश ग्रहों "
+            f"({', '.join(fav_significators[:4]) if fav_significators else 'अनुकूल ग्रह'}) "
+            f"की संयुक्त विंशोत्तरी दशा-भुक्ति-अंतरा (DBA) कालखंड में पूर्णतः फलीभूत होगी।"
+        )
         
         if fav_count >= 2 and det_count <= 1:
             status = "PROMISED"
@@ -562,7 +583,9 @@ def evaluate_kp_house_promises(cusps: List[KPCusp], planet_significators: dict, 
             "status_hi": status_hi,
             "status_color": status_color,
             "description": ev["description"],
-            "verdict_text": verdict_text
+            "verdict_text": verdict_text,
+            "timing_text": timing_text,
+            "fav_significators": fav_significators
         })
         
     return results
