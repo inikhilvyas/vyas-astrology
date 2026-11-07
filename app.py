@@ -1374,6 +1374,41 @@ st.markdown("""
             min-height: 44px !important;
             border-radius: 999px !important;
         }
+
+        /* 7. Action Button Pairs side-by-side on mobile */
+        .mobile-button-row [data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 8px !important;
+            width: 100% !important;
+        }
+        .mobile-button-row [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+            flex: 1 1 50% !important;
+            width: 50% !important;
+            min-width: 0 !important;
+            max-width: 50% !important;
+        }
+        .mobile-button-row div.stButton > button {
+            min-height: 44px !important;
+            font-size: 0.98rem !important;
+            padding: 6px 8px !important;
+            white-space: nowrap !important;
+        }
+
+        /* 8. Unified Banner Cards with seamless bottom action buttons on mobile */
+        .consultation-banner-card {
+            border-bottom-left-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            border-bottom: none !important;
+            margin-bottom: 0 !important;
+        }
+        .consultation-action-btn div.stButton > button {
+            border-top-left-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+            margin-top: 0 !important;
+            box-shadow: none !important;
+        }
     }
 
     /* -------------------------------------------------------------
@@ -1551,12 +1586,15 @@ st.markdown("""
 if _is_light:
     st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
 
+_is_hi_banner = "English" not in st.session_state.get('main_ui_lang_radio', 'हिन्दी')
+_hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
+
 st.markdown(f"""
 <div class="vyas-hero-banner">
-    <div class="vyas-hero-kicker" style="font-size: 0.74rem; letter-spacing: 2.2px; opacity: 0.85; margin-bottom: 2px;">YOUR CELESTIAL PATTERN HAS A STRUCTURE | खगोलीय ग्रहीय गणितीय संरचना</div>
+    <div class="vyas-hero-kicker" style="font-size: 0.72rem; letter-spacing: 1.8px; opacity: 0.9; margin-bottom: 2px; font-weight: 700; color: {TH_GOLD};">{_hero_kicker}</div>
     <div class="vyas-hero-title">VYAS ASTRA</div>
     <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
-    <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: {TH_MUTED}; margin-top: 8px;">
+    <div style="font-family: var(--font-yatra); font-size: clamp(0.82rem, 2.4vw, 1.02rem); color: {TH_MUTED}; margin-top: 8px; line-height: 1.5;">
         वेबसाइट निर्माता एवं शोधकर्ता: <b style="color: {TH_GOLD};">निखिल व्यास (Nikhil Vyas)</b> &bull;  <a href="mailto:inikhilvyas@gmail.com" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">inikhilvyas@gmail.com</a> &bull;  <a href="tel:+919414121172" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">+91 94141 21172</a>
     </div>
 </div>
@@ -2274,6 +2312,7 @@ if is_logged_in_now and active_lp:
         </div>
         """, unsafe_allow_html=True)
     with col_act2:
+        st.markdown('<div class="mobile-button-row">', unsafe_allow_html=True)
         c_btn_a, c_btn_b = st.columns(2)
         with c_btn_a:
             if st.button(" नई कुण्डली", key="new_k_top_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
@@ -2285,6 +2324,7 @@ if is_logged_in_now and active_lp:
             if st.button(toggle_btn_txt, key="toggle_edit_k_btn", use_container_width=True, help="समय/स्थान संशोधित करें"):
                 st.session_state['show_birth_form'] = not st.session_state.get('show_birth_form', False)
                 st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # If user has multiple saved kundlis, show a quick switch drawer
     if len(saved_list) >= 1:
@@ -2617,7 +2657,7 @@ if st.session_state.get('data_generated'):
     col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
     with col_bot_bar1:
         st.markdown(f"""
-        <div style="background: {TH_CARD_BG};
+        <div class="consultation-banner-card" style="background: {TH_CARD_BG};
                     border: {TH_CARD_BORDER}; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
             <div style="font-family: 'Yatra One', serif; font-size: 2.2rem; line-height: 1; color: {TH_GOLD}; font-weight: 900; border: 2px solid {TH_GOLD}; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(37,99,235,0.2);">ॐ</div>
             <div>
@@ -2631,8 +2671,10 @@ if st.session_state.get('data_generated'):
         </div>
         """, unsafe_allow_html=True)
     with col_bot_bar2:
+        st.markdown('<div class="consultation-action-btn">', unsafe_allow_html=True)
         if st.button("परामर्श प्रारंभ करें (Chat Now)", key="open_acharya_bot_bar_btn", use_container_width=True):
             st.session_state["show_acharya_dialog"] = True
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
     # DOMAIN SUITE NAVIGATION (Moved to Sidebar to keep interface clean and compact)
@@ -2700,29 +2742,32 @@ if st.session_state.get('data_generated'):
         """, unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
-    # MORNING 7:00 AM DAILY HOROSCOPE BANNER & ACTIVE SUITE BADGE
+    # MORNING 7:00 AM DAILY HOROSCOPE BANNER
+    # (Only shown on other tabs so it doesn't clutter the daily horoscope tab itself)
     # -------------------------------------------------------------------------
-    col_m_banner1, col_m_banner2 = st.columns([3.5, 1.5])
-    with col_m_banner1:
-        st.markdown(f"""
-        <div style="background: {TH_CARD_BG};
-                    border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
-            <span style="font-size: 2rem;"></span>
-            <div>
-                <div style="font-family: var(--font-yatra); font-weight: 700; color: {TH_GOLD_TITLE}; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
-                    प्रातः 7:00 AM दैनिक राशिफल अलर्ट • {birth.get('name', 'जातक')}
-                </div>
-                <div style="font-size: clamp(0.85rem, 2.5vw, 0.95rem); color: {TH_MUTED}; margin-top: 2px; font-weight: 600;">
-                    नवतारा चक्र, गोचरस्थ चन्द्रमा एवं चालू विंशोत्तरी दशा के आधार पर आज का दिन फल उपलब्ध है।
+    if selected_suite not in ["व्यक्तिगत दैनिक राशिफल", "Daily Horoscope & Timing"]:
+        col_m_banner1, col_m_banner2 = st.columns([3.5, 1.5])
+        with col_m_banner1:
+            st.markdown(f"""
+            <div class="consultation-banner-card" style="background: {TH_CARD_BG};
+                        border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
+                <div>
+                    <div style="font-family: var(--font-yatra); font-weight: 700; color: {TH_GOLD_TITLE}; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
+                        प्रातः 7:00 AM दैनिक राशिफल अलर्ट • {birth.get('name', 'जातक')}
+                    </div>
+                    <div style="font-size: clamp(0.85rem, 2.5vw, 0.95rem); color: {TH_MUTED}; margin-top: 2px; font-weight: 600;">
+                        नवतारा चक्र, गोचरस्थ चन्द्रमा एवं चालू विंशोत्तरी दशा के आधार पर आज का दिन फल उपलब्ध है।
+                    </div>
                 </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_m_banner2:
-        def _jump_to_daily_suite_cb():
-            st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
+            """, unsafe_allow_html=True)
+        with col_m_banner2:
+            st.markdown('<div class="consultation-action-btn">', unsafe_allow_html=True)
+            def _jump_to_daily_suite_cb():
+                st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
 
-        st.button(" आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
+            st.button(" आज का राशिफल देखें", key="jump_daily_horo_top_btn", on_click=_jump_to_daily_suite_cb, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------------------------------------------------------
     # MAIN SCREEN DOMAIN SUITE SELECTOR (Native Mobile Nav & Desktop Quick Nav)
@@ -2731,23 +2776,19 @@ if st.session_state.get('data_generated'):
     if selected_suite in suite_options:
         cur_suite_idx = suite_options.index(selected_suite)
 
-    st.markdown(f"""
-    <div style="background: {TH_CARD_BG};
-                border: {TH_CARD_BORDER}; border-radius: 14px; padding: 12px 18px; margin: 12px 0 12px;
-                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
-        <div>
-            <div style="font-size: 0.82rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;"> ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
-            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 800; color: {TH_GOLD}; margin-top: 2px;">{selected_suite}</div>
-        </div>
-        <div style="font-size: 0.88rem; color: {TH_BADGE_TEXT}; background: {TH_BADGE_BG}; padding: 6px 14px; border-radius: 20px; border: {TH_BADGE_BORDER}; font-weight: 700;">
-             यहाँ से प्रभाग बदलें (Mobile Friendly)
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
     def _sync_suite_from_main():
         st.session_state["domain_suite_sidebar_radio"] = st.session_state["main_screen_suite_select"]
 
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
+        <span style="font-size: 0.86rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;">
+            ज्योतिष अनुसंधान प्रभाग (Domain Suite)
+        </span>
+        <span style="font-size: 0.80rem; color: {TH_MUTED}; font-weight: 700;">
+            (यहाँ से प्रभाग बदलें)
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
     st.selectbox(
         "मुख्य अनुसंधान प्रभाग चुनें (Select Domain Suite):",
         suite_options,
@@ -2910,9 +2951,26 @@ if st.session_state.get('data_generated'):
         else:
             daily_res = st.session_state['daily_res']
 
-        # Render Top Score Cards
+        # Render Top Score Cards with High Contrast Calibration
         score = daily_res["overall_score"]
-        score_color = "#2a9d8f" if score >= 75 else ("#e9c46a" if score >= 55 else "#e63946")
+        if score >= 75:
+            score_color = "#34d399" if not _is_light else "#059669"
+            dial_border = "3.5px solid #10b981"
+            dial_bg = "rgba(16, 185, 129, 0.14)" if not _is_light else "#ecfdf5"
+            dial_glow = "0 0 18px rgba(52, 211, 153, 0.45)"
+            status_txt = "अनुकूल (Favourable)" if is_hi else "Favourable"
+        elif score >= 55:
+            score_color = "#fbbf24" if not _is_light else "#d97706"
+            dial_border = "3.5px solid #f59e0b"
+            dial_bg = "rgba(245, 158, 11, 0.14)" if not _is_light else "#fffbeb"
+            dial_glow = "0 0 18px rgba(251, 191, 36, 0.45)"
+            status_txt = "सामान्य (Moderate)" if is_hi else "Moderate"
+        else:
+            score_color = "#f87171" if not _is_light else "#dc2626"
+            dial_border = "3.5px solid #ef4444"
+            dial_bg = "rgba(239, 68, 68, 0.14)" if not _is_light else "#fef2f2"
+            dial_glow = "0 0 18px rgba(248, 113, 113, 0.45)"
+            status_txt = "सतर्क (Cautious)" if is_hi else "Cautious"
         
         # 4-PANEL DASHBOARD (Matching Reference Figma/UI Mockup)
         col_d1, col_d2, col_d3, col_d4 = st.columns([1.1, 1.3, 1.2, 1.4])
@@ -2920,15 +2978,15 @@ if st.session_state.get('data_generated'):
         with col_d1:
             st.markdown(f"""
             <div class="glass-card" style="text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">VYAS DAY INDEX</div>
-                <div style="margin: 14px auto; position: relative; width: 100px; height: 100px; border-radius: 50%; border: 3px solid rgba(229,169,60,0.2); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(229,169,60,0.15);">
-                    <div style="font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 900; color: {score_color};">{score}</div>
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">VYAS DAY INDEX</div>
+                <div style="margin: 12px auto; position: relative; width: 104px; height: 104px; border-radius: 50%; border: {dial_border}; background: {dial_bg}; display: flex; align-items: center; justify-content: center; box-shadow: {dial_glow};">
+                    <div style="font-family: 'Cinzel', serif; font-size: 2.6rem; font-weight: 900; color: {score_color}; line-height: 1;">{score}</div>
                 </div>
-                <div style="font-size: 1.05rem; font-weight: 700; color: #fef3c7;">{'अनुकूल (Favourable)' if score >= 60 else 'सतर्क (Cautious)'}</div>
-                <div style="margin-top: 10px; font-size: 0.92rem; color: #cbd5e1; text-align: left;">
-                    <div>ऊर्जा (Energy): <b>{daily_res['scores']['health']}%</b></div>
-                    <div>एकाग्रता (Focus): <b>{daily_res['scores']['career']}%</b></div>
-                    <div>वृद्धि (Growth): <b>{daily_res['scores']['wealth']}%</b></div>
+                <div style="font-size: 1.08rem; font-weight: 800; color: {score_color};">{status_txt}</div>
+                <div style="margin-top: 10px; font-size: 0.94rem; color: {TH_MUTED}; text-align: left; font-weight: 600;">
+                    <div>ऊर्जा (Energy): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['health']}%</b></div>
+                    <div>एकाग्रता (Focus): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['career']}%</b></div>
+                    <div>वृद्धि (Growth): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['wealth']}%</b></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
