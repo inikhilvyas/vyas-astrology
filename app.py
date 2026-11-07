@@ -1414,7 +1414,7 @@ with st.sidebar:
 
             function updateStatus() {
                 if (!("Notification" in window)) {
-                    status.innerHTML = "️ ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
+                    status.innerHTML = "ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
                     btn.disabled = true;
                     return;
                 }
@@ -1427,7 +1427,7 @@ with st.sidebar:
                     status.innerHTML = " नोटिफिकेशन ब्लॉक है। ब्राउज़र सेटिंग्स में अनुमति दें।";
                     status.style.color = "#f87171";
                 } else {
-                    status.innerHTML = "ℹ️ सुबह 7 बजे दैनिक फलादेश पाने हेतु बटन दबाएं।";
+                    status.innerHTML = "सुबह 7 बजे दैनिक फलादेश पाने हेतु बटन दबाएं।";
                 }
             }
 
@@ -1987,7 +1987,7 @@ if show_form:
                 " रोग मुक्ति व स्वास्थ्य (Health & Recovery)",
                 "कोर्ट केस / वाद-विवाद (Court Case & Dispute)",
                 " धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
-                "️ विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
+                "विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
                 " खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
             ]
         )
@@ -2352,7 +2352,7 @@ if st.session_state.get('data_generated'):
                 key="kp_seed_num_input"
             )
             st.session_state['prashna_kp_seed'] = seed_input
-            if st.button("🎲 अंतर्ज्ञान से अंक रोल करें (Roll Random Seed)", use_container_width=True):
+            if st.button("अंतर्ज्ञान से अंक रोल करें (Roll Random Seed)", use_container_width=True):
                 import random
                 new_seed = random.randint(1, 249)
                 st.session_state['prashna_kp_seed'] = new_seed
@@ -2388,7 +2388,7 @@ if st.session_state.get('data_generated'):
         for idx, dom in enumerate(vyas_prashna.QUESTION_DOMAINS):
             col_target = chip_cols[idx % 3]
             is_active = (dom["id"] == active_domain_id)
-            btn_label = f"{'✅ ' if is_active else ''}{dom['title_hi'].split('(')[0].strip()}"
+            btn_label = f"{'' if is_active else ''}{dom['title_hi'].split('(')[0].strip()}"
             if col_target.button(btn_label, key=f"chip_dom_{dom['id']}", use_container_width=True, type="primary" if is_active else "secondary"):
                 st.session_state["prashna_active_domain_id"] = dom["id"]
                 st.rerun()
@@ -2690,7 +2690,7 @@ if st.session_state.get('data_generated'):
                 """, unsafe_allow_html=True)
 
             _lz_tab_ch = lazy_sections([
-                "🌟 जातक-विशिष्ट मुहूर्त (Personal Muhurta)",
+                "जातक-विशिष्ट मुहूर्त (Personal Muhurta)",
                 "दिन का चौघड़िया",
                 "रात्रि का चौघड़िया",
                 "24 कालहोरा चक्र (Horas)",
@@ -2709,7 +2709,7 @@ if st.session_state.get('data_generated'):
                     return False
 
             if _lz_tab_ch[0]:
-                asc_idx = chart.ascendant_sign_index
+                asc_idx = getattr(chart, 'ascendant_sign', int(chart.ascendant_longitude // 30.0) % 12)
                 l_sign = constants.SIGNS_HI[asc_idx]
                 l_lord = constants.SIGN_LORD[asc_idx]
                 l_lord_hi = constants.PLANETS_HI.get(l_lord, l_lord)
@@ -2735,7 +2735,7 @@ if st.session_state.get('data_generated'):
                 
                 if h_from_m == 8:
                     ch_status_color = "#ef4444"
-                    ch_badge = "⚠️ चन्द्राष्टम दोष (अति सावधान)"
+                    ch_badge = "चन्द्राष्टम दोष (अति सावधान)"
                     ch_desc = "गोचर चन्द्र आपकी जन्म राशि से 8वें भाव में संचरण कर रहे हैं। आज कोई भी नवीन अनुबंध, जोखिमपूर्ण निवेश, बड़ी खरीदारी या लंबी यात्रा टालें।"
                 elif h_from_m in [1, 3, 6, 7, 10, 11]:
                     ch_status_color = "#10b981"
@@ -2767,7 +2767,7 @@ if st.session_state.get('data_generated'):
 
                 col_pj1, col_pj2 = st.columns(2)
                 with col_pj1:
-                    st.markdown("##### 🟢 जातक के लिए आज के सर्वश्रेष्ठ शुभ मुहूर्त (Peak Lucky Windows)")
+                    st.markdown("##### जातक के लिए आज के सर्वश्रेष्ठ शुभ मुहूर्त (Peak Lucky Windows)")
                     p_shubh_items = []
                     am_v = daily_res.get('amrit_vela', '-')
                     if not ("कोई नहीं" in am_v or "वर्जित" in am_v or "Prohibited" in am_v or "बुधवार" in am_v):
@@ -2812,7 +2812,7 @@ if st.session_state.get('data_generated'):
                     st.markdown("".join(sh_cards) if sh_cards else "<p style='color: #94a3b8;'>आज का दिन सामान्य है।</p>", unsafe_allow_html=True)
 
                 with col_pj2:
-                    st.markdown("##### 🔴 जातक के लिए आज के टालने योग्य काल (Windows to Avoid)")
+                    st.markdown("##### जातक के लिए आज के टालने योग्य काल (Windows to Avoid)")
                     p_avoid_items = []
                     p_avoid_items.append({
                         "title": "राहु काल (Rahu Kaal)",
@@ -2841,7 +2841,7 @@ if st.session_state.get('data_generated'):
                             if len(parts) == 2:
                                 act = _is_time_window_active(parts[0], parts[1])
                         act_border = "border: 2px solid #ef4444; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);" if act else "border: 1px solid rgba(239, 68, 68, 0.25);"
-                        act_pill = '<span style="background: #ef4444; color: #ffffff; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">⚠️ चालू (सावधान)</span>' if act else ''
+                        act_pill = '<span style="background: #ef4444; color: #ffffff; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">चालू (सावधान)</span>' if act else ''
                         av_cards.append(f"""<div style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; {act_border}">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
 <div style="font-weight: 800; font-size: 0.95rem; color: #f87171;">{item['title']}{act_pill}</div>
@@ -2989,7 +2989,7 @@ if st.session_state.get('data_generated'):
                             if len(parts) == 2:
                                 act = _is_time_window_active(parts[0], parts[1])
                         active_style = "border: 2px solid #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.35);" if act else "border: 1px solid rgba(239, 68, 68, 0.25);"
-                        active_pill = '<span style="background: #ef4444; color: #ffffff; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">⚠️ चालू (सावधान)</span>' if act else ''
+                        active_pill = '<span style="background: #ef4444; color: #ffffff; font-weight: 800; font-size: 0.68rem; padding: 1px 6px; border-radius: 10px; margin-left: 6px;">चालू (सावधान)</span>' if act else ''
                         ashubh_cards.append(f"""<div style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; {active_style}">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px;">
 <div style="font-weight: 800; font-size: 0.95rem; color: #f87171;">{m['name']}{active_pill}</div>
@@ -3049,7 +3049,7 @@ if st.session_state.get('data_generated'):
             with col_narr2:
                 st.markdown(f"""
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #ec4899;">
-                    <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">️ संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
+                    <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
                     <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('love', '')}</div>
                 </div>
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #f59e0b;">
@@ -3134,7 +3134,7 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        with st.expander("📖 जन्म समय शुद्धि (BTR) पद्धति कैसे कार्य करती है? (Methodology Guide)", expanded=False):
+        with st.expander("जन्म समय शुद्धि (BTR) पद्धति कैसे कार्य करती है? (Methodology Guide)", expanded=False):
             st.markdown("""
             <div style="font-size: 0.95rem; line-height: 1.7; color: var(--text-main);">
                 <b>वैदिक महर्षियों एवं आधुनिक के.पी. शोधकर्ताओं द्वारा प्रतिपादित 4 प्रमुख शोधन स्तंभ:</b><br/>
@@ -3181,7 +3181,7 @@ if st.session_state.get('data_generated'):
                         border: 2px solid #f0c05a; border-radius: 14px; padding: 18px 20px; margin: 16px 0; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                     <div style="font-size: 0.85rem; color: #ffd700; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">
-                        🏆 सर्वाधिक अनुशंसित एवं गणितीय रूप से प्रमाणित शुद्ध जन्म समय
+                        [प्रमाणित] सर्वाधिक अनुशंसित एवं गणितीय रूप से प्रमाणित शुद्ध जन्म समय
                     </div>
                     <div style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.82rem;">
                         {top_c['confidence_pct']}% शुद्धता स्कोर
@@ -3198,13 +3198,13 @@ if st.session_state.get('data_generated'):
                 <hr style="border-color: rgba(240, 192, 90, 0.3); margin: 12px 0;"/>
                 <div style="font-size: 0.92rem; color: #f1f5f9; line-height: 1.7;">
                     <div style="margin-bottom: 8px;">
-                        <b style="color: #f0c05a;">🔹 पाराशरी कुन्द शोधन (81x):</b> {top_c['reason_kunda']}
+                        <b style="color: #f0c05a;">• पाराशरी कुन्द शोधन (81x):</b> {top_c['reason_kunda']}
                     </div>
                     <div style="margin-bottom: 8px;">
-                        <b style="color: #f0c05a;">🔹 पंचतत्त्व लिंग शुद्धि:</b> {top_c['reason_tattva']}
+                        <b style="color: #f0c05a;">• पंचतत्त्व लिंग शुद्धि:</b> {top_c['reason_tattva']}
                     </div>
                     <div style="margin-bottom: 4px;">
-                        <b style="color: #f0c05a;">🔹 सूक्ष्म वर्ग स्थिरता:</b> {top_c['reason_varga']}
+                        <b style="color: #f0c05a;">• सूक्ष्म वर्ग स्थिरता:</b> {top_c['reason_varga']}
                     </div>
                     <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 8px; background: rgba(0,0,0,0.35); padding: 6px 12px; border-radius: 8px;">
                         <b>लग्न स्पष्ट:</b> {top_c['asc_deg']} &nbsp;|&nbsp; <b>कुन्द नक्षत्र:</b> {top_c['kunda_nak']} &nbsp;|&nbsp; <b>नवमांश लग्न:</b> {top_c['navamsha_lagna']}
@@ -3215,7 +3215,7 @@ if st.session_state.get('data_generated'):
 
             col_apply1, col_apply2 = st.columns([1.5, 1])
             with col_apply1:
-                if st.button(f"✅ इस शुद्ध समय ({top_c['time_str']}) को अपनी कुण्डली में लागू करें", key="apply_btr_top_btn", type="primary", use_container_width=True):
+                if st.button(f"इस शुद्ध समय ({top_c['time_str']}) को अपनी कुण्डली में लागू करें", key="apply_btr_top_btn", type="primary", use_container_width=True):
                     cur_p = st.session_state.get('loaded_profile', dict(birth))
                     cur_p['tob'] = top_c['time_str']
                     if is_logged_in_now:
@@ -4603,7 +4603,7 @@ if st.session_state.get('data_generated'):
 
             for se in sutra_eval:
                 tl = timeline_map.get(se.sutra_id, {})
-                status_badge = tl.get("status_badge", "🟢 सक्रिय")
+                status_badge = tl.get("status_badge", "सक्रिय")
                 status_color = tl.get("status_color", "#10b981")
                 active_now_desc = tl.get("active_now_desc", "")
                 next_window_desc = tl.get("next_window_desc", "")
@@ -4792,7 +4792,7 @@ if st.session_state.get('data_generated'):
                     """, unsafe_allow_html=True)
 
         if (not _dl_ok) and st.session_state.get('pdf_out_path') and os.path.exists(st.session_state['pdf_out_path']):
-            st.caption("️ पिछली बार बना PDF अलग इनपुट का है — नया रिपोर्ट देखने के लिए ऊपर फिर से जनरेट करें।")
+            st.caption("पिछली बार बना PDF अलग इनपुट का है — नया रिपोर्ट देखने के लिए ऊपर फिर से जनरेट करें।")
 
         with col_gen2:
             st.markdown("""

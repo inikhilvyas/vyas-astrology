@@ -595,7 +595,7 @@ def compute_yoga_activation_timeline(
         # 1. Current Active Status
         if md_lord in planets_inv and ad_lord in planets_inv:
             is_active_now = True
-            status_badge = "🟢 परम सक्रिय (Active Peak)"
+            status_badge = "परम सक्रिय (Active Peak)"
             status_color = "#22c55e"
             status_label_hi = "परम स्वर्ण काल (Peak Manifestation)"
             active_now_desc = (
@@ -605,7 +605,7 @@ def compute_yoga_activation_timeline(
             )
         elif md_lord in planets_inv:
             is_active_now = True
-            status_badge = "🟢 सक्रिय (MD Active)"
+            status_badge = "सक्रिय (MD Active)"
             status_color = "#10b981"
             status_label_hi = "महादशा स्तर पर सक्रिय (Active Under MD)"
             active_now_desc = (
@@ -614,7 +614,7 @@ def compute_yoga_activation_timeline(
             )
         elif ad_lord in planets_inv:
             is_active_now = True
-            status_badge = "🔵 जाग्रत (AD Triggered)"
+            status_badge = "जाग्रत (AD Triggered)"
             status_color = "#3b82f6"
             status_label_hi = "अन्तर्दशा स्तर पर जाग्रत (Triggered Under AD)"
             active_now_desc = (
@@ -623,7 +623,7 @@ def compute_yoga_activation_timeline(
             )
         else:
             is_active_now = False
-            status_badge = "⏳ सुप्त (Dormant)"
+            status_badge = "सुप्त (Dormant)"
             status_color = "#94a3b8"
             status_label_hi = "सुप्त अवस्था (Dormant - Awaiting Dasha)"
             active_now_desc = (

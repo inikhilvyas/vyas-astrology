@@ -88,6 +88,10 @@ class Chart:
         return int(self.ascendant_longitude // 30.0) % 12
         
     @property
+    def ascendant_sign_index(self) -> int:
+        return self.ascendant_sign
+        
+    @property
     def ascendant_nakshatra(self) -> int:
         return int(self.ascendant_longitude // constants.NAKSHATRA_SPAN) % 27
         
