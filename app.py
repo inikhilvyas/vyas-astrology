@@ -529,6 +529,18 @@ st.markdown('''
 _active_theme_mode = st.session_state.get("_user_theme_mode", "डार्क थीम (Dark)")
 _is_light = "लाइट" in str(_active_theme_mode) or "Light" in str(_active_theme_mode) or "कंट्रास्ट" in str(_active_theme_mode)
 
+# High-contrast Theme Design Tokens for 100% Legibility in Light & Dark Mode
+TH_GOLD = "#1e3a8a" if _is_light else "#f0c05a"
+TH_GOLD_TITLE = "#1e3a8a" if _is_light else "#ffd700"
+TH_GOLD_ACCENT = "#2563eb" if _is_light else "#fbbf24"
+TH_MUTED = "#1e293b" if _is_light else "#cbd5e1"
+TH_NAME = "#0f172a" if _is_light else "#ffffff"
+TH_CARD_BG = "#ffffff" if _is_light else "linear-gradient(135deg, rgba(240,192,90,0.18) 0%, rgba(14,23,42,0.96) 100%)"
+TH_CARD_BORDER = "1.5px solid rgba(37, 99, 235, 0.35)" if _is_light else "1.8px solid #f0c05a"
+TH_BADGE_BG = "#eff6ff" if _is_light else "rgba(0,0,0,0.4)"
+TH_BADGE_TEXT = "#1e3a8a" if _is_light else "#cbd5e1"
+TH_BADGE_BORDER = "1.5px solid #93c5fd" if _is_light else "1px solid rgba(240,192,90,0.25)"
+
 # Global Luxury Vedic Styling & Mobile-First Responsive Framework
 _light_css_rules = """
         :root {
@@ -641,46 +653,105 @@ _light_css_rules = """
             color: #0f172a !important;
         }
 
-        /* Sidebar styling in Light Mode */
+        /* ALL Radio Buttons & Nav Pills in Light Mode (Main Content & Sidebar) */
+        div[data-testid="stRadio"] [role="radiogroup"],
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] {
+            background: #f1f5f9 !important;
+            border: 1.5px solid #cbd5e1 !important;
+            padding: 6px !important;
+            border-radius: 999px !important;
+        }
+        div[data-testid="stRadio"] [role="radiogroup"] label,
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 999px !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+            padding: 8px 18px !important;
+        }
+        div[data-testid="stRadio"] [role="radiogroup"] label *,
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label * {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+        }
+        div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked),
+        div[data-testid="stRadio"] [role="radiogroup"] label[data-checked="true"],
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+            color: #ffffff !important;
+            border-color: #1d4ed8 !important;
+            box-shadow: 0 3px 12px rgba(37,99,235,0.35) !important;
+        }
+        div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) *,
+        div[data-testid="stRadio"] [role="radiogroup"] label[data-checked="true"] *,
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) * {
+            color: #ffffff !important;
+            font-weight: 800 !important;
+        }
+
+        /* Selectbox & Inputs in Light Mode */
+        div[data-baseweb="select"],
+        div[data-baseweb="select"] > div,
+        div[data-baseweb="input"],
+        div[data-baseweb="input"] > input,
+        div[data-testid="stSelectbox"] > div > div {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+        }
+        div[data-baseweb="select"] *,
+        div[data-testid="stSelectbox"] * {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+        }
+        ul[data-baseweb="menu"],
+        div[data-baseweb="popover"] div,
+        li[data-baseweb="menu-item"] {
+            background: #ffffff !important;
+            color: #0f172a !important;
+        }
+        li[data-baseweb="menu-item"]:hover {
+            background: #eff6ff !important;
+            color: #1e3a8a !important;
+        }
+
+        /* Sidebar in Light Mode */
         section[data-testid="stSidebar"] {
             background: #f8fafc !important;
             border-right: 1.5px solid rgba(15, 23, 42, 0.15) !important;
             color: #0f172a !important;
         }
         section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] {
-            background: #ffffff !important;
-            border: 1.5px solid #cbd5e1 !important;
+            border-radius: 12px !important;
         }
         section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label {
-            background: #ffffff !important;
-            color: #0f172a !important;
-            border: 1px solid #cbd5e1 !important;
-        }
-        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label * {
-            color: #0f172a !important;
-        }
-        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) {
-            background: #2563eb !important;
-            color: #ffffff !important;
-            border-color: #1d4ed8 !important;
-        }
-        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) * {
-            color: #ffffff !important;
-            font-weight: 800 !important;
+            border-radius: 8px !important;
         }
         section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] p {
             color: #0f172a !important;
         }
 
-        /* Buttons in Light Mode: Vibrant Cobalt Blue with high contrast text */
-        div.stButton > button, section[data-testid="stSidebar"] div.stButton > button {
+        /* All Buttons in Light Mode: Vibrant Cobalt Blue with 100% white bold text */
+        div.stButton > button,
+        div[data-testid="stButton"] > button,
+        button[kind="secondary"],
+        button[kind="primary"],
+        section[data-testid="stSidebar"] div.stButton > button {
             background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #1d4ed8 100%) !important;
             color: #ffffff !important;
             -webkit-text-fill-color: #ffffff !important;
             border: 2px solid #1e3a8a !important;
             box-shadow: 0 4px 14px rgba(37,99,235,0.25) !important;
+            border-radius: 10px !important;
         }
-        div.stButton > button *, section[data-testid="stSidebar"] div.stButton > button * {
+        div.stButton > button *,
+        div[data-testid="stButton"] > button *,
+        button[kind="secondary"] *,
+        button[kind="primary"] *,
+        section[data-testid="stSidebar"] div.stButton > button * {
             color: #ffffff !important;
             -webkit-text-fill-color: #ffffff !important;
             font-weight: 800 !important;
@@ -692,6 +763,28 @@ _light_css_rules = """
             border: 1.5px solid rgba(37, 99, 235, 0.4) !important;
             filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15)) !important;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12) !important;
+        }
+
+        /* Modern Tables in Light Mode */
+        table {
+            background: #ffffff !important;
+            border-color: #cbd5e1 !important;
+        }
+        th {
+            background: #eff6ff !important;
+            color: #1e3a8a !important;
+            border-bottom: 2px solid #93c5fd !important;
+            font-weight: 800 !important;
+        }
+        td {
+            color: #0f172a !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        tr:nth-child(even) td {
+            background: #f8fafc !important;
+        }
+        tr:nth-child(odd) td {
+            background: #ffffff !important;
         }
 """
 
@@ -731,22 +824,22 @@ st.markdown("""
     /* Automatic System Light Mode Adaptation for PC & Mobile */
     @media (prefers-color-scheme: light) {
         :root {
-            --gold-primary: #b45309;
-            --gold-light: #78350f;
-            --gold-accent: #d97706;
+            --gold-primary: #1e3a8a;
+            --gold-light: #2563eb;
+            --gold-accent: #1d4ed8;
             --bg-deep: #f8fafc;
             --bg-surface: #ffffff;
             --card-bg: rgba(255, 255, 255, 0.98);
-            --card-border: rgba(180, 130, 40, 0.32);
-            --card-border-hover: rgba(180, 130, 40, 0.75);
+            --card-border: rgba(37, 99, 235, 0.25);
+            --card-border-hover: rgba(37, 99, 235, 0.65);
             --accent-ruby: #dc2626;
             --accent-emerald: #059669;
             --text-main: #0f172a;
-            --text-muted: #475569;
-            --vyas-gold-1: #78350f;
-            --vyas-gold-2: #b45309;
-            --vyas-gold-3: #92400e;
-            --vyas-line: rgba(180, 130, 40, 0.28);
+            --text-muted: #1e293b;
+            --vyas-gold-1: #1e3a8a;
+            --vyas-gold-2: #2563eb;
+            --vyas-gold-3: #1d4ed8;
+            --vyas-line: rgba(37, 99, 235, 0.25);
         }
 
         html, body {
@@ -755,8 +848,8 @@ st.markdown("""
         }
 
         .stApp, [data-testid="stAppViewContainer"], .main {
-            background: radial-gradient(ellipse at top, #faf7f2 0%, #f3ece0 100%) !important;
-            background-attachment: fixed !important;
+            background: #f8fafc !important;
+            background-image: none !important;
             color: #0f172a !important;
         }
 
@@ -769,7 +862,7 @@ st.markdown("""
 
         .glass-card, .predict-card {
             background: #ffffff !important;
-            border-color: rgba(180, 130, 40, 0.32) !important;
+            border-color: rgba(37, 99, 235, 0.25) !important;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
             color: #0f172a !important;
         }
@@ -779,35 +872,35 @@ st.markdown("""
         }
 
         .vyas-hero-banner {
-            background: linear-gradient(180deg, #ffffff 0%, #faf5ea 100%) !important;
-            border-color: rgba(180, 130, 40, 0.45) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important;
+            background: #ffffff !important;
+            border-color: rgba(37, 99, 235, 0.45) !important;
+            box-shadow: 0 10px 30px rgba(37,99,235,0.08) !important;
         }
 
         .vyas-hero-kicker {
-            color: #92400e !important;
+            color: #1e3a8a !important;
         }
 
         .vyas-hero-title {
-            background: linear-gradient(135deg, #78350f 0%, #b45309 60%, #92400e 100%) !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #1d4ed8 100%) !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             text-shadow: none !important;
         }
 
         .section-title {
-            color: #92400e !important;
-            border-bottom-color: rgba(180, 130, 40, 0.35) !important;
+            color: #1e3a8a !important;
+            border-bottom-color: rgba(37, 99, 235, 0.35) !important;
         }
 
         section[data-testid="stSidebar"] {
-            background: #fdfbf7 !important;
-            border-right: 1px solid rgba(180, 130, 40, 0.25) !important;
+            background: #f8fafc !important;
+            border-right: 1.5px solid rgba(15, 23, 42, 0.15) !important;
         }
 
         [data-testid="stExpander"] {
             background: #ffffff !important;
-            border-color: rgba(180, 130, 40, 0.28) !important;
+            border-color: rgba(37, 99, 235, 0.25) !important;
         }
 
         [data-testid="stExpander"] summary {
@@ -1413,16 +1506,16 @@ st.markdown("""
 if _is_light:
     st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
 
-st.html("""
+st.markdown(f"""
 <div class="vyas-hero-banner">
     <div class="vyas-hero-kicker" style="font-size: 0.74rem; letter-spacing: 2.2px; opacity: 0.85; margin-bottom: 2px;">YOUR CELESTIAL PATTERN HAS A STRUCTURE | खगोलीय ग्रहीय गणितीय संरचना</div>
     <div class="vyas-hero-title">VYAS ASTRA</div>
     <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
-    <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: rgba(238, 220, 154, 0.9); margin-top: 8px;">
-        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color:#f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull;  <a href="mailto:inikhilvyas@gmail.com" style="color:#93c5fd; text-decoration:none;">inikhilvyas@gmail.com</a> &bull;  <a href="tel:+919414121172" style="color:#93c5fd; text-decoration:none;">+91 94141 21172</a>
+    <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: {TH_MUTED}; margin-top: 8px;">
+        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color: {TH_GOLD};">निखिल व्यास (Nikhil Vyas)</b> &bull;  <a href="mailto:inikhilvyas@gmail.com" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">inikhilvyas@gmail.com</a> &bull;  <a href="tel:+919414121172" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">+91 94141 21172</a>
     </div>
 </div>
-""")
+""", unsafe_allow_html=True)
 
 
 # ---------------- SESSION RESOLUTION (before the sidebar) ----------------
@@ -2121,14 +2214,14 @@ if is_logged_in_now and active_lp:
     col_act1, col_act2 = st.columns([2.4, 1.4])
     with col_act1:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(240,192,90,0.18) 0%, rgba(14,23,42,0.96) 100%); border: 1.8px solid #f0c05a; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.4);">
-            <div style="font-size: 0.74rem; color: #ffd700; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+        <div style="background: {TH_CARD_BG}; border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
+            <div style="font-size: 0.74rem; color: {TH_GOLD_TITLE}; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
                  आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)
             </div>
-            <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: #ffffff; font-weight: 800; margin-top: 2px;">
+            <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: {TH_NAME}; font-weight: 800; margin-top: 2px;">
                 {active_lp.get('name', 'जातक')}
             </div>
-            <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 3px;">
+            <div style="font-size: 0.86rem; color: {TH_MUTED}; margin-top: 3px; font-weight: 600;">
                  <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
                 <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
                  <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
@@ -2479,14 +2572,14 @@ if st.session_state.get('data_generated'):
     col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
     with col_bot_bar1:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 42, 0.96) 100%);
-                    border: 1.5px solid rgba(240, 192, 90, 0.45); border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 16px;">
-            <div style="font-family: 'Yatra One', serif; font-size: 2.2rem; line-height: 1; color: #f0c05a; font-weight: 900; border: 2px solid #f0c05a; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(240,192,90,0.3);">ॐ</div>
+        <div style="background: {TH_CARD_BG};
+                    border: {TH_CARD_BORDER}; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
+            <div style="font-family: 'Yatra One', serif; font-size: 2.2rem; line-height: 1; color: {TH_GOLD}; font-weight: 900; border: 2px solid {TH_GOLD}; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(37,99,235,0.2);">ॐ</div>
             <div>
-                <div style="font-family: 'Yatra One', serif; font-weight: 700; color: #f0c05a; font-size: clamp(1.15rem, 3.8vw, 1.4rem); letter-spacing: 0.4px;">
+                <div style="font-family: 'Yatra One', serif; font-weight: 700; color: {TH_GOLD}; font-size: clamp(1.15rem, 3.8vw, 1.4rem); letter-spacing: 0.4px;">
                     आचार्य व्यास • प्रत्यक्ष वैदिक संवाद (Live Consultation)
                 </div>
-                <div style="color: #cbd5e1; font-size: clamp(0.92rem, 2.8vw, 1.05rem); margin-top: 4px; line-height: 1.5;">
+                <div style="color: {TH_MUTED}; font-size: clamp(0.92rem, 2.8vw, 1.05rem); margin-top: 4px; line-height: 1.5; font-weight: 600;">
                     आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित सीधा समाधान
                 </div>
             </div>
@@ -2567,14 +2660,14 @@ if st.session_state.get('data_generated'):
     col_m_banner1, col_m_banner2 = st.columns([3.5, 1.5])
     with col_m_banner1:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(14, 23, 42, 0.95) 100%);
-                    border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px;">
+        <div style="background: {TH_CARD_BG};
+                    border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
             <span style="font-size: 2rem;"></span>
             <div>
-                <div style="font-family: var(--font-yatra); font-weight: 700; color: #fbbf24; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
+                <div style="font-family: var(--font-yatra); font-weight: 700; color: {TH_GOLD_TITLE}; font-size: clamp(1.05rem, 3.2vw, 1.25rem);">
                     प्रातः 7:00 AM दैनिक राशिफल अलर्ट • {birth.get('name', 'जातक')}
                 </div>
-                <div style="font-size: clamp(0.85rem, 2.5vw, 0.95rem); color: #cbd5e1; margin-top: 2px;">
+                <div style="font-size: clamp(0.85rem, 2.5vw, 0.95rem); color: {TH_MUTED}; margin-top: 2px; font-weight: 600;">
                     नवतारा चक्र, गोचरस्थ चन्द्रमा एवं चालू विंशोत्तरी दशा के आधार पर आज का दिन फल उपलब्ध है।
                 </div>
             </div>
@@ -2594,14 +2687,14 @@ if st.session_state.get('data_generated'):
         cur_suite_idx = suite_options.index(selected_suite)
 
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.16) 0%, rgba(14, 23, 42, 0.96) 100%);
-                border: 1.5px solid rgba(240, 192, 90, 0.45); border-radius: 14px; padding: 12px 18px; margin: 12px 0 12px;
-                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <div style="background: {TH_CARD_BG};
+                border: {TH_CARD_BORDER}; border-radius: 14px; padding: 12px 18px; margin: 12px 0 12px;
+                display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
         <div>
-            <div style="font-size: 0.82rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700;"> ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
-            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 800; color: #f0c05a; margin-top: 2px;">{selected_suite}</div>
+            <div style="font-size: 0.82rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;"> ज्योतिष अनुसंधान प्रभाग (Domain Suite)</div>
+            <div style="font-family: var(--font-yatra); font-size: 1.35rem; font-weight: 800; color: {TH_GOLD}; margin-top: 2px;">{selected_suite}</div>
         </div>
-        <div style="font-size: 0.88rem; color: #cbd5e1; background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(240,192,90,0.25);">
+        <div style="font-size: 0.88rem; color: {TH_BADGE_TEXT}; background: {TH_BADGE_BG}; padding: 6px 14px; border-radius: 20px; border: {TH_BADGE_BORDER}; font-weight: 700;">
              यहाँ से प्रभाग बदलें (Mobile Friendly)
         </div>
     </div>
