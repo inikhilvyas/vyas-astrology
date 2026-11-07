@@ -172,22 +172,27 @@ def _mount_session_bridge(action: str = "read", token: str = "") -> str:
 
 
 def _load_kundli_into_session(chosen_k, make_default=False, user_id=None):
-    """Loads a saved kundli profile into active session and marks data ready."""
+    """Loads a saved kundli profile into active session and marks data ready without widget conflicts."""
     if not chosen_k:
         return
     st.session_state['loaded_profile'] = dict(chosen_k)
     st.session_state['lat'] = float(chosen_k.get('lat', 28.6139))
     st.session_state['lon'] = float(chosen_k.get('lon', 77.2090))
-    st.session_state['city_name'] = chosen_k.get('city', 'New Delhi, India')
-    st.session_state['city_search_input'] = chosen_k.get('city', 'New Delhi, India')
-    st.session_state['_last_chosen_city'] = chosen_k.get('city', 'New Delhi, India')
+    c_name = chosen_k.get('city', 'New Delhi, India')
+    st.session_state['city_name'] = c_name
+    st.session_state['_last_chosen_city'] = c_name
+    st.session_state['_pending_city_search_input'] = c_name
+    try:
+        st.session_state['city_search_input'] = c_name
+    except Exception:
+        pass
     st.session_state.pop('selected_city_dropdown', None)
     st.session_state.pop('_birth_input_sig', None)
     st.session_state['data_generated'] = True
     st.session_state['show_birth_form'] = False
-    if make_default and user_id:
+    if make_default and user_id and chosen_k.get("id"):
         try:
-            auth_vault.set_default_kundli(user_id, chosen_k["id"])
+            auth_vault.set_default_kundli(user_id, int(chosen_k["id"]))
         except Exception:
             pass
 
@@ -1582,44 +1587,43 @@ with st.sidebar:
     # ---------------- USER AUTHENTICATION & SESSION ----------------
     is_logged_in = (u["email"] != "seeker@vyasastro.com")
     
-    if not is_logged_in:
-        if is_logged_in:
-            u_tokens = auth_vault.get_google_tokens(u["id"])
-            has_gdrive = bool(u_tokens and u_tokens.get("access_token"))
-            gdrive_status_html = """
-            <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
-                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
-                <b>Google Drive:</b> सक्रिय ('VYAS Kundli & Horoscopes' सिंक चालू)
-            </div>
-            """ if has_gdrive else """
-            <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
-                ️ Google Drive कनेक्ट नहीं है (नीचे से कनेक्ट करें)
-            </div>
-            """
+    if is_logged_in:
+        u_tokens = auth_vault.get_google_tokens(u["id"])
+        has_gdrive = bool(u_tokens and u_tokens.get("access_token"))
+        gdrive_status_html = """
+        <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+            <b>Google Drive:</b> सक्रिय (PDF रिपोर्ट सिंक)
+        </div>
+        """ if has_gdrive else """
+        <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
+            Google Drive कनेक्ट नहीं है
+        </div>
+        """
 
-            st.markdown(f"""
-            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
-                <div style="font-weight: 700; color: #34d399;">सफलतापूर्वक लॉगिन: {u['name']}</div>
-                <div style="font-size: 0.8rem; color: #cbd5e1;">{u['email']}</div>
-                {gdrive_status_html}
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px;">
+            <div style="font-weight: 700; color: #34d399; font-size: 0.92rem;">लॉगिन: {u['name']}</div>
+            <div style="font-size: 0.78rem; color: #cbd5e1;">{u['email']}</div>
+            {gdrive_status_html}
+        </div>
+        """, unsafe_allow_html=True)
 
+        col_gdr1, col_gdr2 = st.columns([1.2, 1])
+        with col_gdr1:
             if not has_gdrive:
                 auth_url = google_drive_sync.get_google_auth_url(include_drive=True)
                 if auth_url:
                     st.link_button(
-                        " Google Drive से कनेक्ट करें",
+                        "Drive कनेक्ट करें",
                         auth_url,
                         use_container_width=True,
                         help="Drive में PDF सुरक्षित करने के लिए अनुमति दें।",
                     )
-
-            if st.button(" Logout (लॉगआउट)", key="sidebar_logout_btn", use_container_width=True):
+        with col_gdr2:
+            if st.button("Logout", key="sidebar_logout_btn", use_container_width=True):
                 _end_user_session()
                 st.query_params.clear()
-                # Drop the durable OAuth copies too, otherwise a stale nonce or
-                # verifier from before the logout could satisfy a later callback.
                 for _dk in ("oauth_state", "oauth_code_verifier"):
                     try:
                         auth_vault.pop_app_state(_dk)
@@ -1627,35 +1631,67 @@ with st.sidebar:
                         pass
                 st.success("लॉगआउट हुआ।")
                 st.rerun()
-        else:
-            auth_url = google_drive_sync.get_google_auth_url(include_drive=False)
-            if auth_url:
-                # A plain top-level navigation (<a target="_top">) is silently
-                # blocked when the app is framed with a sandbox that omits
-                # allow-top-navigation — the click then does nothing at all.
-                # Streamlit's own link_button renders a real anchor that opens
-                # Google in a NEW top-level tab, which Google always allows.
-                st.link_button(
-                    "Google से साइन इन करें",
-                    auth_url,
-                    use_container_width=True,
-                    type="primary",
-                    help="सुरक्षित OAuth 2.0 — Google लॉगिन नई विंडो में खुलेगा।",
-                )
-                st.caption(" साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
-            else:
-                st.markdown(
-                    '<div style="background: rgba(250,204,21,0.10); border:1px solid #facc15; '
-                    'border-radius:8px; padding:10px 12px; font-size:0.78rem; line-height:1.5;">'
-                    '<b> Google Login सेटअप आवश्यक</b><br/>'
-                    'Google लॉगिन के लिए Admin ने क्रेडेंशियल्स कॉन्फ़िगर करने होंगे।'
-                    '</div>',
-                    unsafe_allow_html=True
-                )
 
-    # Hide admin/debug panels from non-logged-in users for cleaner landing page
-    if is_logged_in:
-        with st.expander(" Google Cloud API Credentials (Admin Only)", expanded=False):
+        # ---------------- PROMINENT SIDEBAR KUNDLI VAULT (OPEN KUNDLI) ----------------
+        saved_list_sb = auth_vault.get_saved_kundlis(u["id"])
+        cur_lp_sb = st.session_state.get('loaded_profile')
+        
+        st.markdown("""
+        <div style="font-size: 0.78rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin: 12px 0 6px 0;">
+            सुरक्षित कुण्डलियाँ (Saved Kundlis)
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if cur_lp_sb:
+            st.markdown(f"""
+            <div style="background: rgba(15, 23, 42, 0.9); border: 1.2px solid #f0c05a; border-radius: 8px; padding: 6px 10px; margin-bottom: 8px;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #f0c05a;">सक्रिय कुण्डली: {cur_lp_sb.get('name', 'जातक')}</div>
+                <div style="font-size: 0.72rem; color: #cbd5e1;">{cur_lp_sb.get('dob')} • {cur_lp_sb.get('city', '')[:16]}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        if saved_list_sb:
+            sb_k_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')[:12]})": k for k in saved_list_sb}
+            cur_k_id = cur_lp_sb.get('id') if cur_lp_sb else None
+            cur_k_idx = 0
+            for idx, k in enumerate(saved_list_sb):
+                if k.get('id') == cur_k_id:
+                    cur_k_idx = idx
+                    break
+            sb_sel_lbl = st.selectbox("कुण्डली चुनें:", list(sb_k_map.keys()), index=cur_k_idx, key="sb_vault_kundli_select", label_visibility="collapsed")
+            sb_sel_k = sb_k_map[sb_sel_lbl]
+            
+            c_sb1, c_sb2 = st.columns(2)
+            with c_sb1:
+                if st.button("कुण्डली खोलें", key="sb_open_k_btn", use_container_width=True, type="primary", help="चयनित कुण्डली तुरंत लोड करें"):
+                    _load_kundli_into_session(sb_sel_k, user_id=u["id"])
+                    st.rerun()
+            with c_sb2:
+                if st.button("नई कुण्डली", key="sb_new_k_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
+                    st.session_state['show_birth_form'] = True
+                    st.session_state.pop('loaded_profile', None)
+                    st.rerun()
+        else:
+            if st.button("नई कुण्डली बनाएं (Enter Details)", key="sb_new_k_empty_btn", use_container_width=True, type="primary"):
+                st.session_state['show_birth_form'] = True
+                st.session_state.pop('loaded_profile', None)
+                st.rerun()
+    else:
+        auth_url = google_drive_sync.get_google_auth_url(include_drive=False)
+        if auth_url:
+            st.link_button(
+                "Google से साइन इन करें",
+                auth_url,
+                use_container_width=True,
+                type="primary",
+                help="सुरक्षित OAuth 2.0 — Google लॉगिन नई विंडो में खुलेगा।",
+            )
+            st.caption(" साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
+
+    # Admin/debug panels - ONLY visible when ?admin=1 query param is explicitly passed
+    is_admin_mode = bool(st.query_params.get("admin") in ("1", "true") or os.environ.get("VYAS_ADMIN") == "1")
+    if is_logged_in and is_admin_mode:
+        with st.expander("Google Cloud API Credentials (Admin Only)", expanded=False):
             g_cfg = google_drive_sync.load_google_config()
             # Never render stored OAuth secrets in the browser.
             cfg_cid = st.text_input("Google Client ID", value="", key="cfg_cid_in", placeholder="Leave blank to keep current Client ID")
@@ -1820,7 +1856,7 @@ if is_logged_in_now and active_lp:
                 st.rerun()
 
     # If user has multiple saved kundlis, show a quick switch drawer
-    if len(saved_list) > 1:
+    if len(saved_list) >= 1:
         with st.expander(f" कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
             k_disp_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')})": k for k in saved_list}
             cur_id = active_lp.get('id')
@@ -1856,6 +1892,30 @@ if is_logged_in_now and active_lp:
                     auth_vault.set_default_kundli(u["id"], chosen_k["id"])
                     st.success(f"'{chosen_k['name']}' को प्राथमिक डिफ़ॉल्ट कुण्डली सेट किया गया!")
                     st.rerun()
+
+# If no active profile is loaded but user has saved kundlis, show a 1-click open prompt
+if is_logged_in_now and not active_lp and saved_list:
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(240,192,90,0.15) 0%, rgba(14,23,42,0.95) 100%);
+                border: 1.5px solid #f0c05a; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+        <div style="font-size: 1.05rem; font-weight: 800; color: #f0c05a; margin-bottom: 6px;">
+            आपकी सुरक्षित कुण्डलियाँ उपलब्ध हैं (Saved Kundlis Ready)
+        </div>
+        <div style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 10px;">
+            हर बार विवरण भरने की आवश्यकता नहीं है। नीचे से अपनी पूर्व सुरक्षित कुण्डली चुनें और 'कुण्डली खोलें' दबाएं:
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    c_wel_1, c_wel_2 = st.columns([2.5, 1.2])
+    with c_wel_1:
+        welcome_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')})": k for k in saved_list}
+        w_sel_lbl = st.selectbox("सुरक्षित कुण्डली चुनें:", list(welcome_map.keys()), key="welcome_k_selector")
+        w_sel_k = welcome_map[w_sel_lbl]
+    with c_wel_2:
+        st.write("") # spacing
+        if st.button("कुण्डली खोलें (Open)", key="welcome_open_btn", type="primary", use_container_width=True):
+            _load_kundli_into_session(w_sel_k, make_default=True, user_id=u["id"])
+            st.rerun()
 
 # Determine whether to show birth input form:
 # Only show if user has no loaded profile OR clicked ' नई कुण्डली' / ' विवरण बदलें'
@@ -1939,6 +1999,9 @@ if show_form:
 
     st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
 
+    if '_pending_city_search_input' in st.session_state:
+        st.session_state['city_search_input'] = st.session_state.pop('_pending_city_search_input')
+
     city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
 
     matched_cities = city_search.search_cities(city_query, limit=40) if city_search else []
@@ -2002,7 +2065,8 @@ if show_form:
             }
             ok, s_msg = auth_vault.save_kundli(u["id"], k_payload)
             if ok:
-                _load_kundli_into_session(k_payload, make_default=True, user_id=u["id"])
+                _latest = auth_vault.get_default_or_latest_kundli(u["id"]) or k_payload
+                _load_kundli_into_session(_latest, make_default=True, user_id=u["id"])
                 st.success(f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।")
                 st.rerun()
             else:
