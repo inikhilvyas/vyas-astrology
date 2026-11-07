@@ -550,7 +550,7 @@ _light_css_rules = """
             --vyas-line: rgba(37, 99, 235, 0.24) !important;
         }
 
-        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main, .block-container, section[data-testid="stSidebar"] {
             background: #f8fafc !important;
             background-image: none !important;
             color: #0f172a !important;
@@ -564,8 +564,8 @@ _light_css_rules = """
             color: #0f172a !important;
         }
 
-        .glass-card *, .predict-card *, [data-testid="stExpander"] * {
-            color: #0f172a !important;
+        .glass-card p, .predict-card p, .glass-card div, .predict-card div, [data-testid="stExpander"] p, [data-testid="stExpander"] div {
+            color: #1e293b !important;
         }
 
         .vyas-hero-banner {
@@ -576,6 +576,7 @@ _light_css_rules = """
         }
         .vyas-hero-kicker {
             color: #1e40af !important;
+            font-size: 0.74rem !important;
         }
         .vyas-hero-title {
             background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%) !important;
@@ -591,14 +592,21 @@ _light_css_rules = """
             border-bottom-color: rgba(30, 58, 138, 0.25) !important;
         }
 
-        /* Override all inline dark backgrounds to crisp white cards in Light Mode */
-        [style*="rgba(14, 23, 42"], [style*="rgba(15, 23, 42"],
-        [style*="rgba(16, 26, 52"], [style*="rgba(19, 27, 54"],
-        [style*="rgba(8, 12, 26"], [style*="rgba(10, 16, 32"],
-        [style*="rgba(0, 0, 0"], [style*="rgba(0,0,0"],
+        /* Override ALL dark boxes and dark linear gradients to pure white cards in Light Mode */
+        [style*="background: linear-gradient"],
+        [style*="background:linear-gradient"],
+        [style*="background: rgba(14, 23, 42"], [style*="background:rgba(14,23,42"],
+        [style*="background: rgba(15, 23, 42"], [style*="background:rgba(15,23,42"],
+        [style*="background: rgba(16, 26, 52"], [style*="background:rgba(16,26,52"],
+        [style*="background: rgba(19, 27, 54"], [style*="background:rgba(19,27,54"],
+        [style*="background: rgba(8, 12, 26"], [style*="background:rgba(8,12,26"],
+        [style*="background: rgba(10, 16, 32"], [style*="background:rgba(10,16,32"],
+        [style*="background: rgba(9, 14, 30"], [style*="background:rgba(9,14,30"],
+        [style*="background: rgba(0, 0, 0"], [style*="background: rgba(0,0,0"],
+        [style*="background: rgba(2, 6, 23"], [style*="background:rgba(2,6,23"],
         [style*="background: #060c18"], [style*="background:#060c18"],
-        [style*="background: linear-gradient(135deg, rgba(240,192,90"],
-        [style*="background: linear-gradient(135deg, rgba(245, 158, 11"] {
+        [style*="background: #0b1220"], [style*="background:#0b1220"],
+        [style*="background: #07090d"], [style*="background:#07090d"] {
             background: #ffffff !important;
             background-image: none !important;
             border: 1.5px solid rgba(15, 23, 42, 0.15) !important;
@@ -606,7 +614,7 @@ _light_css_rules = """
             box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
         }
 
-        /* Replace all golden/yellow text colors with Deep Royal Navy Blue in Light Mode */
+        /* Replace ALL golden/yellow text colors with Deep Royal Navy Blue in Light Mode */
         [style*="color: #f0c05a"], [style*="color:#f0c05a"],
         [style*="color: #ffd700"], [style*="color:#ffd700"],
         [style*="color: #fbbf24"], [style*="color:#fbbf24"],
@@ -615,12 +623,14 @@ _light_css_rules = """
         [style*="color: #fef3c7"], [style*="color:#fef3c7"],
         [style*="color: #ffd97d"], [style*="color:#ffd97d"],
         [style*="color: #e5a93c"], [style*="color:#e5a93c"],
-        [style*="color: #f5d16e"], [style*="color:#f5d16e"] {
+        [style*="color: #f5d16e"], [style*="color:#f5d16e"],
+        [style*="color: #b45309"], [style*="color:#b45309"],
+        [style*="color: #92400e"], [style*="color:#92400e"] {
             color: #1e3a8a !important;
             font-weight: 800 !important;
         }
 
-        /* Replace all white/light-grey text colors with Deep Slate in Light Mode */
+        /* Replace ALL white/light-grey text colors with Deep Slate in Light Mode */
         [style*="color: #f8fafc"], [style*="color:#f8fafc"],
         [style*="color: #f1f5f9"], [style*="color:#f1f5f9"],
         [style*="color: #cbd5e1"], [style*="color:#cbd5e1"],
@@ -675,9 +685,15 @@ _light_css_rules = """
             -webkit-text-fill-color: #ffffff !important;
             font-weight: 800 !important;
         }
+
+        /* Logo frame in Light Mode */
+        .vyas-sidebar-logo {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1.5px solid rgba(37, 99, 235, 0.4) !important;
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15)) !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.12) !important;
+        }
 """
-if _is_light:
-    st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
@@ -1094,7 +1110,7 @@ st.markdown("""
     /* -------------------------------------------------------------
        MODERN ADAPTIVE RESPONSIVE ENGINE (Mobile / Tablet / PC Auto-Reflow)
        ------------------------------------------------------------- */
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         /* 1. Prevent desktop zoom-out; force true 100vw mobile width */
         html, body, .stApp, [data-testid="stAppViewContainer"], .main {
             width: 100vw !important;
@@ -1104,26 +1120,65 @@ st.markdown("""
             padding: 0 !important;
         }
 
-        /* 2. On Mobile, sidebar is an overlay slide-in drawer, NEVER side-by-side! */
+        /* 2. On Mobile, sidebar is an animated overlay drawer that never sticks on screen when closed */
         section[data-testid="stSidebar"] {
             position: fixed !important;
             top: 0 !important;
-            left: 0 !important;
+            bottom: 0 !important;
             height: 100vh !important;
-            width: 85vw !important;
-            max-width: 320px !important;
-            z-index: 999999 !important;
-            box-shadow: 6px 0 32px rgba(0,0,0,0.85) !important;
-            background: #0b1220 !important;
+            width: 86vw !important;
+            max-width: 340px !important;
+            z-index: 9999999 !important;
+            box-shadow: 12px 0 45px rgba(0, 0, 0, 0.85) !important;
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
-        
+
+        /* Sidebar CLOSED: completely hidden off-screen to the left so it NEVER covers content */
+        section[data-testid="stSidebar"][aria-expanded="false"] {
+            transform: translateX(-110%) !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* Sidebar OPEN: smoothly slides into view */
+        section[data-testid="stSidebar"][aria-expanded="true"] {
+            transform: translateX(0) !important;
+            left: 0 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+
+        /* Large touch-friendly toggle buttons for finger tap */
+        [data-testid="stSidebarCollapseButton"] button {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            border-radius: 8px !important;
+        }
+        [data-testid="stExpandSidebarButton"] button,
+        [data-testid="collapsedControl"] button {
+            min-width: 44px !important;
+            min-height: 44px !important;
+            border-radius: 8px !important;
+            background: #2563eb !important;
+            color: #ffffff !important;
+        }
+
         /* 3. Main container takes full 100% screen with zero side-cramping */
+        [data-testid="stAppViewContainer"] > .main,
+        .main {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            min-width: 100vw !important;
+            flex: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
         .block-container {
             width: 100vw !important;
             max-width: 100vw !important;
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-            padding-top: 24px !important;
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+            padding-top: 20px !important;
             padding-bottom: 3.5rem !important;
             box-sizing: border-box !important;
         }
@@ -1132,7 +1187,7 @@ st.markdown("""
         [data-testid="stHorizontalBlock"] {
             display: flex !important;
             flex-direction: column !important;
-            gap: 10px !important;
+            gap: 12px !important;
             width: 100% !important;
         }
         [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
@@ -1354,6 +1409,9 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+if _is_light:
+    st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
 
 st.html("""
 <div class="vyas-hero-banner">
@@ -1577,6 +1635,7 @@ with st.sidebar:
     st.markdown(f"""
     <div style="text-align: center; margin-bottom: 8px;">
         <img src="data:image/png;base64,{_logo_b64}" 
+             class="vyas-sidebar-logo"
              style="max-width: 105px; height: auto; border-radius: 14px; padding: 6px; background: rgba(255, 255, 255, 0.15); filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.6)); border: 1.5px solid rgba(240, 192, 90, 0.4);" />
         <div style="font-family: 'Cinzel', serif; font-size: 1.08rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px; margin-top: 6px;">VYAS ASTRA</div>
         <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
@@ -1587,6 +1646,9 @@ with st.sidebar:
     # ---------------- THEME & ACCESSIBILITY CONTROLS ----------------
     col_th_a, col_th_b = st.columns([1.3, 1.1])
     with col_th_a:
+        def _on_theme_select_cb():
+            st.session_state["_user_theme_mode"] = st.session_state["_user_theme_radio_widget"]
+
         _theme_choice = st.radio(
             "थीम स्वरूप (Display Theme):",
             options=["डार्क थीम (Dark)", "लाइट थीम (Light)", "हाई कंट्रास्ट (High Contrast)", "सिस्टम अनुसार (Auto System)"],
@@ -1596,7 +1658,8 @@ with st.sidebar:
                 )
             ),
             horizontal=False,
-            key="_user_theme_mode",
+            key="_user_theme_radio_widget",
+            on_change=_on_theme_select_cb,
             help="डिवाइस सिस्टम के अनुसार अथवा मनपसंद डार्क/लाइट/कंट्रास्ट थीम चुनें"
         )
     with col_th_b:
@@ -1606,79 +1669,7 @@ with st.sidebar:
             key="_user_contrast_font",
             help="अक्षरों को गहरा, स्पष्ट व 100% सुपाठ्य बनाएं ताकि लाइट थीम में कोई टेक्स्ट अदृश्य या धुंधला न रहे"
         )
-    if "लाइट" in _theme_choice or "कंट्रास्ट" in _theme_choice:
-        is_ultra = "कंट्रास्ट" in _theme_choice
-        bg_page = "#ffffff" if is_ultra else "#f8fafc"
-        card_bg = "#ffffff"
-        text_primary = "#000000" if is_ultra else "#0f172a"
-        text_secondary = "#0f172a" if is_ultra else "#1e293b"
-        st.markdown(f"""<style>
-        :root {{
-            --gold-primary: #92400e !important; --gold-light: #78350f !important; --gold-accent: #b45309 !important;
-            --bg-deep: {bg_page} !important; --bg-surface: {card_bg} !important; --card-bg: {card_bg} !important;
-            --card-border: rgba(15, 23, 42, 0.22) !important; --text-main: {text_primary} !important; --text-muted: {text_secondary} !important;
-        }}
-        html, body, .stApp, [data-testid="stAppViewContainer"], .main {{
-            background: {bg_page} !important; color: {text_primary} !important;
-        }}
-        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span, [data-testid="stMarkdownContainer"] li {{
-            color: {text_primary} !important; font-weight: 500 !important;
-        }}
-        .glass-card, .predict-card, [data-testid="stExpander"] {{
-            background: {card_bg} !important; color: {text_primary} !important;
-            border: 1.5px solid rgba(15, 23, 42, 0.20) !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-        }}
-        .glass-card p, .predict-card p, .glass-card div, .predict-card div, [data-testid="stExpander"] p, [data-testid="stExpander"] div {{
-            color: {text_secondary} !important;
-        }}
-        /* Force high contrast on ALL light inline text in Light Mode */
-        [style*="color: #cbd5e1"], [style*="color:#cbd5e1"],
-        [style*="color: #f8fafc"], [style*="color:#f8fafc"],
-        [style*="color: #fef3c7"], [style*="color:#fef3c7"],
-        [style*="color: #94a3b8"], [style*="color:#94a3b8"],
-        [style*="color: #e2e8f0"], [style*="color:#e2e8f0"],
-        [style*="color: #eedc9a"], [style*="color:#eedc9a"],
-        [style*="color: #f0fdf4"], [style*="color:#f0fdf4"],
-        [style*="color: #fecaca"], [style*="color:#fecaca"],
-        [style*="color: #fef0cd"], [style*="color:#fef0cd"],
-        [style*="color: #ffffff"], [style*="color:#ffffff"],
-        [style*="color: white"], [style*="color:white"] {{
-            color: {text_primary} !important; font-weight: 600 !important;
-        }}
-        /* Force dark cards to become light in Light Mode */
-        [style*="background: rgba(15, 23, 42"], [style*="background:rgba(15,23,42"],
-        [style*="background: rgba(0, 0, 0"], [style*="background: rgba(0,0,0"],
-        [style*="background: rgba(2, 6, 23"], [style*="background:rgba(2,6,23"] {{
-            background: #f1f5f9 !important; border-color: rgba(15, 23, 42, 0.18) !important; color: {text_primary} !important;
-        }}
-        /* High contrast amber/blue badges in Light Mode */
-        [style*="color: #facc15"], [style*="color: #fbbf24"], [style*="color: #f0c05a"], [style*="color: #ffd700"] {{
-            color: #92400e !important; font-weight: 800 !important;
-        }}
-        [style*="color: #38bdf8"], [style*="color: #60a5fa"] {{
-            color: #0369a1 !important; font-weight: 700 !important;
-        }}
-        section[data-testid="stSidebar"] {{
-            background: #f8fafc !important; border-right: 1.5px solid rgba(15, 23, 42, 0.18) !important;
-        }}
-        section[data-testid="stSidebar"] * {{
-            color: {text_primary} !important;
-        }}
-        </style>""", unsafe_allow_html=True)
-    elif "डार्क" in _theme_choice:
-        st.markdown("""<style>
-        :root {
-            --gold-primary: #e5a93c !important; --gold-light: #fef3c7 !important; --gold-accent: #f59e0b !important;
-            --bg-deep: #07090d !important; --bg-surface: #0b1220 !important; --card-bg: rgba(11, 18, 32, 0.88) !important;
-            --card-border: rgba(229, 169, 60, 0.22) !important; --text-main: #f1f5f9 !important; --text-muted: #94a3b8 !important;
-        }
-        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
-            background: radial-gradient(ellipse at top, #121a36 0%, #070b1a 48%, #04050d 100%) !important; color: #f1f5f9 !important;
-        }
-        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span { color: #f8fafc !important; }
-        .glass-card, .predict-card { background: rgba(11, 18, 32, 0.88) !important; color: #f8fafc !important; }
-        </style>""", unsafe_allow_html=True)
+    # Unified theme styling is handled at the root level for 100% consistency
 
     _font_scale_choice = st.select_slider(
         "अक्षर आकार (Text Size):",
