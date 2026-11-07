@@ -284,11 +284,11 @@ def compute_bnn_karaka_synthesis(planets) -> Dict[str, str]:
 
     jup_sign_hi = constants.SIGNS_HI[jup_sign] if jup_sign < len(constants.SIGNS_HI) else str(jup_sign)
     jeeva_text = (
-        f"भृगु नन्दी नाड़ी में देवगुरु बृहस्पति को **'जीव कारक' (Jeeva Karaka)** माना गया है, जो जातक की चेतना व जीवन-शक्ति का प्रतीक है। "
-        f"आपकी कुण्डली में जीव कारक गुरु **{jup_sign_hi} राशि** ({jup_dir}) में अवस्थित हैं। "
+        f"भृगु नन्दी नाड़ी में देवगुरु बृहस्पति को <b>'जीव कारक' (Jeeva Karaka)</b> माना गया है, जो जातक की चेतना व जीवन-शक्ति का प्रतीक है। "
+        f"आपकी कुण्डली में जीव कारक गुरु <b>{jup_sign_hi} राशि</b> ({jup_dir}) में अवस्थित हैं। "
     )
     if trine_to_jup:
-        jeeva_text += f"गुरु के साथ दिशीय त्रिकोण में **{trine_hi}** की युति ऊर्जा का आदान-प्रदान कर रही है, जिससे जातक का व्यक्तित्व बहुमुखी ज्ञान, दूरदर्शिता व स्वाभिमान से युक्त होता है। "
+        jeeva_text += f"गुरु के साथ दिशीय त्रिकोण में <b>{trine_hi}</b> की युति ऊर्जा का आदान-प्रदान कर रही है, जिससे जातक का व्यक्तित्व बहुमुखी ज्ञान, दूरदर्शिता व स्वाभिमान से युक्त होता है। "
     else:
         jeeva_text += "गुरु स्वतंत्र त्रिकोण में होने से जातक अपनी मौलिक विचारधारा व आत्मबल पर अग्रसर होता है। "
 
@@ -307,8 +307,8 @@ def compute_bnn_karaka_synthesis(planets) -> Dict[str, str]:
     sat_sign_hi = constants.SIGNS_HI[sat_sign] if sat_sign < len(constants.SIGNS_HI) else str(sat_sign)
 
     karma_text = (
-        f"नाड़ी दर्शन में शनिदेव को **'कर्म कारक' (Karma Karaka)** कहा गया है, जो जातक की आजीविका, सामाजिक दायित्व व पुरुषार्थ के नियंता हैं। "
-        f"आपकी कुण्डली में कर्म कारक शनि **{sat_sign_hi} राशि** ({sat_dir}) में प्रतिष्ठित हैं। "
+        f"नाड़ी दर्शन में शनिदेव को <b>'कर्म कारक' (Karma Karaka)</b> कहा गया है, जो जातक की आजीविका, सामाजिक दायित्व व पुरुषार्थ के नियंता हैं। "
+        f"आपकी कुण्डली में कर्म कारक शनि <b>{sat_sign_hi} राशि</b> ({sat_dir}) में प्रतिष्ठित हैं। "
     )
     if "Sun" in trine_to_sat:
         karma_text += "सूर्य के साथ दिशीय संबंध से शासन, सरकारी तंत्र, प्रशासनिक प्रतिष्ठा अथवा सत्ताधारी प्रतिष्ठानों से आजीविका का योग बनता है। "
@@ -331,7 +331,7 @@ def compute_bnn_karaka_synthesis(planets) -> Dict[str, str]:
     ven_sign_hi = constants.SIGNS_HI[ven_sign] if ven_sign < len(constants.SIGNS_HI) else str(ven_sign)
     merc_sign_hi = constants.SIGNS_HI[merc_sign] if merc_sign < len(constants.SIGNS_HI) else str(merc_sign)
     dhana_text = (
-        f"नाड़ी में शुक्र **'लक्ष्मी/धन कारक'** तथा बुध **'व्यापार व बुद्धि कारक'** हैं। "
+        f"नाड़ी में शुक्र <b>'लक्ष्मी/धन कारक'</b> तथा बुध <b>'व्यापार व बुद्धि कारक'</b> हैं। "
         f"शुक्र {ven_sign_hi} राशि में एवं बुध {merc_sign_hi} राशि में स्थित होकर धनार्जन के निरंतर स्रोत निर्मित करते हैं। "
         f"जातक का बौद्धिक पराक्रम ही उसकी स्थायी सम्पत्ति व यश का मूल आधार बनता है।"
     )
@@ -344,10 +344,10 @@ def compute_bnn_karaka_synthesis(planets) -> Dict[str, str]:
 
     trines_text = (
         f"नाड़ी चतुर्विध पुरुषार्थ संयोजन:\n"
-        f"• **पूर्व दिशा (धर्म त्रिकोण):** {', '.join(dir_counts['East (Fire / Dharma)']) or 'रिक्त'}\n"
-        f"• **दक्षिण दिशा (अर्थ त्रिकोण):** {', '.join(dir_counts['South (Earth / Artha)']) or 'रिक्त'}\n"
-        f"• **पश्चिम दिशा (काम त्रिकोण):** {', '.join(dir_counts['West (Air / Kama)']) or 'रिक्त'}\n"
-        f"• **उत्तर दिशा (मोक्ष त्रिकोण):** {', '.join(dir_counts['North (Water / Moksha)']) or 'रिक्त'}\n"
+        f"• <b>पूर्व दिशा (धर्म त्रिकोण):</b> {', '.join(dir_counts['East (Fire / Dharma)']) or 'रिक्त'}\n"
+        f"• <b>दक्षिण दिशा (अर्थ त्रिकोण):</b> {', '.join(dir_counts['South (Earth / Artha)']) or 'रिक्त'}\n"
+        f"• <b>पश्चिम दिशा (काम त्रिकोण):</b> {', '.join(dir_counts['West (Air / Kama)']) or 'रिक्त'}\n"
+        f"• <b>उत्तर दिशा (मोक्ष त्रिकोण):</b> {', '.join(dir_counts['North (Water / Moksha)']) or 'रिक्त'}\n"
         f"जिस दिशा में सर्वाधिक शुभ ग्रहों का समूह होता है, जातक का जीवन उसी पुरुषार्थ की सिद्धि में केंद्रित रहता है।"
     )
 

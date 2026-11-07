@@ -408,8 +408,8 @@ def compute_sudarshan_chakra(chart) -> SudarshanChakraAnalysis:
     
     verdict = (
         f"सुदर्शन चक्र के त्रिविध विश्लेषण (देह: {constants.SIGNS_HI[asc_sign]}, मन: {constants.SIGNS_HI[moon_sign]}, आत्मा: {constants.SIGNS_HI[sun_sign]}) "
-        f"के अनुसार जातक के सर्वोच्च शक्ति केंद्र **{p_str}** हैं जहाँ शुभ ग्रहों का त्रिक संगम प्राप्त है। "
-        f"इसके विपरीत **{v_str}** पर पाप प्रभाव केंद्रित होने से अतिरिक्त सजगता व शांति उपाय अभीष्ट हैं।"
+        f"के अनुसार जातक के सर्वोच्च शक्ति केंद्र <b>{p_str}</b> हैं जहाँ शुभ ग्रहों का त्रिक संगम प्राप्त है। "
+        f"इसके विपरीत <b>{v_str}</b> पर पाप प्रभाव केंद्रित होने से अतिरिक्त सजगता व शांति उपाय अभीष्ट हैं।"
     )
     
     return SudarshanChakraAnalysis(

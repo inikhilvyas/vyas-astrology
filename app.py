@@ -1,5 +1,57 @@
 import streamlit as st
 
+def format_bold_clean(text: str) -> str:
+    """Converts any markdown bold/italic asterisks into clean HTML <b> tags."""
+    if not text or not isinstance(text, str):
+        return str(text) if text is not None else ""
+    t = re.sub(r'\*\*([^*]+)\*\*', r'<b>\1</b>', text)
+    t = re.sub(r'(?<!\*)\*([A-Za-z\u0900-\u097F0-9_ -]+)\*(?!\*)', r'<b>\1</b>', t)
+    return t
+
+def render_modern_table(data_rows, title: str = "", badge_cols: dict = None) -> str:
+    """Renders a list of dicts as an ultra-modern, responsive HTML glass table."""
+    if not data_rows:
+        return ""
+    if isinstance(data_rows, pd.DataFrame):
+        records = data_rows.to_dict(orient="records")
+    else:
+        records = list(data_rows)
+    if not records:
+        return ""
+    headers = list(records[0].keys())
+    th_cells = "".join([f'<th style="padding: 11px 14px; text-align: left; font-size: 0.90rem; font-weight: 800; color: #f0c05a; background: rgba(15, 23, 42, 0.95); border-bottom: 2px solid rgba(240, 192, 90, 0.35); white-space: nowrap;">{h}</th>' for h in headers])
+    
+    tr_rows = []
+    for idx, row in enumerate(records):
+        bg = "rgba(15, 23, 42, 0.55)" if idx % 2 == 0 else "rgba(15, 23, 42, 0.30)"
+        td_cells = []
+        for h in headers:
+            val = str(row.get(h, ""))
+            val_clean = format_bold_clean(val)
+            # Apply color badge if matching
+            if any(w in val for w in ["सर्वश्रेष्ठ", "प्रबल", "उच्च", "शुभ", "अति शुभ", "Exalted", "Own Sign"]):
+                val_disp = f'<span style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.82rem;">{val_clean}</span>'
+            elif any(w in val for w in ["सावधानी", "अल्प", "नीच", "अशुभ", "क्रूर", "Debilitated", "Enemy"]):
+                val_disp = f'<span style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.82rem;">{val_clean}</span>'
+            elif any(w in val for w in ["मध्यम", "सामान्य", "Neutral"]):
+                val_disp = f'<span style="background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 0.82rem;">{val_clean}</span>'
+            else:
+                val_disp = val_clean
+            td_cells.append(f'<td style="padding: 10px 14px; font-size: 0.88rem; color: #f1f5f9; border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.5;">{val_disp}</td>')
+        tr_rows.append(f'<tr style="background: {bg}; transition: background 0.2s;">{"".join(td_cells)}</tr>')
+
+    title_html = f'<div style="font-weight: 800; color: #f0c05a; font-size: 1.05rem; margin-bottom: 8px;">{title}</div>' if title else ""
+    return f"""<div style="width: 100%; margin: 12px 0 16px 0;">
+{title_html}
+<div style="width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+<table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 520px;">
+<thead><tr>{th_cells}</tr></thead>
+<tbody>{"".join(tr_rows)}</tbody>
+</table>
+</div>
+</div>"""
+
+
 # Backward/forward compatibility shims across Streamlit versions
 if not hasattr(st, "dialog") and hasattr(st, "experimental_dialog"):
     st.dialog = st.experimental_dialog
@@ -608,7 +660,7 @@ st.markdown("""
     [data-testid="stMarkdownContainer"] li {
         font-size: var(--app-font-size, 20.5px) !important;
         line-height: 1.75 !important;
-        color: #f8fafc !important;
+        color: var(--text-main, #f1f5f9) !important;
         font-family: var(--font-body) !important;
         overflow-wrap: break-word !important;
         word-break: break-word !important;
@@ -1342,28 +1394,86 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     # ---------------- THEME & ACCESSIBILITY CONTROLS ----------------
-    _theme_choice = st.radio(
-        "थीम स्वरूप (Display Theme):",
-        options=["सिस्टम अनुसार (Auto System)", "डार्क थीम (Dark)", "लाइट थीम (Light)"],
-        index=0,
-        horizontal=True,
-        key="_user_theme_mode",
-        help="डिवाइस सिस्टम के अनुसार स्वतः अथवा मनपसंद डार्क/लाइट थीम चुनें"
-    )
-    if "लाइट" in _theme_choice:
-        st.markdown("""<style>
-        :root {
-            --gold-primary: #b45309 !important; --gold-light: #78350f !important; --gold-accent: #d97706 !important;
-            --bg-deep: #f8fafc !important; --bg-surface: #ffffff !important; --card-bg: rgba(255, 255, 255, 0.98) !important;
-            --card-border: rgba(180, 130, 40, 0.32) !important; --text-main: #0f172a !important; --text-muted: #475569 !important;
-        }
-        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
-            background: radial-gradient(ellipse at top, #faf7f2 0%, #f3ece0 100%) !important; color: #0f172a !important;
-        }
-        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span { color: #0f172a !important; }
-        .glass-card, .predict-card { background: #ffffff !important; color: #0f172a !important; border-color: rgba(180, 130, 40, 0.32) !important; }
-        .glass-card p, .predict-card p, .predict-card div { color: #1e293b !important; }
-        section[data-testid="stSidebar"] { background: #fdfbf7 !important; border-right: 1px solid rgba(180, 130, 40, 0.25) !important; }
+    col_th_a, col_th_b = st.columns([1.3, 1.1])
+    with col_th_a:
+        _theme_choice = st.radio(
+            "थीम स्वरूप (Display Theme):",
+            options=["डार्क थीम (Dark)", "लाइट थीम (Light)", "हाई कंट्रास्ट (High Contrast)", "सिस्टम अनुसार (Auto System)"],
+            index=0 if st.session_state.get("_user_theme_mode") is None or "डार्क" in str(st.session_state.get("_user_theme_mode", "")) else (
+                1 if "लाइट" in str(st.session_state.get("_user_theme_mode", "")) else (
+                    2 if "कंट्रास्ट" in str(st.session_state.get("_user_theme_mode", "")) else 0
+                )
+            ),
+            horizontal=False,
+            key="_user_theme_mode",
+            help="डिवाइस सिस्टम के अनुसार अथवा मनपसंद डार्क/लाइट/कंट्रास्ट थीम चुनें"
+        )
+    with col_th_b:
+        _contrast_font = st.toggle(
+            "कंट्रास्ट फ़ॉन्ट (Crisp Contrast)",
+            value=st.session_state.get("_user_contrast_font", True),
+            key="_user_contrast_font",
+            help="अक्षरों को गहरा, स्पष्ट व 100% सुपाठ्य बनाएं ताकि लाइट थीम में कोई टेक्स्ट अदृश्य या धुंधला न रहे"
+        )
+    if "लाइट" in _theme_choice or "कंट्रास्ट" in _theme_choice:
+        is_ultra = "कंट्रास्ट" in _theme_choice
+        bg_page = "#ffffff" if is_ultra else "#f8fafc"
+        card_bg = "#ffffff"
+        text_primary = "#000000" if is_ultra else "#0f172a"
+        text_secondary = "#0f172a" if is_ultra else "#1e293b"
+        st.markdown(f"""<style>
+        :root {{
+            --gold-primary: #92400e !important; --gold-light: #78350f !important; --gold-accent: #b45309 !important;
+            --bg-deep: {bg_page} !important; --bg-surface: {card_bg} !important; --card-bg: {card_bg} !important;
+            --card-border: rgba(15, 23, 42, 0.22) !important; --text-main: {text_primary} !important; --text-muted: {text_secondary} !important;
+        }}
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main {{
+            background: {bg_page} !important; color: {text_primary} !important;
+        }}
+        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span, [data-testid="stMarkdownContainer"] li {{
+            color: {text_primary} !important; font-weight: 500 !important;
+        }}
+        .glass-card, .predict-card, [data-testid="stExpander"] {{
+            background: {card_bg} !important; color: {text_primary} !important;
+            border: 1.5px solid rgba(15, 23, 42, 0.20) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+        }}
+        .glass-card p, .predict-card p, .glass-card div, .predict-card div, [data-testid="stExpander"] p, [data-testid="stExpander"] div {{
+            color: {text_secondary} !important;
+        }}
+        /* Force high contrast on ALL light inline text in Light Mode */
+        [style*="color: #cbd5e1"], [style*="color:#cbd5e1"],
+        [style*="color: #f8fafc"], [style*="color:#f8fafc"],
+        [style*="color: #fef3c7"], [style*="color:#fef3c7"],
+        [style*="color: #94a3b8"], [style*="color:#94a3b8"],
+        [style*="color: #e2e8f0"], [style*="color:#e2e8f0"],
+        [style*="color: #eedc9a"], [style*="color:#eedc9a"],
+        [style*="color: #f0fdf4"], [style*="color:#f0fdf4"],
+        [style*="color: #fecaca"], [style*="color:#fecaca"],
+        [style*="color: #fef0cd"], [style*="color:#fef0cd"],
+        [style*="color: #ffffff"], [style*="color:#ffffff"],
+        [style*="color: white"], [style*="color:white"] {{
+            color: {text_primary} !important; font-weight: 600 !important;
+        }}
+        /* Force dark cards to become light in Light Mode */
+        [style*="background: rgba(15, 23, 42"], [style*="background:rgba(15,23,42"],
+        [style*="background: rgba(0, 0, 0"], [style*="background: rgba(0,0,0"],
+        [style*="background: rgba(2, 6, 23"], [style*="background:rgba(2,6,23"] {{
+            background: #f1f5f9 !important; border-color: rgba(15, 23, 42, 0.18) !important; color: {text_primary} !important;
+        }}
+        /* High contrast amber/blue badges in Light Mode */
+        [style*="color: #facc15"], [style*="color: #fbbf24"], [style*="color: #f0c05a"], [style*="color: #ffd700"] {{
+            color: #92400e !important; font-weight: 800 !important;
+        }}
+        [style*="color: #38bdf8"], [style*="color: #60a5fa"] {{
+            color: #0369a1 !important; font-weight: 700 !important;
+        }}
+        section[data-testid="stSidebar"] {{
+            background: #f8fafc !important; border-right: 1.5px solid rgba(15, 23, 42, 0.18) !important;
+        }}
+        section[data-testid="stSidebar"] * {{
+            color: {text_primary} !important;
+        }}
         </style>""", unsafe_allow_html=True)
     elif "डार्क" in _theme_choice:
         st.markdown("""<style>
@@ -2675,11 +2785,11 @@ if st.session_state.get('data_generated'):
                 else:
                     abhijit_exp_ui = f"<span style='color: #38bdf8; font-weight: 700;'>{amrit_v_exp}</span>"
 
-                st.markdown(f"**स्थान (Location):** `{birth.get('city', 'New Delhi')}`")
-                st.markdown(f"**अभिजीत मुहूर्त:** {abhijit_exp_ui}", unsafe_allow_html=True)
-                st.markdown(f"**राहु काल:** <span style='color: #ef4444; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span>", unsafe_allow_html=True)
-                st.markdown(f"**यमगण्ड:** <span style='color: #f59e0b; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span>", unsafe_allow_html=True)
-                st.markdown(f"**गुलिक काल:** <span style='color: #e2e8f0; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span>", unsafe_allow_html=True)
+                st.markdown(f"<div><b>स्थान (Location):</b> <code>{birth.get('city', 'New Delhi')}</code></div>", unsafe_allow_html=True)
+                st.markdown(f"<div><b>अभिजीत मुहूर्त:</b> {abhijit_exp_ui}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div><b>राहु काल:</b> <span style='color: #ef4444; font-weight: 700;'>{daily_res.get('rahu_kalam', '-')}</span></div>", unsafe_allow_html=True)
+                st.markdown(f"<div><b>यमगण्ड:</b> <span style='color: #f59e0b; font-weight: 700;'>{daily_res.get('yamaganda', '-')}</span></div>", unsafe_allow_html=True)
+                st.markdown(f"<div><b>गुलिक काल:</b> <span style='color: #e2e8f0; font-weight: 700;'>{daily_res.get('gulika_kalam', '-')}</span></div>", unsafe_allow_html=True)
             with col_m2:
                 st.markdown("""
                 <div style="font-size: 0.82rem; color: #cbd5e1; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229, 169, 60, 0.2); border-radius: 8px; padding: 10px;">
@@ -2933,11 +3043,11 @@ if st.session_state.get('data_generated'):
 
                 col_h1, col_h2 = st.columns(2)
                 with col_h1:
-                    st.markdown("**दिन की 12 होरा (Day Horas):**")
+                    st.markdown("<b>दिन की 12 होरा (Day Horas):</b>", unsafe_allow_html=True)
                     if h_day:
                         st.markdown(_render_hora_grid(h_day), unsafe_allow_html=True)
                 with col_h2:
-                    st.markdown("**रात्रि की 12 होरा (Night Horas):**")
+                    st.markdown("<b>रात्रि की 12 होरा (Night Horas):</b>", unsafe_allow_html=True)
                     if h_night:
                         st.markdown(_render_hora_grid(h_night), unsafe_allow_html=True)
 
@@ -3469,7 +3579,7 @@ if st.session_state.get('data_generated'):
                     "अधिष्ठाता देवता": pv.deity,
                     "प्रकृति / स्वभाव": "शुभ (Benefic)" if pv.is_benefic else "अशुभ / शोधन योग्य"
                 })
-            st.dataframe(pd.DataFrame(d60_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(d60_table, title="D-60 षष्ट्यंश देवता एवं प्रारब्ध तालिका"), unsafe_allow_html=True)
 
         if _lz_sub_tab[3]:
             st.markdown(f'<div class="section-title">{"वर्ग कुण्डली शास्त्रीय सूत्र फलित (D1, D9, D10 व D60 महा-विश्लेषण)" if is_hi else "Divisional Vargas Script Synthesis"}</div>', unsafe_allow_html=True)
@@ -3701,7 +3811,7 @@ if st.session_state.get('data_generated'):
                         "चन्द्र से भाव" if is_hi else "House from Moon": f"भाव {g_from_moon}",
                         "स्थिति": "वक्री (R)" if gp.speed < 0 else "मार्गी (Direct)"
                     })
-            st.dataframe(pd.DataFrame(g_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(g_table, title="फलदीपिका शास्त्रीय गोचर एवं वेध तालिका"), unsafe_allow_html=True)
 
             st.markdown(f"#### {'फलदीपिका शास्त्रीय गोचर, तारा बल एवं वेध तालिका' if is_hi else 'Phaladeepika Transit, Tara & Vedha'}")
             try:
@@ -3718,7 +3828,7 @@ if st.session_state.get('data_generated'):
                         "गोचर प्रभाव": "शुभ फलदायी" if tr.favourable else "सावधानी अपेक्षित",
                         "आगामी राशि परिवर्तन": tr.next_ingress or "-"
                     })
-                st.dataframe(pd.DataFrame(t_table), use_container_width=True, hide_index=True)
+                st.markdown(render_modern_table(t_table, title="दैनिक नवतारा चक्र एवं ताराबल"), unsafe_allow_html=True)
             except Exception as e:
                 st.caption(f"Classical transit table: {e}")
 
@@ -3747,16 +3857,40 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-            sav_display = []
+            sav_cards_html = []
             for he in sav_pred["house_evals"]:
-                sav_display.append({
-                    "भाव": f"भाव {he['house']}",
-                    "राशि": he["sign_hi"] if is_hi else constants.SIGNS[(asc_sign_idx + he['house'] - 1) % 12],
-                    "SAV बिंदु": he["bindus"],
-                    "सामर्थ्य": he["verdict"],
-                    "शास्त्रीय फलित": he["analysis_hi"]
-                })
-            st.dataframe(pd.DataFrame(sav_display), use_container_width=True, hide_index=True)
+                pts = he["bindus"]
+                if pts >= 30:
+                    badge_border = "#10b981"
+                    badge_bg = "rgba(16, 185, 129, 0.16)"
+                    badge_color = "#34d399"
+                    status_lbl = "अत्यंत प्रबल (सर्वश्रेष्ठ फल)" if pts >= 32 else "प्रबल (सकारात्मक फल)"
+                elif pts >= 28:
+                    badge_border = "#38bdf8"
+                    badge_bg = "rgba(56, 189, 248, 0.16)"
+                    badge_color = "#38bdf8"
+                    status_lbl = "मध्यम (संतुलित फल)"
+                else:
+                    badge_border = "#ef4444"
+                    badge_bg = "rgba(239, 68, 68, 0.16)"
+                    badge_color = "#f87171"
+                    status_lbl = "अल्प बली (सावधानी अपेक्षित)"
+
+                sign_name = he["sign_hi"] if is_hi else constants.SIGNS[(asc_sign_idx + he['house'] - 1) % 12]
+                sav_cards_html.append(f"""<div style="background: rgba(15, 23, 42, 0.72); border: 1px solid rgba(255,255,255,0.08); border-left: 4px solid {badge_border}; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px;">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span style="font-size: 1.08rem; font-weight: 800; color: #f0c05a;">भाव {he['house']}</span>
+<span style="font-size: 0.88rem; color: #cbd5e1; background: rgba(255,255,255,0.06); padding: 2px 10px; border-radius: 4px;">{sign_name} राशि</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px;">
+<span style="background: {badge_bg}; color: {badge_color}; border: 1px solid {badge_border}; font-weight: 800; font-size: 0.82rem; padding: 2px 10px; border-radius: 12px;">{status_lbl}</span>
+<span style="font-weight: 800; font-size: 1.05rem; color: #fbbf24; background: rgba(0,0,0,0.35); padding: 2px 12px; border-radius: 6px; border: 1px solid rgba(251, 191, 36, 0.35);">{pts} बिंदु</span>
+</div>
+</div>
+<div style="font-size: 0.94rem; line-height: 1.65; color: var(--text-main, #f1f5f9);">{he['analysis_hi']}</div>
+</div>""")
+            st.markdown("".join(sav_cards_html), unsafe_allow_html=True)
 
         if _lz_b_tab[1]:
             st.markdown(f'<div class="section-title">{"षड्बल एवं भावबल विश्लेषण (Six-Fold Planetary Strengths)" if is_hi else "Shadbala Six-Fold Strengths"}</div>', unsafe_allow_html=True)
@@ -3782,7 +3916,7 @@ if st.session_state.get('data_generated'):
                     "श्रेणी": f"#{s.rank}",
                     "परिणाम": "प्रबल (बली)" if s.strength_ratio >= 1.0 else "निर्बल (दुर्बल)"
                 })
-            st.dataframe(pd.DataFrame(shad_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(shad_table, title="षड्बल एवं भावबल विस्तृत तालिका"), unsafe_allow_html=True)
 
         if _lz_b_tab[2]:
             st.markdown(f'<div class="section-title">{"श्रीपति भाव चलित चक्र एवं पञ्चधा मैत्री" if is_hi else "Sripati Chalit Chart & Maitri"}</div>', unsafe_allow_html=True)
@@ -3820,7 +3954,7 @@ if st.session_state.get('data_generated'):
                         "अन्त (संधि)": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.anta_sign)] if is_hi and cd.anta_sign in constants.SIGNS else cd.anta_sign} {cd.anta_dms}",
                         "चलित भावस्थ ग्रह": ", ".join([constants.PLANETS_HI.get(p, p) if is_hi else p for p in cd.planets_in_bhava]) if cd.planets_in_bhava else "-"
                     })
-                st.dataframe(pd.DataFrame(chalit_table), use_container_width=True, hide_index=True)
+                st.markdown(render_modern_table(chalit_table, title="भाव चलित चक्र तालिका"), unsafe_allow_html=True)
 
             # Panchadha Maitri Matrix
             st.markdown(f"#### {' सप्तग्रह पञ्चधा मैत्री चक्र (Compound 5-Fold Friendship Matrix)' if is_hi else 'Panchadha Maitri Matrix'}")
@@ -3832,7 +3966,7 @@ if st.session_state.get('data_generated'):
                     p2_lbl = constants.PLANETS_HI.get(p2, p2) if is_hi else p2
                     row[p2_lbl] = relation
                 pm_rows.append(row)
-            st.dataframe(pd.DataFrame(pm_rows), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(pm_rows, title="पंचधा मैत्री चक्र"), unsafe_allow_html=True)
 
         if _lz_b_tab[3]:
             st.markdown(f'<div class="section-title">{"अष्टकवर्ग शास्त्रीय सूत्र एवं काक्ष्य फलित" if is_hi else "Ashtakavarga Sutras Script"}</div>', unsafe_allow_html=True)
@@ -3958,7 +4092,7 @@ if st.session_state.get('data_generated'):
                     "SSSSL": constants.PLANETS_HI.get(c.sub_sub_sub_sub_lord, c.sub_sub_sub_sub_lord) if is_hi else c.sub_sub_sub_sub_lord,
                     "SSSSSL": constants.PLANETS_HI.get(c.sub_sub_sub_sub_sub_lord, c.sub_sub_sub_sub_sub_lord) if is_hi else c.sub_sub_sub_sub_sub_lord
                 })
-            st.dataframe(pd.DataFrame(kp_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(kp_table, title="केपी कस्प उप-स्वामी तालिका"), unsafe_allow_html=True)
 
             # --- SUB-SECTION 4: 9 PLANETARY KP TABLE (DOWN TO SSSSSL) ---
             st.markdown(f"#### {'नवग्रह केपी स्पष्ट एवं SSSSSL तालिका (Planetary KP Table down to SSSSSL)' if is_hi else 'Planetary KP Table (down to SSSSSL)'}")
@@ -3977,7 +4111,7 @@ if st.session_state.get('data_generated'):
                     "SSSSL": constants.PLANETS_HI.get(pl.sub_sub_sub_sub_lord, pl.sub_sub_sub_sub_lord) if is_hi else pl.sub_sub_sub_sub_lord,
                     "SSSSSL": constants.PLANETS_HI.get(pl.sub_sub_sub_sub_sub_lord, pl.sub_sub_sub_sub_sub_lord) if is_hi else pl.sub_sub_sub_sub_sub_lord
                 })
-            st.dataframe(pd.DataFrame(kp_pl_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(kp_pl_table, title="केपी ग्रह स्थिति एवं उप-स्वामी तालिका"), unsafe_allow_html=True)
 
             # --- SUB-SECTION 5: 4-FOLD SIGNIFICATORS (चतुर्विध कार्येश) ---
             st.markdown(f"#### {'केपी 4-Step कार्येश तालिका (KP 4-Fold Significators Matrix)' if is_hi else 'KP 4-Fold Significators Matrix'}")
@@ -4097,7 +4231,7 @@ if st.session_state.get('data_generated'):
                     "राशि": constants.SIGNS_HI[constants.SIGNS.index(k.sign_name)] if is_hi and k.sign_name in constants.SIGNS else k.sign_name,
                     "शास्त्रीय कारकत्व": k.signification
                 })
-            st.dataframe(pd.DataFrame(jk_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(jk_table, title="जैमिनी चर कारक तालिका (7-Karaka Scheme)"), unsafe_allow_html=True)
 
             # Jaimini Predictions & Chara Dasha Phala Synthesis
             chara_dashas = forensic_predictor.compute_chara_dasha(chart.ascendant_sign, birth['local'], chart)
@@ -4138,7 +4272,7 @@ if st.session_state.get('data_generated'):
                     "आरम्भ तिथि": cd.get("start", ""),
                     "समाप्ति तिथि": cd.get("end", "")
                 })
-            st.dataframe(pd.DataFrame(cd_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(cd_table, title="जैमिनी चर दशा कालखंड तालिका"), unsafe_allow_html=True)
 
         if _lz_k_tab[2]:
             st.markdown(f'<div class="section-title">{"भृगु नन्दी नाड़ी: गहन जीवन फलादेश एवं ग्रह संयोजन" if is_hi else "Bhrigu Nandi Nadi"}</div>', unsafe_allow_html=True)
@@ -4406,10 +4540,10 @@ if st.session_state.get('data_generated'):
 
                     ch_col1, ch_col2 = st.columns(2)
                     with ch_col1:
-                        st.markdown("**दिन का चौघड़िया (Day):**")
+                        st.markdown("<b>दिन का चौघड़िया (Day):</b>", unsafe_allow_html=True)
                         st.markdown(_render_ch_mini(panch_obj.chaughadiya_day), unsafe_allow_html=True)
                     with ch_col2:
-                        st.markdown("**रात्रि का चौघड़िया (Night):**")
+                        st.markdown("<b>रात्रि का चौघड़िया (Night):</b>", unsafe_allow_html=True)
                         st.markdown(_render_ch_mini(panch_obj.chaughadiya_night), unsafe_allow_html=True)
 
     # =========================================================================
@@ -4485,7 +4619,7 @@ if st.session_state.get('data_generated'):
                     # Weave matched Bhrigu Sutram & Bhavadhipati sutras into this house
                     m_sutras_in_bh = bhava_map.get(bh.bhava_num, [])
                     if m_sutras_in_bh:
-                        st.markdown(f"**भाव {bh.bhava_num} पर सक्रिय प्रामाणिक शास्त्रीय सूत्र:**")
+                        st.markdown(f"<b>भाव {bh.bhava_num} पर सक्रिय प्रामाणिक शास्त्रीय सूत्र:</b>", unsafe_allow_html=True)
                         for s in m_sutras_in_bh:
                             st.markdown(f"""
                             <div style="background: var(--card-bg); border-left: 3px solid var(--gold-accent); padding: 8px 12px; margin-top: 6px; border-radius: 6px; border: 1px solid var(--card-border);">
@@ -4518,7 +4652,7 @@ if st.session_state.get('data_generated'):
                     "द्वितीयक SAV": b["sec_sav"],
                     "सामर्थ्य निर्णय": b["status_verdict"]
                 })
-            st.dataframe(pd.DataFrame(bb_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(bb_table, title="भावत् भावम् द्वादश विश्लेषण तालिका"), unsafe_allow_html=True)
 
             st.markdown("#### भावत् भावम् द्वादश गहन फलकथन:")
             col_bb1, col_bb2 = st.columns(2)
@@ -4551,7 +4685,7 @@ if st.session_state.get('data_generated'):
                     "दृष्टि डालने वाले ग्रह": ", ".join([constants.PLANETS_HI.get(x, x) for x in dig.aspects_received_from]) or "-",
                     "शास्त्रीय गरिमा": dig.dignity_summary_hi
                 })
-            st.dataframe(pd.DataFrame(dig_rows), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(dig_rows, title="ग्रह गरिमा, उच्च-नीच व अवस्था परीक्षण"), unsafe_allow_html=True)
 
         if _lz_p_tab[4]:
             st.markdown(f'<div class="section-title">{"मंगल दोष सम्पूर्ण शास्त्रीय विवेचन एवं परिहार" if is_hi else "Mangal Dosha Assessment"}</div>', unsafe_allow_html=True)
@@ -4579,7 +4713,7 @@ if st.session_state.get('data_generated'):
                     "चरण भेद": sp.charan_hi,
                     "विशिष्ट शास्त्रीय प्रभाव": sp.impact_hi
                 })
-            st.dataframe(pd.DataFrame(s_table), use_container_width=True, hide_index=True)
+            st.markdown(render_modern_table(s_table, title="शनि साढ़ेसाती एवं ढैया संपूर्ण कालखंड"), unsafe_allow_html=True)
 
         if _lz_p_tab[6]:
             st.markdown(f'<div class="section-title">{"कालसर्प दोष 12 भेदों की सूक्ष्म जाँच" if is_hi else "Kalsarp Dosha Analysis"}</div>', unsafe_allow_html=True)

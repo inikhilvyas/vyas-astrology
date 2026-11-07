@@ -343,14 +343,14 @@ def detect_mook_prashna_intent(
 
     reasoning_text = (
         f"केरलीय [प्रश्न मार्ग] एवं [के.पी. मूक प्रश्न सिद्धांत] के अनुसार: "
-        f"तात्कालिक मन:कारक चन्द्रमा आपकी कुण्डली के **भाव {moon_house}** ({constants.SIGNS_HI[moon_p.sign_index]} राशि) में स्थित हैं। "
-        f"चन्द्रमा के उप-स्वामी **{constants.PLANETS_HI.get(moon_sl, moon_sl)}** तथा नक्षत्र स्वामी **{constants.PLANETS_HI.get(moon_nl, moon_nl)}** "
+        f"तात्कालिक मन:कारक चन्द्रमा आपकी कुण्डली के <b>भाव {moon_house}</b> ({constants.SIGNS_HI[moon_p.sign_index]} राशि) में स्थित हैं। "
+        f"चन्द्रमा के उप-स्वामी <b>{constants.PLANETS_HI.get(moon_sl, moon_sl)}</b> तथा नक्षत्र स्वामी <b>{constants.PLANETS_HI.get(moon_nl, moon_nl)}</b> "
         f"{p_domain['title_hi']} के प्रमुख कार्येश बन रहे हैं। "
     )
     if kp_seed_num and seed_sl:
-        reasoning_text += f"इसके अतिरिक्त आपके द्वारा चयनित केपी होरारी अंक **{kp_seed_num}** के उप-स्वामी ({constants.PLANETS_HI.get(seed_sl, seed_sl)}) ने भी इस भाव को प्रमाणित किया है। "
+        reasoning_text += f"इसके अतिरिक्त आपके द्वारा चयनित केपी होरारी अंक <b>{kp_seed_num}</b> के उप-स्वामी ({constants.PLANETS_HI.get(seed_sl, seed_sl)}) ने भी इस भाव को प्रमाणित किया है। "
     else:
-        reasoning_text += f"साथ ही तात्कालिक 24-सेकंड प्राण लग्न **{p_lagna['sign_hi']}** में गतिशील होकर विचार तरंगों की पुष्टि कर रहा है।"
+        reasoning_text += f"साथ ही तात्कालिक 24-सेकंड प्राण लग्न <b>{p_lagna['sign_hi']}</b> में गतिशील होकर विचार तरंगों की पुष्टि कर रहा है।"
 
     return {
         "top_domain": p_domain,
