@@ -2599,19 +2599,33 @@ if st.session_state.get('data_generated'):
             return str(val)
 
         if daily_panchang:
-            t_end_fmt = _safe_panchang_time_fmt(daily_panchang.tithi_end)
-            tithi_str = f"{daily_panchang.tithi_hi}" + (f" (तक {t_end_fmt})" if t_end_fmt else "")
-            nak_str = f"{daily_panchang.nakshatra_hi} पद {daily_panchang.nakshatra_pada} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.nakshatra_lord, daily_panchang.nakshatra_lord)})"
-            y_end_fmt = _safe_panchang_time_fmt(daily_panchang.yoga_end)
-            yoga_str = f"{daily_panchang.yoga}" + (f" (तक {y_end_fmt})" if y_end_fmt else "")
+            if getattr(daily_panchang, 'has_dual_tithi', False):
+                tithi_html = f"""<div style="font-size: 0.88rem; font-weight: 700; color: #f8fafc; line-height: 1.45; margin-top: 2px;"><div><b>उदयातिथि:</b> {daily_panchang.udaya_tithi_hi} <span style="color: #94a3b8; font-weight: 400; font-size: 0.82rem;">({daily_panchang.udaya_tithi_end_rel} तक)</span></div><div style="color: #38bdf8; margin-top: 2px;"><b>तत्पश्चात:</b> {daily_panchang.next_tithi_hi} <span style="color: #93c5fd; font-weight: 400; font-size: 0.82rem;">({daily_panchang.next_tithi_end_rel} तक)</span></div></div>"""
+            else:
+                tithi_end_disp = daily_panchang.udaya_tithi_end_rel or _safe_panchang_time_fmt(daily_panchang.tithi_end)
+                tithi_html = f"""<div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{daily_panchang.udaya_tithi_hi or daily_panchang.tithi_hi} <span style="color: #cbd5e1; font-weight: 400; font-size: 0.85rem;">({tithi_end_disp} तक)</span></div>"""
+
+            nak_timeline = getattr(daily_panchang, 'nakshatra_timeline_hi', None)
+            if not nak_timeline:
+                nak_str = f"{daily_panchang.nakshatra_hi} पद {daily_panchang.nakshatra_pada} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.nakshatra_lord, daily_panchang.nakshatra_lord)})"
+            else:
+                nak_str = f"{nak_timeline} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.nakshatra_lord, daily_panchang.nakshatra_lord)})"
+
+            yoga_timeline = getattr(daily_panchang, 'yoga_timeline_hi', None)
+            yoga_str = yoga_timeline if yoga_timeline else f"{daily_panchang.yoga}"
+
+            karana_timeline = getattr(daily_panchang, 'karana_timeline_hi', None)
+            karana_str = karana_timeline if karana_timeline else f"{getattr(daily_panchang, 'karana', 'बव')}"
+
             sunrise_str = _safe_panchang_time_fmt(daily_panchang.sunrise) or "06:30 AM"
             sunset_str = _safe_panchang_time_fmt(daily_panchang.sunset) or "05:45 PM"
             vara_str = f"{daily_panchang.vara} (स्वामी: {constants.PLANETS_HI.get(daily_panchang.vara_lord, daily_panchang.vara_lord)})"
             vikram_str = f"विक्रम संवत {daily_panchang.vikram_samvat} | शक संवत {daily_panchang.shaka_samvat}"
         else:
-            tithi_str = "शुक्ल/कृष्ण पक्ष तिथि"
+            tithi_html = '<div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">शुक्ल/कृष्ण पक्ष तिथि</div>'
             nak_str = daily_res.get('transit_nakshatra', '-')
             yoga_str = "शुभ योग"
+            karana_str = "बव"
             sunrise_str = "06:30 AM"
             sunset_str = "05:45 PM"
             vara_str = now_dt.strftime("%A")
@@ -2623,10 +2637,10 @@ if st.session_state.get('data_generated'):
 <span style="font-size: 0.85rem; color: #cbd5e1; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 8px; border-radius: 6px;">{vikram_str}</span>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px;">
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">तिथि (Tithi)</div><div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{tithi_str}</div></div>
+<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">तिथि (Tithi)</div>{tithi_html}</div>
 <div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">वार (Vara)</div><div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{vara_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">नक्षत्र (Nakshatra)</div><div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{nak_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">योग एवं करण (Yoga & Karana)</div><div style="font-size: 0.92rem; font-weight: 600; color: #f8fafc; margin-top: 2px;">{yoga_str} | {getattr(daily_panchang, 'karana', 'बव')}</div></div>
+<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">नक्षत्र (Nakshatra)</div><div style="font-size: 0.90rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{nak_str}</div></div>
+<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">योग एवं करण (Yoga & Karana)</div><div style="font-size: 0.88rem; font-weight: 600; color: #f8fafc; margin-top: 2px;"><b>योग:</b> {yoga_str}<br/><b>करण:</b> {karana_str}</div></div>
 <div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">सूर्योदय व सूर्यास्त (Sunrise / Sunset)</div><div style="font-size: 0.92rem; font-weight: 600; color: #facc15; margin-top: 2px;">{sunrise_str} — {sunset_str}</div></div>
 <div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">दिशा शूल व परिहार (Travel Rule)</div><div style="font-size: 0.9rem; font-weight: 600; color: #f87171; margin-top: 2px;">दिशा: <b>{shool_dir}</b> | <span style="color: #cbd5e1; font-size: 0.82rem;">{shool_rem}</span></div></div>
 </div>

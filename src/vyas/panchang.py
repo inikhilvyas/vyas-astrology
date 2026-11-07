@@ -194,6 +194,19 @@ class Panchang:
     chaughadiya_night: list = field(default_factory=list)
     horas_day: list = field(default_factory=list)
     horas_night: list = field(default_factory=list)
+    udaya_tithi: str = ""
+    udaya_tithi_hi: str = ""
+    udaya_tithi_end: str = ""
+    udaya_tithi_end_rel: str = ""
+    next_tithi: str = ""
+    next_tithi_hi: str = ""
+    next_tithi_end: str = ""
+    next_tithi_end_rel: str = ""
+    has_dual_tithi: bool = False
+    tithi_timeline_hi: str = ""
+    nakshatra_timeline_hi: str = ""
+    yoga_timeline_hi: str = ""
+    karana_timeline_hi: str = ""
 
     def as_dict(self):
         return asdict(self)
@@ -584,9 +597,86 @@ def compute(dt_local, lat: float, lon: float, tz_hours: float,
 
     rise, sset = sun_rise_set(dt_local, lat, lon, tz_hours)
     # Hindu day starts at sunrise; before sunrise belongs to the previous vara.
-    vara_date = dt_local if (rise is None or dt_local >= rise) else dt_local - timedelta(days=1)
+    if rise and dt_local < rise:
+        prev_day = dt_local - timedelta(days=1)
+        prev_rise, prev_sset = sun_rise_set(prev_day, lat, lon, tz_hours)
+        if prev_rise and prev_sset:
+            next_rise = rise
+            rise, sset = prev_rise, prev_sset
+            vara_date = prev_day
+        else:
+            next_rise = rise
+            vara_date = dt_local - timedelta(days=1)
+    else:
+        next_day = dt_local + timedelta(days=1)
+        next_rise, _ = sun_rise_set(next_day, lat, lon, tz_hours)
+        if next_rise is None:
+            next_rise = (rise + timedelta(hours=24)) if rise else (dt_local + timedelta(hours=24))
+        vara_date = dt_local
     wd = (vara_date.weekday() + 1) % 7         # Python Mon=0 -> Sun=0
 
+    def fmt(t):
+        return t.astimezone(tz).strftime("%d/%m/%Y %H:%M:%S") if t else "-"
+
+    def rel_fmt(tgt_dt, ref_dt):
+        if not tgt_dt:
+            return ""
+        t_loc = tgt_dt.astimezone(tz)
+        ref_loc = ref_dt.astimezone(tz)
+        time_str = t_loc.strftime("%I:%M %p")
+        diff_d = (t_loc.date() - ref_loc.date()).days
+        if diff_d == 0:
+            return f"आज {time_str}"
+        elif diff_d == 1:
+            return f"कल {time_str}"
+        elif diff_d == -1:
+            return f"कल (बीता) {time_str}"
+        else:
+            return f"{t_loc.strftime('%d/%m')} {time_str}"
+
+    rise_u = _utc(rise) if rise else dt_u
+    next_rise_u = _utc(next_rise) if next_rise else (dt_u + timedelta(hours=24))
+
+    # --- Udaya Tithi (at Sunrise) and Day Tithi Timeline ---
+    e_rise = _elong(rise_u)
+    t_rise_idx = int(e_rise // 12.0)
+    paksha_rise = "Shukla" if t_rise_idx < 15 else "Krishna"
+    paksha_rise_hi = "शुक्ल" if t_rise_idx < 15 else "कृष्ण"
+    tn_rise = t_rise_idx % 15
+    tithi_rise_name = "Amavasya" if t_rise_idx == 29 else TITHIS[tn_rise]
+    tithi_rise_hi = "अमावस्या" if t_rise_idx == 29 else TITHIS_HI[tn_rise]
+    udaya_tithi_full_hi = f"{paksha_rise_hi} {tithi_rise_hi}"
+
+    u_t_end_u = _next_boundary(_elong, 12.0, rise_u)
+    u_t_end_str = fmt(u_t_end_u)
+    u_t_end_rel = rel_fmt(u_t_end_u, dt_local)
+
+    has_dual_tithi = False
+    next_tithi = ""
+    next_tithi_hi = ""
+    next_tithi_full_hi = ""
+    next_t_end_str = ""
+    next_t_end_rel = ""
+
+    if u_t_end_u and u_t_end_u < next_rise_u:
+        has_dual_tithi = True
+        t_next_idx = (t_rise_idx + 1) % 30
+        paksha_next = "Shukla" if t_next_idx < 15 else "Krishna"
+        paksha_next_hi = "शुक्ल" if t_next_idx < 15 else "कृष्ण"
+        tn_next = t_next_idx % 15
+        tithi_next_name = "Amavasya" if t_next_idx == 29 else TITHIS[tn_next]
+        next_tithi_base_hi = "अमावस्या" if t_next_idx == 29 else TITHIS_HI[tn_next]
+        next_tithi = f"{paksha_next} {tithi_next_name}"
+        next_tithi_hi = next_tithi_base_hi
+        next_tithi_full_hi = f"{paksha_next_hi} {next_tithi_base_hi}"
+        next_t_end_u = _next_boundary(_elong, 12.0, u_t_end_u + timedelta(seconds=10))
+        next_t_end_str = fmt(next_t_end_u)
+        next_t_end_rel = rel_fmt(next_t_end_u, dt_local)
+        tithi_timeline_hi = f"{udaya_tithi_full_hi} ({u_t_end_rel} तक), तत्पश्चात {next_tithi_full_hi} ({next_t_end_rel} तक)"
+    else:
+        tithi_timeline_hi = f"{udaya_tithi_full_hi} ({u_t_end_rel} तक)"
+
+    # --- Current Instant Details ---
     e = _elong(dt_u)
     t_idx = int(e // 12.0)
     paksha = "Shukla" if t_idx < 15 else "Krishna"
@@ -599,13 +689,23 @@ def compute(dt_local, lat: float, lon: float, tz_hours: float,
     pada = int((moon % C.NAKSHATRA_SPAN) // C.PADA_SPAN) + 1
     y = int(_yoga_sum(dt_u) // C.NAKSHATRA_SPAN) % 27
 
-    def fmt(t):
-        return t.astimezone(tz).strftime("%d/%m/%Y %H:%M:%S") if t else "-"
-
     t_end = _next_boundary(_elong, 12.0, dt_u)
     n_end = _next_boundary(_moon, C.NAKSHATRA_SPAN, dt_u)
     y_end = _next_boundary(_yoga_sum, C.NAKSHATRA_SPAN, dt_u)
     k_end = _next_boundary(_elong, 6.0, dt_u)
+
+    rel_n_end = rel_fmt(n_end, dt_local)
+    next_nak = (nak + 1) % 27
+    nak_timeline_hi = f"{C.NAKSHATRAS_HI[nak]} पद {pada} ({rel_n_end} तक), तत्पश्चात {C.NAKSHATRAS_HI[next_nak]}"
+
+    rel_y_end = rel_fmt(y_end, dt_local)
+    next_y = (y + 1) % 27
+    yoga_timeline_hi = f"{YOGAS[y]} ({rel_y_end} तक), तत्पश्चात {YOGAS[next_y]}"
+
+    rel_k_end = rel_fmt(k_end, dt_local)
+    k_next_u = (k_end + timedelta(seconds=10)) if k_end else dt_u
+    k_next_name = karana_name(_elong(k_next_u))
+    karana_timeline_hi = f"{karana_name(e)} ({rel_k_end} तक), तत्पश्चात {k_next_name}"
 
     # Lunar month: Sun's sidereal sign at the preceding new moon (Amanta).
     nm = _prev_boundary(_elong, 360.0, dt_u, step_h=12.0, max_days=31.0) or dt_u
@@ -653,5 +753,18 @@ def compute(dt_local, lat: float, lon: float, tz_hours: float,
         chaughadiya_day=muh_ch["chaughadiya_day"],
         chaughadiya_night=muh_ch["chaughadiya_night"],
         horas_day=muh_ch.get("horas_day", []),
-        horas_night=muh_ch.get("horas_night", [])
+        horas_night=muh_ch.get("horas_night", []),
+        udaya_tithi=f"{paksha_rise} {tithi_rise_name}",
+        udaya_tithi_hi=udaya_tithi_full_hi,
+        udaya_tithi_end=u_t_end_str,
+        udaya_tithi_end_rel=u_t_end_rel,
+        next_tithi=next_tithi,
+        next_tithi_hi=next_tithi_full_hi,
+        next_tithi_end=next_t_end_str,
+        next_tithi_end_rel=next_t_end_rel,
+        has_dual_tithi=has_dual_tithi,
+        tithi_timeline_hi=tithi_timeline_hi,
+        nakshatra_timeline_hi=nak_timeline_hi,
+        yoga_timeline_hi=yoga_timeline_hi,
+        karana_timeline_hi=karana_timeline_hi
     )
