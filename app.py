@@ -524,7 +524,161 @@ st.markdown('''
 </script>
 ''', unsafe_allow_html=True)
 
+
+# ---------------- EARLY THEME RESOLUTION ----------------
+_active_theme_mode = st.session_state.get("_user_theme_mode", "डार्क थीम (Dark)")
+_is_light = "लाइट" in str(_active_theme_mode) or "Light" in str(_active_theme_mode) or "कंट्रास्ट" in str(_active_theme_mode)
+
 # Global Luxury Vedic Styling & Mobile-First Responsive Framework
+_light_css_rules = """
+        :root {
+            --gold-primary: #1e3a8a !important;
+            --gold-light: #1e40af !important;
+            --gold-accent: #2563eb !important;
+            --bg-deep: #f8fafc !important;
+            --bg-surface: #ffffff !important;
+            --card-bg: #ffffff !important;
+            --card-border: rgba(15, 23, 42, 0.16) !important;
+            --card-border-hover: rgba(37, 99, 235, 0.55) !important;
+            --accent-ruby: #dc2626 !important;
+            --accent-emerald: #15803d !important;
+            --text-main: #0f172a !important;
+            --text-muted: #334155 !important;
+            --vyas-gold-1: #1e3a8a !important;
+            --vyas-gold-2: #2563eb !important;
+            --vyas-gold-3: #1d4ed8 !important;
+            --vyas-line: rgba(37, 99, 235, 0.24) !important;
+        }
+
+        html, body, .stApp, [data-testid="stAppViewContainer"], .main {
+            background: #f8fafc !important;
+            background-image: none !important;
+            color: #0f172a !important;
+        }
+
+        .glass-card, .predict-card, [data-testid="stExpander"] {
+            background: #ffffff !important;
+            background-image: none !important;
+            border: 1.5px solid rgba(15, 23, 42, 0.16) !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05) !important;
+            color: #0f172a !important;
+        }
+
+        .glass-card *, .predict-card *, [data-testid="stExpander"] * {
+            color: #0f172a !important;
+        }
+
+        .vyas-hero-banner {
+            background: #ffffff !important;
+            background-image: none !important;
+            border: 2px solid #2563eb !important;
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.08) !important;
+        }
+        .vyas-hero-kicker {
+            color: #1e40af !important;
+        }
+        .vyas-hero-title {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #1d4ed8 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-shadow: none !important;
+        }
+        .vyas-hero-subtitle {
+            color: #334155 !important;
+        }
+        .section-title, h1, h2, h3, h4, h5 {
+            color: #1e3a8a !important;
+            border-bottom-color: rgba(30, 58, 138, 0.25) !important;
+        }
+
+        /* Override all inline dark backgrounds to crisp white cards in Light Mode */
+        [style*="rgba(14, 23, 42"], [style*="rgba(15, 23, 42"],
+        [style*="rgba(16, 26, 52"], [style*="rgba(19, 27, 54"],
+        [style*="rgba(8, 12, 26"], [style*="rgba(10, 16, 32"],
+        [style*="rgba(0, 0, 0"], [style*="rgba(0,0,0"],
+        [style*="background: #060c18"], [style*="background:#060c18"],
+        [style*="background: linear-gradient(135deg, rgba(240,192,90"],
+        [style*="background: linear-gradient(135deg, rgba(245, 158, 11"] {
+            background: #ffffff !important;
+            background-image: none !important;
+            border: 1.5px solid rgba(15, 23, 42, 0.15) !important;
+            color: #0f172a !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+        }
+
+        /* Replace all golden/yellow text colors with Deep Royal Navy Blue in Light Mode */
+        [style*="color: #f0c05a"], [style*="color:#f0c05a"],
+        [style*="color: #ffd700"], [style*="color:#ffd700"],
+        [style*="color: #fbbf24"], [style*="color:#fbbf24"],
+        [style*="color: #facc15"], [style*="color:#facc15"],
+        [style*="color: #eedc9a"], [style*="color:#eedc9a"],
+        [style*="color: #fef3c7"], [style*="color:#fef3c7"],
+        [style*="color: #ffd97d"], [style*="color:#ffd97d"],
+        [style*="color: #e5a93c"], [style*="color:#e5a93c"],
+        [style*="color: #f5d16e"], [style*="color:#f5d16e"] {
+            color: #1e3a8a !important;
+            font-weight: 800 !important;
+        }
+
+        /* Replace all white/light-grey text colors with Deep Slate in Light Mode */
+        [style*="color: #f8fafc"], [style*="color:#f8fafc"],
+        [style*="color: #f1f5f9"], [style*="color:#f1f5f9"],
+        [style*="color: #cbd5e1"], [style*="color:#cbd5e1"],
+        [style*="color: #94a3b8"], [style*="color:#94a3b8"],
+        [style*="color: #e2e8f0"], [style*="color:#e2e8f0"],
+        [style*="color: #ffffff"], [style*="color:#ffffff"],
+        [style*="color: white"], [style*="color:white"] {
+            color: #0f172a !important;
+        }
+
+        /* Sidebar styling in Light Mode */
+        section[data-testid="stSidebar"] {
+            background: #f8fafc !important;
+            border-right: 1.5px solid rgba(15, 23, 42, 0.15) !important;
+            color: #0f172a !important;
+        }
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] {
+            background: #ffffff !important;
+            border: 1.5px solid #cbd5e1 !important;
+        }
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label * {
+            color: #0f172a !important;
+        }
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) {
+            background: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #1d4ed8 !important;
+        }
+        section[data-testid="stSidebar"] div[data-testid="stRadio"] [role="radiogroup"] label:has(input:checked) * {
+            color: #ffffff !important;
+            font-weight: 800 !important;
+        }
+        section[data-testid="stSidebar"] label, section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] p {
+            color: #0f172a !important;
+        }
+
+        /* Buttons in Light Mode: Vibrant Cobalt Blue with high contrast text */
+        div.stButton > button, section[data-testid="stSidebar"] div.stButton > button {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #1d4ed8 100%) !important;
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            border: 2px solid #1e3a8a !important;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.25) !important;
+        }
+        div.stButton > button *, section[data-testid="stSidebar"] div.stButton > button * {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            font-weight: 800 !important;
+        }
+"""
+if _is_light:
+    st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
+
 st.markdown("""
 <style>
     @font-face {
@@ -1203,7 +1357,7 @@ st.markdown("""
 
 st.html("""
 <div class="vyas-hero-banner">
-    <div class="vyas-hero-kicker">YOUR CELESTIAL PATTERN HAS A STRUCTURE</div>
+    <div class="vyas-hero-kicker" style="font-size: 0.74rem; letter-spacing: 2.2px; opacity: 0.85; margin-bottom: 2px;">YOUR CELESTIAL PATTERN HAS A STRUCTURE | खगोलीय ग्रहीय गणितीय संरचना</div>
     <div class="vyas-hero-title">VYAS ASTRA</div>
     <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
     <div style="font-family: var(--font-yatra); font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: rgba(238, 220, 154, 0.9); margin-top: 8px;">
@@ -1423,7 +1577,7 @@ with st.sidebar:
     st.markdown(f"""
     <div style="text-align: center; margin-bottom: 8px;">
         <img src="data:image/png;base64,{_logo_b64}" 
-             style="max-width: 110px; height: auto; filter: drop-shadow(0 0 18px rgba(229, 169, 60, 0.32));" />
+             style="max-width: 105px; height: auto; border-radius: 14px; padding: 6px; background: rgba(255, 255, 255, 0.15); filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.6)); border: 1.5px solid rgba(240, 192, 90, 0.4);" />
         <div style="font-family: 'Cinzel', serif; font-size: 1.08rem; font-weight: 800; color: #fef3c7; letter-spacing: 2px; margin-top: 6px;">VYAS ASTRA</div>
         <div style="font-size: 0.68rem; color: #94a3b8; letter-spacing: 1px; text-transform: uppercase;">Vedic Astrology Intelligence</div>
     </div>
