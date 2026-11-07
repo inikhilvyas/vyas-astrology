@@ -3055,16 +3055,27 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
+        # Theme-aware tokens for dashboard cards (D2, D3, D4)
+        _d_lbl = "#475569" if _is_light else "#94a3b8"
+        _d_val = "#0f172a" if _is_light else "#e2e8f0"
+        _d_accent = TH_GOLD_ACCENT
+        _d_gold = TH_GOLD
+        _d_highlight = "#0f172a" if _is_light else "#fef3c7"
+        _d_divider = "1px solid #cbd5e1" if _is_light else "1px solid rgba(229, 169, 60, 0.15)"
+        _d_abhi_col = "#1d4ed8" if _is_light else "#38bdf8"
+        _d_rahu_col = "#dc2626" if _is_light else "#f87171"
+        _d_naksh_col = TH_GOLD
+
         with col_d2:
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
-                    <div style="font-size: 1.18rem; font-weight: 800; color: #e5a93c; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
-                    <div style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.6;">{daily_res['tara_desc']}</div>
+                    <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
+                    <div style="font-size: 1.18rem; font-weight: 800; color: {_d_accent}; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
+                    <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{daily_res['tara_desc']}</div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: #cbd5e1;">
-                    <b>सक्रिय दशा:</b> <span style="color: #fef3c7;">{daily_res['running_dasha']}</span>
+                <div style="border-top: {_d_divider}; padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: {_d_val};">
+                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{daily_res['running_dasha']}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -3076,14 +3087,14 @@ if st.session_state.get('data_generated'):
             sat_p = chart.planets.get("Saturn")
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
-                <div style="font-size: 0.95rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 7px;">
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
+                <div style="font-size: 0.95rem; color: {_d_val}; display: flex; flex-direction: column; gap: 7px;">
                     <div style="display: flex; justify-content: space-between;"><span> सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span> चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span> गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
                     <div style="display: flex; justify-content: space-between;"><span>शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: #f0c05a; font-weight: 600;">
+                <div style="border-top: {_d_divider}; padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: {_d_naksh_col}; font-weight: 600;">
                     नक्षत्र: {daily_res['natal_nakshatra']}
                 </div>
             </div>
@@ -3092,19 +3103,20 @@ if st.session_state.get('data_generated'):
         with col_d4:
             amrit_v = daily_res.get('amrit_vela', '-')
             if "कोई नहीं" in amrit_v or "वर्जित" in amrit_v or "Prohibited" in amrit_v or "बुधवार" in amrit_v:
-                abhijit_ui = '<span style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.15); padding: 2px 6px; border-radius: 4px; display: inline-block;"> कोई नहीं (बुधवार को नहीं होता)</span>'
+                _abhi_bg = "rgba(220, 38, 38, 0.10)" if _is_light else "rgba(239, 68, 68, 0.15)"
+                abhijit_ui = f'<span style="color: {_d_rahu_col}; font-weight: 700; background: {_abhi_bg}; padding: 2px 6px; border-radius: 4px; display: inline-block;"> कोई नहीं (बुधवार को नहीं होता)</span>'
             else:
-                abhijit_ui = f'<span style="color: #38bdf8; font-weight: 600;">{amrit_v}</span>'
+                abhijit_ui = f'<span style="color: {_d_abhi_col}; font-weight: 600;">{amrit_v}</span>'
 
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
-                <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 7px;">
+                <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
+                <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 7px; color: {_d_val};">
                     <div><b>अभिजीत मुहूर्त:</b> <br>{abhijit_ui}</div>
-                    <div><b>राहुकाल (सावधानी):</b> <br><span style="color: #f87171; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
+                    <div><b>राहुकाल (सावधानी):</b> <br><span style="color: {_d_rahu_col}; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
                 </div>
-                <div style="border-top: 1px solid rgba(229, 169, 60, 0.15); padding-top: 6px; margin-top: 6px; font-size: 0.92rem; color: #cbd5e1;">
-                    <b>शुभ रंग:</b> <span style="color: #fef3c7;">{daily_res['lucky_color']}</span>
+                <div style="border-top: {_d_divider}; padding-top: 6px; margin-top: 6px; font-size: 0.92rem; color: {_d_val};">
+                    <b>शुभ रंग:</b> <span style="color: {_d_accent}; font-weight: 700;">{daily_res['lucky_color']}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -3152,10 +3164,10 @@ if st.session_state.get('data_generated'):
 
         if daily_panchang:
             if getattr(daily_panchang, 'has_dual_tithi', False):
-                tithi_html = f"""<div style="font-size: 0.88rem; font-weight: 700; color: #f8fafc; line-height: 1.45; margin-top: 2px;"><div><b>उदयातिथि:</b> {daily_panchang.udaya_tithi_hi} <span style="color: #94a3b8; font-weight: 400; font-size: 0.82rem;">({daily_panchang.udaya_tithi_end_rel} तक)</span></div><div style="color: #38bdf8; margin-top: 2px;"><b>तत्पश्चात:</b> {daily_panchang.next_tithi_hi} <span style="color: #93c5fd; font-weight: 400; font-size: 0.82rem;">({daily_panchang.next_tithi_end_rel} तक)</span></div></div>"""
+                tithi_html = f"""<div style="font-size: 0.88rem; font-weight: 700; color: {_pch_tithi_main}; line-height: 1.45; margin-top: 2px;"><div><b>उदयातिथि:</b> {daily_panchang.udaya_tithi_hi} <span style="color: {_pch_tithi_muted}; font-weight: 400; font-size: 0.82rem;">({daily_panchang.udaya_tithi_end_rel} तक)</span></div><div style="color: {_pch_tithi_next}; margin-top: 2px;"><b>तत्पश्चात:</b> {daily_panchang.next_tithi_hi} <span style="color: {_pch_tithi_next2}; font-weight: 400; font-size: 0.82rem;">({daily_panchang.next_tithi_end_rel} तक)</span></div></div>"""
             else:
                 tithi_end_disp = daily_panchang.udaya_tithi_end_rel or _safe_panchang_time_fmt(daily_panchang.tithi_end)
-                tithi_html = f"""<div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{daily_panchang.udaya_tithi_hi or daily_panchang.tithi_hi} <span style="color: #cbd5e1; font-weight: 400; font-size: 0.85rem;">({tithi_end_disp} तक)</span></div>"""
+                tithi_html = f"""<div style="font-size: 0.95rem; font-weight: 700; color: {_pch_tithi_main}; margin-top: 2px;">{daily_panchang.udaya_tithi_hi or daily_panchang.tithi_hi} <span style="color: {_pch_tithi_muted}; font-weight: 400; font-size: 0.85rem;">({tithi_end_disp} तक)</span></div>"""
 
             nak_timeline = getattr(daily_panchang, 'nakshatra_timeline_hi', None)
             if not nak_timeline:
@@ -3196,6 +3208,17 @@ if st.session_state.get('data_generated'):
         _pch_val_col = "#0f172a" if _is_light else "#f8fafc"
         _pch_title_col = TH_GOLD
         _pch_divider = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.08)"
+        # Panchang muhurta time span colors — evaluated Python ternary (not f-string literals)
+        _pch_abhi_col = "#2563eb" if _is_light else "#38bdf8"
+        _pch_brahma_col = "#16a34a" if _is_light else "#4ade80"
+        _pch_amrit_col = "#059669" if _is_light else "#34d399"
+        _pch_rahu_col = "#dc2626" if _is_light else "#f87171"
+        _pch_hora_col = "#16a34a" if _is_light else "#4ade80"
+        # tithi_html uses these tokens too
+        _pch_tithi_main = "#0f172a" if _is_light else "#f8fafc"
+        _pch_tithi_muted = "#475569" if _is_light else "#94a3b8"
+        _pch_tithi_next = "#1d4ed8" if _is_light else "#38bdf8"
+        _pch_tithi_next2 = "#2563eb" if _is_light else "#93c5fd"
 
         panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid {TH_GOLD_ACCENT};">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
