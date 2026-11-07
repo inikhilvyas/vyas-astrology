@@ -2360,15 +2360,8 @@ if st.session_state.get('data_generated'):
                 st.rerun()
         with col_pr3:
             s_seed_data = vyas_prashna.get_kp_seed_data(seed_input)
-            st.markdown(f"""
-            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229,169,60,0.25); border-radius: 8px; padding: 10px; font-size: 0.85rem; color: #cbd5e1;">
-                <b>के.पी. अंक {seed_input} विवरण:</b><br/>
-                राशि: <b>{s_seed_data.sign_name}</b> ({constants.PLANETS_HI.get(s_seed_data.sign_lord, s_seed_data.sign_lord)}) | 
-                नक्षत्र: <b>{s_seed_data.star_name}</b> ({constants.PLANETS_HI.get(s_seed_data.star_lord, s_seed_data.star_lord)})<br/>
-                उप-स्वामी (SL): <b style='color: #facc15;'>{constants.PLANETS_HI.get(s_seed_data.sub_lord, s_seed_data.sub_lord)}</b><br/>
-                विस्तार: <code>{s_seed_data.span_str}</code>
-            </div>
-            """, unsafe_allow_html=True)
+            seed_card_html = f"""<div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(229,169,60,0.25); border-radius: 8px; padding: 10px; font-size: 0.85rem; color: #cbd5e1;"><b>के.पी. अंक {seed_input} विवरण:</b><br/>राशि: <b>{s_seed_data.sign_name}</b> ({constants.PLANETS_HI.get(s_seed_data.sign_lord, s_seed_data.sign_lord)}) | नक्षत्र: <b>{s_seed_data.star_name}</b> ({constants.PLANETS_HI.get(s_seed_data.star_lord, s_seed_data.star_lord)})<br/>उप-स्वामी (SL): <b style='color: #facc15;'>{constants.PLANETS_HI.get(s_seed_data.sub_lord, s_seed_data.sub_lord)}</b><br/>विस्तार: <code>{s_seed_data.span_str}</code></div>"""
+            st.markdown(seed_card_html, unsafe_allow_html=True)
 
         # Detect Mook Prashna Intent
         target_seed = seed_input if ("249" in horary_method or "संयुक्त" in horary_method) else None
@@ -2379,26 +2372,15 @@ if st.session_state.get('data_generated'):
         active_domain_id = st.session_state.get("prashna_active_domain_id", top_domain["id"])
         active_domain = next((d for d in vyas_prashna.QUESTION_DOMAINS if d["id"] == active_domain_id), top_domain)
         
-        st.markdown(f"""
-        <div class="glass-card" style="border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%); margin-top: 15px; margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                <div style="font-size: 1.18rem; font-weight: 800; color: #fbbf24;">
-                    मूक प्रश्न: मनोगत विचार संसूचक (Mook Prashna Thought Detector)
-                </div>
-                <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;">
-                    {mook_res['confidence_pct']}% खगोलीय सामंजस्य
-                </span>
-            </div>
-            <div style="font-size: 1.05rem; color: #fef3c7; margin-top: 10px; line-height: 1.6;">
-                हमारी खगोलीय व के.पी. गणना के अनुसार, इस क्षण आपका मन मुख्यतः 
-                <b style="color: #38bdf8; font-size: 1.15rem;">'{top_domain['title_hi']}'</b> 
-                से सम्बद्ध प्रतीत होता है।
-            </div>
-            <div style="font-size: 0.88rem; color: #cbd5e1; margin-top: 8px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
-                <b>शास्त्रीय प्रमाण:</b> {mook_res['reasoning_hi']}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        mook_card_html = f"""<div class="glass-card" style="border: 2px solid #f59e0b; background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%); margin-top: 15px; margin-bottom: 15px;">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+<div style="font-size: 1.18rem; font-weight: 800; color: #fbbf24;">मूक प्रश्न: मनोगत विचार संसूचक (Mook Prashna Thought Detector)</div>
+<span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;">{mook_res['confidence_pct']}% खगोलीय सामंजस्य</span>
+</div>
+<div style="font-size: 1.05rem; color: #fef3c7; margin-top: 10px; line-height: 1.6;">हमारी खगोलीय व के.पी. गणना के अनुसार, इस क्षण आपका मन मुख्यतः <b style="color: #38bdf8; font-size: 1.15rem;">'{top_domain['title_hi']}'</b> से सम्बद्ध प्रतीत होता है।</div>
+<div style="font-size: 0.88rem; color: #cbd5e1; margin-top: 8px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;"><b>शास्त्रीय प्रमाण:</b> {mook_res['reasoning_hi']}</div>
+</div>"""
+        st.markdown(mook_card_html, unsafe_allow_html=True)
         
         # Interactive Question Chips / Selection
         st.markdown("<b>क्या यही आपका प्रश्न है, अथवा कोई अन्य विषय चुनना चाहते हैं?</b>", unsafe_allow_html=True)
@@ -2422,51 +2404,37 @@ if st.session_state.get('data_generated'):
         tajik_res = vyas_prashna.evaluate_tajik_horary_judgement(chart, target_house=active_domain["prime_house"], kp_seed_num=target_seed)
 
         # Horary Verdict Card
-        st.markdown(f"""
-        <div class="glass-card" style="border: 2px solid {tajik_res['verdict_color']}; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%); margin-top: 15px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                <div>
-                    <span style="font-size: 1.25rem; font-weight: 800; color: #f0c05a;">
-                        ताजिक एवं के.पी. प्रश्न निर्णय (Final Horary Judgement)
-                    </span>
-                    <div style="font-size: 0.92rem; color: #fef3c7; margin-top: 4px;">
-                        <b>विषय:</b> {active_domain['title_hi']} | <b>प्रश्न:</b> "{custom_q}"
-                    </div>
-                </div>
-                <span style="background: {tajik_res['verdict_color']}; color: black; font-weight: 800; padding: 6px 16px; border-radius: 20px; font-size: 0.92rem;">
-                    {tajik_res['verdict_hi']}
-                </span>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.88rem; color: #cbd5e1; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-                <div><b>प्रच्छक (लग्न):</b> {tajik_res['lagna_sign_hi']} (स्वामी: {tajik_res['lagnesh_hi']})</div>
-                <div><b>कार्य भाव:</b> भाव {tajik_res['target_house']} ({tajik_res['target_sign_hi']})</div>
-                <div><b>कार्येश ग्रह:</b> {tajik_res['karyesh_hi']}</div>
-                <div><b>चन्द्रमा (कार्यवाहक):</b> {tajik_res['moon_sign_hi']} ({tajik_res['moon_hi']})</div>
-            </div>
-
-            <div style="background: rgba(0,0,0,0.35); padding: 12px 14px; border-radius: 8px; border-left: 4px solid {tajik_res['verdict_color']}; margin-top: 14px;">
-                <div style="font-weight: 700; color: #facc15; font-size: 1.02rem; margin-bottom: 4px;">
-                    {tajik_res['yoga_name']}
-                </div>
-                <div style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc;">
-                    {tajik_res['yoga_desc']}
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; font-size: 0.92rem;">
-                <div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">कार्य सिद्धि की समय सीमा (Timeline)</div>
-                    <div style="font-size: 1.02rem; font-weight: 700; color: #38bdf8; margin-top: 2px;">{tajik_res['timeline_str']}</div>
-                </div>
-                <div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">अनुकूल दिशा सूचक (Direction)</div>
-                    <div style="font-size: 1.02rem; font-weight: 700; color: #4ade80; margin-top: 2px;">{tajik_res['direction_info']}</div>
-                    <div style="font-size: 0.75rem; color: #94a3b8;">{tajik_res['direction_desc']}</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        verdict_card_html = f"""<div class="glass-card" style="border: 2px solid {tajik_res['verdict_color']}; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 100%); margin-top: 15px;">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+<div>
+<span style="font-size: 1.25rem; font-weight: 800; color: #f0c05a;">ताजिक एवं के.पी. प्रश्न निर्णय (Final Horary Judgement)</span>
+<div style="font-size: 0.92rem; color: #fef3c7; margin-top: 4px;"><b>विषय:</b> {active_domain['title_hi']} | <b>प्रश्न:</b> "{custom_q}"</div>
+</div>
+<span style="background: {tajik_res['verdict_color']}; color: black; font-weight: 800; padding: 6px 16px; border-radius: 20px; font-size: 0.92rem;">{tajik_res['verdict_hi']}</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.88rem; color: #cbd5e1; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+<div><b>प्रच्छक (लग्न):</b> {tajik_res['lagna_sign_hi']} (स्वामी: {tajik_res['lagnesh_hi']})</div>
+<div><b>कार्य भाव:</b> भाव {tajik_res['target_house']} ({tajik_res['target_sign_hi']})</div>
+<div><b>कार्येश ग्रह:</b> {tajik_res['karyesh_hi']}</div>
+<div><b>चन्द्रमा (कार्यवाहक):</b> {tajik_res['moon_sign_hi']} ({tajik_res['moon_hi']})</div>
+</div>
+<div style="background: rgba(0,0,0,0.35); padding: 12px 14px; border-radius: 8px; border-left: 4px solid {tajik_res['verdict_color']}; margin-top: 14px;">
+<div style="font-weight: 700; color: #facc15; font-size: 1.02rem; margin-bottom: 4px;">{tajik_res['yoga_name']}</div>
+<div style="font-size: 0.95rem; line-height: 1.6; color: #f8fafc;">{tajik_res['yoga_desc']}</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; font-size: 0.92rem;">
+<div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+<div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">कार्य सिद्धि की समय सीमा (Timeline)</div>
+<div style="font-size: 1.02rem; font-weight: 700; color: #38bdf8; margin-top: 2px;">{tajik_res['timeline_str']}</div>
+</div>
+<div style="background: rgba(15, 23, 42, 0.7); padding: 10px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+<div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">अनुकूल दिशा सूचक (Direction)</div>
+<div style="font-size: 1.02rem; font-weight: 700; color: #4ade80; margin-top: 2px;">{tajik_res['direction_info']}</div>
+<div style="font-size: 0.75rem; color: #94a3b8;">{tajik_res['direction_desc']}</div>
+</div>
+</div>
+</div>"""
+        st.markdown(verdict_card_html, unsafe_allow_html=True)
 
         col_pr_btn1, col_pr_btn2 = st.columns([1.5, 1])
         with col_pr_btn1:
