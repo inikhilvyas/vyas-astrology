@@ -41,10 +41,10 @@ def render_modern_table(data_rows, title: str = "", badge_cols: dict = None) -> 
         tr_rows.append(f'<tr style="background: {bg}; transition: background 0.2s;">{"".join(td_cells)}</tr>')
 
     title_html = f'<div style="font-weight: 800; color: #f0c05a; font-size: 1.05rem; margin-bottom: 8px;">{title}</div>' if title else ""
-    return f"""<div style="width: 100%; margin: 12px 0 16px 0;">
+    return f"""<div style="width: 100%; max-width: 100%; margin: 12px 0 16px 0;">
 {title_html}
-<div style="width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
-<table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 520px;">
+<div style="width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+<table style="width: 100%; min-width: 100%; max-width: 100%; border-collapse: collapse; text-align: left;">
 <thead><tr>{th_cells}</tr></thead>
 <tbody>{"".join(tr_rows)}</tbody>
 </table>
@@ -1290,25 +1290,56 @@ st.markdown("""
             flex: 1 1 100% !important;
         }
 
-        /* 5. Mobile Typography & Touch-Friendly Dimensions */
+        /* 5. Mobile Fluid Typography & Touch-Friendly Dimensions */
         :root {
-            --app-font-size: 18.5px !important;
+            --app-font-size: 20px !important;
         }
-        p, span, li, label, div, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span {
-            font-size: 1.05rem !important;
-            line-height: 1.65 !important;
+        p, span, li, label, [data-testid="stMarkdownContainer"] p, [data-testid="stMarkdownContainer"] span {
+            font-size: 1.15rem !important;
+            line-height: 1.8 !important;
+            text-align: left !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            word-break: normal !important;
         }
         .section-title {
-            font-size: 1.38rem !important;
+            font-size: 1.42rem !important;
             padding: 4px 0 8px 0 !important;
-            margin-top: 12px !important;
+            margin-top: 14px !important;
             margin-bottom: 12px !important;
+            line-height: 1.4 !important;
         }
         .glass-card, .predict-card {
-            padding: 14px 14px !important;
-            border-radius: 12px !important;
-            margin-bottom: 12px !important;
-            font-size: 1.02rem !important;
+            padding: 16px 14px !important;
+            border-radius: 14px !important;
+            margin-bottom: 14px !important;
+            font-size: 1.15rem !important;
+            line-height: 1.8 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+        .glass-card p, .predict-card p, .predict-card div {
+            font-size: 1.15rem !important;
+            line-height: 1.8 !important;
+            text-align: left !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+        [data-testid="stExpander"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-bottom: 10px !important;
+        }
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] div[role="button"] p {
+            font-size: 1.18rem !important;
+            font-weight: 700 !important;
+            line-height: 1.5 !important;
+            word-wrap: break-word !important;
         }
         div.stButton > button {
             min-height: 50px !important;
@@ -1361,8 +1392,8 @@ st.markdown("""
                     0 24px 50px -24px rgba(0, 0, 0, 0.95);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        font-size: clamp(1.02rem, 3vw, 1.15rem) !important;
-        line-height: 1.7 !important;
+        font-size: clamp(1.10rem, 2.8vw, 1.25rem) !important;
+        line-height: 1.8 !important;
     }
 
     .predict-card {
@@ -1378,8 +1409,8 @@ st.markdown("""
         padding: 20px 24px;
         margin-bottom: 16px;
         box-shadow: 0 20px 46px -24px rgba(0, 0, 0, 0.98);
-        font-size: clamp(1.02rem, 3vw, 1.15rem) !important;
-        line-height: 1.75 !important;
+        font-size: clamp(1.10rem, 2.8vw, 1.25rem) !important;
+        line-height: 1.8 !important;
     }
 
     /* Kundli Diamond Chart */
@@ -1446,14 +1477,28 @@ st.markdown("""
     /* Tables & Tabs */
     [data-testid="stDataFrame"],
     [data-testid="stTable"],
-    .as-table-wrap,
-    table {
+    .as-table-wrap {
         width: 100% !important;
         max-width: 100% !important;
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
         display: block !important;
         font-size: clamp(0.95rem, 2.5vw, 1.05rem) !important;
+    }
+    table {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: clamp(0.95rem, 2.5vw, 1.05rem) !important;
+    }
+
+    /* Timed Prediction Cards styling */
+    .timed-pred-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .timed-pred-card:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.22);
     }
 
     .stTabs [data-baseweb="tab-list"], .stTabs [role="tablist"] {
@@ -4343,9 +4388,9 @@ if st.session_state.get('data_generated'):
                             अनुकूल भाव: <b style="color: #4ade80;">{p_item['favorable_houses']}</b> (सक्रिय: {p_item['favorable_active'] or 'कोई नहीं'}) | 
                             विरोधी भाव: <b style="color: #f87171;">{p_item['detrimental_houses']}</b> (सक्रिय: {p_item['detrimental_active'] or 'कोई नहीं'})
                         </div>
-                        <p style="font-size: 0.95rem; line-height: 1.6; color: #f1f5f9; text-align: justify; margin: 0;">
+                        <div style="font-size: 1.05rem; line-height: 1.75; color: #f1f5f9; text-align: left; margin: 0; word-wrap: break-word; overflow-wrap: break-word;">
                             {p_item['verdict_text']}
-                        </p>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -4866,12 +4911,12 @@ if st.session_state.get('data_generated'):
                 with st.expander(f"अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
                     st.markdown(f"""
                     <div class="predict-card" style="border-left-color: var(--gold-accent);">
-                        <div class="predict-header" style="font-size: 1.15rem; color: var(--gold-primary); display: flex; align-items: center; gap: 8px;">
+                        <div class="predict-header" style="font-size: 1.18rem; color: var(--gold-primary); display: flex; align-items: center; gap: 8px;">
                             {get_svg_vector(ch_icon, 20)} <span>{ch_title}</span>
                         </div>
-                        <p style="font-size: 1.05rem; line-height: 1.75; color: var(--text-main); text-align: justify; margin-top: 10px;">
+                        <div style="font-size: 1.15rem; line-height: 1.85; color: var(--text-main); text-align: left; margin-top: 12px; word-wrap: break-word; overflow-wrap: break-word;">
                             {_chap.get('content_hi', '')}
-                        </p>
+                        </div>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -4888,7 +4933,7 @@ if st.session_state.get('data_generated'):
                             भावस्थ ग्रह: {', '.join(bh.occupants_hi) or 'कोई नहीं (रिक्त)'} | 
                             दृष्टि डालने वाले ग्रह: {', '.join(bh.aspecting_planets_hi) or 'कोई नहीं'}
                         </div>
-                        <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main);">{bh.prediction_hi}</p>
+                        <div style="font-size: 1.12rem; line-height: 1.8; color: var(--text-main); text-align: left; word-wrap: break-word; overflow-wrap: break-word;">{bh.prediction_hi}</div>
                     </div>
                     """, unsafe_allow_html=True)
                     # Weave matched Bhrigu Sutram & Bhavadhipati sutras into this house
@@ -4941,9 +4986,9 @@ if st.session_state.get('data_generated'):
                             प्राथमिक भाव {b['primary_house']} ({b['prim_sign_hi']} - {b['prim_sav']} SAV) | 
                             द्वितीयक भाव {b['secondary_house']} ({b['sec_sign_hi']} - {b['sec_sav']} SAV)
                         </div>
-                        <p style="font-size: 0.98rem; line-height: 1.65; color: var(--text-main); text-align: justify;">
+                        <div style="font-size: 1.10rem; line-height: 1.8; color: var(--text-main); text-align: left; word-wrap: break-word; overflow-wrap: break-word;">
                             {b['verdict_hi']}
-                        </p>
+                        </div>
                         """, unsafe_allow_html=True)
 
         if _lz_p_tab[3]:

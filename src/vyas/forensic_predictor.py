@@ -2057,24 +2057,64 @@ def compute_overall_life_forecast(
     # -------------------------------------------------------------------------
     timed = build_timed_predictions(chart, dignities, sav, dasha_engine, birth)
     if timed:
-        rows_hi = []
-        rows_en = []
+        cards_hi = []
+        cards_en = []
         for tp in timed:
-            rows_hi.append(
-                f"<tr><td>{tp['period']}</td><td>{tp['dasha']}</td>"
-                f"<td>{tp['domain_hi']}</td><td>{tp['verdict_hi']}</td>"
-                f"<td style='font-size:0.82rem'>{tp['evidence_hi']}</td></tr>")
-            rows_en.append(
-                f"<tr><td>{tp['period']}</td><td>{tp['dasha']}</td>"
-                f"<td>{tp['domain_en']}</td><td>{tp['verdict_en']}</td>"
-                f"<td style='font-size:0.82rem'>{tp['evidence_en']}</td></tr>")
+            v_hi = tp['verdict_hi']
+            if any(w in v_hi for w in ["अनुकूल", "शुभ", "उच्च"]):
+                b_color = "#10b981"
+                b_bg = "rgba(16, 185, 129, 0.16)"
+                b_text = "#34d399"
+                b_border = "1px solid rgba(16, 185, 129, 0.45)"
+            elif any(w in v_hi for w in ["सतर्कता", "प्रतिकूल", "अशुभ"]):
+                b_color = "#ef4444"
+                b_bg = "rgba(239, 68, 68, 0.16)"
+                b_text = "#f87171"
+                b_border = "1px solid rgba(239, 68, 68, 0.45)"
+            else:
+                b_color = "#f59e0b"
+                b_bg = "rgba(245, 158, 11, 0.16)"
+                b_text = "#fbbf24"
+                b_border = "1px solid rgba(245, 158, 11, 0.45)"
+
+            cards_hi.append(f'''
+            <div class="timed-pred-card" style="background: var(--card-bg); border: 1px solid var(--card-border); border-left: 5px solid {b_color}; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-weight: 800; font-size: 1.12rem; color: var(--gold-primary); letter-spacing: 0.3px;">{tp['period']}</span>
+                    <span style="background: {b_bg}; color: {b_text}; border: {b_border}; padding: 3px 12px; border-radius: 999px; font-weight: 700; font-size: 0.88rem;">{tp['verdict_hi']}</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 8px; font-size: 1rem; color: var(--text-main);">
+                    <div><span style="color: var(--gold-accent); font-weight: 700;">दशा:</span> <b>{tp['dasha']}</b></div>
+                    <div><span style="color: var(--gold-accent); font-weight: 700;">सक्रिय क्षेत्र:</span> <b>{tp['domain_hi']}</b></div>
+                </div>
+                <div style="background: rgba(0,0,0,0.06); border-radius: 8px; padding: 10px 14px; font-size: 0.98rem; color: var(--text-main); line-height: 1.7; border: 1px solid var(--card-border);">
+                    <b style="color: var(--gold-primary);">शास्त्रीय प्रमाण-श्रृंखला:</b> {tp['evidence_hi']}
+                </div>
+            </div>''')
+
+            v_en = tp['verdict_en']
+            cards_en.append(f'''
+            <div class="timed-pred-card" style="background: var(--card-bg); border: 1px solid var(--card-border); border-left: 5px solid {b_color}; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-weight: 800; font-size: 1.12rem; color: var(--gold-primary); letter-spacing: 0.3px;">{tp['period']}</span>
+                    <span style="background: {b_bg}; color: {b_text}; border: {b_border}; padding: 3px 12px; border-radius: 999px; font-weight: 700; font-size: 0.88rem;">{tp['verdict_en']}</span>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 8px; font-size: 1rem; color: var(--text-main);">
+                    <div><span style="color: var(--gold-accent); font-weight: 700;">Dasha:</span> <b>{tp['dasha']}</b></div>
+                    <div><span style="color: var(--gold-accent); font-weight: 700;">Domain:</span> <b>{tp['domain_en']}</b></div>
+                </div>
+                <div style="background: rgba(0,0,0,0.06); border-radius: 8px; padding: 10px 14px; font-size: 0.98rem; color: var(--text-main); line-height: 1.7; border: 1px solid var(--card-border);">
+                    <b style="color: var(--gold-primary);">Evidence Chain:</b> {tp['evidence_en']}
+                </div>
+            </div>''')
+
         intro_hi = (
-            "<p>प्रत्येक फलादेश के साथ उसका <b>प्रमाण-श्रृंखला</b> दी गई है: "
+            "<p style='font-size: 1.10rem; line-height: 1.8; color: var(--text-main); margin-bottom: 14px;'>प्रत्येक फलादेश के साथ उसका <b>प्रमाण-श्रृंखला</b> दी गई है: "
             "कौन-सी महादशा/अंतर्दशा चल रही है, वह कुण्डली का कौन-सा भाव सक्रिय करती है, "
             "गोचर में कौन-सा ग्रह उसे ट्रिगर करता है और उस राशि में अष्टकवर्ग बिन्दु कितने हैं। "
             "बिन्दु 28 से अधिक = अनुकूल, 22 से कम = प्रतिकूल।</p>")
         intro_en = (
-            "<p>Every prediction below carries the <b>evidence chain</b> that produced it: "
+            "<p style='font-size: 1.10rem; line-height: 1.8; color: var(--text-main); margin-bottom: 14px;'>Every prediction below carries the <b>evidence chain</b> that produced it: "
             "which Mahadasha/Antardasha is running, which house of the chart it activates, "
             "which transit triggers it, and how many Ashtakavarga bindus the transited sign holds. "
             "Above 28 bindus = favourable, below 22 = unfavourable.</p>")
@@ -2085,14 +2125,8 @@ def compute_overall_life_forecast(
             "title_hi": "दिनांकित भविष्यवाणियाँ एवं प्रमाण-श्रृंखला",
             "title_en": "Dated Predictions & Evidence Chain",
             "icon": "goal",
-            "content_hi": (
-                intro_hi +
-                "<table class='as-table'><tr><th>अवधि</th><th>दशा</th><th>क्षेत्र</th>"
-                "<th>निर्णय</th><th>प्रमाण</th></tr>" + "".join(rows_hi) + "</table>"),
-            "content_en": (
-                intro_en +
-                "<table class='as-table'><tr><th>Period</th><th>Dasha</th><th>Domain</th>"
-                "<th>Verdict</th><th>Evidence</th></tr>" + "".join(rows_en) + "</table>"),
+            "content_hi": intro_hi + "<div class='timed-pred-container' style='display: flex; flex-direction: column; gap: 6px; width: 100%;'>" + "".join(cards_hi) + "</div>",
+            "content_en": intro_en + "<div class='timed-pred-container' style='display: flex; flex-direction: column; gap: 6px; width: 100%;'>" + "".join(cards_en) + "</div>",
         })
 
     return chapters
