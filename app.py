@@ -626,6 +626,18 @@ _light_css_rules = """
             box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
         }
 
+        /* Ensure ALL children of neutralized dark containers have deep navy/slate text */
+        [style*="background: linear-gradient"] p, [style*="background: linear-gradient"] span, [style*="background: linear-gradient"] div,
+        [style*="background:linear-gradient"] p, [style*="background:linear-gradient"] span, [style*="background:linear-gradient"] div,
+        [style*="background: rgba(14, 23, 42"] p, [style*="background: rgba(14, 23, 42"] span, [style*="background: rgba(14, 23, 42"] div,
+        [style*="background: rgba(15, 23, 42"] p, [style*="background: rgba(15, 23, 42"] span, [style*="background: rgba(15, 23, 42"] div,
+        [style*="background: rgba(19, 27, 54"] p, [style*="background: rgba(19, 27, 54"] span, [style*="background: rgba(19, 27, 54"] div,
+        [style*="background: rgba(0, 0, 0"] p, [style*="background: rgba(0, 0, 0"] span, [style*="background: rgba(0, 0, 0"] div,
+        [style*="background: rgba(0,0,0"] p, [style*="background: rgba(0,0,0"] span, [style*="background: rgba(0,0,0"] div {
+            color: #0f172a !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }
+
         /* Replace ALL golden/yellow text colors with Deep Royal Navy Blue in Light Mode */
         [style*="color: #f0c05a"], [style*="color:#f0c05a"],
         [style*="color: #ffd700"], [style*="color:#ffd700"],
@@ -690,32 +702,84 @@ _light_css_rules = """
             font-weight: 800 !important;
         }
 
-        /* Selectbox & Inputs in Light Mode */
+        /* Complete 100% Selectbox, Input, Popover & Descendant Theme Fix in Light/Contrast Mode */
+        div[data-testid="stSelectbox"],
+        div[data-testid="stSelectbox"] div,
+        div[data-testid="stSelectbox"] span,
+        div[data-testid="stSelectbox"] p,
         div[data-baseweb="select"],
-        div[data-baseweb="select"] > div,
+        div[data-baseweb="select"] div,
+        div[data-baseweb="select"] span,
+        div[data-baseweb="select"] input,
         div[data-baseweb="input"],
-        div[data-baseweb="input"] > input,
-        div[data-testid="stSelectbox"] > div > div {
+        div[data-baseweb="input"] div,
+        div[data-baseweb="input"] input,
+        div[data-testid="stTextInput"] div,
+        div[data-testid="stTextInput"] input,
+        div[data-testid="stNumberInput"] div,
+        div[data-testid="stNumberInput"] input,
+        div[data-testid="stDateInput"] div,
+        div[data-testid="stDateInput"] input,
+        div[data-testid="stTimeInput"] div,
+        div[data-testid="stTimeInput"] input {
             background: #ffffff !important;
             background-color: #ffffff !important;
             color: #0f172a !important;
-            border: 1.5px solid #cbd5e1 !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }
+
+        /* Distinct Border & Radius for Selectbox Container */
+        div[data-baseweb="select"] > div,
+        div[data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+        div[data-baseweb="input"] > div {
+            border: 1.8px solid #94a3b8 !important;
             border-radius: 10px !important;
-        }
-        div[data-baseweb="select"] *,
-        div[data-testid="stSelectbox"] * {
-            color: #0f172a !important;
-            font-weight: 700 !important;
-        }
-        ul[data-baseweb="menu"],
-        div[data-baseweb="popover"] div,
-        li[data-baseweb="menu-item"] {
             background: #ffffff !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
+        }
+
+        /* SVG arrows and icons inside Selectbox */
+        div[data-testid="stSelectbox"] svg,
+        div[data-baseweb="select"] svg {
+            fill: #0f172a !important;
             color: #0f172a !important;
         }
-        li[data-baseweb="menu-item"]:hover {
-            background: #eff6ff !important;
+
+        /* Dropdown Popover Menus (when clicked) */
+        div[data-baseweb="popover"],
+        div[data-baseweb="popover"] div,
+        div[data-baseweb="menu"],
+        div[data-baseweb="menu"] div,
+        ul[data-baseweb="menu"],
+        ul[data-baseweb="menu"] li,
+        ul[role="listbox"],
+        ul[role="listbox"] li,
+        li[role="option"],
+        li[role="option"] div,
+        li[role="option"] span,
+        li[data-baseweb="menu-item"],
+        li[data-baseweb="menu-item"] div,
+        li[data-baseweb="menu-item"] span {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }
+        li[data-baseweb="menu-item"]:hover,
+        li[data-baseweb="menu-item"]:hover div,
+        li[data-baseweb="menu-item"]:hover span,
+        li[role="option"]:hover,
+        li[role="option"]:hover div,
+        li[role="option"]:hover span,
+        li[aria-selected="true"],
+        li[aria-selected="true"] div,
+        li[aria-selected="true"] span {
+            background: #dbeafe !important;
+            background-color: #dbeafe !important;
             color: #1e3a8a !important;
+            -webkit-text-fill-color: #1e3a8a !important;
+            font-weight: 800 !important;
         }
 
         /* Sidebar in Light Mode */
@@ -3126,29 +3190,36 @@ if st.session_state.get('data_generated'):
                 shubh_horas_summary.append(f"<b>{h['lord_hi']}</b> ({h['start']}-{h['end']})")
         shubh_horas_summary_str = " | ".join(shubh_horas_summary) if shubh_horas_summary else "गुरु, शुक्र, बुध, चन्द्र होरा"
 
-        panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid #f59e0b;">
+        _pch_box_bg = "#f1f5f9" if _is_light else "rgba(15, 23, 42, 0.65)"
+        _pch_box_border = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.06)"
+        _pch_lbl_col = "#475569" if _is_light else "#94a3b8"
+        _pch_val_col = "#0f172a" if _is_light else "#f8fafc"
+        _pch_title_col = TH_GOLD
+        _pch_divider = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.08)"
+
+        panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid {TH_GOLD_ACCENT};">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-<div style="font-weight: 800; color: #fbbf24; font-size: 1.15rem;">आज का सम्पूर्ण दैनिक पंचांग एवं विशिष्ट मुहूर्त ({birth.get('city', 'New Delhi')})</div>
-<span style="font-size: 0.85rem; color: #cbd5e1; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 8px; border-radius: 6px;">{vikram_str}</span>
+<div style="font-weight: 800; color: {_pch_title_col}; font-size: 1.15rem;">आज का सम्पूर्ण दैनिक पंचांग एवं विशिष्ट मुहूर्त ({birth.get('city', 'New Delhi')})</div>
+<span style="font-size: 0.85rem; color: {TH_MUTED}; background: {TH_BADGE_BG}; border: {TH_BADGE_BORDER}; padding: 3px 8px; border-radius: 6px; font-weight: 700;">{vikram_str}</span>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px;">
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">तिथि (Tithi)</div>{tithi_html}</div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">वार (Vara)</div><div style="font-size: 0.95rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{vara_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">नक्षत्र (Nakshatra)</div><div style="font-size: 0.90rem; font-weight: 700; color: #f8fafc; margin-top: 2px;">{nak_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">योग एवं करण (Yoga & Karana)</div><div style="font-size: 0.88rem; font-weight: 600; color: #f8fafc; margin-top: 2px;"><b>योग:</b> {yoga_str}<br/><b>करण:</b> {karana_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">सूर्योदय व सूर्यास्त (Sunrise / Sunset)</div><div style="font-size: 0.92rem; font-weight: 600; color: #facc15; margin-top: 2px;">{sunrise_str} — {sunset_str}</div></div>
-<div style="background: rgba(15, 23, 42, 0.65); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);"><div style="font-size: 0.78rem; color: #94a3b8; text-transform: uppercase;">दिशा शूल व परिहार (Travel Rule)</div><div style="font-size: 0.9rem; font-weight: 600; color: #f87171; margin-top: 2px;">दिशा: <b>{shool_dir}</b> | <span style="color: #cbd5e1; font-size: 0.82rem;">{shool_rem}</span></div></div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">तिथि (Tithi)</div>{tithi_html}</div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">वार (Vara)</div><div style="font-size: 0.95rem; font-weight: 700; color: {_pch_val_col}; margin-top: 2px;">{vara_str}</div></div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">नक्षत्र (Nakshatra)</div><div style="font-size: 0.90rem; font-weight: 700; color: {_pch_val_col}; margin-top: 2px;">{nak_str}</div></div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">योग एवं करण (Yoga & Karana)</div><div style="font-size: 0.88rem; font-weight: 600; color: {_pch_val_col}; margin-top: 2px;"><b>योग:</b> {yoga_str}<br/><b>करण:</b> {karana_str}</div></div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">सूर्योदय व सूर्यास्त (Sunrise / Sunset)</div><div style="font-size: 0.92rem; font-weight: 600; color: {TH_GOLD_TITLE}; margin-top: 2px;">{sunrise_str} — {sunset_str}</div></div>
+<div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">दिशा शूल व परिहार (Travel Rule)</div><div style="font-size: 0.9rem; font-weight: 600; color: #ef4444; margin-top: 2px;">दिशा: <b>{shool_dir}</b> | <span style="color: {TH_MUTED}; font-size: 0.82rem;">{shool_rem}</span></div></div>
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
-<div><b>अभिजीत मुहूर्त:</b> <span style="color: #38bdf8;">{daily_res.get('amrit_vela', '-')}</span></div>
-<div><b>ब्रह्म मुहूर्त:</b> <span style="color: #4ade80;">{daily_res.get('brahma_muhurta', '-')}</span></div>
-<div><b>अमृत काल:</b> <span style="color: #34d399;">{daily_res.get('amrit_kalam', '-')}</span></div>
-<div><b>राहुकाल (सावधानी):</b> <span style="color: #f87171;">{daily_res.get('rahu_kalam', '-')}</span></div>
-<div><b>यमगण्ड:</b> <span style="color: #fbbf24;">{daily_res.get('yamaganda', '-')}</span></div>
-<div><b>गुलिक काल:</b> <span style="color: #e2e8f0;">{daily_res.get('gulika_kalam', '-')}</span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 12px; border-top: {_pch_divider}; padding-top: 10px;">
+<div><b>अभिजीत मुहूर्त:</b> <span style="color: #2563eb if _is_light else #38bdf8;">{daily_res.get('amrit_vela', '-')}</span></div>
+<div><b>ब्रह्म मुहूर्त:</b> <span style="color: #16a34a if _is_light else #4ade80;">{daily_res.get('brahma_muhurta', '-')}</span></div>
+<div><b>अमृत काल:</b> <span style="color: #059669 if _is_light else #34d399;">{daily_res.get('amrit_kalam', '-')}</span></div>
+<div><b>राहुकाल (सावधानी):</b> <span style="color: #dc2626 if _is_light else #f87171; font-weight: 700;">{daily_res.get('rahu_kalam', '-')}</span></div>
+<div><b>यमगण्ड:</b> <span style="color: {TH_GOLD_ACCENT}; font-weight: 700;">{daily_res.get('yamaganda', '-')}</span></div>
+<div><b>गुलिक काल:</b> <span style="color: {_pch_val_col}; font-weight: 700;">{daily_res.get('gulika_kalam', '-')}</span></div>
 </div>
-<div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; font-size: 0.88rem; color: #cbd5e1;">
-<b>दिन की प्रमुख शुभ होरा (Auspicious Horas):</b> <span style="color: #4ade80;">{shubh_horas_summary_str}</span>
+<div style="margin-top: 10px; border-top: {_pch_divider}; padding-top: 8px; font-size: 0.88rem; color: {TH_MUTED}; font-weight: 600;">
+<b>दिन की प्रमुख शुभ होरा (Auspicious Horas):</b> <span style="color: #16a34a if _is_light else #4ade80;">{shubh_horas_summary_str}</span>
 </div>
 </div>"""
         st.markdown(panchang_card_html, unsafe_allow_html=True)
