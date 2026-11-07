@@ -2725,18 +2725,121 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("####  ±10 मिनट विंडो ऑटोमैटिक सेकंड्स स्कैनर (Automated Time Rectifier)")
-        if st.button(" Run Multi-Factor BTR Scanner (सटीक समय की खोज करें)", use_container_width=True):
+        with st.expander("📖 जन्म समय शुद्धि (BTR) पद्धति कैसे कार्य करती है? (Methodology Guide)", expanded=False):
+            st.markdown("""
+            <div style="font-size: 0.95rem; line-height: 1.7; color: var(--text-main);">
+                <b>वैदिक महर्षियों एवं आधुनिक के.पी. शोधकर्ताओं द्वारा प्रतिपादित 4 प्रमुख शोधन स्तंभ:</b><br/>
+                <ol style="margin-top: 6px; padding-left: 20px;">
+                    <li><b>पाराशरी कुन्द शुद्धि (Kunda Shodhana - BPHS):</b>
+                        लग्न के स्पष्ट अंशों को 81 से गुणा करके 27 नक्षत्रों से भाग दिया जाता है। प्राप्त 'कुन्द नक्षत्र' जातक के जन्म चन्द्र नक्षत्र से त्रिकोण (1, 10, या 19वें नक्षत्र) में होना अनिवार्य है। यदि समय में 15 सेकंड का भी अंतर हो तो कुन्द नक्षत्र बदल जाता है।
+                    </li>
+                    <li><b>पंचतत्त्व शोधन (Pancha Tattva Shodhana):</b>
+                        सूर्योदय से जन्म समय तक 24-24 मिनट के पंचतत्त्व (अग्नि, पृथ्वी, वायु, जल, आकाश) चक्र संचलित होते हैं। पुरुष जातक के लिए विषम तत्त्व (अग्नि, वायु, आकाश) और स्त्री जातक के लिए सम तत्त्व (पृथ्वी, जल) प्राकृतिक रूप से अनुकूल व फलदायी होते हैं।
+                    </li>
+                    <li><b>के.पी. कस्पल सब-लॉर्ड संगति (KP Ruling Planets):</b>
+                        लग्न का उप-स्वामी (Cuspal Sub-Lord) चन्द्रमा के नक्षत्र स्वामी या दिन के स्वामी से प्रत्यक्ष संबंध रखता है।
+                    </li>
+                    <li><b>वर्ग कुण्डली संधि परीक्षण (Divisional Cuspal Stability):</b>
+                        लग्न किसी राशि के अंतिम (29°) या प्रारंभिक (0°) संधि अंश में न होकर नवांश (D-9) व दशमांश (D-10) में स्थिर होना चाहिए।
+                    </li>
+                </ol>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("#### ±10 मिनट विंडो ऑटोमैटिक सेकंड्स स्कैनर (Automated Time Rectifier)")
+        
+        col_scan1, col_scan2 = st.columns([2.5, 1])
+        with col_scan1:
+            st.caption("यह स्कैनर आपके दर्ज समय के ±10 मिनट में प्रत्येक 20 सेकंड के अंतराल पर कुन्द शोधन, तत्व शुद्धि एवं वर्ग स्थिरता की सूक्ष्म गणना करता है।")
+        with col_scan2:
+            run_btr = st.button("Run Multi-Factor BTR Scanner", key="run_btr_scan_btn", type="primary", use_container_width=True)
+
+        if run_btr:
             with st.spinner("Scanning micro-time variations across Kunda & Tattva matrices..."):
                 candidates = vyas_btr.scan_rectification_window(
                     birth['local'], birth['lat'], birth['lon'], birth['tz'],
                     chart.planets['Moon'].longitude, gender="Male", window_minutes=10
                 )
-                if candidates:
-                    st.success("सर्वाधिक सटीक एवं गणितीय रूप से शुद्ध संभावित जन्म समय:")
-                    st.dataframe(pd.DataFrame(candidates), use_container_width=True, hide_index=True)
-                else:
-                    st.info("वर्तमान दर्ज समय ही गणितीय रूप से सर्वाधिक संतुलित है।")
+                st.session_state['btr_candidates'] = candidates
+
+        btr_candidates = st.session_state.get('btr_candidates', [])
+        if btr_candidates:
+            top_c = btr_candidates[0]
+            
+            # 1. TOP RECOMMENDED CANDIDATE CARD
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 42, 0.98) 100%);
+                        border: 2px solid #f0c05a; border-radius: 14px; padding: 18px 20px; margin: 16px 0; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 0.85rem; color: #ffd700; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;">
+                        🏆 सर्वाधिक अनुशंसित एवं गणितीय रूप से प्रमाणित शुद्ध जन्म समय
+                    </div>
+                    <div style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.82rem;">
+                        {top_c['confidence_pct']}% शुद्धता स्कोर
+                    </div>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 14px; margin-top: 8px;">
+                    <div style="font-family: var(--font-yatra); font-size: 2.2rem; color: #ffffff; font-weight: 800; letter-spacing: 1px;">
+                        {top_c['time_str']}
+                    </div>
+                    <div style="font-size: 1.05rem; color: #f7d584; font-weight: 600;">
+                        ({top_c['offset_desc']})
+                    </div>
+                </div>
+                <hr style="border-color: rgba(240, 192, 90, 0.3); margin: 12px 0;"/>
+                <div style="font-size: 0.92rem; color: #f1f5f9; line-height: 1.7;">
+                    <div style="margin-bottom: 8px;">
+                        <b style="color: #f0c05a;">🔹 पाराशरी कुन्द शोधन (81x):</b> {top_c['reason_kunda']}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <b style="color: #f0c05a;">🔹 पंचतत्त्व लिंग शुद्धि:</b> {top_c['reason_tattva']}
+                    </div>
+                    <div style="margin-bottom: 4px;">
+                        <b style="color: #f0c05a;">🔹 सूक्ष्म वर्ग स्थिरता:</b> {top_c['reason_varga']}
+                    </div>
+                    <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 8px; background: rgba(0,0,0,0.35); padding: 6px 12px; border-radius: 8px;">
+                        <b>लग्न स्पष्ट:</b> {top_c['asc_deg']} &nbsp;|&nbsp; <b>कुन्द नक्षत्र:</b> {top_c['kunda_nak']} &nbsp;|&nbsp; <b>नवमांश लग्न:</b> {top_c['navamsha_lagna']}
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_apply1, col_apply2 = st.columns([1.5, 1])
+            with col_apply1:
+                if st.button(f"✅ इस शुद्ध समय ({top_c['time_str']}) को अपनी कुण्डली में लागू करें", key="apply_btr_top_btn", type="primary", use_container_width=True):
+                    cur_p = st.session_state.get('loaded_profile', dict(birth))
+                    cur_p['tob'] = top_c['time_str']
+                    if is_logged_in_now:
+                        auth_vault.save_kundli(u["id"], cur_p)
+                    _load_kundli_into_session(cur_p, user_id=u["id"] if is_logged_in_now else None)
+                    st.success(f"जन्म समय को शुद्ध कर '{top_c['time_str']}' पर सेट कर दिया गया! सम्पूर्ण कुण्डली नए समय से अपडेट हो गई है।")
+                    st.rerun()
+
+            # 2. ALTERNATIVE CANDIDATES (If hospital birth time had a 3-5 min variation)
+            other_candidates = btr_candidates[1:]
+            if other_candidates:
+                with st.expander(f"वैकल्पिक शुद्ध समय विकल्प ({len(other_candidates)} अन्य संभावित समय)", expanded=False):
+                    st.caption("यदि आपको संदेह है कि घड़ी या अस्पताल रिकॉर्ड 3 से 5 मिनट आगे-पीछे दर्ज हुआ था, तो नीचे दिए गए वैकल्पिक समय भी कुन्द व तत्व दोनों की कसौटी पर शत-प्रतिशत शुद्ध हैं:")
+                    for idx, alt_c in enumerate(other_candidates):
+                        st.markdown(f"""
+                        <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(240,192,90,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-weight: 800; color: #f0c05a; font-size: 1.1rem;">विकल्प {idx+2}: {alt_c['time_str']} ({alt_c['offset_desc']})</div>
+                                <div style="color: #34d399; font-weight: 700; font-size: 0.85rem;">स्कोर: {alt_c['score']}%</div>
+                            </div>
+                            <div style="font-size: 0.86rem; color: #cbd5e1; margin-top: 6px; line-height: 1.6;">
+                                {alt_c['full_reasoning']}
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        if st.button(f"यह वैकल्पिक समय ({alt_c['time_str']}) लागू करें", key=f"apply_alt_btr_{idx}"):
+                            cur_p = st.session_state.get('loaded_profile', dict(birth))
+                            cur_p['tob'] = alt_c['time_str']
+                            if is_logged_in_now:
+                                auth_vault.save_kundli(u["id"], cur_p)
+                            _load_kundli_into_session(cur_p, user_id=u["id"] if is_logged_in_now else None)
+                            st.success(f"जन्म समय को शुद्ध कर '{alt_c['time_str']}' पर सेट कर दिया गया!")
+                            st.rerun()
 
         # -------------------------------------------------------------
         # LIFE EVENTS CORRELATION & VERIFICATION (जीवन की प्रमुख घटनाओं से समय शुद्धि)

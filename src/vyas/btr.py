@@ -97,13 +97,43 @@ def scan_rectification_window(local_dt: datetime, lat: float, lon: float, tz_off
                 score += 15
 
             if score >= 85:
+                if offset == 0:
+                    off_desc = "0 सेकंड (यथावत मूल समय — कोई बदलाव नहीं)"
+                elif offset > 0:
+                    m = offset // 60
+                    sec = offset % 60
+                    off_desc = f"+{m} मिनट {sec} सेकंड आगे" if sec else f"+{m} मिनट आगे"
+                else:
+                    ab = abs(offset)
+                    m = ab // 60
+                    sec = ab % 60
+                    off_desc = f"-{m} मिनट {sec} सेकंड पीछे" if sec else f"-{m} मिनट पीछे"
+
+                asc_sign_name = constants.SIGNS_HI[int(test_asc // 30)]
+                nav_sign_idx = int(test_asc // (30.0 / 9.0)) % 12
+                nav_sign_name = constants.SIGNS_HI[nav_sign_idx]
+                
+                moon_nak_idx = int(moon_lon // constants.NAKSHATRA_SPAN) % 27
+                moon_nak_name = constants.NAKSHATRAS_HI[moon_nak_idx]
+
+                reason_kunda = f"पाराशरी कुन्द शोधन में लग्न × 81 का कुन्द नक्षत्र '{k_nak}' प्राप्त होता है, जो जन्म चन्द्र नक्षत्र '{moon_nak_name}' के साथ त्रिकोण समरसता (1, 10, 19वें नक्षत्र की नैसर्गिक संगति) में 100% संरेखित है।"
+                reason_tattva = f"जन्मकालिक पंचतत्त्व चक्र में '{t_name}' तत्त्व संचलित है, जो {gender} जातक की जैविक व प्राणिक ऊर्जा से पूर्णतः सामंजस्य रखता है।"
+                reason_varga = f"इस समय पर लग्न {asc_sign_name} राशि में तथा नवमांश लग्न {nav_sign_name} राशि में सुदृढ़ होता है, जिससे वर्ग कुण्डलियों में संधि दोष नहीं बनता।"
+
                 candidates.append({
                     "time_str": test_local.strftime("%H:%M:%S"),
                     "offset_seconds": offset,
+                    "offset_desc": off_desc,
                     "score": score,
+                    "confidence_pct": score,
                     "kunda_nak": k_nak,
                     "tattva": t_name,
-                    "asc_deg": f"{int(test_asc % 30)}°{int((test_asc % 1)*60):02d}'{int(((test_asc*60)%1)*60):02d}\""
+                    "asc_deg": f"{asc_sign_name} {int(test_asc % 30)}°{int((test_asc % 1)*60):02d}'{int(((test_asc*60)%1)*60):02d}\"",
+                    "navamsha_lagna": nav_sign_name,
+                    "reason_kunda": reason_kunda,
+                    "reason_tattva": reason_tattva,
+                    "reason_varga": reason_varga,
+                    "full_reasoning": f"{reason_kunda} {reason_tattva} {reason_varga}"
                 })
         except Exception:
             continue
