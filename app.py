@@ -1606,20 +1606,36 @@ st.markdown("""
     #MainMenu, 
     header, 
     footer, 
+    footer:before,
+    footer:after,
     .stDeployButton, 
     [data-testid="stToolbar"], 
     [data-testid="stDecoration"], 
     [data-testid="stStatusWidget"],
     [data-testid="stHeader"],
+    [data-testid="stFooter"],
+    [data-testid="stBottom"],
+    [data-testid="stBottomBlockContainer"],
+    a[href*="streamlit.io"],
+    a[href*="streamlit.app"],
     .viewerBadge_container__r5tak,
-    [class*="viewerBadge_"],
-    [class*="manageApp_"],
-    [class*="StatusWidget_"] {
+    [class*="viewerBadge"],
+    [class*="manageApp"],
+    [class*="StatusWidget"],
+    [class*="floatingBadge"],
+    [class*="streamlit-badge"],
+    [class*="badgeContainer"],
+    [data-testid="manage-app-button"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        position: absolute !important;
+        top: -9999px !important;
+        left: -9999px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -6052,10 +6068,10 @@ st.session_state["_vyas_script_start"] = _time_mod.perf_counter()
 
 # Main Page Bottom Footer
 st.markdown("""
-<footer style="text-align: center; margin-top: 45px; padding: 22px 10px; border-top: 1px solid rgba(240, 192, 90, 0.22); font-size: 0.85rem; color: #94a3b8; line-height: 1.7;">
+<div class="vyas-custom-footer" style="text-align: center; margin-top: 45px; padding: 22px 10px; border-top: 1px solid rgba(240, 192, 90, 0.22); font-size: 0.85rem; color: #94a3b8; line-height: 1.7;">
     <b>VYAS ASTRA</b> &bull; Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence<br/>
     वेबसाइट निर्माण एवं शोधकर्ता: <b style="color: #f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; 
      <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
      <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
-</footer>
+</div>
 """, unsafe_allow_html=True)
