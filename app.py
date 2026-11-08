@@ -409,10 +409,17 @@ def lazy_sections(labels, key: str):
     )
     return [i == active for i in range(len(labels))]
 
+from PIL import Image as _PILImage
+
 _VYAS_LOGO_ICON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo_icon.png")
+try:
+    _VYAS_PAGE_ICON = _PILImage.open(_VYAS_LOGO_ICON) if os.path.exists(_VYAS_LOGO_ICON) else "🕉️"
+except Exception:
+    _VYAS_PAGE_ICON = "🕉️"
+
 st.set_page_config(
     page_title="VYAS • Vedic Yield Astrology Systems",
-    page_icon=_VYAS_LOGO_ICON if os.path.exists(_VYAS_LOGO_ICON) else "",
+    page_icon=_VYAS_PAGE_ICON,
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -1583,6 +1590,26 @@ st.markdown("""
         direction: ltr !important;
         -webkit-font-smoothing: antialiased !important;
         font-style: normal !important;
+    }
+
+    /* Complete Streamlit Branding Eradication & Clean Interface */
+    #MainMenu, 
+    header, 
+    footer, 
+    .stDeployButton, 
+    [data-testid="stToolbar"], 
+    [data-testid="stDecoration"], 
+    [data-testid="stStatusWidget"],
+    [data-testid="stHeader"],
+    .viewerBadge_container__r5tak,
+    [class*="viewerBadge_"],
+    [class*="manageApp_"],
+    [class*="StatusWidget_"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
