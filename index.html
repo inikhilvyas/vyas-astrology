@@ -7,10 +7,16 @@
     <meta name="description" content="Vedic Yield Astrology Systems (VYAS) - High-Precision Astronomical Intelligence, Kundli, Dasha, Gochar & BTR by Nikhil Vyas">
     <meta name="theme-color" content="#0b1220">
     
-    <!-- App Icons -->
+    <!-- PWA Manifest & App Icons -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VYAS ASTRA">
+
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="logo_icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/vyasbilawas-ctrl/vyas-astrology/master/logo_icon.png">
 
@@ -89,6 +95,49 @@
             50% { transform: scale(1.06); opacity: 1; }
             100% { transform: scale(0.96); opacity: 0.85; }
         }
+
+        /* Luxury Floating PWA Install Button */
+        #pwa-install-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9995;
+            background: linear-gradient(135deg, #1e293b 0%, #0b1220 100%);
+            color: #f0c05a;
+            border: 1.8px solid #f0c05a;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+        #pwa-install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 26px rgba(240, 192, 90, 0.35);
+            background: linear-gradient(135deg, #2d3b55 0%, #0f172a 100%);
+        }
+        #ios-modal {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1.5px solid #f0c05a;
+            color: #f8fafc;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: center;
+            max-width: 90%;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +145,20 @@
         <div class="om-symbol">🕉️</div>
         <div class="brand-title">VYAS ASTRA</div>
         <div class="brand-sub">वैदिक ज्योतिष अनुसंधान पोर्टल लोड हो रहा है...</div>
+    </div>
+
+    <!-- PWA Install Button -->
+    <button id="pwa-install-btn" title="ऐप को होम स्क्रीन पर इंस्टॉल करें">
+        <span style="font-size: 1.1rem;">📲</span>
+        <span>ऐप इंस्टॉल करें</span>
+    </button>
+
+    <!-- iOS Instructions Modal -->
+    <div id="ios-modal">
+        iPhone पर इंस्टॉल करने के लिए: नीचे शेयर (Share <b>⎋ / 📤</b>) दबाएं और <b>'Add to Home Screen'</b> चुनें।
+        <div style="margin-top: 8px;">
+            <button onclick="document.getElementById('ios-modal').style.display='none'" style="background:#f0c05a; color:#0b1220; border:none; padding:4px 14px; border-radius:6px; font-weight:700; cursor:pointer;">ठीक है</button>
+        </div>
     </div>
 
     <div id="frame-container">
@@ -106,5 +169,46 @@
             onload="setTimeout(() => { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 400); }, 700);"
         ></iframe>
     </div>
+
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+
+        // Handle PWA Install Prompt
+        let deferredPrompt = null;
+        const installBtn = document.getElementById('pwa-install-btn');
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            } else if (isIOS) {
+                document.getElementById('ios-modal').style.display = 'block';
+            } else {
+                // If already installed or Chrome desktop
+                alert('ऐप इंस्टॉल करने के लिए अपने ब्राउज़र के मेन्यू (तीन डॉट्स ⋮) में जाकर "Install App" या "Add to Home screen" चुनें।');
+            }
+        });
+
+        // Hide button if already in standalone app mode
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            installBtn.style.display = 'none';
+        }
+    </script>
 </body>
 </html>
