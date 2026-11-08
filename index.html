@@ -171,6 +171,20 @@
     </div>
 
     <script>
+        // Forward query params (OAuth codes, session tokens, etc.) into the Streamlit app
+        (function() {
+            try {
+                const search = window.location.search;
+                if (search) {
+                    const extra = search.startsWith('?') ? search.substring(1) : search;
+                    const iframe = document.getElementById('app-frame');
+                    if (iframe && extra) {
+                        iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&" + extra;
+                    }
+                }
+            } catch(e) {}
+        })();
+
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

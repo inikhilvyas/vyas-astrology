@@ -52,6 +52,8 @@ DEFAULT_REDIRECT_URI = "http://localhost:8501"
 REGISTERED_REDIRECT_URIS = frozenset({
     "http://localhost:8501",
     "https://vyas-astrology-111.streamlit.app",
+    "https://vyasastro.in",
+    "https://www.vyasastro.in",
 })
 
 
