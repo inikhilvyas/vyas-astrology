@@ -1616,8 +1616,7 @@ st.markdown("""
     [data-testid="stFooter"],
     [data-testid="stBottom"],
     [data-testid="stBottomBlockContainer"],
-    a[href*="streamlit.io"],
-    a[href*="streamlit.app"],
+    footer a[href*="streamlit"],
     .viewerBadge_container__r5tak,
     [class*="viewerBadge"],
     [class*="manageApp"],
@@ -1636,6 +1635,20 @@ st.markdown("""
         position: absolute !important;
         top: -9999px !important;
         left: -9999px !important;
+    }
+
+    /* Guarantee that st.link_button is ALWAYS visible and styled */
+    [data-testid="stLinkButton"],
+    [data-testid="stLinkButton"] a {
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        height: auto !important;
+        min-height: auto !important;
+        pointer-events: auto !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -1712,7 +1725,7 @@ if st.query_params.get("uid"):
     st.query_params.clear()
 
 u = st.session_state["user"]
-is_logged_in_now = (u.get("email") != "seeker@vyasastro.com")
+is_logged_in_now = (u.get("email") != "seeker@vyasastro.com") or st.session_state.get("guest_mode", False)
 is_hi = "हिन्दी" in st.session_state.get('main_ui_lang_radio', 'हिन्दी (Hindi)')
 
 # Auto-load the default or last saved kundli into loaded_profile on fresh session
@@ -1822,10 +1835,18 @@ if not is_logged_in_now:
         _google_login_url = google_drive_sync.get_google_auth_url(include_drive=False)
         if _google_login_url:
             st.markdown(
-                "<div style='text-align:center;color:#64748b;font-size:0.78rem;margin:12px 0 6px;'>— या —</div>",
+                "<div style='text-align:center;color:#94a3b8;font-size:0.82rem;margin:14px 0 8px;'>— या Google से 1-क्लिक में —</div>",
                 unsafe_allow_html=True,
             )
-            st.link_button("Google से साइन इन करें", _google_login_url, use_container_width=True)
+            st.link_button("🌐 Google से साइन इन करें", _google_login_url, use_container_width=True)
+
+        st.markdown(
+            "<div style='text-align:center;color:#94a3b8;font-size:0.82rem;margin:14px 0 8px;'>— अथवा —</div>",
+            unsafe_allow_html=True,
+        )
+        if st.button("✨ बिना लॉगिन सीधे प्रवेश करें (अतिथि मोड)", use_container_width=True, type="secondary"):
+            st.session_state["guest_mode"] = True
+            st.rerun()
 
     with st.expander("साइन-इन में समस्या? / Sign-in help", expanded=False):
         _diag = google_drive_sync.oauth_diagnostics()

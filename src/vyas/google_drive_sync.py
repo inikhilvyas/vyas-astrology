@@ -110,6 +110,12 @@ def detect_runtime_redirect_uri() -> str:
     except Exception:
         pass
 
+    # If running on cloud, prioritize the custom domain https://vyasastro.in
+    # so Google OAuth returns to the white-label domain instead of exposing streamlit.app
+    if "https://vyasastro.in" in REGISTERED_REDIRECT_URIS:
+        if any("streamlit.app" in c or "vyasastro.in" in c for c in candidates):
+            return "https://vyasastro.in"
+
     for cand in candidates:
         cand = cand.rstrip("/")
         if cand in REGISTERED_REDIRECT_URIS:
