@@ -250,6 +250,16 @@ def _safe_panchang_time_fmt(val):
     return str(val)
 
 
+def _safe_selectbox_guard(key: str, options: list, default_idx: int = 0) -> int:
+    """Guards against StreamlitValueOutOfRangeError by pruning stale session state and clamping index."""
+    if not options:
+        return 0
+    safe_idx = max(0, min(int(default_idx), len(options) - 1))
+    if key in st.session_state and st.session_state[key] not in options:
+        st.session_state.pop(key, None)
+    return safe_idx
+
+
 def _load_kundli_into_session(chosen_k, make_default=False, user_id=None):
     """Loads a saved kundli profile into active session and marks data ready without widget conflicts."""
     if not chosen_k:
@@ -2198,15 +2208,29 @@ with st.sidebar:
             """, unsafe_allow_html=True)
 
         if saved_list_sb:
-            sb_k_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')[:12]})": k for k in saved_list_sb}
+            sb_k_options = []
+            sb_k_map = {}
+            for k in saved_list_sb:
+                lbl = f"{k.get('name', 'जातक')} ({k.get('dob', '')} - {str(k.get('city', ''))[:12]}) #{k.get('id', '')}"
+                sb_k_options.append(lbl)
+                sb_k_map[lbl] = k
+
             cur_k_id = cur_lp_sb.get('id') if cur_lp_sb else None
             cur_k_idx = 0
-            for idx, k in enumerate(saved_list_sb):
-                if k.get('id') == cur_k_id:
+            for idx, lbl in enumerate(sb_k_options):
+                if sb_k_map[lbl].get('id') == cur_k_id:
                     cur_k_idx = idx
                     break
-            sb_sel_lbl = st.selectbox("कुण्डली चुनें:", list(sb_k_map.keys()), index=cur_k_idx, key="sb_vault_kundli_select", label_visibility="collapsed")
-            sb_sel_k = sb_k_map[sb_sel_lbl]
+
+            safe_idx = _safe_selectbox_guard("sb_vault_kundli_select", sb_k_options, cur_k_idx)
+            sb_sel_lbl = st.selectbox(
+                "कुण्डली चुनें:",
+                sb_k_options,
+                index=safe_idx,
+                key="sb_vault_kundli_select",
+                label_visibility="collapsed"
+            )
+            sb_sel_k = sb_k_map.get(sb_sel_lbl, saved_list_sb[0])
             
             c_sb1, c_sb2 = st.columns(2)
             with c_sb1:
@@ -2482,15 +2506,28 @@ if is_logged_in_now and active_lp:
     # If user has multiple saved kundlis, show a quick switch drawer
     if len(saved_list) >= 1:
         with st.expander(f" कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
-            k_disp_map = {f"{k['name']} ({k.get('dob')} - {k.get('city', '')})": k for k in saved_list}
-            cur_id = active_lp.get('id')
+            k_options = []
+            k_disp_map = {}
+            for k in saved_list:
+                lbl = f"{k.get('name', 'जातक')} ({k.get('dob', '')} - {str(k.get('city', ''))}) #{k.get('id', '')}"
+                k_options.append(lbl)
+                k_disp_map[lbl] = k
+
+            cur_id = active_lp.get('id') if active_lp else None
             def_idx = 0
-            for idx, k in enumerate(saved_list):
-                if k.get('id') == cur_id:
+            for idx, lbl in enumerate(k_options):
+                if k_disp_map[lbl].get('id') == cur_id:
                     def_idx = idx
                     break
-            chosen_label = st.selectbox("सुरक्षित कुण्डली चुनें:", list(k_disp_map.keys()), index=def_idx, key="active_k_selector")
-            chosen_k = k_disp_map[chosen_label]
+
+            safe_k_idx = _safe_selectbox_guard("active_k_selector", k_options, def_idx)
+            chosen_label = st.selectbox(
+                "सुरक्षित कुण्डली चुनें:",
+                k_options,
+                index=safe_k_idx,
+                key="active_k_selector"
+            )
+            chosen_k = k_disp_map.get(chosen_label, saved_list[0])
 
             col_k1, col_k2, col_k3 = st.columns([1.2, 1, 1.2])
             with col_k1:
@@ -2938,15 +2975,28 @@ if st.session_state.get('data_generated'):
 
         if is_logged_in_now and len(saved_list) > 1:
             with st.expander(f"कुण्डली बदलें ({len(saved_list)})", expanded=False):
-                sb_k_map = {f"{k['name']} ({k.get('dob')})": k for k in saved_list}
+                sb_sw_options = []
+                sb_sw_map = {}
+                for k in saved_list:
+                    lbl = f"{k.get('name', 'जातक')} ({k.get('dob', '')}) #{k.get('id', '')}"
+                    sb_sw_options.append(lbl)
+                    sb_sw_map[lbl] = k
+
                 cur_k_id = active_lp.get('id') if active_lp else None
                 cur_k_idx = 0
-                for idx, k in enumerate(saved_list):
-                    if k.get('id') == cur_k_id:
+                for idx, lbl in enumerate(sb_sw_options):
+                    if sb_sw_map[lbl].get('id') == cur_k_id:
                         cur_k_idx = idx
                         break
-                sb_sel_lbl = st.selectbox("कुण्डली चुनें:", list(sb_k_map.keys()), index=cur_k_idx, key="sb_kundli_switcher")
-                sb_sel_k = sb_k_map[sb_sel_lbl]
+
+                safe_sw_idx = _safe_selectbox_guard("sb_kundli_switcher", sb_sw_options, cur_k_idx)
+                sb_sel_lbl = st.selectbox(
+                    "कुण्डली चुनें:",
+                    sb_sw_options,
+                    index=safe_sw_idx,
+                    key="sb_kundli_switcher"
+                )
+                sb_sel_k = sb_sw_map.get(sb_sel_lbl, saved_list[0])
                 if sb_sel_k.get('id') != cur_k_id:
                     if st.button("खोलें", key="sb_switch_btn", use_container_width=True):
                         _load_kundli_into_session(sb_sel_k, user_id=u["id"])
@@ -3002,6 +3052,7 @@ if st.session_state.get('data_generated'):
     def _sync_suite_from_main():
         st.session_state["domain_suite_sidebar_radio"] = st.session_state["main_screen_suite_select"]
 
+    safe_suite_idx = _safe_selectbox_guard("main_screen_suite_select", suite_options, cur_suite_idx)
     st.markdown(f"""
     <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
         <span style="font-size: 0.86rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;">
@@ -3015,7 +3066,7 @@ if st.session_state.get('data_generated'):
     st.selectbox(
         "मुख्य अनुसंधान प्रभाग चुनें (Select Domain Suite):",
         suite_options,
-        index=cur_suite_idx,
+        index=safe_suite_idx,
         key="main_screen_suite_select",
         on_change=_sync_suite_from_main,
         label_visibility="collapsed"
