@@ -2385,12 +2385,10 @@ except Exception:
 
 if _top_p_festival and ("दीपावली" in _top_p_festival or "Diwali" in _top_p_festival or "महालक्ष्मी" in _top_p_festival):
     # Fire celebratory in-app flash toast
-    if not st.session_state.get('_diwali_toast_flashed'):
-        try:
-            st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
-        except Exception:
-            pass
-        st.session_state['_diwali_toast_flashed'] = True
+    try:
+        st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
+    except Exception:
+        pass
 
     _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
     _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
@@ -3214,6 +3212,24 @@ if st.session_state.get('data_generated'):
         }
         shool_dir, shool_rem = disha_map.get(wd, ("पूर्व", "ईश्वर स्मरण कर प्रस्थान करें"))
 
+        _pch_box_bg = "#f1f5f9" if _is_light else "rgba(15, 23, 42, 0.65)"
+        _pch_box_border = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.06)"
+        _pch_lbl_col = "#475569" if _is_light else "#94a3b8"
+        _pch_val_col = "#0f172a" if _is_light else "#f8fafc"
+        _pch_title_col = TH_GOLD
+        _pch_divider = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.08)"
+        # Panchang muhurta time span colors — evaluated Python ternary (not f-string literals)
+        _pch_abhi_col = "#2563eb" if _is_light else "#38bdf8"
+        _pch_brahma_col = "#16a34a" if _is_light else "#4ade80"
+        _pch_amrit_col = "#059669" if _is_light else "#34d399"
+        _pch_rahu_col = "#dc2626" if _is_light else "#f87171"
+        _pch_hora_col = "#16a34a" if _is_light else "#4ade80"
+        # tithi_html uses these tokens too
+        _pch_tithi_main = "#0f172a" if _is_light else "#f8fafc"
+        _pch_tithi_muted = "#475569" if _is_light else "#94a3b8"
+        _pch_tithi_next = "#1d4ed8" if _is_light else "#38bdf8"
+        _pch_tithi_next2 = "#2563eb" if _is_light else "#93c5fd"
+
         def _safe_panchang_time_fmt(val):
             if not val:
                 return ""
@@ -3274,47 +3290,41 @@ if st.session_state.get('data_generated'):
                 shubh_horas_summary.append(f"<b>{h['lord_hi']}</b> ({h['start']}-{h['end']})")
         shubh_horas_summary_str = " | ".join(shubh_horas_summary) if shubh_horas_summary else "गुरु, शुक्र, बुध, चन्द्र होरा"
 
-        _pch_box_bg = "#f1f5f9" if _is_light else "rgba(15, 23, 42, 0.65)"
-        _pch_box_border = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.06)"
-        _pch_lbl_col = "#475569" if _is_light else "#94a3b8"
-        _pch_val_col = "#0f172a" if _is_light else "#f8fafc"
-        _pch_title_col = TH_GOLD
-        _pch_divider = "1px solid #cbd5e1" if _is_light else "1px solid rgba(255,255,255,0.08)"
-        # Panchang muhurta time span colors — evaluated Python ternary (not f-string literals)
-        _pch_abhi_col = "#2563eb" if _is_light else "#38bdf8"
-        _pch_brahma_col = "#16a34a" if _is_light else "#4ade80"
-        _pch_amrit_col = "#059669" if _is_light else "#34d399"
-        _pch_rahu_col = "#dc2626" if _is_light else "#f87171"
-        _pch_hora_col = "#16a34a" if _is_light else "#4ade80"
-        # tithi_html uses these tokens too
-        _pch_tithi_main = "#0f172a" if _is_light else "#f8fafc"
-        _pch_tithi_muted = "#475569" if _is_light else "#94a3b8"
-        _pch_tithi_next = "#1d4ed8" if _is_light else "#38bdf8"
-        _pch_tithi_next2 = "#2563eb" if _is_light else "#93c5fd"
-
         _today_festival = getattr(daily_panchang, 'festival', '') if daily_panchang else ''
         _festival_html = ""
         if _today_festival:
-            _fest_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(220, 38, 38, 0.12) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef2f2 100%)"
-            _fest_border = "1.8px solid #f59e0b" if not _is_light else "1.8px solid #d97706"
+            _fest_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(220, 38, 38, 0.14) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef2f2 100%)"
+            _fest_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
             _fest_title_col = "#fbbf24" if not _is_light else "#b45309"
             _fest_txt_col = "#f8fafc" if not _is_light else "#0f172a"
             _fest_sub_col = "#cbd5e1" if not _is_light else "#334155"
+
+            _extra_diwali_muhurta = ""
+            if "दीपावली" in _today_festival or "Diwali" in _today_festival or "महालक्ष्मी" in _today_festival:
+                _extra_diwali_muhurta = f"""
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(245, 158, 11, 0.4); display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.88rem;">
+                    <div><b style="color: {_fest_title_col};">प्रदोष काल मुहूर्त:</b> सायं 05:51 से 08:25 PM</div>
+                    <div><b style="color: #10b981;">स्थिर वृषभ लग्न (महालक्ष्मी पूजन):</b> सायं 06:15 से 08:12 PM</div>
+                    <div><b style="color: {_fest_title_col};">महानिशीथ काल (सिंह लग्न):</b> रात्रि 11:42 से 12:35 AM</div>
+                </div>
+                """
+
             _festival_html = f"""
             <div style="background: {_fest_bg}; border: {_fest_border}; border-radius: 12px; padding: 14px 18px; margin-top: 14px; margin-bottom: 6px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.4rem; line-height: 1;">🪔</span>
+                        <span style="font-size: 1.6rem; line-height: 1;">🪔</span>
                         <div>
                             <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800; color: {_fest_title_col};">आज का प्रमुख पर्व / पावन त्योहार (Today's Auspicious Festival)</div>
-                            <div style="font-size: 1.15rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_today_festival}</div>
+                            <div style="font-size: 1.18rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_today_festival}</div>
                         </div>
                     </div>
-                    <span style="background: rgba(245, 158, 11, 0.2); color: {_fest_title_col}; border: 1px solid {_fest_border}; font-size: 0.82rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">शुभ उत्सव</span>
+                    <span style="background: rgba(245, 158, 11, 0.25); color: {_fest_title_col}; border: 1.5px solid {_fest_border}; font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;">पावन दीपोत्सव</span>
                 </div>
-                <div style="font-size: 0.88rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
-                    इस पावन दिवस पर ईश्वरीय ऊर्जा एवं ग्रहों की स्थिति विशेष फलदायी है। अपने इष्ट देव का ध्यान कर दीप प्रज्वलित करें एवं परोपकार करें।
+                <div style="font-size: 0.90rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
+                    इस पावन दिवस पर ईश्वरीय ऊर्जा एवं ग्रहों की स्थिति विशेष फलदायी है। अपने इष्ट देव व माँ महालक्ष्मी का ध्यान कर दीप प्रज्वलित करें एवं परोपकार करें।
                 </div>
+                {_extra_diwali_muhurta}
             </div>
             """
 
