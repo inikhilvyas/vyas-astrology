@@ -1635,6 +1635,7 @@ if st.query_params.get("uid"):
 
 u = st.session_state["user"]
 is_logged_in_now = (u.get("email") != "seeker@vyasastro.com")
+is_hi = "हिन्दी" in st.session_state.get('main_ui_lang_radio', 'हिन्दी (Hindi)')
 
 # Auto-load the default or last saved kundli into loaded_profile on fresh session
 if is_logged_in_now:
@@ -1903,10 +1904,10 @@ with st.sidebar:
                 try {
                     const perm = await N.requestPermission();
                     if (perm === "granted") {
-                        new N("VYAS • दैनिक राशिफल व पंचांग अलर्ट", {
+                        new N("VYAS • शुभ दीपावली एवं महालक्ष्मी पूजन", {
                             body: isTest 
-                                ? "परीक्षण सफल! VYAS दैनिक पंचांग, शुभ मुहूर्त एवं व्यक्तिगत राशिफल अलर्ट सक्रिय हो गया है।" 
-                                : "नमस्ते! आज का पंचांग, शुभ अभिजीत मुहूर्त व आपकी चालू दशा का व्यक्तिगत राशिफल तैयार है।",
+                                ? "परीक्षण सफल! VYAS पूर्णतः सक्रिय है। शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त (स्थिर वृषभ लग्न): सायं 06:15 से 08:12 PM तक।" 
+                                : "शुभ दीपावली! आज का पंचांग व महालक्ष्मी पूजन मुहूर्त (सायं 06:15 - 08:12 PM) एवं चालू दशा का व्यक्तिगत राशिफल तैयार है।",
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
                         });
                     }
@@ -1919,6 +1920,18 @@ with st.sidebar:
             btn.addEventListener('click', () => requestAndNotify(false));
             testBtn.addEventListener('click', () => requestAndNotify(true));
             updateStatus();
+
+            // Auto flash browser notification once per session if already granted
+            try {
+                const autoN = getNotifAPI();
+                if (autoN && autoN.permission === "granted" && !sessionStorage.getItem('vyas_diwali_notif_fired')) {
+                    new autoN("VYAS • शुभ दीपावली एवं महालक्ष्मी पूजन", {
+                        body: "दीपावली महापर्व की हार्दिक शुभकामनाएँ! महालक्ष्मी पूजन का शुभ मुहूर्त (स्थिर वृषभ लग्न): सायं 06:15 से 08:12 PM तक।",
+                        icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
+                    });
+                    sessionStorage.setItem('vyas_diwali_notif_fired', '1');
+                }
+            } catch(e) {}
         </script>
         """, height=140)
 
@@ -2356,6 +2369,77 @@ if is_logged_in_now and active_lp:
                     auth_vault.set_default_kundli(u["id"], chosen_k["id"])
                     st.success(f"'{chosen_k['name']}' को प्राथमिक डिफ़ॉल्ट कुण्डली सेट किया गया!")
                     st.rerun()
+
+# ---------------- CELEBRATORY FLASH FESTIVAL BANNER & TOAST ----------------
+_top_p_festival = ""
+try:
+    _top_quick_panchang = vyas_panchang.compute(
+        datetime.now().date(),
+        float(active_lp.get('lat', 28.6139)) if active_lp else 28.6139,
+        float(active_lp.get('lon', 77.2090)) if active_lp else 77.2090,
+        float(active_lp.get('tz', 5.5)) if active_lp else 5.5
+    )
+    _top_p_festival = getattr(_top_quick_panchang, 'festival', '') or ''
+except Exception:
+    _top_p_festival = ""
+
+if _top_p_festival and ("दीपावली" in _top_p_festival or "Diwali" in _top_p_festival or "महालक्ष्मी" in _top_p_festival):
+    # Fire celebratory in-app flash toast
+    if not st.session_state.get('_diwali_toast_flashed'):
+        try:
+            st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
+        except Exception:
+            pass
+        st.session_state['_diwali_toast_flashed'] = True
+
+    _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
+    _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
+    _fl_title_c = "#fbbf24" if not _is_light else "#b45309"
+    _fl_txt_c = "#f8fafc" if not _is_light else "#0f172a"
+    _fl_sub_c = "#cbd5e1" if not _is_light else "#334155"
+    _fl_box_bg = "rgba(0, 0, 0, 0.28)" if not _is_light else "#ffffff"
+    _fl_box_border = "1px solid rgba(245, 158, 11, 0.35)" if not _is_light else "1px solid rgba(217, 119, 6, 0.35)"
+
+    st.markdown(f"""
+    <div style="background: {_fl_card_bg}; border: {_fl_border}; border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem; line-height: 1;">🪔</span>
+                <div>
+                    <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_fl_title_c};">
+                        {'दीपावली महापर्व एवं श्री महालक्ष्मी पूजन' if is_hi else 'Deepawali & Shri Mahalakshmi Pujan'}
+                    </div>
+                    <div style="font-size: 1.45rem; font-weight: 900; color: {_fl_txt_c}; font-family: var(--font-yatra); margin-top: 2px;">
+                        {'दीपोत्सव की हार्दिक शुभकामनाएँ!' if is_hi else 'Happy Deepawali & Prosperity Blessings!'}
+                    </div>
+                </div>
+            </div>
+            <span style="background: rgba(245, 158, 11, 0.25); color: {_fl_title_c}; border: 1.5px solid {_fl_title_c}; font-size: 0.88rem; font-weight: 800; padding: 5px 14px; border-radius: 999px;">
+                {'कार्तिक कृष्ण अमावस्या • संवत 2083' if is_hi else 'Kartika Krishna Amavasya • Samvat 2083'}
+            </span>
+        </div>
+        <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'1. प्रदोष काल मुहूर्त (सर्वोत्तम)' if is_hi else '1. Pradosha Kaal Muhurta'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">05:51 PM – 08:25 PM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'सूर्यास्त के उपरांत गृहस्थ महालक्ष्मी पूजन हेतु श्रेष्ठ' if is_hi else 'Auspicious post-sunset window for household Lakshmi puja'}</div>
+            </div>
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #10b981;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #10b981; text-transform: uppercase;">{'2. स्थिर वृषभ लग्न (महालक्ष्मी पूजन)' if is_hi else '2. Sthir Vrishabha Lagna'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">06:15 PM – 08:12 PM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'स्थिर लग्न में पूजन से धन, ऐश्वर्य व कीर्ति स्थायी रहती है' if is_hi else 'Fixed ascendant brings perennial wealth & stability'}</div>
+            </div>
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'3. महानिशीथ काल (सिंह लग्न / साधना)' if is_hi else '3. Mahanishitha Kaal (Simha Lagna)'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">11:42 PM – 12:35 AM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'श्री सूक्त, कनकधारा, बहीखाता एवं कुबेर तांत्रिक साधना' if is_hi else 'Shri Suktam, Kanakadhara & Kuber ledger sadhana'}</div>
+            </div>
+        </div>
+        <div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
+            <b>{'शुभ चौघड़िया मुहूर्त:' if is_hi else 'Shubh Choghadiya:'}</b> {'सायं 05:51 से 07:28 PM (शुभ) | रात्रि 08:25 से 10:18 PM (अमृत) |' if is_hi else 'Evening 05:51 - 07:28 PM (Shubh) | Night 08:25 - 10:18 PM (Amrit) |'} <b>{'पूजन मंत्र:' if is_hi else 'Mantra:'}</b> <i>"ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः"</i>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # If no active profile is loaded but user has saved kundlis, show a 1-click open prompt
 if is_logged_in_now and not active_lp and saved_list:
