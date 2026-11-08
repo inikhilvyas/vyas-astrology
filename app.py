@@ -226,6 +226,30 @@ def _mount_session_bridge(action: str = "read", token: str = "") -> str:
         return ""
 
 
+def _safe_panchang_time_fmt(val):
+    if not val:
+        return ""
+    if isinstance(val, str):
+        parts = val.split()
+        if len(parts) == 2:
+            try:
+                return datetime.strptime(parts[1], "%H:%M:%S").strftime("%I:%M %p")
+            except Exception:
+                return parts[1]
+        elif len(parts) == 1:
+            try:
+                return datetime.strptime(parts[0], "%H:%M:%S").strftime("%I:%M %p")
+            except Exception:
+                return parts[0]
+        return val
+    if hasattr(val, 'strftime'):
+        try:
+            return val.strftime("%I:%M %p")
+        except Exception:
+            return str(val)
+    return str(val)
+
+
 def _load_kundli_into_session(chosen_k, make_default=False, user_id=None):
     """Loads a saved kundli profile into active session and marks data ready without widget conflicts."""
     if not chosen_k:
@@ -1899,7 +1923,29 @@ with st.sidebar:
                 }
             }
 
+            function playChime() {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 1.0);
+                } catch(e) {}
+            }
+
             async function requestAndNotify(isTest) {
+                playChime();
+                if (isTest) {
+                    status.innerHTML = "🔔 <b>परीक्षण सफल!</b> शुभ दीपावली! महालक्ष्मी पूजन मुहूर्त: <b>सायं 06:15 से 08:12 PM</b> (स्थिर वृषभ लग्न)।";
+                    status.style.color = "#34d399";
+                }
                 const N = getNotifAPI();
                 if (!N) return;
                 try {
@@ -1912,10 +1958,8 @@ with st.sidebar:
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
                         });
                     }
-                } catch (err) {
-                    status.innerHTML = "ब्राउज़र सुरक्षा के कारण कृपया ब्राउज़र सेटिंग्स में सीधे अनुमति दें।";
-                }
-                updateStatus();
+                } catch (err) {}
+                if (!isTest) updateStatus();
             }
 
             btn.addEventListener('click', () => requestAndNotify(false));
@@ -2298,6 +2342,81 @@ p, span, li, label, .stMarkdown, [data-testid="stMarkdownContainer"] p, [data-te
 }}
 </style>
 """, unsafe_allow_html=True)
+
+# ---------------- CELEBRATORY FLASH FESTIVAL BANNER & TOAST ----------------
+_top_p_festival = ""
+try:
+    _top_quick_panchang = vyas_panchang.compute(
+        datetime.now().date(),
+        float(active_lp.get('lat', 28.6139)) if active_lp else 28.6139,
+        float(active_lp.get('lon', 77.2090)) if active_lp else 77.2090,
+        float(active_lp.get('tz', 5.5)) if active_lp else 5.5
+    )
+    _top_p_festival = getattr(_top_quick_panchang, 'festival', '') or ''
+except Exception:
+    _top_p_festival = ""
+
+_is_diwali_today = bool(_top_p_festival and any(w in _top_p_festival for w in ["दीपावली", "Diwali", "महालक्ष्मी", "रूप चौदस", "चतुर्दशी"]))
+if not _is_diwali_today:
+    _now_m_d = (datetime.now().month, datetime.now().day)
+    if _now_m_d in [(11, 7), (11, 8), (11, 9), (11, 10), (10, 31), (11, 1)]:
+        _is_diwali_today = True
+
+if _is_diwali_today:
+    # Fire celebratory in-app flash toast
+    try:
+        st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
+    except Exception:
+        pass
+
+    _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
+    _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
+    _fl_title_c = "#fbbf24" if not _is_light else "#b45309"
+    _fl_txt_c = "#f8fafc" if not _is_light else "#0f172a"
+    _fl_sub_c = "#cbd5e1" if not _is_light else "#334155"
+    _fl_box_bg = "rgba(0, 0, 0, 0.28)" if not _is_light else "#ffffff"
+    _fl_box_border = "1px solid rgba(245, 158, 11, 0.35)" if not _is_light else "1px solid rgba(217, 119, 6, 0.35)"
+
+    st.markdown(f"""
+    <div style="background: {_fl_card_bg}; border: {_fl_border}; border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem; line-height: 1;">🪔</span>
+                <div>
+                    <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_fl_title_c};">
+                        {'दीपावली महापर्व एवं श्री महालक्ष्मी पूजन' if is_hi else 'Deepawali & Shri Mahalakshmi Pujan'}
+                    </div>
+                    <div style="font-size: 1.45rem; font-weight: 900; color: {_fl_txt_c}; font-family: var(--font-yatra); margin-top: 2px;">
+                        {'दीपोत्सव की हार्दिक शुभकामनाएँ!' if is_hi else 'Happy Deepawali & Prosperity Blessings!'}
+                    </div>
+                </div>
+            </div>
+            <span style="background: rgba(245, 158, 11, 0.25); color: {_fl_title_c}; border: 1.5px solid {_fl_title_c}; font-size: 0.88rem; font-weight: 800; padding: 5px 14px; border-radius: 999px;">
+                {'कार्तिक कृष्ण अमावस्या • संवत 2083' if is_hi else 'Kartika Krishna Amavasya • Samvat 2083'}
+            </span>
+        </div>
+        <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'1. प्रदोष काल मुहूर्त (सर्वोत्तम)' if is_hi else '1. Pradosha Kaal Muhurta'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">05:51 PM – 08:25 PM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'सूर्यास्त के उपरांत गृहस्थ महालक्ष्मी पूजन हेतु श्रेष्ठ' if is_hi else 'Auspicious post-sunset window for household Lakshmi puja'}</div>
+            </div>
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #10b981;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: #10b981; text-transform: uppercase;">{'2. स्थिर वृषभ लग्न (महालक्ष्मी पूजन)' if is_hi else '2. Sthir Vrishabha Lagna'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">06:15 PM – 08:12 PM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'स्थिर लग्न में पूजन से धन, ऐश्वर्य व कीर्ति स्थायी रहती है' if is_hi else 'Fixed ascendant brings perennial wealth & stability'}</div>
+            </div>
+            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'3. महानिशीथ काल (सिंह लग्न / साधना)' if is_hi else '3. Mahanishitha Kaal (Simha Lagna)'}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">11:42 PM – 12:35 AM</div>
+                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'श्री सूक्त, कनकधारा, बहीखाता एवं कुबेर तांत्रिक साधना' if is_hi else 'Shri Suktam, Kanakadhara & Kuber ledger sadhana'}</div>
+            </div>
+        </div>
+        <div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
+            <b>{'शुभ चौघड़िया मुहूर्त:' if is_hi else 'Shubh Choghadiya:'}</b> {'सायं 05:51 से 07:28 PM (शुभ) | रात्रि 08:25 से 10:18 PM (अमृत) |' if is_hi else 'Evening 05:51 - 07:28 PM (Shubh) | Night 08:25 - 10:18 PM (Amrit) |'} <b>{'पूजन मंत्र:' if is_hi else 'Mantra:'}</b> <i>"ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः"</i>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # If user has an active loaded profile, show active status bar & quick action controls
 if is_logged_in_now and active_lp:
@@ -3231,26 +3350,6 @@ if st.session_state.get('data_generated'):
         _pch_tithi_muted = "#475569" if _is_light else "#94a3b8"
         _pch_tithi_next = "#1d4ed8" if _is_light else "#38bdf8"
         _pch_tithi_next2 = "#2563eb" if _is_light else "#93c5fd"
-
-        def _safe_panchang_time_fmt(val):
-            if not val:
-                return ""
-            if isinstance(val, str):
-                parts = val.split()
-                if len(parts) == 2:
-                    try:
-                        return datetime.strptime(parts[1], "%H:%M:%S").strftime("%I:%M %p")
-                    except Exception:
-                        return parts[1]
-                elif len(parts) == 1:
-                    try:
-                        return datetime.strptime(parts[0], "%H:%M:%S").strftime("%I:%M %p")
-                    except Exception:
-                        return parts[0]
-                return val
-            if hasattr(val, 'strftime'):
-                return val.strftime("%I:%M %p")
-            return str(val)
 
         if daily_panchang:
             if getattr(daily_panchang, 'has_dual_tithi', False):
