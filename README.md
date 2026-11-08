@@ -1,3 +1,15 @@
+---
+title: VYAS Astra
+emoji: 🕉️
+colorFrom: yellow
+colorTo: indigo
+sdk: streamlit
+sdk_version: 1.40.1
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # Vedic Yield Astrology Systems (VYAS)
 
 **Designed by:** Nikhil Vyas (MAJY)
