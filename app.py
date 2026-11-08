@@ -1851,7 +1851,7 @@ with st.sidebar:
             {'रोज़ाना सुबह 7:00 बजे आपके फ़ोन/ब्राउज़र पर आज का शुभ अभिजीत मुहूर्त, राहुकाल, नवतारा चक्र एवं चालू दशा का फलादेश प्राप्त करें।' if is_hi else 'Receive your personalised morning horoscope, Abhijit Muhurta, Rahu Kaal and running dasha at 7:00 AM daily.'}
         </div>
         """, unsafe_allow_html=True)
-        st.components.v1.html(f"""
+        st.components.v1.html("""
         <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
             <div style="display: flex; gap: 8px; flex-direction: column;">
                 <button id="notif-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
@@ -1869,52 +1869,52 @@ with st.sidebar:
             const status = document.getElementById('notif-status');
 
             function getNotifAPI() {
-                try {{
+                try {
                     if (window.parent && window.parent.Notification) return window.parent.Notification;
-                }} catch(e) {{}}
+                } catch(e) {}
                 if (typeof Notification !== 'undefined') return Notification;
                 return null;
             }
 
             function updateStatus() {
                 const N = getNotifAPI();
-                if (!N) {{
+                if (!N) {
                     status.innerHTML = "⚠️ इस ब्राउज़र में वेब नोटिफिकेशन समर्थित नहीं है (कृपया Chrome/Edge प्रयोग करें)।";
                     btn.disabled = true;
                     testBtn.disabled = true;
                     return;
-                }}
-                if (N.permission === "granted") {{
+                }
+                if (N.permission === "granted") {
                     status.innerHTML = "✅ दैनिक 7:00 AM राशिफल अलर्ट सक्रिय है!";
                     status.style.color = "#34d399";
                     btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily Active)";
                     btn.style.background = "linear-gradient(135deg, #059669, #10b981)";
-                }} else if (N.permission === "denied") {{
+                } else if (N.permission === "denied") {
                     status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र एड्रेस बार में 🔒 या सेटिंग्स पर टैप कर Notification को Allow करें।";
                     status.style.color = "#f87171";
-                }} else {{
+                } else {
                     status.innerHTML = "सूचना पाने हेतु ऊपर बटन दबाकर 'Allow' करें।";
-                }}
+                }
             }
 
-            async function requestAndNotify(isTest) {{
+            async function requestAndNotify(isTest) {
                 const N = getNotifAPI();
                 if (!N) return;
-                try {{
+                try {
                     const perm = await N.requestPermission();
-                    if (perm === "granted") {{
-                        new N("VYAS • दैनिक राशिफल व पंचांग अलर्ट", {{
+                    if (perm === "granted") {
+                        new N("VYAS • दैनिक राशिफल व पंचांग अलर्ट", {
                             body: isTest 
                                 ? "परीक्षण सफल! VYAS दैनिक पंचांग, शुभ मुहूर्त एवं व्यक्तिगत राशिफल अलर्ट सक्रिय हो गया है।" 
                                 : "नमस्ते! आज का पंचांग, शुभ अभिजीत मुहूर्त व आपकी चालू दशा का व्यक्तिगत राशिफल तैयार है।",
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
-                        }});
-                    }}
-                }} catch (err) {{
+                        });
+                    }
+                } catch (err) {
                     status.innerHTML = "ब्राउज़र सुरक्षा के कारण कृपया ब्राउज़र सेटिंग्स में सीधे अनुमति दें।";
-                }}
+                }
                 updateStatus();
-            }}
+            }
 
             btn.addEventListener('click', () => requestAndNotify(false));
             testBtn.addEventListener('click', () => requestAndNotify(true));
