@@ -96,6 +96,7 @@ from vyas.kp import (
     evaluate_kp_house_promises,
     evaluate_active_houses_by_dasha
 )
+from vyas import kp as vyas_kp
 from vyas.dasha import VimshottariDasha
 from vyas import ephem as vyas_ephem
 from vyas import panchang as vyas_panchang
@@ -2712,6 +2713,7 @@ if st.session_state.get('data_generated'):
     av_res = st.session_state['av_res']
     sav = av_res["sav"]
     cur_dasha = dasha_engine.get_running_dasha(datetime.now()) if hasattr(dasha_engine, 'get_running_dasha') else dasha_engine.get_dasha_at(datetime.now())
+    cur_dasha_str = cur_dasha.get("full_path", "Jupiter-Saturn") if isinstance(cur_dasha, dict) else str(cur_dasha)
 
     d1_houses = {h: [] for h in range(1, 13)}
     for h in range(1, 13):
@@ -4758,7 +4760,7 @@ if st.session_state.get('data_generated'):
 
             # KP 10 Core Life Event Promises via Cuspal Sub-Lords & Dasha Manifestation Timing
             st.markdown(f"#### {'केपी 10 प्रमुख जीवन घटना प्रॉमिस एवं दशा फलित काल' if is_hi else 'KP 10 Core Life Event Promises & Dasha Timing'}")
-            kp_promises = vyas_kp.get_kp_house_promises(kp_cusps, planet_significators)
+            kp_promises = evaluate_kp_house_promises(kp_cusps, planet_significators, chart.planets)
             col_p1, col_p2 = st.columns(2)
             for i, p_item in enumerate(kp_promises):
                 target_col = col_p1 if i % 2 == 0 else col_p2
