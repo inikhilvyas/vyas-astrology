@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>VYAS ASTRA • वैदिक ज्योतिष अनुसंधान एवं फलित विज्ञान</title>
     <meta name="description" content="Vedic Yield Astrology Systems (VYAS) - High-Precision Astronomical Intelligence, Kundli, Dasha, Gochar & BTR by Nikhil Vyas">
-    <meta name="theme-color" content="#e5a93c">
+    <meta name="theme-color" content="#0b1220">
     
     <!-- App Icons -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png">
 
-    <!-- Open Graph for WhatsApp, Facebook, Twitter Sharing -->
+    <!-- Open Graph for Social Sharing -->
     <meta property="og:title" content="VYAS ASTRA • वैदिक ज्योतिष अनुसंधान">
     <meta property="og:description" content="उच्च-सटीक खगोलीय गणना, कुण्डली, चालू दशा, तात्कालिक गोचर एवं संपूर्ण वैदिक फलित विश्लेषण">
     <meta property="og:image" content="https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png">
@@ -32,10 +32,19 @@
             background-color: #0b1220;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        #app-frame {
+        #frame-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             height: 100dvh;
+            overflow: hidden;
+        }
+        #app-frame {
+            width: 100%;
+            height: calc(100% + 46px);
+            height: calc(100dvh + 46px);
             border: none;
             display: block;
             background-color: #0b1220;
@@ -52,7 +61,7 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
         .om-symbol {
             font-size: 3.5rem;
@@ -86,11 +95,13 @@
         <div class="brand-sub">वैदिक ज्योतिष अनुसंधान पोर्टल लोड हो रहा है...</div>
     </div>
 
-    <iframe 
-        id="app-frame"
-        src="https://vyas-astrology-111.streamlit.app/?embed=true" 
-        allow="geolocation; microphone; camera; clipboard-write; clipboard-read; payment"
-        onload="setTimeout(() => { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }, 800);"
-    ></iframe>
+    <div id="frame-container">
+        <iframe 
+            id="app-frame"
+            src="https://vyas-astrology-111.streamlit.app/?embed=true" 
+            allow="geolocation; microphone; camera; clipboard-write; clipboard-read; payment"
+            onload="setTimeout(() => { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 400); }, 700);"
+        ></iframe>
+    </div>
 </body>
 </html>
