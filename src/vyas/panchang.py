@@ -207,9 +207,151 @@ class Panchang:
     nakshatra_timeline_hi: str = ""
     yoga_timeline_hi: str = ""
     karana_timeline_hi: str = ""
+    festival: str = ""
 
     def as_dict(self):
         return asdict(self)
+
+
+def get_hindu_festival(masa_amanta: str, tithi_index: int, paksha: str,
+                       vara_lord: str, masa_index: int) -> str:
+    """Return the festival name (Hindi + English) for the given Panchang parameters.
+
+    Parameters
+    ----------
+    masa_amanta : str
+        Amanta lunar month name, e.g. 'Kartika', 'Chaitra'.
+    tithi_index : int
+        0-based tithi number within the paksha (0 = Pratipada … 14 = Purnima/Amavasya).
+        For the 15th tithi of Shukla paksha use 14 → Purnima;
+        for the 15th tithi of Krishna paksha use 14 → Amavasya.
+    paksha : str
+        'Shukla' or 'Krishna'.
+    vara_lord : str
+        Weekday lord, e.g. 'Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'.
+    masa_index : int
+        0-based index into MASAS list (0 = Chaitra … 11 = Phalguna).
+
+    Returns
+    -------
+    str
+        Festival name string (Hindi + English) or empty string if none.
+    """
+    # Build a normalised lookup key: (masa_amanta, paksha, tithi_name)
+    # tithi_name is the standard English name from TITHIS list (index 0-14),
+    # with special handling for Purnima (Shukla-14) and Amavasya (Krishna-14).
+    if tithi_index < 0 or tithi_index > 14:
+        return ""
+
+    if tithi_index == 14:
+        tithi_name = "Purnima" if paksha == "Shukla" else "Amavasya"
+    else:
+        tithi_name = TITHIS[tithi_index]  # 0-based: Pratipada=0 … Chaturdashi=13
+
+    # -------------------------------------------------------------------------
+    # PRIMARY FESTIVAL TABLE  (masa, paksha, tithi) → festival string
+    # Supports both Amanta and Purnimanta naming variations across traditions.
+    # -------------------------------------------------------------------------
+    _FESTIVAL_TABLE: dict[tuple[str, str, str], str] = {
+        # --- Chaitra ---
+        ("Chaitra",    "Shukla",  "Pratipada"): "हिन्दू नव वर्ष / गुड़ी पड़वा (Hindu New Year / Gudi Padwa)",
+        ("Chaitra",    "Shukla",  "Tritiya"):   "मत्स्य जयन्ती / गणगौर (Gangaur Puja)",
+        ("Chaitra",    "Shukla",  "Navami"):    "श्री राम नवमी (Ram Navami)",
+        ("Chaitra",    "Shukla",  "Purnima"):   "हनुमान जयन्ती / चैत्र पूर्णिमा (Hanuman Jayanti)",
+        # --- Vaishakha ---
+        ("Vaishakha",  "Shukla",  "Tritiya"):   "अक्षय तृतीया / परशुराम जयन्ती (Akshaya Tritiya)",
+        ("Vaishakha",  "Shukla",  "Purnima"):   "बुद्ध पूर्णिमा (Buddha Purnima)",
+        # --- Jyeshtha ---
+        ("Jyeshtha",   "Krishna", "Amavasya"):  "वट सावित्री व्रत (Vat Savitri Vrat)",
+        ("Jyeshtha",   "Shukla",  "Dashami"):   "गंगा दशहरा (Ganga Dussehra)",
+        ("Jyeshtha",   "Shukla",  "Ekadashi"):  "निर्जला एकादशी (Nirjala Ekadashi)",
+        # --- Ashadha ---
+        ("Ashadha",    "Shukla",  "Dwitiya"):   "जगन्नाथ रथयात्रा (Jagannath Ratha Yatra)",
+        ("Ashadha",    "Shukla",  "Ekadashi"):  "देवशयनी एकादशी / आषाढ़ी एकादशी (Devshayani Ekadashi)",
+        ("Ashadha",    "Shukla",  "Purnima"):   "गुरु पूर्णिमा / व्यास पूर्णिमा (Guru Purnima)",
+        # --- Shravana ---
+        ("Shravana",   "Shukla",  "Tritiya"):   "हरियाली तीज (Hariyali Teej)",
+        ("Shravana",   "Shukla",  "Panchami"):  "नाग पंचमी (Nag Panchami)",
+        ("Shravana",   "Shukla",  "Purnima"):   "रक्षा बंधन / श्रावणी पूर्णिमा (Raksha Bandhan)",
+        # --- Bhadrapada / Shravana Krishna (Janmashtami) ---
+        ("Shravana",   "Krishna", "Ashtami"):   "श्री कृष्ण जन्माष्टमी (Janmashtami)",
+        ("Bhadrapada", "Krishna", "Ashtami"):   "श्री कृष्ण जन्माष्टमी (Janmashtami)",
+        ("Bhadrapada", "Shukla",  "Chaturthi"): "श्री गणेश चतुर्थी / विनायक चतुर्थी (Ganesh Chaturthi)",
+        ("Bhadrapada", "Shukla",  "Panchami"):  "ऋषि पंचमी (Rishi Panchami)",
+        ("Bhadrapada", "Shukla",  "Chaturdashi"): "अनन्त चतुर्दशी (Anant Chaturdashi)",
+        # --- Ashwin (Navratri & Dussehra) ---
+        ("Ashwin",     "Shukla",  "Pratipada"): "शारदीय नवरात्रि घटस्थापना (Navratri Ghatasthapana)",
+        ("Ashwin",     "Shukla",  "Saptami"):   "दुर्गा सप्तमी / कालरात्रि पूजा (Durga Saptami)",
+        ("Ashwin",     "Shukla",  "Ashtami"):   "दुर्गा अष्टमी / महाअष्टमी (Durga Maha Ashtami)",
+        ("Ashwin",     "Shukla",  "Navami"):    "महानवमी / आयुध पूजा (Maha Navami)",
+        ("Ashwin",     "Shukla",  "Dashami"):   "दशहरा / विजयादशमी (Dussehra / Vijayadashami)",
+        ("Ashwin",     "Shukla",  "Purnima"):   "शरद पूर्णिमा / कोजागरी (Sharad Purnima)",
+        # --- Deepawali Cycle (Covers both Ashwin Amanta & Kartika Purnimanta) ---
+        ("Ashwin",     "Krishna", "Trayodashi"):  "धनतेरस / धन्वन्तरि जयन्ती (Dhanteras)",
+        ("Kartika",    "Krishna", "Trayodashi"):  "धनतेरस / धन्वन्तरि जयन्ती (Dhanteras)",
+        ("Ashwin",     "Krishna", "Chaturdashi"): "नरक चतुर्दशी / रूप चौदस (Chhoti Diwali / Roop Chaudas)",
+        ("Kartika",    "Krishna", "Chaturdashi"): "नरक चतुर्दशी / रूप चौदस (Chhoti Diwali / Roop Chaudas)",
+        ("Ashwin",     "Krishna", "Amavasya"):    "दीपावली / दीपोत्सव / महालक्ष्मी पूजन (Diwali / Deepawali)",
+        ("Kartika",    "Krishna", "Amavasya"):    "दीपावली / दीपोत्सव / महालक्ष्मी पूजन (Diwali / Deepawali)",
+        ("Kartika",    "Shukla",  "Pratipada"):   "गोवर्धन पूजा / अन्नकूट (Govardhan Puja / Annakoot)",
+        ("Kartika",    "Shukla",  "Dwitiya"):     "भाई दूज / यम द्वितीया (Bhai Dooj)",
+        ("Kartika",    "Shukla",  "Shashthi"):    "छठ पूजा / सूर्य षष्ठी (Chhath Puja)",
+        ("Kartika",    "Shukla",  "Ekadashi"):    "देवउठनी एकादशी / तुलसी विवाह (Devutthana Ekadashi)",
+        ("Kartika",    "Shukla",  "Purnima"):     "कार्तिक पूर्णिमा / देव दीपावली (Kartika Purnima / Dev Deepawali)",
+        # --- Margashirsha & Pausha ---
+        ("Margashirsha", "Shukla", "Ekadashi"): "मोक्षदा एकादशी / गीता जयन्ती (Gita Jayanti / Mokshada Ekadashi)",
+        ("Pausha",     "Shukla",  "Purnima"):   "शाकम्भरी पूर्णिमा (Paush Purnima)",
+        # --- Magha ---
+        ("Magha",      "Shukla",  "Panchami"):  "बसंत पंचमी / सरस्वती पूजा (Basant Panchami)",
+        ("Magha",      "Krishna", "Chaturdashi"): "महाशिवरात्रि (Maha Shivratri)",
+        ("Phalguna",   "Krishna", "Chaturdashi"): "महाशिवरात्रि (Maha Shivratri)",
+        # --- Phalguna ---
+        ("Phalguna",   "Krishna", "Amavasya"):  "फाल्गुन दर्श अमावस्या (Phalguna Amavasya)",
+        ("Phalguna",   "Shukla",  "Chaturdashi"): "होलिका दहन (Holika Dahan)",
+        ("Phalguna",   "Shukla",  "Purnima"):     "होली / धुलेंडी (Holi Festival)",
+    }
+
+    key = (masa_amanta, paksha, tithi_name)
+    specific = _FESTIVAL_TABLE.get(key, "")
+    if specific:
+        return specific
+
+    # -------------------------------------------------------------------------
+    # UNIVERSAL RECURRING OBSERVANCES  (apply every month)
+    # -------------------------------------------------------------------------
+    # Ekadashi (11th tithi, both pakshas — index 10)
+    if tithi_index == 10:
+        return "एकादशी व्रत (Ekadashi Vrat)"
+
+    # Purnima (Shukla 15th — index 14, paksha Shukla)
+    if tithi_index == 14 and paksha == "Shukla":
+        return "पूर्णिमा (Purnima)"
+
+    # Amavasya (Krishna 15th — index 14, paksha Krishna)
+    if tithi_index == 14 and paksha == "Krishna":
+        return "अमावस्या (Amavasya)"
+
+    # Pradosha Vrat (Trayodashi of either paksha — index 12)
+    if tithi_index == 12:
+        return "प्रदोष व्रत (Pradosha Vrat)"
+
+    # -------------------------------------------------------------------------
+    # VARA-LORD BASED VRATS
+    # -------------------------------------------------------------------------
+    _VARA_VRAT: dict[str, str] = {
+        "Sun":     "रविवार व्रत / आदित्य व्रत (Ravivar Vrat)",
+        "Moon":    "सोमवार व्रत / सोमेश्वर व्रत (Somvar Vrat)",
+        "Mars":    "मंगलवार व्रत / हनुमान व्रत (Mangalvar Vrat)",
+        "Mercury": "बुधवार व्रत / बुध व्रत (Budhvar Vrat)",
+        "Jupiter": "गुरुवार व्रत / बृहस्पति व्रत (Guruvar Vrat)",
+        "Venus":   "शुक्रवार व्रत / लक्ष्मी व्रत (Shukravar Vrat)",
+        "Saturn":  "शनिवार व्रत / शनि व्रत (Shanivar Vrat)",
+    }
+    vara_vrat = _VARA_VRAT.get(vara_lord, "")
+    if vara_vrat:
+        return vara_vrat
+
+    return ""
 
 
 def get_muhurta_and_chaughadiya(date_local, lat: float = 28.6139, lon: float = 77.2090, tz_hours: float = 5.5) -> dict:
@@ -724,6 +866,27 @@ def compute(dt_local, lat: float, lon: float, tz_hours: float,
 
     muh_ch = get_muhurta_and_chaughadiya(dt_local, lat, lon, tz_hours)
 
+    # Detect Hindu festival: evaluate udaya tithi, instant tithi, and next tithi if dual.
+    fest_rise = get_hindu_festival(MASAS[masa], tn_rise, paksha_rise, VARA_LORD[wd], masa)
+    fest_inst = get_hindu_festival(MASAS[masa], tn, paksha, VARA_LORD[wd], masa)
+    fest_next = get_hindu_festival(MASAS[masa], tn_next, paksha_next, VARA_LORD[wd], masa) if has_dual_tithi else ""
+
+    # Priority to major celebrations (Deepawali, Dussehra, Shivratri, Janmashtami, Holi, etc.)
+    major_keywords = ["दीपावली", "दशहरा", "शिवरात्रि", "होली", "जन्माष्टमी", "गणेश चतुर्थी", "धनतेरस", "रामनवमी", "अक्षय तृतीया", "रक्षा बंधन"]
+    fest = fest_rise
+    # If instant or next tithi brings in Deepawali / major festival, highlight it prominently
+    for candidate in [fest_inst, fest_next]:
+        if candidate and any(k in candidate for k in major_keywords):
+            if fest and fest != candidate and not any(k in fest for k in major_keywords):
+                fest = f"{fest} • {candidate}"
+            elif not fest or not any(k in fest for k in major_keywords):
+                fest = candidate
+            elif "दीपावली" in candidate and "दीपावली" not in fest:
+                fest = f"{fest} • {candidate}"
+
+    if not fest:
+        fest = fest_inst or fest_rise
+
     return Panchang(
         vara=VARAS[wd], vara_lord=VARA_LORD[wd],
         tithi=f"{paksha} {tithi}", tithi_hi=tithi_hi, paksha=paksha, tithi_end=fmt(t_end),
@@ -766,5 +929,6 @@ def compute(dt_local, lat: float, lon: float, tz_hours: float,
         tithi_timeline_hi=tithi_timeline_hi,
         nakshatra_timeline_hi=nak_timeline_hi,
         yoga_timeline_hi=yoga_timeline_hi,
-        karana_timeline_hi=karana_timeline_hi
+        karana_timeline_hi=karana_timeline_hi,
+        festival=fest
     )

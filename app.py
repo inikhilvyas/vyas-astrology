@@ -118,6 +118,7 @@ from vyas import btr as vyas_btr
 from vyas import varga_predictions as vyas_vp
 from vyas import match as vyas_match
 from vyas import prashna as vyas_prashna
+from vyas import daivagya_engine
 from vyas.chatbot import vyas_chatbot
 try:
     from vyas import city_search
@@ -527,6 +528,7 @@ st.markdown('''
 
 # ---------------- EARLY THEME RESOLUTION ----------------
 _active_theme_mode = st.session_state.get("_user_theme_mode", "डार्क थीम (Dark)")
+_is_auto = "सिस्टम" in str(_active_theme_mode) or "Auto" in str(_active_theme_mode)
 _is_light = "लाइट" in str(_active_theme_mode) or "Light" in str(_active_theme_mode) or "कंट्रास्ट" in str(_active_theme_mode)
 
 # High-contrast Theme Design Tokens for 100% Legibility in Light & Dark Mode
@@ -883,93 +885,6 @@ st.markdown("""
         --vyas-ease: cubic-bezier(0.22, 1, 0.36, 1);
         --font-yatra: 'Yatra One', 'Noto Sans Devanagari', 'Cinzel', serif;
         --font-body: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
-    }
-
-    /* Automatic System Light Mode Adaptation for PC & Mobile */
-    @media (prefers-color-scheme: light) {
-        :root {
-            --gold-primary: #1e3a8a;
-            --gold-light: #2563eb;
-            --gold-accent: #1d4ed8;
-            --bg-deep: #f8fafc;
-            --bg-surface: #ffffff;
-            --card-bg: rgba(255, 255, 255, 0.98);
-            --card-border: rgba(37, 99, 235, 0.25);
-            --card-border-hover: rgba(37, 99, 235, 0.65);
-            --accent-ruby: #dc2626;
-            --accent-emerald: #059669;
-            --text-main: #0f172a;
-            --text-muted: #1e293b;
-            --vyas-gold-1: #1e3a8a;
-            --vyas-gold-2: #2563eb;
-            --vyas-gold-3: #1d4ed8;
-            --vyas-line: rgba(37, 99, 235, 0.25);
-        }
-
-        html, body {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
-        }
-
-        .stApp, [data-testid="stAppViewContainer"], .main {
-            background: #f8fafc !important;
-            background-image: none !important;
-            color: #0f172a !important;
-        }
-
-        p, span, li, label,
-        [data-testid="stMarkdownContainer"] p,
-        [data-testid="stMarkdownContainer"] span,
-        [data-testid="stMarkdownContainer"] li {
-            color: #0f172a !important;
-        }
-
-        .glass-card, .predict-card {
-            background: #ffffff !important;
-            border-color: rgba(37, 99, 235, 0.25) !important;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06) !important;
-            color: #0f172a !important;
-        }
-
-        .glass-card p, .predict-card p, .predict-card div {
-            color: #1e293b !important;
-        }
-
-        .vyas-hero-banner {
-            background: #ffffff !important;
-            border-color: rgba(37, 99, 235, 0.45) !important;
-            box-shadow: 0 10px 30px rgba(37,99,235,0.08) !important;
-        }
-
-        .vyas-hero-kicker {
-            color: #1e3a8a !important;
-        }
-
-        .vyas-hero-title {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #1d4ed8 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            text-shadow: none !important;
-        }
-
-        .section-title {
-            color: #1e3a8a !important;
-            border-bottom-color: rgba(37, 99, 235, 0.35) !important;
-        }
-
-        section[data-testid="stSidebar"] {
-            background: #f8fafc !important;
-            border-right: 1.5px solid rgba(15, 23, 42, 0.15) !important;
-        }
-
-        [data-testid="stExpander"] {
-            background: #ffffff !important;
-            border-color: rgba(37, 99, 235, 0.25) !important;
-        }
-
-        [data-testid="stExpander"] summary {
-            color: #0f172a !important;
-        }
     }
 
     /* Base Page Styling with Fluid Typography */
@@ -1649,6 +1564,8 @@ st.markdown("""
 
 if _is_light:
     st.markdown(f"<style>{_light_css_rules}</style>", unsafe_allow_html=True)
+elif _is_auto:
+    st.markdown(f"<style>@media (prefers-color-scheme: light) {{\n{_light_css_rules}\n}}</style>", unsafe_allow_html=True)
 
 _is_hi_banner = "English" not in st.session_state.get('main_ui_lang_radio', 'हिन्दी')
 _hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
@@ -1926,72 +1843,84 @@ with st.sidebar:
         st.markdown("<style>:root { --app-font-size: 19.5px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 19.5px !important; }</style>", unsafe_allow_html=True)
 
     # ---------------- 7:00 AM DAILY HOROSCOPE NOTIFICATION WIDGET ----------------
-    with st.expander(" 7:00 AM दैनिक राशिफल अलर्ट", expanded=False):
-        st.markdown("""
-        <div style="font-size: 0.8rem; color: #eedc9a; line-height: 1.5; margin-bottom: 8px;">
-            <b>प्रातःकालीन व्यक्तिगत राशिफल:</b><br/>
-            रोज़ाना सुबह 7:00 बजे आपके ब्राउज़र/फ़ोन पर नवतारा चक्र, गोचरस्थ चन्द्रमा व चालू विंशोत्तरी दशा का दैनिक फलादेश अलर्ट प्राप्त करें।
+    _notif_exp_title = "🔔 7:00 AM दैनिक राशिफल अलर्ट" if is_hi else "🔔 7:00 AM Daily Horoscope Alert"
+    with st.expander(_notif_exp_title, expanded=False):
+        st.markdown(f"""
+        <div style="font-size: 0.85rem; color: {TH_MUTED}; line-height: 1.6; margin-bottom: 10px;">
+            <b>{'प्रातःकालीन व्यक्तिगत राशिफल एवं पंचांग सूचना:' if is_hi else 'Daily Morning Personalised Alert:'}</b><br/>
+            {'रोज़ाना सुबह 7:00 बजे आपके फ़ोन/ब्राउज़र पर आज का शुभ अभिजीत मुहूर्त, राहुकाल, नवतारा चक्र एवं चालू दशा का फलादेश प्राप्त करें।' if is_hi else 'Receive your personalised morning horoscope, Abhijit Muhurta, Rahu Kaal and running dasha at 7:00 AM daily.'}
         </div>
         """, unsafe_allow_html=True)
-        st.components.v1.html("""
-        <div style="text-align: center; font-family: sans-serif;">
-            <button id="notif-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(245,158,11,0.35);">
-                 7:00 AM अलर्ट चालू करें
-            </button>
-            <div id="notif-status" style="font-size: 0.74rem; color: #94a3b8; margin-top: 6px;"></div>
+        st.components.v1.html(f"""
+        <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <div style="display: flex; gap: 8px; flex-direction: column;">
+                <button id="notif-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+                    🔔 7:00 AM अलर्ट चालू करें
+                </button>
+                <button id="test-notif-btn" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; font-weight: 700; border: 1.5px solid #f59e0b; border-radius: 8px; padding: 7px 12px; font-size: 0.82rem; cursor: pointer; width: 100%;">
+                    ⚡ अभी टेस्ट नोटिफिकेशन भेजें (Send Test Alert)
+                </button>
+            </div>
+            <div id="notif-status" style="font-size: 0.78rem; color: #94a3b8; margin-top: 8px; line-height: 1.4;"></div>
         </div>
         <script>
             const btn = document.getElementById('notif-btn');
+            const testBtn = document.getElementById('test-notif-btn');
             const status = document.getElementById('notif-status');
 
+            function getNotifAPI() {
+                try {{
+                    if (window.parent && window.parent.Notification) return window.parent.Notification;
+                }} catch(e) {{}}
+                if (typeof Notification !== 'undefined') return Notification;
+                return null;
+            }
+
             function updateStatus() {
-                if (!("Notification" in window)) {
-                    status.innerHTML = "ब्राउज़र नोटिफिकेशन समर्थित नहीं है।";
+                const N = getNotifAPI();
+                if (!N) {{
+                    status.innerHTML = "⚠️ इस ब्राउज़र में वेब नोटिफिकेशन समर्थित नहीं है (कृपया Chrome/Edge प्रयोग करें)।";
                     btn.disabled = true;
+                    testBtn.disabled = true;
                     return;
-                }
-                if (Notification.permission === "granted") {
-                    status.innerHTML = " 7:00 AM दैनिक राशिफल अलर्ट सक्रिय है!";
+                }}
+                if (N.permission === "granted") {{
+                    status.innerHTML = "✅ दैनिक 7:00 AM राशिफल अलर्ट सक्रिय है!";
                     status.style.color = "#34d399";
-                    btn.innerText = " अलर्ट सक्रिय है (7:00 AM Daily)";
-                    checkMorningAlert();
-                } else if (Notification.permission === "denied") {
-                    status.innerHTML = " नोटिफिकेशन ब्लॉक है। ब्राउज़र सेटिंग्स में अनुमति दें।";
+                    btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily Active)";
+                    btn.style.background = "linear-gradient(135deg, #059669, #10b981)";
+                }} else if (N.permission === "denied") {{
+                    status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र एड्रेस बार में 🔒 या सेटिंग्स पर टैप कर Notification को Allow करें।";
                     status.style.color = "#f87171";
-                } else {
-                    status.innerHTML = "सुबह 7 बजे दैनिक फलादेश पाने हेतु बटन दबाएं।";
-                }
+                }} else {{
+                    status.innerHTML = "सूचना पाने हेतु ऊपर बटन दबाकर 'Allow' करें।";
+                }}
             }
 
-            function checkMorningAlert() {
-                const today = new Date().toISOString().slice(0, 10);
-                const lastNotif = localStorage.getItem('vyas_last_7am_notif');
-                const now = new Date();
-                if (now.getHours() >= 7 && lastNotif !== today) {
-                    new Notification("VYAS • आज का दैनिक पंचांग, शुभ मुहूर्त व राशिफल", {
-                        body: "नमस्ते! आज का पंचांग, शुभ अभिजीत मुहूर्त, राहुकाल एवं आपकी चालू दशा का व्यक्तिगत राशिफल तैयार है।",
-                        icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
-                    });
-                    localStorage.setItem('vyas_last_7am_notif', today);
-                }
-            }
-
-            btn.addEventListener('click', async () => {
-                if ("Notification" in window) {
-                    const perm = await Notification.requestPermission();
-                    if (perm === "granted") {
-                        localStorage.setItem('vyas_daily_notif_enabled', 'true');
-                        new Notification("VYAS • 7:00 AM अलर्ट चालू", {
-                            body: "दैनिक पंचांग, मुहूर्त व राशिफल अलर्ट सक्रिय हो गया है। हर सुबह 7:00 बजे आपको दिन फल प्राप्त होगा।",
+            async function requestAndNotify(isTest) {{
+                const N = getNotifAPI();
+                if (!N) return;
+                try {{
+                    const perm = await N.requestPermission();
+                    if (perm === "granted") {{
+                        new N("VYAS • दैनिक राशिफल व पंचांग अलर्ट", {{
+                            body: isTest 
+                                ? "परीक्षण सफल! VYAS दैनिक पंचांग, शुभ मुहूर्त एवं व्यक्तिगत राशिफल अलर्ट सक्रिय हो गया है।" 
+                                : "नमस्ते! आज का पंचांग, शुभ अभिजीत मुहूर्त व आपकी चालू दशा का व्यक्तिगत राशिफल तैयार है।",
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
-                        });
-                    }
-                    updateStatus();
-                }
-            });
+                        }});
+                    }}
+                }} catch (err) {{
+                    status.innerHTML = "ब्राउज़र सुरक्षा के कारण कृपया ब्राउज़र सेटिंग्स में सीधे अनुमति दें।";
+                }}
+                updateStatus();
+            }}
+
+            btn.addEventListener('click', () => requestAndNotify(false));
+            testBtn.addEventListener('click', () => requestAndNotify(true));
             updateStatus();
         </script>
-        """, height=105)
+        """, height=140)
 
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     # `u` and `is_logged_in_now` are resolved once, above the sidebar.
@@ -3015,6 +2944,65 @@ if st.session_state.get('data_generated'):
         else:
             daily_res = st.session_state['daily_res']
 
+        # ---------------- BIRTHDAY & VARSHPHAL SPECIAL DETECTION ----------------
+        _b_local = birth.get('local')
+        _is_birthday = False
+        _birthday_banner_html = ""
+        if _b_local and hasattr(_b_local, 'month') and hasattr(_b_local, 'day'):
+            if now_dt.month == _b_local.month and now_dt.day == _b_local.day:
+                _is_birthday = True
+                _age_turning = now_dt.year - _b_local.year
+                try:
+                    _v_bday = forensic_predictor.compute_tajik_varshphal(
+                        _b_local, chart.planets["Sun"].longitude, now_dt.year, asc_sign_idx
+                    )
+                    _v_lagna = _v_bday.get('varsha_lagna_hi' if is_hi else 'varsha_lagna', 'लग्न')
+                    _v_lord = _v_bday.get('varshesh_hi' if is_hi else 'varshesh', 'वर्षेश')
+                    _v_muntha = _v_bday.get('muntha_house', 1)
+                    _v_muntha_res = _v_bday.get('muntha_result_hi' if is_hi else 'muntha_result_en', '')
+                except Exception:
+                    _v_bday = {}
+                    _v_lagna = "-"
+                    _v_lord = "-"
+                    _v_muntha = "-"
+                    _v_muntha_res = ""
+
+                _bday_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.12) 50%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #ffffff 100%)"
+                _bday_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
+                _bday_gold = "#fbbf24" if not _is_light else "#b45309"
+                _bday_txt = "#f8fafc" if not _is_light else "#0f172a"
+                _bday_sub = "#cbd5e1" if not _is_light else "#334155"
+
+                _birthday_banner_html = f"""
+                <div style="background: {_bday_bg}; border: {_bday_border}; border-radius: 16px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 8px 30px rgba(245, 158, 11, 0.22);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_bday_gold};">✨ दिव्य जन्मदिवस मंगलकामनाएँ (Divine Birthday Blessings)</div>
+                            <div style="font-size: 1.55rem; font-weight: 900; color: {_bday_txt}; font-family: var(--font-yatra); margin-top: 2px;">
+                                🎂 {birth.get('name', 'जातक')} जी, आपको जन्मदिवस की हार्दिक शुभकामनाएँ!
+                            </div>
+                        </div>
+                        <span style="background: rgba(245, 158, 11, 0.25); color: {_bday_gold}; border: 1.5px solid {_bday_gold}; font-weight: 800; font-size: 0.95rem; padding: 6px 14px; border-radius: 999px;">
+                            पूर्ण आयु: {_age_turning} वर्ष
+                        </span>
+                    </div>
+                    <div style="font-size: 0.98rem; color: {_bday_sub}; line-height: 1.6; margin-top: 10px;">
+                        आज आपका सौर चक्र (Solar Return) पूर्ण होकर <b>{_age_turning + 1}वें वर्ष</b> में प्रवेश हुआ है। 
+                        ताजिक ज्योतिष अनुसार इस नए वर्ष के <b>वर्षेश: {_v_lord}</b> हैं, <b>वर्ष लग्न: {_v_lagna}</b> है तथा <b>मुन्था भाव {_v_muntha}</b> में स्थित है।
+                        {f'<br/><span style="color: {_bday_gold}; font-weight: 700;">मुन्था प्रभाव: {_v_muntha_res}</span>' if _v_muntha_res else ''}
+                    </div>
+                </div>
+                """
+
+        if _birthday_banner_html:
+            st.markdown(_birthday_banner_html, unsafe_allow_html=True)
+            col_bday_1, col_bday_2 = st.columns([1.5, 1])
+            with col_bday_1:
+                if st.button("वर्षफल टैब में इस वर्ष का संपूर्ण वर्षफल देखें (View Full Annual Varshphal) →", type="primary", key="btn_goto_varshphal_from_bday"):
+                    st.session_state['domain_suite_sidebar_radio'] = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
+                    st.session_state['main_screen_suite_select'] = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
+                    st.rerun()
+
         # Render Top Score Cards with High Contrast Calibration
         score = daily_res["overall_score"]
         if score >= 75:
@@ -3220,11 +3208,38 @@ if st.session_state.get('data_generated'):
         _pch_tithi_next = "#1d4ed8" if _is_light else "#38bdf8"
         _pch_tithi_next2 = "#2563eb" if _is_light else "#93c5fd"
 
+        _today_festival = getattr(daily_panchang, 'festival', '') if daily_panchang else ''
+        _festival_html = ""
+        if _today_festival:
+            _fest_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(220, 38, 38, 0.12) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef2f2 100%)"
+            _fest_border = "1.8px solid #f59e0b" if not _is_light else "1.8px solid #d97706"
+            _fest_title_col = "#fbbf24" if not _is_light else "#b45309"
+            _fest_txt_col = "#f8fafc" if not _is_light else "#0f172a"
+            _fest_sub_col = "#cbd5e1" if not _is_light else "#334155"
+            _festival_html = f"""
+            <div style="background: {_fest_bg}; border: {_fest_border}; border-radius: 12px; padding: 14px 18px; margin-top: 14px; margin-bottom: 6px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.4rem; line-height: 1;">🪔</span>
+                        <div>
+                            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800; color: {_fest_title_col};">आज का प्रमुख पर्व / पावन त्योहार (Today's Auspicious Festival)</div>
+                            <div style="font-size: 1.15rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_today_festival}</div>
+                        </div>
+                    </div>
+                    <span style="background: rgba(245, 158, 11, 0.2); color: {_fest_title_col}; border: 1px solid {_fest_border}; font-size: 0.82rem; font-weight: 700; padding: 3px 10px; border-radius: 999px;">शुभ उत्सव</span>
+                </div>
+                <div style="font-size: 0.88rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
+                    इस पावन दिवस पर ईश्वरीय ऊर्जा एवं ग्रहों की स्थिति विशेष फलदायी है। अपने इष्ट देव का ध्यान कर दीप प्रज्वलित करें एवं परोपकार करें।
+                </div>
+            </div>
+            """
+
         panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid {TH_GOLD_ACCENT};">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
 <div style="font-weight: 800; color: {_pch_title_col}; font-size: 1.15rem;">आज का सम्पूर्ण दैनिक पंचांग एवं विशिष्ट मुहूर्त ({birth.get('city', 'New Delhi')})</div>
 <span style="font-size: 0.85rem; color: {TH_MUTED}; background: {TH_BADGE_BG}; border: {TH_BADGE_BORDER}; padding: 3px 8px; border-radius: 6px; font-weight: 700;">{vikram_str}</span>
 </div>
+{_festival_html}
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px;">
 <div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">तिथि (Tithi)</div>{tithi_html}</div>
 <div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">वार (Vara)</div><div style="font-size: 0.95rem; font-weight: 700; color: {_pch_val_col}; margin-top: 2px;">{vara_str}</div></div>
@@ -3234,15 +3249,15 @@ if st.session_state.get('data_generated'):
 <div style="background: {_pch_box_bg}; padding: 8px 12px; border-radius: 6px; border: {_pch_box_border};"><div style="font-size: 0.78rem; color: {_pch_lbl_col}; text-transform: uppercase; font-weight: 700;">दिशा शूल व परिहार (Travel Rule)</div><div style="font-size: 0.9rem; font-weight: 600; color: #ef4444; margin-top: 2px;">दिशा: <b>{shool_dir}</b> | <span style="color: {TH_MUTED}; font-size: 0.82rem;">{shool_rem}</span></div></div>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 12px; border-top: {_pch_divider}; padding-top: 10px;">
-<div><b>अभिजीत मुहूर्त:</b> <span style="color: #2563eb if _is_light else #38bdf8;">{daily_res.get('amrit_vela', '-')}</span></div>
-<div><b>ब्रह्म मुहूर्त:</b> <span style="color: #16a34a if _is_light else #4ade80;">{daily_res.get('brahma_muhurta', '-')}</span></div>
-<div><b>अमृत काल:</b> <span style="color: #059669 if _is_light else #34d399;">{daily_res.get('amrit_kalam', '-')}</span></div>
-<div><b>राहुकाल (सावधानी):</b> <span style="color: #dc2626 if _is_light else #f87171; font-weight: 700;">{daily_res.get('rahu_kalam', '-')}</span></div>
+<div><b>अभिजीत मुहूर्त:</b> <span style="color: {_pch_abhi_col}; font-weight: 600;">{daily_res.get('amrit_vela', '-')}</span></div>
+<div><b>ब्रह्म मुहूर्त:</b> <span style="color: {_pch_brahma_col}; font-weight: 600;">{daily_res.get('brahma_muhurta', '-')}</span></div>
+<div><b>अमृत काल:</b> <span style="color: {_pch_amrit_col}; font-weight: 600;">{daily_res.get('amrit_kalam', '-')}</span></div>
+<div><b>राहुकाल (सावधानी):</b> <span style="color: {_pch_rahu_col}; font-weight: 700;">{daily_res.get('rahu_kalam', '-')}</span></div>
 <div><b>यमगण्ड:</b> <span style="color: {TH_GOLD_ACCENT}; font-weight: 700;">{daily_res.get('yamaganda', '-')}</span></div>
 <div><b>गुलिक काल:</b> <span style="color: {_pch_val_col}; font-weight: 700;">{daily_res.get('gulika_kalam', '-')}</span></div>
 </div>
 <div style="margin-top: 10px; border-top: {_pch_divider}; padding-top: 8px; font-size: 0.88rem; color: {TH_MUTED}; font-weight: 600;">
-<b>दिन की प्रमुख शुभ होरा (Auspicious Horas):</b> <span style="color: #16a34a if _is_light else #4ade80;">{shubh_horas_summary_str}</span>
+<b>दिन की प्रमुख शुभ होरा (Auspicious Horas):</b> <span style="color: {_pch_hora_col}; font-weight: 600;">{shubh_horas_summary_str}</span>
 </div>
 </div>"""
         st.markdown(panchang_card_html, unsafe_allow_html=True)
@@ -3916,6 +3931,23 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
+            # KUNDLI DATA LOCK TABLE (Layer 0 Anti-Hallucination Gate)
+            _kdlt = daivagya_engine.generate_kundli_data_lock(chart, birth, dasha_info=cur_dasha_str)
+            with st.expander("🔒 कुण्डली डेटा लॉक तालिका (KUNDLI DATA LOCK TABLE • शत-प्रतिशत गणितीय प्रामाणिकता)" if is_hi else "🔒 KUNDLI DATA LOCK TABLE (100% Mathematical Precision Verification)", expanded=False):
+                kdlt_rows = []
+                for kr in _kdlt.rows:
+                    kdlt_rows.append({
+                        "ग्रह" if is_hi else "Graha": kr.planet_hi if is_hi else kr.planet,
+                        "राशि" if is_hi else "Rashi": kr.rashi,
+                        "अंश (DMS)" if is_hi else "Degree (DMS)": kr.degree_dms,
+                        "भाव" if is_hi else "Bhava": f"भाव {kr.bhava}" if is_hi else f"House {kr.bhava}",
+                        "नक्षत्र (पाद)" if is_hi else "Nakshatra (Pada)": f"{kr.nakshatra} ({kr.pada})",
+                        "उप-स्वामी (SL)" if is_hi else "Sub-Lord (SL)": kr.sub_lord,
+                        "उप-उप-स्वामी (SSL)" if is_hi else "Sub-Sub-Lord (SSL)": kr.sub_sub_lord,
+                        "अवस्था / गरिमा" if is_hi else "Dignity": kr.dignity + (" (वक्री)" if kr.is_retrograde else "") + (" (अस्त)" if kr.is_combust else "")
+                    })
+                st.markdown(render_modern_table(kdlt_rows, title=f"KUNDLI DATA LOCK — {_kdlt.native_name} ({'लग्न:' if is_hi else 'Lagna:'} {_kdlt.lagna_rashi} {_kdlt.lagna_dms})"), unsafe_allow_html=True)
+
             chart_style = st.radio("Kundli Style (कुंडली प्रारूप)", ["North Indian (उत्तर भारतीय हीरा शैली)", "South Indian (दक्षिण भारतीय चौकोर शैली)"], horizontal=True)
 
             col1, col2 = st.columns([1.35, 1.0])
@@ -4047,11 +4079,11 @@ if st.session_state.get('data_generated'):
                 d60_table.append({
                     "ग्रह" if is_hi else "Planet": constants.PLANETS_HI.get(p_name, p_name) if is_hi else p_name,
                     "D60 राशि" if is_hi else "D60 Sign": constants.SIGNS_HI[pv.sign_index] if is_hi else pv.sign_name,
-                    "अंश": pv.dms_str,
-                    "अधिष्ठाता देवता": pv.deity,
-                    "प्रकृति / स्वभाव": "शुभ (Benefic)" if pv.is_benefic else "अशुभ / शोधन योग्य"
+                    "अंश" if is_hi else "Degrees": pv.dms_str,
+                    "अधिष्ठाता देवता" if is_hi else "Presiding Deity": pv.deity,
+                    "प्रकृति / स्वभाव" if is_hi else "Nature": "शुभ (Benefic)" if pv.is_benefic else ("अशुभ / शोधन योग्य" if is_hi else "Afflicted / Requires Remedy")
                 })
-            st.markdown(render_modern_table(d60_table, title="D-60 षष्ट्यंश देवता एवं प्रारब्ध तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(d60_table, title="D-60 षष्ट्यंश देवता एवं प्रारब्ध तालिका" if is_hi else "D-60 Shashtyamsha Deities & Prarabdha Table"), unsafe_allow_html=True)
 
         if _lz_sub_tab[3]:
             st.markdown(f'<div class="section-title">{"वर्ग कुण्डली शास्त्रीय सूत्र फलित (D1, D9, D10 व D60 महा-विश्लेषण)" if is_hi else "Divisional Vargas Script Synthesis"}</div>', unsafe_allow_html=True)
@@ -4283,7 +4315,7 @@ if st.session_state.get('data_generated'):
                         "चन्द्र से भाव" if is_hi else "House from Moon": f"भाव {g_from_moon}",
                         "स्थिति": "वक्री (R)" if gp.speed < 0 else "मार्गी (Direct)"
                     })
-            st.markdown(render_modern_table(g_table, title="फलदीपिका शास्त्रीय गोचर एवं वेध तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(g_table, title="फलदीपिका शास्त्रीय गोचर एवं वेध तालिका" if is_hi else "Phaladeepika Classical Transit & Vedha Table"), unsafe_allow_html=True)
 
             st.markdown(f"#### {'फलदीपिका शास्त्रीय गोचर, तारा बल एवं वेध तालिका' if is_hi else 'Phaladeepika Transit, Tara & Vedha'}")
             try:
@@ -4300,7 +4332,7 @@ if st.session_state.get('data_generated'):
                         "गोचर प्रभाव": "शुभ फलदायी" if tr.favourable else "सावधानी अपेक्षित",
                         "आगामी राशि परिवर्तन": tr.next_ingress or "-"
                     })
-                st.markdown(render_modern_table(t_table, title="दैनिक नवतारा चक्र एवं ताराबल"), unsafe_allow_html=True)
+                st.markdown(render_modern_table(t_table, title="दैनिक नवतारा चक्र एवं ताराबल" if is_hi else "Daily Navatara Cycle & Tarabala"), unsafe_allow_html=True)
             except Exception as e:
                 st.caption(f"Classical transit table: {e}")
 
@@ -4388,7 +4420,7 @@ if st.session_state.get('data_generated'):
                     "श्रेणी": f"#{s.rank}",
                     "परिणाम": "प्रबल (बली)" if s.strength_ratio >= 1.0 else "निर्बल (दुर्बल)"
                 })
-            st.markdown(render_modern_table(shad_table, title="षड्बल एवं भावबल विस्तृत तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(shad_table, title="षड्बल एवं भावबल विस्तृत तालिका" if is_hi else "Shadbala & Bhavabala Detail Table"), unsafe_allow_html=True)
 
         if _lz_b_tab[2]:
             st.markdown(f'<div class="section-title">{"श्रीपति भाव चलित चक्र एवं पञ्चधा मैत्री" if is_hi else "Sripati Chalit Chart & Maitri"}</div>', unsafe_allow_html=True)
@@ -4426,7 +4458,7 @@ if st.session_state.get('data_generated'):
                         "अन्त (संधि)": f"{constants.SIGNS_HI[constants.SIGNS.index(cd.anta_sign)] if is_hi and cd.anta_sign in constants.SIGNS else cd.anta_sign} {cd.anta_dms}",
                         "चलित भावस्थ ग्रह": ", ".join([constants.PLANETS_HI.get(p, p) if is_hi else p for p in cd.planets_in_bhava]) if cd.planets_in_bhava else "-"
                     })
-                st.markdown(render_modern_table(chalit_table, title="भाव चलित चक्र तालिका"), unsafe_allow_html=True)
+                st.markdown(render_modern_table(chalit_table, title="भाव चलित चक्र तालिका" if is_hi else "Chalit Chakra House Cusps"), unsafe_allow_html=True)
 
             # Panchadha Maitri Matrix
             st.markdown(f"#### {' सप्तग्रह पञ्चधा मैत्री चक्र (Compound 5-Fold Friendship Matrix)' if is_hi else 'Panchadha Maitri Matrix'}")
@@ -4438,7 +4470,7 @@ if st.session_state.get('data_generated'):
                     p2_lbl = constants.PLANETS_HI.get(p2, p2) if is_hi else p2
                     row[p2_lbl] = relation
                 pm_rows.append(row)
-            st.markdown(render_modern_table(pm_rows, title="पंचधा मैत्री चक्र"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(pm_rows, title="पंचधा मैत्री चक्र" if is_hi else "Panchadha Maitri 5-Fold Friendship Matrix"), unsafe_allow_html=True)
 
         if _lz_b_tab[3]:
             st.markdown(f'<div class="section-title">{"अष्टकवर्ग शास्त्रीय सूत्र एवं काक्ष्य फलित" if is_hi else "Ashtakavarga Sutras Script"}</div>', unsafe_allow_html=True)
@@ -4564,7 +4596,7 @@ if st.session_state.get('data_generated'):
                     "SSSSL": constants.PLANETS_HI.get(c.sub_sub_sub_sub_lord, c.sub_sub_sub_sub_lord) if is_hi else c.sub_sub_sub_sub_lord,
                     "SSSSSL": constants.PLANETS_HI.get(c.sub_sub_sub_sub_sub_lord, c.sub_sub_sub_sub_sub_lord) if is_hi else c.sub_sub_sub_sub_sub_lord
                 })
-            st.markdown(render_modern_table(kp_table, title="केपी कस्प उप-स्वामी तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(kp_table, title="केपी कस्प उप-स्वामी तालिका" if is_hi else "KP Cuspal Sub-Lord Table"), unsafe_allow_html=True)
 
             # --- SUB-SECTION 4: 9 PLANETARY KP TABLE (DOWN TO SSSSSL) ---
             st.markdown(f"#### {'नवग्रह केपी स्पष्ट एवं SSSSSL तालिका (Planetary KP Table down to SSSSSL)' if is_hi else 'Planetary KP Table (down to SSSSSL)'}")
@@ -4583,7 +4615,7 @@ if st.session_state.get('data_generated'):
                     "SSSSL": constants.PLANETS_HI.get(pl.sub_sub_sub_sub_lord, pl.sub_sub_sub_sub_lord) if is_hi else pl.sub_sub_sub_sub_lord,
                     "SSSSSL": constants.PLANETS_HI.get(pl.sub_sub_sub_sub_sub_lord, pl.sub_sub_sub_sub_sub_lord) if is_hi else pl.sub_sub_sub_sub_sub_lord
                 })
-            st.markdown(render_modern_table(kp_pl_table, title="केपी ग्रह स्थिति एवं उप-स्वामी तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(kp_pl_table, title="केपी ग्रह स्थिति एवं उप-स्वामी तालिका" if is_hi else "KP Planetary Positions & Sub-Lords Table"), unsafe_allow_html=True)
 
             # --- SUB-SECTION 5: 4-FOLD SIGNIFICATORS (चतुर्विध कार्येश) ---
             st.markdown(f"#### {'केपी 4-Step कार्येश तालिका (KP 4-Fold Significators Matrix)' if is_hi else 'KP 4-Fold Significators Matrix'}")
@@ -4703,7 +4735,7 @@ if st.session_state.get('data_generated'):
                     "राशि": constants.SIGNS_HI[constants.SIGNS.index(k.sign_name)] if is_hi and k.sign_name in constants.SIGNS else k.sign_name,
                     "शास्त्रीय कारकत्व": k.signification
                 })
-            st.markdown(render_modern_table(jk_table, title="जैमिनी चर कारक तालिका (7-Karaka Scheme)"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(jk_table, title="जैमिनी चर कारक तालिका (7-Karaka Scheme)" if is_hi else "Jaimini Chara Karakas (7-Karaka Scheme)"), unsafe_allow_html=True)
 
             # Jaimini Predictions & Chara Dasha Phala Synthesis
             chara_dashas = forensic_predictor.compute_chara_dasha(chart.ascendant_sign, birth['local'], chart)
@@ -4744,7 +4776,7 @@ if st.session_state.get('data_generated'):
                     "आरम्भ तिथि": cd.get("start", ""),
                     "समाप्ति तिथि": cd.get("end", "")
                 })
-            st.markdown(render_modern_table(cd_table, title="जैमिनी चर दशा कालखंड तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(cd_table, title="जैमिनी चर दशा कालखंड तालिका" if is_hi else "Jaimini Chara Dasha Timeline Table"), unsafe_allow_html=True)
 
         if _lz_k_tab[2]:
             st.markdown(f'<div class="section-title">{"भृगु नन्दी नाड़ी: गहन जीवन फलादेश एवं ग्रह संयोजन" if is_hi else "Bhrigu Nandi Nadi"}</div>', unsafe_allow_html=True)
@@ -5036,9 +5068,11 @@ if st.session_state.get('data_generated'):
 
         _lz_p_tab = lazy_sections([
             "समग्र जीवन महा-फलादेश (13 जीवन अध्याय)" if is_hi else "Master Overall Life Forecast",
+            "ऋषि त्रि-संयोग फलित कालक्रम (TCR Engine)" if is_hi else "Triple-Convergence Timing (TCR)",
             "द्वादश भाव विस्तृत फलादेश (12 Bhavas)" if is_hi else "12 Bhavas In-Depth",
             "भावत् भावम् सूक्ष्म विश्लेषण (Bhavat Bhavam)" if is_hi else "Bhavat Bhavam Matrix",
             "ग्रह अवस्था एवं दृष्टि बल (Dignities & Aspects)" if is_hi else "Dignities & Aspects",
+            "त्रि-स्तरीय वैदिक उपाय: मन्त्र, यन्त्र, तन्त्र व दान" if is_hi else "Three-Tier Remedies (Mantra, Tantra, Yantra)",
             "मंगल दोष सम्पूर्ण विवेचन एवं परिहार (Mangal Dosha)" if is_hi else "Mangal Dosha Analysis",
             "शनि साढ़े साती एवं ढैय्या 46-चरणीय चक्र (Sade Sati)" if is_hi else "Sade Sati Report",
             "कालसर्प दोष 12 भेदों की सूक्ष्म जाँच (Kalsarp Dosha)" if is_hi else "Kalsarp Dosha",
@@ -5058,32 +5092,79 @@ if st.session_state.get('data_generated'):
             
             for _chap in overall_forecast:
                 ch_num = _chap.get('chapter_num', 1)
-                ch_title = _chap.get('title_hi', _chap.get('title', 'जीवन अध्याय'))
+                ch_title = _chap.get('title_hi', _chap.get('title', 'जीवन अध्याय')) if is_hi else _chap.get('title_en', _chap.get('title', 'Life Chapter'))
+                ch_content = _chap.get('content_hi', '') if is_hi else _chap.get('content_en', _chap.get('content_hi', ''))
                 ch_icon = _chap.get('icon', 'destiny')
-                with st.expander(f"अध्याय {ch_num}: {ch_title}", expanded=(ch_num in [1, 4, 5, 8])):
+                _exp_lbl = f"अध्याय {ch_num}: {ch_title}" if is_hi else f"Chapter {ch_num}: {ch_title}"
+                with st.expander(_exp_lbl, expanded=(ch_num in [1, 4, 5, 8])):
                     st.markdown(f"""
                     <div class="predict-card" style="border-left-color: var(--gold-accent);">
                         <div class="predict-header" style="font-size: 1.18rem; color: var(--gold-primary); display: flex; align-items: center; gap: 8px;">
                             {get_svg_vector(ch_icon, 20)} <span>{ch_title}</span>
                         </div>
                         <div style="font-size: 1.15rem; line-height: 1.85; color: var(--text-main); text-align: left; margin-top: 12px; word-wrap: break-word; overflow-wrap: break-word;">
-                            {_chap.get('content_hi', '')}
+                            {ch_content}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
 
         if _lz_p_tab[1]:
+            st.markdown(f'<div class="section-title">{"ऋषि परम्परा त्रि-संयोग फलित कालक्रम (Triple-Convergence Prediction Standard • TCR)" if is_hi else "Triple-Convergence Event Timing (TCR Standard)"}</div>', unsafe_allow_html=True)
+            st.markdown("""
+            <div class="glass-card" style="border-left: 4px solid #10b981; margin-bottom: 20px;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: #f0c05a;">प्राचीन दैवज्ञ त्रिवेणी मानक • फलित का वैज्ञानिक आधार</div>
+                <p style="color: var(--text-main); margin-top: 6px; font-size: 0.95rem; line-height: 1.7;">
+                    प्राचीन काल में महर्षि केवल एक ग्रह या साधारण गोचर देखकर भविष्य नहीं बताते थे। वे तीन अनिवार्य घटकों के एक साथ संरेखित होने पर ही तिथि-सहित भविष्यवाणी करते थे:<br/>
+                    <b>1. जन्म कुण्डली प्रतिज्ञा (Natal Promise):</b> क्या जातक की लग्न कुण्डली व नवमांश में वह घटना बीज रूप में अनुमत है?<br/>
+                    <b>2. केपी कस्प उप-स्वामी (Cuspal Sub-Lord):</b> क्या समय का उप-स्वामी उस भाव के फल को स्वीकृति देता है अथवा रोकता है?<br/>
+                    <b>3. गुरु-शनि द्वि-गोचर (Double Transit of Jupiter & Saturn):</b> जब तक कर्म के अधिपति शनि और ईश्वरीय अनुग्रह के दाता देवगुरु बृहस्पति दोनों की दृष्टि उस भाव पर न पड़े, घटना प्रकट नहीं हो सकती।
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            tcr_forecasts = daivagya_engine.compute_triple_convergence_predictions(chart, cur_dasha_str)
+            for tf in tcr_forecasts:
+                tier_col = "#10b981" if tf.convergence_tier == "C3" else ("#f59e0b" if tf.convergence_tier == "C2" else "#ef4444")
+                st.markdown(f"""
+                <div class="predict-card" style="border-left: 5px solid {tier_col}; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div style="font-size: 1.2rem; font-weight: 900; color: #ffd700;">{tf.domain_name_hi if is_hi else tf.domain_name_en}</div>
+                        <span style="font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px; background: rgba(0,0,0,0.35); border: 1.5px solid {tier_col}; color: {tier_col};">
+                            {tf.tier_badge}
+                        </span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 12px; font-size: 0.88rem; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px;">
+                        <div><b>पाराशरी प्रतिज्ञा:</b> <span style="color: #34d399;">{tf.promise_status}</span></div>
+                        <div><b>केपी उप-स्वामी:</b> <span style="color: #38bdf8;">{tf.kp_sublord_verdict}</span></div>
+                        <div><b>गुरु-शनि द्वि-गोचर:</b> <span style="color: #fbbf24;">{tf.double_transit_status}</span></div>
+                        <div><b>अनुमानित कालखंड:</b> <span style="color: #ffd700; font-weight: 700;">{tf.timing_window}</span></div>
+                    </div>
+                    <div style="font-size: 1.05rem; line-height: 1.8; color: var(--text-main); margin-top: 12px;">
+                        {tf.causal_synthesis_hi if is_hi else tf.causal_synthesis_en}
+                    </div>
+                    <div style="font-size: 0.84rem; color: #94a3b8; font-style: italic; margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+                        <b>वैज्ञानिक सत्यता की कसौटी (Falsification Standard):</b> {tf.falsification_trigger}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        if _lz_p_tab[2]:
             st.markdown(f'<div class="section-title">{"द्वादश भाव गहन ज्योतिषीय फलित (12 Houses Forensic Interpretation)" if is_hi else "12 Houses Forensic Interpretation"}</div>', unsafe_allow_html=True)
             bhava_scripts_data = vyas_knowledge_engine.synthesize_bhava_and_yogas_scripts(chart)
             bhava_map = bhava_scripts_data.get("bhava_map", {})
             for bh in bhavas:
-                with st.expander(f"भाव {bh.bhava_num}: {bh.sign_hi} राशि (स्वामी: {bh.lord_hi}) — [{bh.strength_type}]", expanded=(bh.bhava_num in [1, 7, 10])):
+                _bh_sign = bh.sign_hi if is_hi else constants.SIGNS[bh.sign_index]
+                _bh_lord = bh.lord_hi if is_hi else bh.lord
+                _bh_occupants = (', '.join(bh.occupants_hi) if is_hi else ', '.join(bh.occupants)) or ('कोई नहीं (रिक्त)' if is_hi else 'None (Empty)')
+                _bh_aspects = (', '.join(bh.aspecting_planets_hi) if is_hi else ', '.join(bh.aspecting_planets)) or ('कोई नहीं' if is_hi else 'None')
+                _bh_header = f"भाव {bh.bhava_num}: {_bh_sign} राशि (स्वामी: {_bh_lord}) — [{bh.strength_type}]" if is_hi else f"House {bh.bhava_num}: {_bh_sign} (Lord: {_bh_lord}) — [{bh.strength_type}]"
+                with st.expander(_bh_header, expanded=(bh.bhava_num in [1, 7, 10])):
                     st.markdown(f"""
                     <div class="predict-card">
                         <div style="color: var(--gold-primary); font-weight: bold; margin-bottom: 6px;">
-                            भावाधिपति स्थिति: भाव {bh.lord_house} ({bh.lord_sign_hi}) | 
-                            भावस्थ ग्रह: {', '.join(bh.occupants_hi) or 'कोई नहीं (रिक्त)'} | 
-                            दृष्टि डालने वाले ग्रह: {', '.join(bh.aspecting_planets_hi) or 'कोई नहीं'}
+                            {'भावाधिपति स्थिति: भाव' if is_hi else 'Lord Placement: House'} {bh.lord_house} ({bh.lord_sign_hi if is_hi else bh.lord_sign}) | 
+                            {'भावस्थ ग्रह:' if is_hi else 'Occupants:'} {_bh_occupants} | 
+                            {'दृष्टि डालने वाले ग्रह:' if is_hi else 'Aspecting Planets:'} {_bh_aspects}
                         </div>
                         <div style="font-size: 1.12rem; line-height: 1.8; color: var(--text-main); text-align: left; word-wrap: break-word; overflow-wrap: break-word;">{bh.prediction_hi}</div>
                     </div>
@@ -5100,7 +5181,7 @@ if st.session_state.get('data_generated'):
                             </div>
                             """, unsafe_allow_html=True)
 
-        if _lz_p_tab[2]:
+        if _lz_p_tab[3]:
             st.markdown(f'<div class="section-title">{"भावत् भावम् सूक्ष्म सिद्धांत एवं फलित (Bhavat Bhavam Recursive Matrix)" if is_hi else "Bhavat Bhavam Matrix"}</div>', unsafe_allow_html=True)
             st.markdown("""
             <div class="glass-card" style="border-left: 4px solid var(--gold-accent); margin-bottom: 20px;">
@@ -5124,7 +5205,7 @@ if st.session_state.get('data_generated'):
                     "द्वितीयक SAV": b["sec_sav"],
                     "सामर्थ्य निर्णय": b["status_verdict"]
                 })
-            st.markdown(render_modern_table(bb_table, title="भावत् भावम् द्वादश विश्लेषण तालिका"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(bb_table, title="भावत् भावम् द्वादश विश्लेषण तालिका" if is_hi else "Bhavat Bhavam 12-House Synthesis Table"), unsafe_allow_html=True)
 
             st.markdown("#### भावत् भावम् द्वादश गहन फलकथन:")
             col_bb1, col_bb2 = st.columns(2)
@@ -5143,7 +5224,7 @@ if st.session_state.get('data_generated'):
                         </div>
                         """, unsafe_allow_html=True)
 
-        if _lz_p_tab[3]:
+        if _lz_p_tab[4]:
             st.markdown(f'<div class="section-title">{"ग्रह अवस्था, अस्त/वक्री एवं दृष्टि बल विश्लेषण" if is_hi else "Planetary Dignities & States"}</div>', unsafe_allow_html=True)
             dig_rows = []
             for p_name, dig in dignities.items():
@@ -5157,9 +5238,96 @@ if st.session_state.get('data_generated'):
                     "दृष्टि डालने वाले ग्रह": ", ".join([constants.PLANETS_HI.get(x, x) for x in dig.aspects_received_from]) or "-",
                     "शास्त्रीय गरिमा": dig.dignity_summary_hi
                 })
-            st.markdown(render_modern_table(dig_rows, title="ग्रह गरिमा, उच्च-नीच व अवस्था परीक्षण"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(dig_rows, title="ग्रह गरिमा, उच्च-नीच व अवस्था परीक्षण" if is_hi else "Planetary Dignities, Awasthas & Strength Evaluation"), unsafe_allow_html=True)
 
-        if _lz_p_tab[4]:
+        if _lz_p_tab[5]:
+            st.markdown(f'<div class="section-title">{"दैवज्ञ त्रि-स्तरीय वैदिक उपाय: मन्त्र, यन्त्र, तन्त्र व दान विधान" if is_hi else "Three-Tier Vedic Remedial Architecture (Mantra, Yantra, Tantra & Daan)"}</div>', unsafe_allow_html=True)
+            st.markdown("""
+            <div class="glass-card" style="border-left: 4px solid #f59e0b; margin-bottom: 20px;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: #f0c05a;">ऊर्जा संरेखण विज्ञान • शास्त्रीय दोष निवारण एवं सिद्धि</div>
+                <p style="color: var(--text-main); margin-top: 6px; font-size: 0.95rem; line-height: 1.7;">
+                    प्राचीन ऋषियों ने उपाय को तीन स्तरों में विभाजित किया था:<br/>
+                    <b>प्रथम स्तर (संज्ञानात्मक भाव-परिवर्तन):</b> पीड़ित ग्रह जिस मानसिक ग्रंथि या अहंकार को जन्म देता है, उसका आत्म-साक्षात्कार।<br/>
+                    <b>द्वितीय स्तर (तन्त्र एवं आचरण शुद्धि):</b> दैनिक जीवन में कर्मों का संशोधन, सेवा, जीव-दया एवं सूक्ष्म नियमों का पालन।<br/>
+                    <b>तृतीय स्तर (मन्त्र, यन्त्र व दान):</b> मन्त्र की ध्वनि तरंगों, यन्त्र के ज्यामितीय संकेंद्रण एवं द्रव्य-दान द्वारा नकारात्मक स्पंदन का विसर्जन।
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            sel_rem_col1, sel_rem_col2 = st.columns([1.2, 1.5])
+            with sel_rem_col1:
+                sel_p = st.selectbox(
+                    "उपाय हेतु ग्रह का चयन करें (Select Planet):",
+                    ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"],
+                    index=0,
+                    format_func=lambda x: f"{constants.PLANETS_HI.get(x, x)} ({x})"
+                )
+            
+            rem_plan = daivagya_engine.generate_daivagya_remedy(sel_p)
+
+            st.markdown(f"""
+            <div class="predict-card" style="border-left: 5px solid #f59e0b; margin-top: 10px;">
+                <div style="font-size: 1.25rem; font-weight: 900; color: #ffd700; margin-bottom: 6px;">
+                    {rem_plan.planet_hi} — पीड़ा व दोष निवारण विधान
+                </div>
+                <div style="font-size: 0.92rem; color: #f87171; background: rgba(239, 68, 68, 0.12); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.25); margin-bottom: 14px;">
+                    <b>पीड़ा के लक्षण:</b> {rem_plan.affliction_cause_hi}
+                </div>
+
+                <!-- TIER 1 -->
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 12px 16px; border-radius: 10px; border-left: 4px solid #38bdf8; margin-bottom: 12px;">
+                    <div style="font-weight: 800; color: #38bdf8; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                        स्तर 1: संज्ञानात्मक भाव-परिवर्तन (Psychological Re-Alignment)
+                    </div>
+                    <div style="font-size: 1.02rem; line-height: 1.7; color: var(--text-main); margin-top: 4px;">
+                        {rem_plan.tier1_cognitive_shift_hi}
+                    </div>
+                </div>
+
+                <!-- TIER 2 -->
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 12px 16px; border-radius: 10px; border-left: 4px solid #10b981; margin-bottom: 12px;">
+                    <div style="font-weight: 800; color: #34d399; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                        स्तर 2: तन्त्र व व्यावहारिक कर्म-शुद्धि (Behavioral Karma Modification)
+                    </div>
+                    <div style="font-size: 1.02rem; line-height: 1.7; color: var(--text-main); margin-top: 4px;">
+                        {rem_plan.tier2_tantra_behavior_hi}
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.92rem; color: #fbbf24; background: rgba(245, 158, 11, 0.15); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        ⚡ <b>दैनिक संकल्प (Daily Habit Streak):</b> {rem_plan.tier2_daily_streak_task}
+                    </div>
+                </div>
+
+                <!-- TIER 3 -->
+                <div style="background: rgba(15, 23, 42, 0.6); padding: 12px 16px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-bottom: 12px;">
+                    <div style="font-weight: 800; color: #fbbf24; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px;">
+                        स्तर 3: मन्त्र, यन्त्र, दान एवं सुरक्षित रत्न विज्ञान
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 10px; font-size: 0.92rem;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">
+                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">वैदिक बीज मन्त्र</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #facc15; margin: 4px 0; font-family: 'Tiro Devanagari Sanskrit', serif;">{rem_plan.beej_mantra}</div>
+                            <div style="color: #cbd5e1; font-size: 0.82rem;">जप संख्या: <b>{rem_plan.mantra_count}</b> | माला: <b>{rem_plan.mala_type}</b> | दिशा: <b>{rem_plan.mantra_direction}</b></div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">
+                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">यन्त्र प्रतिष्ठा</div>
+                            <div style="font-size: 1.05rem; font-weight: 700; color: #38bdf8; margin: 4px 0;">{rem_plan.yantra_name_hi}</div>
+                            <div style="color: #cbd5e1; font-size: 0.82rem;">धातु: <b>{rem_plan.yantra_metal}</b><br/>प्रतिष्ठा समय: <b>{rem_plan.yantra_installation_day}</b></div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">
+                            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">शास्त्रीय दान विधान</div>
+                            <div style="font-size: 0.95rem; color: #f1f5f9; margin: 4px 0;">{rem_plan.daan_items_hi}</div>
+                            <div style="color: #cbd5e1; font-size: 0.82rem;">पात्र: <b>{rem_plan.daan_recipient_hi}</b> | समय: <b>{rem_plan.daan_timing_hi}</b></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 0.9rem; color: #cbd5e1;">
+                        <b>रत्न परामर्श:</b> {rem_plan.ratna_verdict_hi}<br/>
+                        <span style="color: #34d399;"><b>सुरक्षित वनौषधि / उपरत्न विकल्प:</b> {rem_plan.ratna_safe_substitute_hi}</span>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        if _lz_p_tab[6]:
             st.markdown(f'<div class="section-title">{"मंगल दोष सम्पूर्ण शास्त्रीय विवेचन एवं परिहार" if is_hi else "Mangal Dosha Assessment"}</div>', unsafe_allow_html=True)
             m_dosha = forensic_predictor.compute_comprehensive_mangal_dosha(chart)
             st.markdown(f"""
@@ -5172,7 +5340,7 @@ if st.session_state.get('data_generated'):
             for r in m_dosha['remedies_hi']:
                 st.markdown(f"• {r}")
 
-        if _lz_p_tab[5]:
+        if _lz_p_tab[7]:
             st.markdown(f'<div class="section-title">{"शनि साढ़े साती एवं ढैय्या 46-चरणीय जीवन चक्र" if is_hi else "Shani Sade Sati Full Report"}</div>', unsafe_allow_html=True)
             sade_phases = forensic_predictor.compute_comprehensive_sade_sati(birth["local"], chart.planets["Moon"].longitude, tz_hours=float(birth.get("tz", 5.5)))
             s_table = []
@@ -5185,9 +5353,9 @@ if st.session_state.get('data_generated'):
                     "चरण भेद": sp.charan_hi,
                     "विशिष्ट शास्त्रीय प्रभाव": sp.impact_hi
                 })
-            st.markdown(render_modern_table(s_table, title="शनि साढ़ेसाती एवं ढैया संपूर्ण कालखंड"), unsafe_allow_html=True)
+            st.markdown(render_modern_table(s_table, title="शनि साढ़ेसाती एवं ढैया संपूर्ण कालखंड" if is_hi else "Saturn Sade Sati & Dhayya Lifecycle Trajectory"), unsafe_allow_html=True)
 
-        if _lz_p_tab[6]:
+        if _lz_p_tab[8]:
             st.markdown(f'<div class="section-title">{"कालसर्प दोष 12 भेदों की सूक्ष्म जाँच" if is_hi else "Kalsarp Dosha Analysis"}</div>', unsafe_allow_html=True)
             k_dosha = forensic_predictor.compute_comprehensive_kalsarp(chart)
             st.markdown(f"""
@@ -5197,7 +5365,7 @@ if st.session_state.get('data_generated'):
             </div>
             """, unsafe_allow_html=True)
 
-        if _lz_p_tab[7]:
+        if _lz_p_tab[9]:
             st.markdown(f'<div class="section-title">{"विशिष्ट शास्त्रीय योग एवं दुर्लभ फलित" if is_hi else "Classical Rare Yogas & Forensic Timing"}</div>', unsafe_allow_html=True)
             yoga_scripts_data = vyas_knowledge_engine.synthesize_bhava_and_yogas_scripts(chart)
             st.markdown(yoga_scripts_data["yogas_script"], unsafe_allow_html=True)
