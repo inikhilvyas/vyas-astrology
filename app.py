@@ -1867,30 +1867,6 @@ if not is_logged_in_now:
             st.session_state["guest_mode"] = True
             st.rerun()
 
-    with st.expander("साइन-इन में समस्या? / Sign-in help", expanded=False):
-        _diag = google_drive_sync.oauth_diagnostics()
-        _bad = []
-        if _diag["client_id_configured"] != "yes":
-            _bad.append("Google Client ID सेट नहीं है — Streamlit **Secrets** में `GOOGLE_CLIENT_ID` जोड़ें।")
-        if _diag["client_secret_configured"] != "yes":
-            _bad.append("Google Client Secret सेट नहीं है — Secrets में `GOOGLE_CLIENT_SECRET` जोड़ें।")
-        if _diag["redirect_uri_registered"] != "yes":
-            _bad.append("यह Redirect URI Google Cloud Console में registered नहीं है (नीचे देखें)।")
-        if _bad:
-            st.warning(" • ".join(_bad))
-        else:
-            st.success("Google क्रेडेंशियल्स ठीक दिख रहे हैं।")
-        st.markdown(
-            f"**Redirect URI (यही Google Console में डालें):**\n\n"
-            f"`{_diag['effective_redirect_uri']}`"
-        )
-        if _diag["last_oauth_error"]:
-            st.error(f"अंतिम Google त्रुटि:\n\n{_diag['last_oauth_error']}")
-        st.caption(
-            "ईमेल/पासवर्ड से लॉगिन हमेशा काम करता है — Google वैकल्पिक है। "
-            "Google के लिए OAuth client में redirect URI जोड़ें और Audience → Test users में Gmail डालें।"
-        )
-
     st.stop()
 
 # Sidebar Native Setup
