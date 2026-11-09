@@ -534,21 +534,61 @@ st.html("""
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 <script>
 (function() {
-    function setupTouchSelectboxes() {
-        var selects = document.querySelectorAll('div[data-baseweb="select"]');
-        for (var i = 0; i < selects.length; i++) {
-            var inp = selects[i].querySelector('input');
-            if (inp && inp.getAttribute('inputmode') !== 'none') {
-                inp.setAttribute('inputmode', 'none');
-                inp.setAttribute('readonly', 'readonly');
-                inp.setAttribute('autocomplete', 'off');
-                inp.setAttribute('tabindex', '-1');
+    function isSelectInput(target) {
+        if (!target) return false;
+        if (target.tagName !== 'INPUT') return false;
+        return !!(target.closest('div[data-baseweb="select"]') || target.closest('div[data-testid="stSelectbox"]'));
+    }
+
+    // 1. Block any key that would type or edit text (Backspace, letters, numbers, symbols, space)
+    // Allow ONLY navigation keys: ArrowDown, ArrowUp, Enter, Escape, Tab
+    window.addEventListener('keydown', function(e) {
+        if (isSelectInput(e.target)) {
+            var allowed = ['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'];
+            if (allowed.indexOf(e.key) === -1) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
             }
         }
+    }, true);
+
+    // 2. Block beforeinput (IME, virtual keyboard composition, autocomplete)
+    window.addEventListener('beforeinput', function(e) {
+        if (isSelectInput(e.target)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }, true);
+
+    // 3. Block paste into selectbox
+    window.addEventListener('paste', function(e) {
+        if (isSelectInput(e.target)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }, true);
+
+    // 4. Continuously lock readonly and inputmode="none"
+    function lockSelectInputs() {
+        var inps = document.querySelectorAll('div[data-baseweb="select"] input, div[data-testid="stSelectbox"] input');
+        for (var i = 0; i < inps.length; i++) {
+            var el = inps[i];
+            if (!el.readOnly) el.readOnly = true;
+            if (el.getAttribute('inputmode') !== 'none') el.setAttribute('inputmode', 'none');
+            if (el.getAttribute('autocomplete') !== 'off') el.setAttribute('autocomplete', 'off');
+        }
     }
-    setupTouchSelectboxes();
-    var mo = new MutationObserver(setupTouchSelectboxes);
-    mo.observe(document.body, { childList: true, subtree: true });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', lockSelectInputs);
+    } else {
+        lockSelectInputs();
+    }
+    var observer = new MutationObserver(lockSelectInputs);
+    observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
 })();
 </script>
 """)
