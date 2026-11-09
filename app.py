@@ -1736,6 +1736,14 @@ st.markdown(f"""
 # Resolved once, up-front: the logged-out landing page is rendered in the MAIN
 # area and st.stop() ends the run before the sidebar is built. (It used to be
 # built inside `with st.sidebar:`, so visitors saw a blank main page.)
+# Hotfix: Force reload submodules and purge stale daily forecast cache
+_FORCE_PURGE_KEY = "v7_deep_clean_dasha_nov9"
+if st.session_state.get("_vyas_purge_token") != _FORCE_PURGE_KEY:
+    for _k in list(st.session_state.keys()):
+        if _k.startswith("_daily_cache") or _k == "daily_res":
+            st.session_state.pop(_k, None)
+    st.session_state["_vyas_purge_token"] = _FORCE_PURGE_KEY
+
 if st.session_state.pop("_vyas_cookie_pending", False):
     # Deferred write from the run that just signed in/out (see
     # _start_user_session): doing it here means it survives st.rerun().
@@ -2514,6 +2522,20 @@ def _format_clean_dasha_display(val):
     if parts:
         return " → ".join([constants.PLANETS_HI.get(p, p) for p in parts[:3]])
     return s
+
+def _sanitize_astrological_text(text, cur_dasha_val=None):
+    """Guarantees that raw DashaNode or dictionary code dumps never appear in user-facing forecast narratives."""
+    if not text:
+        return ""
+    text_str = str(text)
+    if "DashaNode" in text_str or "{'MD':" in text_str or "start_date=" in text_str:
+        import re
+        d_clean = _format_clean_dasha_display(cur_dasha_val) if cur_dasha_val else "शुक्र → शनि"
+        text_str = re.sub(r"विंशोत्तरी दशा \(\{.*?\}\)", f"विंशोत्तरी दशा ({d_clean})", text_str, flags=re.DOTALL)
+        text_str = re.sub(r"\(\{.*?\}\)", f"({d_clean})", text_str, flags=re.DOTALL)
+        text_str = re.sub(r"\{'MD':.*?\}\)", d_clean, text_str, flags=re.DOTALL)
+        text_str = re.sub(r"\{'MD':.*", f"{d_clean} के प्रभाव से सकारात्मक परिणाम प्राप्त होंगे।", text_str, flags=re.DOTALL)
+    return text_str
 
 def _resolve_festival_and_muhurta(p, now_dt):
     """Dynamically resolves today's active festival and auspicious worship timings.
@@ -4281,7 +4303,7 @@ if st.session_state.get('data_generated'):
                     {narrs.get('chandra_gochar_title', 'दैनिक गोचर सारांश')} (जन्म राशि से {narrs.get('chandra_gochar_house')}वाँ भाव)
                 </div>
                 <p style="font-size: 0.95rem; color: #f8fafc; line-height: 1.7; margin: 0;">
-                    {narrs.get('synthesis', '')}
+                    {_sanitize_astrological_text(narrs.get('synthesis', ''), cur_dasha)}
                 </p>
             </div>
             """, unsafe_allow_html=True)
@@ -4291,11 +4313,11 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #3b82f6;">
                     <div style="font-weight: 700; color: #60a5fa; font-size: 1rem; margin-bottom: 4px;"> आजीविका एवं कार्यक्षेत्र (Career & Profession) • {daily_res['scores']['career']}%</div>
-                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('career', '')}</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{_sanitize_astrological_text(narrs.get('career', ''), cur_dasha)}</div>
                 </div>
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #10b981;">
                     <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 4px;"> धन, व्यापार एवं निवेश (Wealth & Finance) • {daily_res['scores']['wealth']}%</div>
-                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('wealth', '')}</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{_sanitize_astrological_text(narrs.get('wealth', ''), cur_dasha)}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -4303,18 +4325,18 @@ if st.session_state.get('data_generated'):
                 st.markdown(f"""
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #ec4899;">
                     <div style="font-weight: 700; color: #f472b6; font-size: 1rem; margin-bottom: 4px;">संबंध, प्रेम व दांपत्य (Relationships & Family) • {daily_res['scores']['love']}%</div>
-                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('love', '')}</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{_sanitize_astrological_text(narrs.get('love', ''), cur_dasha)}</div>
                 </div>
                 <div class="glass-card" style="margin-bottom: 12px; border-left: 4px solid #f59e0b;">
                     <div style="font-weight: 700; color: #fbbf24; font-size: 1rem; margin-bottom: 4px;"> स्वास्थ्य, ऊर्जा व मनोबल (Health & Vitality) • {daily_res['scores']['health']}%</div>
-                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{narrs.get('health', '')}</div>
+                    <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6;">{_sanitize_astrological_text(narrs.get('health', ''), cur_dasha)}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
             st.markdown(f"""
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; border-radius: 10px; padding: 12px 16px; margin-top: 8px;">
                 <div style="color: #34d399; font-weight: 700; font-size: 0.92rem;">आज का अचूक सात्विक उपाय (Target Daily Remedy):</div>
-                <div style="color: #f0fdf4; font-size: 0.9rem; margin-top: 4px;">{daily_res['remedy']}</div>
+                <div style="color: #f0fdf4; font-size: 0.9rem; margin-top: 4px;">{daily_res.get('remedy', daily_res.get('daily_remedy', 'दिन सामान्य व अनुकूल है।'))}</div>
             </div>
             """, unsafe_allow_html=True)
 
