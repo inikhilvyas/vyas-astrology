@@ -49,49 +49,61 @@ def evaluate_shani_gochar(natal_moon_lon: float, today_date: datetime) -> Dict[s
         return {
             "has_shani_effect": True,
             "type": "साढ़े साती (प्रथम चरण)",
+            "type_en": "Sade Sati (1st Phase - Inception)",
             "impact_score": -6,
             "is_adverse": True,
-            "desc": "द्वादश भाव में शनि का संचरण (साढ़े साती की शुरुआत) - अकारण व्यय, दूरगामी योजनाएं व मानसिक भागदौड़ की स्थिति बनी रहती है।"
+            "desc": "द्वादश भाव में शनि का संचरण (साढ़े साती की शुरुआत) - अकारण व्यय, दूरगामी योजनाएं व मानसिक भागदौड़ की स्थिति बनी रहती है।",
+            "desc_en": "Saturn transiting 12th from Moon (Inception Phase) - Potential expenditure, distant plans, and restlessness."
         }
     elif diff_from_moon == 0:
         return {
             "has_shani_effect": True,
             "type": "साढ़े साती (द्वितीय चरण - शिखर)",
+            "type_en": "Sade Sati (2nd Phase - Peak)",
             "impact_score": -9,
             "is_adverse": True,
-            "desc": "जन्म चन्द्रमा पर शनि का प्रत्यक्ष संचरण (साढ़े साती शिखर) - कार्यभार, अनुशासन एवं धैर्य की परीक्षा। स्वास्थ्य व मनोबल का संतुलन रखें।"
+            "desc": "जन्म चन्द्रमा पर शनि का प्रत्यक्ष संचरण (साढ़े साती शिखर) - कार्यभार, अनुशासन एवं धैर्य की परीक्षा। स्वास्थ्य व मनोबल का संतुलन रखें।",
+            "desc_en": "Saturn directly over natal Moon (Peak Phase) - Test of patience, discipline, and stamina. Maintain emotional balance."
         }
     elif diff_from_moon == 1:
         return {
             "has_shani_effect": True,
             "type": "साढ़े साती (तृतीय चरण - उतरती)",
+            "type_en": "Sade Sati (3rd Phase - Setting)",
             "impact_score": -5,
             "is_adverse": True,
-            "desc": "द्वितीय भाव में शनि का गोचर (उतरती साढ़े साती) - आर्थिक नियंत्रण एवं वाणी में सौम्यता बनाए रखना हितकर रहेगा।"
+            "desc": "द्वितीय भाव में शनि का गोचर (उतरती साढ़े साती) - आर्थिक नियंत्रण एवं वाणी में सौम्यता बनाए रखना हितकर रहेगा।",
+            "desc_en": "Saturn in 2nd from Moon (Setting Phase) - Financial prudence and temperate speech recommended."
         }
     elif diff_from_moon == 3:
         return {
             "has_shani_effect": True,
             "type": "शनि की कंटक ढैया (चतुर्थ शनि)",
+            "type_en": "Kantaka Dhaiya (4th Saturn)",
             "impact_score": -7,
             "is_adverse": True,
-            "desc": "चतुर्थ भाव में शनि का गोचर (कंटक ढैया) - घरेलू उत्तरदायित्वों में वृद्धि, संपत्ति व मानसिक शांति हेतु सजगता आवश्यक।"
+            "desc": "चतुर्थ भाव में शनि का गोचर (कंटक ढैया) - घरेलू उत्तरदायित्वों में वृद्धि, संपत्ति व मानसिक शांति हेतु सजगता आवश्यक।",
+            "desc_en": "Saturn in 4th from Moon - Heightened domestic duties; focus on mental calm and peace."
         }
     elif diff_from_moon == 7:
         return {
             "has_shani_effect": True,
             "type": "शनि की अष्टम ढैया",
+            "type_en": "Ashtama Dhaiya (8th Saturn)",
             "impact_score": -8,
             "is_adverse": True,
-            "desc": "अष्टम भाव में शनि का गोचर (अष्टम ढैया) - आकस्मिक विघ्न, यात्रा व स्वास्थ्य के प्रति विशेष सावधानी अपेक्षित है।"
+            "desc": "अष्टम भाव में शनि का गोचर (अष्टम ढैया) - आकस्मिक विघ्न, यात्रा व स्वास्थ्य के प्रति विशेष सावधानी अपेक्षित है।",
+            "desc_en": "Saturn in 8th from Moon - Unanticipated roadblocks; exercise caution in travel and well-being."
         }
     else:
         return {
             "has_shani_effect": False,
             "type": "शनि गोचर अनुकूल/तटस्थ",
+            "type_en": "Favourable / Neutral Saturn Transit",
             "impact_score": 0,
             "is_adverse": False,
-            "desc": "वर्तमान में आपकी राशि पर शनि की साढ़े साती अथवा ढैया का कोई प्रत्यक्ष प्रतिकूल प्रभाव नहीं है।"
+            "desc": "वर्तमान में आपकी राशि पर शनि की साढ़े साती अथवा ढैया का कोई प्रत्यक्ष प्रतिकूल प्रभाव नहीं है।",
+            "desc_en": "No adverse Sade Sati or Dhaiya transit active on your Moon sign at present."
         }
 
 def evaluate_chandra_gochar(natal_moon_lon: float, transit_moon_lon: float) -> Dict[str, Any]:
@@ -101,30 +113,35 @@ def evaluate_chandra_gochar(natal_moon_lon: float, transit_moon_lon: float) -> D
     cg_house = (transit_rashi - natal_rashi + 12) % 12 + 1
 
     chandra_gochar_data = {
-        1: ("मानसिक ऊर्जा व आत्म-सजगता", "चन्द्रमा का जन्म राशि में संचरण मनोभावों को संवेदनशील बनाता है। अपने स्वास्थ्य व भोजन पर ध्यान दें।", 1, False, False),
-        2: ("धन एवं वाणी विचार", "द्वितीय भाव में चन्द्रमा आर्थिक लेन-देन व पारिवारिक संवाद का संकेत देता है। कटु वचनों से बचें।", 2, False, False),
-        3: ("पराक्रम, भ्रातृ सुख व साहस", "तृतीय भाव में चन्द्रमा अत्यंत शुभ फलदायी होता है। पराक्रम व संपर्क शक्ति में वृद्धि होगी।", 5, False, False),
-        4: ("चतुर्थ चन्द्रमा (सावधानी)", "⚠️ चतुर्थ भाव में चन्द्रमा मानसिक उद्वेग, घरेलू असंतोष या अनिद्रा का कारक बनता है। महत्वपूर्ण निर्णय धैर्य से लें व वाहन सावधानी से चलाएं।", -7, True, False),
-        5: ("विद्या, बुद्धि व रचनात्मकता", "पंचम भाव में चन्द्रमा बौद्धिक क्षमता व निर्णय शक्ति को तीव्र करता है।", 3, False, False),
-        6: ("शत्रु शमन, प्रतियोगिता व आरोग्य", "षष्ठ भाव में चन्द्रमा रोगों व विरोधियों पर विजय दिलाता है। शुभ गोचर फल।", 4, False, False),
-        7: ("साझेदारी, दांपत्य व जनसंपर्क", "सप्तम भाव में चन्द्रमा दांपत्य जीवन व व्यापारिक साझेदारों से समन्वय में सहायक होता है।", 2, False, False),
-        8: ("चन्द्रअष्टम (अष्टम चन्द्रमा - विशेष सतर्कता)", "⚠️ अष्टम भाव में चन्द्रमा (चन्द्रअष्टम) मानसिक तनाव, कार्य-बाधा व अप्रत्याशित खर्च ला सकता है। आज जोखिम भरे कार्य टालें।", -9, False, True),
-        9: ("भाग्य, धर्म व आत्मिक उन्नति", "नवम भाव में चन्द्रमा भाग्य का सहयोग देता है। धार्मिक चिंतन से बिगड़े काम बनेंगे।", 4, False, False),
-        10: ("कर्मक्षेत्र, प्रतिष्ठा व प्रभाव", "दशम भाव में चन्द्रमा कार्यक्षेत्र में आपकी प्रतिष्ठा व प्रभाव को बढ़ाता है।", 5, False, False),
-        11: ("एकादश लाभ व अभीष्ट सिद्धि", "एकादश भाव में चन्द्रमा सभी प्रकार के मनोवांछित लाभ व मित्रों के सहयोग का प्रदाता होता है। उत्तम गोचर।", 6, False, False),
-        12: ("द्वादश चन्द्रमा (व्यय विचार)", "द्वादश भाव में चन्द्रमा व्यय की अधिकता व दूरस्थ कार्यों की संभावना बताता है। अनावश्यक भागदौड़ से बचें।", -4, False, False)
+        1: ("मानसिक ऊर्जा व आत्म-सजगता", "चन्द्रमा का जन्म राशि में संचरण मनोभावों को संवेदनशील बनाता है। अपने स्वास्थ्य व भोजन पर ध्यान दें।", 1, False, False, "Mental Energy & Awareness", "Moon in natal sign heightens emotions. Focus on nutrition and well-being."),
+        2: ("धन एवं वाणी विचार", "द्वितीय भाव में चन्द्रमा आर्थिक लेन-देन व पारिवारिक संवाद का संकेत देता है। कटु वचनों से बचें।", 2, False, False, "Finances & Speech Consideration", "Moon in 2nd denotes financial discussions. Maintain gracious speech."),
+        3: ("पराक्रम, भ्रातृ सुख व साहस", "तृतीय भाव में चन्द्रमा अत्यंत शुभ फलदायी होता है। पराक्रम व संपर्क शक्ति में वृद्धि होगी।", 5, False, False, "Enterprise, Siblings & Courage", "Moon in 3rd is highly favourable for proactive initiatives and communications."),
+        4: ("चतुर्थ चन्द्रमा (सावधानी)", "⚠️ चतुर्थ भाव में चन्द्रमा मानसिक उद्वेग, घरेलू असंतोष या अनिद्रा का कारक बनता है। महत्वपूर्ण निर्णय धैर्य से लें व वाहन सावधानी से चलाएं।", -7, True, False, "4th Moon (Caution)", "⚠️ Moon in 4th may cause emotional turbulence. Decide patiently and drive carefully."),
+        5: ("विद्या, बुद्धि व रचनात्मकता", "पंचम भाव में चन्द्रमा बौद्धिक क्षमता व निर्णय शक्ति को तीव्र करता है।", 3, False, False, "Intellect, Wisdom & Creativity", "Moon in 5th enhances creative intuition and sharp analytical insight."),
+        6: ("शत्रु शमन, प्रतियोगिता व आरोग्य", "षष्ठ भाव में चन्द्रमा रोगों व विरोधियों पर विजय दिलाता है। शुभ गोचर फल।", 4, False, False, "Overcoming Hurdles & Vitality", "Moon in 6th brings triumph over competitors and resolving chronic issues."),
+        7: ("साझेदारी, दांपत्य व जनसंपर्क", "सप्तम भाव में चन्द्रमा दांपत्य जीवन व व्यापारिक साझेदारों से समन्वय में सहायक होता है।", 2, False, False, "Partnerships & Alliances", "Moon in 7th promotes positive rapport with partners and associates."),
+        8: ("चन्द्रअष्टम (अष्टम चन्द्रमा - विशेष सतर्कता)", "⚠️ अष्टम भाव में चन्द्रमा (चन्द्रअष्टम) मानसिक तनाव, कार्य-बाधा व अप्रत्याशित खर्च ला सकता है। आज जोखिम भरे कार्य टालें।", -9, False, True, "Chandrashtama (8th Moon - Vigilance)", "⚠️ Moon in 8th (Chandrashtama) can cause unexpected hurdles. Avoid high-risk actions."),
+        9: ("भाग्य, धर्म व आत्मिक उन्नति", "नवम भाव में चन्द्रमा भाग्य का सहयोग देता है। धार्मिक चिंतन से बिगड़े काम बनेंगे।", 4, False, False, "Fortune, Virtue & Spiritual Alignment", "Moon in 9th unlocks providential support and purposeful endeavors."),
+        10: ("कर्मक्षेत्र, प्रतिष्ठा व प्रभाव", "दशम भाव में चन्द्रमा कार्यक्षेत्र में आपकी प्रतिष्ठा व प्रभाव को बढ़ाता है।", 5, False, False, "Career, Prestige & Authority", "Moon in 10th expands professional influence and public recognition."),
+        11: ("एकादश लाभ व अभीष्ट सिद्धि", "एकादश भाव में चन्द्रमा सभी प्रकार के मनोवांछित लाभ व मित्रों के सहयोग का प्रदाता होता है। उत्तम गोचर।", 6, False, False, "Gains, Desires & Networking", "Moon in 11th is superlative for realizing objectives and alliance support."),
+        12: ("द्वादश चन्द्रमा (व्यय विचार)", "द्वादश भाव में चन्द्रमा व्यय की अधिकता व दूरस्थ कार्यों की संभावना बताता है। अनावश्यक भागदौड़ से बचें।", -4, False, False, "12th Moon (Expenditure / Distant Endeavors)", "Moon in 12th advises conserving reserves and monitoring expenditures.")
     }
 
-    title, desc, score_impact, is_4th, is_8th = chandra_gochar_data.get(cg_house, ("गोचर प्रभाव", "गोचर ग्रह सामान्य परिणाम दे रहे हैं।", 0, False, False))
+    item = chandra_gochar_data.get(cg_house, ("गोचर प्रभाव", "गोचर ग्रह सामान्य परिणाम दे रहे हैं।", 0, False, False, "Transit Effect", "Planetary transits yielding moderate results."))
+    title, desc, score_impact, is_4th, is_8th, title_en, desc_en = item
     return {
         "house": cg_house,
         "title": title,
+        "title_en": title_en,
         "desc": desc,
+        "desc_en": desc_en,
         "score_impact": score_impact,
         "is_fourth_moon": is_4th,
         "is_ashtama_moon": is_8th,
         "natal_rashi": constants.SIGNS_HI[natal_rashi],
-        "transit_rashi": constants.SIGNS_HI[transit_rashi]
+        "natal_rashi_en": constants.SIGNS[natal_rashi],
+        "transit_rashi": constants.SIGNS_HI[transit_rashi],
+        "transit_rashi_en": constants.SIGNS[transit_rashi]
     }
 
 def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
@@ -289,10 +306,28 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         f"{'दिनचर्या संतुलित रहेगी।' if health_score >= 65 else 'पर्याप्त विश्राम लें और खान-पान में सुपाच्य आहार को प्राथमिकता दें।'}"
     )
 
+    tara_en_item = NAVATARA_EN_MAP.get(tara_idx, ("Navatara Cycle", "Daily transit tara insight."))
+    tara_name_en = f"{tara_en_item[0]} (Tier {paryaya})"
+    tara_desc_en = tara_en_item[1]
+
+    daily_remedy_en = "Favourable day for purposeful tasks. Offer prayers to your Ishta Devata and initiate key goals with confidence."
+    if cg_res["is_ashtama_moon"]:
+        daily_remedy_en = "Chandrashtama is active today. Defer contentious arguments; chant 'Om Namah Shivaya' and practice mindful calm."
+    elif cg_res["is_fourth_moon"]:
+        daily_remedy_en = "4th Moon may cause restless thoughts. Meditate and start your day with a sweet offering for peaceful focus."
+    elif shani_res["has_shani_effect"] and shani_res["is_adverse"]:
+        daily_remedy_en = f"To pacify {shani_res.get('type_en', 'Saturn influence')}, light a sesame oil lamp or recite Hanuman Chalisa in the evening."
+    elif category == "bad":
+        daily_remedy_en = "Exercise extra patience today. Avoid speculative investments, feed birds, and maintain inner serenity."
+
     return {
         "today_str": today_date.strftime("%d %B %Y, %A"),
         "tara_name": tara_name,
+        "tara_name_en": tara_name_en,
         "tara_desc": tara_desc,
+        "tara_desc_en": tara_desc_en,
+        "daily_remedy_en": daily_remedy_en,
+        "remedy_en": daily_remedy_en,
         "overall_score": overall_score,
         "scores": {
             "career": career_score,

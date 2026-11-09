@@ -2995,23 +2995,29 @@ except Exception:
     _top_quick_panchang = None
 
 
-def _format_clean_dasha_display(val):
-    """Sanitizes raw dasha dictionaries or string representations into clean Devanagari names."""
+def _format_clean_dasha_display(val, is_hi=True):
+    """Sanitizes raw dasha dictionaries or string representations into clean names."""
+    default_ret = "शुक्र → शनि" if is_hi else "Venus → Saturn"
     if not val:
-        return "शुक्र → शनि"
+        return default_ret
     if isinstance(val, dict):
         md = val.get("mahadasha") or val.get("MD", {}).get("lord", "")
         ad = val.get("antardasha") or val.get("AD", {}).get("lord", "")
         pd = val.get("pratyantardasha") or val.get("PD", {}).get("lord", "")
         from vyas import constants
-        md_h = constants.PLANETS_HI.get(md, md)
-        ad_h = constants.PLANETS_HI.get(ad, ad)
-        pd_h = constants.PLANETS_HI.get(pd, pd)
+        if is_hi:
+            md_h = constants.PLANETS_HI.get(md, md)
+            ad_h = constants.PLANETS_HI.get(ad, ad)
+            pd_h = constants.PLANETS_HI.get(pd, pd)
+        else:
+            md_h = str(md).capitalize()
+            ad_h = str(ad).capitalize()
+            pd_h = str(pd).capitalize()
         if md_h and ad_h and pd_h:
             return f"{md_h} → {ad_h} → {pd_h}"
         elif md_h and ad_h:
             return f"{md_h} → {ad_h}"
-        return md_h or "शुक्र → शनि"
+        return md_h or default_ret
     s = str(val).strip()
     if "{" in s or "DashaNode" in s or "datetime" in s:
         import re
@@ -3020,30 +3026,24 @@ def _format_clean_dasha_display(val):
         if matches:
             unique_lords = []
             for m in matches:
-                if m not in unique_lords and m in constants.PLANETS_HI:
+                if m not in unique_lords:
                     unique_lords.append(m)
             if unique_lords:
-                return " → ".join([constants.PLANETS_HI.get(l, l) for l in unique_lords[:3]])
-        return "शुक्र → शनि"
+                if is_hi:
+                    return " → ".join([constants.PLANETS_HI.get(l, l) for l in unique_lords[:3]])
+                else:
+                    return " → ".join([str(l).capitalize() for l in unique_lords[:3]])
+        return default_ret
     from vyas import constants
     parts = [p.strip() for p in s.replace("->", "-").replace("→", "-").split("-") if p.strip()]
     if parts:
-        return " → ".join([constants.PLANETS_HI.get(p, p) for p in parts[:3]])
-    return s
-
-def _sanitize_astrological_text(text, cur_dasha_val=None):
-    """Guarantees that raw DashaNode or dictionary code dumps never appear in user-facing forecast narratives."""
-    if not text:
-        return ""
-    text_str = str(text)
-    if "DashaNode" in text_str or "{'MD':" in text_str or "start_date=" in text_str:
-        import re
-        d_clean = _format_clean_dasha_display(cur_dasha_val) if cur_dasha_val else "शुक्र → शनि"
-        text_str = re.sub(r"विंशोत्तरी दशा \(\{.*?\}\)", f"विंशोत्तरी दशा ({d_clean})", text_str, flags=re.DOTALL)
-        text_str = re.sub(r"\(\{.*?\}\)", f"({d_clean})", text_str, flags=re.DOTALL)
-        text_str = re.sub(r"\{'MD':.*?\}\)", d_clean, text_str, flags=re.DOTALL)
-        text_str = re.sub(r"\{'MD':.*", f"{d_clean} के प्रभाव से सकारात्मक परिणाम प्राप्त होंगे।", text_str, flags=re.DOTALL)
-    return text_str
+        if is_hi:
+            clean = [constants.PLANETS_HI.get(p, p) for p in parts]
+        else:
+            clean = [str(p).capitalize() for p in parts]
+        if clean:
+            return " → ".join(clean[:3])
+    return s or default_ret
 
 def _resolve_festival_and_muhurta(p, now_dt, is_hi=True):
     """Dynamically resolves today's active festival and auspicious worship timings.
@@ -3827,6 +3827,30 @@ if st.session_state.get('data_generated'):
         "शोध प्रबंध PDF" if is_hi else "Publication PDF"
     ]
 
+    # Auto-migrate domain suite index across language changes
+    _s_hi_names = [
+        "व्यक्तिगत दैनिक राशिफल", "दिव्य प्रश्न कुण्डली (Horary & Mook Prashna)",
+        "कुण्डली एवं षोडशवर्ग", "वैदिक फलित एवं शास्त्रीय सूत्र",
+        "अष्टकूट मिलान एवं परिहार", "लाल किताब सम्पूर्ण",
+        "दशा, गोचर एवं वर्षफल", "जन्म समय शुद्धि (BTR)",
+        "अष्टकवर्ग, षड्बल एवं मैत्री", "केपी, जैमिनी, नाड़ी एवं चक्र",
+        "शोध प्रबंध PDF"
+    ]
+    _s_en_names = [
+        "Daily Horoscope & Timing", "Horary & Mook Prashna",
+        "Birth Charts & 16 Vargas", "Vedic Forecast & Classical Sutras",
+        "Compatibility & Dosha Parihara", "Lal Kitab System & Remedies",
+        "Dasha, Transits & Varshphal", "Birth Time Rectification",
+        "Ashtakavarga & Strengths", "KP, Jaimini, Nadi & Chakras",
+        "Publication PDF"
+    ]
+    _cur_sb_val = st.session_state.get("domain_suite_sidebar_radio")
+    if _cur_sb_val:
+        if not is_hi and _cur_sb_val in _s_hi_names:
+            st.session_state["domain_suite_sidebar_radio"] = _s_en_names[_s_hi_names.index(_cur_sb_val)]
+        elif is_hi and _cur_sb_val in _s_en_names:
+            st.session_state["domain_suite_sidebar_radio"] = _s_hi_names[_s_en_names.index(_cur_sb_val)]
+
     # Pre-select Daily Horoscope if triggered
     if st.session_state.pop("_jump_to_daily_suite", False):
         st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
@@ -3932,10 +3956,10 @@ if st.session_state.get('data_generated'):
         st.markdown(f"""
         <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
             <span style="font-size: 0.86rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;">
-                ज्योतिष अनुसंधान प्रभाग (Domain Suite)
+                {'ज्योतिष अनुसंधान प्रभाग (Domain Suite)' if is_hi else 'RESEARCH DOMAIN SUITE'}
             </span>
             <span style="font-size: 0.80rem; color: {TH_MUTED}; font-weight: 700;">
-                (यहाँ से प्रभाग बदलें)
+                {'(यहाँ से प्रभाग बदलें)' if is_hi else '(Switch Domain)'}
             </span>
         </div>
         """, unsafe_allow_html=True)
@@ -3953,7 +3977,7 @@ if st.session_state.get('data_generated'):
             for k in list(st.session_state.keys()):
                 if k.startswith('_daily_cache') or k == 'daily_res':
                     st.session_state.pop(k, None)
-        if st.button("🔄 रीफ्रेश", key="top_quick_refresh_btn", on_click=_purge_and_reload, use_container_width=True, help="डेटा व स्क्रीन रीफ्रेश करें"):
+        if st.button("🔄 रीफ्रेश" if is_hi else "🔄 Refresh", key="top_quick_refresh_btn", on_click=_purge_and_reload, use_container_width=True, help="डेटा व स्क्रीन रीफ्रेश करें" if is_hi else "Refresh calculations & UI"):
             st.rerun()
 
     # -------------------------------------------------------------------------
@@ -4228,15 +4252,17 @@ if st.session_state.get('data_generated'):
         _d_naksh_col = TH_GOLD
 
         with col_d2:
+            _d_tara_name = daily_res.get('tara_name_en' if not is_hi else 'tara_name', daily_res['tara_name'])
+            _d_tara_desc = daily_res.get('tara_desc_en' if not is_hi else 'tara_desc', daily_res['tara_desc'])
             st.markdown(f"""
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase;">TODAY'S INSIGHT</div>
-                    <div style="font-size: 1.18rem; font-weight: 800; color: {_d_accent}; margin: 10px 0 6px 0;">{daily_res['tara_name']}</div>
-                    <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{daily_res['tara_desc']}</div>
+                    <div style="font-size: 1.18rem; font-weight: 800; color: {_d_accent}; margin: 10px 0 6px 0;">{_d_tara_name}</div>
+                    <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{_d_tara_desc}</div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: {_d_val};">
-                    <b>{'सक्रिय दशा:' if is_hi else 'Active Dasha:'}</b> <span style="color: {_d_highlight}; font-weight: 700;">{_format_clean_dasha_display(daily_res.get('running_dasha'))}</span>
+                    <b>{'सक्रिय दशा:' if is_hi else 'Active Dasha:'}</b> <span style="color: {_d_highlight}; font-weight: 700;">{_format_clean_dasha_display(daily_res.get('running_dasha'), is_hi=is_hi)}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -4265,7 +4291,8 @@ if st.session_state.get('data_generated'):
             amrit_v = daily_res.get('amrit_vela', '-')
             if "कोई नहीं" in amrit_v or "वर्जित" in amrit_v or "Prohibited" in amrit_v or "बुधवार" in amrit_v:
                 _abhi_bg = "rgba(220, 38, 38, 0.10)" if _is_light else "rgba(239, 68, 68, 0.15)"
-                abhijit_ui = f'<span style="color: {_d_rahu_col}; font-weight: 700; background: {_abhi_bg}; padding: 2px 6px; border-radius: 4px; display: inline-block;"> कोई नहीं (बुधवार को नहीं होता)</span>'
+                _no_abhi_lbl = " कोई नहीं (बुधवार को नहीं होता)" if is_hi else " None (Omitted on Wednesdays)"
+                abhijit_ui = f'<span style="color: {_d_rahu_col}; font-weight: 700; background: {_abhi_bg}; padding: 2px 6px; border-radius: 4px; display: inline-block;">{_no_abhi_lbl}</span>'
             else:
                 abhijit_ui = f'<span style="color: {_d_abhi_col}; font-weight: 600;">{amrit_v}</span>'
 
