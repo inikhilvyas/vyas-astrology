@@ -1,0 +1,8 @@
+# Robots.txt for VYAS ASTRA (https://vyasastro.in)
+User-agent: *
+Allow: /
+Disallow: /_stcore/
+Disallow: /static/
+
+# Sitemap index
+Sitemap: https://vyasastro.in/sitemap.xml

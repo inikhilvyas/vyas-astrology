@@ -532,6 +532,25 @@ st.html("""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<script>
+(function() {
+    function setupTouchSelectboxes() {
+        var selects = document.querySelectorAll('div[data-baseweb="select"]');
+        for (var i = 0; i < selects.length; i++) {
+            var inp = selects[i].querySelector('input');
+            if (inp && inp.getAttribute('inputmode') !== 'none') {
+                inp.setAttribute('inputmode', 'none');
+                inp.setAttribute('readonly', 'readonly');
+                inp.setAttribute('autocomplete', 'off');
+                inp.setAttribute('tabindex', '-1');
+            }
+        }
+    }
+    setupTouchSelectboxes();
+    var mo = new MutationObserver(setupTouchSelectboxes);
+    mo.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
 """)
 
 # ---------------- GOOGLE OAUTH 2.0 CALLBACK HANDLING ----------------
@@ -933,37 +952,58 @@ _light_css_rules = """
             color: #0f172a !important;
         }
 
-        /* Dropdown Popover Menus (when clicked) */
-        div[data-baseweb="popover"],
-        div[data-baseweb="popover"] div,
+        /* Mobile Touch-Proof Selectbox & Popover (Light Theme) */
+        div[data-baseweb="select"] {
+            cursor: pointer !important;
+            touch-action: manipulation !important;
+        }
+        div[data-baseweb="select"] * {
+            cursor: pointer !important;
+        }
+        div[data-baseweb="select"] input {
+            inputmode: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            caret-color: transparent !important;
+            cursor: pointer !important;
+            pointer-events: none !important;
+        }
+        div[data-baseweb="popover"] {
+            z-index: 100000000 !important;
+        }
+        div[data-baseweb="popover"] > div,
         div[data-baseweb="menu"],
-        div[data-baseweb="menu"] div,
         ul[data-baseweb="menu"],
-        ul[data-baseweb="menu"] li,
-        ul[role="listbox"],
-        ul[role="listbox"] li,
-        li[role="option"],
-        li[role="option"] div,
-        li[role="option"] span,
-        li[data-baseweb="menu-item"],
-        li[data-baseweb="menu-item"] div,
-        li[data-baseweb="menu-item"] span {
-            background: #ffffff !important;
+        ul[role="listbox"] {
+            z-index: 100000000 !important;
+            max-height: 52vh !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            border-radius: 12px !important;
+            border: 1.5px solid #2563eb !important;
             background-color: #ffffff !important;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2) !important;
+        }
+        li[data-baseweb="menu-item"],
+        li[role="option"] {
+            min-height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            padding: 12px 16px !important;
+            font-size: 0.98rem !important;
+            cursor: pointer !important;
+            touch-action: manipulation !important;
             color: #0f172a !important;
             -webkit-text-fill-color: #0f172a !important;
+            background: #ffffff !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
         li[data-baseweb="menu-item"]:hover,
-        li[data-baseweb="menu-item"]:hover div,
-        li[data-baseweb="menu-item"]:hover span,
+        li[data-baseweb="menu-item"]:active,
         li[role="option"]:hover,
-        li[role="option"]:hover div,
-        li[role="option"]:hover span,
-        li[aria-selected="true"],
-        li[aria-selected="true"] div,
-        li[aria-selected="true"] span {
+        li[role="option"]:active,
+        li[aria-selected="true"] {
             background: #dbeafe !important;
-            background-color: #dbeafe !important;
             color: #1e3a8a !important;
             -webkit-text-fill-color: #1e3a8a !important;
             font-weight: 800 !important;
@@ -1242,6 +1282,64 @@ st.markdown("""
         background-color: rgba(14, 23, 42, 0.9) !important;
         color: #ffffff !important;
         border: 1px solid rgba(240, 192, 90, 0.3) !important;
+    }
+
+    /* Universal Mobile Touch-Proof Selectbox & Popover (Dark Mode) */
+    div[data-baseweb="select"] {
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+    }
+    div[data-baseweb="select"] * {
+        cursor: pointer !important;
+    }
+    div[data-baseweb="select"] input {
+        inputmode: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        caret-color: transparent !important;
+        cursor: pointer !important;
+        pointer-events: none !important;
+    }
+    div[data-baseweb="popover"] {
+        z-index: 100000000 !important;
+    }
+    div[data-baseweb="popover"] > div,
+    div[data-baseweb="menu"],
+    ul[data-baseweb="menu"],
+    ul[role="listbox"] {
+        z-index: 100000000 !important;
+        max-height: 52vh !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 12px !important;
+        border: 1.5px solid #f0c05a !important;
+        background-color: #0b1220 !important;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.95), 0 0 24px rgba(240, 192, 90, 0.35) !important;
+    }
+    li[data-baseweb="menu-item"],
+    li[role="option"] {
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        padding: 12px 16px !important;
+        font-size: 0.98rem !important;
+        font-weight: 600 !important;
+        color: #f1f5f9 !important;
+        -webkit-text-fill-color: #f1f5f9 !important;
+        background: #0b1220 !important;
+        cursor: pointer !important;
+        touch-action: manipulation !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    }
+    li[data-baseweb="menu-item"]:hover,
+    li[data-baseweb="menu-item"]:active,
+    li[role="option"]:hover,
+    li[role="option"]:active,
+    li[aria-selected="true"] {
+        background: rgba(240, 192, 90, 0.22) !important;
+        color: #f0c05a !important;
+        -webkit-text-fill-color: #f0c05a !important;
+        font-weight: 800 !important;
     }
 
     /* -------------------------------------------------------------
@@ -3570,7 +3668,7 @@ if st.session_state.get('data_generated'):
         st.session_state["domain_suite_sidebar_radio"] = st.session_state["main_screen_suite_select"]
 
     safe_suite_idx = _safe_selectbox_guard("main_screen_suite_select", suite_options, cur_suite_idx)
-    col_sel_suite, col_sel_ref = st.columns([3.8, 1.2])
+    col_sel_suite, col_sel_ref = st.columns([4.2, 0.8])
     with col_sel_suite:
         st.markdown(f"""
         <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
