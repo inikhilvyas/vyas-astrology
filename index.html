@@ -83,7 +83,56 @@
             "priceCurrency": "INR"
           }
         },
-        {
+                {
+          "@type": "ItemList",
+          "@id": "https://vyasastro.in/#sitelinks",
+          "name": "VYAS ASTRA मुख्य वैदिक ज्योतिषीय सेवाएं",
+          "itemListElement": [
+            {
+              "@type": "SiteNavigationElement",
+              "position": 1,
+              "name": "निःशुल्क जन्म कुण्डली (Janam Kundali)",
+              "description": "सटीक लग्न चार्ट, नवमांश (D9), दशमांश (D10) एवं षोडशवर्ग चक्र",
+              "url": "https://vyasastro.in/?section=kundli"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 2,
+              "name": "आज का पंचांग व अभिजित मुहूर्त (Today's Panchang)",
+              "description": "सटीक तिथि, वार, नक्षत्र, योग, करण एवं अभिजित मुहूर्त समय",
+              "url": "https://vyasastro.in/?section=panchang"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 3,
+              "name": "आज का चौघड़िया (Day & Night Choghadiya)",
+              "description": "शुभ, अमृत, लाभ, चर चौघड़िया समय real-time वेध",
+              "url": "https://vyasastro.in/?section=choghadiya"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 4,
+              "name": "विंशोत्तरी महादशा व गोचर (Vimshottari Dasha)",
+              "description": "120 वर्षीय 5-स्तरीय विंशोत्तरी दशा एवं तात्कालिक ग्रह गोचर",
+              "url": "https://vyasastro.in/?section=dasha"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 5,
+              "name": "आचार्य व्यास AI ज्योतिषी (AI Astrologer)",
+              "description": "करियर, धन, विवाह व स्वास्थ्य पर सटीक शास्त्रीय फलादेश एवं सात्विक उपाय",
+              "url": "https://vyasastro.in/?section=chatbot"
+            },
+            {
+              "@type": "SiteNavigationElement",
+              "position": 6,
+              "name": "कुण्डली मिलान व अष्टकूट गुण (Kundli Milan)",
+              "description": "36 गुण मिलान, नाड़ी दोष, भकूट दोष एवं मांगलिक विचार",
+              "url": "https://vyasastro.in/?section=milan"
+            }
+          ]
+        },
+{
           "@type": "Organization",
           "@id": "https://vyasastro.in/#org",
           "name": "VYAS ASTRA",
@@ -280,6 +329,43 @@
         @keyframes shimmer {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
+        }
+
+        
+        /* 1-Click WhatsApp & Viral Web Share Pill */
+        #viral-share-btn {
+            position: fixed;
+            bottom: 18px;
+            left: 16px;
+            z-index: 999;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 999px;
+            padding: 8px 15px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 16px rgba(18, 140, 126, 0.45), 0 2px 6px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #viral-share-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 22px rgba(18, 140, 126, 0.65);
+            border-color: #f0c05a;
+        }
+        #viral-share-btn:active {
+            transform: scale(0.96);
+        }
+        .share-wa-icon {
+            font-size: 1.05rem;
+            display: inline-block;
+            line-height: 1;
         }
 
         /* Luxury Animated Vedic Loading Screen */
@@ -504,6 +590,11 @@
             <li><strong>दैनिक पंचांग व शुभ मुहूर्त:</strong> आज का अभिजित मुहूर्त, अमृत चौघड़िया, राहुकाल, नक्षत्र एवं तिथि।</li>
             <li><strong>आचार्य व्यास AI ज्योतिषी:</strong> करियर, धन, विवाह, प्रेम, संतान एवं स्वास्थ्य पर सटीक शास्त्रीय परामर्श व सात्विक उपाय।</li>
             <li><strong>वर्षफल एवं मुद्ददा दशा:</strong> ताजिक वर्षफल, मुन्था, वर्षेश एवं 12 महीनों का सूक्ष्म समय-चक्र।</li>
+            <li><strong>दैनिक राशिफल 2026:</strong> मेष, वृषभ, मिथुन, कर्क, सिंह, कन्या, तुला, वृश्चिक, धनु, मकर, कुम्भ एवं मीन राशियों का सटीक वैदिक दैनिक राशिफल।</li>
+            <li><strong>कुण्डली मिलान (36 गुण मिलान):</strong> वर-वधू की कुण्डली मिलान, अष्टकूट गुण (वर्ण, वश्य, तारा, योनि, ग्रहमैत्री, गण, भकूट, नाड़ी) एवं मांगलिक दोष विचार।</li>
+            <li><strong>कालसर्प दोष एवं शनि साढ़े साती:</strong> 12 प्रकार के कालसर्प योग, साढ़े साती के तीन चरण (उदय, शिखर, अस्त) एवं शास्त्रीय सात्विक वैदिक उपाय।</li>
+            <li><strong>केपी कस्पल सब-लॉर्ड (KP Astrology):</strong> 1 से 249 कस्पल सब-लॉर्ड, 4-स्टेप सिग्निफिकेटर्स एवं रूलिंग प्लैनेट्स (RP) द्वारा अचूक निर्णय।</li>
+
         </ul>
     </main>
     <!-- Instant Flash First-Paint Header & Skeleton Overlay (Sub-30ms UX) -->
@@ -565,6 +656,12 @@
 
 
 
+        <!-- 1-Click WhatsApp & Viral Web Share Pill -->
+    <button id="viral-share-btn" onclick="triggerViralShare()" title="व्हाट्सएप पर आज का पंचांग व कुण्डली शेयर करें">
+        <span class="share-wa-icon">📲</span>
+        <span>शेयर करें</span>
+    </button>
+
     <!-- PWA Install Button -->
     <button id="pwa-install-btn" title="ऐप को होम स्क्रीन पर इंस्टॉल करें">
         <span style="font-size: 1.1rem;">📲</span>
@@ -596,6 +693,25 @@
                     console.warn('[VYAS] SW Registration note:', err);
                 });
             });
+        }
+
+        
+        // 1-Click WhatsApp & Web Share API Viral Loop
+        function triggerViralShare() {
+            const shareTitle = 'VYAS ASTRA • आज का वैदिक पंचांग एवं निःशुल्क जन्म कुण्डली';
+            const shareText = '🌟 व्यास अस्त्र (VYAS ASTRA) • आज का अभिजित मुहूर्त, अमृत चौघड़िया, विंशोत्तरी दशा व आचार्य व्यास AI से सीधे ज्योतिषीय परामर्श प्राप्त करें:\n';
+            const shareUrl = 'https://vyasastro.in/';
+
+            if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
+                navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl
+                }).catch(function(e) {});
+            } else {
+                const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText + '👉 ' + shareUrl);
+                window.open(waUrl, '_blank');
+            }
         }
 
         // Synchronous immediate iframe URL resolver (Prevents unauthenticated race conditions)
