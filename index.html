@@ -27,6 +27,9 @@
     <meta property="og:url" content="https://vyasastro.in">
     <meta property="og:type" content="website">
 
+    <!-- Official Google Identity Services SDK (100% In-Page Verification, Zero Redirects) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -237,6 +240,11 @@
         </div>
     </div>
 
+    <!-- Floating Google 1-Click Sign-In on HTML wrapper -->
+    <div id="google-auth-bar" style="position: fixed; top: 10px; right: 14px; z-index: 1000; display: flex; align-items: center; gap: 8px;">
+        <div id="g_id_signin"></div>
+    </div>
+
     <!-- PWA Install Button -->
     <button id="pwa-install-btn" title="ऐप को होम स्क्रीन पर इंस्टॉल करें">
         <span style="font-size: 1.1rem;">📲</span>
@@ -261,19 +269,77 @@
     </div>
 
     <script>
-        // Forward query params (OAuth codes, session tokens, etc.) into the Streamlit app
+        // Official Google Identity Services (GIS) — 100% On-Page Verification, Zero Streamlit Redirects!
+        function handleGoogleCredential(response) {
+            if (response && response.credential) {
+                try {
+                    localStorage.setItem('vyas_g_jwt', response.credential);
+                    const iframe = document.getElementById('app-frame');
+                    if (iframe) {
+                        iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&g_jwt=" + encodeURIComponent(response.credential);
+                    }
+                    // Hide the top auth bar once signed in
+                    const authBar = document.getElementById('google-auth-bar');
+                    if (authBar) authBar.style.display = 'none';
+                } catch(e) {
+                    console.error("GIS Error:", e);
+                }
+            }
+        }
+
+        function initGoogleIdentity() {
+            if (window.google && window.google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: "341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com",
+                    callback: handleGoogleCredential,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+
+                // Render standard Google Sign-In button
+                const gDiv = document.getElementById("g_id_signin");
+                if (gDiv) {
+                    google.accounts.id.renderButton(gDiv, {
+                        theme: "filled_blue",
+                        size: "medium",
+                        shape: "pill",
+                        text: "signin_with",
+                        logo_alignment: "left"
+                    });
+                }
+
+                // Show One-Tap prompt
+                google.accounts.id.prompt();
+            } else {
+                setTimeout(initGoogleIdentity, 300);
+            }
+        }
+
+        // On Page Load: Restore session or forward params
         (function() {
             try {
                 const search = window.location.search;
+                const iframe = document.getElementById('app-frame');
+                const savedJwt = localStorage.getItem('vyas_g_jwt');
+
                 if (search) {
                     const extra = search.startsWith('?') ? search.substring(1) : search;
-                    const iframe = document.getElementById('app-frame');
                     if (iframe && extra) {
                         iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&" + extra;
                     }
+                } else if (savedJwt && iframe) {
+                    // Auto-login using saved verified Google token
+                    iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&g_jwt=" + encodeURIComponent(savedJwt);
+                    const authBar = document.getElementById('google-auth-bar');
+                    if (authBar) authBar.style.display = 'none';
                 }
             } catch(e) {}
         })();
+
+        // Start GIS
+        window.addEventListener('load', () => {
+            initGoogleIdentity();
+        });
 
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {

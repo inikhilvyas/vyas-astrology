@@ -723,3 +723,24 @@ def upload_pdf_to_google_drive(
             return False, f"अपलोड त्रुटि ({resp.status_code}): {resp.text}", None
     except Exception as e:
         return False, f"नेटवर्क त्रुटि: {str(e)}", None
+
+
+def verify_google_id_token(id_token: str) -> Tuple[bool, str, dict]:
+    """Verifies a Google ID token (JWT) returned by Google Identity Services on the HTML wrapper.
+    Queries Google's official tokeninfo endpoint. Returns (ok, message, user_info).
+    """
+    if not id_token:
+        return False, "टोकन खाली है।", {}
+    try:
+        url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(id_token)}"
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            email = data.get("email")
+            if email and (data.get("email_verified") is True or str(data.get("email_verified")).lower() == "true"):
+                name = data.get("name") or email.split("@")[0]
+                return True, "सफल", {"email": email, "name": name, "sub": data.get("sub")}
+            return False, "Google ईमेल सत्यापित नहीं है।", {}
+        return False, f"Google प्रमाणीकरण त्रुटि: HTTP {resp.status_code}", {}
+    except Exception as exc:
+        return False, f"टोकन सत्यापन विफल: {str(exc)}", {}

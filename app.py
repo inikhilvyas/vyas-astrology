@@ -488,6 +488,25 @@ _oauth_code = st.query_params.get("code")
 _oauth_state = st.query_params.get("state")
 _oauth_error = st.query_params.get("error")
 _oauth_err_desc = st.query_params.get("error_description")
+_g_jwt = st.query_params.get("g_jwt")
+
+if _g_jwt and not st.session_state.get("user_google_processed"):
+    st.session_state["user_google_processed"] = True
+    with st.spinner("Google से सुरक्षित प्रमाणीकरण किया जा रहा है..."):
+        ok_jwt, msg_jwt, u_jwt = google_drive_sync.verify_google_id_token(_g_jwt)
+        if ok_jwt and u_jwt:
+            ok_log, msg_log, u_obj = auth_vault.login_or_register_google(u_jwt["email"], u_jwt["name"])
+            if ok_log and u_obj:
+                _start_user_session(u_obj)
+                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}!", icon="")
+                st.query_params.clear()
+                st.rerun()
+            else:
+                st.error(f"Google खाता निर्माण विफल: {msg_log}")
+                st.query_params.clear()
+        else:
+            st.error(f"Google प्रमाणीकरण विफल: {msg_jwt}")
+            st.query_params.clear()
 
 if _oauth_error:
     # Google bounced back with an error — show it and clean the URL.
