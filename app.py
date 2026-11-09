@@ -486,6 +486,7 @@ st.set_page_config(
 
 # ---------------- DOMAIN ENFORCEMENT & CANONICAL REDIRECT GUARD ----------------
 # Ensures visitors and OAuth flows always stay on https://vyasastro.in instead of raw streamlit.app
+import streamlit.components.v1 as components
 import streamlit.components.v1 as _st_comp_guard
 _st_comp_guard.html("""
 <script>
@@ -549,7 +550,7 @@ st.html("""
 """)
 
 # Pure Dropdown Key & Focus Locker (Runs via iframe with window.parent access to catch all BaseWeb select events)
-components.v1.html("""
+st.components.v1.html("""
 <script>
 (function() {
     try {
@@ -2048,7 +2049,7 @@ with col_nav_lang:
         st.rerun()
 
 if st.session_state.pop("_trigger_open_sidebar", False):
-    components.v1.html("""
+    st.components.v1.html("""
     <script>
     try {
         var doc = window.parent.document;
@@ -2223,7 +2224,7 @@ if st.session_state.get('_client_sync_profile'):
     try:
         import json
         _prof_str = json.dumps(st.session_state['_client_sync_profile'])
-        components.v1.html(f"""
+        st.components.v1.html(f"""
         <script>
         try {{
             var prof = {_prof_str};
