@@ -291,6 +291,19 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
     if prd_hi: dasha_parts_hi.append(f"प्राण दशा: {prd_hi}")
     dasha_full_text = " | ".join(dasha_parts_hi) if dasha_parts_hi else f"सक्रिय दशा: {md_hi}-{ad_hi}"
 
+    dasha_parts_en = []
+    if md_l: dasha_parts_en.append(f"Mahadasha: {md_l}")
+    if ad_l: dasha_parts_en.append(f"Antardasha: {ad_l}")
+    if pd_l: dasha_parts_en.append(f"Pratyantar: {pd_l}")
+    if sd_l: dasha_parts_en.append(f"Sookshma: {sd_l}")
+    if prd_l: dasha_parts_en.append(f"Prana: {prd_l}")
+    dasha_full_text_en = " | ".join(dasha_parts_en) if dasha_parts_en else f"Active Dasha: {md_l}-{ad_l}"
+
+    tara_en_item = NAVATARA_EN_MAP.get(tara_idx, ("Navatara Cycle", "Daily transit tara insight."))
+    paryaya = ((transit_nak - natal_nak + 27) % 27 // 9) + 1
+    tara_name_en = f"{tara_en_item[0]} (Cycle {paryaya})"
+    tara_desc_en = tara_en_item[1]
+
     # Master Synthesis
     master_synthesis = (
         f"आज गोचरस्थ चन्द्रमा आपकी जन्म राशि से {cg_res['house']}वें भाव ({cg_res['transit_rashi']} राशि, {constants.NAKSHATRAS[transit_nak]} नक्षत्र) में संचरण कर रहे हैं। "
@@ -299,6 +312,18 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         f"शनि गोचर स्थिति: <b>{shani_res['type']}</b> ({shani_res['desc']})। "
         f"चन्द्र गोचर फल: <b>{cg_res['title']}</b> ({cg_res['desc']})। "
         f"समग्र खगोलीय समीकरणों के आधार पर आज का दिन संतुलित रूप से <b>{overall_score}% अनुकूल</b> परिलक्षित होता है।"
+    )
+
+    _h_num = cg_res['house']
+    _h_ord = "1st" if _h_num == 1 else ("2nd" if _h_num == 2 else ("3rd" if _h_num == 3 else f"{_h_num}th"))
+
+    master_synthesis_en = (
+        f"Today transit Moon moves through the {_h_ord} house from your natal Moon ({cg_res.get('transit_rashi_en', cg_res['transit_rashi'])} sign, {constants.NAKSHATRAS[transit_nak]} Nakshatra). "
+        f"According to Navatara principles, this activates '{tara_name_en}' ({tara_desc_en}). "
+        f"Currently, your chart operates under <b>{dasha_full_text_en}</b>. "
+        f"Saturn transit alignment: <b>{shani_res.get('type_en', shani_res['type'])}</b> ({shani_res.get('desc_en', shani_res['desc'])}). "
+        f"Moon transit indication: <b>{cg_res.get('title_en', cg_res['title'])}</b> ({cg_res.get('desc_en', cg_res['desc'])}). "
+        f"Synthesizing these planetary factors, today's astrological resonance is calibrated at <b>{overall_score}% favourable</b>."
     )
 
     career_narrative = (
@@ -318,10 +343,22 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         f"{'दिनचर्या संतुलित रहेगी।' if health_score >= 65 else 'पर्याप्त विश्राम लें और खान-पान में सुपाच्य आहार को प्राथमिकता दें।'}"
     )
 
-    tara_en_item = NAVATARA_EN_MAP.get(tara_idx, ("Navatara Cycle", "Daily transit tara insight."))
-    paryaya = ((transit_nak - natal_nak + 27) % 27 // 9) + 1
-    tara_name_en = f"{tara_en_item[0]} (Tier {paryaya})"
-    tara_desc_en = tara_en_item[1]
+    career_narrative_en = (
+        f"In professional spheres, maintain a structured approach under {md_l}-{ad_l} Dasha and {tara_name_en}. "
+        f"{'The day is conducive for advancing plans and executing core priorities.' if career_score >= 65 else 'Maintain harmony with colleagues and avoid friction over conflicting opinions.'}"
+    )
+    wealth_narrative_en = (
+        f"Financial conditions reflect relative equilibrium at {wealth_score}%. "
+        f"{'Routine transactions and past initiatives yield steady progress.' if wealth_score >= 65 else 'Exercising fiscal prudence and avoiding impulsive expenditures is strongly advised.'}"
+    )
+    love_narrative_en = (
+        f"Interpersonal harmony and family rapport indicate {love_score}% alignment. "
+        f"{'Thoughtful dialogue and mutual understanding bring warmth to relationships.' if love_score >= 65 else 'Handle sensitive matters with patience and attentive listening.'}"
+    )
+    health_narrative_en = (
+        f"Vitality and mental stamina measure at {health_score}%. "
+        f"{'Routine energy remains balanced for daily responsibilities.' if health_score >= 65 else 'Prioritize sufficient rest, hydration, and mindful relaxation.'}"
+    )
 
     daily_remedy_en = "Favourable day for purposeful tasks. Offer prayers to your Ishta Devata and initiate key goals with confidence."
     if cg_res["is_ashtama_moon"]:
@@ -350,16 +387,26 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
         },
         "narratives": {
             "career": career_narrative,
+            "career_en": career_narrative_en,
             "wealth": wealth_narrative,
+            "wealth_en": wealth_narrative_en,
             "love": love_narrative,
+            "love_en": love_narrative_en,
             "health": health_narrative,
+            "health_en": health_narrative_en,
             "synthesis": master_synthesis,
+            "synthesis_en": master_synthesis_en,
             "chandra_gochar_title": cg_res["title"],
+            "chandra_gochar_title_en": cg_res.get("title_en", cg_res["title"]),
             "chandra_gochar_desc": cg_res["desc"],
+            "chandra_gochar_desc_en": cg_res.get("desc_en", cg_res["desc"]),
             "chandra_gochar_house": cg_res["house"],
             "shani_gochar_title": shani_res["type"],
+            "shani_gochar_title_en": shani_res.get("type_en", shani_res["type"]),
             "shani_gochar_desc": shani_res["desc"],
-            "dasha_full_text": dasha_full_text
+            "shani_gochar_desc_en": shani_res.get("desc_en", shani_res["desc"]),
+            "dasha_full_text": dasha_full_text,
+            "dasha_full_text_en": dasha_full_text_en
         },
         "running_dasha": running_dasha_str,
         "dasha_chain_hi": {
