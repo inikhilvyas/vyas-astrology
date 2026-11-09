@@ -3397,30 +3397,7 @@ if st.session_state.get('data_generated'):
             abbr += " (R)" if not is_hi else " (व)"
         d1_houses[house_num].append(abbr)
 
-    # -------------------------------------------------------------------------
-    # ACHARYA VYAS LIVE VEDIC CONSULTATION TRIGGER BAR
-    # -------------------------------------------------------------------------
-    col_bot_bar1, col_bot_bar2 = st.columns([3.5, 1.5])
-    with col_bot_bar1:
-        st.markdown(f"""
-        <div class="consultation-banner-card" style="background: {TH_CARD_BG};
-                    border: {TH_CARD_BORDER}; border-radius: 14px; padding: 14px 18px; display: flex; align-items: center; gap: 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
-            <div style="font-family: 'Yatra One', serif; font-size: 2.2rem; line-height: 1; color: {TH_GOLD}; font-weight: 900; border: 2px solid {TH_GOLD}; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 14px rgba(37,99,235,0.2);">ॐ</div>
-            <div>
-                <div style="font-family: 'Yatra One', serif; font-weight: 700; color: {TH_GOLD}; font-size: clamp(1.15rem, 3.8vw, 1.4rem); letter-spacing: 0.4px;">
-                    आचार्य व्यास • प्रत्यक्ष वैदिक संवाद (Live Consultation)
-                </div>
-                <div style="color: {TH_MUTED}; font-size: clamp(0.92rem, 2.8vw, 1.05rem); margin-top: 4px; line-height: 1.5; font-weight: 600;">
-                    आपकी कुण्डली, चालू विंशोत्तरी दशा व तात्कालिक गोचर पर आधारित सीधा समाधान
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    with col_bot_bar2:
-        st.markdown('<div class="consultation-action-btn">', unsafe_allow_html=True)
-        if st.button("परामर्श प्रारंभ करें (Chat Now)", key="open_acharya_bot_bar_btn", use_container_width=True):
-            st.session_state["show_acharya_dialog"] = True
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Acharya Vyas Live Consultation is available via floating Rishi avatar widget & sidebar
 
     # -------------------------------------------------------------------------
     # DOMAIN SUITE NAVIGATION (Moved to Sidebar to keep interface clean and compact)
@@ -3681,7 +3658,12 @@ if st.session_state.get('data_generated'):
         with col_pr_btn1:
             if st.button("आचार्य व्यास से इस प्रश्न पर सीधे संवाद करें (Chat Now)", type="primary", use_container_width=True, key="prashna_live_chat_btn"):
                 st.session_state['prashna_meta'] = {"category": active_domain['title_hi'], "text": custom_q}
-                st.session_state["show_acharya_dialog"] = True
+                if custom_q:
+                    if "dialog_chat_history" not in st.session_state or not st.session_state["dialog_chat_history"]:
+                        st.session_state["dialog_chat_history"] = []
+                    st.session_state["dialog_chat_history"].append({"role": "user", "content": custom_q})
+                    st.session_state["chat_pending_query"] = custom_q
+                st.session_state["vyas_chat_open"] = True
                 st.rerun()
 
     # =========================================================================
@@ -6376,31 +6358,18 @@ if st.session_state.get('data_generated'):
             """, unsafe_allow_html=True)
 
     # =========================================================================
-    #  ACHARYA VYAS LIVE VEDIC BOT POPUP MODAL (आचार्य व्यास AI ज्योतिषी)
+    #  ACHARYA VYAS LIVE VEDIC MESSENGER (Facebook Messenger Style Floating Chat)
     # =========================================================================
-    @st.dialog(" आचार्य व्यास • प्रत्यक्ष वैदिक AI परामर्श (Live Consultation)", width="large")
-    def show_acharya_consultation_dialog(ch, b_info, c_dasha, p_meta):
-        # Header profile card
-        st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.2) 0%, rgba(14, 23, 42, 0.95) 100%);
-                    border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 14px; padding: 12px 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px;">
-            <div style="font-size: 2.2rem; background: rgba(240,192,90,0.15); border: 2px solid #f0c05a; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(240,192,90,0.3); color: #f0c05a; font-weight: bold;">
-                ॐ
-            </div>
-            <div style="flex-grow: 1;">
-                <div style="font-size: 1.15rem; font-weight: 800; color: #f0c05a; display: flex; align-items: center; gap: 8px;">
-                    आचार्य व्यास <span style="font-size: 0.75rem; background: #166534; color: #bbf7d0; padding: 2px 8px; border-radius: 12px; font-weight: 600;">ऑनलाइन उपस्थित</span>
-                </div>
-                <div style="font-size: 0.85rem; color: #e2e8f0; margin-top: 2px;">
-                    <b>{constants.SIGNS_HI[ch.ascendant_sign]} लग्न</b>, <b>{constants.SIGNS_HI[ch.planets['Moon'].sign_index]} राशि</b>
-                </div>
-                <div style="font-size: 0.78rem; color: #cbd5e1; margin-top: 2px;">
-                    महर्षि पाराशर, भृगु एवं जैमिनी ज्योतिष सिद्धांतों पर आधारित प्रामाणिक संवाद
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    _here = os.path.dirname(__file__)
+    _rishi_thumb_file = os.path.join(_here, "rishi_avatar_thumb.png")
+    if not os.path.exists(_rishi_thumb_file):
+        _rishi_thumb_file = os.path.join(_here, "rishi_avatar.png")
+    try:
+        _rishi_b64 = base64.b64encode(open(_rishi_thumb_file, 'rb').read()).decode('utf-8')
+    except Exception:
+        _rishi_b64 = ""
 
+    def render_floating_vyas_messenger(ch, b_info, c_dasha, p_meta):
         # Calculate native age for Desh, Kaal & Paristhiti context
         birth_dt_obj = b_info.get('local')
         age_val = None
@@ -6412,236 +6381,366 @@ if st.session_state.get('data_generated'):
                 age_val = datetime.now().year - int(dt_raw.split('-')[0])
             except Exception:
                 age_val = 32
-
         if age_val is None or age_val <= 0:
             age_val = 32
 
-        # Life-Stage appropriate Normal & Dignified Consultation Queries (देश, काल, परिस्थिति)
         if age_val >= 55:
-            # Senior / Elder stage (55+ years)
             suggested_queries = [
-                "स्वास्थ्य रक्षा, दीर्घायु एवं शारीरिक कल्याण के क्या संकेत हैं?",
-                "पारिवारिक सुख, शांति एवं संतान की प्रगति कैसी रहेगी?",
-                "आर्थिक स्थिति, संचय एवं संपत्ति संरक्षण का समय कैसा है?",
-                "आध्यात्मिक उन्नति, मानसिक शांति व साधना हेतु मार्गदर्शन दें।",
-                "दैनिक जीवन में सकारात्मक ऊर्जा हेतु कौन से सात्विक उपाय करें?"
+                "स्वास्थ्य रक्षा एवं दीर्घायु के क्या संकेत हैं?",
+                "पारिवारिक सुख व संतान की प्रगति कैसी रहेगी?",
+                "आर्थिक संचय व संपत्ति संरक्षण का समय कैसा है?",
+                "आध्यात्मिक उन्नति व साधना हेतु मार्गदर्शन दें।"
             ]
             welcome_msg = (
                 f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
                 f"मैं **आचार्य व्यास** हूँ। आपकी जन्म कुण्डली मेरे समक्ष खुली है। "
-                f"आप स्वास्थ्य रक्षा, पारिवारिक सुख-शांति, संतान की उन्नति, आर्थिक संचय अथवा आध्यात्मिक साधना के विषय में सीधे प्रश्न पूछ सकते हैं।"
+                f"आप स्वास्थ्य रक्षा, पारिवारिक सुख, संतान अथवा आध्यात्मिक साधना के विषय में सीधे प्रश्न पूछ सकते हैं।"
             )
         elif age_val >= 32:
-            # Mature adult stage (32-54 years)
             suggested_queries = [
-                "कार्यक्षेत्र, व्यवसाय एवं आजीविका में प्रगति के क्या योग हैं?",
-                "आर्थिक स्थिति, धन संचय एवं निवेश के अवसर कैसे रहेंगे?",
-                "दांपत्य जीवन, गृहस्थ सुख एवं पारिवारिक सामंजस्य कैसा रहेगा?",
-                "संतान पक्ष, विद्या एवं पारिवारिक दायित्वों की क्या स्थिति है?",
-                "स्वास्थ्य रक्षा एवं मानसिक शांति हेतु कौन से सात्विक उपाय करें?"
+                "कार्यक्षेत्र व आजीविका में प्रगति के क्या योग हैं?",
+                "आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?",
+                "दांपत्य जीवन व पारिवारिक सुख कैसा रहेगा?",
+                "स्वास्थ्य रक्षा व शांति हेतु सात्विक उपाय बताएं।"
             ]
             welcome_msg = (
                 f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
                 f"मैं **आचार्य व्यास** हूँ। आपकी जन्म कुण्डली मेरे समक्ष खुली है। "
-                f"आप कार्यक्षेत्र, पदोन्नति, आर्थिक स्थिति, दांपत्य जीवन, संतान अथवा स्वास्थ्य के विषय में सीधे प्रश्न पूछ सकते हैं।"
+                f"आप कार्यक्षेत्र, पदोन्नति, आर्थिक स्थिति, दांपत्य अथवा स्वास्थ्य के विषय में सीधे प्रश्न पूछ सकते हैं।"
             )
         elif age_val >= 18:
-            # Youth / Career Entry stage (18-31 years)
             suggested_queries = [
-                "करियर, रोजगार एवं आजीविका के क्या योग हैं?",
-                "उच्च शिक्षा, कौशल विकास एवं कार्यक्षेत्र में सफलता की संभावना?",
-                "आर्थिक स्थिति एवं भविष्य के विकास के अवसर कैसे रहेंगे?",
-                "विवाह एवं व्यक्तिगत जीवन के ग्रह क्या संकेत दे रहे हैं?",
-                "एकाग्रता, स्वास्थ्य एवं सफलता हेतु कौन से सात्विक उपाय करें?"
+                "करियर व आजीविका के क्या योग हैं?",
+                "उच्च शिक्षा व प्रतियोगी परीक्षा में सफलता?",
+                "आर्थिक स्थिति व आगामी अवसर कैसे रहेंगे?",
+                "विवाह एवं व्यक्तिगत जीवन के ग्रह संकेत?"
             ]
             welcome_msg = (
                 f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
                 f"मैं **आचार्य व्यास** हूँ। आपकी जन्म कुण्डली मेरे समक्ष खुली है। "
-                f"आप करियर, उच्च शिक्षा, आजीविका, विवाह अथवा भविष्य की दिशा के विषय में सीधे प्रश्न पूछ सकते हैं।"
+                f"आप करियर, उच्च शिक्षा, आजीविका अथवा विवाह के विषय में सीधे प्रश्न पूछ सकते हैं।"
             )
         else:
-            # Student / Child stage (< 18 years)
             suggested_queries = [
-                "विद्या, एकाग्रता एवं शैक्षणिक उन्नति के क्या योग हैं?",
-                "स्वास्थ्य, मानसिक ऊर्जा एवं शारीरिक विकास की स्थिति कैसी है?",
-                "भविष्य की अनुकूल दिशा एवं स्वाभाविक प्रतिभा क्या है?",
-                "विद्या वृद्धि एवं कल्याण हेतु कौन से सात्विक उपाय करें?"
+                "विद्या व एकाग्रता के क्या योग हैं?",
+                "स्वास्थ्य व ऊर्जा की स्थिति कैसी है?",
+                "भविष्य की अनुकूल दिशा व प्रतिभा क्या है?",
+                "विद्या वृद्धि हेतु सात्विक उपाय बताएं।"
             ]
             welcome_msg = (
                 f"स्नेह व शुभाशीर्वाद {b_info.get('name', 'जातक')}।\n\n"
                 f"मैं **आचार्य व्यास** हूँ। आपकी जन्म कुण्डली मेरे समक्ष खुली है। "
-                f"आप विद्या, एकाग्रता, प्रतिभा एवं स्वास्थ्य के विषय में सीधे प्रश्न पूछ सकते हैं।"
+                f"आप विद्या, एकाग्रता, प्रतिभा व स्वास्थ्य के विषय में सीधे प्रश्न पूछ सकते हैं।"
             )
 
-        # Quick chips inside popup
-        st.markdown("<div style='font-size: 1.02rem; color: #f0c05a; font-weight: 700; margin-bottom: 8px;'>त्वरित शास्त्रीय प्रश्न (Quick Consultation):</div>", unsafe_allow_html=True)
-        
-        chip_col1, chip_col2 = st.columns(2)
-        chosen_chip = None
-        for i, q_chip in enumerate(suggested_queries):
-            target_col = chip_col1 if i % 2 == 0 else chip_col2
-            with target_col:
-                if st.button(q_chip, key=f"dialog_chip_{i}", use_container_width=True):
-                    chosen_chip = q_chip
-
-        # Initialize session state for dialog chat history
         if "dialog_chat_history" not in st.session_state or not st.session_state["dialog_chat_history"]:
-            st.session_state["dialog_chat_history"] = [
-                {
-                    "role": "assistant",
-                    "content": welcome_msg
-                }
-            ]
+            st.session_state["dialog_chat_history"] = [{"role": "assistant", "content": welcome_msg}]
 
-        # Spacious chat message log container
-        chat_container = st.container(height=440)
-        with chat_container:
-            for msg in st.session_state["dialog_chat_history"]:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+        is_chat_open = st.session_state.get("vyas_chat_open", False)
 
-        # Chat Input inside popup
-        dialog_user_input = st.chat_input("आचार्य व्यास जी से अपना प्रश्न यहाँ पूछें...")
-        if chosen_chip:
-            dialog_user_input = chosen_chip
+        # 1. Floating CSS Styles
+        st.markdown(f"""
+        <style>
+        /* Floating Action Button (FAB) */
+        .vyas-rishi-fab-wrap {{
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            z-index: 9999998 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }}
+        .vyas-rishi-badge {{
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.96) 100%) !important;
+            border: 1.5px solid rgba(240, 192, 90, 0.5) !important;
+            border-radius: 999px !important;
+            padding: 7px 14px !important;
+            color: #fef08a !important;
+            font-size: 0.84rem !important;
+            font-weight: 700 !important;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+            white-space: nowrap !important;
+            pointer-events: none !important;
+        }}
+        .vyas-rishi-fab-wrap div.stButton > button {{
+            width: 66px !important;
+            height: 66px !important;
+            min-width: 66px !important;
+            border-radius: 50% !important;
+            border: 2.5px solid #f0c05a !important;
+            background-image: url('data:image/png;base64,{_rishi_b64}') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            box-shadow: 0 8px 26px rgba(217, 119, 6, 0.65), 0 0 18px rgba(240, 192, 90, 0.4) !important;
+            cursor: pointer !important;
+            color: transparent !important;
+            font-size: 0px !important;
+            padding: 0 !important;
+            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        }}
+        .vyas-rishi-fab-wrap div.stButton > button:hover {{
+            transform: scale(1.12) rotate(3deg) !important;
+            box-shadow: 0 12px 34px rgba(245, 158, 11, 0.9), 0 0 26px rgba(254, 240, 138, 0.7) !important;
+            border-color: #fef08a !important;
+        }}
 
-        if dialog_user_input:
-            st.session_state["dialog_chat_history"].append({"role": "user", "content": dialog_user_input})
+        /* Floating Messenger Box */
+        div[data-testid="stVerticalBlock"]:has(> div > .vyas-chat-messenger-box),
+        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) {{
+            position: fixed !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            width: 410px !important;
+            max-width: calc(100vw - 28px) !important;
+            height: 610px !important;
+            max-height: calc(100dvh - 36px) !important;
+            background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.14) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
+            border: 2px solid rgba(240, 192, 90, 0.55) !important;
+            border-radius: 22px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(240, 192, 90, 0.3) !important;
+            z-index: 9999999 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 12px 14px !important;
+            backdrop-filter: blur(20px) !important;
+            animation: vyasPopIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }}
+
+        @keyframes vyasPopIn {{
+            0% {{ transform: translateY(35px) scale(0.9); opacity: 0; }}
+            100% {{ transform: translateY(0) scale(1); opacity: 1; }}
+        }}
+
+        /* Suggestion chip styling */
+        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) div.stButton > button {{
+            background: rgba(30, 41, 59, 0.75) !important;
+            border: 1px solid rgba(240, 192, 90, 0.3) !important;
+            border-radius: 12px !important;
+            color: #e2e8f0 !important;
+            font-size: 0.76rem !important;
+            padding: 5px 8px !important;
+            min-height: 38px !important;
+            line-height: 1.25 !important;
+            transition: all 0.2s ease !important;
+        }}
+        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) div.stButton > button:hover {{
+            background: rgba(240, 192, 90, 0.2) !important;
+            border-color: #f0c05a !important;
+            color: #fef08a !important;
+        }}
+
+        /* Minimize / Clear action button */
+        .vyas-chat-close-btn div.stButton > button {{
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 8px !important;
+            color: #f8fafc !important;
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            min-height: 32px !important;
+            padding: 2px 8px !important;
+        }}
+        .vyas-chat-close-btn div.stButton > button:hover {{
+            background: rgba(239, 68, 68, 0.35) !important;
+            border-color: #ef4444 !important;
+            color: #fee2e2 !important;
+        }}
+
+        /* Animated typing dots */
+        .vyas-typing-bubble {{
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(240, 192, 90, 0.4);
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin: 4px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }}
+        .vyas-pulse-dot {{
+            width: 7px;
+            height: 7px;
+            background-color: #f0c05a;
+            border-radius: 50%;
+            display: inline-block;
+            animation: vyasBounce 1.4s infinite ease-in-out both;
+        }}
+        .vyas-pulse-dot:nth-child(1) {{ animation-delay: -0.32s; }}
+        .vyas-pulse-dot:nth-child(2) {{ animation-delay: -0.16s; }}
+        .vyas-pulse-dot:nth-child(3) {{ animation-delay: 0s; }}
+
+        @keyframes vyasBounce {{
+            0%, 80%, 100% {{ transform: scale(0.2); opacity: 0.3; }}
+            40% {{ transform: scale(1.1); opacity: 1; background-color: #fef08a; }}
+        }}
+
+        @media (max-width: 600px) {{
+            div[data-testid="stVerticalBlock"]:has(> div > .vyas-chat-messenger-box),
+            div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) {{
+                bottom: 0 !important;
+                right: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 84dvh !important;
+                max-height: 84dvh !important;
+                border-radius: 24px 24px 0 0 !important;
+            }}
+            .vyas-rishi-badge {{
+                display: none !important;
+            }}
+            .vyas-rishi-fab-wrap {{
+                bottom: 16px !important;
+                right: 16px !important;
+            }}
+        }}
+        </style>
+        """, unsafe_allow_html=True)
+
+        if not is_chat_open:
+            # Minimized State: Floating Circular Avatar Button
+            def _open_chat_fab_cb():
+                st.session_state["vyas_chat_open"] = True
+
+            st.markdown(f'''
+            <div class="vyas-rishi-fab-wrap">
+                <div class="vyas-rishi-badge">आचार्य व्यास • संवाद ✨</div>
+            </div>
+            ''', unsafe_allow_html=True)
+            st.markdown('<div class="vyas-rishi-fab-wrap">', unsafe_allow_html=True)
+            st.button(" ", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
+            st.markdown('</div>', unsafe_allow_html=True)
+            return
+
+        # Open State: Floating Messenger Window
+        with st.container():
+            st.markdown('<div class="vyas-chat-messenger-box"></div>', unsafe_allow_html=True)
             
-            # Check user VIP / Pro status for conversational funnel gating
-            _cur_u = st.session_state.get("user") or {}
-            _is_vip_user = bool(is_logged_in_now and (_cur_u.get("is_vip") or _cur_u.get("is_pro") or _cur_u.get("tier") in ["VIP_PAID", "VIP_TRIAL"]))
+            # Header Row
+            hdr_col1, hdr_col2, hdr_col3 = st.columns([3.8, 0.7, 0.7])
+            with hdr_col1:
+                st.markdown(f"""
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(240, 192, 90, 0.4);"></div>
+                    <div>
+                        <div style="font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 800; color: #f0c05a; line-height: 1.1;">
+                            आचार्य व्यास
+                        </div>
+                        <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px;">
+                            <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; margin-right: 4px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            with hdr_col2:
+                st.markdown('<div class="vyas-chat-close-btn">', unsafe_allow_html=True)
+                def _clear_chat_cb():
+                    st.session_state["dialog_chat_history"] = [{"role": "assistant", "content": welcome_msg}]
+                st.button("🗑️", key="btn_clear_chat_history", on_click=_clear_chat_cb, help="चैट साफ़ करें")
+                st.markdown('</div>', unsafe_allow_html=True)
+            with hdr_col3:
+                st.markdown('<div class="vyas-chat-close-btn">', unsafe_allow_html=True)
+                def _minimize_chat_cb():
+                    st.session_state["vyas_chat_open"] = False
+                st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="मिनिमाइज़ करें")
+                st.markdown('</div>', unsafe_allow_html=True)
 
-            # Check if this is a follow-up response to the curiosity hook (e.g. "हाँ", "बताइए", "yes", "धन आगमन", or 2nd+ turn)
-            user_turn_count = sum(1 for m in st.session_state["dialog_chat_history"] if m.get("role") == "user")
-            inp_low = dialog_user_input.strip().lower()
-            is_hook_ack = any(w in inp_low for w in ["हाँ", "हां", "ha", "haan", "yes", "बताइए", "batao", "bataiye", "धन", "dhan", "karein", "bata do"]) or user_turn_count >= 2
+            # Chat History Scroll Container
+            _avatar_arg = _rishi_thumb_file if os.path.exists(_rishi_thumb_file) else "🧙‍♂️"
+            chat_container = st.container(height=340)
+            with chat_container:
+                for msg in st.session_state["dialog_chat_history"]:
+                    if msg["role"] == "user":
+                        with st.chat_message("user"):
+                            st.markdown(msg["content"])
+                    else:
+                        with st.chat_message("assistant", avatar=_avatar_arg):
+                            st.markdown(msg["content"])
 
-            if is_hook_ack and not _is_vip_user:
-                # Free / Guest / Non-Pro Teaser + VIP Upgrade Unlock Gate
-                teaser_reply = (
-                    f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
-                    f"आपकी जन्मपत्रिका में <b>द्वितीय (स्थायी धन भाव)</b> एवं <b>एकादश (लाभ भाव)</b> का संबंध अत्यंत प्रभावशाली है। "
-                    f"आपकी कुण्डली में चालू विंशोत्तरी दशा के अंतर्गत <b>अचानक बड़े धन लाभ एवं पदोन्नति (Sudden Wealth Inflow) का दुर्लभ योग</b> निर्मित हो रहा है।\n\n"
-                    f"🔒 <b>यह सूक्ष्म समय-चक्र VIP प्रो सदस्यों के लिए उपलब्ध है:</b>\n"
-                    f"• धन आगमन एवं भाग्योदय का सटीक <b>माह व तिथि-वार समय-चक्र</b>\n"
-                    f"• प्रत्यंतर एवं सूक्ष्म दशा का गणितीय विश्लेषण\n"
-                    f"• धन वृद्धि व स्थायी प्रतिष्ठा हेतु <b>अचूक तांत्रिक व वैदिक अनुष्ठान</b>\n\n"
-                    f"🌟 <b>VIP Pro में अपग्रेड करें:</b> असीमित आचार्य व्यास संवाद, विस्तृत रिपोर्ट्स एवं संपूर्ण शोध अनलॉक करने हेतु साइडबार में दिए गए <b>'Upgrade VIP / प्रीमियम सदस्यता लें'</b> विकल्प से VIP Pro प्राप्त करें।"
-                )
-                st.session_state["dialog_chat_history"].append({"role": "assistant", "content": teaser_reply})
-            else:
-                try:
-                    cur_raw_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
-                except Exception:
-                    cur_raw_pos = None
+                # Handle pending question with live typing indicator
+                if st.session_state.get("chat_pending_query"):
+                    pending_text = st.session_state["chat_pending_query"]
+                    with st.chat_message("assistant", avatar=_avatar_arg):
+                        status_box = st.empty()
+                        status_box.markdown("""
+                        <div class="vyas-typing-bubble">
+                            <span class="vyas-pulse-dot"></span>
+                            <span class="vyas-pulse-dot"></span>
+                            <span class="vyas-pulse-dot"></span>
+                            <span style="color:#fef08a; font-weight:600; font-size:0.82rem; margin-left:4px;">आचार्य व्यास चिंतन कर रहे हैं... ✍️</span>
+                        </div>
+                        """, unsafe_allow_html=True)
 
-                bot_reply = vyas_chatbot.consult(
-                    query=dialog_user_input,
-                    chart=ch,
-                    cur_dasha=c_dasha,
-                    birth_info=b_info,
-                    transit_pos=cur_raw_pos,
-                    prashna_meta=p_meta,
-                    chat_history=st.session_state["dialog_chat_history"]
-                )
-                if _is_vip_user and user_turn_count >= 2:
-                    bot_reply = f"🌟 **[VIP Pro विशेष फलित]**\n\n{bot_reply}"
-                st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+                        _cur_u = st.session_state.get("user") or {}
+                        _is_vip_user = bool(is_logged_in_now and (_cur_u.get("is_vip") or _cur_u.get("is_pro") or _cur_u.get("tier") in ["VIP_PAID", "VIP_TRIAL"]))
+                        user_turn_count = sum(1 for m in st.session_state["dialog_chat_history"] if m.get("role") == "user")
+                        inp_low = pending_text.strip().lower()
+                        is_hook_ack = any(w in inp_low for w in ["हाँ", "हां", "ha", "haan", "yes", "बताइए", "batao", "bataiye", "धन", "dhan", "karein", "bata do"]) or user_turn_count >= 2
 
-            st.session_state["show_acharya_dialog"] = True
-            st.rerun()
+                        if is_hook_ack and not _is_vip_user:
+                            bot_reply = (
+                                f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
+                                f"आपकी जन्मपत्रिका में <b>द्वितीय (स्थायी धन भाव)</b> एवं <b>एकादश (लाभ भाव)</b> का संबंध अत्यंत प्रभावशाली है। "
+                                f"आपकी कुण्डली में चालू विंशोत्तरी दशा के अंतर्गत <b>अचानक बड़े धन लाभ एवं पदोन्नति का दुर्लभ योग</b> निर्मित हो रहा है।\n\n"
+                                f"🔒 <b>यह सूक्ष्म समय-चक्र VIP प्रो सदस्यों के लिए उपलब्ध है:</b>\n"
+                                f"• धन आगमन एवं भाग्योदय का सटीक <b>माह व तिथि-वार समय-चक्र</b>\n"
+                                f"• प्रत्यंतर एवं सूक्ष्म दशा का गणितीय विश्लेषण\n"
+                                f"• धन वृद्धि व स्थायी प्रतिष्ठा हेतु <b>अचूक तांत्रिक व वैदिक अनुष्ठान</b>\n\n"
+                                f"🌟 <b>VIP Pro में अपग्रेड करें:</b> साइडबार में दिए गए <b>'Upgrade VIP / प्रीमियम सदस्यता लें'</b> विकल्प से VIP Pro प्राप्त करें।"
+                            )
+                        else:
+                            try:
+                                cur_raw_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
+                            except Exception:
+                                cur_raw_pos = None
 
-        col_act1, col_act2 = st.columns([4, 1])
-        with col_act2:
-            if st.button(" साफ करें", key="clear_dialog_chat_btn", use_container_width=True):
-                st.session_state["dialog_chat_history"] = []
+                            bot_reply = vyas_chatbot.consult(
+                                query=pending_text,
+                                chart=ch,
+                                cur_dasha=c_dasha,
+                                birth_info=b_info,
+                                transit_pos=cur_raw_pos,
+                                prashna_meta=p_meta,
+                                chat_history=st.session_state["dialog_chat_history"]
+                            )
+                            if _is_vip_user and user_turn_count >= 2:
+                                bot_reply = f"🌟 **[VIP Pro विशेष फलित]**\n\n{bot_reply}"
+
+                        status_box.empty()
+                        st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+                        st.session_state.pop("chat_pending_query", None)
+                        st.rerun()
+
+            # Quick Suggestion Chips (Compact 2-Column Buttons with on_click)
+            st.markdown("<div style='font-size: 0.74rem; color: #f0c05a; font-weight: 700; margin: 4px 0 2px;'>त्वरित प्रश्न (Quick Questions):</div>", unsafe_allow_html=True)
+            chip_c1, chip_c2 = st.columns(2)
+            def _send_chip_click_cb(chip_q):
+                st.session_state["dialog_chat_history"].append({"role": "user", "content": chip_q})
+                st.session_state["chat_pending_query"] = chip_q
+
+            for i, q_chip in enumerate(suggested_queries[:4]):
+                target_c = chip_c1 if i % 2 == 0 else chip_c2
+                with target_c:
+                    st.button(q_chip, key=f"quick_chip_{i}", on_click=_send_chip_click_cb, args=(q_chip,), use_container_width=True)
+
+            # Chat Input Field at the bottom of the card
+            chat_user_inp = st.chat_input("आचार्य व्यास जी से पूछें...", key="vyas_floating_chat_input")
+            if chat_user_inp:
+                st.session_state["dialog_chat_history"].append({"role": "user", "content": chat_user_inp})
+                st.session_state["chat_pending_query"] = chat_user_inp
                 st.rerun()
 
-    # Trigger Dialog if requested (one-shot: clear the flag after opening, else
-    # the next rerun re-opens the popup even after the user closed it).
-    if st.session_state.get("show_acharya_dialog"):
-        st.session_state["show_acharya_dialog"] = False
-        show_acharya_consultation_dialog(chart, birth, cur_dasha, st.session_state.get('prashna_meta'))
-
-    # Acharya Vyas Live Consultation is readily launched via top bar & sidebar
+    # Render floating messenger
+    render_floating_vyas_messenger(chart, birth, cur_dasha, st.session_state.get('prashna_meta'))
 
     with st.sidebar:
         st.markdown("---")
-        if st.button("आचार्य व्यास जी से परामर्श करें (Live Consultation)", key="open_acharya_bot_sidebar_btn", use_container_width=True):
-            st.session_state["show_acharya_dialog"] = True
-            st.rerun()
-
-# Mobile & Desktop Stepper Navigation (Next / Previous Suite buttons)
-if st.session_state.get('data_generated') and 'suite_options' in locals() and 'cur_suite_idx' in locals():
-    st.markdown('<div style="margin-top: 36px; border-top: 1px solid rgba(229, 169, 60, 0.25); padding-top: 16px;"></div>', unsafe_allow_html=True)
-    _col_prev, _col_ref_mid, _col_next = st.columns([1.2, 0.9, 1.2])
-    def _step_nav_cb(target_suite):
-        st.session_state["domain_suite_sidebar_radio"] = target_suite
-        st.session_state["main_screen_suite_select"] = target_suite
-
-    def _purge_and_reload_bot():
-        for k in list(st.session_state.keys()):
-            if k.startswith('_daily_cache') or k == 'daily_res':
-                st.session_state.pop(k, None)
-
-    if cur_suite_idx > 0:
-        with _col_prev:
-            _p_name = suite_options[cur_suite_idx - 1]
-            st.button(f"← पिछला प्रभाग: {_p_name.split('(')[0].strip()}", key="btn_stepper_nav_prev", on_click=_step_nav_cb, args=(_p_name,), use_container_width=True)
-    with _col_ref_mid:
-        st.button("🔄 ऐप रीफ्रेश करें", key="btn_stepper_refresh_mid", on_click=_purge_and_reload_bot, use_container_width=True)
-    if cur_suite_idx < len(suite_options) - 1:
-        with _col_next:
-            _n_name = suite_options[cur_suite_idx + 1]
-            st.button(f"अगला प्रभाग: {_n_name.split('(')[0].strip()} →", type="primary", key="btn_stepper_nav_next", on_click=_step_nav_cb, args=(_n_name,), use_container_width=True)
-
-# ---------------- FLOATING ACHARYA VYAS CHATBOT DOCK (ON EVERY SCREEN) ----------------
-if st.session_state.get('data_generated'):
-    st.markdown('''
-    <style>
-    .vyas-fab-wrap {
-        position: fixed !important;
-        bottom: 24px !important;
-        right: 24px !important;
-        z-index: 999999 !important;
-    }
-    .vyas-fab-wrap div.stButton > button {
-        background: linear-gradient(135deg, #d97706 0%, #b45309 55%, #78350f 100%) !important;
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        font-size: 0.94rem !important;
-        border: 2px solid #fbbf24 !important;
-        border-radius: 999px !important;
-        padding: 10px 22px !important;
-        box-shadow: 0 8px 24px rgba(217, 119, 6, 0.5), 0 2px 10px rgba(0, 0, 0, 0.6) !important;
-        cursor: pointer !important;
-        transition: all 0.25s ease-in-out !important;
-    }
-    .vyas-fab-wrap div.stButton > button:hover {
-        transform: translateY(-2px) scale(1.04) !important;
-        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.7) !important;
-        border-color: #fef08a !important;
-    }
-    @media (max-width: 640px) {
-        .vyas-fab-wrap {
-            bottom: 18px !important;
-            right: 18px !important;
-        }
-        .vyas-fab-wrap div.stButton > button {
-            font-size: 0.88rem !important;
-            padding: 8px 18px !important;
-        }
-    }
-    </style>
-    ''', unsafe_allow_html=True)
-
-    def _open_floating_acharya_cb():
-        st.session_state["show_acharya_dialog"] = True
-
-    st.markdown('<div class="vyas-fab-wrap">', unsafe_allow_html=True)
-    st.button("🧙‍♂️ आचार्य व्यास • लाइव संवाद (Chat)", key="btn_floating_fab_acharya", on_click=_open_floating_acharya_cb)
-    st.markdown('</div>', unsafe_allow_html=True)
+        def _open_sidebar_chat_cb():
+            st.session_state["vyas_chat_open"] = True
+        st.button("🧙‍♂️ आचार्य व्यास जी से परामर्श करें (Live Chat)", key="open_acharya_bot_sidebar_btn", on_click=_open_sidebar_chat_cb, use_container_width=True)
 
 # ---------------- SCRIPT TIMING (opt-in) ----------------
 import time as _time_mod
