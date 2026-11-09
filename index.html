@@ -222,6 +222,71 @@
             text-align: center;
             max-width: 90%;
         }
+        /* Floating Refresh Button for PWA & Mobile */
+        #pwa-refresh-btn {
+            position: fixed;
+            bottom: 22px;
+            right: 18px;
+            z-index: 9990;
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            color: #0b1220;
+            border: 2px solid #fef3c7;
+            border-radius: 999px;
+            padding: 9px 18px;
+            font-size: 0.90rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #pwa-refresh-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+        }
+        .refresh-icon {
+            font-size: 1.15rem;
+            display: inline-block;
+            transition: transform 0.4s ease;
+        }
+        .spinning {
+            animation: spinRefresh 0.8s linear infinite !important;
+        }
+        @keyframes spinRefresh {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Pull to Refresh Indicator */
+        #ptr-indicator {
+            position: fixed;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            z-index: 10000;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1.5px solid #f59e0b;
+            border-radius: 999px;
+            padding: 7px 18px;
+            color: #fbbf24;
+            font-size: 0.86rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
+            opacity: 0;
+        }
+        #ptr-indicator.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -244,6 +309,18 @@
     <div id="google-auth-bar" style="position: fixed; top: 10px; right: 14px; z-index: 1000; display: flex; align-items: center; gap: 8px;">
         <div id="g_id_signin"></div>
     </div>
+
+    <!-- Pull to Refresh Visual Indicator -->
+    <div id="ptr-indicator">
+        <span class="ptr-icon" style="display:inline-block;">🔄</span>
+        <span id="ptr-text">नीचे खींचें रीफ्रेश के लिए</span>
+    </div>
+
+    <!-- PWA Floating Refresh Button (Always available on mobile/standalone) -->
+    <button id="pwa-refresh-btn" onclick="refreshVyasApp()" title="ऐप रीफ्रेश करें (Refresh App)">
+        <span class="refresh-icon">🔄</span>
+        <span>रीफ्रेश</span>
+    </button>
 
     <!-- PWA Install Button -->
     <button id="pwa-install-btn" title="ऐप को होम स्क्रीन पर इंस्टॉल करें">
@@ -378,6 +455,82 @@
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             installBtn.style.display = 'none';
         }
+        // Refresh App Logic
+        function refreshVyasApp() {
+            const btn = document.getElementById('pwa-refresh-btn');
+            const icon = btn ? btn.querySelector('.refresh-icon') : null;
+            if (icon) icon.classList.add('spinning');
+            
+            const iframe = document.getElementById('app-frame');
+            if (iframe) {
+                try {
+                    const url = new URL(iframe.src);
+                    url.searchParams.set('_rb', Date.now());
+                    iframe.src = url.toString();
+                } catch(e) {
+                    iframe.src = iframe.src;
+                }
+            } else {
+                window.location.reload();
+            }
+            setTimeout(() => {
+                if (icon) icon.classList.remove('spinning');
+            }, 1200);
+        }
+
+        // Native Mobile Pull-to-Refresh Gesture Handler
+        (function initPTR() {
+            let startY = 0;
+            let currentY = 0;
+            let isDragging = false;
+            const ptr = document.getElementById('ptr-indicator');
+            const ptrText = document.getElementById('ptr-text');
+            const threshold = 75;
+
+            window.addEventListener('touchstart', (e) => {
+                if (window.scrollY === 0 || document.documentElement.scrollTop === 0) {
+                    startY = e.touches[0].clientY;
+                    isDragging = true;
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                currentY = e.touches[0].clientY;
+                const pullDist = currentY - startY;
+                if (pullDist > 12 && pullDist < 180) {
+                    if (ptr) {
+                        ptr.classList.add('active');
+                        ptr.style.transform = `translateX(-50%) translateY(${Math.min(pullDist * 0.45, 55)}px)`;
+                        if (pullDist >= threshold) {
+                            if (ptrText) ptrText.innerText = 'छोड़ें और रीफ्रेश करें...';
+                        } else {
+                            if (ptrText) ptrText.innerText = 'नीचे खींचें रीफ्रेश के लिए';
+                        }
+                    }
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', () => {
+                if (!isDragging) return;
+                isDragging = false;
+                const pullDist = currentY - startY;
+                if (pullDist >= threshold) {
+                    if (ptrText) ptrText.innerText = 'रीफ्रेश हो रहा है...';
+                    const ptrIcon = ptr ? ptr.querySelector('.ptr-icon') : null;
+                    if (ptrIcon) ptrIcon.classList.add('spinning');
+                    refreshVyasApp();
+                }
+                setTimeout(() => {
+                    if (ptr) {
+                        ptr.classList.remove('active');
+                        ptr.style.transform = 'translateX(-50%) translateY(-80px)';
+                        const ptrIcon = ptr.querySelector('.ptr-icon');
+                        if (ptrIcon) ptrIcon.classList.remove('spinning');
+                    }
+                }, 900);
+            }, { passive: true });
+        })();
     </script>
 </body>
 </html>

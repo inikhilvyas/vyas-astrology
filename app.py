@@ -2479,6 +2479,42 @@ except Exception:
     _top_quick_panchang = None
 
 
+def _format_clean_dasha_display(val):
+    """Sanitizes raw dasha dictionaries or string representations into clean Devanagari names."""
+    if not val:
+        return "शुक्र → शनि"
+    if isinstance(val, dict):
+        md = val.get("mahadasha") or val.get("MD", {}).get("lord", "")
+        ad = val.get("antardasha") or val.get("AD", {}).get("lord", "")
+        pd = val.get("pratyantardasha") or val.get("PD", {}).get("lord", "")
+        from vyas import constants
+        md_h = constants.PLANETS_HI.get(md, md)
+        ad_h = constants.PLANETS_HI.get(ad, ad)
+        pd_h = constants.PLANETS_HI.get(pd, pd)
+        if md_h and ad_h and pd_h:
+            return f"{md_h} → {ad_h} → {pd_h}"
+        elif md_h and ad_h:
+            return f"{md_h} → {ad_h}"
+        return md_h or "शुक्र → शनि"
+    s = str(val).strip()
+    if "{" in s or "DashaNode" in s or "datetime" in s:
+        import re
+        from vyas import constants
+        matches = re.findall(r"(?:'lord':\s*'|lord=')([A-Za-z]+)'", s)
+        if matches:
+            unique_lords = []
+            for m in matches:
+                if m not in unique_lords and m in constants.PLANETS_HI:
+                    unique_lords.append(m)
+            if unique_lords:
+                return " → ".join([constants.PLANETS_HI.get(l, l) for l in unique_lords[:3]])
+        return "शुक्र → शनि"
+    from vyas import constants
+    parts = [p.strip() for p in s.replace("->", "-").replace("→", "-").split("-") if p.strip()]
+    if parts:
+        return " → ".join([constants.PLANETS_HI.get(p, p) for p in parts[:3]])
+    return s
+
 def _resolve_festival_and_muhurta(p, now_dt):
     """Dynamically resolves today's active festival and auspicious worship timings.
     Never shows expired festivals; transitions according to classical pradosha / sunset tithi.
@@ -3369,24 +3405,34 @@ if st.session_state.get('data_generated'):
         st.session_state["domain_suite_sidebar_radio"] = st.session_state["main_screen_suite_select"]
 
     safe_suite_idx = _safe_selectbox_guard("main_screen_suite_select", suite_options, cur_suite_idx)
-    st.markdown(f"""
-    <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
-        <span style="font-size: 0.86rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;">
-            ज्योतिष अनुसंधान प्रभाग (Domain Suite)
-        </span>
-        <span style="font-size: 0.80rem; color: {TH_MUTED}; font-weight: 700;">
-            (यहाँ से प्रभाग बदलें)
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
-    st.selectbox(
-        "मुख्य अनुसंधान प्रभाग चुनें (Select Domain Suite):",
-        suite_options,
-        index=safe_suite_idx,
-        key="main_screen_suite_select",
-        on_change=_sync_suite_from_main,
-        label_visibility="collapsed"
-    )
+    col_sel_suite, col_sel_ref = st.columns([3.8, 1.2])
+    with col_sel_suite:
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 12px 2px 6px 2px;">
+            <span style="font-size: 0.86rem; color: {TH_GOLD}; letter-spacing: 1px; text-transform: uppercase; font-weight: 800;">
+                ज्योतिष अनुसंधान प्रभाग (Domain Suite)
+            </span>
+            <span style="font-size: 0.80rem; color: {TH_MUTED}; font-weight: 700;">
+                (यहाँ से प्रभाग बदलें)
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        st.selectbox(
+            "मुख्य अनुसंधान प्रभाग चुनें (Select Domain Suite):",
+            suite_options,
+            index=safe_suite_idx,
+            key="main_screen_suite_select",
+            on_change=_sync_suite_from_main,
+            label_visibility="collapsed"
+        )
+    with col_sel_ref:
+        st.markdown('<div style="margin-top: 22px;"></div>', unsafe_allow_html=True)
+        def _purge_and_reload():
+            for k in list(st.session_state.keys()):
+                if k.startswith('_daily_cache') or k == 'daily_res':
+                    st.session_state.pop(k, None)
+        if st.button("🔄 रीफ्रेश", key="top_quick_refresh_btn", on_click=_purge_and_reload, use_container_width=True, help="डेटा व स्क्रीन रीफ्रेश करें"):
+            st.rerun()
 
     # -------------------------------------------------------------------------
     # PRASHNA KUNDLI HORARY JUDGEMENT (तात्कालिक प्रश्न विचार व फलित)
@@ -3522,7 +3568,8 @@ if st.session_state.get('data_generated'):
         
         cur_dasha_str = cur_dasha.get("deep_path") or cur_dasha.get("full_path") or f"{cur_dasha.get('mahadasha', '')}-{cur_dasha.get('antardasha', '')}" if isinstance(cur_dasha, dict) else str(cur_dasha)
         _today_str = now_dt.strftime("%Y-%m-%d")
-        if (st.session_state.get('_daily_cache_day') != _today_str 
+        _cache_token = f"{_today_str}_v6_clean_dasha"
+        if (st.session_state.get('_daily_cache_token') != _cache_token 
                 or st.session_state.get('_daily_cache_sig') != _birth_input_sig
                 or 'daily_res' not in st.session_state):
             daily_res = vyas_daily.generate_daily_horoscope(
@@ -3536,7 +3583,7 @@ if st.session_state.get('data_generated'):
                 tz_hours=birth.get('tz', 5.5)
             )
             st.session_state['daily_res'] = daily_res
-            st.session_state['_daily_cache_day'] = _today_str
+            st.session_state['_daily_cache_token'] = _cache_token
             st.session_state['_daily_cache_sig'] = _birth_input_sig
         else:
             daily_res = st.session_state['daily_res']
@@ -3660,7 +3707,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{daily_res['tara_desc']}</div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: {_d_val};">
-                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{daily_res['narratives'].get('dasha_full_text', daily_res['running_dasha'])}</span>
+                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{_format_clean_dasha_display(daily_res.get('running_dasha'))}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -6365,7 +6412,7 @@ if st.session_state.get('data_generated'):
 # Mobile & Desktop Stepper Navigation (Next / Previous Suite buttons)
 if st.session_state.get('data_generated') and 'suite_options' in locals() and 'cur_suite_idx' in locals():
     st.markdown('<div style="margin-top: 36px; border-top: 1px solid rgba(229, 169, 60, 0.25); padding-top: 16px;"></div>', unsafe_allow_html=True)
-    _col_prev, _col_next = st.columns([1, 1])
+    _col_prev, _col_ref_mid, _col_next = st.columns([1.2, 0.9, 1.2])
     if cur_suite_idx > 0:
         with _col_prev:
             _p_name = suite_options[cur_suite_idx - 1]
@@ -6373,6 +6420,13 @@ if st.session_state.get('data_generated') and 'suite_options' in locals() and 'c
                 st.session_state["domain_suite_sidebar_radio"] = _p_name
                 st.session_state["main_screen_suite_select"] = _p_name
                 st.rerun()
+    with _col_ref_mid:
+        def _purge_and_reload_bot():
+            for k in list(st.session_state.keys()):
+                if k.startswith('_daily_cache') or k == 'daily_res':
+                    st.session_state.pop(k, None)
+        if st.button("🔄 ऐप रीफ्रेश करें", key="btn_stepper_refresh_mid", on_click=_purge_and_reload_bot, use_container_width=True):
+            st.rerun()
     if cur_suite_idx < len(suite_options) - 1:
         with _col_next:
             _n_name = suite_options[cur_suite_idx + 1]

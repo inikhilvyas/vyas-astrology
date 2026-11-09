@@ -138,32 +138,48 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
     """
     from vyas.panchang import get_muhurta_and_chaughadiya
 
-    # 1. Parse Dasha Hierarchy
+    # 1. Parse Dasha Hierarchy with strict sanitization
     md_l, ad_l, pd_l, sd_l, prd_l = "", "", "", "", ""
     if isinstance(running_dasha, dict):
-        md_l = running_dasha.get("MD", {}).get("lord") or running_dasha.get("mahadasha", "")
-        ad_l = running_dasha.get("AD", {}).get("lord") or running_dasha.get("antardasha", "")
-        pd_l = running_dasha.get("PD", {}).get("lord") or running_dasha.get("pratyantardasha", "")
-        sd_l = running_dasha.get("SD", {}).get("lord") or running_dasha.get("sookshmadasha", "")
-        prd_l = running_dasha.get("PrD", {}).get("lord") or running_dasha.get("pranadasha", "")
-        running_dasha_str = running_dasha.get("deep_path") or running_dasha.get("full_path") or f"{md_l}-{ad_l}"
-    elif isinstance(running_dasha, str):
-        running_dasha_str = running_dasha
-        parts = [p.strip() for p in running_dasha.replace("->", "-").split("-") if p.strip()]
-        if len(parts) >= 1: md_l = parts[0]
-        if len(parts) >= 2: ad_l = parts[1]
-        if len(parts) >= 3: pd_l = parts[2]
-        if len(parts) >= 4: sd_l = parts[3]
-        if len(parts) >= 5: prd_l = parts[4]
+        md_l = running_dasha.get("mahadasha") or running_dasha.get("MD", {}).get("lord", "")
+        ad_l = running_dasha.get("antardasha") or running_dasha.get("AD", {}).get("lord", "")
+        pd_l = running_dasha.get("pratyantardasha") or running_dasha.get("PD", {}).get("lord", "")
+        sd_l = running_dasha.get("sookshmadasha") or running_dasha.get("SD", {}).get("lord", "")
+        prd_l = running_dasha.get("pranadasha") or running_dasha.get("PrD", {}).get("lord", "")
     else:
-        running_dasha_str = "Venus-Saturn"
-        md_l, ad_l = "Venus", "Saturn"
+        s_raw = str(running_dasha).strip()
+        if "{" in s_raw or "DashaNode" in s_raw:
+            import re
+            matches = re.findall(r"(?:'lord':\s*'|lord=')([A-Za-z]+)'", s_raw)
+            if matches:
+                unique_lords = []
+                for m in matches:
+                    if m not in unique_lords:
+                        unique_lords.append(m)
+                if len(unique_lords) >= 1: md_l = unique_lords[0]
+                if len(unique_lords) >= 2: ad_l = unique_lords[1]
+                if len(unique_lords) >= 3: pd_l = unique_lords[2]
+                if len(unique_lords) >= 4: sd_l = unique_lords[3]
+                if len(unique_lords) >= 5: prd_l = unique_lords[4]
+        else:
+            parts = [p.strip() for p in s_raw.replace("->", "-").replace("→", "-").split("-") if p.strip()]
+            if len(parts) >= 1: md_l = parts[0]
+            if len(parts) >= 2: ad_l = parts[1]
+            if len(parts) >= 3: pd_l = parts[2]
+            if len(parts) >= 4: sd_l = parts[3]
+            if len(parts) >= 5: prd_l = parts[4]
+
+    if not md_l: md_l = "Venus"
+    if not ad_l: ad_l = "Saturn"
 
     md_hi = constants.PLANETS_HI.get(md_l, md_l)
     ad_hi = constants.PLANETS_HI.get(ad_l, ad_l)
     pd_hi = constants.PLANETS_HI.get(pd_l, pd_l)
     sd_hi = constants.PLANETS_HI.get(sd_l, sd_l)
     prd_hi = constants.PLANETS_HI.get(prd_l, prd_l)
+
+    clean_lords_hi = [constants.PLANETS_HI.get(x, x) for x in [md_l, ad_l, pd_l] if x]
+    running_dasha_str = " → ".join(clean_lords_hi) if clean_lords_hi else f"{md_hi} → {ad_hi}"
 
     # 2. Navatara Calculation (Calibrated Base 40-75%)
     natal_nak = int(natal_moon_lon // constants.NAKSHATRA_SPAN) % 27
