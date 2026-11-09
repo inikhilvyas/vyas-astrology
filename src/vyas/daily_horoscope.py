@@ -25,6 +25,18 @@ NAVATARA_NAMES = [
     ("Ati-Mitra (अति-मित्र तारा)", "अति उत्तम - अटके कार्यों में गति व सम्मान प्राप्त होगा।", 73, "good")
 ]
 
+NAVATARA_EN_MAP = {
+    0: ("Janma (Birth Tara)", "Identity and mental state. Maintain calm and avoid hasty moves."),
+    1: ("Sampat (Wealth Tara)", "Highly auspicious for financial growth, prosperity, and gains."),
+    2: ("Vipat (Hazard Tara)", "Minor delays or hindrances. Double-check all commitments."),
+    3: ("Kshema (Well-being Tara)", "Protection, comfort, domestic peace, and stable progress."),
+    4: ("Pratyari (Obstacle Tara)", "Differing opinions possible. Keep discussions constructive."),
+    5: ("Sadhak (Success Tara)", "Great for goal execution, professional accomplishments, and focus."),
+    6: ("Vadha (Danger Tara)", "Extreme care advised. Defer speculative or high-risk bets."),
+    7: ("Mitra (Friendly Tara)", "Cordiality, enjoyable conversations, and cooperative allies."),
+    8: ("Ati-Mitra (Intimate Friendly Tara)", "Excellent - rapid progress in stalled tasks and widespread respect.")
+}
+
 def calculate_navatara(natal_moon_nak_idx: int, transit_moon_nak_idx: int) -> Tuple[int, str, str, int, str]:
     distance_27 = (transit_moon_nak_idx - natal_moon_nak_idx + 27) % 27
     tara_idx = distance_27 % 9
@@ -307,6 +319,7 @@ def generate_daily_horoscope(natal_moon_lon: float, natal_asc_lon: float,
     )
 
     tara_en_item = NAVATARA_EN_MAP.get(tara_idx, ("Navatara Cycle", "Daily transit tara insight."))
+    paryaya = ((transit_nak - natal_nak + 27) % 27 // 9) + 1
     tara_name_en = f"{tara_en_item[0]} (Tier {paryaya})"
     tara_desc_en = tara_en_item[1]
 
