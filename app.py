@@ -6549,66 +6549,96 @@ if st.session_state.get('data_generated'):
             }}
         }}
 
-        /* Floating Messenger Box */
-        div[data-testid="stVerticalBlock"]:has(> div > .vyas-chat-messenger-box),
-        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) {{
+        /* Floating Messenger Box (Scoped strictly to st-key container so main app remains 100% visible) */
+        div.st-key-vyas_messenger_card {{
             position: fixed !important;
-            bottom: 20px !important;
-            right: 20px !important;
-            width: 410px !important;
-            max-width: calc(100vw - 28px) !important;
-            height: 610px !important;
-            max-height: calc(100dvh - 36px) !important;
-            background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.14) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            width: 375px !important;
+            max-width: calc(100vw - 32px) !important;
+            height: 520px !important;
+            max-height: calc(100dvh - 50px) !important;
+            background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.12) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
             border: 2px solid rgba(240, 192, 90, 0.55) !important;
-            border-radius: 22px !important;
+            border-radius: 20px !important;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(240, 192, 90, 0.3) !important;
             z-index: 9999999 !important;
             display: flex !important;
             flex-direction: column !important;
-            padding: 12px 14px !important;
+            padding: 10px 12px !important;
             backdrop-filter: blur(20px) !important;
-            animation: vyasPopIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            animation: vyasPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }}
 
         @keyframes vyasPopIn {{
-            0% {{ transform: translateY(35px) scale(0.9); opacity: 0; }}
+            0% {{ transform: translateY(30px) scale(0.92); opacity: 0; }}
             100% {{ transform: translateY(0) scale(1); opacity: 1; }}
         }}
 
         /* Suggestion chip styling */
-        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) div.stButton > button {{
-            background: rgba(30, 41, 59, 0.75) !important;
+        div.st-key-vyas_messenger_card div.stButton > button {{
+            background: rgba(30, 41, 59, 0.8) !important;
             border: 1px solid rgba(240, 192, 90, 0.3) !important;
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             color: #e2e8f0 !important;
-            font-size: 0.76rem !important;
-            padding: 5px 8px !important;
-            min-height: 38px !important;
-            line-height: 1.25 !important;
+            font-size: 0.74rem !important;
+            padding: 4px 6px !important;
+            min-height: 32px !important;
+            line-height: 1.2 !important;
             transition: all 0.2s ease !important;
         }}
-        div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) div.stButton > button:hover {{
+        div.st-key-vyas_messenger_card div.stButton > button:hover {{
             background: rgba(240, 192, 90, 0.2) !important;
             border-color: #f0c05a !important;
             color: #fef08a !important;
         }}
 
-        /* Minimize / Clear action button */
-        .vyas-chat-close-btn div.stButton > button {{
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 8px !important;
-            color: #f8fafc !important;
-            font-size: 0.95rem !important;
-            font-weight: 700 !important;
-            min-height: 32px !important;
-            padding: 2px 8px !important;
+        /* Minimize / Clear action button styling (Circular glass icons) */
+        div.st-key-btn_minimize_chat_window button,
+        div.st-key-btn_clear_chat_history button {{
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(240, 192, 90, 0.3) !important;
+            border-radius: 50% !important;
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
+            padding: 0 !important;
+            color: #f0c05a !important;
+            font-size: 0.88rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s ease !important;
         }}
-        .vyas-chat-close-btn div.stButton > button:hover {{
-            background: rgba(239, 68, 68, 0.35) !important;
+        div.st-key-btn_minimize_chat_window button:hover {{
+            background: rgba(239, 68, 68, 0.4) !important;
             border-color: #ef4444 !important;
             color: #fee2e2 !important;
+        }}
+        div.st-key-btn_clear_chat_history button:hover {{
+            background: rgba(245, 158, 11, 0.4) !important;
+            border-color: #f59e0b !important;
+            color: #fef08a !important;
+        }}
+
+        /* Scoped Chat Input inside Messenger Card */
+        div.st-key-vyas_messenger_card div[data-testid="stChatInput"] {{
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100% !important;
+            padding: 2px 0 0 0 !important;
+            margin-top: 2px !important;
+        }}
+        div.st-key-vyas_messenger_card div[data-testid="stChatInput"] > div {{
+            border-radius: 12px !important;
+            border: 1.5px solid rgba(240, 192, 90, 0.4) !important;
+            background: rgba(15, 23, 42, 0.95) !important;
+        }}
+        div.st-key-vyas_messenger_card div[data-testid="stChatInput"] textarea {{
+            font-size: 0.82rem !important;
+            color: #f8fafc !important;
         }}
 
         /* Animated typing dots */
@@ -6619,7 +6649,7 @@ if st.session_state.get('data_generated'):
             background: rgba(30, 41, 59, 0.9);
             border: 1px solid rgba(240, 192, 90, 0.4);
             border-radius: 14px;
-            padding: 8px 14px;
+            padding: 7px 12px;
             margin: 4px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }}
@@ -6641,23 +6671,15 @@ if st.session_state.get('data_generated'):
         }}
 
         @media (max-width: 600px) {{
-            div[data-testid="stVerticalBlock"]:has(> div > .vyas-chat-messenger-box),
-            div[data-testid="stVerticalBlock"]:has(.vyas-chat-messenger-box) {{
+            div.st-key-vyas_messenger_card {{
                 bottom: 0 !important;
                 right: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                height: 84dvh !important;
-                max-height: 84dvh !important;
-                border-radius: 24px 24px 0 0 !important;
-            }}
-            .vyas-rishi-badge {{
-                display: none !important;
-            }}
-            .vyas-rishi-fab-wrap {{
-                bottom: 16px !important;
-                right: 16px !important;
+                height: 76dvh !important;
+                max-height: 76dvh !important;
+                border-radius: 20px 20px 0 0 !important;
             }}
         }}
         </style>
@@ -6671,42 +6693,36 @@ if st.session_state.get('data_generated'):
             st.button(" ", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
             return
 
-        # Open State: Floating Messenger Window
-        with st.container():
-            st.markdown('<div class="vyas-chat-messenger-box"></div>', unsafe_allow_html=True)
-            
+        # Open State: Floating Messenger Window (Scoped strictly to st-key container)
+        with st.container(key="vyas_messenger_card"):
             # Header Row
-            hdr_col1, hdr_col2, hdr_col3 = st.columns([3.8, 0.7, 0.7])
+            hdr_col1, hdr_col2, hdr_col3 = st.columns([4.2, 0.6, 0.6])
             with hdr_col1:
                 st.markdown(f"""
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 10px rgba(240, 192, 90, 0.4);"></div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 8px rgba(240, 192, 90, 0.4);"></div>
                     <div>
-                        <div style="font-family: 'Cinzel', serif; font-size: 1.05rem; font-weight: 800; color: #f0c05a; line-height: 1.1;">
+                        <div style="font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 800; color: #f0c05a; line-height: 1.1;">
                             आचार्य व्यास
                         </div>
-                        <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px;">
-                            <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; margin-right: 4px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न
+                        <div style="font-size: 0.68rem; color: #94a3b8; margin-top: 1px;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 3px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न
                         </div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             with hdr_col2:
-                st.markdown('<div class="vyas-chat-close-btn">', unsafe_allow_html=True)
                 def _clear_chat_cb():
                     st.session_state["dialog_chat_history"] = [{"role": "assistant", "content": welcome_msg}]
                 st.button("🗑️", key="btn_clear_chat_history", on_click=_clear_chat_cb, help="चैट साफ़ करें")
-                st.markdown('</div>', unsafe_allow_html=True)
             with hdr_col3:
-                st.markdown('<div class="vyas-chat-close-btn">', unsafe_allow_html=True)
                 def _minimize_chat_cb():
                     st.session_state["vyas_chat_open"] = False
                 st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="मिनिमाइज़ करें")
-                st.markdown('</div>', unsafe_allow_html=True)
 
-            # Chat History Scroll Container
+            # Chat History Scroll Container (Compact height leaves ample room for input)
             _avatar_arg = _rishi_thumb_file if os.path.exists(_rishi_thumb_file) else "🧙‍♂️"
-            chat_container = st.container(height=340)
+            chat_container = st.container(height=230)
             with chat_container:
                 for msg in st.session_state["dialog_chat_history"]:
                     if msg["role"] == "user":
@@ -6771,14 +6787,13 @@ if st.session_state.get('data_generated'):
                         st.rerun()
 
             # Quick Suggestion Chips (Compact 2-Column Buttons with on_click)
-            st.markdown("<div style='font-size: 0.74rem; color: #f0c05a; font-weight: 700; margin: 4px 0 2px;'>त्वरित प्रश्न (Quick Questions):</div>", unsafe_allow_html=True)
             chip_c1, chip_c2 = st.columns(2)
             def _send_chip_click_cb(chip_q):
                 st.session_state["dialog_chat_history"].append({"role": "user", "content": chip_q})
                 st.session_state["chat_pending_query"] = chip_q
 
-            for i, q_chip in enumerate(suggested_queries[:4]):
-                target_c = chip_c1 if i % 2 == 0 else chip_c2
+            for i, q_chip in enumerate(suggested_queries[:2]):
+                target_c = chip_c1 if i == 0 else chip_c2
                 with target_c:
                     st.button(q_chip, key=f"quick_chip_{i}", on_click=_send_chip_click_cb, args=(q_chip,), use_container_width=True)
 

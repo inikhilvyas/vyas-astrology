@@ -180,31 +180,33 @@
             100% { left: 100%; }
         }
 
-        /* Luxury Floating PWA Install Button (Anchored Bottom-Left to avoid Chatbot Avatar) */
+        /* Clean Minimal Top-Left PWA Install Pill (Keeps screen uncluttered) */
         #pwa-install-btn {
             position: fixed;
-            bottom: 24px;
-            left: 20px;
-            right: auto;
+            top: 10px;
+            left: 14px;
             z-index: 9995;
-            background: linear-gradient(135deg, #1e293b 0%, #0b1220 100%);
+            background: rgba(15, 23, 42, 0.88);
             color: #f0c05a;
-            border: 1.8px solid #f0c05a;
+            border: 1px solid rgba(240, 192, 90, 0.4);
             border-radius: 999px;
-            padding: 9px 16px;
-            font-size: 0.86rem;
+            padding: 5px 12px;
+            font-size: 0.76rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-            display: flex;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            display: none; /* Shown dynamically only when browser fires beforeinstallprompt */
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            backdrop-filter: blur(8px);
             transition: all 0.25s ease;
         }
         #pwa-install-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 26px rgba(240, 192, 90, 0.35);
-            background: linear-gradient(135deg, #2d3b55 0%, #0f172a 100%);
+            transform: translateY(-1px);
+            border-color: #f0c05a;
+            background: rgba(30, 41, 59, 0.95);
+            color: #fef08a;
+            box-shadow: 0 6px 18px rgba(240, 192, 90, 0.3);
         }
         #ios-modal {
             display: none;
@@ -223,46 +225,8 @@
             text-align: center;
             max-width: 90%;
         }
-        /* Floating Refresh Button for PWA & Mobile (Anchored Bottom-Left above Install Button) */
         #pwa-refresh-btn {
-            position: fixed;
-            bottom: 74px;
-            left: 20px;
-            right: auto;
-            z-index: 9990;
-            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
-            color: #0b1220;
-            border: 2px solid #fef3c7;
-            border-radius: 999px;
-            padding: 8px 16px;
-            font-size: 0.86rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        @media (max-width: 600px) {
-            #pwa-install-btn {
-                bottom: 16px;
-                left: 14px;
-                padding: 7px 12px;
-                font-size: 0.78rem;
-            }
-            #pwa-refresh-btn {
-                bottom: 58px;
-                left: 14px;
-                padding: 7px 12px;
-                font-size: 0.78rem;
-            }
-        }
-        #pwa-refresh-btn:active {
-            transform: scale(0.94);
-            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            display: none !important; /* Removed intrusive floating refresh button */
         }
         .refresh-icon {
             font-size: 1.15rem;
@@ -332,11 +296,7 @@
         <span id="ptr-text">नीचे खींचें रीफ्रेश के लिए</span>
     </div>
 
-    <!-- PWA Floating Refresh Button (Always available on mobile/standalone) -->
-    <button id="pwa-refresh-btn" onclick="refreshVyasApp()" title="ऐप रीफ्रेश करें (Refresh App)">
-        <span class="refresh-icon">🔄</span>
-        <span>रीफ्रेश</span>
-    </button>
+
 
     <!-- PWA Install Button -->
     <button id="pwa-install-btn" title="ऐप को होम स्क्रीन पर इंस्टॉल करें">
