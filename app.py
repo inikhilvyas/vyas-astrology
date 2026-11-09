@@ -481,7 +481,7 @@ st.set_page_config(
     page_title="VYAS • Vedic Yield Astrology Systems",
     page_icon=_VYAS_PAGE_ICON,
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # ---------------- DOMAIN ENFORCEMENT & CANONICAL REDIRECT GUARD ----------------
@@ -2033,33 +2033,62 @@ if _is_light:
 elif _is_auto:
     st.markdown(f"<style>@media (prefers-color-scheme: light) {{\n{_light_css_rules}\n}}</style>", unsafe_allow_html=True)
 
-_is_hi_banner = st.session_state.get('sidebar_ui_lang', 'हिन्दी') == 'हिन्दी'
+# ---------------- UNIFIED GLOBAL LANGUAGE RESOLVER ----------------
+_pref_lang = st.session_state.get('sidebar_ui_lang') or st.session_state.get('main_ui_lang_radio') or 'हिन्दी'
+is_hi = "English" not in _pref_lang
+st.session_state['sidebar_ui_lang'] = "हिन्दी" if is_hi else "English"
+st.session_state['main_ui_lang_radio'] = "हिन्दी (Hindi)" if is_hi else "English"
+st.session_state['ui_lang'] = "hi" if is_hi else "en"
+_is_hi_banner = is_hi
 
-# ---------------- TOP UTILITY ACTION BAR (Sidebar Menu & Compact Language) ----------------
+# ---------------- TOP UTILITY ACTION BAR (Menu Toggle & Fast Language Switch) ----------------
 col_nav_menu, col_nav_space, col_nav_lang = st.columns([1.6, 2.0, 1.2])
 with col_nav_menu:
-    _sb_lbl = "☰ मेन्यू एवं सेटिंग्स" if _is_hi_banner else "☰ Menu & Settings"
-    if st.button(_sb_lbl, key="nav_open_sidebar_btn", use_container_width=True, help="कुण्डली सूची, सेटिंग्स एवं टूल्स खोलें"):
-        st.session_state["_trigger_open_sidebar"] = True
+    _sb_lbl = "☰ मेन्यू एवं सेटिंग्स" if is_hi else "☰ Menu & Settings"
+    if st.button(_sb_lbl, key="nav_open_sidebar_btn", use_container_width=True, help="साइट सेटिंग्स, कुण्डली सूची व टूल्स खोलें"):
+        st.session_state["_show_main_settings_drawer"] = not st.session_state.get("_show_main_settings_drawer", False)
+        st.rerun()
 with col_nav_lang:
-    _cur_l = st.session_state.get('sidebar_ui_lang', 'हिन्दी')
-    _switch_to = "English" if _cur_l == "हिन्दी" else "हिन्दी"
+    _switch_to = "English" if is_hi else "हिन्दी"
     if st.button(f"🌐 {_switch_to}", key="nav_quick_lang_btn", use_container_width=True, help="Switch Language / भाषा बदलें"):
-        st.session_state['sidebar_ui_lang'] = _switch_to
+        new_lang = "English" if is_hi else "हिन्दी"
+        st.session_state['sidebar_ui_lang'] = new_lang
+        st.session_state['main_ui_lang_radio'] = "English" if new_lang == "English" else "हिन्दी (Hindi)"
+        st.session_state['ui_lang'] = "en" if new_lang == "English" else "hi"
+        st.session_state.pop('daily_res', None)
+        st.session_state.pop('_daily_cache_token', None)
         st.rerun()
 
-if st.session_state.pop("_trigger_open_sidebar", False):
-    st.components.v1.html("""
-    <script>
-    try {
-        var doc = window.parent.document;
-        var btn = doc.querySelector('[data-testid="collapsedControl"] button') || 
-                  doc.querySelector('[data-testid="stExpandSidebarButton"] button') ||
-                  doc.querySelector('[data-testid="collapsedControl"]');
-        if (btn) btn.click();
-    } catch(e) {}
-    </script>
-    """, height=0)
+# ---------------- IN-PAGE SETTINGS & TOOLS DRAWER ----------------
+if st.session_state.get("_show_main_settings_drawer", False):
+    st.markdown(f"""
+    <div style="background: {TH_CARD_BG}; border: 1.5px solid {TH_GOLD}; border-radius: 14px; padding: 14px 18px; margin-bottom: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+        <div style="font-family: var(--font-yatra); font-size: 1.12rem; color: {TH_GOLD}; font-weight: 800; margin-bottom: 8px;">
+            {'⚙️ त्वरित सेटिंग्स एवं टूल्स (Quick Settings & Tools)' if is_hi else '⚙️ Quick Settings & Tools'}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    c_dr1, c_dr2, c_dr3 = st.columns([1.2, 1.5, 1.3])
+    with c_dr1:
+        def _on_dr_lang():
+            sel_l = st.session_state["dr_lang_selector"]
+            st.session_state['sidebar_ui_lang'] = sel_l
+            st.session_state['main_ui_lang_radio'] = "English" if sel_l == "English" else "हिन्दी (Hindi)"
+            st.session_state['ui_lang'] = "en" if sel_l == "English" else "hi"
+            st.session_state.pop('daily_res', None)
+            st.session_state.pop('_daily_cache_token', None)
+        st.radio("भाषा (Language):", ["हिन्दी", "English"], index=0 if is_hi else 1, horizontal=True, key="dr_lang_selector", on_change=_on_dr_lang)
+    with c_dr2:
+        def _on_dr_fs():
+            st.session_state["_user_font_scale"] = st.session_state["dr_fs_selector"]
+        st.select_slider("अक्षर आकार (Text Size):" if is_hi else "Text Size:", options=["सामान्य (17px)", "बड़ा (19.5px - डिफ़ॉल्ट)", "अति विशाल (22px)"], value=st.session_state.get("_user_font_scale", "बड़ा (19.5px - डिफ़ॉल्ट)"), key="dr_fs_selector", on_change=_on_dr_fs)
+    with c_dr3:
+        def _on_dr_th():
+            st.session_state["_user_theme_mode"] = st.session_state["dr_th_selector"]
+        st.radio("थीम (Theme):" if is_hi else "Theme:", ["डार्क (Dark)", "लाइट (Light)", "ऑटो (Auto)"], index=0 if "डार्क" in str(st.session_state.get("_user_theme_mode", "डार्क")) else (1 if "लाइट" in str(st.session_state.get("_user_theme_mode", "")) else 2), horizontal=True, key="dr_th_selector", on_change=_on_dr_th)
+    if st.button("✖ मेन्यू बंद करें (Close Settings)" if is_hi else "✖ Close Settings", key="btn_close_settings_drawer", use_container_width=True):
+        st.session_state["_show_main_settings_drawer"] = False
+        st.rerun()
 
 _hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
 
@@ -2173,7 +2202,7 @@ if st.query_params.get("uid"):
 
 u = st.session_state["user"]
 is_logged_in_now = (u.get("email") != "seeker@vyasastro.com") or st.session_state.get("guest_mode", False)
-is_hi = "हिन्दी" in st.session_state.get('main_ui_lang_radio', 'हिन्दी (Hindi)')
+is_hi = "English" not in str(st.session_state.get('sidebar_ui_lang', 'हिन्दी'))
 
 if not is_logged_in_now and not st.query_params.get("stok"):
     st.html("""
@@ -2915,8 +2944,8 @@ with st.sidebar:
 saved_list = auth_vault.get_saved_kundlis(u["id"]) if is_logged_in_now else []
 active_lp = st.session_state.get('loaded_profile')
 
-# Clean language resolution (managed seamlessly via sidebar settings)
-is_hi = st.session_state.get("sidebar_ui_lang", "हिन्दी") == "हिन्दी"
+# Clean language resolution (managed globally)
+is_hi = "English" not in str(st.session_state.get("sidebar_ui_lang", "हिन्दी"))
 
 # Font scale is controlled cleanly by sidebar settings without cluttering main screen
 _cur_fs = str(st.session_state.get("_user_font_scale", "बड़ा (19.5px - डिफ़ॉल्ट)"))
@@ -4180,9 +4209,9 @@ if st.session_state.get('data_generated'):
                 </div>
                 <div style="font-size: 1.08rem; font-weight: 800; color: {score_color};">{status_txt}</div>
                 <div style="margin-top: 10px; font-size: 0.94rem; color: {TH_MUTED}; text-align: left; font-weight: 600;">
-                    <div>ऊर्जा (Energy): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['health']}%</b></div>
-                    <div>एकाग्रता (Focus): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['career']}%</b></div>
-                    <div>वृद्धि (Growth): <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['wealth']}%</b></div>
+                    <div>{'ऊर्जा (Energy):' if is_hi else 'Energy:'} <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['health']}%</b></div>
+                    <div>{'एकाग्रता (Focus):' if is_hi else 'Focus:'} <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['career']}%</b></div>
+                    <div>{'वृद्धि (Growth):' if is_hi else 'Growth:'} <b style="color: {TH_GOLD_ACCENT};">{daily_res['scores']['wealth']}%</b></div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -4207,7 +4236,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{daily_res['tara_desc']}</div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: {_d_val};">
-                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{_format_clean_dasha_display(daily_res.get('running_dasha'))}</span>
+                    <b>{'सक्रिय दशा:' if is_hi else 'Active Dasha:'}</b> <span style="color: {_d_highlight}; font-weight: 700;">{_format_clean_dasha_display(daily_res.get('running_dasha'))}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -4221,13 +4250,13 @@ if st.session_state.get('data_generated'):
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">CELESTIAL STATE</div>
                 <div style="font-size: 0.95rem; color: {_d_val}; display: flex; flex-direction: column; gap: 7px;">
-                    <div style="display: flex; justify-content: space-between;"><span> सूर्य:</span> <b>{constants.SIGNS_HI[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span> चन्द्र:</span> <b>{constants.SIGNS_HI[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span> गुरु:</span> <b>{constants.SIGNS_HI[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
-                    <div style="display: flex; justify-content: space-between;"><span>शनि:</span> <b>{constants.SIGNS_HI[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>{'सूर्य:' if is_hi else 'Sun:'}</span> <b>{constants.SIGNS_HI[sun_p.sign_index] if is_hi else constants.SIGNS[sun_p.sign_index]} {int(sun_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>{'चन्द्र:' if is_hi else 'Moon:'}</span> <b>{constants.SIGNS_HI[moon_p.sign_index] if is_hi else constants.SIGNS[moon_p.sign_index]} {int(moon_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>{'गुरु:' if is_hi else 'Jupiter:'}</span> <b>{constants.SIGNS_HI[jup_p.sign_index] if is_hi else constants.SIGNS[jup_p.sign_index]} {int(jup_p.longitude%30)}°</b></div>
+                    <div style="display: flex; justify-content: space-between;"><span>{'शनि:' if is_hi else 'Saturn:'}</span> <b>{constants.SIGNS_HI[sat_p.sign_index] if is_hi else constants.SIGNS[sat_p.sign_index]} {int(sat_p.longitude%30)}°</b></div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 6px; margin-top: 8px; font-size: 0.92rem; color: {_d_naksh_col}; font-weight: 600;">
-                    नक्षत्र: {daily_res['natal_nakshatra']}
+                    {'नक्षत्र:' if is_hi else 'Nakshatra:'} {daily_res['natal_nakshatra']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -4244,11 +4273,11 @@ if st.session_state.get('data_generated'):
             <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="font-size: 0.88rem; letter-spacing: 1.2px; color: {_d_lbl}; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">IMPORTANT TIMINGS</div>
                 <div style="font-size: 0.95rem; display: flex; flex-direction: column; gap: 7px; color: {_d_val};">
-                    <div><b>अभिजीत मुहूर्त:</b> <br>{abhijit_ui}</div>
-                    <div><b>राहुकाल (सावधानी):</b> <br><span style="color: {_d_rahu_col}; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
+                    <div><b>{'अभिजीत मुहूर्त:' if is_hi else 'Abhijit Muhurta:'}</b> <br>{abhijit_ui}</div>
+                    <div><b>{'राहुकाल (सावधानी):' if is_hi else 'Rahu Kalam (Caution):'}</b> <br><span style="color: {_d_rahu_col}; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 6px; margin-top: 6px; font-size: 0.92rem; color: {_d_val};">
-                    <b>शुभ रंग:</b> <span style="color: {_d_accent}; font-weight: 700;">{daily_res.get('lucky_color', 'पीला / श्वेत')}</span>
+                    <b>{'शुभ रंग:' if is_hi else 'Lucky Color:'}</b> <span style="color: {_d_accent}; font-weight: 700;">{daily_res.get('lucky_color', 'Yellow / White' if not is_hi else 'पीला / श्वेत')}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -4260,20 +4289,20 @@ if st.session_state.get('data_generated'):
         _ch_col = "#ef4444" if (_ch_g.get("is_fourth_moon") or _ch_g.get("is_ashtama_moon")) else "#38bdf8"
         _rem_today = daily_res.get('daily_remedy', '')
         _rem_block = f"""<div style="border-top: 1px dashed rgba(229, 169, 60, 0.25); margin-top: 10px; padding-top: 8px; font-size: 0.88rem; color: {TH_MUTED};">
-            <b style="color: {TH_GOLD};">🌿 आज का विशेष अनुशंसित उपाय:</b> {_rem_today}
+            <b style="color: {TH_GOLD};">🌿 {'आज का विशेष अनुशंसित उपाय:' if is_hi else 'Recommended Daily Remedy:'}</b> {_rem_today}
         </div>""" if _rem_today else ""
 
         st.markdown(f"""
         <div style="background: {TH_CARD_BG}; border: {TH_CARD_BORDER}; border-radius: 14px; padding: 14px 18px; margin-top: 14px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
                 <div style="border-left: 3.5px solid {_sh_col}; padding-left: 12px;">
-                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">शनि गोचर स्थिति (साढ़े साती / ढैया विश्लेषण)</div>
-                    <div style="font-size: 0.96rem; font-weight: 800; color: {_sh_col}; margin-top: 2px;">{_sh_g.get('type', 'अनुकूल/तटस्थ')}</div>
+                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">{'शनि गोचर स्थिति (साढ़े साती / ढैया विश्लेषण)' if is_hi else 'Saturn Transit (Sade Sati / Dhaiya Status)'}</div>
+                    <div style="font-size: 0.96rem; font-weight: 800; color: {_sh_col}; margin-top: 2px;">{_sh_g.get('type', 'Favourable/Neutral' if not is_hi else 'अनुकूल/तटस्थ')}</div>
                     <div style="font-size: 0.84rem; color: {TH_MUTED}; margin-top: 3px; line-height: 1.45;">{_sh_g.get('desc', '')}</div>
                 </div>
                 <div style="border-left: 3.5px solid {_ch_col}; padding-left: 12px;">
-                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">चन्द्र गोचर विश्लेषण (भाव {_ch_g.get('house', 1)} - {_ch_g.get('transit_rashi', '')} राशि)</div>
-                    <div style="font-size: 0.96rem; font-weight: 800; color: {_ch_col}; margin-top: 2px;">{_ch_g.get('title', 'गोचर प्रभाव')}</div>
+                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">{'चन्द्र गोचर विश्लेषण' if is_hi else 'Moon Transit Analysis'} ({'भाव' if is_hi else 'House'} {_ch_g.get('house', 1)} - {_ch_g.get('transit_rashi', '')} {'राशि' if is_hi else 'Sign'})</div>
+                    <div style="font-size: 0.96rem; font-weight: 800; color: {_ch_col}; margin-top: 2px;">{_ch_g.get('title', 'Transit Impact' if not is_hi else 'गोचर प्रभाव')}</div>
                     <div style="font-size: 0.84rem; color: {TH_MUTED}; margin-top: 3px; line-height: 1.45;">{_ch_g.get('desc', '')}</div>
                 </div>
             </div>
