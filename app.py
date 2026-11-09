@@ -490,10 +490,32 @@ _oauth_error = st.query_params.get("error")
 _oauth_err_desc = st.query_params.get("error_description")
 _g_jwt = st.query_params.get("g_jwt")
 
+
+def _verify_google_jwt(id_token: str):
+    """Verifies a Google ID token (JWT) returned by Google Identity Services on the HTML wrapper."""
+    if not id_token:
+        return False, "टोकन खाली है।", {}
+    try:
+        import urllib.request, urllib.parse, json
+        url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(id_token)}"
+        req = urllib.request.Request(url, headers={"User-Agent": "VYAS-Astra/2.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode("utf-8"))
+                email = data.get("email")
+                if email and (data.get("email_verified") is True or str(data.get("email_verified")).lower() == "true"):
+                    name = data.get("name") or email.split("@")[0]
+                    return True, "सफल", {"email": email, "name": name, "sub": data.get("sub")}
+                return False, "Google ईमेल सत्यापित नहीं है।", {}
+            return False, f"Google प्रमाणीकरण त्रुटि: HTTP {resp.status}", {}
+    except Exception as exc:
+        return False, f"टोकन सत्यापन विफल: {str(exc)}", {}
+
+
 if _g_jwt and not st.session_state.get("user_google_processed"):
     st.session_state["user_google_processed"] = True
     with st.spinner("Google से सुरक्षित प्रमाणीकरण किया जा रहा है..."):
-        ok_jwt, msg_jwt, u_jwt = google_drive_sync.verify_google_id_token(_g_jwt)
+        ok_jwt, msg_jwt, u_jwt = _verify_google_jwt(_g_jwt)
         if ok_jwt and u_jwt:
             ok_log, msg_log, u_obj = auth_vault.login_or_register_google(u_jwt["email"], u_jwt["name"])
             if ok_log and u_obj:
