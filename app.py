@@ -301,6 +301,7 @@ def _start_user_session(u_obj) -> None:
         token = ""
     if token:
         st.session_state["_vyas_session_token"] = token
+        st.query_params["stok"] = token
         # Both are written on the NEXT run: this call is followed by st.rerun(),
         # which discards any element (including the cookie script) created in
         # the current run.
@@ -322,15 +323,21 @@ def _start_user_session(u_obj) -> None:
 
 def _end_user_session() -> None:
     """Logs out: invalidates the token, clears the cookie and session flags."""
-    token = st.session_state.pop("_vyas_session_token", "") or _read_session_cookie()
-    try:
-        auth_vault.delete_session_token(token)
-    except Exception:
-        pass
+    token = st.session_state.pop("_vyas_session_token", "") or st.query_params.get("stok", "") or _read_session_cookie()
+    if token:
+        try:
+            auth_vault.delete_session_token(token)
+        except Exception:
+            pass
     try:
         auth_vault.clear_active_session()
     except Exception:
         pass
+    if "stok" in st.query_params:
+        try:
+            del st.query_params["stok"]
+        except Exception:
+            pass
     st.session_state["_vyas_cookie_pending"] = True  # clears it on the next run
     st.session_state["_vyas_clear_pending"] = True
     st.session_state["user"] = {
@@ -540,15 +547,27 @@ if _g_jwt and not st.session_state.get("user_google_processed"):
             ok_log, msg_log, u_obj = auth_vault.login_or_register_google(u_jwt["email"], u_jwt["name"])
             if ok_log and u_obj:
                 _start_user_session(u_obj)
-                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}!", icon="")
-                st.query_params.clear()
+                st.toast(f"Google से सफल लॉगिन: {u_obj['name']}!", icon="🙏")
+                if "g_jwt" in st.query_params:
+                    try:
+                        del st.query_params["g_jwt"]
+                    except Exception:
+                        pass
                 st.rerun()
             else:
                 st.error(f"Google खाता निर्माण विफल: {msg_log}")
-                st.query_params.clear()
+                if "g_jwt" in st.query_params:
+                    try:
+                        del st.query_params["g_jwt"]
+                    except Exception:
+                        pass
         else:
             st.error(f"Google प्रमाणीकरण विफल: {msg_jwt}")
-            st.query_params.clear()
+            if "g_jwt" in st.query_params:
+                try:
+                    del st.query_params["g_jwt"]
+                except Exception:
+                    pass
 
 if _oauth_error:
     # Google bounced back with an error — show it and clean the URL.
@@ -1769,25 +1788,49 @@ if st.session_state.pop("_vyas_cookie_pending", False):
     # _start_user_session): doing it here means it survives st.rerun().
     _write_session_cookie(st.session_state.get("_vyas_session_token", "") or "")
 
-# Mirror the token into localStorage (works where cookies are stripped) and
-# read it back on the next run. The component is zero-height and invisible.
 _store_pending = st.session_state.pop("_vyas_store_pending", "") or ""
 _clear_pending = st.session_state.pop("_vyas_clear_pending", False)
-_bridge_token = _mount_session_bridge(
-    "store" if _store_pending else ("clear" if _clear_pending else "read"),
-    _store_pending,
-)
-if _clear_pending:
-    # The component still reports the old token on the logout run (JS clears it
-    # in the browser only after this run). Never treat that as a restore.
-    _bridge_token = ""
+
+if _store_pending:
+    try:
+        st.components.v1.html(f"""
+        <script>
+        try {{
+            localStorage.setItem('vyas_auth_token', '{_store_pending}');
+            if (window.parent) {{
+                window.parent.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_store_pending}' }}, '*');
+            }}
+            if (window.top && window.top !== window.parent) {{
+                window.top.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_store_pending}' }}, '*');
+            }}
+        }} catch(e) {{}}
+        </script>
+        """, height=0)
+    except Exception:
+        pass
+elif _clear_pending:
+    try:
+        st.components.v1.html("""
+        <script>
+        try {
+            localStorage.removeItem('vyas_auth_token');
+            localStorage.removeItem('vyas_g_jwt');
+            if (window.parent) {
+                window.parent.postMessage({ type: 'VYAS_LOGOUT' }, '*');
+            }
+            if (window.top && window.top !== window.parent) {
+                window.top.postMessage({ type: 'VYAS_LOGOUT' }, '*');
+            }
+        } catch(e) {}
+        </script>
+        """, height=0)
+    except Exception:
+        pass
 
 _current_email = (st.session_state.get("user") or {}).get("email", "")
 if (not _current_email) or _current_email == "seeker@vyasastro.com":
     _restored = None
-    # localStorage first: it survives reloads even when the Cloud proxy drops
-    # custom cookies. The cookie remains a fallback for local/direct hosting.
-    _token = _bridge_token or _read_session_cookie()
+    _token = st.query_params.get("stok") or st.session_state.get("_vyas_session_token") or _read_session_cookie()
     if _token:
         try:
             _restored = auth_vault.get_user_by_session_token(_token)
@@ -1795,9 +1838,14 @@ if (not _current_email) or _current_email == "seeker@vyasastro.com":
             _restored = None
     if _restored:
         st.session_state["user"] = _restored
-        # Keep the token so Logout can invalidate exactly this browser's row.
         st.session_state["_vyas_session_token"] = _token
+        st.query_params["stok"] = _token
     else:
+        if "stok" in st.query_params:
+            try:
+                del st.query_params["stok"]
+            except Exception:
+                pass
         st.session_state["user"] = {
             "id": 1,
             "name": "नया जातक (Seeker)",
@@ -1809,11 +1857,31 @@ if (not _current_email) or _current_email == "seeker@vyasastro.com":
 
 # A stale `uid` param must never log anyone in; scrub it from the URL.
 if st.query_params.get("uid"):
-    st.query_params.clear()
+    try:
+        del st.query_params["uid"]
+    except Exception:
+        pass
 
 u = st.session_state["user"]
 is_logged_in_now = (u.get("email") != "seeker@vyasastro.com") or st.session_state.get("guest_mode", False)
 is_hi = "हिन्दी" in st.session_state.get('main_ui_lang_radio', 'हिन्दी (Hindi)')
+
+if not is_logged_in_now and not st.query_params.get("stok"):
+    try:
+        st.components.v1.html("""
+        <script>
+        try {
+            var tok = localStorage.getItem('vyas_auth_token');
+            if (tok && !window.location.search.includes('stok=')) {
+                var url = new URL(window.location.href);
+                url.searchParams.set('stok', tok);
+                window.location.replace(url.toString());
+            }
+        } catch(e) {}
+        </script>
+        """, height=0)
+    except Exception:
+        pass
 
 # Auto-load the default or last saved kundli into loaded_profile on fresh session
 if is_logged_in_now:

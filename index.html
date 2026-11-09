@@ -346,7 +346,7 @@
     </div>
 
     <script>
-        // Official Google Identity Services (GIS) — 100% On-Page Verification, Zero Streamlit Redirects!
+        // Official Google Identity Services (GIS) & Persistent Auth Engine
         function handleGoogleCredential(response) {
             if (response && response.credential) {
                 try {
@@ -355,7 +355,6 @@
                     if (iframe) {
                         iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&g_jwt=" + encodeURIComponent(response.credential);
                     }
-                    // Hide the top auth bar once signed in
                     const authBar = document.getElementById('google-auth-bar');
                     if (authBar) authBar.style.display = 'none';
                 } catch(e) {
@@ -365,6 +364,11 @@
         }
 
         function initGoogleIdentity() {
+            const savedToken = localStorage.getItem('vyas_auth_token');
+            if (savedToken) {
+                const authBar = document.getElementById('google-auth-bar');
+                if (authBar) authBar.style.display = 'none';
+            }
             if (window.google && window.google.accounts) {
                 google.accounts.id.initialize({
                     client_id: "341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com",
@@ -385,27 +389,61 @@
                     });
                 }
 
-                // Show One-Tap prompt
-                google.accounts.id.prompt();
+                // Show One-Tap prompt ONLY when user is not already logged in
+                if (!savedToken) {
+                    google.accounts.id.prompt();
+                }
             } else {
                 setTimeout(initGoogleIdentity, 300);
             }
         }
 
-        // On Page Load: Restore session or forward params
+        // Listen for session token messages from the Streamlit app
+        window.addEventListener('message', function(event) {
+            try {
+                if (event.data && typeof event.data === 'object') {
+                    if (event.data.type === 'VYAS_AUTH_TOKEN' && event.data.token) {
+                        localStorage.setItem('vyas_auth_token', event.data.token);
+                        const authBar = document.getElementById('google-auth-bar');
+                        if (authBar) authBar.style.display = 'none';
+                    } else if (event.data.type === 'VYAS_LOGOUT') {
+                        localStorage.removeItem('vyas_auth_token');
+                        localStorage.removeItem('vyas_g_jwt');
+                        const authBar = document.getElementById('google-auth-bar');
+                        if (authBar) authBar.style.display = 'flex';
+                    }
+                }
+            } catch(e) {}
+        });
+
+        // On Page Load: Restore session or forward params with persistent auto-login
         (function() {
             try {
                 const search = window.location.search;
                 const iframe = document.getElementById('app-frame');
+                const savedToken = localStorage.getItem('vyas_auth_token');
                 const savedJwt = localStorage.getItem('vyas_g_jwt');
 
                 if (search) {
                     const extra = search.startsWith('?') ? search.substring(1) : search;
                     if (iframe && extra) {
-                        iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&" + extra;
+                        let finalSrc = "https://vyas-astrology-111.streamlit.app/?embed=true&" + extra;
+                        if (savedToken && !extra.includes('stok=')) {
+                            finalSrc += "&stok=" + encodeURIComponent(savedToken);
+                        }
+                        iframe.src = finalSrc;
+                        if (savedToken) {
+                            const authBar = document.getElementById('google-auth-bar');
+                            if (authBar) authBar.style.display = 'none';
+                        }
                     }
+                } else if (savedToken && iframe) {
+                    // Auto-login using persistent session token (instant, no repeated login prompt)
+                    iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&stok=" + encodeURIComponent(savedToken);
+                    const authBar = document.getElementById('google-auth-bar');
+                    if (authBar) authBar.style.display = 'none';
                 } else if (savedJwt && iframe) {
-                    // Auto-login using saved verified Google token
+                    // Fallback to Google JWT
                     iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&g_jwt=" + encodeURIComponent(savedJwt);
                     const authBar = document.getElementById('google-auth-bar');
                     if (authBar) authBar.style.display = 'none';
