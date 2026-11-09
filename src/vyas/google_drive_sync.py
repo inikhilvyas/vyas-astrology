@@ -150,6 +150,12 @@ def resolve_redirect_uri(configured: str = "") -> str:
             detected = detect_runtime_redirect_uri()
             if detected != DEFAULT_REDIRECT_URI:
                 return detected
+        # Always prioritize the custom branded domain https://vyasastro.in on cloud
+        if "vyasastro.in" in normalized:
+            return "https://vyasastro.in"
+        detected = detect_runtime_redirect_uri()
+        if "vyasastro.in" in detected:
+            return detected
         if normalized in REGISTERED_REDIRECT_URIS:
             return normalized
     return detect_runtime_redirect_uri()

@@ -434,6 +434,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# ---------------- DOMAIN ENFORCEMENT & CANONICAL REDIRECT GUARD ----------------
+# Ensures visitors and OAuth flows always stay on https://vyasastro.in instead of raw streamlit.app
+import streamlit.components.v1 as _st_comp_guard
+_st_comp_guard.html("""
+<script>
+(function() {
+    try {
+        var topLoc = window.top.location;
+        if (topLoc.hostname && topLoc.hostname.indexOf("streamlit.app") !== -1) {
+            var search = topLoc.search || "";
+            var hash = topLoc.hash || "";
+            topLoc.replace("https://vyasastro.in" + search + hash);
+        }
+    } catch(e) {
+        // Cross-origin exception means we are already safely embedded inside the vyasastro.in iframe
+    }
+})();
+</script>
+""", height=0)
+
 
 # ---------------- CACHED HEAVY ENGINES ----------------
 # Measured on a real chart (Windows, cold pyephem/Skyfield):
@@ -2413,7 +2433,8 @@ with st.sidebar:
                 3. OAuth 2.0 Web Client बनाएं और <b>Authorized redirect URIs</b> में ये दोनों जोड़ें
                 (अंत में स्लैश नहीं — Google में byte-exact मैच होना चाहिए):<br/>
                 <code>http://localhost:8501</code> (local के लिए)<br/>
-                <code>https://vyas-astrology-111.streamlit.app</code> (live app के लिए)<br/>
+                <code>https://vyasastro.in</code> (मुख्य वेबसाइट / live app के लिए)<br/>
+                <code>https://vyas-astrology-111.streamlit.app</code> (बैकअप रीडायरेक्ट के लिए)<br/>
                 4. जिस Gmail से लॉगिन करना है उसे <b>Audience → Test users</b> में जोड़ें (या app Publish करें)।
             </div>
             """, unsafe_allow_html=True)
