@@ -315,11 +315,61 @@
     <div id="frame-container">
         <iframe 
             id="app-frame"
-            src="https://vyas-astrology-111.streamlit.app/?embed=true" 
             allow="geolocation; microphone; camera; clipboard-write; clipboard-read; payment"
             onload="const ls=document.getElementById('loading-screen'); if(ls){ ls.style.opacity='0'; setTimeout(()=>ls.style.display='none', 180); }"
         ></iframe>
     </div>
+    <script>
+        // Synchronous immediate iframe URL resolver (Prevents unauthenticated race conditions)
+        (function() {
+            try {
+                const search = window.location.search;
+                const iframe = document.getElementById('app-frame');
+                const savedToken = localStorage.getItem('vyas_auth_token');
+                let savedJwt = localStorage.getItem('vyas_g_jwt');
+
+                function isJwtValid(jwt) {
+                    if (!jwt || typeof jwt !== 'string') return false;
+                    try {
+                        const parts = jwt.split('.');
+                        if (parts.length < 2) return false;
+                        const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+                        const pad = b64.length % 4;
+                        const padded = b64 + (pad ? '='.repeat(4 - pad) : '');
+                        const payload = JSON.parse(atob(padded));
+                        return payload.exp && (payload.exp * 1000 > Date.now());
+                    } catch(e) {
+                        return false;
+                    }
+                }
+
+                if (savedJwt && !isJwtValid(savedJwt)) {
+                    localStorage.removeItem('vyas_g_jwt');
+                    savedJwt = null;
+                }
+
+                let targetSrc = "https://vyas-astrology-111.streamlit.app/?embed=true";
+                if (search) {
+                    const extra = search.startsWith('?') ? search.substring(1) : search;
+                    targetSrc += "&" + extra;
+                    if (savedToken && !extra.includes('stok=')) {
+                        targetSrc += "&stok=" + encodeURIComponent(savedToken);
+                    }
+                } else if (savedToken) {
+                    targetSrc += "&stok=" + encodeURIComponent(savedToken);
+                } else if (savedJwt) {
+                    targetSrc += "&g_jwt=" + encodeURIComponent(savedJwt);
+                }
+
+                if (iframe) iframe.src = targetSrc;
+
+                if (savedToken) {
+                    const authBar = document.getElementById('google-auth-bar');
+                    if (authBar) authBar.style.display = 'none';
+                }
+            } catch(e) {}
+        })();
+    </script>
 
     <script>
         // Official Google Identity Services (GIS) & Persistent Auth Engine

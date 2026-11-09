@@ -296,15 +296,12 @@ def _start_user_session(u_obj) -> None:
     except Exception:
         pass
     try:
-        token = auth_vault.create_session_token(u_obj["id"])
+        token = auth_vault.create_signed_session_token(u_obj["id"], u_obj.get("email", ""), u_obj.get("name", ""))
     except Exception:
         token = ""
     if token:
         st.session_state["_vyas_session_token"] = token
         st.query_params["stok"] = token
-        # Both are written on the NEXT run: this call is followed by st.rerun(),
-        # which discards any element (including the cookie script) created in
-        # the current run.
         st.session_state["_vyas_store_pending"] = token
         st.session_state["_vyas_cookie_pending"] = True
 
@@ -354,6 +351,38 @@ def _end_user_session() -> None:
                 "_birth_input_sig", "chart", "birth", "kp_cusps", "dasha_engine",
                 "vargas_matrix", "panchang", "gochar", "predictions"):
         st.session_state.pop(_sk, None)
+
+
+def _restore_user_session_early() -> None:
+    """Restores user session from persistent token (stok query param, session state, or cookie) early before page render."""
+    _current_user = st.session_state.get("user") or {}
+    _current_email = _current_user.get("email", "")
+    if _current_email and _current_email != "seeker@vyasastro.com":
+        return
+
+    _token = st.query_params.get("stok") or st.session_state.get("_vyas_session_token") or _read_session_cookie()
+    if not _token:
+        return
+
+    try:
+        _restored = auth_vault.resolve_session_token(_token)
+    except Exception:
+        _restored = None
+
+    if _restored:
+        _start_user_session(_restored)
+        st.session_state["_vyas_session_token"] = _token
+        st.query_params["stok"] = _token
+    else:
+        if "stok" in st.query_params:
+            try:
+                del st.query_params["stok"]
+            except Exception:
+                pass
+
+
+# Execute early session restoration immediately upon script execution!
+_restore_user_session_early()
 
 
 
@@ -1825,41 +1854,35 @@ if st.session_state.pop("_vyas_cookie_pending", False):
 _store_pending = st.session_state.pop("_vyas_store_pending", "") or ""
 _clear_pending = st.session_state.pop("_vyas_clear_pending", False)
 
-if _store_pending:
-    try:
-        st.components.v1.html(f"""
-        <script>
-        try {{
-            localStorage.setItem('vyas_auth_token', '{_store_pending}');
-            if (window.parent) {{
-                window.parent.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_store_pending}' }}, '*');
-            }}
-            if (window.top && window.top !== window.parent) {{
-                window.top.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_store_pending}' }}, '*');
-            }}
-        }} catch(e) {{}}
-        </script>
-        """, height=0)
-    except Exception:
-        pass
-elif _clear_pending:
-    try:
-        st.components.v1.html("""
-        <script>
-        try {
-            localStorage.removeItem('vyas_auth_token');
-            localStorage.removeItem('vyas_g_jwt');
-            if (window.parent) {
-                window.parent.postMessage({ type: 'VYAS_LOGOUT' }, '*');
-            }
-            if (window.top && window.top !== window.parent) {
-                window.top.postMessage({ type: 'VYAS_LOGOUT' }, '*');
-            }
-        } catch(e) {}
-        </script>
-        """, height=0)
-    except Exception:
-        pass
+# Permanent Session Synchronization with outer iframe & localStorage (Direct DOM via st.html)
+_active_tok_for_client = st.session_state.get("_vyas_session_token") or st.query_params.get("stok", "") or _store_pending
+if _clear_pending:
+    st.html("""
+    <script>
+    try {
+        localStorage.removeItem('vyas_auth_token');
+        localStorage.removeItem('vyas_g_jwt');
+        if (window.parent) window.parent.postMessage({ type: 'VYAS_LOGOUT' }, '*');
+        if (window.top && window.top !== window.parent) window.top.postMessage({ type: 'VYAS_LOGOUT' }, '*');
+    } catch(e) {}
+    </script>
+    """)
+elif _active_tok_for_client and (st.session_state.get("user") or {}).get("email") != "seeker@vyasastro.com":
+    st.html(f"""
+    <script>
+    try {{
+        localStorage.setItem('vyas_auth_token', '{_active_tok_for_client}');
+        if (window.parent) {{
+            window.parent.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_active_tok_for_client}' }}, '*');
+            window.parent.postMessage({{ type: 'VYAS_CLEAR_JWT' }}, '*');
+        }}
+        if (window.top && window.top !== window.parent) {{
+            window.top.postMessage({{ type: 'VYAS_AUTH_TOKEN', token: '{_active_tok_for_client}' }}, '*');
+            window.top.postMessage({{ type: 'VYAS_CLEAR_JWT' }}, '*');
+        }}
+    }} catch(e) {{}}
+    </script>
+    """)
 
 _current_email = (st.session_state.get("user") or {}).get("email", "")
 if (not _current_email) or _current_email == "seeker@vyasastro.com":
@@ -1901,21 +1924,18 @@ is_logged_in_now = (u.get("email") != "seeker@vyasastro.com") or st.session_stat
 is_hi = "हिन्दी" in st.session_state.get('main_ui_lang_radio', 'हिन्दी (Hindi)')
 
 if not is_logged_in_now and not st.query_params.get("stok"):
-    try:
-        st.components.v1.html("""
-        <script>
-        try {
-            var tok = localStorage.getItem('vyas_auth_token');
-            if (tok && !window.location.search.includes('stok=')) {
-                var url = new URL(window.location.href);
-                url.searchParams.set('stok', tok);
-                window.location.replace(url.toString());
-            }
-        } catch(e) {}
-        </script>
-        """, height=0)
-    except Exception:
-        pass
+    st.html("""
+    <script>
+    try {
+        var tok = localStorage.getItem('vyas_auth_token');
+        if (tok && !window.location.search.includes('stok=')) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('stok', tok);
+            window.location.replace(url.toString());
+        }
+    } catch(e) {}
+    </script>
+    """)
 
 # Auto-load the default or last saved kundli into loaded_profile on fresh session
 if is_logged_in_now:
@@ -6860,12 +6880,16 @@ if st.session_state.get('data_generated'):
             chat_container = st.container(height=115)
             with chat_container:
                 for msg in st.session_state["dialog_chat_history"]:
+                    _raw_txt = msg.get("content", "")
+                    _clean_txt = re.sub(r'<\s*b\s*>', '**', _raw_txt, flags=re.IGNORECASE)
+                    _clean_txt = re.sub(r'<\s*/\s*b\s*>', '**', _clean_txt, flags=re.IGNORECASE)
+                    _clean_txt = re.sub(r'\*{4,}', '**', _clean_txt)
                     if msg["role"] == "user":
                         with st.chat_message("user"):
-                            st.markdown(msg["content"])
+                            st.markdown(_clean_txt)
                     else:
                         with st.chat_message("assistant", avatar=_avatar_arg):
-                            st.markdown(msg["content"])
+                            st.markdown(_clean_txt)
 
                 # Handle pending question with live typing indicator
                 if st.session_state.get("chat_pending_query"):
@@ -6890,13 +6914,13 @@ if st.session_state.get('data_generated'):
                         if is_hook_ack and not _is_vip_user:
                             bot_reply = (
                                 f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
-                                f"आपकी जन्मपत्रिका में <b>द्वितीय (स्थायी धन भाव)</b> एवं <b>एकादश (लाभ भाव)</b> का संबंध अत्यंत प्रभावशाली है। "
-                                f"आपकी कुण्डली में चालू विंशोत्तरी दशा के अंतर्गत <b>अचानक बड़े धन लाभ एवं पदोन्नति का दुर्लभ योग</b> निर्मित हो रहा है।\n\n"
-                                f"🔒 <b>यह सूक्ष्म समय-चक्र VIP प्रो सदस्यों के लिए उपलब्ध है:</b>\n"
-                                f"• धन आगमन एवं भाग्योदय का सटीक <b>माह व तिथि-वार समय-चक्र</b>\n"
+                                f"आपकी जन्मपत्रिका में **द्वितीय (स्थायी धन भाव)** एवं **एकादश (लाभ भाव)** का संबंध अत्यंत प्रभावशाली है। "
+                                f"आपकी कुण्डली में चालू विंशोत्तरी दशा के अंतर्गत **अचानक बड़े धन लाभ एवं पदोन्नति का दुर्लभ योग** निर्मित हो रहा है।\n\n"
+                                f"🔒 **यह सूक्ष्म समय-चक्र VIP प्रो सदस्यों के लिए उपलब्ध है:**\n"
+                                f"• धन आगमन एवं भाग्योदय का सटीक **माह व तिथि-वार समय-चक्र**\n"
                                 f"• प्रत्यंतर एवं सूक्ष्म दशा का गणितीय विश्लेषण\n"
-                                f"• धन वृद्धि व स्थायी प्रतिष्ठा हेतु <b>अचूक तांत्रिक व वैदिक अनुष्ठान</b>\n\n"
-                                f"🌟 <b>VIP Pro में अपग्रेड करें:</b> साइडबार में दिए गए <b>'Upgrade VIP / प्रीमियम सदस्यता लें'</b> विकल्प से VIP Pro प्राप्त करें।"
+                                f"• धन वृद्धि व स्थायी प्रतिष्ठा हेतु **अचूक तांत्रिक व वैदिक अनुष्ठान**\n\n"
+                                f"🌟 **VIP Pro में अपग्रेड करें:** साइडबार में दिए गए **'Upgrade VIP / प्रीमियम सदस्यता लें'** विकल्प से VIP Pro प्राप्त करें।"
                             )
                         else:
                             try:

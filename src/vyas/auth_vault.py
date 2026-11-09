@@ -504,38 +504,116 @@ def prune_app_state(prefix: str, keep_hours: int = 6) -> None:
 # charts. These tokens are handed to one browser (cookie) and resolved back to
 # that user only, so accounts stay isolated.
 
-def create_session_token(user_id: int) -> str:
-    """Creates a long-lived random token mapped to one user id."""
+_AUTH_SECRET_KEY = b"vyas_permanent_astrology_vault_key_2026_nov"
+
+
+def create_signed_session_token(user_id: int, email: str = "", name: str = "") -> str:
+    """Creates a self-verifying, tamper-proof persistent session token that also persists in app_state."""
     import secrets as _secrets
-    token = _secrets.token_urlsafe(32)
+    import hmac as _hmac
+    import hashlib as _hashlib
+    import base64 as _base64
+
+    email = (email or "").strip().lower()
+    name = (name or "").strip()
+    if not email:
+        u = get_user_by_id(user_id)
+        if u:
+            email = u.get("email", "").strip().lower()
+            name = u.get("name", "").strip()
+
+    payload = f"{email}|{name}|{int(user_id)}"
+    sig = _hmac.new(_AUTH_SECRET_KEY, payload.encode("utf-8"), _hashlib.sha256).hexdigest()[:24]
+    b64_p = _base64.urlsafe_b64encode(payload.encode("utf-8")).decode("utf-8").rstrip("=")
+    signed_token = f"vyas_{b64_p}_{sig}"
+
     try:
         with _get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "INSERT OR REPLACE INTO app_state (key, value, updated_at) VALUES (?, ?, ?)",
-                (f"session:{token}", str(int(user_id)), datetime.now().isoformat()),
+                (f"session:{signed_token}", str(int(user_id)), datetime.now().isoformat()),
             )
             conn.commit()
     except Exception:
-        return ""
-    return token
+        pass
+    return signed_token
 
 
-def get_user_by_session_token(token: str) -> Optional[Dict]:
-    """Resolves a browser cookie token back to its account (None if unknown)."""
+def create_session_token(user_id: int) -> str:
+    """Creates a long-lived signed session token mapped to one user id."""
+    return create_signed_session_token(user_id)
+
+
+def resolve_session_token(token: str) -> Optional[Dict]:
+    """Resolves a session token via DB or cryptographically verifies and auto-restores if DB rebooted."""
     token = (token or "").strip()
     if not token:
         return None
+
+    # 1. Check if token was explicitly revoked (logout)
+    try:
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM app_state WHERE key = ?", (f"revoked:{token}",))
+            if cursor.fetchone():
+                return None
+    except Exception:
+        pass
+
+    # 2. Direct DB lookup
     try:
         with _get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT value FROM app_state WHERE key = ?", (f"session:{token}",))
             row = cursor.fetchone()
-            if not row:
-                return None
-            return get_user_by_id(int(row["value"]))
+            if row:
+                u = get_user_by_id(int(row["value"]))
+                if u:
+                    return u
     except Exception:
-        return None
+        pass
+
+    # 3. Check cryptographic signed token fallback (resilient across container restarts)
+    if token.startswith("vyas_"):
+        try:
+            import hmac as _hmac
+            import hashlib as _hashlib
+            import base64 as _base64
+
+            parts = token.split("_")
+            if len(parts) == 3:
+                b64_p = parts[1]
+                sig = parts[2]
+                pad = len(b64_p) % 4
+                if pad:
+                    b64_p += "=" * (4 - pad)
+                payload = _base64.urlsafe_b64decode(b64_p.encode("utf-8")).decode("utf-8")
+                expected_sig = _hmac.new(_AUTH_SECRET_KEY, payload.encode("utf-8"), _hashlib.sha256).hexdigest()[:24]
+                if _hmac.compare_digest(sig, expected_sig):
+                    email, name, uid_str = payload.split("|", 2)
+                    ok, msg, restored_u = login_or_register_google(email, name)
+                    if ok and restored_u:
+                        try:
+                            with _get_connection() as conn:
+                                cursor = conn.cursor()
+                                cursor.execute(
+                                    "INSERT OR REPLACE INTO app_state (key, value, updated_at) VALUES (?, ?, ?)",
+                                    (f"session:{token}", str(int(restored_u["id"])), datetime.now().isoformat()),
+                                )
+                                conn.commit()
+                        except Exception:
+                            pass
+                        return restored_u
+        except Exception:
+            pass
+
+    return None
+
+
+def get_user_by_session_token(token: str) -> Optional[Dict]:
+    """Resolves a browser session token back to its account (None if unknown)."""
+    return resolve_session_token(token)
 
 
 def delete_session_token(token: str) -> None:
@@ -547,6 +625,10 @@ def delete_session_token(token: str) -> None:
         with _get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM app_state WHERE key = ?", (f"session:{token}",))
+            cursor.execute(
+                "INSERT OR REPLACE INTO app_state (key, value, updated_at) VALUES (?, ?, ?)",
+                (f"revoked:{token}", "1", datetime.now().isoformat()),
+            )
             conn.commit()
     except Exception:
         pass
