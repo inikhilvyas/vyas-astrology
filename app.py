@@ -3664,10 +3664,12 @@ if st.session_state.get('data_generated'):
             st.markdown(_birthday_banner_html, unsafe_allow_html=True)
             col_bday_1, col_bday_2 = st.columns([1.5, 1])
             with col_bday_1:
-                if st.button("वर्षफल टैब में इस वर्ष का संपूर्ण वर्षफल देखें (View Full Annual Varshphal) →", type="primary", key="btn_goto_varshphal_from_bday"):
-                    st.session_state['domain_suite_sidebar_radio'] = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
-                    st.session_state['main_screen_suite_select'] = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
-                    st.rerun()
+                def _goto_varshphal_cb():
+                    _vp_target = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
+                    st.session_state['domain_suite_sidebar_radio'] = _vp_target
+                    st.session_state['main_screen_suite_select'] = _vp_target
+
+                st.button("वर्षफल टैब में इस वर्ष का संपूर्ण वर्षफल देखें (View Full Annual Varshphal) →", type="primary", key="btn_goto_varshphal_from_bday", on_click=_goto_varshphal_cb)
 
         # Render Top Score Cards with High Contrast Calibration (Calibrated 40-75% range)
         score = daily_res["overall_score"]
@@ -6435,27 +6437,25 @@ if st.session_state.get('data_generated'):
 if st.session_state.get('data_generated') and 'suite_options' in locals() and 'cur_suite_idx' in locals():
     st.markdown('<div style="margin-top: 36px; border-top: 1px solid rgba(229, 169, 60, 0.25); padding-top: 16px;"></div>', unsafe_allow_html=True)
     _col_prev, _col_ref_mid, _col_next = st.columns([1.2, 0.9, 1.2])
+    def _step_nav_cb(target_suite):
+        st.session_state["domain_suite_sidebar_radio"] = target_suite
+        st.session_state["main_screen_suite_select"] = target_suite
+
+    def _purge_and_reload_bot():
+        for k in list(st.session_state.keys()):
+            if k.startswith('_daily_cache') or k == 'daily_res':
+                st.session_state.pop(k, None)
+
     if cur_suite_idx > 0:
         with _col_prev:
             _p_name = suite_options[cur_suite_idx - 1]
-            if st.button(f"← पिछला प्रभाग: {_p_name.split('(')[0].strip()}", key="btn_stepper_nav_prev", use_container_width=True):
-                st.session_state["domain_suite_sidebar_radio"] = _p_name
-                st.session_state["main_screen_suite_select"] = _p_name
-                st.rerun()
+            st.button(f"← पिछला प्रभाग: {_p_name.split('(')[0].strip()}", key="btn_stepper_nav_prev", on_click=_step_nav_cb, args=(_p_name,), use_container_width=True)
     with _col_ref_mid:
-        def _purge_and_reload_bot():
-            for k in list(st.session_state.keys()):
-                if k.startswith('_daily_cache') or k == 'daily_res':
-                    st.session_state.pop(k, None)
-        if st.button("🔄 ऐप रीफ्रेश करें", key="btn_stepper_refresh_mid", on_click=_purge_and_reload_bot, use_container_width=True):
-            st.rerun()
+        st.button("🔄 ऐप रीफ्रेश करें", key="btn_stepper_refresh_mid", on_click=_purge_and_reload_bot, use_container_width=True)
     if cur_suite_idx < len(suite_options) - 1:
         with _col_next:
             _n_name = suite_options[cur_suite_idx + 1]
-            if st.button(f"अगला प्रभाग: {_n_name.split('(')[0].strip()} →", type="primary", key="btn_stepper_nav_next", use_container_width=True):
-                st.session_state["domain_suite_sidebar_radio"] = _n_name
-                st.session_state["main_screen_suite_select"] = _n_name
-                st.rerun()
+            st.button(f"अगला प्रभाग: {_n_name.split('(')[0].strip()} →", type="primary", key="btn_stepper_nav_next", on_click=_step_nav_cb, args=(_n_name,), use_container_width=True)
 
 # ---------------- SCRIPT TIMING (opt-in) ----------------
 import time as _time_mod
