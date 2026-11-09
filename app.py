@@ -6605,8 +6605,8 @@ if st.session_state.get('data_generated'):
             right: 20px !important;
             width: 380px !important;
             max-width: calc(100vw - 24px) !important;
-            height: 490px !important;
-            max-height: calc(100dvh - 36px) !important;
+            height: 480px !important;
+            max-height: calc(100dvh - 30px) !important;
             background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.12) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
             border: 2px solid rgba(240, 192, 90, 0.6) !important;
             border-radius: 20px !important;
@@ -6614,11 +6614,11 @@ if st.session_state.get('data_generated'):
             z-index: 9999999 !important;
             display: flex !important;
             flex-direction: column !important;
-            padding: 8px 12px 10px 12px !important;
+            padding: 8px 10px 10px 10px !important;
             backdrop-filter: blur(20px) !important;
             animation: vyasPopIn 0.14s ease-out !important;
             touch-action: pan-y !important;
-            user-select: none !important;
+            box-sizing: border-box !important;
         }}
 
         @keyframes vyasPopIn {{
@@ -6626,79 +6626,20 @@ if st.session_state.get('data_generated'):
             100% {{ transform: translateY(0) scale(1); opacity: 1; }}
         }}
 
+        /* Hidden fallback button for minimize action */
+        div.st-key-btn_minimize_chat_window {{
+            display: none !important;
+        }}
+
         /* Draggable Header Handle */
         .vyas-messenger-drag-handle {{
             cursor: grab !important;
             touch-action: none !important;
-            padding: 2px 4px 6px 4px;
-            border-bottom: 1px solid rgba(240, 192, 90, 0.2);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            width: 100% !important;
+            box-sizing: border-box !important;
         }}
         .vyas-messenger-drag-handle:active {{
             cursor: grabbing !important;
-        }}
-
-        /* Absolute Top-Right Minimize/Close Button */
-        div.st-key-btn_minimize_chat_window {{
-            position: absolute !important;
-            top: 7px !important;
-            right: 9px !important;
-            z-index: 10000005 !important;
-            width: 28px !important;
-            height: 28px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }}
-        div.st-key-btn_minimize_chat_window button {{
-            background: rgba(239, 68, 68, 0.25) !important;
-            border: 1.5px solid rgba(239, 68, 68, 0.8) !important;
-            border-radius: 50% !important;
-            width: 28px !important;
-            height: 28px !important;
-            min-width: 28px !important;
-            max-width: 28px !important;
-            padding: 0 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
-        }}
-        div.st-key-btn_minimize_chat_window button:hover {{
-            background: #ef4444 !important;
-            border-color: #fca5a5 !important;
-            transform: scale(1.1) !important;
-        }}
-        div.st-key-btn_minimize_chat_window button * {{
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff !important;
-            font-size: 0.95rem !important;
-            font-weight: 900 !important;
-            line-height: 1 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }}
-
-        /* Horizontal 50/50 Quick Options Grid */
-        div.st-key-vyas_messenger_card div[data-testid="stHorizontalBlock"] {{
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 6px !important;
-            width: 100% !important;
-            margin: 4px 0 2px 0 !important;
-        }}
-        div.st-key-vyas_messenger_card div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {{
-            width: 50% !important;
-            max-width: 50% !important;
-            min-width: 0 !important;
-            flex: 1 1 50% !important;
-            padding: 0 !important;
         }}
 
         /* Compact Chat Messages */
@@ -6724,45 +6665,6 @@ if st.session_state.get('data_generated'):
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] div[data-testid="stMarkdownContainer"] li {{
             font-size: 0.74rem !important;
             line-height: 1.3 !important;
-        }}
-
-        /* High Contrast Quick Option Pills (Bright White Text on Navy) */
-        div.st-key-quick_chip_0 button,
-        div.st-key-quick_chip_1 button {{
-            background: #1e293b !important;
-            border: 1.5px solid #f0c05a !important;
-            border-radius: 8px !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
-            min-height: 28px !important;
-            height: 28px !important;
-            padding: 2px 4px !important;
-            width: 100% !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }}
-        div.st-key-quick_chip_0 button *,
-        div.st-key-quick_chip_1 button * {{
-            color: #ffffff !important;
-            -webkit-text-fill-color: #ffffff !important;
-            font-size: 0.72rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.2px !important;
-            white-space: nowrap !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            text-align: center !important;
-            margin: 0 !important;
-        }}
-        div.st-key-quick_chip_0 button:hover,
-        div.st-key-quick_chip_1 button:hover {{
-            background: #334155 !important;
-            border-color: #ffd700 !important;
-        }}
-        div.st-key-quick_chip_0 button:hover *,
-        div.st-key-quick_chip_1 button:hover * {{
-            color: #fef08a !important;
-            -webkit-text-fill-color: #fef08a !important;
         }}
 
         /* Chat Input Field inside Card */
@@ -6819,18 +6721,21 @@ if st.session_state.get('data_generated'):
             40% {{ transform: scale(1.1); opacity: 1; background-color: #fef08a; }}
         }}
 
-        /* Compact Mobile View: 54dvh Movable Card */
+        /* Compact Mobile View: 50dvh Height, Pinned 8px from Left & Right (Zero horizontal overflow) */
         @media (max-width: 600px) {{
             div.st-key-vyas_messenger_card {{
                 bottom: 8px !important;
                 right: 8px !important;
-                left: auto !important;
-                width: calc(100vw - 16px) !important;
-                max-width: calc(100vw - 16px) !important;
-                height: 54dvh !important;
-                max-height: 54dvh !important;
+                left: 8px !important;
+                width: calc(100% - 16px) !important;
+                max-width: calc(100% - 16px) !important;
+                min-width: 0 !important;
+                height: 50dvh !important;
+                max-height: 50dvh !important;
                 border-radius: 18px !important;
-                padding: 6px 10px 8px 10px !important;
+                padding: 6px 8px 8px 8px !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(240, 192, 90, 0.25) !important;
             }}
         }}
@@ -6923,32 +6828,36 @@ if st.session_state.get('data_generated'):
 
         # Open State: Floating Messenger Window (Facebook Messenger Style: Movable + Minimizable)
         with st.container(key="vyas_messenger_card"):
-            # Absolute Top-Right Minimize Button
+            # Hidden programmatic trigger for minimize action
             def _minimize_chat_cb():
                 st.session_state["vyas_chat_open"] = False
             st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="चैट विंडो मिनिमाइज करें")
 
-            # Draggable Header Handle (Drag window with mouse or touch)
+            # Draggable Header Handle with Integrated Guaranteed-Visible [✕ बंद करें] Button
             st.markdown(f"""
-            <div class="vyas-messenger-drag-handle" title="विंडो को ड्रैग करके स्क्रीन पर कहीं भी ले जाएं (Drag to Move)">
-                <div style="display: flex; align-items: center; gap: 8px; padding-right: 36px; overflow: hidden;">
+            <div class="vyas-messenger-drag-handle" style="display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; padding: 4px 4px 6px 4px; border-bottom: 1px solid rgba(240, 192, 90, 0.25); margin-bottom: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
                     <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 8px rgba(240, 192, 90, 0.4);"></div>
                     <div style="overflow: hidden;">
-                        <div style="font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 800; color: #f0c05a; line-height: 1.1; white-space: nowrap; display: flex; align-items: center; gap: 5px;">
+                        <div style="font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 800; color: #f0c05a; line-height: 1.1; white-space: nowrap; display: flex; align-items: center; gap: 4px;">
                             <span>आचार्य व्यास</span>
-                            <span style="font-size: 0.65rem; color: #94a3b8; font-weight: normal; cursor: grab;" title="ड्रैग करें">⋮⋮</span>
+                            <span style="font-size: 0.60rem; color: #94a3b8; font-weight: normal; cursor: grab;" title="विंडो को ड्रैग करें">⋮⋮ ड्रैग ✋</span>
                         </div>
-                        <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 1px; white-space: nowrap;">
-                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 3px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न &bull; <span style="color:#fef08a;">मूवेबल ✋</span>
+                        <div style="font-size: 0.60rem; color: #94a3b8; margin-top: 1px; white-space: nowrap;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 3px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न
                         </div>
                     </div>
                 </div>
+                <button id="vyas-close-chat-trigger" type="button" onclick="vyasTriggerCloseChat()" 
+                        style="background: #ef4444; border: 1.5px solid #fca5a5; border-radius: 999px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; padding: 3px 10px; font-size: 0.74rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6); flex-shrink: 0; z-index: 10000010;">
+                    ✕ बंद करें
+                </button>
             </div>
             """, unsafe_allow_html=True)
 
-            # Chat History Scroll Container (Compact height: 130px leaves ample room for inputs & controls)
+            # Chat History Scroll Container (Compact height: 115px leaves ample room for options, voice & input)
             _avatar_arg = _rishi_thumb_file if os.path.exists(_rishi_thumb_file) else "🧙‍♂️"
-            chat_container = st.container(height=130)
+            chat_container = st.container(height=115)
             with chat_container:
                 for msg in st.session_state["dialog_chat_history"]:
                     if msg["role"] == "user":
@@ -7012,35 +6921,61 @@ if st.session_state.get('data_generated'):
                         st.session_state.pop("chat_pending_query", None)
                         st.rerun()
 
-            # Quick Suggestion Chips (Compact 2-Pill Grid with short labels)
-            chip_items = [
-                ("💼 करियर व आजीविका", suggested_queries[0] if suggested_queries else "कार्यक्षेत्र व आजीविका के क्या योग हैं?"),
-                ("💰 धन व आर्थिक योग", suggested_queries[1] if len(suggested_queries) > 1 else "आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?")
-            ]
-            chip_c1, chip_c2 = st.columns(2)
-            def _send_chip_click_cb(chip_q):
-                st.session_state["dialog_chat_history"].append({"role": "user", "content": chip_q})
-                st.session_state["chat_pending_query"] = chip_q
-
-            with chip_c1:
-                st.button(chip_items[0][0], key="quick_chip_0", on_click=_send_chip_click_cb, args=(chip_items[0][1],), use_container_width=True)
-            with chip_c2:
-                st.button(chip_items[1][0], key="quick_chip_1", on_click=_send_chip_click_cb, args=(chip_items[1][1],), use_container_width=True)
-
-            # Voice Input (बोलकर पूछें) Button + Web Speech Recognition JS + Draggable Controller
+            # Guaranteed High-Contrast Options, Voice Input & Complete JS Controller
             st.html("""
-            <div class="vyas-voice-mic-bar" style="display: flex; align-items: center; justify-content: center; margin: 3px 0 2px 0;">
+            <div style="display: flex; gap: 6px; width: 100%; box-sizing: border-box; margin: 3px 0 2px 0;">
+                <button type="button" onclick="vyasSendQuickQuery('कार्यक्षेत्र व करियर में उन्नति के क्या योग हैं?')" 
+                        style="flex: 1; background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 8px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-size: 0.74rem; font-weight: 800; padding: 6px 3px; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    💼 करियर व आजीविका
+                </button>
+                <button type="button" onclick="vyasSendQuickQuery('आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?')" 
+                        style="flex: 1; background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 8px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-size: 0.74rem; font-weight: 800; padding: 6px 3px; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    💰 धन व आर्थिक योग
+                </button>
+            </div>
+
+            <div class="vyas-voice-mic-bar" style="display: flex; align-items: center; justify-content: center; margin: 2px 0;">
                 <button id="vyas-voice-mic-btn" type="button" onclick="vyasStartVoiceConsultation()" 
-                        style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18), rgba(245, 158, 11, 0.28));
-                               border: 1.5px solid #f0c05a; border-radius: 999px; color: #fef08a; padding: 3px 12px;
-                               font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
-                               gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: all 0.2s ease;">
-                    <span id="vyas-mic-icon" style="font-size: 0.82rem;">🎙️</span>
+                        style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.22), rgba(245, 158, 11, 0.32));
+                               border: 1.5px solid #f0c05a; border-radius: 999px; color: #fef08a !important; -webkit-text-fill-color: #fef08a !important; padding: 3px 14px;
+                               font-size: 0.73rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center;
+                               gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+                    <span id="vyas-mic-icon">🎙️</span>
                     <span id="vyas-mic-text">बोलकर पूछें (Tap to Speak)</span>
                 </button>
             </div>
+
             <script>
-            // --- 1. VOICE RECOGNITION (WEB SPEECH API) ---
+            // --- 1. CLOSE / MINIMIZE CHAT TRIGGER ---
+            window.vyasTriggerCloseChat = function() {
+                const btn = document.querySelector('div.st-key-btn_minimize_chat_window button');
+                if (btn) {
+                    btn.click();
+                } else {
+                    const fallback = document.querySelector('button[kind="secondary"][aria-label*="बंद"]');
+                    if (fallback) fallback.click();
+                }
+            };
+
+            // --- 2. SEND QUICK OPTION QUERY ---
+            window.vyasSendQuickQuery = function(queryText) {
+                const card = document.querySelector('div.st-key-vyas_messenger_card');
+                const inputArea = card ? (card.querySelector('textarea[data-testid="stChatInputTextArea"]') || card.querySelector('textarea')) : document.querySelector('textarea');
+                if (inputArea) {
+                    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                    nativeSetter.call(inputArea, queryText);
+                    inputArea.dispatchEvent(new Event('input', { bubbles: true }));
+                    inputArea.dispatchEvent(new Event('change', { bubbles: true }));
+                    setTimeout(() => {
+                        const submitBtn = card ? card.querySelector('button[data-testid="stChatInputSubmitButton"]') : document.querySelector('button[data-testid="stChatInputSubmitButton"]');
+                        if (submitBtn && !submitBtn.disabled) {
+                            submitBtn.click();
+                        }
+                    }, 250);
+                }
+            };
+
+            // --- 3. VOICE RECOGNITION (WEB SPEECH API) ---
             window.vyasVoiceActive = false;
             window.vyasStartVoiceConsultation = function() {
                 const btn = document.getElementById('vyas-voice-mic-btn');
@@ -7068,7 +7003,7 @@ if st.session_state.get('data_generated'):
                 function resetMicBtn() {
                     window.vyasVoiceActive = false;
                     if (btn) {
-                        btn.style.background = 'linear-gradient(135deg, rgba(240, 192, 90, 0.18), rgba(245, 158, 11, 0.28))';
+                        btn.style.background = 'linear-gradient(135deg, rgba(240, 192, 90, 0.22), rgba(245, 158, 11, 0.32))';
                         btn.style.borderColor = '#f0c05a';
                         btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.4)';
                     }
@@ -7111,23 +7046,7 @@ if st.session_state.get('data_generated'):
                     if (txt) {
                         txt.textContent = 'सुना: "' + spoken.substring(0, 18) + (spoken.length > 18 ? '...' : '') + '"';
                     }
-                    
-                    const card = document.querySelector('div.st-key-vyas_messenger_card');
-                    const inputArea = card ? (card.querySelector('textarea[data-testid="stChatInputTextArea"]') || card.querySelector('textarea')) : document.querySelector('textarea');
-                    
-                    if (inputArea) {
-                        const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
-                        nativeSetter.call(inputArea, spoken);
-                        inputArea.dispatchEvent(new Event('input', { bubbles: true }));
-                        inputArea.dispatchEvent(new Event('change', { bubbles: true }));
-                        
-                        setTimeout(() => {
-                            const submitBtn = card ? card.querySelector('button[data-testid="stChatInputSubmitButton"]') : document.querySelector('button[data-testid="stChatInputSubmitButton"]');
-                            if (submitBtn && !submitBtn.disabled) {
-                                submitBtn.click();
-                            }
-                        }, 350);
-                    }
+                    vyasSendQuickQuery(spoken);
                 };
                 
                 try {
@@ -7138,7 +7057,7 @@ if st.session_state.get('data_generated'):
                 }
             };
 
-            // --- 2. FACEBOOK MESSENGER STYLE MOVABLE / DRAGGABLE WINDOW ---
+            // --- 4. FACEBOOK MESSENGER STYLE MOVABLE / DRAGGABLE WINDOW ---
             function initVyasMessengerDraggable() {
                 const card = document.querySelector('div.st-key-vyas_messenger_card');
                 if (!card) return;
@@ -7166,7 +7085,7 @@ if st.session_state.get('data_generated'):
                 let startX, startY, initialLeft, initialTop;
 
                 function onPointerDown(e) {
-                    if (e.target.closest('button') || e.target.closest('.stButton')) return;
+                    if (e.target.closest('button') || e.target.closest('#vyas-close-chat-trigger')) return;
                     isDragging = true;
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
