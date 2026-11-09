@@ -2763,19 +2763,28 @@ with col_top_lang:
     ui_lang = st.radio(" भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
     is_hi = "हिन्दी" in ui_lang
 with col_top_font:
-    _font_options = ["मध्यम (18.5px)", "बड़ा (20.5px)", "अति विशाल (24px)"] if is_hi else ["Medium (18.5px)", "Large (20.5px)", "Extra Large (24px)"]
+    _font_keys = ["medium", "large", "xlarge"]
+    _font_labels_hi = {"medium": "मध्यम (18.5px)", "large": "बड़ा (20.5px)", "xlarge": "अति विशाल (24px)"}
+    _font_labels_en = {"medium": "Medium (18.5px)", "large": "Large (20.5px)", "xlarge": "Extra Large (24px)"}
+    
+    # Safe guard against old session state string values to prevent Streamlit radio mismatch crash
+    cur_f = st.session_state.get("main_font_scale_choice_radio")
+    if cur_f not in _font_keys:
+        st.session_state["main_font_scale_choice_radio"] = "large"
+
     _font_scale_choice = st.radio(
         " फ़ॉन्ट आकार (Text Size):" if is_hi else " Text Size:",
-        _font_options,
+        _font_keys,
+        format_func=lambda k: _font_labels_hi.get(k, k) if is_hi else _font_labels_en.get(k, k),
         index=1,
         horizontal=True,
         key="main_font_scale_choice_radio",
         help="अक्षरों का आकार छोटा या बड़ा करें" if is_hi else "Adjust text font size"
     )
 
-if "विशाल" in _font_scale_choice or "Extra" in _font_scale_choice:
+if _font_scale_choice == "xlarge":
     chosen_font_px = "24px"
-elif "मध्यम" in _font_scale_choice or "Medium" in _font_scale_choice:
+elif _font_scale_choice == "medium":
     chosen_font_px = "18.5px"
 else:
     chosen_font_px = "20.5px"
