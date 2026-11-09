@@ -6463,89 +6463,104 @@ if st.session_state.get('data_generated'):
             white-space: nowrap !important;
             pointer-events: none !important;
         }}
+        /* Floating Acharya Vyas Chat Action Pill (Instantly recognizable on PC & Mobile) */
         div.st-key-btn_floating_rishi_avatar,
         .vyas-rishi-fab-wrap {{
             position: fixed !important;
             bottom: 84px !important;
-            right: 24px !important;
+            right: 20px !important;
             z-index: 9999999 !important;
-            width: 68px !important;
-            height: 68px !important;
+            width: auto !important;
+            height: auto !important;
             display: block !important;
         }}
         div.st-key-btn_floating_rishi_avatar > button,
         .vyas-rishi-fab-wrap div.stButton > button {{
-            width: 68px !important;
-            height: 68px !important;
-            min-width: 68px !important;
-            border-radius: 50% !important;
-            border: 3px solid #f0c05a !important;
-            background-image: url('data:image/png;base64,{_rishi_b64}') !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
-            box-shadow: 0 10px 28px rgba(217, 119, 6, 0.7), 0 0 20px rgba(240, 192, 90, 0.5) !important;
+            width: auto !important;
+            min-width: 175px !important;
+            height: 46px !important;
+            border-radius: 999px !important;
+            border: 2px solid #f0c05a !important;
+            background: linear-gradient(135deg, #1e293b 0%, #0a0f1d 100%) !important;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8), 0 0 18px rgba(240, 192, 90, 0.45) !important;
             cursor: pointer !important;
-            color: transparent !important;
-            font-size: 0px !important;
-            padding: 0 !important;
+            padding: 4px 18px 4px 10px !important;
             transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
-            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
         }}
         div.st-key-btn_floating_rishi_avatar > button:hover,
         .vyas-rishi-fab-wrap div.stButton > button:hover {{
-            transform: scale(1.12) rotate(3deg) !important;
-            box-shadow: 0 14px 36px rgba(245, 158, 11, 0.95), 0 0 28px rgba(254, 240, 138, 0.8) !important;
+            transform: translateY(-2px) scale(1.03) !important;
+            box-shadow: 0 14px 34px rgba(245, 158, 11, 0.7), 0 0 24px rgba(254, 240, 138, 0.7) !important;
             border-color: #fef08a !important;
+            background: linear-gradient(135deg, #2d3b55 0%, #0f172a 100%) !important;
         }}
-        /* Green online dot badge */
+        /* Circular Avatar Photo inside the button */
+        div.st-key-btn_floating_rishi_avatar > button::before {{
+            content: '' !important;
+            display: inline-block !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            border-radius: 50% !important;
+            border: 2px solid #f0c05a !important;
+            background-image: url('data:image/png;base64,{_rishi_b64}') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 0 8px rgba(240, 192, 90, 0.6) !important;
+        }}
+        /* Crisp Golden Text for Acharya Vyas */
+        div.st-key-btn_floating_rishi_avatar > button div,
+        div.st-key-btn_floating_rishi_avatar > button p {{
+            color: #fef08a !important;
+            font-size: 0.88rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.3px !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+        }}
+        /* Online dot indicator */
         div.st-key-btn_floating_rishi_avatar::after {{
             content: '' !important;
             position: absolute !important;
-            bottom: 2px !important;
-            right: 4px !important;
-            width: 16px !important;
-            height: 16px !important;
+            bottom: 7px !important;
+            left: 36px !important;
+            width: 11px !important;
+            height: 11px !important;
             background: #22c55e !important;
-            border: 2.5px solid #0b1220 !important;
+            border: 2px solid #0b1220 !important;
             border-radius: 50% !important;
             z-index: 10000000 !important;
             pointer-events: none !important;
-            box-shadow: 0 0 8px rgba(34, 197, 94, 0.8) !important;
-        }}
-        /* Desktop speech prompt */
-        div.st-key-btn_floating_rishi_avatar::before {{
-            content: 'आचार्य व्यास • लाइव संवाद ✨' !important;
-            position: absolute !important;
-            top: 50% !important;
-            right: 78px !important;
-            transform: translateY(-50%) !important;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.96) 100%) !important;
-            border: 1.5px solid rgba(240, 192, 90, 0.55) !important;
-            border-radius: 999px !important;
-            padding: 6px 14px !important;
-            color: #fef08a !important;
-            font-size: 0.82rem !important;
-            font-weight: 700 !important;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6) !important;
-            white-space: nowrap !important;
-            pointer-events: none !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.9) !important;
         }}
         @media (max-width: 600px) {{
             div.st-key-btn_floating_rishi_avatar {{
                 bottom: 74px !important;
-                right: 16px !important;
-                width: 58px !important;
-                height: 58px !important;
+                right: 14px !important;
             }}
             div.st-key-btn_floating_rishi_avatar > button {{
-                width: 58px !important;
-                height: 58px !important;
-                min-width: 58px !important;
+                height: 42px !important;
+                padding: 3px 14px 3px 8px !important;
+                min-width: 155px !important;
             }}
-            div.st-key-btn_floating_rishi_avatar::before {{
-                display: none !important;
+            div.st-key-btn_floating_rishi_avatar > button::before {{
+                width: 28px !important;
+                height: 28px !important;
+                min-width: 28px !important;
+            }}
+            div.st-key-btn_floating_rishi_avatar > button div,
+            div.st-key-btn_floating_rishi_avatar > button p {{
+                font-size: 0.80rem !important;
+            }}
+            div.st-key-btn_floating_rishi_avatar::after {{
+                bottom: 6px !important;
+                left: 30px !important;
             }}
         }}
 
@@ -6652,27 +6667,52 @@ if st.session_state.get('data_generated'):
             line-height: 1.3 !important;
         }}
 
-        /* Suggestion Pill Buttons */
+        /* High Contrast Quick Option Pills (Bright White/Gold Text on Deep Blue-Gray) */
         div.st-key-quick_chip_0 button,
-        div.st-key-quick_chip_1 button {{
-            background: rgba(30, 41, 59, 0.9) !important;
-            border: 1px solid rgba(240, 192, 90, 0.35) !important;
+        div.st-key-quick_chip_1 button,
+        div.st-key-vyas_messenger_card div.stButton > button:not([data-testid="baseButton-secondary"]):not(#btn_minimize_chat_window) {{
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+            border: 1.5px solid #f0c05a !important;
             border-radius: 10px !important;
-            color: #e2e8f0 !important;
-            font-size: 0.72rem !important;
-            padding: 3px 6px !important;
-            min-height: 28px !important;
-            height: 28px !important;
-            line-height: 1 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+            min-height: 32px !important;
+            height: 32px !important;
+            padding: 3px 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }}
+        div.st-key-quick_chip_0 button div,
+        div.st-key-quick_chip_0 button p,
+        div.st-key-quick_chip_1 button div,
+        div.st-key-quick_chip_1 button p,
+        div.st-key-vyas_messenger_card div.stButton > button p,
+        div.st-key-vyas_messenger_card div.stButton > button div {{
+            color: #ffffff !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.2px !important;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
+            margin: 0 !important;
         }}
         div.st-key-quick_chip_0 button:hover,
-        div.st-key-quick_chip_1 button:hover {{
-            background: rgba(240, 192, 90, 0.25) !important;
-            border-color: #f0c05a !important;
-            color: #fef08a !important;
+        div.st-key-quick_chip_1 button:hover,
+        div.st-key-vyas_messenger_card div.stButton > button:hover {{
+            background: linear-gradient(135deg, #f0c05a 0%, #d49c28 100%) !important;
+            border-color: #ffd700 !important;
+            box-shadow: 0 6px 16px rgba(240, 192, 90, 0.5) !important;
+        }}
+        div.st-key-quick_chip_0 button:hover div,
+        div.st-key-quick_chip_0 button:hover p,
+        div.st-key-quick_chip_1 button:hover div,
+        div.st-key-quick_chip_1 button:hover p,
+        div.st-key-vyas_messenger_card div.stButton > button:hover p,
+        div.st-key-vyas_messenger_card div.stButton > button:hover div {{
+            color: #0b1220 !important;
+            text-shadow: none !important;
         }}
 
         /* Scoped Chat Input inside Messenger Card */
@@ -6691,8 +6731,13 @@ if st.session_state.get('data_generated'):
             background: rgba(15, 23, 42, 0.95) !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stChatInput"] textarea {{
+            font-size: 0.84rem !important;
+            color: #ffffff !important;
+            background: transparent !important;
+        }}
+        div.st-key-vyas_messenger_card div[data-testid="stChatInput"] textarea::placeholder {{
+            color: #cbd5e1 !important;
             font-size: 0.82rem !important;
-            color: #f8fafc !important;
         }}
 
         /* Animated typing dots */
@@ -6744,7 +6789,7 @@ if st.session_state.get('data_generated'):
             def _open_chat_fab_cb():
                 st.session_state["vyas_chat_open"] = True
 
-            st.button(" ", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
+            st.button("आचार्य व्यास • चैट करें 💬", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
             return
 
         # Open State: Floating Messenger Window (Scoped strictly to st-key container)
