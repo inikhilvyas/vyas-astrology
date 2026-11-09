@@ -2448,8 +2448,8 @@ p, span, li, label, .stMarkdown, [data-testid="stMarkdownContainer"] p, [data-te
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- CELEBRATORY FLASH FESTIVAL BANNER & TOAST ----------------
-_top_p_festival = ""
+# ---------------- DYNAMIC VEDIC FESTIVAL & AUSPICIOUS MUHURTA ENGINE ----------------
+_top_quick_panchang = None
 try:
     _top_quick_panchang = vyas_panchang.compute(
         datetime.now().date(),
@@ -2457,23 +2457,250 @@ try:
         float(active_lp.get('lon', 77.2090)) if active_lp else 77.2090,
         float(active_lp.get('tz', 5.5)) if active_lp else 5.5
     )
-    _top_p_festival = getattr(_top_quick_panchang, 'festival', '') or ''
 except Exception:
-    _top_p_festival = ""
+    _top_quick_panchang = None
 
-_is_diwali_today = bool(_top_p_festival and any(w in _top_p_festival for w in ["दीपावली", "Diwali", "महालक्ष्मी", "रूप चौदस", "चतुर्दशी"]))
-if not _is_diwali_today:
-    _now_m_d = (datetime.now().month, datetime.now().day)
-    if _now_m_d in [(11, 7), (11, 8), (11, 9), (11, 10), (10, 31), (11, 1)]:
-        _is_diwali_today = True
 
-if _is_diwali_today:
-    # Fire celebratory in-app flash toast
+def _resolve_festival_and_muhurta(p, now_dt):
+    """Dynamically resolves today's active festival and auspicious worship timings.
+    Never shows expired festivals; transitions according to classical pradosha / sunset tithi.
+    """
+    if not p:
+        return None
+    masa = getattr(p, 'masa_amanta', 'Kartika') or "Kartika"
+    tithi_name = getattr(p, 'tithi_hi', '') or ""
+    paksha = getattr(p, 'paksha', '') or ""
+    has_dual = getattr(p, 'has_dual_tithi', False)
+    next_tithi_hi = getattr(p, 'next_tithi_hi', '') or ''
+    tithi_end_str = getattr(p, 'tithi_end', '') or ''
+    
+    tithi_end_dt = None
     try:
-        st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
+        if tithi_end_str:
+            tithi_end_dt = datetime.strptime(tithi_end_str, "%d/%m/%Y %H:%M:%S")
     except Exception:
         pass
 
+    sunset_str = getattr(p, 'sunset', '17:50:00')
+    sunset_hour, sunset_min = 17, 50
+    try:
+        if ":" in sunset_str:
+            parts = sunset_str.replace("PM", "").strip().split(":")
+            h = int(parts[0])
+            if "PM" in sunset_str and h < 12:
+                h += 12
+            sunset_hour = h
+            sunset_min = int(parts[1])
+    except Exception:
+        pass
+    sunset_time = time(sunset_hour, sunset_min)
+
+    sunset_in_next_tithi = False
+    if tithi_end_dt and has_dual:
+        if tithi_end_dt.time() < sunset_time:
+            sunset_in_next_tithi = True
+
+    effective_tithi = next_tithi_hi if sunset_in_next_tithi else tithi_name
+    
+    sunrise = getattr(p, 'sunrise', '06:50 AM')
+    sunset = getattr(p, 'sunset', '05:50 PM')
+    abhijit = getattr(p, 'abhijit_muhurta', '11:58 AM - 12:42 PM')
+    brahma = getattr(p, 'brahma_muhurta', '05:06 AM - 05:58 AM')
+    rahu = getattr(p, 'rahu_kalam', '08:12 AM - 09:35 AM')
+    
+    def clean_time(t_str):
+        if not t_str: return t_str
+        parts = t_str.split(" - ")
+        cleaned = []
+        for pt in parts:
+            pt = pt.strip()
+            if len(pt.split(":")) == 3:
+                h, m, s = pt.split(":")
+                ampm = s.split()[1] if len(s.split()) > 1 else ""
+                cleaned.append(f"{h}:{m} {ampm}".strip())
+            else:
+                cleaned.append(pt)
+        return " - ".join(cleaned)
+
+    sunrise = clean_time(sunrise)
+    sunset = clean_time(sunset)
+    abhijit = clean_time(abhijit)
+    brahma = clean_time(brahma)
+    rahu = clean_time(rahu)
+    samvat = getattr(p, 'vikram_samvat', 2083)
+
+    # 1. GOVARDHAN PUJA / ANNAKOOT
+    if ("प्रतिपदा" in effective_tithi and (paksha == "Shukla" or sunset_in_next_tithi)) or \
+       ("अमावस्या" in tithi_name and sunset_in_next_tithi and masa in ("Kartika", "Ashwin")):
+        return {
+            "is_special": True,
+            "title": "गोवर्धन पूजा एवं अन्नकूट महोत्सव",
+            "subtitle": "गौ-माता पूजन, अन्नकूट भोग एवं गिरिराज गोवर्धन आराधना का पावन महापर्व",
+            "icon": "🐄",
+            "tag": f"कार्तिक शुक्ल प्रतिपदा • संवत {samvat}",
+            "m1_title": "1. प्रातः कालीन गोवर्धन पूजन मुहूर्त",
+            "m1_time": f"{sunrise} – 09:35 AM (शुभ / अमृत)",
+            "m1_desc": "घर के आँगन में गोवर्धन बनाकर पुष्प, धूप, दीप व नैवेद्य से पूजन",
+            "m2_title": "2. अभिजीत व अन्नकूट भोग मुहूर्त (सर्वोत्तम)",
+            "m2_time": f"{abhijit}",
+            "m2_desc": "भगवान श्रीकृष्ण को 56 भोग, अन्नकूट अर्पण, आरती व प्रसाद वितरण",
+            "m3_title": "3. सायंकालीन गोपूजन व दीपदान मुहूर्त",
+            "m3_time": f"{sunset} – 07:28 PM (प्रदोष काल)",
+            "m3_desc": "गौशाला में गौ-माता को मिष्ठान्न, हरा चारा अर्पण व दीप प्रज्वलन",
+            "choghadiya": "प्रातः 06:50 से 08:12 AM (अमृत) | मध्याह्न 11:58 AM से 12:42 PM (अभिजीत)",
+            "mantra": 'ॐ नमो भगवते वासुदेवाय • "गोवर्धन धराधार गोकुल त्राणकारक। विष्णुबाहु कृतोच्छ्राय गवां कोटिप्रदो भव॥"'
+        }
+
+    # 2. BHAI DOOJ / YAMA DWITIYA
+    if "द्वितीया" in effective_tithi and (paksha == "Shukla" or "Shukla" in getattr(p, 'tithi', '')):
+        return {
+            "is_special": True,
+            "title": "भाई दूज / यम द्वितीया महापर्व",
+            "subtitle": "भ्रातृ-भगिनी के पावन स्नेह, भाई तिलक एवं यमराज-यमुना पूजन का दिवस",
+            "icon": "🌸",
+            "tag": f"कार्तिक शुक्ल द्वितीया • संवत {samvat}",
+            "m1_title": "1. भाई दूज तिलक मुहूर्त (अपराह्न - सर्वोत्तम)",
+            "m1_time": "01:15 PM – 03:05 PM",
+            "m1_desc": "बहनों द्वारा भाइयों को तिलक व दीर्घायु, यश व सौभाग्य की मंगलकामना",
+            "m2_title": "2. अभिजीत मुहूर्त (यम पूजन)",
+            "m2_time": f"{abhijit}",
+            "m2_desc": "यमराज व यमुना जी का ध्यान, दीपदान व सर्वसंकट निवारण",
+            "m3_title": "3. सायं अमृत वेला मुहूर्त",
+            "m3_time": "03:05 PM – 04:28 PM (लाभ / अमृत)",
+            "m3_desc": "भ्रातृ भोज, मंगल आशीर्वाद व उपहार आदान-प्रदान",
+            "choghadiya": "दोपहर 01:15 से 03:05 PM (शुभ) | सायं 03:05 से 04:28 PM (लाभ)",
+            "mantra": '"धर्मराज नमस्तुभ्यं नमस्ते यमुनाग्रज। पाहि मां किंकरात् घोरत् सूर्यपुत्र नमोऽस्तु ते॥"'
+        }
+
+    # 3. LABH PANCHAMI
+    if "पंचमी" in effective_tithi and (paksha == "Shukla" or "Shukla" in getattr(p, 'tithi', '')) and masa in ("Kartika", "Ashwin"):
+        return {
+            "is_special": True,
+            "title": "लाभ पंचमी / सौभाग्य पंचमी",
+            "subtitle": "नया व्यापार, दुकान, बहीखाता लेखन एवं ज्ञान-साधना का अबूझ मुहूर्त",
+            "icon": "🪙",
+            "tag": f"कार्तिक शुक्ल पंचमी • संवत {samvat}",
+            "m1_title": "1. अमृत चौघड़िया मुहूर्त (सर्वश्रेष्ठ)",
+            "m1_time": f"{sunrise} – 08:12 AM",
+            "m1_desc": "व्यापारिक प्रतिष्ठान के कपाट खोलना, बहीखाता लेखन शुभारंभ",
+            "m2_title": "2. शुभ चौघड़िया मुहूर्त",
+            "m2_time": "09:35 AM – 10:57 AM",
+            "m2_desc": "कलम, दवात व शारदा पूजन, नवीन व्यापारिक अनुबंध",
+            "m3_title": "3. अभिजीत मुहूर्त",
+            "m3_time": f"{abhijit}",
+            "m3_desc": "सर्वकार्य सिद्धि एवं महालक्ष्मी-कुबेर ध्यान",
+            "choghadiya": "प्रातः 06:50 से 08:12 AM (अमृत) | 09:35 से 10:57 AM (शुभ)",
+            "mantra": '"ॐ श्रीं ह्रीं क्लीं श्रीं नमः" • "ॐ वाग्देव्यै च विद्महे कामराजाय धीमहि। तन्नो देवी प्रचोदयात्॥"'
+        }
+
+    # 4. CHHATH PUJA
+    if "षष्ठी" in effective_tithi and paksha == "Shukla" and masa in ("Kartika", "Ashwin"):
+        return {
+            "is_special": True,
+            "title": "छठ पूजा महापर्व (संध्या अर्घ्य)",
+            "subtitle": "भगवान सूर्य नारायण एवं छठी मइया की उपासना व संध्याकालीन अर्घ्य",
+            "icon": "☀️",
+            "tag": f"कार्तिक शुक्ल षष्ठी • संवत {samvat}",
+            "m1_title": "1. सायंकालीन सूर्यास्त अर्घ्य मुहूर्त",
+            "m1_time": f"{sunset}",
+            "m1_desc": "अस्ताचलगामी सूर्य देव को जल व दूध से प्रथम संध्या अर्घ्य",
+            "m2_title": "2. अभिजीत मुहूर्त (प्रसाद निर्माण)",
+            "m2_time": f"{abhijit}",
+            "m2_desc": "ठेकुआ, मौसमी फल व पूजा सूप की पावन तैयारी",
+            "m3_title": "3. रात्रिकालीन कोसी भराई जागरण",
+            "m3_time": "रात्रि 08:00 PM से",
+            "m3_desc": "छठी मइया के गीत, दीप प्रज्वलन व अखंड जागरण",
+            "choghadiya": f"सायं 05:30 से {sunset} (शुभ)",
+            "mantra": '"ॐ एहि सूर्य सहस्त्रांशो तेजोराशे जगत्पते। अनुकम्पय मां भक्त्या गृहाणार्घ्यं दिवाकर॥"'
+        }
+
+    # 5. DEV UTTHANA EKADASHI / TULSI VIVAH
+    if "एकादशी" in effective_tithi and (paksha == "Shukla" or "Shukla" in getattr(p, 'tithi', '')) and masa in ("Kartika", "Ashwin"):
+        return {
+            "is_special": True,
+            "title": "देवउठनी एकादशी / प्रबोधिनी एकादशी एवं तुलसी विवाह",
+            "subtitle": "भगवान श्रीविष्णु का योगनिद्रा से जागरण, चातुर्मास समाप्ति व मांगलिक कार्य शुभारंभ",
+            "icon": "🌿",
+            "tag": f"कार्तिक शुक्ल एकादशी • संवत {samvat}",
+            "m1_title": "1. चातुर्मास समाप्ति व हरि जागरण",
+            "m1_time": f"{sunrise} से प्रारम्भ",
+            "m1_desc": "श्रीविष्णु सहस्त्रनाम पाठ, उपवास एवं ध्यान",
+            "m2_title": "2. तुलसी-शालिग्राम विवाह लग्न (गोधूलि)",
+            "m2_time": f"{sunset} – 07:15 PM",
+            "m2_desc": "तुलसी महारानी व शालिग्राम जी का वैदिक विवाह",
+            "m3_title": "3. निशीथ काल हरि जागरण",
+            "m3_time": "11:54 PM – 12:46 AM",
+            "m3_desc": "रात्रिकालीन संकीर्तन एवं दीपदान",
+            "choghadiya": "सायं 05:50 से 07:28 PM (शुभ) | रात्रि 10:43 से 12:20 AM (लाभ)",
+            "mantra": '"उत्तिष्ठोत्तिष्ठ गोविन्द त्यज निद्रां जगत्पते। त्वयि सुप्ते जगत्सुप्तं प्रबुद्धे चेतते जगत्॥"'
+        }
+
+    # 6. KARTIK PURNIMA / DEV DEEPAWALI
+    if "पूर्णिमा" in effective_tithi and masa in ("Kartika", "Ashwin"):
+        return {
+            "is_special": True,
+            "title": "कार्तिक पूर्णिमा / देव दीपावली / गुरु नानक जयन्ती",
+            "subtitle": "त्रिपुरारी शिव विजय, गंगा स्नान, दीपदान एवं श्री सत्यनारायण पूजन",
+            "icon": "🌕",
+            "tag": f"कार्तिक शुक्ल पूर्णिमा • संवत {samvat}",
+            "m1_title": "1. पवित्र नदी स्नान व ब्रह्म मुहूर्त",
+            "m1_time": f"{brahma}",
+            "m1_desc": "कार्तिक स्नान समाप्ति, तीर्थ स्नान व सूर्य अर्घ्य",
+            "m2_title": "2. देव दीपावली महादीपदान (प्रदोष वेला)",
+            "m2_time": f"{sunset} – 07:28 PM",
+            "m2_desc": "सरोवरों, मंदिरों व घर के आँगन में 365 बत्ती या 11/21 दीपदान",
+            "m3_title": "3. श्री सत्यनारायण कथा एवं चंद्र अर्घ्य",
+            "m3_time": "सायं 05:40 PM से रात्रि पर्यन्त",
+            "m3_desc": "पूर्ण चंद्र दर्शन व सत्यनारायण भगवान का पूजन",
+            "choghadiya": "सायं 05:50 से 07:28 PM (चल) | रात्रि 08:25 से 10:18 PM (अमृत)",
+            "mantra": '"नमो भगवते वासुदेवाय" • "ॐ नमः शिवाय"'
+        }
+
+    # 7. DIWALI (Only on Amavasya when sunset is still in Amavasya)
+    if "अमावस्या" in effective_tithi and masa in ("Kartika", "Ashwin"):
+        return {
+            "is_special": True,
+            "title": "दीपावली महापर्व एवं श्री महालक्ष्मी पूजन",
+            "subtitle": "माँ महालक्ष्मी, गणेश जी एवं कुबेर पूजन का पावन दीपोत्सव",
+            "icon": "🪔",
+            "tag": f"कार्तिक कृष्ण अमावस्या • संवत {samvat}",
+            "m1_title": "1. प्रदोष काल मुहूर्त (सर्वोत्तम)",
+            "m1_time": f"{sunset} – 08:25 PM",
+            "m1_desc": "सूर्यास्त के उपरांत गृहस्थ महालक्ष्मी पूजन हेतु श्रेष्ठ",
+            "m2_title": "2. स्थिर वृषभ लग्न (महालक्ष्मी पूजन)",
+            "m2_time": "06:15 PM – 08:12 PM",
+            "m2_desc": "स्थिर लग्न में पूजन से धन, ऐश्वर्य व कीर्ति स्थायी रहती है",
+            "m3_title": "3. महानिशीथ काल (सिंह लग्न / साधना)",
+            "m3_time": "11:42 PM – 12:35 AM",
+            "m3_desc": "श्री सूक्त, कनकधारा, बहीखाता एवं कुबेर साधना",
+            "choghadiya": "सायं 05:51 से 07:28 PM (शुभ) | रात्रि 08:25 से 10:18 PM (अमृत)",
+            "mantra": '"ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः"'
+        }
+
+    # Default Daily Auspicious Muhurtas for any regular day
+    vara = getattr(p, 'vara', 'Somvar')
+    vara_lord = getattr(p, 'vara_lord', 'Moon')
+    return {
+        "is_special": False,
+        "title": f"दैनिक विशिष्ट मुहूर्त एवं शुभ समय ({tithi_name})",
+        "subtitle": f"{vara} (वार स्वामी: {vara_lord}) • दैनिक वैदिक पंचांग गणना एवं कार्य सिद्धि मुहूर्त",
+        "icon": "⭐",
+        "tag": f"{tithi_name} • संवत {samvat}",
+        "m1_title": "1. अभिजीत मुहूर्त (सर्वकार्य सिद्धि)",
+        "m1_time": f"{abhijit}",
+        "m1_desc": "यात्रा, नवीन अनुबंध, व्यापारिक व मांगलिक कार्यों हेतु सर्वोत्तम",
+        "m2_title": "2. ब्रह्म मुहूर्त व अमृत काल",
+        "m2_time": f"{brahma}",
+        "m2_desc": "विद्याध्ययन, योग साधना, पूजा-पाठ व ईश्वर आराधना हेतु श्रेष्ठ",
+        "m3_title": "3. राहुकाल (अशुभ समय - टालें)",
+        "m3_time": f"{rahu}",
+        "m3_desc": "इस कालखंड में कोई भी नया कार्य, यात्रा या निवेश न करें",
+        "choghadiya": "दिन के श्रेष्ठ चौघड़िया अनुसार शुभ व अमृत वेला का चयन करें",
+        "mantra": f"वार अधिपति ({vara_lord}) का नमन करें।"
+    }
+
+_active_fest = _resolve_festival_and_muhurta(_top_quick_panchang, datetime.now())
+if _active_fest and _active_fest.get("is_special"):
     _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
     _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
     _fl_title_c = "#fbbf24" if not _is_light else "#b45309"
@@ -2482,46 +2709,45 @@ if _is_diwali_today:
     _fl_box_bg = "rgba(0, 0, 0, 0.28)" if not _is_light else "#ffffff"
     _fl_box_border = "1px solid rgba(245, 158, 11, 0.35)" if not _is_light else "1px solid rgba(217, 119, 6, 0.35)"
 
-    st.markdown(f"""
-    <div style="background: {_fl_card_bg}; border: {_fl_border}; border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 2rem; line-height: 1;">🪔</span>
-                <div>
-                    <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_fl_title_c};">
-                        {'दीपावली महापर्व एवं श्री महालक्ष्मी पूजन' if is_hi else 'Deepawali & Shri Mahalakshmi Pujan'}
-                    </div>
-                    <div style="font-size: 1.45rem; font-weight: 900; color: {_fl_txt_c}; font-family: var(--font-yatra); margin-top: 2px;">
-                        {'दीपोत्सव की हार्दिक शुभकामनाएँ!' if is_hi else 'Happy Deepawali & Prosperity Blessings!'}
-                    </div>
-                </div>
-            </div>
-            <span style="background: rgba(245, 158, 11, 0.25); color: {_fl_title_c}; border: 1.5px solid {_fl_title_c}; font-size: 0.88rem; font-weight: 800; padding: 5px 14px; border-radius: 999px;">
-                {'कार्तिक कृष्ण अमावस्या • संवत 2083' if is_hi else 'Kartika Krishna Amavasya • Samvat 2083'}
-            </span>
-        </div>
-        <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
-                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'1. प्रदोष काल मुहूर्त (सर्वोत्तम)' if is_hi else '1. Pradosha Kaal Muhurta'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">05:51 PM – 08:25 PM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'सूर्यास्त के उपरांत गृहस्थ महालक्ष्मी पूजन हेतु श्रेष्ठ' if is_hi else 'Auspicious post-sunset window for household Lakshmi puja'}</div>
-            </div>
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #10b981;">
-                <div style="font-size: 0.78rem; font-weight: 700; color: #10b981; text-transform: uppercase;">{'2. स्थिर वृषभ लग्न (महालक्ष्मी पूजन)' if is_hi else '2. Sthir Vrishabha Lagna'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">06:15 PM – 08:12 PM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'स्थिर लग्न में पूजन से धन, ऐश्वर्य व कीर्ति स्थायी रहती है' if is_hi else 'Fixed ascendant brings perennial wealth & stability'}</div>
-            </div>
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
-                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'3. महानिशीथ काल (सिंह लग्न / साधना)' if is_hi else '3. Mahanishitha Kaal (Simha Lagna)'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">11:42 PM – 12:35 AM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'श्री सूक्त, कनकधारा, बहीखाता एवं कुबेर तांत्रिक साधना' if is_hi else 'Shri Suktam, Kanakadhara & Kuber ledger sadhana'}</div>
-            </div>
-        </div>
-        <div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
-            <b>{'शुभ चौघड़िया मुहूर्त:' if is_hi else 'Shubh Choghadiya:'}</b> {'सायं 05:51 से 07:28 PM (शुभ) | रात्रि 08:25 से 10:18 PM (अमृत) |' if is_hi else 'Evening 05:51 - 07:28 PM (Shubh) | Night 08:25 - 10:18 PM (Amrit) |'} <b>{'पूजन मंत्र:' if is_hi else 'Mantra:'}</b> <i>"ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः"</i>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    _banner_html = f"""<div style="background: {_fl_card_bg}; border: {_fl_border}; border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+<div style="display: flex; align-items: center; gap: 12px;">
+<span style="font-size: 2rem; line-height: 1;">{_active_fest['icon']}</span>
+<div>
+<div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_fl_title_c};">
+{_active_fest['title']}
+</div>
+<div style="font-size: 1.35rem; font-weight: 900; color: {_fl_txt_c}; font-family: var(--font-yatra); margin-top: 2px;">
+{_active_fest['subtitle']}
+</div>
+</div>
+</div>
+<span style="background: rgba(245, 158, 11, 0.25); color: {_fl_title_c}; border: 1.5px solid {_fl_title_c}; font-size: 0.88rem; font-weight: 800; padding: 5px 14px; border-radius: 999px;">
+{_active_fest['tag']}
+</span>
+</div>
+<div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+<div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+<div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{_active_fest['m1_title']}</div>
+<div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">{_active_fest['m1_time']}</div>
+<div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{_active_fest['m1_desc']}</div>
+</div>
+<div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #10b981;">
+<div style="font-size: 0.78rem; font-weight: 700; color: #10b981; text-transform: uppercase;">{_active_fest['m2_title']}</div>
+<div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">{_active_fest['m2_time']}</div>
+<div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{_active_fest['m2_desc']}</div>
+</div>
+<div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
+<div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{_active_fest['m3_title']}</div>
+<div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">{_active_fest['m3_time']}</div>
+<div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{_active_fest['m3_desc']}</div>
+</div>
+</div>
+<div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
+<b>शुभ चौघड़िया:</b> {_active_fest['choghadiya']} &nbsp;|&nbsp; <b>पूजन मंत्र:</b> <i>{_active_fest['mantra']}</i>
+</div>
+</div>"""
+    st.markdown(_banner_html, unsafe_allow_html=True)
 
 # If user has an active loaded profile, show active status bar & quick action controls
 if is_logged_in_now and active_lp:
@@ -3523,43 +3749,35 @@ if st.session_state.get('data_generated'):
                 shubh_horas_summary.append(f"<b>{h['lord_hi']}</b> ({h['start']}-{h['end']})")
         shubh_horas_summary_str = " | ".join(shubh_horas_summary) if shubh_horas_summary else "गुरु, शुक्र, बुध, चन्द्र होरा"
 
-        _today_festival = getattr(daily_panchang, 'festival', '') if daily_panchang else ''
         _festival_html = ""
-        if _today_festival:
+        _card_fest = _resolve_festival_and_muhurta(daily_panchang, now_dt)
+        if _card_fest and _card_fest.get("is_special"):
             _fest_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(220, 38, 38, 0.14) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef2f2 100%)"
             _fest_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
             _fest_title_col = "#fbbf24" if not _is_light else "#b45309"
             _fest_txt_col = "#f8fafc" if not _is_light else "#0f172a"
             _fest_sub_col = "#cbd5e1" if not _is_light else "#334155"
 
-            _extra_diwali_muhurta = ""
-            if "दीपावली" in _today_festival or "Diwali" in _today_festival or "महालक्ष्मी" in _today_festival:
-                _extra_diwali_muhurta = f"""
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(245, 158, 11, 0.4); display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.88rem;">
-                    <div><b style="color: {_fest_title_col};">प्रदोष काल मुहूर्त:</b> सायं 05:51 से 08:25 PM</div>
-                    <div><b style="color: #10b981;">स्थिर वृषभ लग्न (महालक्ष्मी पूजन):</b> सायं 06:15 से 08:12 PM</div>
-                    <div><b style="color: {_fest_title_col};">महानिशीथ काल (सिंह लग्न):</b> रात्रि 11:42 से 12:35 AM</div>
-                </div>
-                """
-
-            _festival_html = f"""
-            <div style="background: {_fest_bg}; border: {_fest_border}; border-radius: 12px; padding: 14px 18px; margin-top: 14px; margin-bottom: 6px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 1.6rem; line-height: 1;">🪔</span>
-                        <div>
-                            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800; color: {_fest_title_col};">आज का प्रमुख पर्व / पावन त्योहार (Today's Auspicious Festival)</div>
-                            <div style="font-size: 1.18rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_today_festival}</div>
-                        </div>
-                    </div>
-                    <span style="background: rgba(245, 158, 11, 0.25); color: {_fest_title_col}; border: 1.5px solid {_fest_border}; font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;">पावन दीपोत्सव</span>
-                </div>
-                <div style="font-size: 0.90rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
-                    इस पावन दिवस पर ईश्वरीय ऊर्जा एवं ग्रहों की स्थिति विशेष फलदायी है। अपने इष्ट देव व माँ महालक्ष्मी का ध्यान कर दीप प्रज्वलित करें एवं परोपकार करें।
-                </div>
-                {_extra_diwali_muhurta}
-            </div>
-            """
+            _festival_html = f"""<div style="background: {_fest_bg}; border: {_fest_border}; border-radius: 12px; padding: 14px 18px; margin-top: 14px; margin-bottom: 6px; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.18);">
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span style="font-size: 1.6rem; line-height: 1;">{_card_fest['icon']}</span>
+<div>
+<div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 800; color: {_fest_title_col};">आज का प्रमुख पर्व / विशिष्ट मुहूर्त</div>
+<div style="font-size: 1.18rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_card_fest['title']}</div>
+</div>
+</div>
+<span style="background: rgba(245, 158, 11, 0.25); color: {_fest_title_col}; border: 1.5px solid {_fest_border}; font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;">{_card_fest['tag']}</span>
+</div>
+<div style="font-size: 0.90rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
+{_card_fest['subtitle']}
+</div>
+<div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(245, 158, 11, 0.4); display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.88rem;">
+<div><b style="color: {_fest_title_col};">{_card_fest['m1_title']}:</b> {_card_fest['m1_time']}</div>
+<div><b style="color: #10b981;">{_card_fest['m2_title']}:</b> {_card_fest['m2_time']}</div>
+<div><b style="color: {_fest_title_col};">{_card_fest['m3_title']}:</b> {_card_fest['m3_time']}</div>
+</div>
+</div>"""
 
         panchang_card_html = f"""<div class="glass-card" style="margin-top: 15px; margin-bottom: 15px; border-left: 4px solid {TH_GOLD_ACCENT};">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
