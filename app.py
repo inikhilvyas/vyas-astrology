@@ -1946,7 +1946,7 @@ if _is_light:
 elif _is_auto:
     st.markdown(f"<style>@media (prefers-color-scheme: light) {{\n{_light_css_rules}\n}}</style>", unsafe_allow_html=True)
 
-_is_hi_banner = "English" not in st.session_state.get('main_ui_lang_radio', 'हिन्दी')
+_is_hi_banner = st.session_state.get('sidebar_ui_lang', 'हिन्दी') == 'हिन्दी'
 _hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
 
 _logo_b64 = ""
@@ -2223,7 +2223,15 @@ with st.sidebar:
     <hr style="border-color: rgba(229, 169, 60, 0.16); margin: 10px 0;">
     """, unsafe_allow_html=True)
 
-    # ---------------- THEME & ACCESSIBILITY CONTROLS ----------------
+    # ---------------- LANGUAGE, THEME & ACCESSIBILITY CONTROLS ----------------
+    st.radio(
+        "भाषा (Language):",
+        ["हिन्दी", "English"],
+        index=0 if st.session_state.get("sidebar_ui_lang", "हिन्दी") == "हिन्दी" else 1,
+        horizontal=True,
+        key="sidebar_ui_lang",
+        help="एप्लिकेशन की भाषा चुनें"
+    )
     col_th_a, col_th_b = st.columns([1.3, 1.1])
     with col_th_a:
         def _on_theme_select_cb():
@@ -2758,36 +2766,17 @@ with st.sidebar:
 saved_list = auth_vault.get_saved_kundlis(u["id"]) if is_logged_in_now else []
 active_lp = st.session_state.get('loaded_profile')
 
-col_top_lang, col_top_font = st.columns([1.1, 1.4])
-with col_top_lang:
-    ui_lang = st.radio(" भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
-    is_hi = "हिन्दी" in ui_lang
-with col_top_font:
-    _font_keys = ["medium", "large", "xlarge"]
-    _font_labels_hi = {"medium": "मध्यम (18.5px)", "large": "बड़ा (20.5px)", "xlarge": "अति विशाल (24px)"}
-    _font_labels_en = {"medium": "Medium (18.5px)", "large": "Large (20.5px)", "xlarge": "Extra Large (24px)"}
-    
-    # Safe guard against old session state string values to prevent Streamlit radio mismatch crash
-    cur_f = st.session_state.get("main_font_scale_choice_radio")
-    if cur_f not in _font_keys:
-        st.session_state["main_font_scale_choice_radio"] = "large"
+# Clean language resolution (managed seamlessly via sidebar settings)
+is_hi = st.session_state.get("sidebar_ui_lang", "हिन्दी") == "हिन्दी"
 
-    _font_scale_choice = st.radio(
-        " फ़ॉन्ट आकार (Text Size):" if is_hi else " Text Size:",
-        _font_keys,
-        format_func=lambda k: _font_labels_hi.get(k, k) if is_hi else _font_labels_en.get(k, k),
-        index=1,
-        horizontal=True,
-        key="main_font_scale_choice_radio",
-        help="अक्षरों का आकार छोटा या बड़ा करें" if is_hi else "Adjust text font size"
-    )
-
-if _font_scale_choice == "xlarge":
-    chosen_font_px = "24px"
-elif _font_scale_choice == "medium":
-    chosen_font_px = "18.5px"
+# Font scale is controlled cleanly by sidebar settings without cluttering main screen
+_cur_fs = str(st.session_state.get("_user_font_scale", "बड़ा (19.5px - डिफ़ॉल्ट)"))
+if "विशाल" in _cur_fs:
+    chosen_font_px = "22px"
+elif "सामान्य" in _cur_fs:
+    chosen_font_px = "17px"
 else:
-    chosen_font_px = "20.5px"
+    chosen_font_px = "19.5px"
 
 st.markdown(f"""
 <style>
