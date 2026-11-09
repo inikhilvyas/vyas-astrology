@@ -6598,51 +6598,92 @@ if st.session_state.get('data_generated'):
             }}
         }}
 
-        /* Floating Messenger Box (Scoped strictly to st-key container so main app remains 100% visible) */
+        /* Facebook Messenger Style Floating Card (Movable / Draggable & Minimizable) */
         div.st-key-vyas_messenger_card {{
             position: fixed !important;
-            bottom: 24px !important;
-            right: 24px !important;
-            width: 375px !important;
-            max-width: calc(100vw - 32px) !important;
-            height: 520px !important;
-            max-height: calc(100dvh - 50px) !important;
+            bottom: 20px !important;
+            right: 20px !important;
+            width: 380px !important;
+            max-width: calc(100vw - 24px) !important;
+            height: 490px !important;
+            max-height: calc(100dvh - 36px) !important;
             background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.12) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
-            border: 2px solid rgba(240, 192, 90, 0.55) !important;
+            border: 2px solid rgba(240, 192, 90, 0.6) !important;
             border-radius: 20px !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(240, 192, 90, 0.3) !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(240, 192, 90, 0.35) !important;
             z-index: 9999999 !important;
             display: flex !important;
             flex-direction: column !important;
-            padding: 10px 12px !important;
+            padding: 8px 12px 10px 12px !important;
             backdrop-filter: blur(20px) !important;
             animation: vyasPopIn 0.14s ease-out !important;
+            touch-action: pan-y !important;
+            user-select: none !important;
         }}
 
         @keyframes vyasPopIn {{
-            0% {{ transform: translateY(30px) scale(0.92); opacity: 0; }}
+            0% {{ transform: translateY(20px) scale(0.94); opacity: 0; }}
             100% {{ transform: translateY(0) scale(1); opacity: 1; }}
         }}
 
-        /* Suggestion chip styling */
-        div.st-key-vyas_messenger_card div.stButton > button {{
-            background: rgba(30, 41, 59, 0.8) !important;
-            border: 1px solid rgba(240, 192, 90, 0.3) !important;
-            border-radius: 10px !important;
-            color: #e2e8f0 !important;
-            font-size: 0.74rem !important;
-            padding: 4px 6px !important;
-            min-height: 32px !important;
-            line-height: 1.2 !important;
-            transition: all 0.2s ease !important;
+        /* Draggable Header Handle */
+        .vyas-messenger-drag-handle {{
+            cursor: grab !important;
+            touch-action: none !important;
+            padding: 2px 4px 6px 4px;
+            border-bottom: 1px solid rgba(240, 192, 90, 0.2);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }}
-        div.st-key-vyas_messenger_card div.stButton > button:hover {{
-            background: rgba(240, 192, 90, 0.2) !important;
-            border-color: #f0c05a !important;
-            color: #fef08a !important;
+        .vyas-messenger-drag-handle:active {{
+            cursor: grabbing !important;
         }}
 
-        /* Keep horizontal blocks unstacked on mobile */
+        /* Absolute Top-Right Minimize/Close Button */
+        div.st-key-btn_minimize_chat_window {{
+            position: absolute !important;
+            top: 7px !important;
+            right: 9px !important;
+            z-index: 10000005 !important;
+            width: 28px !important;
+            height: 28px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+        div.st-key-btn_minimize_chat_window button {{
+            background: rgba(239, 68, 68, 0.25) !important;
+            border: 1.5px solid rgba(239, 68, 68, 0.8) !important;
+            border-radius: 50% !important;
+            width: 28px !important;
+            height: 28px !important;
+            min-width: 28px !important;
+            max-width: 28px !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }}
+        div.st-key-btn_minimize_chat_window button:hover {{
+            background: #ef4444 !important;
+            border-color: #fca5a5 !important;
+            transform: scale(1.1) !important;
+        }}
+        div.st-key-btn_minimize_chat_window button * {{
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            font-size: 0.95rem !important;
+            font-weight: 900 !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }}
+
+        /* Horizontal 50/50 Quick Options Grid */
         div.st-key-vyas_messenger_card div[data-testid="stHorizontalBlock"] {{
             display: flex !important;
             flex-direction: row !important;
@@ -6650,43 +6691,27 @@ if st.session_state.get('data_generated'):
             align-items: center !important;
             gap: 6px !important;
             width: 100% !important;
+            margin: 4px 0 2px 0 !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {{
+            width: 50% !important;
+            max-width: 50% !important;
             min-width: 0 !important;
-            flex: 1 1 auto !important;
+            flex: 1 1 50% !important;
+            padding: 0 !important;
         }}
 
-        /* Prominent '✕ बंद करें' Close Button */
-        div.st-key-btn_minimize_chat_window button {{
-            background: rgba(239, 68, 68, 0.2) !important;
-            border: 1px solid rgba(239, 68, 68, 0.6) !important;
-            border-radius: 999px !important;
-            color: #fecaca !important;
-            font-size: 0.74rem !important;
-            font-weight: 700 !important;
-            padding: 4px 10px !important;
-            min-height: 28px !important;
-            height: 28px !important;
-            line-height: 1 !important;
-            white-space: nowrap !important;
-            transition: all 0.15s ease !important;
-        }}
-        div.st-key-btn_minimize_chat_window button:hover {{
-            background: rgba(239, 68, 68, 0.4) !important;
-            border-color: #ef4444 !important;
-            color: #ffffff !important;
-        }}
-
-        /* Compact Chat Messages (Chhoti Font Size) */
+        /* Compact Chat Messages */
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] {{
-            padding: 6px 10px !important;
-            margin-bottom: 6px !important;
+            padding: 5px 8px !important;
+            margin-bottom: 5px !important;
             border-radius: 12px !important;
             background: rgba(15, 23, 42, 0.85) !important;
             border: 1px solid rgba(240, 192, 90, 0.2) !important;
+            user-select: text !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] div[data-testid="stMarkdownContainer"] p {{
-            font-size: 0.78rem !important;
+            font-size: 0.76rem !important;
             line-height: 1.35 !important;
             color: #f1f5f9 !important;
             margin: 0 !important;
@@ -6694,62 +6719,53 @@ if st.session_state.get('data_generated'):
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] div[data-testid="stMarkdownContainer"] strong,
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] div[data-testid="stMarkdownContainer"] b {{
             color: #fef08a !important;
-            font-size: 0.78rem !important;
+            font-size: 0.76rem !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stChatMessage"] div[data-testid="stMarkdownContainer"] li {{
-            font-size: 0.76rem !important;
+            font-size: 0.74rem !important;
             line-height: 1.3 !important;
         }}
 
-        /* High Contrast Quick Option Pills (Bright White/Gold Text on Deep Blue-Gray) */
+        /* High Contrast Quick Option Pills (Bright White Text on Navy) */
         div.st-key-quick_chip_0 button,
-        div.st-key-quick_chip_1 button,
-        div.st-key-vyas_messenger_card div.stButton > button:not([data-testid="baseButton-secondary"]):not(#btn_minimize_chat_window) {{
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+        div.st-key-quick_chip_1 button {{
+            background: #1e293b !important;
             border: 1.5px solid #f0c05a !important;
-            border-radius: 10px !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6) !important;
-            min-height: 32px !important;
-            height: 32px !important;
-            padding: 3px 8px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5) !important;
+            min-height: 28px !important;
+            height: 28px !important;
+            padding: 2px 4px !important;
+            width: 100% !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
         }}
-        div.st-key-quick_chip_0 button div,
-        div.st-key-quick_chip_0 button p,
-        div.st-key-quick_chip_1 button div,
-        div.st-key-quick_chip_1 button p,
-        div.st-key-vyas_messenger_card div.stButton > button p,
-        div.st-key-vyas_messenger_card div.stButton > button div {{
+        div.st-key-quick_chip_0 button *,
+        div.st-key-quick_chip_1 button * {{
             color: #ffffff !important;
-            font-size: 0.78rem !important;
-            font-weight: 800 !important;
+            -webkit-text-fill-color: #ffffff !important;
+            font-size: 0.72rem !important;
+            font-weight: 700 !important;
             letter-spacing: 0.2px !important;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
+            text-align: center !important;
             margin: 0 !important;
         }}
         div.st-key-quick_chip_0 button:hover,
-        div.st-key-quick_chip_1 button:hover,
-        div.st-key-vyas_messenger_card div.stButton > button:hover {{
-            background: linear-gradient(135deg, #f0c05a 0%, #d49c28 100%) !important;
+        div.st-key-quick_chip_1 button:hover {{
+            background: #334155 !important;
             border-color: #ffd700 !important;
-            box-shadow: 0 6px 16px rgba(240, 192, 90, 0.5) !important;
         }}
-        div.st-key-quick_chip_0 button:hover div,
-        div.st-key-quick_chip_0 button:hover p,
-        div.st-key-quick_chip_1 button:hover div,
-        div.st-key-quick_chip_1 button:hover p,
-        div.st-key-vyas_messenger_card div.stButton > button:hover p,
-        div.st-key-vyas_messenger_card div.stButton > button:hover div {{
-            color: #0b1220 !important;
-            text-shadow: none !important;
+        div.st-key-quick_chip_0 button:hover *,
+        div.st-key-quick_chip_1 button:hover * {{
+            color: #fef08a !important;
+            -webkit-text-fill-color: #fef08a !important;
         }}
 
-        /* Scoped Chat Input inside Messenger Card */
+        /* Chat Input Field inside Card */
         div.st-key-vyas_messenger_card div[data-testid="stChatInput"] {{
             position: relative !important;
             bottom: auto !important;
@@ -6765,13 +6781,13 @@ if st.session_state.get('data_generated'):
             background: rgba(15, 23, 42, 0.95) !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stChatInput"] textarea {{
-            font-size: 0.84rem !important;
+            font-size: 0.82rem !important;
             color: #ffffff !important;
             background: transparent !important;
         }}
         div.st-key-vyas_messenger_card div[data-testid="stChatInput"] textarea::placeholder {{
             color: #cbd5e1 !important;
-            font-size: 0.82rem !important;
+            font-size: 0.80rem !important;
         }}
 
         /* Animated typing dots */
@@ -6803,55 +6819,136 @@ if st.session_state.get('data_generated'):
             40% {{ transform: scale(1.1); opacity: 1; background-color: #fef08a; }}
         }}
 
+        /* Compact Mobile View: 54dvh Movable Card */
         @media (max-width: 600px) {{
             div.st-key-vyas_messenger_card {{
-                bottom: 0 !important;
-                right: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                height: 76dvh !important;
-                max-height: 76dvh !important;
-                border-radius: 20px 20px 0 0 !important;
+                bottom: 8px !important;
+                right: 8px !important;
+                left: auto !important;
+                width: calc(100vw - 16px) !important;
+                max-width: calc(100vw - 16px) !important;
+                height: 54dvh !important;
+                max-height: 54dvh !important;
+                border-radius: 18px !important;
+                padding: 6px 10px 8px 10px !important;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95), 0 0 20px rgba(240, 192, 90, 0.25) !important;
             }}
         }}
         </style>
         """, unsafe_allow_html=True)
 
         if not is_chat_open:
-            # Minimized State: Floating Circular Avatar Button
+            # Minimized State: Floating Messenger Chat Head (Movable / Draggable Chat Head)
             def _open_chat_fab_cb():
                 st.session_state["vyas_chat_open"] = True
 
             st.button("आचार्य व्यास • चैट करें 💬", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
+            st.html("""
+            <script>
+            (function() {
+                const fab = document.querySelector('div.st-key-btn_floating_rishi_avatar');
+                if (!fab || fab.dataset.dragInit === 'true') return;
+                fab.dataset.dragInit = 'true';
+
+                // Restore saved chat-head position
+                const savedFabPos = sessionStorage.getItem('vyas_fab_pos');
+                if (savedFabPos) {
+                    try {
+                        const { x, y } = JSON.parse(savedFabPos);
+                        const maxX = window.innerWidth - fab.offsetWidth;
+                        const maxY = window.innerHeight - fab.offsetHeight;
+                        fab.style.left = Math.max(8, Math.min(x, maxX - 8)) + 'px';
+                        fab.style.top = Math.max(8, Math.min(y, maxY - 8)) + 'px';
+                        fab.style.right = 'auto';
+                        fab.style.bottom = 'auto';
+                    } catch(e) {}
+                }
+
+                let isDragging = false;
+                let hasMoved = false;
+                let startX, startY, initialLeft, initialTop;
+
+                fab.addEventListener('pointerdown', function(e) {
+                    isDragging = true;
+                    hasMoved = false;
+                    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+                    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+                    startX = cx;
+                    startY = cy;
+                    const r = fab.getBoundingClientRect();
+                    initialLeft = r.left;
+                    initialTop = r.top;
+
+                    function onMove(ev) {
+                        if (!isDragging) return;
+                        const curX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+                        const curY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+                        if (Math.abs(curX - startX) > 5 || Math.abs(curY - startY) > 5) {
+                            hasMoved = true;
+                            if (ev.cancelable) ev.preventDefault();
+                            let nl = initialLeft + (curX - startX);
+                            let nt = initialTop + (curY - startY);
+                            const maxL = window.innerWidth - fab.offsetWidth;
+                            const maxT = window.innerHeight - fab.offsetHeight;
+                            nl = Math.max(8, Math.min(nl, maxL - 8));
+                            nt = Math.max(8, Math.min(nt, maxT - 8));
+                            fab.style.left = nl + 'px';
+                            fab.style.top = nt + 'px';
+                            fab.style.right = 'auto';
+                            fab.style.bottom = 'auto';
+                        }
+                    }
+
+                    function onUp() {
+                        isDragging = false;
+                        window.removeEventListener('pointermove', onMove);
+                        window.removeEventListener('pointerup', onUp);
+                        window.removeEventListener('touchmove', onMove);
+                        window.removeEventListener('touchend', onUp);
+                        if (hasMoved) {
+                            const rect = fab.getBoundingClientRect();
+                            sessionStorage.setItem('vyas_fab_pos', JSON.stringify({ x: rect.left, y: rect.top }));
+                        }
+                    }
+
+                    window.addEventListener('pointermove', onMove, { passive: false });
+                    window.addEventListener('pointerup', onUp);
+                    window.addEventListener('touchmove', onMove, { passive: false });
+                    window.addEventListener('touchend', onUp);
+                });
+            })();
+            </script>
+            """)
             return
 
-        # Open State: Floating Messenger Window (Scoped strictly to st-key container)
+        # Open State: Floating Messenger Window (Facebook Messenger Style: Movable + Minimizable)
         with st.container(key="vyas_messenger_card"):
-            # Header Row (2 Columns: Left = Avatar & Status, Right = Prominent '✕ बंद करें' Button)
-            hdr_left, hdr_right = st.columns([3.3, 1.7])
-            with hdr_left:
-                st.markdown(f"""
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div style="width: 34px; height: 34px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 8px rgba(240, 192, 90, 0.4);"></div>
+            # Absolute Top-Right Minimize Button
+            def _minimize_chat_cb():
+                st.session_state["vyas_chat_open"] = False
+            st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="चैट विंडो मिनिमाइज करें")
+
+            # Draggable Header Handle (Drag window with mouse or touch)
+            st.markdown(f"""
+            <div class="vyas-messenger-drag-handle" title="विंडो को ड्रैग करके स्क्रीन पर कहीं भी ले जाएं (Drag to Move)">
+                <div style="display: flex; align-items: center; gap: 8px; padding-right: 36px; overflow: hidden;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 8px rgba(240, 192, 90, 0.4);"></div>
                     <div style="overflow: hidden;">
-                        <div style="font-family: 'Cinzel', serif; font-size: 0.90rem; font-weight: 800; color: #f0c05a; line-height: 1.1; white-space: nowrap;">
-                            आचार्य व्यास
+                        <div style="font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 800; color: #f0c05a; line-height: 1.1; white-space: nowrap; display: flex; align-items: center; gap: 5px;">
+                            <span>आचार्य व्यास</span>
+                            <span style="font-size: 0.65rem; color: #94a3b8; font-weight: normal; cursor: grab;" title="ड्रैग करें">⋮⋮</span>
                         </div>
-                        <div style="font-size: 0.64rem; color: #94a3b8; margin-top: 1px; white-space: nowrap;">
-                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 3px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न
+                        <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 1px; white-space: nowrap;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; margin-right: 3px;"></span><b>ऑनलाइन</b> &bull; {constants.SIGNS_HI[ch.ascendant_sign]} लग्न &bull; <span style="color:#fef08a;">मूवेबल ✋</span>
                         </div>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
-            with hdr_right:
-                def _minimize_chat_cb():
-                    st.session_state["vyas_chat_open"] = False
-                st.button("✕ बंद करें", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="चैट विंडो बंद करें", use_container_width=True)
+            </div>
+            """, unsafe_allow_html=True)
 
-            # Chat History Scroll Container (Compact height: 185px leaves ample space for input & options)
+            # Chat History Scroll Container (Compact height: 130px leaves ample room for inputs & controls)
             _avatar_arg = _rishi_thumb_file if os.path.exists(_rishi_thumb_file) else "🧙‍♂️"
-            chat_container = st.container(height=185)
+            chat_container = st.container(height=130)
             with chat_container:
                 for msg in st.session_state["dialog_chat_history"]:
                     if msg["role"] == "user":
@@ -6917,8 +7014,8 @@ if st.session_state.get('data_generated'):
 
             # Quick Suggestion Chips (Compact 2-Pill Grid with short labels)
             chip_items = [
-                ("💼 कार्यक्षेत्र व करियर", suggested_queries[0] if suggested_queries else "कार्यक्षेत्र व आजीविका के क्या योग हैं?"),
-                ("💰 आर्थिक स्थिति व धन", suggested_queries[1] if len(suggested_queries) > 1 else "आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?")
+                ("💼 करियर व आजीविका", suggested_queries[0] if suggested_queries else "कार्यक्षेत्र व आजीविका के क्या योग हैं?"),
+                ("💰 धन व आर्थिक योग", suggested_queries[1] if len(suggested_queries) > 1 else "आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?")
             ]
             chip_c1, chip_c2 = st.columns(2)
             def _send_chip_click_cb(chip_q):
@@ -6929,6 +7026,212 @@ if st.session_state.get('data_generated'):
                 st.button(chip_items[0][0], key="quick_chip_0", on_click=_send_chip_click_cb, args=(chip_items[0][1],), use_container_width=True)
             with chip_c2:
                 st.button(chip_items[1][0], key="quick_chip_1", on_click=_send_chip_click_cb, args=(chip_items[1][1],), use_container_width=True)
+
+            # Voice Input (बोलकर पूछें) Button + Web Speech Recognition JS + Draggable Controller
+            st.html("""
+            <div class="vyas-voice-mic-bar" style="display: flex; align-items: center; justify-content: center; margin: 3px 0 2px 0;">
+                <button id="vyas-voice-mic-btn" type="button" onclick="vyasStartVoiceConsultation()" 
+                        style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18), rgba(245, 158, 11, 0.28));
+                               border: 1.5px solid #f0c05a; border-radius: 999px; color: #fef08a; padding: 3px 12px;
+                               font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
+                               gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); transition: all 0.2s ease;">
+                    <span id="vyas-mic-icon" style="font-size: 0.82rem;">🎙️</span>
+                    <span id="vyas-mic-text">बोलकर पूछें (Tap to Speak)</span>
+                </button>
+            </div>
+            <script>
+            // --- 1. VOICE RECOGNITION (WEB SPEECH API) ---
+            window.vyasVoiceActive = false;
+            window.vyasStartVoiceConsultation = function() {
+                const btn = document.getElementById('vyas-voice-mic-btn');
+                const icon = document.getElementById('vyas-mic-icon');
+                const txt = document.getElementById('vyas-mic-text');
+                
+                const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRec) {
+                    alert("आपके ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है। कृपया लिखकर पूछें।");
+                    return;
+                }
+                
+                if (window.vyasVoiceActive && window.vyasCurrentRecognition) {
+                    try { window.vyasCurrentRecognition.stop(); } catch(e){}
+                    return;
+                }
+                
+                const recognition = new SpeechRec();
+                window.vyasCurrentRecognition = recognition;
+                recognition.lang = 'hi-IN';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+                
+                function resetMicBtn() {
+                    window.vyasVoiceActive = false;
+                    if (btn) {
+                        btn.style.background = 'linear-gradient(135deg, rgba(240, 192, 90, 0.18), rgba(245, 158, 11, 0.28))';
+                        btn.style.borderColor = '#f0c05a';
+                        btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.4)';
+                    }
+                    if (icon) icon.textContent = '🎙️';
+                    if (txt) {
+                        txt.textContent = 'बोलकर पूछें (Tap to Speak)';
+                        txt.style.color = '#fef08a';
+                    }
+                }
+                
+                recognition.onstart = function() {
+                    window.vyasVoiceActive = true;
+                    if (btn) {
+                        btn.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+                        btn.style.borderColor = '#fca5a5';
+                        btn.style.boxShadow = '0 0 12px rgba(239, 68, 68, 0.8)';
+                    }
+                    if (icon) icon.textContent = '🔴';
+                    if (txt) {
+                        txt.textContent = 'सुन रहे हैं... बोलिए ✍️';
+                        txt.style.color = '#ffffff';
+                    }
+                };
+                
+                recognition.onend = function() {
+                    setTimeout(resetMicBtn, 1200);
+                };
+                
+                recognition.onerror = function(e) {
+                    console.warn("Vyas Voice Error:", e.error);
+                    if (txt) txt.textContent = 'आवाज़ नहीं सुनी जा सकी';
+                    setTimeout(resetMicBtn, 1400);
+                };
+                
+                recognition.onresult = function(event) {
+                    if (!event.results || !event.results[0] || !event.results[0][0]) return;
+                    const spoken = event.results[0][0].transcript.trim();
+                    if (!spoken) return;
+                    
+                    if (txt) {
+                        txt.textContent = 'सुना: "' + spoken.substring(0, 18) + (spoken.length > 18 ? '...' : '') + '"';
+                    }
+                    
+                    const card = document.querySelector('div.st-key-vyas_messenger_card');
+                    const inputArea = card ? (card.querySelector('textarea[data-testid="stChatInputTextArea"]') || card.querySelector('textarea')) : document.querySelector('textarea');
+                    
+                    if (inputArea) {
+                        const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                        nativeSetter.call(inputArea, spoken);
+                        inputArea.dispatchEvent(new Event('input', { bubbles: true }));
+                        inputArea.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        setTimeout(() => {
+                            const submitBtn = card ? card.querySelector('button[data-testid="stChatInputSubmitButton"]') : document.querySelector('button[data-testid="stChatInputSubmitButton"]');
+                            if (submitBtn && !submitBtn.disabled) {
+                                submitBtn.click();
+                            }
+                        }, 350);
+                    }
+                };
+                
+                try {
+                    recognition.start();
+                } catch(err) {
+                    console.error("Speech recognition start failed:", err);
+                    resetMicBtn();
+                }
+            };
+
+            // --- 2. FACEBOOK MESSENGER STYLE MOVABLE / DRAGGABLE WINDOW ---
+            function initVyasMessengerDraggable() {
+                const card = document.querySelector('div.st-key-vyas_messenger_card');
+                if (!card) return;
+                const handle = card.querySelector('.vyas-messenger-drag-handle');
+                if (!handle || handle.dataset.dragInit === 'true') return;
+                handle.dataset.dragInit = 'true';
+
+                // Restore saved position if present
+                const savedPos = sessionStorage.getItem('vyas_card_pos');
+                if (savedPos) {
+                    try {
+                        const { x, y } = JSON.parse(savedPos);
+                        const maxX = window.innerWidth - card.offsetWidth;
+                        const maxY = window.innerHeight - card.offsetHeight;
+                        const clampX = Math.max(6, Math.min(x, Math.max(6, maxX - 6)));
+                        const clampY = Math.max(6, Math.min(y, Math.max(6, maxY - 6)));
+                        card.style.left = clampX + 'px';
+                        card.style.top = clampY + 'px';
+                        card.style.right = 'auto';
+                        card.style.bottom = 'auto';
+                    } catch(e) {}
+                }
+
+                let isDragging = false;
+                let startX, startY, initialLeft, initialTop;
+
+                function onPointerDown(e) {
+                    if (e.target.closest('button') || e.target.closest('.stButton')) return;
+                    isDragging = true;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    startX = clientX;
+                    startY = clientY;
+                    const rect = card.getBoundingClientRect();
+                    initialLeft = rect.left;
+                    initialTop = rect.top;
+
+                    card.style.transition = 'none';
+                    handle.style.cursor = 'grabbing';
+                    document.body.style.userSelect = 'none';
+
+                    window.addEventListener('pointermove', onPointerMove, { passive: false });
+                    window.addEventListener('pointerup', onPointerUp);
+                    window.addEventListener('touchmove', onPointerMove, { passive: false });
+                    window.addEventListener('touchend', onPointerUp);
+                }
+
+                function onPointerMove(e) {
+                    if (!isDragging) return;
+                    if (e.cancelable) e.preventDefault();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    const deltaX = clientX - startX;
+                    const deltaY = clientY - startY;
+
+                    let newLeft = initialLeft + deltaX;
+                    let newTop = initialTop + deltaY;
+
+                    const maxLeft = window.innerWidth - card.offsetWidth;
+                    const maxTop = window.innerHeight - card.offsetHeight;
+                    newLeft = Math.max(6, Math.min(newLeft, Math.max(6, maxLeft - 6)));
+                    newTop = Math.max(6, Math.min(newTop, Math.max(6, maxTop - 6)));
+
+                    card.style.left = newLeft + 'px';
+                    card.style.top = newTop + 'px';
+                    card.style.right = 'auto';
+                    card.style.bottom = 'auto';
+                }
+
+                function onPointerUp() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    handle.style.cursor = 'grab';
+                    document.body.style.userSelect = '';
+
+                    window.removeEventListener('pointermove', onPointerMove);
+                    window.removeEventListener('pointerup', onPointerUp);
+                    window.removeEventListener('touchmove', onPointerMove);
+                    window.removeEventListener('touchend', onPointerUp);
+
+                    const rect = card.getBoundingClientRect();
+                    sessionStorage.setItem('vyas_card_pos', JSON.stringify({ x: rect.left, y: rect.top }));
+                }
+
+                handle.addEventListener('pointerdown', onPointerDown);
+                handle.addEventListener('touchstart', onPointerDown, { passive: true });
+            }
+
+            // Run on load and DOM changes
+            setTimeout(initVyasMessengerDraggable, 100);
+            setTimeout(initVyasMessengerDraggable, 400);
+            </script>
+            """)
 
             # Chat Input Field at the bottom of the card
             chat_user_inp = st.chat_input("आचार्य व्यास जी से पूछें...", key="vyas_floating_chat_input")
