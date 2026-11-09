@@ -6463,27 +6463,90 @@ if st.session_state.get('data_generated'):
             white-space: nowrap !important;
             pointer-events: none !important;
         }}
+        div.st-key-btn_floating_rishi_avatar,
+        .vyas-rishi-fab-wrap {{
+            position: fixed !important;
+            bottom: 24px !important;
+            right: 24px !important;
+            z-index: 9999999 !important;
+            width: 68px !important;
+            height: 68px !important;
+            display: block !important;
+        }}
+        div.st-key-btn_floating_rishi_avatar > button,
         .vyas-rishi-fab-wrap div.stButton > button {{
-            width: 66px !important;
-            height: 66px !important;
-            min-width: 66px !important;
+            width: 68px !important;
+            height: 68px !important;
+            min-width: 68px !important;
             border-radius: 50% !important;
-            border: 2.5px solid #f0c05a !important;
+            border: 3px solid #f0c05a !important;
             background-image: url('data:image/png;base64,{_rishi_b64}') !important;
             background-size: cover !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
-            box-shadow: 0 8px 26px rgba(217, 119, 6, 0.65), 0 0 18px rgba(240, 192, 90, 0.4) !important;
+            box-shadow: 0 10px 28px rgba(217, 119, 6, 0.7), 0 0 20px rgba(240, 192, 90, 0.5) !important;
             cursor: pointer !important;
             color: transparent !important;
             font-size: 0px !important;
             padding: 0 !important;
             transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            position: relative !important;
         }}
+        div.st-key-btn_floating_rishi_avatar > button:hover,
         .vyas-rishi-fab-wrap div.stButton > button:hover {{
             transform: scale(1.12) rotate(3deg) !important;
-            box-shadow: 0 12px 34px rgba(245, 158, 11, 0.9), 0 0 26px rgba(254, 240, 138, 0.7) !important;
+            box-shadow: 0 14px 36px rgba(245, 158, 11, 0.95), 0 0 28px rgba(254, 240, 138, 0.8) !important;
             border-color: #fef08a !important;
+        }}
+        /* Green online dot badge */
+        div.st-key-btn_floating_rishi_avatar::after {{
+            content: '' !important;
+            position: absolute !important;
+            bottom: 2px !important;
+            right: 4px !important;
+            width: 16px !important;
+            height: 16px !important;
+            background: #22c55e !important;
+            border: 2.5px solid #0b1220 !important;
+            border-radius: 50% !important;
+            z-index: 10000000 !important;
+            pointer-events: none !important;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.8) !important;
+        }}
+        /* Desktop speech prompt */
+        div.st-key-btn_floating_rishi_avatar::before {{
+            content: 'आचार्य व्यास • लाइव संवाद ✨' !important;
+            position: absolute !important;
+            top: 50% !important;
+            right: 78px !important;
+            transform: translateY(-50%) !important;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.96) 100%) !important;
+            border: 1.5px solid rgba(240, 192, 90, 0.55) !important;
+            border-radius: 999px !important;
+            padding: 6px 14px !important;
+            color: #fef08a !important;
+            font-size: 0.82rem !important;
+            font-weight: 700 !important;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6) !important;
+            white-space: nowrap !important;
+            pointer-events: none !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        }}
+        @media (max-width: 600px) {{
+            div.st-key-btn_floating_rishi_avatar {{
+                bottom: 16px !important;
+                right: 16px !important;
+                width: 58px !important;
+                height: 58px !important;
+            }}
+            div.st-key-btn_floating_rishi_avatar > button {{
+                width: 58px !important;
+                height: 58px !important;
+                min-width: 58px !important;
+            }}
+            div.st-key-btn_floating_rishi_avatar::before {{
+                display: none !important;
+            }}
         }}
 
         /* Floating Messenger Box */
@@ -6605,14 +6668,7 @@ if st.session_state.get('data_generated'):
             def _open_chat_fab_cb():
                 st.session_state["vyas_chat_open"] = True
 
-            st.markdown(f'''
-            <div class="vyas-rishi-fab-wrap">
-                <div class="vyas-rishi-badge">आचार्य व्यास • संवाद ✨</div>
-            </div>
-            ''', unsafe_allow_html=True)
-            st.markdown('<div class="vyas-rishi-fab-wrap">', unsafe_allow_html=True)
             st.button(" ", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
-            st.markdown('</div>', unsafe_allow_html=True)
             return
 
         # Open State: Floating Messenger Window
