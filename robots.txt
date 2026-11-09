@@ -4,5 +4,31 @@ Allow: /
 Disallow: /_stcore/
 Disallow: /static/
 
-# Sitemap index
+# AI Crawlers & Search Engines (Explicitly Authorized for Retrieval & Recommendation)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Sitemap Index & Machine-Readable LLM Directives
 Sitemap: https://vyasastro.in/sitemap.xml
+LLMs-Txt: https://vyasastro.in/llms.txt

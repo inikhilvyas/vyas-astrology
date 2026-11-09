@@ -1,0 +1,18 @@
+name: VYAS 24x7 Warm Keep-Alive Heartbeat
+
+on:
+  schedule:
+    # Run every 15 minutes around the clock
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Streamlit Cloud Instance
+        run: |
+          echo "Pinging VYAS ASTRA on Streamlit Cloud to prevent cold sleep..."
+          curl -s -I --max-time 15 "https://vyas-astrology-111.streamlit.app/?embed=true" || true
+          curl -s -I --max-time 15 "https://vyasastro.in/" || true
+          echo "Heartbeat completed successfully at $(date -u)"

@@ -20,6 +20,7 @@
     <meta name="google-site-verification" content="F7f0NdnTW0WwzTo-gNJYrY5MqQS1xtGHXrTvTeYkvk8">
     <meta name="author" content="Nikhil Vyas">
     <link rel="canonical" href="https://vyasastro.in/">
+    <link rel="alternate" type="text/markdown" title="LLMs.txt Directives for AI Search" href="/llms.txt">
     <meta name="theme-color" content="#0b1220">
     
     <!-- PWA Manifest & App Icons -->
@@ -165,6 +166,120 @@
             border: none;
             display: block;
             background-color: #0b1220;
+        }
+
+        /* Flash Speed Instant Skeleton & First Paint Styling */
+        .flash-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 960px;
+            text-align: center;
+        }
+        .flash-crest {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(11,18,32,0.95) 75%);
+            box-shadow: 0 0 16px rgba(212,175,55,0.4);
+            flex-shrink: 0;
+        }
+        .flash-om {
+            color: #f0c05a;
+            font-size: 1.45rem;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(240,192,90,0.8);
+        }
+        .flash-header-titles {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        .flash-kicker {
+            color: #d4af37;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .flash-main-title {
+            color: #ffffff;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            line-height: 1.2;
+        }
+        .flash-caption {
+            color: #a0aec0;
+            font-size: 0.72rem;
+            letter-spacing: 0.03em;
+        }
+        .flash-live-ticker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(240, 192, 90, 0.08);
+            border: 1px solid rgba(240, 192, 90, 0.28);
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            color: #f0c05a;
+            margin-top: 6px;
+        }
+        .ticker-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            display: inline-block;
+            animation: pulseGlow 1.8s infinite;
+        }
+        .ticker-sep {
+            color: rgba(240, 192, 90, 0.4);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .flash-skeleton-cards {
+            display: flex;
+            gap: 12px;
+            width: 90%;
+            max-width: 520px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        .skeleton-card {
+            flex: 1;
+            background: rgba(18, 27, 49, 0.6);
+            border: 1px solid rgba(240, 192, 90, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sk-line {
+            height: 10px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, rgba(240,192,90,0.08) 25%, rgba(240,192,90,0.22) 50%, rgba(240,192,90,0.08) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.6s infinite;
+        }
+        .sk-title { width: 70%; height: 12px; }
+        .sk-sub { width: 95%; height: 8px; }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* Luxury Animated Vedic Loading Screen */
@@ -391,18 +506,49 @@
             <li><strong>वर्षफल एवं मुद्ददा दशा:</strong> ताजिक वर्षफल, मुन्था, वर्षेश एवं 12 महीनों का सूक्ष्म समय-चक्र।</li>
         </ul>
     </main>
-    <!-- Luxury Animated Splash / Redirect Screen -->
+    <!-- Instant Flash First-Paint Header & Skeleton Overlay (Sub-30ms UX) -->
     <div id="loading-screen">
-        <div class="logo-orbit-container">
+        <header class="flash-header">
+            <div class="flash-crest">
+                <span class="flash-om">ॐ</span>
+            </div>
+            <div class="flash-header-titles">
+                <div class="flash-kicker">खगोलीय ग्रहीय गणितीय संरचना &bull; HIGH-PRECISION ASTRONOMICAL INTELLIGENCE</div>
+                <h1 class="flash-main-title">VYAS ASTRA</h1>
+                <div class="flash-caption">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
+            </div>
+        </header>
+
+        <div class="flash-live-ticker" id="flash-live-ticker">
+            <span class="ticker-pulse"></span>
+            <span id="flash-ticker-date">वैदिक काल गणना &bull; स्विस एफिमरिस वेध सक्रिय</span>
+            <span class="ticker-sep">&bull;</span>
+            <span id="flash-ticker-muhurta">अभिजित मुहूर्त व चौघड़िया संरेखित</span>
+        </div>
+
+        <div class="logo-orbit-container" style="margin-top: 18px;">
             <div class="celestial-ring"></div>
             <div class="celestial-ring-outer"></div>
             <img class="animated-logo" src="logo_icon.png" onerror="this.src='https://raw.githubusercontent.com/vyasbilawas-ctrl/vyas-astrology/master/logo_icon.png'" alt="VYAS ASTRA">
         </div>
-        <div class="brand-title">VYAS ASTRA</div>
+
+        <div class="brand-title" style="margin-top: 14px;">VYAS ASTRA</div>
         <div class="brand-tagline">vyasastro.in &bull; Vedic Yield Astrology Systems</div>
         <div class="brand-sub">काल ज्ञान एवं ग्रह गणना का अचूक वैदिक वेध</div>
-        <div class="loading-bar-wrap">
+
+        <div class="loading-bar-wrap" style="margin-top: 18px;">
             <div class="loading-bar-fill"></div>
+        </div>
+
+        <div class="flash-skeleton-cards">
+            <div class="skeleton-card">
+                <div class="sk-line sk-title"></div>
+                <div class="sk-line sk-sub"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="sk-line sk-title"></div>
+                <div class="sk-line sk-sub"></div>
+            </div>
         </div>
     </div>
 
@@ -441,6 +587,17 @@
         ></iframe>
     </div>
     <script>
+        // High-Performance PWA Service Worker Registration (0ms Instant Flash Cache)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    console.log('[VYAS] Flash Service Worker Active:', reg.scope);
+                }).catch(function(err) {
+                    console.warn('[VYAS] SW Registration note:', err);
+                });
+            });
+        }
+
         // Synchronous immediate iframe URL resolver (Prevents unauthenticated race conditions)
         (function() {
             try {
