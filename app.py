@@ -1691,6 +1691,13 @@ st.markdown("""
         min-height: auto !important;
         pointer-events: auto !important;
     }
+    @media (max-width: 768px) {
+        [data-testid="stSidebar"] {
+            max-width: 82vw !important;
+            width: 82vw !important;
+            box-shadow: 4px 0 28px rgba(0, 0, 0, 0.7) !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -1702,13 +1709,24 @@ elif _is_auto:
 _is_hi_banner = "English" not in st.session_state.get('main_ui_lang_radio', 'हिन्दी')
 _hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
 
+_logo_b64 = ""
+_logo_file = os.path.join(os.path.dirname(__file__), "static", "logo_icon.png")
+if os.path.exists(_logo_file):
+    try:
+        with open(_logo_file, "rb") as _f:
+            _logo_b64 = base64.b64encode(_f.read()).decode("utf-8")
+    except Exception:
+        _logo_b64 = ""
+
+_logo_img_html = f'<img src="data:image/png;base64,{_logo_b64}" alt="VYAS ASTRA Logo" style="width: clamp(56px, 11vw, 76px); height: clamp(56px, 11vw, 76px); border-radius: 50%; border: 2.5px solid {TH_GOLD}; box-shadow: 0 0 20px rgba(245, 158, 11, 0.45); object-fit: cover; flex-shrink: 0;" />' if _logo_b64 else f'<div style="font-family: \'Yatra One\', serif; font-size: 2.2rem; color: {TH_GOLD}; border: 2px solid {TH_GOLD}; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">ॐ</div>'
+
 st.markdown(f"""
-<div class="vyas-hero-banner">
-    <div class="vyas-hero-kicker" style="font-size: 0.72rem; letter-spacing: 1.8px; opacity: 0.9; margin-bottom: 2px; font-weight: 700; color: {TH_GOLD};">{_hero_kicker}</div>
-    <div class="vyas-hero-title">VYAS ASTRA</div>
-    <div class="vyas-hero-subtitle">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
-    <div style="font-family: var(--font-yatra); font-size: clamp(0.82rem, 2.4vw, 1.02rem); color: {TH_MUTED}; margin-top: 8px; line-height: 1.5;">
-        वेबसाइट निर्माता एवं शोधकर्ता: <b style="color: {TH_GOLD};">निखिल व्यास (Nikhil Vyas)</b> &bull;  <a href="mailto:inikhilvyas@gmail.com" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">inikhilvyas@gmail.com</a> &bull;  <a href="tel:+919414121172" style="color: {TH_GOLD_ACCENT}; text-decoration:none;">+91 94141 21172</a>
+<div class="vyas-hero-banner" style="display: flex; align-items: center; justify-content: center; gap: clamp(14px, 3.5vw, 24px); flex-wrap: wrap; text-align: left; padding: 16px 20px;">
+    {_logo_img_html}
+    <div>
+        <div class="vyas-hero-kicker" style="font-size: 0.72rem; letter-spacing: 1.8px; opacity: 0.9; margin-bottom: 2px; font-weight: 700; color: {TH_GOLD};">{_hero_kicker}</div>
+        <div class="vyas-hero-title" style="margin: 0; line-height: 1.1;">VYAS ASTRA</div>
+        <div class="vyas-hero-subtitle" style="margin-top: 3px;">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -3194,7 +3212,7 @@ if st.session_state.get('data_generated'):
     av_res = st.session_state['av_res']
     sav = av_res["sav"]
     cur_dasha = dasha_engine.get_running_dasha(datetime.now()) if hasattr(dasha_engine, 'get_running_dasha') else dasha_engine.get_dasha_at(datetime.now())
-    cur_dasha_str = cur_dasha.get("full_path", "Jupiter-Saturn") if isinstance(cur_dasha, dict) else str(cur_dasha)
+    cur_dasha_str = cur_dasha.get("deep_path") or cur_dasha.get("full_path") or f"{cur_dasha.get('mahadasha', '')}-{cur_dasha.get('antardasha', '')}" if isinstance(cur_dasha, dict) else str(cur_dasha)
 
     d1_houses = {h: [] for h in range(1, 13)}
     for h in range(1, 13):
@@ -3502,7 +3520,7 @@ if st.session_state.get('data_generated'):
         except Exception:
             transit_moon_lon = (chart.planets["Moon"].longitude + 13.2) % 360.0
         
-        cur_dasha_str = cur_dasha.get("full_path", "Jupiter-Saturn") if isinstance(cur_dasha, dict) else str(cur_dasha)
+        cur_dasha_str = cur_dasha.get("deep_path") or cur_dasha.get("full_path") or f"{cur_dasha.get('mahadasha', '')}-{cur_dasha.get('antardasha', '')}" if isinstance(cur_dasha, dict) else str(cur_dasha)
         _today_str = now_dt.strftime("%Y-%m-%d")
         if (st.session_state.get('_daily_cache_day') != _today_str 
                 or st.session_state.get('_daily_cache_sig') != _birth_input_sig
@@ -3510,7 +3528,7 @@ if st.session_state.get('data_generated'):
             daily_res = vyas_daily.generate_daily_horoscope(
                 chart.planets["Moon"].longitude,
                 chart.ascendant_longitude,
-                cur_dasha_str,
+                cur_dasha,
                 transit_moon_lon,
                 now_dt,
                 lat=birth.get('lat', 28.6139),
@@ -3582,26 +3600,26 @@ if st.session_state.get('data_generated'):
                     st.session_state['main_screen_suite_select'] = "दशा, गोचर एवं वर्षफल" if is_hi else "Dasha, Transits & Varshphal"
                     st.rerun()
 
-        # Render Top Score Cards with High Contrast Calibration
+        # Render Top Score Cards with High Contrast Calibration (Calibrated 40-75% range)
         score = daily_res["overall_score"]
-        if score >= 75:
+        if score >= 68:
             score_color = "#34d399" if not _is_light else "#059669"
             dial_border = "3.5px solid #10b981"
             dial_bg = "rgba(16, 185, 129, 0.14)" if not _is_light else "#ecfdf5"
             dial_glow = "0 0 18px rgba(52, 211, 153, 0.45)"
             status_txt = "अनुकूल (Favourable)" if is_hi else "Favourable"
-        elif score >= 55:
+        elif score >= 50:
             score_color = "#fbbf24" if not _is_light else "#d97706"
             dial_border = "3.5px solid #f59e0b"
             dial_bg = "rgba(245, 158, 11, 0.14)" if not _is_light else "#fffbeb"
             dial_glow = "0 0 18px rgba(251, 191, 36, 0.45)"
-            status_txt = "सामान्य (Moderate)" if is_hi else "Moderate"
+            status_txt = "सामान्य व संतुलित (Moderate)" if is_hi else "Moderate"
         else:
             score_color = "#f87171" if not _is_light else "#dc2626"
             dial_border = "3.5px solid #ef4444"
             dial_bg = "rgba(239, 68, 68, 0.14)" if not _is_light else "#fef2f2"
             dial_glow = "0 0 18px rgba(248, 113, 113, 0.45)"
-            status_txt = "सतर्क (Cautious)" if is_hi else "Cautious"
+            status_txt = "सतर्क व धैर्य (Cautious)" if is_hi else "Cautious"
         
         # 4-PANEL DASHBOARD (Matching Reference Figma/UI Mockup)
         col_d1, col_d2, col_d3, col_d4 = st.columns([1.1, 1.3, 1.2, 1.4])
@@ -3642,7 +3660,7 @@ if st.session_state.get('data_generated'):
                     <div style="font-size: 0.95rem; color: {_d_val}; line-height: 1.6;">{daily_res['tara_desc']}</div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 8px; margin-top: 12px; font-size: 0.92rem; color: {_d_val};">
-                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{daily_res['running_dasha']}</span>
+                    <b>सक्रिय दशा:</b> <span style="color: {_d_highlight}; font-weight: 700;">{daily_res['narratives'].get('dasha_full_text', daily_res['running_dasha'])}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -3683,10 +3701,38 @@ if st.session_state.get('data_generated'):
                     <div><b>राहुकाल (सावधानी):</b> <br><span style="color: {_d_rahu_col}; font-weight: 600;">{daily_res['rahu_kalam']}</span></div>
                 </div>
                 <div style="border-top: {_d_divider}; padding-top: 6px; margin-top: 6px; font-size: 0.92rem; color: {_d_val};">
-                    <b>शुभ रंग:</b> <span style="color: {_d_accent}; font-weight: 700;">{daily_res['lucky_color']}</span>
+                    <b>शुभ रंग:</b> <span style="color: {_d_accent}; font-weight: 700;">{daily_res.get('lucky_color', 'पीला / श्वेत')}</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+        # Dedicated Astrological Transit, Shani & Chandra Gochar Real-Time Balance Card
+        _sh_g = daily_res.get('shani_gochar', {})
+        _ch_g = daily_res.get('chandra_gochar', {})
+        _sh_col = "#10b981" if not _sh_g.get("is_adverse") else "#f59e0b"
+        _ch_col = "#ef4444" if (_ch_g.get("is_fourth_moon") or _ch_g.get("is_ashtama_moon")) else "#38bdf8"
+        _rem_today = daily_res.get('daily_remedy', '')
+        _rem_block = f"""<div style="border-top: 1px dashed rgba(229, 169, 60, 0.25); margin-top: 10px; padding-top: 8px; font-size: 0.88rem; color: {TH_MUTED};">
+            <b style="color: {TH_GOLD};">🌿 आज का विशेष अनुशंसित उपाय:</b> {_rem_today}
+        </div>""" if _rem_today else ""
+
+        st.markdown(f"""
+        <div style="background: {TH_CARD_BG}; border: {TH_CARD_BORDER}; border-radius: 14px; padding: 14px 18px; margin-top: 14px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                <div style="border-left: 3.5px solid {_sh_col}; padding-left: 12px;">
+                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">शनि गोचर स्थिति (साढ़े साती / ढैया विश्लेषण)</div>
+                    <div style="font-size: 0.96rem; font-weight: 800; color: {_sh_col}; margin-top: 2px;">{_sh_g.get('type', 'अनुकूल/तटस्थ')}</div>
+                    <div style="font-size: 0.84rem; color: {TH_MUTED}; margin-top: 3px; line-height: 1.45;">{_sh_g.get('desc', '')}</div>
+                </div>
+                <div style="border-left: 3.5px solid {_ch_col}; padding-left: 12px;">
+                    <div style="font-size: 0.78rem; color: {TH_GOLD}; font-weight: 800; text-transform: uppercase;">चन्द्र गोचर विश्लेषण (भाव {_ch_g.get('house', 1)} - {_ch_g.get('transit_rashi', '')} राशि)</div>
+                    <div style="font-size: 0.96rem; font-weight: 800; color: {_ch_col}; margin-top: 2px;">{_ch_g.get('title', 'गोचर प्रभाव')}</div>
+                    <div style="font-size: 0.84rem; color: {TH_MUTED}; margin-top: 3px; line-height: 1.45;">{_ch_g.get('desc', '')}</div>
+                </div>
+            </div>
+            {_rem_block}
+        </div>
+        """, unsafe_allow_html=True)
 
         # ---------------------------------------------------------------------
         # TODAY'S COMPLETE VEDIC PANCHANG & AUSPICIOUS MUHURTAS
@@ -6316,10 +6362,26 @@ if st.session_state.get('data_generated'):
             st.session_state["show_acharya_dialog"] = True
             st.rerun()
 
+# Mobile & Desktop Stepper Navigation (Next / Previous Suite buttons)
+if st.session_state.get('data_generated') and 'suite_options' in locals() and 'cur_suite_idx' in locals():
+    st.markdown('<div style="margin-top: 36px; border-top: 1px solid rgba(229, 169, 60, 0.25); padding-top: 16px;"></div>', unsafe_allow_html=True)
+    _col_prev, _col_next = st.columns([1, 1])
+    if cur_suite_idx > 0:
+        with _col_prev:
+            _p_name = suite_options[cur_suite_idx - 1]
+            if st.button(f"← पिछला प्रभाग: {_p_name.split('(')[0].strip()}", key="btn_stepper_nav_prev", use_container_width=True):
+                st.session_state["domain_suite_sidebar_radio"] = _p_name
+                st.session_state["main_screen_suite_select"] = _p_name
+                st.rerun()
+    if cur_suite_idx < len(suite_options) - 1:
+        with _col_next:
+            _n_name = suite_options[cur_suite_idx + 1]
+            if st.button(f"अगला प्रभाग: {_n_name.split('(')[0].strip()} →", type="primary", key="btn_stepper_nav_next", use_container_width=True):
+                st.session_state["domain_suite_sidebar_radio"] = _n_name
+                st.session_state["main_screen_suite_select"] = _n_name
+                st.rerun()
+
 # ---------------- SCRIPT TIMING (opt-in) ----------------
-# Set VYAS_SHOW_TIMING=1 (env var or secret) to see how long this rerun took.
-# Useful for verifying that cached engines and lazy sections really are skipping
-# work: an unchanged rerun should be well under a second.
 import time as _time_mod
 
 def _timing_enabled() -> bool:
@@ -6339,13 +6401,20 @@ if _timing_enabled():
 
 st.session_state["_vyas_script_start"] = _time_mod.perf_counter()
 
-
-# Main Page Bottom Footer
+# Main Page Bottom Footer - Founder & Chief Architect
 st.markdown("""
-<div class="vyas-custom-footer" style="text-align: center; margin-top: 45px; padding: 22px 10px; border-top: 1px solid rgba(240, 192, 90, 0.22); font-size: 0.85rem; color: #94a3b8; line-height: 1.7;">
-    <b>VYAS ASTRA</b> &bull; Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence<br/>
-    वेबसाइट निर्माण एवं शोधकर्ता: <b style="color: #f0c05a;">निखिल व्यास (Nikhil Vyas)</b> &bull; 
-     <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
-     <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+<div class="vyas-custom-footer" style="text-align: center; margin-top: 45px; padding: 26px 16px; border-top: 1px solid rgba(240, 192, 90, 0.25); font-size: 0.90rem; color: #94a3b8; line-height: 1.8; background: rgba(15, 23, 42, 0.45); border-radius: 14px;">
+    <div style="font-family: var(--font-cinzel); font-size: 1.15rem; font-weight: 800; color: #f0c05a; letter-spacing: 1px;">VYAS ASTRA &bull; वैदिक खगोलीय प्रज्ञा</div>
+    <div style="font-size: 0.84rem; color: #cbd5e1; margin-top: 2px;">Vedic Yield Astrology Systems &bull; High-Precision Astronomical Intelligence Platform</div>
+    <div style="margin-top: 12px; font-family: var(--font-yatra); font-size: 1.05rem; color: #f8fafc;">
+        संस्थापक एवं मुख्य वास्तुकार (Founder & Chief Architect): <b style="color: #f59e0b;">निखिल व्यास (Nikhil Vyas)</b>
+    </div>
+    <div style="margin-top: 6px; font-size: 0.86rem; color: #94a3b8;">
+        ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color: #93c5fd; text-decoration: none;">inikhilvyas@gmail.com</a> &bull; 
+        दूरभाष: <a href="tel:+919414121172" style="color: #93c5fd; text-decoration: none;">+91 94141 21172</a>
+    </div>
+    <div style="margin-top: 10px; font-size: 0.78rem; color: #64748b;">
+        &copy; 2026 VYAS ASTRA. सर्वाधिकार सुरक्षित (All Rights Reserved).
+    </div>
 </div>
 """, unsafe_allow_html=True)

@@ -227,7 +227,35 @@ class VimshottariDasha:
                 "node": found_sub
             }
             curr_node = found_sub
-            
+
+        md_l = active_chain.get("MD", {}).get("lord", "")
+        ad_l = active_chain.get("AD", {}).get("lord", "")
+        pd_l = active_chain.get("PD", {}).get("lord", "")
+        sd_l = active_chain.get("SD", {}).get("lord", "")
+        prd_l = active_chain.get("PrD", {}).get("lord", "")
+
+        active_chain["mahadasha"] = md_l
+        active_chain["antardasha"] = ad_l
+        active_chain["pratyantardasha"] = pd_l
+        active_chain["sookshmadasha"] = sd_l
+        active_chain["pranadasha"] = prd_l
+
+        active_chain["full_path"] = f"{md_l}-{ad_l}" if (md_l and ad_l) else (md_l or "")
+        active_chain["deep_path"] = f"{md_l}-{ad_l}-{pd_l}" if (md_l and ad_l and pd_l) else active_chain["full_path"]
+        active_chain["micro_path"] = f"{md_l}-{ad_l}-{pd_l}-{sd_l}-{prd_l}" if (md_l and ad_l and pd_l and sd_l and prd_l) else active_chain["deep_path"]
+        active_chain["running_dasha"] = active_chain["full_path"]
+
+        from vyas.constants import PLANETS_HI
+        md_hi = PLANETS_HI.get(md_l, md_l)
+        ad_hi = PLANETS_HI.get(ad_l, ad_l)
+        pd_hi = PLANETS_HI.get(pd_l, pd_l)
+        sd_hi = PLANETS_HI.get(sd_l, sd_l)
+        prd_hi = PLANETS_HI.get(prd_l, prd_l)
+
+        active_chain["full_path_hi"] = f"{md_hi}-{ad_hi}" if (md_hi and ad_hi) else md_hi
+        active_chain["deep_path_hi"] = f"{md_hi}-{ad_hi}-{pd_hi}" if (md_hi and ad_hi and pd_hi) else active_chain["full_path_hi"]
+        active_chain["micro_path_hi"] = f"{md_hi}-{ad_hi}-{pd_hi}-{sd_hi}-{prd_hi}" if (md_hi and ad_hi and pd_hi and sd_hi and prd_hi) else active_chain["deep_path_hi"]
+        
         return active_chain
 
     def get_dasha_at(self, target_date: datetime, max_depth: int = 5) -> Dict[str, dict]:
