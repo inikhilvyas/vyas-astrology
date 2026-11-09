@@ -387,10 +387,27 @@
                         localStorage.removeItem('vyas_g_jwt');
                         const authBar = document.getElementById('google-auth-bar');
                         if (authBar) authBar.style.display = 'flex';
+                    } else if (event.data.type === 'VYAS_CLEAR_JWT') {
+                        localStorage.removeItem('vyas_g_jwt');
                     }
                 }
             } catch(e) {}
         });
+
+        function isJwtFresh(jwt) {
+            if (!jwt || typeof jwt !== 'string') return false;
+            try {
+                const parts = jwt.split('.');
+                if (parts.length < 2) return false;
+                const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+                const pad = b64.length % 4;
+                const padded = b64 + (pad ? '='.repeat(4 - pad) : '');
+                const payload = JSON.parse(atob(padded));
+                return payload.exp && (payload.exp * 1000 > Date.now());
+            } catch(e) {
+                return false;
+            }
+        }
 
         // On Page Load: Restore session or forward params with persistent auto-login
         (function() {
@@ -398,7 +415,13 @@
                 const search = window.location.search;
                 const iframe = document.getElementById('app-frame');
                 const savedToken = localStorage.getItem('vyas_auth_token');
-                const savedJwt = localStorage.getItem('vyas_g_jwt');
+                let savedJwt = localStorage.getItem('vyas_g_jwt');
+
+                // Clean expired Google ID tokens immediately to prevent HTTP 400 Bad Request
+                if (savedJwt && !isJwtFresh(savedJwt)) {
+                    localStorage.removeItem('vyas_g_jwt');
+                    savedJwt = null;
+                }
 
                 if (search) {
                     const extra = search.startsWith('?') ? search.substring(1) : search;
@@ -414,12 +437,12 @@
                         }
                     }
                 } else if (savedToken && iframe) {
-                    // Auto-login using persistent session token (instant, no repeated login prompt)
+                    // Auto-login using persistent session token (permanent, instant, no repeated login prompt)
                     iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&stok=" + encodeURIComponent(savedToken);
                     const authBar = document.getElementById('google-auth-bar');
                     if (authBar) authBar.style.display = 'none';
                 } else if (savedJwt && iframe) {
-                    // Fallback to Google JWT
+                    // Fallback to fresh Google JWT
                     iframe.src = "https://vyas-astrology-111.streamlit.app/?embed=true&g_jwt=" + encodeURIComponent(savedJwt);
                     const authBar = document.getElementById('google-auth-bar');
                     if (authBar) authBar.style.display = 'none';

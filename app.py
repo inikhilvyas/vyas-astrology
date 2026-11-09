@@ -522,11 +522,27 @@ def _verify_google_jwt(id_token: str):
     """Verifies a Google ID token (JWT) returned by Google Identity Services on the HTML wrapper."""
     if not id_token:
         return False, "टोकन खाली है।", {}
+
+    # 1. Quick local expiration & payload inspection (prevents unnecessary HTTP 400 calls)
     try:
-        import urllib.request, urllib.parse, json
+        import base64, json, time
+        parts = id_token.split(".")
+        if len(parts) >= 2:
+            pad = len(parts[1]) % 4
+            b64_str = parts[1] + ("=" * (4 - pad) if pad else "")
+            payload = json.loads(base64.urlsafe_b64decode(b64_str.encode("utf-8")).decode("utf-8"))
+            exp = payload.get("exp", 0)
+            if exp and time.time() > exp:
+                return False, "EXPIRED", {}
+    except Exception:
+        pass
+
+    # 2. Remote verification with Google tokeninfo
+    try:
+        import urllib.request, urllib.parse, urllib.error, json
         url = f"https://oauth2.googleapis.com/tokeninfo?id_token={urllib.parse.quote(id_token)}"
         req = urllib.request.Request(url, headers={"User-Agent": "VYAS-Astra/2.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=8) as resp:
             if resp.status == 200:
                 data = json.loads(resp.read().decode("utf-8"))
                 email = data.get("email")
@@ -535,13 +551,32 @@ def _verify_google_jwt(id_token: str):
                     return True, "सफल", {"email": email, "name": name, "sub": data.get("sub")}
                 return False, "Google ईमेल सत्यापित नहीं है।", {}
             return False, f"Google प्रमाणीकरण त्रुटि: HTTP {resp.status}", {}
+    except urllib.error.HTTPError as http_err:
+        if http_err.code in [400, 401]:
+            # Token expired or invalid on Google (normal lifecycle)
+            return False, "EXPIRED", {}
+        return False, f"Google सर्वर त्रुटि: HTTP {http_err.code}", {}
     except Exception as exc:
-        return False, f"टोकन सत्यापन विफल: {str(exc)}", {}
+        if "400" in str(exc) or "401" in str(exc):
+            return False, "EXPIRED", {}
+        return False, f"सत्यापन त्रुटि: {str(exc)}", {}
 
 
-if _g_jwt and not st.session_state.get("user_google_processed"):
-    st.session_state["user_google_processed"] = True
-    with st.spinner("Google से सुरक्षित प्रमाणीकरण किया जा रहा है..."):
+# Determine if user is already signed in
+_cur_user_in_session = st.session_state.get("user") or {}
+_is_already_authed = bool(_cur_user_in_session.get("email") and _cur_user_in_session.get("email") != "seeker@vyasastro.com")
+
+if _g_jwt:
+    if _is_already_authed:
+        # Already logged in: discard incoming stale or expired g_jwt cleanly without re-validating
+        if "g_jwt" in st.query_params:
+            try:
+                del st.query_params["g_jwt"]
+            except Exception:
+                pass
+        st.html("<script>try{window.parent.postMessage({type:'VYAS_CLEAR_JWT'},'*');}catch(e){}</script>")
+    elif not st.session_state.get("user_google_processed"):
+        st.session_state["user_google_processed"] = True
         ok_jwt, msg_jwt, u_jwt = _verify_google_jwt(_g_jwt)
         if ok_jwt and u_jwt:
             ok_log, msg_log, u_obj = auth_vault.login_or_register_google(u_jwt["email"], u_jwt["name"])
@@ -553,21 +588,20 @@ if _g_jwt and not st.session_state.get("user_google_processed"):
                         del st.query_params["g_jwt"]
                     except Exception:
                         pass
+                st.html("<script>try{window.parent.postMessage({type:'VYAS_CLEAR_JWT'},'*');}catch(e){}</script>")
                 st.rerun()
             else:
                 st.error(f"Google खाता निर्माण विफल: {msg_log}")
-                if "g_jwt" in st.query_params:
-                    try:
-                        del st.query_params["g_jwt"]
-                    except Exception:
-                        pass
         else:
-            st.error(f"Google प्रमाणीकरण विफल: {msg_jwt}")
+            # Token expired or invalid: clean up query param & localStorage silently (NO HTTP 400 error box!)
             if "g_jwt" in st.query_params:
                 try:
                     del st.query_params["g_jwt"]
                 except Exception:
                     pass
+            st.html("<script>try{window.parent.postMessage({type:'VYAS_CLEAR_JWT'},'*');}catch(e){}</script>")
+            if msg_jwt != "EXPIRED":
+                st.warning("Google सत्र नवीनीकरण आवश्यक है। कृपया पुनः लॉगिन करें।")
 
 if _oauth_error:
     # Google bounced back with an error — show it and clean the URL.
