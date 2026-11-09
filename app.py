@@ -2763,18 +2763,19 @@ with col_top_lang:
     ui_lang = st.radio(" भाषा / Language", ["हिन्दी (Hindi)", "English"], horizontal=True, key="main_ui_lang_radio")
     is_hi = "हिन्दी" in ui_lang
 with col_top_font:
+    _font_options = ["मध्यम (18.5px)", "बड़ा (20.5px)", "अति विशाल (24px)"] if is_hi else ["Medium (18.5px)", "Large (20.5px)", "Extra Large (24px)"]
     _font_scale_choice = st.radio(
-        " फ़ॉन्ट आकार (Text Size):",
-        ["मध्यम (18.5px)", "बड़ा (20.5px)", "अति विशाल (24px)"],
+        " फ़ॉन्ट आकार (Text Size):" if is_hi else " Text Size:",
+        _font_options,
         index=1,
         horizontal=True,
         key="main_font_scale_choice_radio",
-        help="अक्षरों का आकार छोटा या बड़ा करें"
+        help="अक्षरों का आकार छोटा या बड़ा करें" if is_hi else "Adjust text font size"
     )
 
-if "विशाल" in _font_scale_choice:
+if "विशाल" in _font_scale_choice or "Extra" in _font_scale_choice:
     chosen_font_px = "24px"
-elif "मध्यम" in _font_scale_choice:
+elif "मध्यम" in _font_scale_choice or "Medium" in _font_scale_choice:
     chosen_font_px = "18.5px"
 else:
     chosen_font_px = "20.5px"
@@ -2868,7 +2869,7 @@ def _sanitize_astrological_text(text, cur_dasha_val=None):
         text_str = re.sub(r"\{'MD':.*", f"{d_clean} के प्रभाव से सकारात्मक परिणाम प्राप्त होंगे।", text_str, flags=re.DOTALL)
     return text_str
 
-def _resolve_festival_and_muhurta(p, now_dt):
+def _resolve_festival_and_muhurta(p, now_dt, is_hi=True):
     """Dynamically resolves today's active festival and auspicious worship timings.
     Never shows expired festivals; transitions according to classical pradosha / sunset tithi.
     """
@@ -2962,6 +2963,25 @@ def _resolve_festival_and_muhurta(p, now_dt):
     # 10 Nov 2026: Govardhan Puja & Annakoot Mahotsav (Udayatithi Pratipada)
     # 11 Nov 2026: Bhai Dooj / Yama Dwitiya (Udayatithi Dwitiya)
     if today_d == datetime(2026, 11, 9).date():
+        if not is_hi:
+            return {
+                "is_special": True,
+                "title": "Somvati / Snan-Daan Amavasya & Govardhan Eve",
+                "subtitle": "Gau-Mata Seva, Deepdan & Tomorrow 10 Nov Govardhan Puja & Annakoot Mahaparv",
+                "icon": "🐄",
+                "tag": f"Kartika Krishna Amavasya (Ends 12:32 PM) • Vikram Samvat {samvat}",
+                "m1_title": "1. Today's Abhijit Muhurta (All-Auspicious Success)",
+                "m1_time": f"{abhijit}",
+                "m1_desc": "Supreme for journeys, agreements, business & auspicious deeds",
+                "m2_title": "2. Tomorrow Morning Govardhan Puja Muhurta (10 Nov)",
+                "m2_time": "Morning 06:50 AM – 09:35 AM (Shubh / Amrit)",
+                "m2_desc": "Pratipada Udayatithi: Govardhan puja in courtyard with flowers & lamps",
+                "m3_title": "3. Tomorrow's 56 Bhog Annakoot Muhurta (10 Nov)",
+                "m3_time": "Midday 11:58 AM – 12:42 PM (Abhijit - Supreme)",
+                "m3_desc": "Offering 56 Bhog Annakoot to Lord Giriraj, Aarti & Prasad distribution",
+                "choghadiya": "Today Evening 05:49 to 07:27 PM (Pradosha Deepdan) | Tomorrow Morning 06:50 to 08:12 AM (Amrit)",
+                "mantra": 'Om Namo Bhagavate Vasudevaya • "Govardhana Dharadhara Gokula Tranakarakah..."'
+            }
         return {
             "is_special": True,
             "title": "सोमवती / स्नान-दान अमावस्या एवं अन्नकूट-गोवर्धन पूर्व संध्या",
@@ -3151,7 +3171,7 @@ def _resolve_festival_and_muhurta(p, now_dt):
         "mantra": f"वार अधिपति ({vara_lord}) का नमन करें।"
     }
 
-_active_fest = _resolve_festival_and_muhurta(_top_quick_panchang, datetime.now())
+_active_fest = _resolve_festival_and_muhurta(_top_quick_panchang, datetime.now(), is_hi=is_hi)
 if _active_fest and _active_fest.get("is_special"):
     _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
     _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
@@ -3196,7 +3216,7 @@ if _active_fest and _active_fest.get("is_special"):
 </div>
 </div>
 <div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
-<b>शुभ चौघड़िया:</b> {_active_fest['choghadiya']} &nbsp;|&nbsp; <b>पूजन मंत्र:</b> <i>{_active_fest['mantra']}</i>
+<b>{'शुभ चौघड़िया:' if is_hi else 'Auspicious Choghadiya:'}</b> {_active_fest['choghadiya']} &nbsp;|&nbsp; <b>{'पूजन मंत्र:' if is_hi else 'Sacred Mantra:'}</b> <i>{_active_fest['mantra']}</i>
 </div>
 </div>"""
     st.markdown(_banner_html, unsafe_allow_html=True)
@@ -3208,15 +3228,15 @@ if is_logged_in_now and active_lp:
         st.markdown(f"""
         <div style="background: {TH_CARD_BG}; border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
             <div style="font-size: 0.74rem; color: {TH_GOLD_TITLE}; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
-                 आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)
+                {' आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)' if is_hi else ' ACTIVE DEFAULT HOROSCOPE'}
             </div>
             <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: {TH_NAME}; font-weight: 800; margin-top: 2px;">
-                {active_lp.get('name', 'जातक')}
+                {active_lp.get('name', 'जातक' if is_hi else 'Native')}
             </div>
             <div style="font-size: 0.86rem; color: {TH_MUTED}; margin-top: 3px; font-weight: 600;">
-                 <b>जन्म:</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
-                <b>स्थान:</b> {active_lp.get('city', 'स्थान')} &nbsp;|&nbsp; 
-                 <b>निर्देशांक:</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
+                 <b>{'जन्म:' if is_hi else 'DOB:'}</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
+                <b>{'स्थान:' if is_hi else 'Place:'}</b> {active_lp.get('city', 'स्थान' if is_hi else 'City')} &nbsp;|&nbsp; 
+                 <b>{'निर्देशांक:' if is_hi else 'Coords:'}</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -3224,20 +3244,26 @@ if is_logged_in_now and active_lp:
         st.markdown('<div class="mobile-button-row">', unsafe_allow_html=True)
         c_btn_a, c_btn_b = st.columns(2)
         with c_btn_a:
-            if st.button(" नई कुण्डली", key="new_k_top_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
+            _new_k_lbl = " नई कुण्डली" if is_hi else " + New Kundli"
+            _new_k_help = "नये जातक का जन्म विवरण भरें" if is_hi else "Enter birth details for a new person"
+            if st.button(_new_k_lbl, key="new_k_top_btn", use_container_width=True, help=_new_k_help):
                 st.session_state['show_birth_form'] = True
                 st.session_state.pop('loaded_profile', None)
                 st.rerun()
         with c_btn_b:
-            toggle_btn_txt = " फॉर्म बंद करें" if st.session_state.get('show_birth_form') else " विवरण बदलें"
-            if st.button(toggle_btn_txt, key="toggle_edit_k_btn", use_container_width=True, help="समय/स्थान संशोधित करें"):
+            if is_hi:
+                toggle_btn_txt = " फॉर्म बंद करें" if st.session_state.get('show_birth_form') else " विवरण बदलें"
+            else:
+                toggle_btn_txt = " Close Form" if st.session_state.get('show_birth_form') else " Edit Details"
+            _edit_k_help = "समय/स्थान संशोधित करें" if is_hi else "Modify birth time or place"
+            if st.button(toggle_btn_txt, key="toggle_edit_k_btn", use_container_width=True, help=_edit_k_help):
                 st.session_state['show_birth_form'] = not st.session_state.get('show_birth_form', False)
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
     # If user has multiple saved kundlis, show a quick switch drawer
     if len(saved_list) >= 1:
-        with st.expander(f" कुण्डली बदलें / सुरक्षित कुण्डलियाँ ({len(saved_list)})", expanded=False):
+        with st.expander(f" {'कुण्डली बदलें / सुरक्षित कुण्डलियाँ' if is_hi else 'Switch / Saved Kundlis'} ({len(saved_list)})", expanded=False):
             k_options = []
             k_disp_map = {}
             for k in saved_list:
@@ -6905,7 +6931,7 @@ if st.session_state.get('data_generated'):
             def _open_chat_fab_cb():
                 st.session_state["vyas_chat_open"] = True
 
-            st.button("आचार्य व्यास • चैट करें 💬", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
+            st.button("आचार्य व्यास • चैट करें 💬" if is_hi else "Acharya Vyas • Chat 💬", key="btn_floating_rishi_avatar", on_click=_open_chat_fab_cb)
             st.html("""
             <script>
             (function() {
