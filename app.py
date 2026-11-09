@@ -6466,7 +6466,7 @@ if st.session_state.get('data_generated'):
         div.st-key-btn_floating_rishi_avatar,
         .vyas-rishi-fab-wrap {{
             position: fixed !important;
-            bottom: 24px !important;
+            bottom: 84px !important;
             right: 24px !important;
             z-index: 9999999 !important;
             width: 68px !important;
@@ -6489,7 +6489,7 @@ if st.session_state.get('data_generated'):
             color: transparent !important;
             font-size: 0px !important;
             padding: 0 !important;
-            transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
             position: relative !important;
         }}
         div.st-key-btn_floating_rishi_avatar > button:hover,
@@ -6534,7 +6534,7 @@ if st.session_state.get('data_generated'):
         }}
         @media (max-width: 600px) {{
             div.st-key-btn_floating_rishi_avatar {{
-                bottom: 16px !important;
+                bottom: 74px !important;
                 right: 16px !important;
                 width: 58px !important;
                 height: 58px !important;
@@ -6567,7 +6567,7 @@ if st.session_state.get('data_generated'):
             flex-direction: column !important;
             padding: 10px 12px !important;
             backdrop-filter: blur(20px) !important;
-            animation: vyasPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            animation: vyasPopIn 0.14s ease-out !important;
         }}
 
         @keyframes vyasPopIn {{

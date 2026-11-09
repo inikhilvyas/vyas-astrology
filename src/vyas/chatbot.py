@@ -683,10 +683,10 @@ class VyasChatbotEngine:
                         "model": m_name,
                         "messages": messages,
                         "temperature": 0.6,
-                        "max_tokens": 4096
+                        "max_tokens": 1024
                     }
                     try:
-                        resp = requests.post(endpoint_url, json=payload, headers=headers, timeout=25)
+                        resp = requests.post(endpoint_url, json=payload, headers=headers, timeout=8)
                         if resp.status_code == 200:
                             data = resp.json()
                             text = data["choices"][0]["message"].get("content", "").strip()
@@ -709,7 +709,7 @@ class VyasChatbotEngine:
         return self._call_openai_compatible(
             endpoint_url="https://api.groq.com/openai/v1/chat/completions",
             key_pool=ai_key_manager.get_groq_key_pool(task="chat"),
-            models=["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"],
+            models=["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
             query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
         )
 
@@ -789,14 +789,14 @@ class VyasChatbotEngine:
                 "contents": contents,
                 "generationConfig": {
                     "temperature": 0.6,
-                    "maxOutputTokens": 4096
+                    "maxOutputTokens": 1024
                 }
             }
             for api_key in key_pool:
-                for gm_model in ["gemini-3.8-flash", "gemini-2.5-pro", "gemini-flash-latest", "gemini-1.5-flash"]:
+                for gm_model in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]:
                     url = f"https://generativelanguage.googleapis.com/v1beta/models/{gm_model}:generateContent?key={api_key}"
                     try:
-                        resp = requests.post(url, json=payload, headers=headers, timeout=25)
+                        resp = requests.post(url, json=payload, headers=headers, timeout=8)
                         if resp.status_code == 200:
                             data = resp.json()
                             candidates = data.get("candidates", [])
@@ -968,7 +968,7 @@ class VyasChatbotEngine:
             if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider != "classical":
             # Auto cascade: Try available models in order of speed and capability
-            for call_fn in [self._call_groq, self._call_deepseek, self._call_openai, self._call_gemini, self._call_kilo, self._call_openrouter]:
+            for call_fn in [self._call_groq, self._call_gemini, self._call_deepseek, self._call_openai, self._call_kilo, self._call_openrouter]:
                 reply = call_fn(query, fw, birth_info, chat_history)
                 if reply:
                     return self._append_curiosity_hook(reply, query)

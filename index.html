@@ -75,7 +75,7 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.18s ease-out;
         }
         .logo-orbit-container {
             position: relative;
@@ -317,7 +317,7 @@
             id="app-frame"
             src="https://vyas-astrology-111.streamlit.app/?embed=true" 
             allow="geolocation; microphone; camera; clipboard-write; clipboard-read; payment"
-            onload="setTimeout(() => { document.getElementById('loading-screen').style.opacity = '0'; setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500); }, 800);"
+            onload="const ls=document.getElementById('loading-screen'); if(ls){ ls.style.opacity='0'; setTimeout(()=>ls.style.display='none', 180); }"
         ></iframe>
     </div>
 
@@ -428,6 +428,15 @@
         })();
 
         // Start GIS
+        // Auto-dismiss loading screen fallback
+        setTimeout(() => {
+            const ls = document.getElementById('loading-screen');
+            if (ls && ls.style.display !== 'none') {
+                ls.style.opacity = '0';
+                setTimeout(() => ls.style.display = 'none', 180);
+            }
+        }, 2200);
+
         window.addEventListener('load', () => {
             initGoogleIdentity();
         });
