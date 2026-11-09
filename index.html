@@ -742,6 +742,7 @@
                     savedJwt = null;
                 }
 
+                const savedProfile = localStorage.getItem('vyas_active_profile');
                 let targetSrc = "https://vyas-astrology-111.streamlit.app/?embed=true";
                 if (search) {
                     const extra = search.startsWith('?') ? search.substring(1) : search;
@@ -753,6 +754,14 @@
                     targetSrc += "&stok=" + encodeURIComponent(savedToken);
                 } else if (savedJwt) {
                     targetSrc += "&g_jwt=" + encodeURIComponent(savedJwt);
+                }
+
+                // Auto-restore saved active kundli so user never has to re-type birth details
+                if (savedProfile && !targetSrc.includes('k_profile=')) {
+                    try {
+                        const b64Prof = btoa(unescape(encodeURIComponent(savedProfile)));
+                        targetSrc += "&k_profile=" + encodeURIComponent(b64Prof);
+                    } catch(e) {}
                 }
 
                 if (iframe) iframe.src = targetSrc;
@@ -826,6 +835,10 @@
                         localStorage.setItem('vyas_auth_token', event.data.token);
                         const authBar = document.getElementById('google-auth-bar');
                         if (authBar) authBar.style.display = 'none';
+                    } else if (event.data.type === 'VYAS_SAVE_ACTIVE_KUNDLI' && event.data.profile) {
+                        localStorage.setItem('vyas_active_profile', JSON.stringify(event.data.profile));
+                    } else if (event.data.type === 'VYAS_CLEAR_KUNDLI') {
+                        localStorage.removeItem('vyas_active_profile');
                     } else if (event.data.type === 'VYAS_LOGOUT') {
                         localStorage.removeItem('vyas_auth_token');
                         localStorage.removeItem('vyas_g_jwt');

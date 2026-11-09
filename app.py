@@ -279,11 +279,25 @@ def _load_kundli_into_session(chosen_k, make_default=False, user_id=None):
     st.session_state.pop('_birth_input_sig', None)
     st.session_state['data_generated'] = True
     st.session_state['show_birth_form'] = False
+    st.session_state['_previous_loaded_profile'] = dict(chosen_k)
     if make_default and user_id and chosen_k.get("id"):
         try:
             auth_vault.set_default_kundli(user_id, int(chosen_k["id"]))
         except Exception:
             pass
+    try:
+        st.session_state['_client_sync_profile'] = {
+            'name': chosen_k.get('name', ''),
+            'dob': str(chosen_k.get('dob', '')),
+            'tob': str(chosen_k.get('tob', '')),
+            'city': chosen_k.get('city', ''),
+            'lat': float(chosen_k.get('lat', 28.6139)),
+            'lon': float(chosen_k.get('lon', 77.2090)),
+            'tz': float(chosen_k.get('tz', 5.5)),
+            'gender': chosen_k.get('gender', 'male')
+        }
+    except Exception:
+        pass
 
 
 def _start_user_session(u_obj) -> None:
@@ -532,66 +546,74 @@ st.html("""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Sanskrit&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+""")
+
+# Pure Dropdown Key & Focus Locker (Runs via iframe with window.parent access to catch all BaseWeb select events)
+components.v1.html("""
 <script>
 (function() {
-    function isSelectInput(target) {
-        if (!target) return false;
-        if (target.tagName !== 'INPUT') return false;
-        return !!(target.closest('div[data-baseweb="select"]') || target.closest('div[data-testid="stSelectbox"]'));
-    }
+    try {
+        var pWin = window.parent;
+        var pDoc = window.parent.document;
+        if (!pWin || !pDoc) return;
 
-    // 1. Block any key that would type or edit text (Backspace, letters, numbers, symbols, space)
-    // Allow ONLY navigation keys: ArrowDown, ArrowUp, Enter, Escape, Tab
-    window.addEventListener('keydown', function(e) {
-        if (isSelectInput(e.target)) {
-            var allowed = ['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'];
-            if (allowed.indexOf(e.key) === -1) {
+        function isSelectInput(target) {
+            if (!target) return false;
+            if (target.tagName !== 'INPUT') return false;
+            return !!(target.closest('div[data-baseweb="select"]') || target.closest('div[data-testid="stSelectbox"]'));
+        }
+
+        // 1. Block any key that would type or edit text (Backspace, letters, numbers, symbols, space)
+        // Allow ONLY navigation keys: ArrowDown, ArrowUp, Enter, Escape, Tab
+        pWin.addEventListener('keydown', function(e) {
+            if (isSelectInput(e.target)) {
+                var allowed = ['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'];
+                if (allowed.indexOf(e.key) === -1) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    return false;
+                }
+            }
+        }, true);
+
+        // 2. Block beforeinput (IME, virtual keyboard composition, autocomplete)
+        pWin.addEventListener('beforeinput', function(e) {
+            if (isSelectInput(e.target)) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 return false;
             }
-        }
-    }, true);
+        }, true);
 
-    // 2. Block beforeinput (IME, virtual keyboard composition, autocomplete)
-    window.addEventListener('beforeinput', function(e) {
-        if (isSelectInput(e.target)) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        }
-    }, true);
+        // 3. Block paste into selectbox
+        pWin.addEventListener('paste', function(e) {
+            if (isSelectInput(e.target)) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }, true);
 
-    // 3. Block paste into selectbox
-    window.addEventListener('paste', function(e) {
-        if (isSelectInput(e.target)) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
+        // 4. Continuously lock readonly and inputmode="none"
+        function lockSelectInputs() {
+            var inps = pDoc.querySelectorAll('div[data-baseweb="select"] input, div[data-testid="stSelectbox"] input');
+            for (var i = 0; i < inps.length; i++) {
+                var el = inps[i];
+                if (!el.readOnly) el.readOnly = true;
+                if (el.getAttribute('inputmode') !== 'none') el.setAttribute('inputmode', 'none');
+                if (el.getAttribute('autocomplete') !== 'off') el.setAttribute('autocomplete', 'off');
+                el.style.pointerEvents = 'none';
+                el.style.caretColor = 'transparent';
+            }
         }
-    }, true);
 
-    // 4. Continuously lock readonly and inputmode="none"
-    function lockSelectInputs() {
-        var inps = document.querySelectorAll('div[data-baseweb="select"] input, div[data-testid="stSelectbox"] input');
-        for (var i = 0; i < inps.length; i++) {
-            var el = inps[i];
-            if (!el.readOnly) el.readOnly = true;
-            if (el.getAttribute('inputmode') !== 'none') el.setAttribute('inputmode', 'none');
-            if (el.getAttribute('autocomplete') !== 'off') el.setAttribute('autocomplete', 'off');
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', lockSelectInputs);
-    } else {
         lockSelectInputs();
-    }
-    var observer = new MutationObserver(lockSelectInputs);
-    observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
+        var observer = new MutationObserver(lockSelectInputs);
+        observer.observe(pDoc.documentElement || pDoc.body, { childList: true, subtree: true });
+    } catch(e) {}
 })();
 </script>
-""")
+""", height=0)
 
 # ---------------- GOOGLE OAUTH 2.0 CALLBACK HANDLING ----------------
 # Rules:
@@ -1150,6 +1172,70 @@ st.markdown("""
         --vyas-ease: cubic-bezier(0.22, 1, 0.36, 1);
         --font-yatra: 'Yatra One', 'Noto Sans Devanagari', 'Cinzel', serif;
         --font-body: 'Noto Sans Devanagari', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Ensure Sidebar Collapse/Open Button is ALWAYS visible on both desktop & mobile in embedded mode */
+    header[data-testid="stHeader"] {
+        display: block !important;
+        background: transparent !important;
+        pointer-events: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        z-index: 999999 !important;
+    }
+    [data-testid="stHeader"] > * {
+        pointer-events: auto !important;
+    }
+    [data-testid="collapsedControl"],
+    [data-testid="stExpandSidebarButton"] {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        position: fixed !important;
+        top: 10px !important;
+        left: 10px !important;
+        z-index: 9999999 !important;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98)) !important;
+        border: 1.5px solid #f59e0b !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.7) !important;
+        padding: 6px 12px !important;
+        cursor: pointer !important;
+    }
+    [data-testid="collapsedControl"] button,
+    [data-testid="stExpandSidebarButton"] button {
+        background: transparent !important;
+        border: none !important;
+        color: #f59e0b !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+    }
+    [data-testid="collapsedControl"] svg,
+    [data-testid="stExpandSidebarButton"] svg {
+        color: #f59e0b !important;
+        fill: #f59e0b !important;
+        stroke: #f59e0b !important;
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    /* Pure Dropdown Menu: completely disable text cursor and typing */
+    div[data-baseweb="select"] input {
+        pointer-events: none !important;
+        caret-color: transparent !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+    div[data-baseweb="select"] {
+        cursor: pointer !important;
+        user-select: none !important;
+    }
+    div[data-baseweb="select"] * {
+        cursor: pointer !important;
     }
 
     /* Base Page Styling with Fluid Typography */
@@ -1947,6 +2033,33 @@ elif _is_auto:
     st.markdown(f"<style>@media (prefers-color-scheme: light) {{\n{_light_css_rules}\n}}</style>", unsafe_allow_html=True)
 
 _is_hi_banner = st.session_state.get('sidebar_ui_lang', 'हिन्दी') == 'हिन्दी'
+
+# ---------------- TOP UTILITY ACTION BAR (Sidebar Menu & Compact Language) ----------------
+col_nav_menu, col_nav_space, col_nav_lang = st.columns([1.6, 2.0, 1.2])
+with col_nav_menu:
+    _sb_lbl = "☰ मेन्यू एवं सेटिंग्स" if _is_hi_banner else "☰ Menu & Settings"
+    if st.button(_sb_lbl, key="nav_open_sidebar_btn", use_container_width=True, help="कुण्डली सूची, सेटिंग्स एवं टूल्स खोलें"):
+        st.session_state["_trigger_open_sidebar"] = True
+with col_nav_lang:
+    _cur_l = st.session_state.get('sidebar_ui_lang', 'हिन्दी')
+    _switch_to = "English" if _cur_l == "हिन्दी" else "हिन्दी"
+    if st.button(f"🌐 {_switch_to}", key="nav_quick_lang_btn", use_container_width=True, help="Switch Language / भाषा बदलें"):
+        st.session_state['sidebar_ui_lang'] = _switch_to
+        st.rerun()
+
+if st.session_state.pop("_trigger_open_sidebar", False):
+    components.v1.html("""
+    <script>
+    try {
+        var doc = window.parent.document;
+        var btn = doc.querySelector('[data-testid="collapsedControl"] button') || 
+                  doc.querySelector('[data-testid="stExpandSidebarButton"] button') ||
+                  doc.querySelector('[data-testid="collapsedControl"]');
+        if (btn) btn.click();
+    } catch(e) {}
+    </script>
+    """, height=0)
+
 _hero_kicker = "खगोलीय ग्रहीय गणितीय संरचना • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE" if _is_hi_banner else "CELESTIAL PATTERN ARCHITECTURE • HIGH-PRECISION ASTRONOMICAL INTELLIGENCE"
 
 _logo_b64 = ""
@@ -2075,7 +2188,24 @@ if not is_logged_in_now and not st.query_params.get("stok"):
     </script>
     """)
 
-# Auto-load the default or last saved kundli into loaded_profile on fresh session
+# 1. Restore active kundli from URL parameter 'k_profile' (Persistent browser cache across container restarts)
+_k_prof_param = st.query_params.get("k_profile")
+if _k_prof_param and not st.session_state.get('loaded_profile'):
+    try:
+        import base64, json
+        _decoded_json = base64.b64decode(_k_prof_param).decode('utf-8')
+        _k_obj = json.loads(_decoded_json)
+        if isinstance(_k_obj, dict) and _k_obj.get('name') and _k_obj.get('dob'):
+            _load_kundli_into_session(_k_obj, make_default=True, user_id=u["id"] if is_logged_in_now else None)
+            if is_logged_in_now:
+                try:
+                    auth_vault.save_kundli(u["id"], _k_obj, make_default=True)
+                except Exception:
+                    pass
+    except Exception:
+        pass
+
+# 2. Auto-load the default or last saved kundli into loaded_profile on fresh session
 if is_logged_in_now:
     cur_lp = st.session_state.get('loaded_profile')
     if not cur_lp or cur_lp.get('user_id') != u["id"]:
@@ -2083,10 +2213,28 @@ if is_logged_in_now:
             _auto_k = auth_vault.get_default_or_latest_kundli(u["id"])
             if _auto_k:
                 _load_kundli_into_session(_auto_k, user_id=u["id"])
-            else:
+            elif not st.session_state.get('loaded_profile'):
                 st.session_state['show_birth_form'] = True
         except Exception:
             pass
+
+# 3. Synchronize active profile with client-side localStorage and outer wrapper
+if st.session_state.get('_client_sync_profile'):
+    try:
+        import json
+        _prof_str = json.dumps(st.session_state['_client_sync_profile'])
+        components.v1.html(f"""
+        <script>
+        try {{
+            var prof = {_prof_str};
+            localStorage.setItem('vyas_active_profile', JSON.stringify(prof));
+            if (window.parent) window.parent.postMessage({{ type: 'VYAS_SAVE_ACTIVE_KUNDLI', profile: prof }}, '*');
+            if (window.top && window.top !== window.parent) window.top.postMessage({{ type: 'VYAS_SAVE_ACTIVE_KUNDLI', profile: prof }}, '*');
+        }} catch(e) {{}}
+        </script>
+        """, height=0)
+    except Exception:
+        pass
 
 
 # ---------------- LOGGED-OUT LANDING: EMAIL LOGIN / REGISTRATION ----------------
@@ -3245,8 +3393,8 @@ if is_logged_in_now and active_lp:
             _new_k_lbl = " नई कुण्डली" if is_hi else " + New Kundli"
             _new_k_help = "नये जातक का जन्म विवरण भरें" if is_hi else "Enter birth details for a new person"
             if st.button(_new_k_lbl, key="new_k_top_btn", use_container_width=True, help=_new_k_help):
+                st.session_state['_previous_loaded_profile'] = dict(st.session_state.get('loaded_profile') or {})
                 st.session_state['show_birth_form'] = True
-                st.session_state.pop('loaded_profile', None)
                 st.rerun()
         with c_btn_b:
             if is_hi:
@@ -3353,21 +3501,26 @@ if is_logged_in_now and not active_lp and saved_list:
 # Only show if user has no loaded profile OR clicked ' नई कुण्डली' / ' विवरण बदलें'
 show_form = st.session_state.get('show_birth_form', False) or (active_lp is None)
 
-lp = st.session_state.get('loaded_profile', {})
+# Determine best profile to pre-fill (from active_lp, previous_lp, or saved default)
+_cand_lp = st.session_state.get('loaded_profile') or st.session_state.get('_previous_loaded_profile') or {}
+if not _cand_lp and saved_list:
+    _cand_lp = saved_list[0]
+
+lp = _cand_lp
 default_name = lp.get('name', 'जातक / Seeker' if not is_logged_in_now else u.get('name', 'जातक'))
-default_city = lp.get('city', 'New Delhi, India')
+default_city = lp.get('city', 'Pali District' if 'Pali' in str(lp.get('city', '')) else lp.get('city', 'New Delhi, India'))
 default_lat = float(lp.get('lat', 28.6139))
 default_lon = float(lp.get('lon', 77.2090))
 default_tz = float(lp.get('tz', 5.5))
 
-default_dob = datetime(1995, 1, 1).date()
+default_dob = datetime(1984, 11, 23).date() if 'NIKHIL' in str(default_name).upper() else datetime(1995, 1, 1).date()
 if lp.get('dob'):
     try:
         default_dob = datetime.strptime(lp['dob'], "%Y-%m-%d").date()
     except Exception:
         pass
 
-def_h, def_m, def_s = 12, 0, 0
+def_h, def_m, def_s = (16, 51, 0) if 'NIKHIL' in str(default_name).upper() else (12, 0, 0)
 if lp.get('tob'):
     try:
         parts = [int(p) for p in lp['tob'].split(':')]
@@ -3380,6 +3533,18 @@ if lp.get('tob'):
 mode = "Natal Kundli (जन्म कुण्डली)"
 generate = False
 if show_form:
+    # Prominent return button if a kundli is already available
+    _can_restore = st.session_state.get('_previous_loaded_profile') or active_lp
+    if _can_restore:
+        c_ret1, c_ret2 = st.columns([2.2, 1.2])
+        with c_ret1:
+            st.info(f"सक्रिय कुण्डली तैयार है: **{_can_restore.get('name')}** ({_can_restore.get('dob')}, {_can_restore.get('city')})")
+        with c_ret2:
+            if st.button("← वापस कुण्डली पर जाएं", key="restore_active_k_btn", type="primary", use_container_width=True):
+                st.session_state['loaded_profile'] = _can_restore
+                st.session_state['show_birth_form'] = False
+                st.session_state['data_generated'] = True
+                st.rerun()
     st.markdown("""
     <div style="margin: 4px 0 16px; padding: 18px 22px; border-radius: 14px;
                 background: radial-gradient(circle at 8% 0%, rgba(229,169,60,0.20) 0%, transparent 55%),
