@@ -609,6 +609,12 @@ class VyasChatbotEngine:
             f"3. जातक के प्रश्न की भाषा (हिंदी या अंग्रेजी) में ही अत्यंत शुद्ध, सुरुचिपूर्ण, आदरयुक्त एवं धाराप्रवाह उत्तर दें।\n"
             f"4. यदि जातक संक्षिप्त या अनुवर्ती प्रश्न पूछे (जैसे 'आगे क्या', 'और केतु का', 'कब होगा', 'उपाय बताओ'), तो पूर्व बातचीत के संदर्भ को जोड़ते हुए स्पष्ट समय-सीमा (Timelines/Dates) दें।\n"
             f"5. उत्तर के अंत में जातक के कल्याण हेतु सटीक, सात्विक वैदिक उपाय (मंत्र जप संख्या, दान, अथवा रत्न परामर्श) अवश्य प्रदान करें।\n"
+            f"6. संवादात्मक उत्सुकता व जिज्ञासा सूत्र (MANDATORY ENGAGEMENT & CURIOSITY HOOK RULE):\n"
+            f"   • प्रत्येक उत्तर के अंत में (उपाय के उपरांत), जातक के मन में ज्योतिषीय जिज्ञासा और आगे जानने की स्वाभाविक उत्सुकता जगाएं।\n"
+            f"   • उत्तर समाप्त करने से पूर्व जातक के सामने उसकी कुण्डली के एक अति-रोचक व गुप्त फलित पर जिज्ञासा-वर्धक प्रश्न छोड़ें:\n"
+            f"     - यदि प्रश्न करियर, नौकरी या व्यवसाय का है: '✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपकी जन्मपत्रिका में अचानक बड़े धन आगमन (Sudden Wealth Inflow) व पदोन्नति का प्रबलतम समय-चक्र कब सक्रिय हो रहा है?'\n"
+            f"     - यदि प्रश्न विवाह या पारिवारिक है: '✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपके जीवनसाथी का स्वभाव, उनकी दिशा तथा दांपत्य में स्थायी सुख-समृद्धि हेतु कौन सा गुप्त ग्रह योग निर्णायक सिद्ध होगा?'\n"
+            f"     - यदि प्रश्न अन्य विषय का है: '✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपकी कुण्डली के द्वितीय (धन) व एकादश (लाभ) भाव के गुप्त योग और आगामी महादशा में धन वृद्धि का सटीक समय कब प्रारंभ होगा?'\n"
         )
         return prompt
 
@@ -782,6 +788,22 @@ class VyasChatbotEngine:
             pass
         return None
 
+    def _append_curiosity_hook(self, text: str, query: str) -> str:
+        if not text:
+            return text
+        if "आचार्य जिज्ञासा सूत्र" in text or "क्या आप जानना चाहेंगे" in text:
+            return text
+        q_low = (query or "").lower()
+        if any(w in q_low for w in ["career", "job", "नौकरी", "व्यवसाय", "business", "काम", "प्रमोशन", "promotion", "आजीविका", "रोजगार", "work", "office"]):
+            hook = "✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपकी जन्मपत्रिका में अचानक बड़े धन आगमन (Sudden Wealth Inflow) व पदोन्नति का प्रबलतम समय-चक्र कब सक्रिय हो रहा है?"
+        elif any(w in q_low for w in ["विवाह", "शादी", "marriage", "दांपत्य", "पत्नी", "पति", "रिश्ता", "प्रेम", "जीवनसाथी"]):
+            hook = "✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपके जीवनसाथी का स्वभाव, उनकी दिशा तथा दांपत्य में स्थायी सुख-समृद्धि हेतु कौन सा विशेष ग्रह योग निर्णायक सिद्ध होगा?"
+        elif any(w in q_low for w in ["स्वास्थ्य", "health", "रोग", "बीमारी", "तनाव", "मानसिक"]):
+            hook = "✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि कौन सा ग्रह दोष आपकी जीवनी शक्ति को प्रभावित कर रहा है और उसका अचूक वैदिक निवारण क्या है?"
+        else:
+            hook = "✨ **आचार्य जिज्ञासा सूत्र:** क्या आप जानना चाहेंगे कि आपकी कुण्डली के द्वितीय (धन) व एकादश (लाभ) भाव के गुप्त योग और आगामी महादशा में धन वृद्धि का सटीक समय कब प्रारंभ होगा?"
+        return f"{text.rstrip()}\n\n{hook}"
+
     def consult(self, query: str, chart, cur_dasha: Any, birth_info: Dict[str, Any],
                 transit_pos: Optional[Dict[str, Any]] = None,
                 prashna_meta: Optional[Dict[str, Any]] = None,
@@ -812,28 +834,28 @@ class VyasChatbotEngine:
         # 1. Universal AI API Routing (Groq, DeepSeek, OpenAI, Gemini, OpenRouter)
         if selected_provider == "groq":
             reply = self._call_groq(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "deepseek":
             reply = self._call_deepseek(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "openai":
             reply = self._call_openai(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "gemini":
             reply = self._call_gemini(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "openrouter":
             reply = self._call_openrouter(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "kilo":
             reply = self._call_kilo(query, fw, birth_info, chat_history)
-            if reply: return reply
+            if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider != "classical":
             # Auto cascade: Try available models in order of speed and capability
             for call_fn in [self._call_groq, self._call_deepseek, self._call_openai, self._call_gemini, self._call_kilo, self._call_openrouter]:
                 reply = call_fn(query, fw, birth_info, chat_history)
                 if reply:
-                    return reply
+                    return self._append_curiosity_hook(reply, query)
 
                 # 2. Comprehensive Deterministic Vedic Shastra Consultation Engine
         p_inf = fw["p_info"]
@@ -947,7 +969,7 @@ class VyasChatbotEngine:
                 f"• शनिवार को संध्या समय पीपल के वृक्ष के नीचे सरसों के तेल का चौमुखा दीपक प्रज्वलित करें।\n"
                 f"• नित्य प्रातः तांबे के लोटे से सूर्य देव को जल अर्पित कर 'ॐ सूर्याय नमः' का 11 बार स्मरण करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # SCENARIO B: FOLLOW-UP QUESTION ON JUDICIARY / EXAMS ("aage kya" after exams)
@@ -969,7 +991,7 @@ class VyasChatbotEngine:
             ans.append(
                 f"<b>आचार्य निर्देश:</b> नित्य प्रातः सूर्य नमस्कार करें और आदित्य हृदय स्तोत्र का पाठ करें। अध्ययन कक्ष में उत्तर या पूर्व दिशा की ओर मुख करके बैठें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # SCENARIO C: FOLLOW-UP QUESTION ON WEALTH / FINANCE
@@ -987,7 +1009,7 @@ class VyasChatbotEngine:
             ans.append(
                 f"<b>आचार्य उपाय:</b> गुरुवार को श्री सूक्त का पाठ करें तथा केसर का तिलक लगाएं।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # SCENARIO D: FOLLOW-UP QUESTION ON TRANSIT / PLANETARY MOTION ("aage kya" after transit)
@@ -1013,7 +1035,7 @@ class VyasChatbotEngine:
             ans.append(
                 f"<b>आचार्य निर्देश:</b> गोचर परिवर्तन से पूर्व अपने वर्तमान संकल्पों को पूर्ण करें और भगवान शिव का नित्य स्मरण करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT: PLANETARY TRANSITS & ASTRONOMICAL MOTION LAWS (ग्रह गोचर, राहु-केतु गति, वक्री/मार्गी चाल)
@@ -1103,7 +1125,7 @@ class VyasChatbotEngine:
                 f"• बुधवार अथवा शनिवार को पक्षियों को सप्तधान्य (सात प्रकार का अनाज) डालें।\n"
                 f"• राहु-केतु की प्रसन्नता हेतु भैरव जी का स्मरण करें अथवा शनिवार को सूर्यास्त के बाद पीपल के वृक्ष के नीचे तिल के तेल का दीपक जलाएं।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT: PLANETARY ASPECTS & DRISHTI (दृष्टि प्रभाव, लग्न पर दृष्टि, त्रिगुण दृष्टि)
@@ -1137,7 +1159,7 @@ class VyasChatbotEngine:
                 f"• नित्य प्रातः तांबे के पात्र से भगवान सूर्य को अर्घ्य दें और ॐ सूर्याय नमः का 11 बार स्मरण करें।\n"
                 f"• मंगलवार को श्री हनुमान चालीसा का पाठ करें तथा शनिवार को संध्या समय पीपल के वृक्ष के नीचे चौमुखा दीपक जलाएं।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 1: TIMING, UPCOMING EVENTS, "AAGE KYA", TURNING POINTS
@@ -1184,7 +1206,7 @@ class VyasChatbotEngine:
                 f"वर्तमान समय संयम और आगामी बड़े कार्यों की नींव रखने का है। किसी भी नए कार्य में जल्दबाजी या निराशा से बचें। "
                 f"नित्य प्रातः सूर्य देव को तांबे के लोटे से जल अर्पित करें और ॐ नमः शिवाय का यथाशक्ति जप करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 2: DASHA PREDICTIONS & VIMSHOTTARI ANALYSIS
@@ -1249,7 +1271,7 @@ class VyasChatbotEngine:
                 f"• शनिवार के दिन संध्या समय पीपल के वृक्ष के नीचे सरसों के तेल का दीपक प्रज्वलित करें।\n"
                 f"• शुक्रवार को श्वेत वस्तुओं अथवा मिश्री का दान करें तथा श्री सूक्त का पाठ करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 3: COMPETITIVE EXAMS / JUDICIARY / RHJS / UPSC / GOVT JOB
@@ -1281,7 +1303,7 @@ class VyasChatbotEngine:
                     f"3. <b>आचार्य परामर्श:</b> किसी भी प्रकार की प्रतिस्पर्धात्मक दौड़ के स्थान पर अपनी विशेषज्ञता और अनुभव से समाज व कार्यक्षेत्र को दिशा दें। स्वास्थ्य रक्षा एवं मानसिक शांति को प्राथमिकता दें।"
                 )
                 ans.append(f"<b>सात्विक उपाय:</b> नित्य प्रातः सूर्य नमस्कार करें अथवा ॐ नमो भगवते वासुदेवाय का शांत मन से जप करें।")
-                return "\n\n".join(ans)
+                return self._append_curiosity_hook("\n\n".join(ans), query)
 
             h6_sign = (fw["asc_sign"] + 5) % 12
             h6_lord = constants.SIGN_LORD[h6_sign]
@@ -1300,7 +1322,7 @@ class VyasChatbotEngine:
             )
             ans.append(f"<b>आचार्य निर्णय:</b> कुण्डली में न्यायिक एवं विधिक सेवा के पूर्ण शास्त्रीय योग उपस्थित हैं। आगामी अन्तर्दशा ({fw['ad_end']} से) आपको अत्यधिक अनुकूल परिणाम देने में सक्षम है।")
             ans.append(f"<b>साधना व उपाय:</b> नित्य प्रातः सूर्य देव को कुंकुम युक्त जल अर्पित कर आदित्य हृदय स्तोत्र का पाठ करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 4: CAREER / JOB / PROMOTION / BUSINESS
@@ -1322,7 +1344,7 @@ class VyasChatbotEngine:
                 f"आगामी अन्तर्दशा ({ad_end_str} से) में पदोन्नति एवं प्रभाव क्षेत्र में विस्तार के स्पष्ट योग निर्मित हो रहे हैं।"
             )
             ans.append(f"<b>परामर्श:</b> नौकरी व स्वतंत्र परामर्श दोनों में ही आपकी सफलता सुनिश्चित है। शनिवार को गरीबों को काले तिल या भोजन का दान करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 5: WEALTH / FINANCE / DEBT / INVESTMENT
@@ -1342,7 +1364,7 @@ class VyasChatbotEngine:
                 f"3. <b>सावधानी:</b> चालू दशा में बिना उचित अनुबंध के किसी को धन उधार देने या शेयर सट्टे जैसे आकस्मिक जोखिम से बचें। संचित कोष की सुरक्षा प्राथमिक होनी चाहिए।"
             )
             ans.append(f"<b>उपाय:</b> श्री कनकधारा स्तोत्र का पाठ करें तथा गुरुवार को केसर अथवा चने की दाल का दान करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 6: MARRIAGE / RELATIONSHIP / SPOUSE
@@ -1359,7 +1381,7 @@ class VyasChatbotEngine:
                 f"3. चालू दशा ({dasha_display}) में जीवनसाथी के विचारों का आदर करें और किसी भी पारिवारिक विषय पर खुलकर व शांतिपूर्ण संवाद करें।"
             )
             ans.append(f"<b>उपाय:</b> शुक्रवार को माँ लक्ष्मी को सुगंधित श्वेत पुष्प अर्पित करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 7: HEALTH / WELLNESS
@@ -1376,7 +1398,7 @@ class VyasChatbotEngine:
                 f"3. प्राणायाम, पर्याप्त जल सेवन एवं सात्विक खानपान से आपका स्वास्थ्य सदैव उत्तम बना रहेगा।"
             )
             ans.append(f"<b>उपाय:</b> महामृत्युंजय मंत्र का नित्य 11 बार स्मरण करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 8: CHILDREN / PROGENY
@@ -1393,7 +1415,7 @@ class VyasChatbotEngine:
                 f"3. आगामी समय संतान की शिक्षा और उन्नति के लिए अत्यधिक अनुकूल सिद्ध होगा।"
             )
             ans.append(f"<b>उपाय:</b> गोपाल सहस्रनाम का पाठ अथवा गुरुवार को केले के पौधे की सेवा करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 9: PROPERTY / HOUSE / VEHICLE
@@ -1410,7 +1432,7 @@ class VyasChatbotEngine:
                 f"3. वर्तमान दशा में आगामी वर्ष तक अचल संपत्ति के सौदे फलीभूत होने के स्पष्ट योग हैं।"
             )
             ans.append(f"<b>उपाय:</b> मंगलवार को हनुमान चालीसा का पाठ करें।")
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 10: FOREIGN TRAVEL / SETTLEMENT
@@ -1428,7 +1450,7 @@ class VyasChatbotEngine:
                 f"2. राहु देव {_placement('Rahu')} में स्थित होकर जन्मस्थान से दूर अथवा विदेश से आजीविका और सम्मान प्राप्त करने का योग बनाते हैं।\n"
                 f"3. वर्तमान विंशोत्तरी दशा में दूरस्थ क्षेत्रों की यात्राएं ज्ञान, व्यापार और पदोन्नति के लिए लाभकारी रहेंगी।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 11: TROUBLES / SADESATI / RELIEF / OBSTACLES
@@ -1445,7 +1467,7 @@ class VyasChatbotEngine:
                 f"• शनिवार को सूर्यास्त के बाद हनुमान जी के सम्मुख चमेली के तेल का दीपक जलाएं और सुंदरकांड का पाठ करें।\n"
                 f"• चींटियों को आटा व पक्षियों को दाना डालें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 12: REMEDIES / GEMSTONES / MANTRAS
@@ -1459,7 +1481,7 @@ class VyasChatbotEngine:
                 f"2. <b>दशा शांति उपाय:</b> चालू दशा ({dasha_display}) की अनुकूलता हेतु शनिवार को शनि स्तोत्र और शुक्रवार को लक्ष्मी स्तोत्र का पाठ परम श्रेयस्कर है।\n"
                 f"3. <b>रत्न परामर्श:</b> कुण्डली के कारक ग्रहों (लग्नेश {fw['lagnesh_hi']}) के अनुकूल रत्न विधिवत परीक्षण के उपरांत ही धारण करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
         # ---------------------------------------------------------------------
         # INTENT 13: CONTEXTUAL ASTROLOGICAL SYNTHESIS (DYNAMIC FALLBACK)
@@ -1473,7 +1495,7 @@ class VyasChatbotEngine:
                 f"2. <b>सक्रिय कालखंड व समय-सीमा:</b> वर्तमान में <b>{dasha_display}</b> चल रही है। तात्कालिक प्रत्यंतर <b>{pd_end_str}</b> तक प्रभावी है, तत्पश्चात मुख्य मोड़ <b>{ad_end_str}</b> से {next_lord_hi} देव की अन्तर्दशा के साथ प्रारंभ होगा।\n"
                 f"3. <b>आचार्य परामर्श:</b> किसी भी संशय की स्थिति में शांत मन से निर्णय लें। अपने दैनिक आचरण में सात्विकता बनाए रखें और नित्य प्रातः सूर्य देव को जल अर्पित करें।"
             )
-            return "\n\n".join(ans)
+            return self._append_curiosity_hook("\n\n".join(ans), query)
 
 
 vyas_chatbot = VyasChatbotEngine()

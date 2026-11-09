@@ -1985,117 +1985,167 @@ with st.sidebar:
     else:
         st.markdown("<style>:root { --app-font-size: 19.5px !important; } html, body, p, div, span, label, .stMarkdown, .glass-card, .predict-card { font-size: 19.5px !important; }</style>", unsafe_allow_html=True)
 
-    # ---------------- 7:00 AM DAILY HOROSCOPE NOTIFICATION WIDGET ----------------
-    _notif_exp_title = "🔔 7:00 AM दैनिक राशिफल अलर्ट" if is_hi else "🔔 7:00 AM Daily Horoscope Alert"
+    # ---------------- NOTIFICATION CENTER & ALERT HISTORY ----------------
+    _notif_exp_title = "🔔 सूचना केंद्र एवं अलर्ट इतिहास (Notification Center & History)" if is_hi else "🔔 Notification Center & Alert History"
     with st.expander(_notif_exp_title, expanded=False):
-        st.markdown(f"""
-        <div style="font-size: 0.85rem; color: {TH_MUTED}; line-height: 1.6; margin-bottom: 10px;">
-            <b>{'प्रातःकालीन व्यक्तिगत राशिफल एवं पंचांग सूचना:' if is_hi else 'Daily Morning Personalised Alert:'}</b><br/>
-            {'रोज़ाना सुबह 7:00 बजे आपके फ़ोन/ब्राउज़र पर आज का शुभ अभिजीत मुहूर्त, राहुकाल, नवतारा चक्र एवं चालू दशा का फलादेश प्राप्त करें।' if is_hi else 'Receive your personalised morning horoscope, Abhijit Muhurta, Rahu Kaal and running dasha at 7:00 AM daily.'}
-        </div>
-        """, unsafe_allow_html=True)
-        st.components.v1.html("""
-        <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-            <div style="display: flex; gap: 8px; flex-direction: column;">
-                <button id="notif-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
-                    🔔 7:00 AM अलर्ट चालू करें
-                </button>
-                <button id="test-notif-btn" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; font-weight: 700; border: 1.5px solid #f59e0b; border-radius: 8px; padding: 7px 12px; font-size: 0.82rem; cursor: pointer; width: 100%;">
-                    ⚡ अभी टेस्ट नोटिफिकेशन भेजें (Send Test Alert)
-                </button>
+        t_hist, t_settings = st.tabs(["📜 अलर्ट इतिहास (Alert History)", "⚙️ पुश नोटिफिकेशन सेटिंग्स (Push Settings)"])
+        with t_hist:
+            st.markdown(f"""
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+                <div style="background: rgba(16, 185, 129, 0.12); border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: #34d399; font-size: 0.92rem;">🌟 आज का प्रातः 7:00 AM दैनिक राशिफल अलर्ट</span>
+                        <span style="font-size: 0.72rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 12px;">आज 07:00 AM • सक्रिय</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: #e2e8f0; margin-top: 4px; line-height: 1.4;">
+                        नवतारा चक्र (अति-मित्र तारा) एवं चालू विंशोत्तरी दशा (शुक्र-शनि) के समन्वय से आज का दिन <b>72% अनुकूल</b> है। कार्यक्षेत्र में सम्मान, अटके कार्य पूर्ण होने व धन लाभ के शुभ संकेत हैं।
+                    </div>
+                </div>
+
+                <div style="background: rgba(245, 158, 11, 0.12); border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: #fbbf24; font-size: 0.92rem;">🐄 गोवर्धन पूजा एवं 56 भोग अन्नकूट (अग्रिम मुहूर्त अलर्ट)</span>
+                        <span style="font-size: 0.72rem; color: #f59e0b; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 12px;">कल 10 नवम्बर (मंगलवार)</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: #e2e8f0; margin-top: 4px; line-height: 1.4;">
+                        शास्त्रानुसार कल 10 नवम्बर (मंगलवार) को उदयातिथि प्रतिपदा में गोवर्धन पूजन व अन्नकूट महोत्सव मनाया जाएगा।<br/>
+                        • प्रातः कालीन गोवर्धन पूजन: <b>प्रातः 06:50 से 09:35 AM</b> (शुभ / अमृत)<br/>
+                        • अभिजीत व अन्नकूट भोग: <b>मध्याह्न 11:58 AM से 12:42 PM</b> (सर्वोत्तम)<br/>
+                        • सायंकालीन गोपूजन व दीपदान: <b>सायं 05:49 से 07:27 PM</b> (प्रदोष काल)
+                    </div>
+                </div>
+
+                <div style="background: rgba(148, 163, 184, 0.10); border-left: 4px solid #64748b; border-radius: 8px; padding: 10px 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: #cbd5e1; font-size: 0.92rem;">🪔 दीपावली महापर्व एवं श्री महालक्ष्मी पूजन</span>
+                        <span style="font-size: 0.72rem; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 12px;">8 नवम्बर 2026 • सम्पन्न</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 4px; line-height: 1.4;">
+                        कार्तिक कृष्ण अमावस्या • प्रदोष काल व स्थिर वृषभ लग्न (सायं 06:15 - 08:12 PM) महालक्ष्मी पूजन सफलतापूर्वक संपन्न हुआ।
+                    </div>
+                </div>
+
+                <div style="background: rgba(59, 130, 246, 0.10); border-left: 4px solid #3b82f6; border-radius: 8px; padding: 10px 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: #93c5fd; font-size: 0.92rem;">🪐 ग्रह गोचर एवं दशा संचरण अलर्ट</span>
+                        <span style="font-size: 0.72rem; color: #93c5fd; background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 12px;">साप्ताहिक अपडेट</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: #e2e8f0; margin-top: 4px; line-height: 1.4;">
+                        चन्द्रमा आपकी जन्म राशि से अनुकूल संचरण में हैं। चालू विंशोत्तरी दशा (शुक्र-शनि) के सूक्ष्म फलित हेतु आचार्य व्यास जी से लाइव परामर्श करें।
+                    </div>
+                </div>
             </div>
-            <div id="notif-status" style="font-size: 0.78rem; color: #94a3b8; margin-top: 8px; line-height: 1.4;"></div>
-        </div>
-        <script>
-            const btn = document.getElementById('notif-btn');
-            const testBtn = document.getElementById('test-notif-btn');
-            const status = document.getElementById('notif-status');
+            """, unsafe_allow_html=True)
 
-            function getNotifAPI() {
-                try {
-                    if (window.parent && window.parent.Notification) return window.parent.Notification;
-                } catch(e) {}
-                if (typeof Notification !== 'undefined') return Notification;
-                return null;
-            }
+        with t_settings:
+            st.markdown(f"""
+            <div style="font-size: 0.85rem; color: {TH_MUTED}; line-height: 1.6; margin-bottom: 10px;">
+                <b>{'दैनिक अलर्ट सूचना प्रणाली:' if is_hi else 'Daily Alert Notification System:'}</b><br/>
+                {'रोज़ाना सुबह 7:00 बजे आज का शुभ अभिजीत मुहूर्त, राहुकाल, नवतारा चक्र एवं चालू दशा का फलादेश अपने फ़ोन/ब्राउज़र पर प्राप्त करें।' if is_hi else 'Receive your daily morning horoscope, Abhijit Muhurta, Rahu Kaal and running dasha at 7:00 AM daily.'}
+            </div>
+            """, unsafe_allow_html=True)
+            st.components.v1.html("""
+            <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                <div style="display: flex; gap: 8px; flex-direction: column;">
+                    <button id="notif-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; font-weight: 800; border: none; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; cursor: pointer; width: 100%; box-shadow: 0 4px 14px rgba(37,99,235,0.35);">
+                        🔔 7:00 AM अलर्ट चालू करें
+                    </button>
+                    <button id="test-notif-btn" style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; font-weight: 700; border: 1.5px solid #f59e0b; border-radius: 8px; padding: 7px 12px; font-size: 0.82rem; cursor: pointer; width: 100%;">
+                        ⚡ अभी टेस्ट अलर्ट भेजें (Send Test Alert)
+                    </button>
+                </div>
+                <div id="notif-status" style="font-size: 0.78rem; color: #94a3b8; margin-top: 8px; line-height: 1.4;"></div>
+            </div>
+            <script>
+                const btn = document.getElementById('notif-btn');
+                const testBtn = document.getElementById('test-notif-btn');
+                const status = document.getElementById('notif-status');
 
-            function updateStatus() {
-                const N = getNotifAPI();
-                if (!N) {
-                    status.innerHTML = "⚠️ इस ब्राउज़र में वेब नोटिफिकेशन समर्थित नहीं है (कृपया Chrome/Edge प्रयोग करें)।";
-                    btn.disabled = true;
-                    testBtn.disabled = true;
-                    return;
+                function getNotifAPI() {
+                    try {
+                        if (window.parent && window.parent.Notification) return window.parent.Notification;
+                    } catch(e) {}
+                    if (typeof Notification !== 'undefined') return Notification;
+                    return null;
                 }
-                if (N.permission === "granted") {
-                    status.innerHTML = "✅ दैनिक 7:00 AM राशिफल अलर्ट सक्रिय है!";
-                    status.style.color = "#34d399";
-                    btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily Active)";
-                    btn.style.background = "linear-gradient(135deg, #059669, #10b981)";
-                } else if (N.permission === "denied") {
-                    status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र एड्रेस बार में 🔒 या सेटिंग्स पर टैप कर Notification को Allow करें।";
-                    status.style.color = "#f87171";
-                } else {
-                    status.innerHTML = "सूचना पाने हेतु ऊपर बटन दबाकर 'Allow' करें।";
-                }
-            }
 
-            function playChime() {
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 1.0);
-                } catch(e) {}
-            }
-
-            async function requestAndNotify(isTest) {
-                playChime();
-                if (isTest) {
-                    status.innerHTML = "🔔 <b>परीक्षण सफल!</b> शुभ दीपावली! महालक्ष्मी पूजन मुहूर्त: <b>सायं 06:15 से 08:12 PM</b> (स्थिर वृषभ लग्न)।";
-                    status.style.color = "#34d399";
+                function updateStatus() {
+                    const N = getNotifAPI();
+                    if (!N) {
+                        status.innerHTML = "⚠️ इस ब्राउज़र में वेब नोटिफिकेशन समर्थित नहीं है (कृपया Chrome/Edge प्रयोग करें)।";
+                        btn.disabled = true;
+                        testBtn.disabled = true;
+                        return;
+                    }
+                    if (N.permission === "granted") {
+                        status.innerHTML = "✅ दैनिक 7:00 AM राशिफल अलर्ट सक्रिय है!";
+                        status.style.color = "#34d399";
+                        btn.innerText = "✓ अलर्ट सक्रिय है (7:00 AM Daily Active)";
+                        btn.style.background = "linear-gradient(135deg, #059669, #10b981)";
+                    } else if (N.permission === "denied") {
+                        status.innerHTML = "❌ नोटिफिकेशन ब्लॉक है। ब्राउज़र एड्रेस बार में 🔒 या सेटिंग्स पर टैप कर Notification को Allow करें।";
+                        status.style.color = "#f87171";
+                    } else {
+                        status.innerHTML = "सूचना पाने हेतु ऊपर बटन दबाकर 'Allow' करें।";
+                    }
                 }
-                const N = getNotifAPI();
-                if (!N) return;
+
+                function playChime() {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        osc.stop(ctx.currentTime + 1.0);
+                    } catch(e) {}
+                }
+
+                async function requestAndNotify(isTest) {
+                    playChime();
+                    if (isTest) {
+                        status.innerHTML = "🔔 <b>परीक्षण सफल!</b> VYAS दैनिक ज्योतिष एवं राशिफल अलर्ट पूर्णतः सक्रिय है।";
+                        status.style.color = "#34d399";
+                    }
+                    const N = getNotifAPI();
+                    if (!N) return;
+                    try {
+                        const perm = await N.requestPermission();
+                        if (perm === "granted") {
+                            new N("VYAS • दैनिक ज्योतिष एवं पंचांग अलर्ट", {
+                                body: isTest 
+                                    ? "परीक्षण सफल! VYAS पूर्णतः सक्रिय है। दैनिक राशिफल, शुभ मुहूर्त एवं विशेष पर्व अलर्ट आपको नियमित प्राप्त होंगे।" 
+                                    : "आज का दैनिक पंचांग, शुभ मुहूर्त एवं विंशोत्तरी दशा अनुसार आपका व्यक्तिगत राशिफल तैयार है।",
+                                icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
+                            });
+                        }
+                    } catch (err) {}
+                    if (!isTest) updateStatus();
+                }
+
+                btn.addEventListener('click', () => requestAndNotify(false));
+                testBtn.addEventListener('click', () => requestAndNotify(true));
+                updateStatus();
+
+                // Auto flash browser notification once per session if already granted
                 try {
-                    const perm = await N.requestPermission();
-                    if (perm === "granted") {
-                        new N("VYAS • शुभ दीपावली एवं महालक्ष्मी पूजन", {
-                            body: isTest 
-                                ? "परीक्षण सफल! VYAS पूर्णतः सक्रिय है। शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त (स्थिर वृषभ लग्न): सायं 06:15 से 08:12 PM तक।" 
-                                : "शुभ दीपावली! आज का पंचांग व महालक्ष्मी पूजन मुहूर्त (सायं 06:15 - 08:12 PM) एवं चालू दशा का व्यक्तिगत राशिफल तैयार है।",
+                    const autoN = getNotifAPI();
+                    if (autoN && autoN.permission === "granted" && !sessionStorage.getItem('vyas_daily_notif_fired')) {
+                        new autoN("VYAS • दैनिक ज्योतिष एवं पंचांग अलर्ट", {
+                            body: "आज का दैनिक पंचांग, शुभ मुहूर्त एवं विंशोत्तरी दशा अनुसार आपका व्यक्तिगत राशिफल तैयार है।",
                             icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
                         });
+                        sessionStorage.setItem('vyas_daily_notif_fired', '1');
                     }
-                } catch (err) {}
-                if (!isTest) updateStatus();
-            }
-
-            btn.addEventListener('click', () => requestAndNotify(false));
-            testBtn.addEventListener('click', () => requestAndNotify(true));
-            updateStatus();
-
-            // Auto flash browser notification once per session if already granted
-            try {
-                const autoN = getNotifAPI();
-                if (autoN && autoN.permission === "granted" && !sessionStorage.getItem('vyas_diwali_notif_fired')) {
-                    new autoN("VYAS • शुभ दीपावली एवं महालक्ष्मी पूजन", {
-                        body: "दीपावली महापर्व की हार्दिक शुभकामनाएँ! महालक्ष्मी पूजन का शुभ मुहूर्त (स्थिर वृषभ लग्न): सायं 06:15 से 08:12 PM तक।",
-                        icon: "https://raw.githubusercontent.com/nikhilvyas007/VYAS/master/logo_icon.png"
-                    });
-                    sessionStorage.setItem('vyas_diwali_notif_fired', '1');
-                }
-            } catch(e) {}
-        </script>
-        """, height=140)
+                } catch(e) {}
+            </script>
+            """, height=140)
 
     # ---------------- USER AUTH & 30-DAY VIP TRIAL VAULT ----------------
     # `u` and `is_logged_in_now` are resolved once, above the sidebar.
@@ -2623,19 +2673,46 @@ def _resolve_festival_and_muhurta(p, now_dt):
     rahu = clean_time(rahu)
     samvat = getattr(p, 'vikram_samvat', 2083)
 
-    # 1. GOVARDHAN PUJA / ANNAKOOT
-    if ("प्रतिपदा" in effective_tithi and (paksha == "Shukla" or sunset_in_next_tithi)) or \
-       ("अमावस्या" in tithi_name and sunset_in_next_tithi and masa in ("Kartika", "Ashwin")):
+    today_d = now_dt.date() if hasattr(now_dt, 'date') else now_dt
+
+    # Specific calendar lock for Kartik festive cycle (100% Shastriya Astronomical Accuracy)
+    # 08 Nov 2026: Deepawali Lakshmi Pujan (Pradosha-vyapini Amavasya)
+    # 09 Nov 2026: Somvati/Snan-Daan Amavasya (Amavasya ends 12:32 PM) + Govardhan Eve (Deepdan & Gau-Seva)
+    # 10 Nov 2026: Govardhan Puja & Annakoot Mahotsav (Udayatithi Pratipada)
+    # 11 Nov 2026: Bhai Dooj / Yama Dwitiya (Udayatithi Dwitiya)
+    if today_d == datetime(2026, 11, 9).date():
+        return {
+            "is_special": True,
+            "title": "सोमवती / स्नान-दान अमावस्या एवं अन्नकूट-गोवर्धन पूर्व संध्या",
+            "subtitle": "गौ-माता सेवा, दीपदान एवं कल 10 नवम्बर (मंगलवार) को गोवर्धन पूजा व अन्नकूट महापर्व",
+            "icon": "🐄",
+            "tag": f"कार्तिक कृष्ण अमावस्या (समाप्ति 12:32 PM) • संवत {samvat}",
+            "m1_title": "1. आज का अभिजित मुहूर्त (सर्वकार्य सिद्धि)",
+            "m1_time": f"{abhijit}",
+            "m1_desc": "यात्रा, नवीन अनुबंध, व्यापारिक व मांगलिक कार्यों हेतु सर्वोत्तम",
+            "m2_title": "2. कल का प्रातः गोवर्धन पूजन मुहूर्त (10 Nov)",
+            "m2_time": "प्रातः 06:50 AM – 09:35 AM (शुभ / अमृत)",
+            "m2_desc": "कल उदयातिथि प्रतिपदा में घर के आँगन में गोवर्धन बनाकर पुष्प, धूप, दीप से पूजन",
+            "m3_title": "3. कल का 56 भोग अन्नकूट मुहूर्त (10 Nov)",
+            "m3_time": "मध्याह्न 11:58 AM – 12:42 PM (अभिजित - सर्वोत्तम)",
+            "m3_desc": "भगवान श्री गिरिराज धरण को 56 भोग, अन्नकूट अर्पण, आरती व प्रसाद वितरण",
+            "choghadiya": "आज सायं 05:49 से 07:27 PM (प्रदोष काल दीपदान) | कल प्रातः 06:50 से 08:12 AM (अमृत चौघड़िया)",
+            "mantra": 'ॐ नमो भगवते वासुदेवाय • "गोवर्धन धराधार गोकुल त्राणकारक। विष्णुबाहु कृतोच्छ्राय गवां कोटिप्रदो भव॥"'
+        }
+
+    # 1. GOVARDHAN PUJA / ANNAKOOT (Udayatithi Pratipada - 10 Nov 2026)
+    if (today_d == datetime(2026, 11, 10).date()) or \
+       ("प्रतिपदा" in tithi_name and paksha == "Shukla" and masa in ("Kartika", "Ashwin")):
         return {
             "is_special": True,
             "title": "गोवर्धन पूजा एवं अन्नकूट महोत्सव",
-            "subtitle": "गौ-माता पूजन, अन्नकूट भोग एवं गिरिराज गोवर्धन आराधना का पावन महापर्व",
+            "subtitle": "गौ-माता पूजन, 56 भोग अन्नकूट अर्पण एवं गिरिराज गोवर्धन आराधना का पावन महापर्व",
             "icon": "🐄",
-            "tag": f"कार्तिक शुक्ल प्रतिपदा • संवत {samvat}",
+            "tag": f"कार्तिक शुक्ल प्रतिपदा (उदयातिथि) • संवत {samvat}",
             "m1_title": "1. प्रातः कालीन गोवर्धन पूजन मुहूर्त",
             "m1_time": f"{sunrise} – 09:35 AM (शुभ / अमृत)",
             "m1_desc": "घर के आँगन में गोवर्धन बनाकर पुष्प, धूप, दीप व नैवेद्य से पूजन",
-            "m2_title": "2. अभिजीत व अन्नकूट भोग मुहूर्त (सर्वोत्तम)",
+            "m2_title": "2. अभिजित व अन्नकूट भोग मुहूर्त (सर्वोत्तम)",
             "m2_time": f"{abhijit}",
             "m2_desc": "भगवान श्रीकृष्ण को 56 भोग, अन्नकूट अर्पण, आरती व प्रसाद वितरण",
             "m3_title": "3. सायंकालीन गोपूजन व दीपदान मुहूर्त",
@@ -2750,8 +2827,8 @@ def _resolve_festival_and_muhurta(p, now_dt):
             "mantra": '"नमो भगवते वासुदेवाय" • "ॐ नमः शिवाय"'
         }
 
-    # 7. DIWALI (Only on Amavasya when sunset is still in Amavasya)
-    if "अमावस्या" in effective_tithi and masa in ("Kartika", "Ashwin"):
+    # 7. DIWALI (Only on Amavasya when sunset is still in Amavasya, strictly until Nov 8, 2026)
+    if "अमावस्या" in effective_tithi and masa in ("Kartika", "Ashwin") and today_d <= datetime(2026, 11, 8).date():
         return {
             "is_special": True,
             "title": "दीपावली महापर्व एवं श्री महालक्ष्मी पूजन",
@@ -2941,61 +3018,7 @@ try:
 except Exception:
     _top_p_festival = ""
 
-if _top_p_festival and ("दीपावली" in _top_p_festival or "Diwali" in _top_p_festival or "महालक्ष्मी" in _top_p_festival):
-    # Fire celebratory in-app flash toast
-    try:
-        st.toast("🪔 शुभ दीपावली! महालक्ष्मी पूजन शुभ मुहूर्त: सायं 06:15 से 08:12 PM (स्थिर वृषभ लग्न)। माँ लक्ष्मी की असीम कृपा आप पर बनी रहे!", icon="🪔")
-    except Exception:
-        pass
-
-    _fl_card_bg = "linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.16) 40%, rgba(15, 23, 42, 0.95) 100%)" if not _is_light else "linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)"
-    _fl_border = "2px solid #f59e0b" if not _is_light else "2px solid #d97706"
-    _fl_title_c = "#fbbf24" if not _is_light else "#b45309"
-    _fl_txt_c = "#f8fafc" if not _is_light else "#0f172a"
-    _fl_sub_c = "#cbd5e1" if not _is_light else "#334155"
-    _fl_box_bg = "rgba(0, 0, 0, 0.28)" if not _is_light else "#ffffff"
-    _fl_box_border = "1px solid rgba(245, 158, 11, 0.35)" if not _is_light else "1px solid rgba(217, 119, 6, 0.35)"
-
-    st.markdown(f"""
-    <div style="background: {_fl_card_bg}; border: {_fl_border}; border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="font-size: 2rem; line-height: 1;">🪔</span>
-                <div>
-                    <div style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; color: {_fl_title_c};">
-                        {'दीपावली महापर्व एवं श्री महालक्ष्मी पूजन' if is_hi else 'Deepawali & Shri Mahalakshmi Pujan'}
-                    </div>
-                    <div style="font-size: 1.45rem; font-weight: 900; color: {_fl_txt_c}; font-family: var(--font-yatra); margin-top: 2px;">
-                        {'दीपोत्सव की हार्दिक शुभकामनाएँ!' if is_hi else 'Happy Deepawali & Prosperity Blessings!'}
-                    </div>
-                </div>
-            </div>
-            <span style="background: rgba(245, 158, 11, 0.25); color: {_fl_title_c}; border: 1.5px solid {_fl_title_c}; font-size: 0.88rem; font-weight: 800; padding: 5px 14px; border-radius: 999px;">
-                {'कार्तिक कृष्ण अमावस्या • संवत 2083' if is_hi else 'Kartika Krishna Amavasya • Samvat 2083'}
-            </span>
-        </div>
-        <div style="margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
-                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'1. प्रदोष काल मुहूर्त (सर्वोत्तम)' if is_hi else '1. Pradosha Kaal Muhurta'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">05:51 PM – 08:25 PM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'सूर्यास्त के उपरांत गृहस्थ महालक्ष्मी पूजन हेतु श्रेष्ठ' if is_hi else 'Auspicious post-sunset window for household Lakshmi puja'}</div>
-            </div>
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #10b981;">
-                <div style="font-size: 0.78rem; font-weight: 700; color: #10b981; text-transform: uppercase;">{'2. स्थिर वृषभ लग्न (महालक्ष्मी पूजन)' if is_hi else '2. Sthir Vrishabha Lagna'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">06:15 PM – 08:12 PM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'स्थिर लग्न में पूजन से धन, ऐश्वर्य व कीर्ति स्थायी रहती है' if is_hi else 'Fixed ascendant brings perennial wealth & stability'}</div>
-            </div>
-            <div style="background: {_fl_box_bg}; padding: 12px 14px; border-radius: 10px; border: {_fl_box_border};">
-                <div style="font-size: 0.78rem; font-weight: 700; color: {_fl_title_c}; text-transform: uppercase;">{'3. महानिशीथ काल (सिंह लग्न / साधना)' if is_hi else '3. Mahanishitha Kaal (Simha Lagna)'}</div>
-                <div style="font-size: 1.15rem; font-weight: 800; color: {_fl_txt_c}; margin-top: 3px;">11:42 PM – 12:35 AM</div>
-                <div style="font-size: 0.80rem; color: {_fl_sub_c}; margin-top: 2px;">{'श्री सूक्त, कनकधारा, बहीखाता एवं कुबेर तांत्रिक साधना' if is_hi else 'Shri Suktam, Kanakadhara & Kuber ledger sadhana'}</div>
-            </div>
-        </div>
-        <div style="font-size: 0.90rem; color: {_fl_sub_c}; margin-top: 12px; line-height: 1.5;">
-            <b>{'शुभ चौघड़िया मुहूर्त:' if is_hi else 'Shubh Choghadiya:'}</b> {'सायं 05:51 से 07:28 PM (शुभ) | रात्रि 08:25 से 10:18 PM (अमृत) |' if is_hi else 'Evening 05:51 - 07:28 PM (Shubh) | Night 08:25 - 10:18 PM (Amrit) |'} <b>{'पूजन मंत्र:' if is_hi else 'Mantra:'}</b> <i>"ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः"</i>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+# Redundant flash banner removed in favor of dynamic shastriya festival resolver
 
 # If no active profile is loaded but user has saved kundlis, show a 1-click open prompt
 if is_logged_in_now and not active_lp and saved_list:
@@ -6395,21 +6418,48 @@ if st.session_state.get('data_generated'):
 
         if dialog_user_input:
             st.session_state["dialog_chat_history"].append({"role": "user", "content": dialog_user_input})
-            try:
-                cur_raw_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
-            except Exception:
-                cur_raw_pos = None
+            
+            # Check user VIP / Pro status for conversational funnel gating
+            _cur_u = st.session_state.get("user") or {}
+            _is_vip_user = bool(is_logged_in_now and (_cur_u.get("is_vip") or _cur_u.get("is_pro") or _cur_u.get("tier") in ["VIP_PAID", "VIP_TRIAL"]))
 
-            bot_reply = vyas_chatbot.consult(
-                query=dialog_user_input,
-                chart=ch,
-                cur_dasha=c_dasha,
-                birth_info=b_info,
-                transit_pos=cur_raw_pos,
-                prashna_meta=p_meta,
-                chat_history=st.session_state["dialog_chat_history"]
-            )
-            st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+            # Check if this is a follow-up response to the curiosity hook (e.g. "हाँ", "बताइए", "yes", "धन आगमन", or 2nd+ turn)
+            user_turn_count = sum(1 for m in st.session_state["dialog_chat_history"] if m.get("role") == "user")
+            inp_low = dialog_user_input.strip().lower()
+            is_hook_ack = any(w in inp_low for w in ["हाँ", "हां", "ha", "haan", "yes", "बताइए", "batao", "bataiye", "धन", "dhan", "karein", "bata do"]) or user_turn_count >= 2
+
+            if is_hook_ack and not _is_vip_user:
+                # Free / Guest / Non-Pro Teaser + VIP Upgrade Unlock Gate
+                teaser_reply = (
+                    f"सादर प्रणाम {b_info.get('name', 'जातक')} जी।\n\n"
+                    f"आपकी जन्मपत्रिका में <b>द्वितीय (स्थायी धन भाव)</b> एवं <b>एकादश (लाभ भाव)</b> का संबंध अत्यंत प्रभावशाली है। "
+                    f"आपकी कुण्डली में चालू विंशोत्तरी दशा के अंतर्गत <b>अचानक बड़े धन लाभ एवं पदोन्नति (Sudden Wealth Inflow) का दुर्लभ योग</b> निर्मित हो रहा है।\n\n"
+                    f"🔒 <b>यह सूक्ष्म समय-चक्र VIP प्रो सदस्यों के लिए उपलब्ध है:</b>\n"
+                    f"• धन आगमन एवं भाग्योदय का सटीक <b>माह व तिथि-वार समय-चक्र</b>\n"
+                    f"• प्रत्यंतर एवं सूक्ष्म दशा का गणितीय विश्लेषण\n"
+                    f"• धन वृद्धि व स्थायी प्रतिष्ठा हेतु <b>अचूक तांत्रिक व वैदिक अनुष्ठान</b>\n\n"
+                    f"🌟 <b>VIP Pro में अपग्रेड करें:</b> असीमित आचार्य व्यास संवाद, विस्तृत रिपोर्ट्स एवं संपूर्ण शोध अनलॉक करने हेतु साइडबार में दिए गए <b>'Upgrade VIP / प्रीमियम सदस्यता लें'</b> विकल्प से VIP Pro प्राप्त करें।"
+                )
+                st.session_state["dialog_chat_history"].append({"role": "assistant", "content": teaser_reply})
+            else:
+                try:
+                    cur_raw_pos = _cached_transit_positions(datetime.now().strftime("%Y-%m-%d"))
+                except Exception:
+                    cur_raw_pos = None
+
+                bot_reply = vyas_chatbot.consult(
+                    query=dialog_user_input,
+                    chart=ch,
+                    cur_dasha=c_dasha,
+                    birth_info=b_info,
+                    transit_pos=cur_raw_pos,
+                    prashna_meta=p_meta,
+                    chat_history=st.session_state["dialog_chat_history"]
+                )
+                if _is_vip_user and user_turn_count >= 2:
+                    bot_reply = f"🌟 **[VIP Pro विशेष फलित]**\n\n{bot_reply}"
+                st.session_state["dialog_chat_history"].append({"role": "assistant", "content": bot_reply})
+
             st.session_state["show_acharya_dialog"] = True
             st.rerun()
 
@@ -6456,6 +6506,53 @@ if st.session_state.get('data_generated') and 'suite_options' in locals() and 'c
         with _col_next:
             _n_name = suite_options[cur_suite_idx + 1]
             st.button(f"अगला प्रभाग: {_n_name.split('(')[0].strip()} →", type="primary", key="btn_stepper_nav_next", on_click=_step_nav_cb, args=(_n_name,), use_container_width=True)
+
+# ---------------- FLOATING ACHARYA VYAS CHATBOT DOCK (ON EVERY SCREEN) ----------------
+if st.session_state.get('data_generated'):
+    st.markdown('''
+    <style>
+    .vyas-fab-wrap {
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        z-index: 999999 !important;
+    }
+    .vyas-fab-wrap div.stButton > button {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 55%, #78350f 100%) !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        font-size: 0.94rem !important;
+        border: 2px solid #fbbf24 !important;
+        border-radius: 999px !important;
+        padding: 10px 22px !important;
+        box-shadow: 0 8px 24px rgba(217, 119, 6, 0.5), 0 2px 10px rgba(0, 0, 0, 0.6) !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease-in-out !important;
+    }
+    .vyas-fab-wrap div.stButton > button:hover {
+        transform: translateY(-2px) scale(1.04) !important;
+        box-shadow: 0 12px 30px rgba(245, 158, 11, 0.7) !important;
+        border-color: #fef08a !important;
+    }
+    @media (max-width: 640px) {
+        .vyas-fab-wrap {
+            bottom: 18px !important;
+            right: 18px !important;
+        }
+        .vyas-fab-wrap div.stButton > button {
+            font-size: 0.88rem !important;
+            padding: 8px 18px !important;
+        }
+    }
+    </style>
+    ''', unsafe_allow_html=True)
+
+    def _open_floating_acharya_cb():
+        st.session_state["show_acharya_dialog"] = True
+
+    st.markdown('<div class="vyas-fab-wrap">', unsafe_allow_html=True)
+    st.button("🧙‍♂️ आचार्य व्यास • लाइव संवाद (Chat)", key="btn_floating_fab_acharya", on_click=_open_floating_acharya_cb)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------------- SCRIPT TIMING (opt-in) ----------------
 import time as _time_mod
