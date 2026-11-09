@@ -62,7 +62,7 @@ if not hasattr(st, "iframe"):
         st.iframe = _comp.html
     except Exception:
         pass
-from datetime import datetime, timezone, timedelta, time as d_time
+from datetime import datetime, timezone, timedelta, time, time as d_time
 import sys
 import os
 import shutil
@@ -2485,7 +2485,7 @@ def _resolve_festival_and_muhurta(p, now_dt):
     sunset_hour, sunset_min = 17, 50
     try:
         if ":" in sunset_str:
-            parts = sunset_str.replace("PM", "").strip().split(":")
+            parts = sunset_str.replace("PM", "").replace("AM", "").strip().split(":")
             h = int(parts[0])
             if "PM" in sunset_str and h < 12:
                 h += 12
@@ -2493,7 +2493,8 @@ def _resolve_festival_and_muhurta(p, now_dt):
             sunset_min = int(parts[1])
     except Exception:
         pass
-    sunset_time = time(sunset_hour, sunset_min)
+    from datetime import time as _dt_time
+    sunset_time = _dt_time(sunset_hour, sunset_min)
 
     sunset_in_next_tithi = False
     if tithi_end_dt and has_dual:
@@ -2514,10 +2515,27 @@ def _resolve_festival_and_muhurta(p, now_dt):
         cleaned = []
         for pt in parts:
             pt = pt.strip()
-            if len(pt.split(":")) == 3:
-                h, m, s = pt.split(":")
-                ampm = s.split()[1] if len(s.split()) > 1 else ""
-                cleaned.append(f"{h}:{m} {ampm}".strip())
+            if len(pt.split(":")) >= 2:
+                sub = pt.split(":")
+                try:
+                    h_val = int(sub[0])
+                    m_val = sub[1][:2]
+                    ampm = "AM"
+                    if "PM" in pt.upper():
+                        ampm = "PM"
+                        if h_val < 12: h_val = h_val
+                    elif "AM" in pt.upper():
+                        ampm = "AM"
+                    else:
+                        if h_val >= 12:
+                            ampm = "PM"
+                            if h_val > 12: h_val -= 12
+                        elif h_val == 0:
+                            h_val = 12
+                            ampm = "AM"
+                    cleaned.append(f"{h_val:02d}:{m_val} {ampm}")
+                except Exception:
+                    cleaned.append(pt)
             else:
                 cleaned.append(pt)
         return " - ".join(cleaned)
@@ -3767,7 +3785,7 @@ if st.session_state.get('data_generated'):
 <div style="font-size: 1.18rem; font-weight: 900; color: {_fest_txt_col}; margin-top: 2px;">{_card_fest['title']}</div>
 </div>
 </div>
-<span style="background: rgba(245, 158, 11, 0.25); color: {_fest_title_col}; border: 1.5px solid {_fest_border}; font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;">{_card_fest['tag']}</span>
+<span style="background: rgba(245, 158, 11, 0.25); color: {_fest_title_col}; border: 1.5px solid {_fest_title_col}; font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 999px;">{_card_fest['tag']}</span>
 </div>
 <div style="font-size: 0.90rem; color: {_fest_sub_col}; margin-top: 6px; line-height: 1.5;">
 {_card_fest['subtitle']}
