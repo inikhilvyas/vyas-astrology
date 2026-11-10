@@ -53,16 +53,18 @@ def tattva_shodhana(birth_dt: datetime, gender: str = "Male") -> Tuple[bool, str
     tattvas = ["Agni (अग्नि)", "Prithvi (पृथ्वी)", "Vayu (वायु)", "Jala (जल)", "Akasha (आकाश)"]
     active_tattva = tattvas[cycle_idx]
 
-    is_male = gender.lower() == "male"
-    if is_male:
+    _is_male = str(gender).lower().startswith("m") or "पुरुष" in str(gender)
+    _g_hi = "पुरुष" if _is_male else "स्त्री"
+    _g_en = "Male" if _is_male else "Female"
+    if _is_male:
         aligned = cycle_idx in [0, 2, 4]  # Agni, Vayu, Akasha
     else:
         aligned = cycle_idx in [1, 3]     # Prithvi, Jala
 
     verdict = (
-        f"तत्व शुद्धि पूर्णतः अनुकूल ({active_tattva} is harmonious for {gender})."
+        f"तत्व शुद्धि पूर्णतः अनुकूल ({active_tattva} is harmonious for {_g_en} / {_g_hi})."
         if aligned else
-        f"तत्व शुद्धि में अंतर ({active_tattva} indicates fine-tuning needed for {gender})."
+        f"तत्व शुद्धि में अंतर ({active_tattva} indicates fine-tuning needed for {_g_en} / {_g_hi})."
     )
     return aligned, active_tattva, verdict
 
@@ -116,8 +118,10 @@ def scan_rectification_window(local_dt: datetime, lat: float, lon: float, tz_off
                 moon_nak_idx = int(moon_lon // constants.NAKSHATRA_SPAN) % 27
                 moon_nak_name = constants.NAKSHATRAS_HI[moon_nak_idx]
 
+                _is_m = str(gender).lower().startswith("m") or "पुरुष" in str(gender)
+                _g_term = "पुरुष" if _is_m else "स्त्री"
                 reason_kunda = f"पाराशरी कुन्द शोधन में लग्न × 81 का कुन्द नक्षत्र '{k_nak}' प्राप्त होता है, जो जन्म चन्द्र नक्षत्र '{moon_nak_name}' के साथ त्रिकोण समरसता (1, 10, 19वें नक्षत्र की नैसर्गिक संगति) में 100% संरेखित है।"
-                reason_tattva = f"जन्मकालिक पंचतत्त्व चक्र में '{t_name}' तत्त्व संचलित है, जो {gender} जातक की जैविक व प्राणिक ऊर्जा से पूर्णतः सामंजस्य रखता है।"
+                reason_tattva = f"जन्मकालिक पंचतत्त्व चक्र में '{t_name}' तत्त्व संचलित है, जो {_g_term} जातक की जैविक व प्राणिक ऊर्जा से पूर्णतः सामंजस्य रखता है।"
                 reason_varga = f"इस समय पर लग्न {asc_sign_name} राशि में तथा नवमांश लग्न {nav_sign_name} राशि में सुदृढ़ होता है, जिससे वर्ग कुण्डलियों में संधि दोष नहीं बनता।"
 
                 candidates.append({

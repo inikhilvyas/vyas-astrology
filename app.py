@@ -3533,16 +3533,25 @@ if _active_fest and _active_fest.get("is_special"):
 if is_logged_in_now and active_lp:
     col_act1, col_act2 = st.columns([2.4, 1.4])
     with col_act1:
+        _g_raw_card = str(active_lp.get('gender', 'Male')).strip()
+        _is_fem_card = _g_raw_card.lower().startswith('f') or 'स्त्री' in _g_raw_card or 'महिला' in _g_raw_card
+        _g_card_disp = ("महिला (Female)" if _is_fem_card else "पुरुष (Male)") if is_hi else ("Female" if _is_fem_card else "Male")
         st.markdown(f"""
         <div style="background: {TH_CARD_BG}; border: {TH_CARD_BORDER}; border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
             <div style="font-size: 0.74rem; color: {TH_GOLD_TITLE}; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
                 {' आपकी सक्रिय प्राथमिक कुण्डली (Active Default Kundli)' if is_hi else ' ACTIVE DEFAULT HOROSCOPE'}
             </div>
-            <div style="font-family: var(--font-yatra); font-size: 1.42rem; color: {TH_NAME}; font-weight: 800; margin-top: 2px;">
-                {active_lp.get('name', 'जातक' if is_hi else 'Native')}
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 2px;">
+                <span style="font-family: var(--font-yatra); font-size: 1.42rem; color: {TH_NAME}; font-weight: 800;">
+                    {active_lp.get('name', 'जातक' if is_hi else 'Native')}
+                </span>
+                <span style="font-size: 0.74rem; background: rgba(240, 192, 90, 0.15); border: 1px solid rgba(240, 192, 90, 0.4); color: #f0c05a; padding: 2px 10px; border-radius: 999px; font-weight: 700;">
+                    {_g_card_disp}
+                </span>
             </div>
-            <div style="font-size: 0.86rem; color: {TH_MUTED}; margin-top: 3px; font-weight: 600;">
+            <div style="font-size: 0.86rem; color: {TH_MUTED}; margin-top: 4px; font-weight: 600;">
                  <b>{'जन्म:' if is_hi else 'DOB:'}</b> {active_lp.get('dob')} ({active_lp.get('tob')}) &nbsp;|&nbsp; 
+                 <b>{'लिंग:' if is_hi else 'Gender:'}</b> {_g_card_disp} &nbsp;|&nbsp; 
                 <b>{'स्थान:' if is_hi else 'Place:'}</b> {active_lp.get('city', 'स्थान' if is_hi else 'City')} &nbsp;|&nbsp; 
                  <b>{'निर्देशांक:' if is_hi else 'Coords:'}</b> {float(active_lp.get('lat', 28.61)):.2f}°N, {float(active_lp.get('lon', 77.20)):.2f}°E
             </div>
@@ -3729,7 +3738,18 @@ if show_form:
     if "Natal" in mode or "जन्म" in mode:
         _name_lbl = "पूरा नाम" if is_hi else "Full Name"
         _dob_lbl = "जन्म तिथि" if is_hi else "Date of Birth"
-        name = st.text_input(_name_lbl, default_name)
+        c_n1, c_n2 = st.columns([2.4, 1.4])
+        with c_n1:
+            name = st.text_input(_name_lbl, default_name)
+        with c_n2:
+            _def_g_raw = str(lp.get('gender', 'Male')).strip()
+            _is_fem = _def_g_raw.lower().startswith('f') or 'स्त्री' in _def_g_raw or 'महिला' in _def_g_raw
+            _is_oth = _def_g_raw.lower().startswith('o') or 'अन्य' in _def_g_raw
+            _g_idx = 1 if _is_fem else (2 if _is_oth else 0)
+            _g_opts = ["पुरुष (Male)", "महिला (Female)", "अन्य (Other)"] if is_hi else ["Male", "Female", "Other"]
+            _g_sel = st.selectbox("लिंग (Gender)" if is_hi else "Gender", _g_opts, index=_g_idx)
+            gender = "Female" if ("महिला" in _g_sel or "Female" in _g_sel) else ("Other" if ("अन्य" in _g_sel or "Other" in _g_sel) else "Male")
+
         date_val = st.date_input(_dob_lbl, value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
         
         # Exact HH:MM:SS input for ultra micro-precision
@@ -3741,7 +3761,14 @@ if show_form:
         tob_sec = t_col3.number_input("सेकंड (Sec)" if is_hi else "Sec", min_value=0, max_value=59, value=def_s)
         time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
     else:
-        name = st.text_input("प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
+        c_p1, c_p2 = st.columns([2.4, 1.4])
+        with c_p1:
+            name = st.text_input("प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
+        with c_p2:
+            _g_opts = ["पुरुष (Male)", "महिला (Female)", "अन्य (Other)"] if is_hi else ["Male", "Female", "Other"]
+            _g_sel = st.selectbox("लिंग (Gender)" if is_hi else "Gender", _g_opts, index=0)
+            gender = "Female" if ("महिला" in _g_sel or "Female" in _g_sel) else ("Other" if ("अन्य" in _g_sel or "Other" in _g_sel) else "Male")
+
         prashna_category = st.selectbox(
             "प्रश्न विषय" if is_hi else "Prashna Category",
             [
@@ -3763,7 +3790,7 @@ if show_form:
             ]
         )
         prashna_text = st.text_input("विशेष प्रश्न" if is_hi else "Specific Question", "क्या मेरा कार्य सिद्ध होगा?" if is_hi else "Will my work succeed?")
-        st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
+        st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text, "gender": gender}
         st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा।" if is_hi else "Prashna horary chart automatically captures the exact current cosmic moment.")
         now = datetime.now()
         date_val = now.date()
@@ -3830,6 +3857,7 @@ if show_form:
         if st.button(_btn_save_lbl, use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं" if is_hi else "Save to vault and set as default"):
             k_payload = {
                 "name": name,
+                "gender": gender,
                 "dob": date_val.strftime("%Y-%m-%d"),
                 "tob": time_val.strftime("%H:%M:%S"),
                 "city": city_name,
@@ -3856,6 +3884,7 @@ if show_form:
             st.session_state['data_generated'] = True
             st.session_state['loaded_profile'] = {
                 "name": name,
+                "gender": gender,
                 "dob": date_val.strftime("%Y-%m-%d"),
                 "tob": time_val.strftime("%H:%M:%S"),
                 "city": city_name,
@@ -3868,6 +3897,7 @@ else:
     # Form is collapsed: use active profile data directly
     mode = "Natal Kundli (जन्म कुण्डली)"
     name = lp.get('name', 'जातक')
+    gender = lp.get('gender', 'Male')
     city_name = default_city
     lat = default_lat
     lon = default_lon
@@ -3884,7 +3914,7 @@ else:
 # edited dob/tob/place and re-rendered kept seeing the OLD chart silently.
 _birth_input_sig = (
     date_val.isoformat(), time_val.isoformat(), round(float(lat), 6),
-    round(float(lon), 6), round(float(tz_offset), 4), ayan_choice, node_choice,
+    round(float(lon), 6), round(float(tz_offset), 4), ayan_choice, node_choice, gender
 )
 if (generate or 'data_generated' not in st.session_state
         or st.session_state.get('_birth_input_sig') != _birth_input_sig
@@ -3909,7 +3939,7 @@ if (generate or 'data_generated' not in st.session_state
             dasha_eng = VimshottariDasha(chart.planets["Moon"].longitude, dt)
             vargas_matrix = get_all_vargas_matrix(chart)
             
-            st.session_state['birth'] = {'local': dt, 'lat': lat, 'lon': lon, 'tz': tz_offset, 'name': name, 'city': city_name}
+            st.session_state['birth'] = {'local': dt, 'lat': lat, 'lon': lon, 'tz': tz_offset, 'name': name, 'city': city_name, 'gender': gender}
             st.session_state['chart'] = chart
             st.session_state['kp_cusps'] = kp_cusps
             st.session_state['dasha_engine'] = dasha_eng
@@ -5173,8 +5203,9 @@ if st.session_state.get('data_generated'):
         st.markdown(f'<div class="section-title">{"जन्म समय शुद्धि (Birth Time Rectification - कुन्द व तत्व शोधन)" if is_hi else "Birth Time Rectification (BTR Engine)"}</div>', unsafe_allow_html=True)
         st.info("ऋषि पराशर एवं आधुनिक KP अनुसंधान के अनुसार जन्म समय में 1-2 मिनट का भी अंतर लग्न कस्प, D60 और सब-लॉर्ड्स को बदल देता है। नीचे दिए गए शास्त्रीय परीक्षणों से अपने समय की प्रामाणिकता जांचें:")
 
+        _btr_gender = birth.get('gender', 'Male')
         k_ok, k_nak, k_msg = vyas_btr.kunda_shodhana(chart.ascendant_longitude, chart.planets["Moon"].longitude)
-        t_ok, t_name, t_msg = vyas_btr.tattva_shodhana(birth['local'], gender="Male")
+        t_ok, t_name, t_msg = vyas_btr.tattva_shodhana(birth['local'], gender=_btr_gender)
 
         col_b1, col_b2 = st.columns(2)
         with col_b1:
@@ -5228,7 +5259,7 @@ if st.session_state.get('data_generated'):
             with st.spinner("Scanning micro-time variations across Kunda & Tattva matrices..."):
                 candidates = vyas_btr.scan_rectification_window(
                     birth['local'], birth['lat'], birth['lon'], birth['tz'],
-                    chart.planets['Moon'].longitude, gender="Male", window_minutes=10
+                    chart.planets['Moon'].longitude, gender=_btr_gender, window_minutes=10
                 )
                 st.session_state['btr_candidates'] = candidates
 
