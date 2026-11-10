@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     
+    <!-- Instant Mobile Auto-Router: Smart & Seamless -->
+    <script>
+    (function() {
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        var urlParams = new URLSearchParams(window.location.search);
+        var forceDesktop = urlParams.get('desktop') === '1';
+        if (isMobile && !forceDesktop) {
+            window.location.replace("/app/");
+        }
+    })();
+    </script>
+    
     <!-- Speed & Network Preconnects -->
     <link rel="preconnect" href="https://vyas-astrology-111.streamlit.app" crossorigin>
     <link rel="dns-prefetch" href="https://vyas-astrology-111.streamlit.app">
