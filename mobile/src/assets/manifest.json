@@ -1,0 +1,24 @@
+{
+  "name": "VYAS ASTRA • वैदिक ज्योतिष शोध संस्थान",
+  "short_name": "VYAS ASTRA",
+  "description": "Micro-degree Swiss Ephemeris Vedic Astrology, 16 Vargas, 13,000 Classical Sutras & Acharya Vyas AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07090d",
+  "theme_color": "#e5a93c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/logo_icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/logo_icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
