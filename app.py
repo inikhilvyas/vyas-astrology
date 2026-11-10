@@ -7290,18 +7290,18 @@ if st.session_state.get('data_generated'):
             position: fixed !important;
             bottom: 20px !important;
             right: 20px !important;
-            width: 380px !important;
-            max-width: calc(100vw - 24px) !important;
-            height: 480px !important;
+            width: 420px !important;
+            max-width: calc(100vw - 20px) !important;
+            height: 580px !important;
             max-height: calc(100dvh - 30px) !important;
-            background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.12) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
+            background: radial-gradient(circle at top right, rgba(240, 192, 90, 0.14) 0%, transparent 60%), linear-gradient(180deg, #0e172a 0%, #060a12 100%) !important;
             border: 2px solid rgba(240, 192, 90, 0.6) !important;
             border-radius: 20px !important;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(240, 192, 90, 0.35) !important;
             z-index: 9999999 !important;
             display: flex !important;
             flex-direction: column !important;
-            padding: 8px 10px 10px 10px !important;
+            padding: 8px 12px 10px 12px !important;
             backdrop-filter: blur(20px) !important;
             animation: vyasPopIn 0.14s ease-out !important;
             touch-action: pan-y !important;
@@ -7313,9 +7313,24 @@ if st.session_state.get('data_generated'):
             100% {{ transform: translateY(0) scale(1); opacity: 1; }}
         }}
 
-        /* Hidden fallback button for minimize action */
-        div.st-key-btn_minimize_chat_window {{
-            display: none !important;
+        /* Native Circular Close Button */
+        div.st-key-btn_minimize_chat_window button {{
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            border: 1.5px solid #fca5a5 !important;
+            color: #ffffff !important;
+            font-size: 0.90rem !important;
+            font-weight: 900 !important;
+            border-radius: 999px !important;
+            padding: 2px 8px !important;
+            min-height: 28px !important;
+            height: 28px !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6) !important;
+            cursor: pointer !important;
+            line-height: 1 !important;
+        }}
+        div.st-key-btn_minimize_chat_window button:hover {{
+            background: #b91c1c !important;
+            transform: scale(1.05) !important;
         }}
 
         /* Draggable Header Handle */
@@ -7408,17 +7423,18 @@ if st.session_state.get('data_generated'):
             40% {{ transform: scale(1.1); opacity: 1; background-color: #fef08a; }}
         }}
 
-        /* Compact Mobile View: 50dvh Height, Pinned 8px from Left & Right (Zero horizontal overflow) */
+        /* Mobile View: High-Comfort 82vh Height, Pinned 6px from Left & Right */
         @media (max-width: 600px) {{
             div.st-key-vyas_messenger_card {{
-                bottom: 8px !important;
-                right: 8px !important;
-                left: 8px !important;
-                width: calc(100% - 16px) !important;
-                max-width: calc(100% - 16px) !important;
+                bottom: 6px !important;
+                right: 6px !important;
+                left: 6px !important;
+                top: auto !important;
+                width: calc(100% - 12px) !important;
+                max-width: calc(100% - 12px) !important;
                 min-width: 0 !important;
-                height: 50dvh !important;
-                max-height: 50dvh !important;
+                height: 82vh !important;
+                max-height: 84vh !important;
                 border-radius: 18px !important;
                 padding: 6px 8px 8px 8px !important;
                 box-sizing: border-box !important;
@@ -7515,15 +7531,11 @@ if st.session_state.get('data_generated'):
 
         # Open State: Floating Messenger Window (Facebook Messenger Style: Movable + Minimizable)
         with st.container(key="vyas_messenger_card"):
-            # Hidden programmatic trigger for minimize action
-            def _minimize_chat_cb():
-                st.session_state["vyas_chat_open"] = False
-            st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="चैट विंडो मिनिमाइज करें")
-
-            # Draggable Header Handle with Integrated Guaranteed-Visible [✕ बंद करें] Button
-            st.markdown(f"""
-            <div class="vyas-messenger-drag-handle" style="display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; padding: 4px 4px 6px 4px; border-bottom: 1px solid rgba(240, 192, 90, 0.25); margin-bottom: 4px;">
-                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+            # Header with Native Guaranteed Close / Minimize Button
+            c_hdr_info, c_hdr_close = st.columns([0.82, 0.18])
+            with c_hdr_info:
+                st.markdown(f"""
+                <div class="vyas-messenger-drag-handle" style="display: flex; align-items: center; gap: 8px; overflow: hidden; padding: 2px 0;">
                     <div style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #f0c05a; background-image: url('data:image/png;base64,{_rishi_b64}'); background-size: cover; background-position: center; flex-shrink: 0; box-shadow: 0 0 8px rgba(240, 192, 90, 0.4);"></div>
                     <div style="overflow: hidden;">
                         <div style="font-family: 'Cinzel', serif; font-size: 0.88rem; font-weight: 800; color: #f0c05a; line-height: 1.1; white-space: nowrap; display: flex; align-items: center; gap: 4px;">
@@ -7535,18 +7547,46 @@ if st.session_state.get('data_generated'):
                         </div>
                     </div>
                 </div>
-                <button id="vyas-close-chat-trigger" type="button" onclick="vyasTriggerCloseChat()" 
-                        style="background: #ef4444; border: 1.5px solid #fca5a5; border-radius: 999px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; padding: 3px 10px; font-size: 0.74rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.6); flex-shrink: 0; z-index: 10000010;">
-                    ✕ बंद करें
-                </button>
-            </div>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+            with c_hdr_close:
+                def _minimize_chat_cb():
+                    st.session_state["vyas_chat_open"] = False
+                st.button("✕", key="btn_minimize_chat_window", on_click=_minimize_chat_cb, help="चैट विंडो मिनिमाइज करें", use_container_width=True)
 
-            # Chat History Scroll Container (Compact height: 115px leaves ample room for options, voice & input)
+            # Chat History Scroll Container (Spacious 360px height for optimal reading & interactive options)
             _avatar_arg = _rishi_thumb_file if os.path.exists(_rishi_thumb_file) else "🧙‍♂️"
-            chat_container = st.container(height=115)
+            chat_container = st.container(height=360)
             with chat_container:
-                for msg in st.session_state["dialog_chat_history"]:
+                # If chat history is empty, show welcome greeting with instant-tap query chips
+                if not st.session_state["dialog_chat_history"]:
+                    with st.chat_message("assistant", avatar=_avatar_arg):
+                        st.markdown(
+                            f"**सादर प्रणाम {b_info.get('name', 'जातक')} जी!** मैं **आचार्य व्यास** हूँ। "
+                            f"आपकी **{constants.SIGNS_HI[ch.ascendant_sign]} लग्न** कुण्डली एवं चालू दशा का संपूर्ण खगोलीय विश्लेषण सक्रिय है।\n\n"
+                            f"नीचे दिए गए मुख्य प्रश्नों में से किसी पर भी टैप करें, या लिखकर/बोलकर पूछें:"
+                        )
+                        st.markdown("""
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+                            <button type="button" onclick="vyasSendQuickQuery('मेरी कुण्डली में पुष्कर नवांश है क्या?')" 
+                                    style="background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 12px; color: #fef08a; padding: 7px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 6px;">
+                                <span>🌟</span> <span>मेरी कुण्डली में पुष्कर नवांश है क्या?</span>
+                            </button>
+                            <button type="button" onclick="vyasSendQuickQuery('कार्यक्षेत्र व करियर में उन्नति के क्या योग हैं?')" 
+                                    style="background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 12px; color: #fef08a; padding: 7px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 6px;">
+                                <span>💼</span> <span>कार्यक्षेत्र व करियर में उन्नति के योग बताएं</span>
+                            </button>
+                            <button type="button" onclick="vyasSendQuickQuery('आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?')" 
+                                    style="background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 12px; color: #fef08a; padding: 7px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 6px;">
+                                <span>💰</span> <span>आर्थिक स्थिति व आकस्मिक धन लाभ के योग</span>
+                            </button>
+                            <button type="button" onclick="vyasSendQuickQuery('वर्तमान विंशोत्तरी दशा का फल व सरल वैदिक उपाय बताएं')" 
+                                    style="background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 12px; color: #fef08a; padding: 7px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 6px;">
+                                <span>🕉️</span> <span>वर्तमान दशा फल व सरल वैदिक उपाय बताएं</span>
+                            </button>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                for msg_idx, msg in enumerate(st.session_state["dialog_chat_history"]):
                     _raw_txt = msg.get("content", "")
                     _clean_txt = re.sub(r'<\s*b\s*>', '**', _raw_txt, flags=re.IGNORECASE)
                     _clean_txt = re.sub(r'<\s*/\s*b\s*>', '**', _clean_txt, flags=re.IGNORECASE)
@@ -7557,6 +7597,24 @@ if st.session_state.get('data_generated'):
                     else:
                         with st.chat_message("assistant", avatar=_avatar_arg):
                             st.markdown(_clean_txt)
+                            # On the very last assistant message, render interactive contextual question pills (ChatGPT style)
+                            if msg_idx == len(st.session_state["dialog_chat_history"]) - 1 and not st.session_state.get("chat_pending_query"):
+                                _sug_chips = [
+                                    ("🌟 पुष्कर नवांश", "मेरी कुण्डली में पुष्कर नवांश है क्या?"),
+                                    ("💼 करियर व पदोन्नति", "कार्यक्षेत्र व पदोन्नति का सबसे प्रबल समय कब है?"),
+                                    ("💰 धन व समृद्धि", "आर्थिक स्थिति व आकस्मिक धन आगमन के योग बताएं"),
+                                    ("🕉️ वैदिक उपाय", "दोष निवारण व शुभता हेतु अचूक वैदिक उपाय बताएं")
+                                ]
+                                _chips_html = "".join([
+                                    f'<button type="button" onclick="vyasSendQuickQuery(\'{q}\')" style="background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 16px; color: #fef08a; padding: 4px 10px; font-size: 0.73rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); white-space: nowrap;">{lbl}</button>'
+                                    for lbl, q in _sug_chips
+                                ])
+                                st.markdown(f"""
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(240, 192, 90, 0.25);">
+                                    <div style="width: 100%; font-size: 0.68rem; color: #94a3b8; font-weight: 600;">✨ संबंधित अनुवर्ती प्रश्न (Tap to Ask):</div>
+                                    {_chips_html}
+                                </div>
+                                """, unsafe_allow_html=True)
 
                 # Handle pending question with live typing indicator
                 if st.session_state.get("chat_pending_query"):
@@ -7612,31 +7670,22 @@ if st.session_state.get('data_generated'):
                         st.session_state.pop("chat_pending_query", None)
                         st.rerun()
 
-            # Guaranteed High-Contrast Options, Voice Input & Complete JS Controller
+            # Compact Voice Input Trigger
             st.html("""
-            <div style="display: flex; gap: 6px; width: 100%; box-sizing: border-box; margin: 3px 0 2px 0;">
-                <button type="button" onclick="vyasSendQuickQuery('कार्यक्षेत्र व करियर में उन्नति के क्या योग हैं?')" 
-                        style="flex: 1; background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 8px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-size: 0.74rem; font-weight: 800; padding: 6px 3px; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    💼 करियर व आजीविका
-                </button>
-                <button type="button" onclick="vyasSendQuickQuery('आर्थिक स्थिति व धन संचय के अवसर कैसे रहेंगे?')" 
-                        style="flex: 1; background: #1e293b; border: 1.5px solid #f0c05a; border-radius: 8px; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; font-size: 0.74rem; font-weight: 800; padding: 6px 3px; cursor: pointer; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    💰 धन व आर्थिक योग
-                </button>
-            </div>
-
-            <div class="vyas-voice-mic-bar" style="display: flex; align-items: center; justify-content: center; margin: 2px 0;">
+            <div class="vyas-voice-mic-bar" style="display: flex; align-items: center; justify-content: center; margin: 3px 0 2px 0;">
                 <button id="vyas-voice-mic-btn" type="button" onclick="vyasStartVoiceConsultation()" 
-                        style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.22), rgba(245, 158, 11, 0.32));
-                               border: 1.5px solid #f0c05a; border-radius: 999px; color: #fef08a !important; -webkit-text-fill-color: #fef08a !important; padding: 3px 14px;
-                               font-size: 0.73rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center;
-                               gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.4);">
+                        style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.20), rgba(245, 158, 11, 0.28));
+                               border: 1px solid #f0c05a; border-radius: 999px; color: #fef08a !important; -webkit-text-fill-color: #fef08a !important; padding: 2px 14px;
+                               font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
+                               gap: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
                     <span id="vyas-mic-icon">🎙️</span>
                     <span id="vyas-mic-text">बोलकर पूछें (Tap to Speak)</span>
                 </button>
             </div>
+            """)
 
-            <script>
+            st.html("""
+            
             // --- 1. CLOSE / MINIMIZE CHAT TRIGGER ---
             window.vyasTriggerCloseChat = function() {
                 const btn = document.querySelector('div.st-key-btn_minimize_chat_window button');

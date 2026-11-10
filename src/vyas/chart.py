@@ -127,3 +127,86 @@ class Chart:
                 ruled.append(h)
         return ruled
 
+    def get_special_navamsha_summary(self) -> Dict[str, Any]:
+        """Computes Pushkar Navamsha, Pushkar Bhaga, and Vargottama for Lagna and all planets."""
+        items = {"Lagna": get_navamsha_analysis(self.ascendant_longitude)}
+        for p_name, p in self.planets.items():
+            items[p_name] = get_navamsha_analysis(p.longitude)
+        return items
+
+
+def get_navamsha_analysis(lon: float) -> Dict[str, Any]:
+    """
+    Computes D9 Navamsha sign, Pushkar Navamsha, Pushkar Bhaga, and Vargottama.
+    Based on Brihat Parashara Hora Shastra, Jataka Parijata & Vidyamadhaveeyam.
+    """
+    from typing import Dict, Any
+    total_padas = int(lon // constants.PADA_SPAN)
+    nav_sign_idx = total_padas % 12
+    sign_idx = int(lon // 30.0) % 12
+    deg_in_sign = lon % 30.0
+    nav_num_in_sign = int(deg_in_sign // constants.PADA_SPAN) + 1  # 1 to 9
+
+    element = sign_idx % 4  # 0=Fire, 1=Earth, 2=Air, 3=Water
+
+    # 24 Pushkar Navamshas:
+    is_pushkar_nav = False
+    pushkar_desc = ""
+    if element == 0:  # Agni / Fire: 7th (Libra - Venus) & 9th (Sagittarius - Jupiter)
+        if nav_num_in_sign == 7:
+            is_pushkar_nav = True
+            pushkar_desc = "तुला नवांश (7वां नवांश, स्वामी: शुक्र)"
+        elif nav_num_in_sign == 9:
+            is_pushkar_nav = True
+            pushkar_desc = "धनु नवांश (9वां नवांश, स्वामी: गुरु)"
+    elif element == 1:  # Prithvi / Earth: 3rd (Pisces - Jupiter) & 5th (Taurus - Venus)
+        if nav_num_in_sign == 3:
+            is_pushkar_nav = True
+            pushkar_desc = "मीन नवांश (3वां नवांश, स्वामी: गुरु)"
+        elif nav_num_in_sign == 5:
+            is_pushkar_nav = True
+            pushkar_desc = "वृषभ नवांश (5वां नवांश, स्वामी: शुक्र)"
+    elif element == 2:  # Vayu / Air: 6th (Pisces - Jupiter) & 8th (Taurus - Venus)
+        if nav_num_in_sign == 6:
+            is_pushkar_nav = True
+            pushkar_desc = "मीन नवांश (6वां नवांश, स्वामी: गुरु)"
+        elif nav_num_in_sign == 8:
+            is_pushkar_nav = True
+            pushkar_desc = "वृषभ नवांश (8वां नवांश, स्वामी: शुक्र)"
+    elif element == 3:  # Jala / Water: 1st (Cancer - Moon) & 3rd (Virgo - Mercury)
+        if nav_num_in_sign == 1:
+            is_pushkar_nav = True
+            pushkar_desc = "कर्क नवांश (1वां नवांश, स्वामी: चन्द्र)"
+        elif nav_num_in_sign == 3:
+            is_pushkar_nav = True
+            pushkar_desc = "कन्या नवांश (3वां नवांश, स्वामी: बुध)"
+
+    # 12 Pushkar Bhagas (exact sacred degrees):
+    # Aries: 21°, Taurus: 14°, Gemini: 18°, Cancer: 8°, Leo: 19°, Virgo: 9°,
+    # Libra: 24°, Scorpio: 11°, Sagittarius: 23°, Capricorn: 14°, Aquarius: 19°, Pisces: 9°
+    pushkar_bhaga_degrees = [21.0, 14.0, 18.0, 8.0, 19.0, 9.0, 24.0, 11.0, 23.0, 14.0, 19.0, 9.0]
+    pb_target = pushkar_bhaga_degrees[sign_idx]
+    is_pushkar_bhaga = abs(deg_in_sign - pb_target) <= 1.0
+
+    # Vargottama: Same sign in D1 (Rashi) and D9 (Navamsha)
+    is_vargottama = (sign_idx == nav_sign_idx)
+
+    return {
+        "longitude": lon,
+        "sign_idx": sign_idx,
+        "sign_name": constants.SIGNS_HI[sign_idx],
+        "sign_name_en": constants.SIGNS[sign_idx],
+        "deg_in_sign": deg_in_sign,
+        "nav_num": nav_num_in_sign,
+        "nav_sign_idx": nav_sign_idx,
+        "nav_sign_name": constants.SIGNS_HI[nav_sign_idx],
+        "nav_sign_name_en": constants.SIGNS[nav_sign_idx],
+        "nav_lord": constants.SIGN_LORD[nav_sign_idx],
+        "nav_lord_hi": constants.PLANETS_HI.get(constants.SIGN_LORD[nav_sign_idx], constants.SIGN_LORD[nav_sign_idx]),
+        "is_pushkar_nav": is_pushkar_nav,
+        "pushkar_desc": pushkar_desc,
+        "is_pushkar_bhaga": is_pushkar_bhaga,
+        "pushkar_bhaga_deg": pb_target,
+        "is_vargottama": is_vargottama
+    }
+

@@ -338,6 +338,46 @@ class VyasChatbotEngine:
         except Exception:
             formula_bank_sutras = []
 
+        # Pushkar Navamsha, Pushkar Bhaga & Vargottama Analysis
+        special_navamsha = {}
+        pushkar_nav_lines = []
+        pushkar_nav_planets = []
+        pushkar_bhaga_planets = []
+        vargottama_planets = []
+
+        try:
+            if hasattr(chart, "get_special_navamsha_summary"):
+                special_navamsha = chart.get_special_navamsha_summary()
+            else:
+                from vyas.chart import get_navamsha_analysis
+                special_navamsha = {"Lagna": get_navamsha_analysis(chart.ascendant_longitude)}
+                for p_name, p in chart.planets.items():
+                    special_navamsha[p_name] = get_navamsha_analysis(p.longitude)
+
+            for key in ["Lagna", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"]:
+                if key not in special_navamsha:
+                    continue
+                data = special_navamsha[key]
+                hi_name = constants.PLANETS_HI.get(key, "लग्न" if key == "Lagna" else key)
+                deg_f = f"{int(data['deg_in_sign']):02d}°{int(((data['deg_in_sign']) % 1) * 60):02d}'"
+                flags = []
+                if data["is_pushkar_nav"]:
+                    flags.append(f"★ पुष्कर नवांश ({data['pushkar_desc']})")
+                    pushkar_nav_planets.append(f"{hi_name} ({data['pushkar_desc']})")
+                if data["is_pushkar_bhaga"]:
+                    flags.append(f"★ पुष्कर भाग ({int(data['pushkar_bhaga_deg'])}°)")
+                    pushkar_bhaga_planets.append(f"{hi_name} ({deg_f})")
+                if data["is_vargottama"]:
+                    flags.append("★ वर्गोत्तम")
+                    vargottama_planets.append(f"{hi_name} ({data['sign_name']} राशि)")
+
+                status_str = " | ".join(flags) if flags else "सामान्य नवांश"
+                pushkar_nav_lines.append(
+                    f"• {hi_name} ({key}): {data['sign_name']} ({deg_f}) → {data['nav_num']}वां नवांश ({data['nav_sign_name']} नवांश, स्वामी: {data['nav_lord_hi']}) [{status_str}]"
+                )
+        except Exception:
+            pushkar_nav_lines = ["• नवांश गणना उपलब्ध है।"]
+
         return {
             "asc_sign": asc_sign,
             "asc_sign_name": asc_sign_name,
@@ -371,7 +411,12 @@ class VyasChatbotEngine:
             "house_lords_lines": house_lords_lines,
             "planet_owned": planet_owned,
             "planet_ownership_lines": planet_ownership_lines,
-            "house_aspects": house_aspects
+            "house_aspects": house_aspects,
+            "special_navamsha": special_navamsha,
+            "pushkar_nav_lines": pushkar_nav_lines,
+            "pushkar_nav_planets": pushkar_nav_planets,
+            "pushkar_bhaga_planets": pushkar_bhaga_planets,
+            "vargottama_planets": vargottama_planets
         }
 
     def _extract_conversation_memory(self, chat_history: Optional[List[Dict[str, str]]]) -> str:
@@ -556,6 +601,14 @@ class VyasChatbotEngine:
                 "  - जातक के प्रति सम्मानसूचक व आदरयुक्त पुल्लिंग शब्दों (जैसे 'आपकी कुण्डली में', 'आप प्राप्त करेंगे', 'आपके लिए विशेष शुभ रहेगा') का प्रयोग करें।"
             )
 
+        pushkar_table_block = "\n".join(fw.get("pushkar_nav_lines", []))
+        p_nav_list = fw.get("pushkar_nav_planets", [])
+        p_nav_summary = ", ".join(p_nav_list) if p_nav_list else "कोई ग्रह पुष्कर नवांश में नहीं है।"
+        p_bhaga_list = fw.get("pushkar_bhaga_planets", [])
+        p_bhaga_summary = ", ".join(p_bhaga_list) if p_bhaga_list else "कोई ग्रह पुष्कर भाग में नहीं है।"
+        varg_list = fw.get("vargottama_planets", [])
+        varg_summary = ", ".join(varg_list) if varg_list else "कोई ग्रह वर्गोत्तम नहीं है।"
+
         prompt = (
             f"आप आचार्य व्यास हैं—महर्षि पराशर, जैमिनी, एवं भृगु ज्योतिष के मूर्धन्य विद्वान और पूज्य वैदिक ज्योतिषी।\n\n"
             f"=== जातक का व्यक्तिगत सांसारिक विवरण (देश, काल, पात्र) ===\n"
@@ -572,6 +625,14 @@ class VyasChatbotEngine:
             f"प्रत्यन्तर्दशा {fw['dasha_pd']} (समाप्ति: {fw['pd_end']})\n"
             f"• आगामी अन्तर्दशा: {fw['next_ad_lord_hi']} (प्रारंभ तिथि: {fw['ad_end']})\n"
             f"• 9 ग्रह जन्म स्थितियां (भाव, राशि, अंश): {planets_summary}\n\n"
+            f"=== सूक्ष्म नवांश, पुष्कर नवांश एवं वर्गोत्तम ग्रह (PUSHKAR NAVAMSHA & VARGOTTAMA - ABSOLUTE GROUND TRUTH) ===\n"
+            f"• [पुष्कर नवांश व नवांश फलित का अनिवार्य शास्त्रीय नियम (BPHS & Jataka Parijata)]:\n"
+            f"  - यदि जातक 'पुष्कर नवांश', 'पुष्कर भाग', 'वर्गोत्तम', या अपनी कुण्डली के सूक्ष्म नवांश के विषय में प्रश्न पूछे, तो इधर-उधर की बात बिल्कुल न करें! नीचे दी गई प्रामाणिक गणितीय सूची के आधार पर सीधे, स्पष्ट व विस्तार से बताएं कि कौन सा ग्रह पुष्कर नवांश में है और उसका क्या शुभ फल है।\n"
+            f"{pushkar_table_block}\n"
+            f"• **पुष्कर नवांश में स्थित ग्रह:** {p_nav_summary}\n"
+            f"• **वर्गोत्तम (Vargottama) ग्रह:** {varg_summary}\n"
+            f"• **पुष्कर भाग (Pushkar Bhaga) ग्रह:** {p_bhaga_summary}\n"
+            f"• **शास्त्रीय महत्व (BPHS / Jataka Parijata):** पुष्कर नवांश 108 में से 24 परम शुभ व पोषणकारी नवांश होते हैं (जो केवल गुरु, शुक्र, बुध, चन्द्र द्वारा शासित होते हैं)। इसमें स्थित ग्रह अपनी दशा-अन्तर्दशा में राजयोग, अकूत धन, आरोग्यता व ईश्वरीय रक्षा प्रदान करता है।\n\n"
             f"=== 12 भावों के वास्तविक अधिपति (निर्विवाद शास्त्रीय सत्य - ABSOLUTE GROUND TRUTH) ===\n"
             f"{lords_block}\n\n"
             f"=== ग्रहों का वास्तविक भाव-स्वामित्व एवं स्थिति (PLANET LORDSHIPS & POSITIONS) ===\n"
@@ -1220,6 +1281,36 @@ class VyasChatbotEngine:
                 f"   • ये ग्रह समयानुसार मार्गी व वक्री दोनों अवस्थाओं में आते हैं। वर्तमान में शनि {sat_cur_sign} राशि में {sat_motion} गति में हैं।\n\n"
                 f"• **बृहत्पाराशर व फलदीपिका निर्देश:** छायाग्रहों का फल उनकी तात्कालिक राशि और युति/दृष्टि कारक ग्रहों के अनुरूप प्राप्त होता है।\n\n"
                 f"**सात्विक उपाय:** नित्य प्रातः 'ॐ नमः शिवाय' का 11 बार जप करें अथवा पक्षियों को सप्तधान्य डालें।"
+            )
+            return self._append_curiosity_hook("\n\n".join(ans), query)
+
+        # ---------------------------------------------------------------------
+        # INTENT: PUSHKAR NAVAMSHA, PUSHKAR BHAGA & VARGOTTAMA (पुष्कर नवांश व वर्गोत्तम विश्लेषण)
+        # ---------------------------------------------------------------------
+        if any(w in q_lower for w in ["pushkar", "पुष्कर", "vargottama", "वर्गोत्तम", "पुष्कर नवांश", "पुष्कर भाग", "navamsha", "नवांश"]):
+            p_nav_list = fw.get("pushkar_nav_planets", [])
+            p_bhaga_list = fw.get("pushkar_bhaga_planets", [])
+            varg_list = fw.get("vargottama_planets", [])
+
+            p_nav_text = f"★ **आपकी कुण्डली में पुष्कर नवांश में स्थित ग्रह:** {', '.join(p_nav_list)}।" if p_nav_list else "आपकी जन्मपत्रिका में कोई ग्रह पुष्कर नवांश में स्थित नहीं है।"
+            varg_text = f"★ **वर्गोत्तम (Vargottama) ग्रह:** {', '.join(varg_list)}।" if varg_list else "आपकी कुण्डली में कोई ग्रह वर्गोत्तम नहीं है।"
+            p_bhaga_text = f"★ **पुष्कर भाग (Pushkar Bhaga) में स्थित ग्रह:** {', '.join(p_bhaga_list)}।" if p_bhaga_list else "कोई ग्रह पुष्कर भाग में नहीं है।"
+
+            nav_lines = fw.get("pushkar_nav_lines", [])
+            nav_bullets = "\n".join([f"  {ln}" for ln in nav_lines])
+
+            ans = [salutation]
+            ans.append(
+                f"महर्षि पराशर विरचित बृहत्पाराशर होराशास्त्र एवं मंत्रेश्वरकृत 'जातक पारिजात' के अनुसार कुण्डली के कुल 108 नवांशों में से केवल 24 विशिष्ट नवांश **'पुष्कर नवांश' (Pushkar Navamsha)** कहलाते हैं। ये नवांश सदैव शुभ ग्रहों (गुरु, शुक्र, बुध, चन्द्र) द्वारा अधिष्ठित होते हैं और इसमें स्थित कोई भी ग्रह जातक को असाधारण जीवनदायिनी ऊर्जा, आरोग्य, उच्च पद-प्रतिष्ठा एवं राजयोग तुल्य फल प्रदान करता है।\n\n"
+                f"**आपकी जन्मपत्रिका का सूक्ष्म नवांश (D-9) खगोलीय विश्लेषण:**\n\n"
+                f"{p_nav_text}\n\n"
+                f"{varg_text}\n\n"
+                f"{p_bhaga_text}\n\n"
+                f"**समस्त ग्रहों की नवांश व पुष्कर स्थिति (तालिका):**\n"
+                f"{nav_bullets}\n\n"
+                f"• **शास्त्रीय फलित सार:** " +
+                (f"आपकी पत्रिका में {p_nav_list[0]} का पुष्कर नवांश में होना यह सिद्ध करता है कि संबंधित ग्रह अपनी महादशा अथवा अन्तर्दशा में अत्यंत शुभ, उन्नतिशील व अप्रत्याशित सफलता कारक फल प्रदान करेगा। " if p_nav_list else "आपकी कुण्डली में अन्य शुभ योगों एवं दशा चक्र का फलित अधिक प्रभावी है। ") +
+                (f"साथ ही {varg_list[0]} वर्गोत्तम होने से उस ग्रह को विशेष आत्मिक बल व स्थायित्व प्राप्त है।" if varg_list else "")
             )
             return self._append_curiosity_hook("\n\n".join(ans), query)
 
