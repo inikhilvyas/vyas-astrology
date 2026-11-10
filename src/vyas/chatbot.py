@@ -845,6 +845,57 @@ class VyasChatbotEngine:
             query=query, fw=fw, birth_info=birth_info, chat_history=chat_history
         )
 
+    def _call_vyas_daivagya(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
+                            chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
+        """
+        Calls the custom domain-fine-tuned Vyas-Daivagya model (Vyas-Daivagya-1.5B / 3B).
+        Connects via local Ollama, vLLM, llama.cpp server, or custom hosted endpoint.
+        """
+        import os
+        import json
+        import requests
+
+        endpoint = os.environ.get("VYAS_DAIVAGYA_API_URL", "http://localhost:11434/v1/chat/completions")
+        model = os.environ.get("VYAS_DAIVAGYA_MODEL", "vyas-daivagya:1.5b")
+        api_key = os.environ.get("VYAS_DAIVAGYA_API_KEY", "ollama")
+
+        # Fast circuit breaker: if neither custom URL nor local server is expected and not forced, return quickly
+        if not os.environ.get("VYAS_DAIVAGYA_API_URL") and os.environ.get("ENABLE_LOCAL_DAIVAGYA") != "1":
+            return None
+
+        try:
+            system_prompt = self._build_astrological_system_prompt(fw, birth_info, chat_history=chat_history, query=query)
+            messages = [{"role": "system", "content": system_prompt}]
+            if chat_history:
+                for msg in chat_history[-6:]:
+                    r = "assistant" if msg.get("role") in ["assistant", "model"] else "user"
+                    c = msg.get("content", "")
+                    if c:
+                        messages.append({"role": r, "content": c})
+            messages.append({"role": "user", "content": query})
+
+            resp = requests.post(
+                endpoint,
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "temperature": 0.35,
+                    "max_tokens": 800
+                },
+                timeout=12
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                choices = data.get("choices", [])
+                if choices:
+                    content = choices[0].get("message", {}).get("content", "")
+                    if content and len(content.strip()) > 20:
+                        return self._sanitize_chat_output(content)
+        except Exception:
+            pass
+        return None
+
     def _call_gemini(self, query: str, fw: Dict[str, Any], birth_info: Dict[str, Any],
                      chat_history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         """Calls Google Gemini API with automatic multi-key pool failover & model resilience."""
@@ -1043,8 +1094,11 @@ class VyasChatbotEngine:
             except Exception:
                 pass
 
-        # 1. Universal AI API Routing (Groq, DeepSeek, OpenAI, Gemini, OpenRouter)
-        if selected_provider == "groq":
+        # 1. Universal AI API Routing (Vyas-Daivagya, Groq, DeepSeek, OpenAI, Gemini, OpenRouter)
+        if selected_provider in ("vyas_daivagya", "daivagya", "local"):
+            reply = self._call_vyas_daivagya(query, fw, birth_info, chat_history)
+            if reply: return self._append_curiosity_hook(reply, query)
+        elif selected_provider == "groq":
             reply = self._call_groq(query, fw, birth_info, chat_history)
             if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider == "deepseek":
@@ -1063,8 +1117,8 @@ class VyasChatbotEngine:
             reply = self._call_kilo(query, fw, birth_info, chat_history)
             if reply: return self._append_curiosity_hook(reply, query)
         elif selected_provider != "classical":
-            # Auto cascade: Try available models in order of speed and capability
-            for call_fn in [self._call_groq, self._call_gemini, self._call_deepseek, self._call_openai, self._call_kilo, self._call_openrouter]:
+            # Auto cascade: Try custom Vyas-Daivagya (if running) then cloud APIs in speed order
+            for call_fn in [self._call_vyas_daivagya, self._call_groq, self._call_gemini, self._call_deepseek, self._call_openai, self._call_kilo, self._call_openrouter]:
                 reply = call_fn(query, fw, birth_info, chat_history)
                 if reply:
                     return self._append_curiosity_hook(reply, query)
