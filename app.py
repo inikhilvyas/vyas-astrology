@@ -3013,6 +3013,36 @@ with st.sidebar:
                     else:
                         st.error(_msg_gc)
 
+        # ---- VYAS-Daivagya Continual Learning & Automated Model Updater ----
+        with st.expander("🧠 Vyas-Daivagya AI: Continual Learning & Auto-Updater", expanded=False):
+            try:
+                from vyas import continual_learning
+                _cl_meta = continual_learning.get_continual_learning_status()
+                st.markdown(f"""
+                <div style="background: rgba(30, 41, 59, 0.7); border: 1px solid #3b82f6; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 700; color: #60a5fa; font-size: 1rem;">⚡ Vyas-Daivagya AI Status</span>
+                        <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">ACTIVE & AUTO-SYNCING</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.6;">
+                        • <b>Active Model Version:</b> v{_cl_meta.get('version', '1.0.0')}<br/>
+                        • <b>Total Trained Sutras/Pairs:</b> {_cl_meta.get('total_trained_pairs', 7500):,}<br/>
+                        • <b>Staged Auto-Buffer Pairs:</b> {_cl_meta.get('staged_new_pairs', 0)} (नए सूत्र व परामर्श)<br/>
+                        • <b>Last Update:</b> {_cl_meta.get('last_updated', '2026-11-10')}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                if st.button("🔄 Merge Staged Pairs & Trigger Auto-Update Pipeline", key="btn_trigger_cl_merge", use_container_width=True):
+                    _res_cl = continual_learning.trigger_auto_update_merge()
+                    if _res_cl.get("success"):
+                        st.success(f"✅ {_res_cl.get('message')} (New Version: v{_res_cl.get('new_version')})")
+                        st.rerun()
+                    else:
+                        st.error(_res_cl.get("message"))
+            except Exception as _e_cl:
+                st.caption(f"Continual learning engine note: {_e_cl}")
+
 # ---------------- SAVED KUNDLIS VAULT & ACTIVE KUNDLI BAR ----------------
 saved_list = auth_vault.get_saved_kundlis(u["id"]) if is_logged_in_now else []
 active_lp = st.session_state.get('loaded_profile')

@@ -1018,7 +1018,16 @@ class VyasChatbotEngine:
             hook = "क्या आप जानना चाहेंगे कि आपकी जन्मपत्रिका में सबसे शक्तिशाली 'राजयोग' कौन सा है और वह आपके जीवन में किस उम्र में पूर्ण फल प्रदान करेगा?"
 
         clean_text = VyasChatbotEngine._sanitize_chat_output(text.rstrip())
-        return f"{clean_text}\n\n{hook}"
+        final_reply = f"{clean_text}\n\n{hook}"
+
+        # Automatic continual learning buffer: Stage high-quality astrological consultation
+        try:
+            from vyas import continual_learning
+            continual_learning.stage_consultation_pair(query=query, response=final_reply)
+        except Exception:
+            pass
+
+        return final_reply
 
     @staticmethod
     def _sanitize_chat_output(text: str) -> str:
