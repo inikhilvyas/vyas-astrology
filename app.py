@@ -768,6 +768,44 @@ elif _oauth_code and not st.session_state.get("user_google_processed"):
             st.session_state.pop("oauth_state", None)
             st.rerun()
 
+# ---------------- 0. SOVEREIGN MOBILE VIEW RENDERER ----------------
+# If accessed via mobile query param or detected mobile screen, render the sovereign app directly!
+_m_param = st.query_params.get("m")
+_app_view = st.query_params.get("view")
+_is_mobile_view = (_m_param in ("1", "true") or _app_view == "mobile")
+
+if _is_mobile_view:
+    import streamlit.components.v1 as components
+    # Pure fullscreen native app rendering
+    st.markdown("""
+    <style>
+        header[data-testid="stHeader"] { display: none !important; }
+        #MainMenu { display: none !important; }
+        footer { display: none !important; }
+        .stApp { margin: 0 !important; padding: 0 !important; background: #060913 !important; }
+        div[data-testid="stToolbar"] { display: none !important; }
+        section[data-testid="stSidebar"] { display: none !important; }
+        div.block-container { padding: 0 !important; max-width: 100% !important; }
+        iframe { border: none !important; width: 100% !important; height: 100vh !important; }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    _m_html_path = os.path.join(os.path.dirname(__file__), "mobile", "src", "index.html")
+    if os.path.exists(_m_html_path):
+        with open(_m_html_path, "r", encoding="utf-8") as _mf:
+            _m_code = _mf.read()
+        
+        _m_css_path = os.path.join(os.path.dirname(__file__), "mobile", "src", "css", "mobile-elite.css")
+        _m_js_path = os.path.join(os.path.dirname(__file__), "mobile", "src", "js", "app-core.js")
+        
+        _m_css = open(_m_css_path, "r", encoding="utf-8").read() if os.path.exists(_m_css_path) else ""
+        _m_js = open(_m_js_path, "r", encoding="utf-8").read() if os.path.exists(_m_js_path) else ""
+        
+        _m_code = _m_code.replace('<link rel="stylesheet" href="css/mobile-elite.css">', f'<style>{_m_css}</style>')
+        _m_code = _m_code.replace('<script src="js/app-core.js"></script>', f'<script>{_m_js}</script>')
+        components.html(_m_code, height=920, scrolling=True)
+        st.stop()
+
 # PWA Manifest & Native Mobile Responsive Viewport Engine
 st.markdown('''
 <link rel="manifest" href="static/manifest.json">
@@ -788,14 +826,15 @@ st.markdown('''
         }
         meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
 
-        // Streamlit Multi-page Native Router for Mobile
+        // In-App Seamless Mobile Auto-Router (?m=1) - Never triggers 404!
         var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
         var urlParams = new URLSearchParams(window.location.search);
         var forceDesktop = urlParams.get('desktop') === '1';
+        var hasMobileParam = urlParams.get('m') === '1';
         
-        if (isMobile && !forceDesktop && !window.location.pathname.includes('/mobile')) {
-            console.log("📲 Redirecting mobile user to Sovereign Elite Mobile Experience (/mobile)...");
-            window.location.href = "/mobile";
+        if (isMobile && !forceDesktop && !hasMobileParam) {
+            urlParams.set('m', '1');
+            window.location.search = urlParams.toString();
         }
     } catch(e) {}
 })();

@@ -43,3 +43,4 @@ if os.path.exists(html_path):
     components.html(html_code, height=920, scrolling=True)
 else:
     st.error("Mobile interface assets loading...")
+
