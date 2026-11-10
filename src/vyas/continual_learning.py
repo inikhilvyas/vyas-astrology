@@ -161,3 +161,4 @@ def trigger_auto_update_merge() -> Dict[str, Any]:
         "merged_count": len(buffer_lines),
         "total_pairs": status.get("total_trained_pairs", 0) + len(buffer_lines)
     }
+
