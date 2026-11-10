@@ -39,3 +39,4 @@ jobs:
         with:
           name: vyas-astra-mobile-package
           path: mobile/
+

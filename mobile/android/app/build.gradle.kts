@@ -58,3 +58,4 @@ dependencies {
     implementation("androidx.webkit:webkit:1.9.0")
     implementation("com.android.billingclient:billing-ktx:6.1.0")
 }
+

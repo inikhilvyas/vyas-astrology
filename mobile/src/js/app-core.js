@@ -172,3 +172,4 @@ const VyasMobileApp = {
 window.addEventListener('DOMContentLoaded', () => {
     VyasMobileApp.init();
 });
+

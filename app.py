@@ -772,7 +772,7 @@ elif _oauth_code and not st.session_state.get("user_google_processed"):
 st.markdown('''
 <link rel="manifest" href="static/manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-<meta name="theme-color" content="#e5a93c">
+<meta name="theme-color" content="#060913">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
@@ -787,6 +787,16 @@ st.markdown('''
             pDoc.head.appendChild(meta);
         }
         meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
+
+        // Intelligent Mobile Auto-Router: If user visits on a mobile screen (<= 768px), redirect to the Elite Native Mobile App
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+        var urlParams = new URLSearchParams(window.location.search);
+        var forceDesktop = urlParams.get('desktop') === '1';
+        
+        if (isMobile && !forceDesktop && !window.location.pathname.includes('/static/mobile')) {
+            console.log("📲 Redirecting mobile user to Sovereign Elite Mobile Experience...");
+            window.location.href = "/static/mobile/index.html";
+        }
     } catch(e) {}
 })();
 </script>
