@@ -788,14 +788,14 @@ st.markdown('''
         }
         meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover';
 
-        // Intelligent Mobile Auto-Router: If user visits on a mobile screen (<= 768px), redirect to the Elite Native Mobile App
+        // Streamlit Multi-page Native Router for Mobile
         var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
         var urlParams = new URLSearchParams(window.location.search);
         var forceDesktop = urlParams.get('desktop') === '1';
         
-        if (isMobile && !forceDesktop && !window.location.pathname.includes('/static/mobile')) {
-            console.log("📲 Redirecting mobile user to Sovereign Elite Mobile Experience...");
-            window.location.href = "/static/mobile/index.html";
+        if (isMobile && !forceDesktop && !window.location.pathname.includes('/mobile')) {
+            console.log("📲 Redirecting mobile user to Sovereign Elite Mobile Experience (/mobile)...");
+            window.location.href = "/mobile";
         }
     } catch(e) {}
 })();

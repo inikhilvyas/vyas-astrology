@@ -2,7 +2,7 @@
   "name": "VYAS ASTRA • Sovereign Vedic Intelligence",
   "short_name": "VYAS ASTRA",
   "description": "Micro-degree Swiss Ephemeris Vedic Astrology, 16 Vargas, Pushkar Navamsha & Acharya Vyas AI",
-  "start_url": "/static/mobile/index.html",
+  "start_url": "/mobile",
   "scope": "/",
   "display": "standalone",
   "background_color": "#060913",
