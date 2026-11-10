@@ -2034,8 +2034,15 @@ elif _is_auto:
     st.markdown(f"<style>@media (prefers-color-scheme: light) {{\n{_light_css_rules}\n}}</style>", unsafe_allow_html=True)
 
 # ---------------- UNIFIED GLOBAL LANGUAGE RESOLVER ----------------
-_pref_lang = st.session_state.get('sidebar_ui_lang') or st.session_state.get('main_ui_lang_radio') or 'हिन्दी'
-is_hi = "English" not in _pref_lang
+_q_lang = (st.query_params.get("lang") or "").lower()
+if _q_lang in ("en", "english"):
+    is_hi = False
+elif _q_lang in ("hi", "hindi"):
+    is_hi = True
+else:
+    _pref_lang = st.session_state.get('sidebar_ui_lang') or st.session_state.get('main_ui_lang_radio') or 'हिन्दी'
+    is_hi = "English" not in _pref_lang
+
 st.session_state['sidebar_ui_lang'] = "हिन्दी" if is_hi else "English"
 st.session_state['main_ui_lang_radio'] = "हिन्दी (Hindi)" if is_hi else "English"
 st.session_state['ui_lang'] = "hi" if is_hi else "en"
@@ -2055,9 +2062,19 @@ with col_nav_lang:
         st.session_state['sidebar_ui_lang'] = new_lang
         st.session_state['main_ui_lang_radio'] = "English" if new_lang == "English" else "हिन्दी (Hindi)"
         st.session_state['ui_lang'] = "en" if new_lang == "English" else "hi"
+        st.query_params["lang"] = "en" if new_lang == "English" else "hi"
         st.session_state.pop('daily_res', None)
         st.session_state.pop('_daily_cache_token', None)
         st.rerun()
+
+st.html(f"""
+<script>
+try {{
+    if (window.parent) window.parent.postMessage({{ type: 'VYAS_SET_LANG', lang: '{st.session_state["ui_lang"]}' }}, '*');
+    if (window.top && window.top !== window.parent) window.top.postMessage({{ type: 'VYAS_SET_LANG', lang: '{st.session_state["ui_lang"]}' }}, '*');
+}} catch(e) {{}}
+</script>
+""")
 
 # ---------------- IN-PAGE SETTINGS & TOOLS DRAWER ----------------
 if st.session_state.get("_show_main_settings_drawer", False):
@@ -2659,22 +2676,48 @@ with st.sidebar:
         """, height=125)
     
     if is_logged_in_now:
-        st.markdown(f"""
-        <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 47, 0.95) 100%);
-                    border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 10px; padding: 8px 12px; text-align: center; margin-bottom: 8px;">
-            <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">VIP PRO TRIAL ACTIVE</div>
-            <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{u['name']} • <b>{u.get('days_left', 30)} Days Left</b></div>
-        </div>
-        """, unsafe_allow_html=True)
+        _u_tier = str(u.get("tier", "")).upper()
+        _is_pro_paid = _u_tier in ("VIP_PAID", "LIFETIME", "PRO") or (str(u.get("email", "")).lower() in ["nikhilvyas007@gmail.com", "inikhilvyas@gmail.com"])
+        if _is_pro_paid:
+            _pro_title = "👑 VIP PRO ACTIVE (प्रीमियम सक्रिय)" if is_hi else "👑 VIP PRO ACTIVE (Premium Active)"
+            _pro_sub = f"{u['name']} • <b>आजीवन / वार्षिक VIP प्रो सदस्य</b>" if is_hi else f"{u['name']} • <b>Lifetime / Annual VIP Pro Member</b>"
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.28) 0%, rgba(16, 185, 129, 0.22) 100%);
+                        border: 1.5px solid #f59e0b; border-radius: 10px; padding: 10px 12px; text-align: center; margin-bottom: 8px; box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);">
+                <div style="color: #fbbf24; font-weight: 800; font-size: 0.92rem;">{_pro_title}</div>
+                <div style="color: #f1f5f9; font-size: 0.78rem; margin-top: 3px;">{_pro_sub}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            _trial_title = "⚡ VIP PRO TRIAL ACTIVE"
+            _trial_sub = f"{u['name']} • <b>{u.get('days_left', 30)} दिन शेष (Days Left)</b>" if is_hi else f"{u['name']} • <b>{u.get('days_left', 30)} Days Left</b>"
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, rgba(240, 192, 90, 0.18) 0%, rgba(14, 23, 47, 0.95) 100%);
+                        border: 1px solid rgba(240, 192, 90, 0.5); border-radius: 10px; padding: 8px 12px; text-align: center; margin-bottom: 8px;">
+                <div style="color: #f7d584; font-weight: 800; font-size: 0.88rem;">{_trial_title}</div>
+                <div style="color: #eedc9a; font-size: 0.76rem; margin-top: 2px;">{_trial_sub}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
     # Hybrid Payment & Upgrade VIP Modal
     if is_logged_in_now:
-        with st.expander(" Upgrade VIP / प्रीमियम सदस्यता लें", expanded=False):
-            st.markdown("""
-            <div style="font-size: 0.82rem; color: #eedc9a; margin-bottom: 8px;">
-                <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, विस्तृत रिपोर्ट्स, लाल किताब व BTR का पूर्ण एक्सेस।
-            </div>
-            """, unsafe_allow_html=True)
+        _u_tier = str(u.get("tier", "")).upper()
+        _is_pro_paid = _u_tier in ("VIP_PAID", "LIFETIME", "PRO") or (str(u.get("email", "")).lower() in ["nikhilvyas007@gmail.com", "inikhilvyas@gmail.com"])
+        _exp_title = ("⭐ VIP Pro सदस्यता विवरण" if _is_pro_paid else " Upgrade VIP / प्रीमियम सदस्यता लें") if is_hi else ("⭐ VIP Pro Membership Active" if _is_pro_paid else " Upgrade to VIP Pro")
+        with st.expander(_exp_title, expanded=False):
+            if _is_pro_paid:
+                st.markdown(f"""
+                <div style="font-size: 0.84rem; color: #6ee7b7; margin-bottom: 8px; background: rgba(16, 185, 129, 0.12); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.4);">
+                    <b>{'बधाई! आपका VIP Pro एक्टिव है।' if is_hi else 'Congratulations! Your VIP Pro is Active.'}</b><br/>
+                    {'आपकी सदस्यता 2036 तक वैध है। सभी फीचर्स, 56-पेज कुण्डली व AI परामर्श अनलॉक हैं।' if is_hi else 'Your membership is active until 2036. All features, 56-page Kundli reports, and AI consultation are fully unlocked.'}
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div style="font-size: 0.82rem; color: #eedc9a; margin-bottom: 8px;">
+                    <b>VIP Pro प्लान्स:</b> असीमित कुंडलियां, विस्तृत रिपोर्ट्स, लाल किताब व BTR का पूर्ण एक्सेस।
+                </div>
+                """, unsafe_allow_html=True)
             plan_sel = st.selectbox("चुनें प्लान (Select Plan)", [
                 " वार्षिक प्रो (Annual VIP Pro) - ₹999 / वर्ष",
                 " मासिक (Monthly Starter) - ₹199 / माह",
@@ -2743,20 +2786,34 @@ with st.sidebar:
     if is_logged_in:
         u_tokens = auth_vault.get_google_tokens(u["id"])
         has_gdrive = bool(u_tokens and u_tokens.get("access_token"))
-        gdrive_status_html = """
-        <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
-            <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
-            <b>Google Drive:</b> सक्रिय (PDF रिपोर्ट सिंक)
-        </div>
-        """ if has_gdrive else """
-        <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
-            Google Drive कनेक्ट नहीं है
-        </div>
-        """
+        if is_hi:
+            gdrive_status_html = """
+            <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                <b>Google Drive:</b> सक्रिय (PDF रिपोर्ट सिंक)
+            </div>
+            """ if has_gdrive else """
+            <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
+                Google Drive कनेक्ट नहीं है
+            </div>
+            """
+            _lbl_logged = f"लॉगिन: {u['name']}"
+        else:
+            gdrive_status_html = """
+            <div style="font-size: 0.8rem; color: #6ee7b7; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                <b>Google Drive:</b> Connected (PDF Cloud Sync)
+            </div>
+            """ if has_gdrive else """
+            <div style="font-size: 0.8rem; color: #facc15; margin-top: 6px;">
+                Google Drive Not Connected
+            </div>
+            """
+            _lbl_logged = f"Logged in: {u['name']}"
 
         st.markdown(f"""
         <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.5); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px;">
-            <div style="font-weight: 700; color: #34d399; font-size: 0.92rem;">लॉगिन: {u['name']}</div>
+            <div style="font-weight: 700; color: #34d399; font-size: 0.92rem;">{_lbl_logged}</div>
             <div style="font-size: 0.78rem; color: #cbd5e1;">{u['email']}</div>
             {gdrive_status_html}
         </div>
@@ -2768,10 +2825,10 @@ with st.sidebar:
                 auth_url = google_drive_sync.get_google_auth_url(include_drive=True)
                 if auth_url:
                     st.link_button(
-                        "Drive कनेक्ट करें",
+                        "Drive कनेक्ट करें" if is_hi else "Connect Drive",
                         auth_url,
                         use_container_width=True,
-                        help="Drive में PDF सुरक्षित करने के लिए अनुमति दें।",
+                        help="Drive में PDF सुरक्षित करने के लिए अनुमति दें।" if is_hi else "Authorize to backup reports in Google Drive",
                     )
         with col_gdr2:
             if st.button("Logout", key="sidebar_logout_btn", use_container_width=True):
@@ -2782,23 +2839,24 @@ with st.sidebar:
                         auth_vault.pop_app_state(_dk)
                     except Exception:
                         pass
-                st.success("लॉगआउट हुआ।")
+                st.success("लॉगआउट हुआ।" if is_hi else "Logged out successfully.")
                 st.rerun()
 
         # ---------------- PROMINENT SIDEBAR KUNDLI VAULT (OPEN KUNDLI) ----------------
         saved_list_sb = auth_vault.get_saved_kundlis(u["id"])
         cur_lp_sb = st.session_state.get('loaded_profile')
         
-        st.markdown("""
+        st.markdown(f"""
         <div style="font-size: 0.78rem; color: #eedc9a; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin: 12px 0 6px 0;">
-            सुरक्षित कुण्डलियाँ (Saved Kundlis)
+            {'सुरक्षित कुण्डलियाँ' if is_hi else 'Saved Horoscopes Vault'}
         </div>
         """, unsafe_allow_html=True)
         
         if cur_lp_sb:
+            _active_k_lbl = f"सक्रिय कुण्डली: {cur_lp_sb.get('name', 'जातक')}" if is_hi else f"Active Horoscope: {cur_lp_sb.get('name', 'Seeker')}"
             st.markdown(f"""
             <div style="background: rgba(15, 23, 42, 0.9); border: 1.2px solid #f0c05a; border-radius: 8px; padding: 6px 10px; margin-bottom: 8px;">
-                <div style="font-size: 0.82rem; font-weight: 700; color: #f0c05a;">सक्रिय कुण्डली: {cur_lp_sb.get('name', 'जातक')}</div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #f0c05a;">{_active_k_lbl}</div>
                 <div style="font-size: 0.72rem; color: #cbd5e1;">{cur_lp_sb.get('dob')} • {cur_lp_sb.get('city', '')[:16]}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -2820,7 +2878,7 @@ with st.sidebar:
 
             safe_idx = _safe_selectbox_guard("sb_vault_kundli_select", sb_k_options, cur_k_idx)
             sb_sel_lbl = st.selectbox(
-                "कुण्डली चुनें:",
+                "कुण्डली चुनें:" if is_hi else "Select Horoscope:",
                 sb_k_options,
                 index=safe_idx,
                 key="sb_vault_kundli_select",
@@ -2830,30 +2888,45 @@ with st.sidebar:
             
             c_sb1, c_sb2 = st.columns(2)
             with c_sb1:
-                if st.button("कुण्डली खोलें", key="sb_open_k_btn", use_container_width=True, type="primary", help="चयनित कुण्डली तुरंत लोड करें"):
+                if st.button("कुण्डली खोलें" if is_hi else "Open Horoscope", key="sb_open_k_btn", use_container_width=True, type="primary", help="चयनित कुण्डली तुरंत लोड करें" if is_hi else "Load selected horoscope"):
                     _load_kundli_into_session(sb_sel_k, user_id=u["id"])
                     st.rerun()
             with c_sb2:
-                if st.button("नई कुण्डली", key="sb_new_k_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें"):
+                if st.button("नई कुण्डली" if is_hi else "+ New Kundli", key="sb_new_k_btn", use_container_width=True, help="नये जातक का जन्म विवरण भरें" if is_hi else "Enter details for new person"):
                     st.session_state['show_birth_form'] = True
                     st.session_state.pop('loaded_profile', None)
                     st.rerun()
         else:
-            if st.button("नई कुण्डली बनाएं (Enter Details)", key="sb_new_k_empty_btn", use_container_width=True, type="primary"):
+            if st.button("नई कुण्डली बनाएं" if is_hi else "Create New Horoscope", key="sb_new_k_empty_btn", use_container_width=True, type="primary"):
                 st.session_state['show_birth_form'] = True
                 st.session_state.pop('loaded_profile', None)
                 st.rerun()
     else:
+        # 1-Click In-App Google Sign-In (does not leave the app wrapper!)
+        _gis_btn_txt = "Google 1-Click लॉगिन" if is_hi else "Sign in with Google"
+        st.components.v1.html(f"""
+        <script>
+        function triggerGisLogin() {{
+            try {{
+                if (window.parent) window.parent.postMessage({{ type: 'TRIGGER_GOOGLE_LOGIN' }}, '*');
+                if (window.top && window.top !== window.parent) window.top.postMessage({{ type: 'TRIGGER_GOOGLE_LOGIN' }}, '*');
+            }} catch(e) {{}}
+        }}
+        </script>
+        <button onclick="triggerGisLogin()" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a73e8; color:white; border:none; border-radius:8px; padding:10px 14px; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 2px 10px rgba(26,115,232,0.45);">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#ffffff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#ffffff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#ffffff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#ffffff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <span>{_gis_btn_txt}</span>
+        </button>
+        """, height=44)
+
         auth_url = google_drive_sync.get_google_auth_url(include_drive=False)
         if auth_url:
             st.link_button(
-                "Google से साइन इन करें",
+                "वैकल्पिक: ब्राउज़र से साइन इन करें" if is_hi else "Alternative: Sign in via Browser",
                 auth_url,
                 use_container_width=True,
-                type="primary",
-                help="सुरक्षित OAuth 2.0 — Google लॉगिन नई विंडो में खुलेगा।",
+                help="Google OAuth 2.0 बाह्य ब्राउज़र विंडो में लॉगिन" if is_hi else "Google OAuth 2.0 external browser sign in",
             )
-            st.caption(" साइन-इन नई विंडो में पूरा करें, फिर यह पेज रीफ़्रेश करें।")
 
     # Admin/debug panels - ONLY visible when ?admin=1 query param is explicitly passed
     is_admin_mode = bool(st.query_params.get("admin") in ("1", "true") or os.environ.get("VYAS_ADMIN") == "1")
@@ -3649,23 +3722,28 @@ if show_form:
     </div>
     """, unsafe_allow_html=True)
 
-    mode = st.radio("Mode / प्रकार" if is_hi else "Mode", ["Natal Kundli (जन्म कुण्डली)", "Prashna (प्रश्न कुण्डली)"] if is_hi else ["Natal Kundli", "Prashna (Horary)"], horizontal=True)
+    _mode_lbl = "कुण्डली प्रकार" if is_hi else "Horoscope Mode"
+    _mode_options = ["जन्म कुण्डली (Natal)", "प्रश्न कुण्डली (Horary)"] if is_hi else ["Natal Horoscope", "Prashna (Horary)"]
+    mode = st.radio(_mode_lbl, _mode_options, horizontal=True)
 
-    if "Natal" in mode:
-        name = st.text_input("Name / नाम" if is_hi else "Name", default_name)
-        date_val = st.date_input("Date of Birth / जन्म तिथि" if is_hi else "Date of Birth", value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
+    if "Natal" in mode or "जन्म" in mode:
+        _name_lbl = "पूरा नाम" if is_hi else "Full Name"
+        _dob_lbl = "जन्म तिथि" if is_hi else "Date of Birth"
+        name = st.text_input(_name_lbl, default_name)
+        date_val = st.date_input(_dob_lbl, value=default_dob, min_value=datetime(1900, 1, 1).date(), max_value=datetime(2100, 12, 31).date(), format="DD/MM/YYYY")
         
         # Exact HH:MM:SS input for ultra micro-precision
-        st.markdown("<small style='color: #f0c05a;'><b>Time of Birth (Hours : Mins : Secs) / जन्म समय</b></small>", unsafe_allow_html=True)
+        _tob_hdr = "जन्म समय (घंटे : मिनट : सेकंड)" if is_hi else "Time of Birth (Hours : Mins : Secs)"
+        st.markdown(f"<small style='color: #f0c05a;'><b>{_tob_hdr}</b></small>", unsafe_allow_html=True)
         t_col1, t_col2, t_col3 = st.columns(3)
-        tob_hour = t_col1.number_input("Hour (घंटा)", min_value=0, max_value=23, value=def_h)
-        tob_min = t_col2.number_input("Min (मिनट)", min_value=0, max_value=59, value=def_m)
-        tob_sec = t_col3.number_input("Sec (सेकंड)", min_value=0, max_value=59, value=def_s)
+        tob_hour = t_col1.number_input("घंटा (Hour)" if is_hi else "Hour", min_value=0, max_value=23, value=def_h)
+        tob_min = t_col2.number_input("मिनट (Min)" if is_hi else "Min", min_value=0, max_value=59, value=def_m)
+        tob_sec = t_col3.number_input("सेकंड (Sec)" if is_hi else "Sec", min_value=0, max_value=59, value=def_s)
         time_val = d_time(int(tob_hour), int(tob_min), int(tob_sec))
     else:
-        name = st.text_input("Querent Name / प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
+        name = st.text_input("प्रच्छक का नाम" if is_hi else "Querent Name", "Querent")
         prashna_category = st.selectbox(
-            "प्रश्न विषय (Prashna Subject / Category)",
+            "प्रश्न विषय" if is_hi else "Prashna Category",
             [
                 " नौकरी / कार्य सफलता (Career & Job)",
                 "विवाह एवं प्रेम संबंध (Marriage & Romance)",
@@ -3674,21 +3752,30 @@ if show_form:
                 " धन लाभ / फंसा हुआ धन (Wealth & Recovery of Dues)",
                 "विदेश यात्रा / स्थानांतरण (Travel & Relocation)",
                 " खोई हुई वस्तु / गुमशुदा (Lost Article / Missing Person)"
+            ] if is_hi else [
+                "Career & Job Success",
+                "Marriage & Relationships",
+                "Health & Disease Recovery",
+                "Court Case & Legal Dispute",
+                "Wealth & Recovery of Dues",
+                "Foreign Travel & Relocation",
+                "Lost Article & Missing Person"
             ]
         )
-        prashna_text = st.text_input("विशेष प्रश्न (Specific Question)", "क्या मेरा कार्य सिद्ध होगा?")
+        prashna_text = st.text_input("विशेष प्रश्न" if is_hi else "Specific Question", "क्या मेरा कार्य सिद्ध होगा?" if is_hi else "Will my work succeed?")
         st.session_state['prashna_meta'] = {"category": prashna_category, "text": prashna_text}
-        st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा (Prashna uses exact horary moment).")
+        st.info("प्रश्न कुण्डली में तात्कालिक सटीक समय व स्थान प्रयुक्त होगा।" if is_hi else "Prashna horary chart automatically captures the exact current cosmic moment.")
         now = datetime.now()
         date_val = now.date()
         time_val = now.time()
 
-    st.subheader("Birth Place / जन्म स्थान" if is_hi else "Birth Place")
+    st.subheader("जन्म स्थान" if is_hi else "Birth Place")
 
     if '_pending_city_search_input' in st.session_state:
         st.session_state['city_search_input'] = st.session_state.pop('_pending_city_search_input')
 
-    city_query = st.text_input("नगर/कस्बा खोजें (Type City / Town / Tehsil to search):", value=default_city, key="city_search_input")
+    _city_search_lbl = "नगर / कस्बा खोजें:" if is_hi else "Search City / Town / Tehsil:"
+    city_query = st.text_input(_city_search_lbl, value=default_city, key="city_search_input")
 
     matched_cities = city_search.search_cities(city_query, limit=40) if city_search else []
     city_options = {}
@@ -3704,8 +3791,9 @@ if show_form:
             "lon": float(st.session_state.get('lon', default_lon))
         }
 
+    _city_sel_lbl = "सूची से नगर चुनें:" if is_hi else "Select Town / City from List:"
     selected_city_label = st.selectbox(
-        "नगर चुनें (Select Town / City from List):",
+        _city_sel_lbl,
         options=list(city_options.keys()),
         index=0,
         key="selected_city_dropdown"
@@ -3722,23 +3810,24 @@ if show_form:
     city_name = st.session_state.get('city_name', sel_city_data.get('name', default_city) if sel_city_data else default_city)
             
     coord_col1, coord_col2 = st.columns(2)
-    lat = coord_col1.number_input("Latitude (°N) / अक्षांश" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
-    lon = coord_col2.number_input("Longitude (°E) / रेखांश" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
+    lat = coord_col1.number_input("अक्षांश Latitude (°N)" if is_hi else "Latitude (°N)", value=float(st.session_state.get('lat', default_lat)), format="%.4f", step=0.01)
+    lon = coord_col2.number_input("रेखांश Longitude (°E)" if is_hi else "Longitude (°E)", value=float(st.session_state.get('lon', default_lon)), format="%.4f", step=0.01)
     st.session_state['lat'] = lat
     st.session_state['lon'] = lon
 
-    tz_offset = st.number_input("Timezone Offset (Hours) / समय क्षेत्र", value=default_tz, step=0.5)
+    tz_offset = st.number_input("समय क्षेत्र (Timezone Offset - Hours)" if is_hi else "Timezone Offset (Hours)", value=default_tz, step=0.5)
 
     col_ay1, col_ay2 = st.columns(2)
     with col_ay1:
-        ayan_choice = st.selectbox("Ayanamsa (अयनांश)", ["Lahiri", "KP", "Raman"], index=0)
+        ayan_choice = st.selectbox("अयनांश (Ayanamsa)" if is_hi else "Ayanamsa", ["Lahiri", "KP", "Raman"], index=0)
     with col_ay2:
-        node_choice = st.selectbox("राहु-केतु नोड (Rahu Node)", ["Mean (औसत)", "True (स्पष्ट)"], index=0)
+        node_choice = st.selectbox("राहु-केतु नोड" if is_hi else "Rahu-Ketu Node", ["Mean (औसत)" if is_hi else "Mean", "True (स्पष्ट)" if is_hi else "True"], index=0)
 
     # Save to vault and Generate buttons
     col_sv1, col_sv2 = st.columns([1, 1.2])
     with col_sv1:
-        if st.button(" कुण्डली सुरक्षित करें", use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं"):
+        _btn_save_lbl = "💾 कुण्डली सुरक्षित करें" if is_hi else "💾 Save Horoscope to Vault"
+        if st.button(_btn_save_lbl, use_container_width=True, help="प्रोफ़ाइल वॉल्ट में सेव करें व डिफ़ॉल्ट बनाएं" if is_hi else "Save to vault and set as default"):
             k_payload = {
                 "name": name,
                 "dob": date_val.strftime("%Y-%m-%d"),
@@ -3753,13 +3842,14 @@ if show_form:
             if ok:
                 _latest = auth_vault.get_default_or_latest_kundli(u["id"]) or k_payload
                 _load_kundli_into_session(_latest, make_default=True, user_id=u["id"])
-                st.success(f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।")
+                _msg_ok = f"'{name}' की कुण्डली सुरक्षित व डिफ़ॉल्ट सेट हो गई! अगली बार ऐप खोलने पर यह स्वतः खुली मिलेगी।" if is_hi else f"Horoscope for '{name}' saved and set as default! It will auto-load when you open the app."
+                st.success(_msg_ok)
                 st.rerun()
             else:
                 st.warning(s_msg)
 
     with col_sv2:
-        btn_lbl = "Generate Analysis & Birth Chart →" if not is_hi else "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →"
+        btn_lbl = "कुण्डली एवं ज्योतिषीय विश्लेषण बनाएं →" if is_hi else "Generate Horoscope & Vedic Analysis →"
         generate = st.button(btn_lbl, type="primary", use_container_width=True)
         if generate:
             st.session_state['show_birth_form'] = False
@@ -3922,12 +4012,14 @@ if st.session_state.get('data_generated'):
         st.session_state["domain_suite_sidebar_radio"] = "व्यक्तिगत दैनिक राशिफल" if is_hi else "Daily Horoscope & Timing"
 
     with st.sidebar:
-        st.markdown("""
+        _sb_suite_hdr = "ज्योतिष अनुसंधान प्रभाग" if is_hi else "Research Domain Suites"
+        _sb_suite_sub = "(यहाँ से मुख्य प्रभाग / टैब चुनें)" if is_hi else "(Select primary suite tab)"
+        st.markdown(f"""
         <div style="margin: 16px 0 6px; padding: 10px 14px; background: linear-gradient(135deg, rgba(240,192,90,0.2) 0%, rgba(14,23,42,0.92) 100%); border-left: 4px solid #f0c05a; border-radius: 8px;">
             <div style="font-family: var(--font-yatra); font-size: 1.05rem; font-weight: 700; color: #f0c05a;">
-                ज्योतिष अनुसंधान प्रभाग (Domain Suites)
+                {_sb_suite_hdr}
             </div>
-            <div style="font-size: 0.74rem; color: #cbd5e1;">(यहाँ से मुख्य प्रभाग / टैब चुनें)</div>
+            <div style="font-size: 0.74rem; color: #cbd5e1;">{_sb_suite_sub}</div>
         </div>
         """, unsafe_allow_html=True)
         selected_suite = st.radio(
@@ -3938,7 +4030,8 @@ if st.session_state.get('data_generated'):
         )
 
         if is_logged_in_now and len(saved_list) > 1:
-            with st.expander(f"कुण्डली बदलें ({len(saved_list)})", expanded=False):
+            _exp_sw_title = f"कुण्डली बदलें ({len(saved_list)})" if is_hi else f"Switch Horoscope ({len(saved_list)})"
+            with st.expander(_exp_sw_title, expanded=False):
                 sb_sw_options = []
                 sb_sw_map = {}
                 for k in saved_list:
@@ -3955,14 +4048,14 @@ if st.session_state.get('data_generated'):
 
                 safe_sw_idx = _safe_selectbox_guard("sb_kundli_switcher", sb_sw_options, cur_k_idx)
                 sb_sel_lbl = st.selectbox(
-                    "कुण्डली चुनें:",
+                    "कुण्डली चुनें:" if is_hi else "Select Horoscope:",
                     sb_sw_options,
                     index=safe_sw_idx,
                     key="sb_kundli_switcher"
                 )
                 sb_sel_k = sb_sw_map.get(sb_sel_lbl, saved_list[0])
                 if sb_sel_k.get('id') != cur_k_id:
-                    if st.button("खोलें", key="sb_switch_btn", use_container_width=True):
+                    if st.button("खोलें" if is_hi else "Open", key="sb_switch_btn", use_container_width=True):
                         _load_kundli_into_session(sb_sel_k, user_id=u["id"])
                         st.rerun()
 

@@ -1,0 +1,18 @@
+{
+  "nikhilvyas007@gmail.com": {
+    "user_id": 20,
+    "email": "nikhilvyas007@gmail.com",
+    "tier": "VIP_PAID",
+    "plan": "lifetime",
+    "txn_id": "ADMIN_OWNER_LIFETIME",
+    "expiry": "2036-01-01T00:00:00"
+  },
+  "inikhilvyas@gmail.com": {
+    "user_id": 0,
+    "email": "inikhilvyas@gmail.com",
+    "tier": "VIP_PAID",
+    "plan": "lifetime",
+    "txn_id": "ADMIN_OWNER_LIFETIME",
+    "expiry": "2036-01-01T00:00:00"
+  }
+}

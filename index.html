@@ -743,6 +743,7 @@
                 }
 
                 const savedProfile = localStorage.getItem('vyas_active_profile');
+                const savedLang = localStorage.getItem('vyas_ui_lang');
                 let targetSrc = "https://vyas-astrology-111.streamlit.app/?embed=true";
                 if (search) {
                     const extra = search.startsWith('?') ? search.substring(1) : search;
@@ -754,6 +755,10 @@
                     targetSrc += "&stok=" + encodeURIComponent(savedToken);
                 } else if (savedJwt) {
                     targetSrc += "&g_jwt=" + encodeURIComponent(savedJwt);
+                }
+
+                if (savedLang && !targetSrc.includes('lang=')) {
+                    targetSrc += "&lang=" + encodeURIComponent(savedLang);
                 }
 
                 // Auto-restore saved active kundli so user never has to re-type birth details
@@ -835,6 +840,14 @@
                         localStorage.setItem('vyas_auth_token', event.data.token);
                         const authBar = document.getElementById('google-auth-bar');
                         if (authBar) authBar.style.display = 'none';
+                    } else if (event.data.type === 'TRIGGER_GOOGLE_LOGIN') {
+                        if (window.google && window.google.accounts && window.google.accounts.id) {
+                            google.accounts.id.prompt();
+                            const gBtn = document.querySelector('#g_id_signin div[role="button"]');
+                            if (gBtn) gBtn.click();
+                        }
+                    } else if (event.data.type === 'VYAS_SET_LANG' && event.data.lang) {
+                        localStorage.setItem('vyas_ui_lang', event.data.lang);
                     } else if (event.data.type === 'VYAS_SAVE_ACTIVE_KUNDLI' && event.data.profile) {
                         localStorage.setItem('vyas_active_profile', JSON.stringify(event.data.profile));
                     } else if (event.data.type === 'VYAS_CLEAR_KUNDLI') {
@@ -850,6 +863,50 @@
                 }
             } catch(e) {}
         });
+
+        // Visibility Change Listener: Auto-sync auth token when returning from browser to installed PWA
+        window.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                const savedToken = localStorage.getItem('vyas_auth_token');
+                const iframe = document.getElementById('app-frame');
+                if (savedToken && iframe && iframe.src && !iframe.src.includes('stok=')) {
+                    try {
+                        const url = new URL(iframe.src);
+                        url.searchParams.set('stok', savedToken);
+                        iframe.src = url.toString();
+                    } catch(e) {
+                        iframe.src = iframe.src + '&stok=' + encodeURIComponent(savedToken);
+                    }
+                    const authBar = document.getElementById('google-auth-bar');
+                    if (authBar) authBar.style.display = 'none';
+                }
+            }
+        });
+
+        // Return-to-App Banner when OAuth completes in a separate browser tab
+        (function() {
+            try {
+                const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+                const search = window.location.search;
+                if (!isStandalone && search && (search.includes('code=') || search.includes('stok='))) {
+                    const retBanner = document.createElement('div');
+                    retBanner.id = 'pwa-return-banner';
+                    retBanner.style.cssText = 'position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:10005; background:linear-gradient(135deg,#059669,#047857); color:white; padding:8px 18px; border-radius:999px; box-shadow:0 4px 18px rgba(0,0,0,0.5); display:flex; align-items:center; gap:10px; font-size:0.84rem; font-weight:700; border:1.5px solid #34d399;';
+                    retBanner.innerHTML = '<span>✅ लॉगिन सफल!</span><button onclick="returnToApp()" style="background:#ffffff; color:#065f46; border:none; border-radius:999px; padding:4px 12px; font-weight:800; cursor:pointer;">📲 VYAS ऐप में लौटें</button><span onclick="this.parentElement.remove()" style="cursor:pointer; font-size:1.1rem; margin-left:4px;">✕</span>';
+                    document.body.appendChild(retBanner);
+                }
+            } catch(e) {}
+        })();
+
+        function returnToApp() {
+            if (/android/i.test(navigator.userAgent)) {
+                window.location.href = 'intent://vyasastro.in/#Intent;scheme=https;package=in.vyasastro.twa;end';
+                setTimeout(() => { window.location.href = 'https://vyasastro.in/'; }, 800);
+            } else {
+                window.close();
+                setTimeout(() => { window.location.href = 'https://vyasastro.in/'; }, 500);
+            }
+        }
 
         function isJwtFresh(jwt) {
             if (!jwt || typeof jwt !== 'string') return false;

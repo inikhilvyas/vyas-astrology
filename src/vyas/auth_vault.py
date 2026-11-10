@@ -392,6 +392,16 @@ def _init_db_tables():
                 INSERT OR IGNORE INTO users (id, email, name, password_hash, created_at, vip_expiry, tier)
                 VALUES (1, 'seeker@vyasastro.com', 'नया जातक (Seeker)', '', ?, ?, 'VIP_TRIAL')
             """, (now.isoformat(), vip_expiry.isoformat()))
+
+        # Auto-upgrade admin accounts to lifetime VIP Pro
+        for adm_email in ADMIN_PRO_EMAILS:
+            cursor.execute("SELECT id FROM users WHERE LOWER(email) = ?", (adm_email,))
+            adm_row = cursor.fetchone()
+            if adm_row:
+                cursor.execute("""
+                    UPDATE users SET tier = 'VIP_PAID', vip_expiry = '2036-01-01T00:00:00'
+                    WHERE id = ?
+                """, (adm_row["id"],))
         conn.commit()
         _sync_user_id_sequence(conn)
 
@@ -634,6 +644,68 @@ def delete_session_token(token: str) -> None:
         pass
 
 # Ensure DB is initialized on module import
+ADMIN_PRO_EMAILS = {"nikhilvyas007@gmail.com", "inikhilvyas@gmail.com"}
+
+_VIP_REGISTRY_FILE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    "data",
+    "paid_vip_members.json"
+)
+
+
+def _load_vip_registry() -> Dict[str, Dict]:
+    try:
+        if os.path.exists(_VIP_REGISTRY_FILE):
+            with open(_VIP_REGISTRY_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+
+def _save_vip_registry(registry: Dict[str, Dict]):
+    try:
+        os.makedirs(os.path.dirname(_VIP_REGISTRY_FILE), exist_ok=True)
+        with open(_VIP_REGISTRY_FILE, "w", encoding="utf-8") as f:
+            json.dump(registry, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+
+def _resolve_user_tier_and_vip(email: str, db_tier: str, vip_exp: datetime) -> Tuple[str, bool, int, str]:
+    """Uniform resolver for VIP tier, expiry date, and days left.
+    Guarantees admin/creator lifetime access and preserves paid VIP subscribers across restarts.
+    """
+    email_clean = (email or "").strip().lower()
+    now = datetime.now()
+
+    # 1. Admin / Creator lifetime access
+    if email_clean in ADMIN_PRO_EMAILS:
+        future_exp = datetime(2036, 1, 1, 0, 0, 0)
+        return "VIP_PAID", True, 3650, future_exp.strftime("%d/%m/%Y")
+
+    # 2. Check persistent file registry (survives SQLite container redeploys)
+    reg = _load_vip_registry()
+    if email_clean in reg:
+        entry = reg[email_clean]
+        try:
+            reg_exp = datetime.fromisoformat(entry.get("expiry", ""))
+            if reg_exp > now:
+                tier_str = entry.get("tier", "VIP_PAID")
+                days_l = max(0, (reg_exp - now).days)
+                return tier_str, True, days_l, reg_exp.strftime("%d/%m/%Y")
+        except Exception:
+            pass
+
+    # 3. Database record
+    is_vip = vip_exp > now
+    days_left = max(0, (vip_exp - now).days)
+    tier_val = (db_tier or "VIP_TRIAL").upper()
+    if not is_vip:
+        return "FREE", False, 0, vip_exp.strftime("%d/%m/%Y")
+    return tier_val, True, days_left, vip_exp.strftime("%d/%m/%Y")
+
+
 init_db()
 
 def _hash_password(password: str) -> str:
@@ -734,17 +806,15 @@ def login_user(email: str, password: str) -> Tuple[bool, str, Optional[Dict]]:
             user_id = row["id"]
             name = row["name"]
             vip_exp = datetime.fromisoformat(row["vip_expiry"])
-            now = datetime.now()
-            
-            days_left = max(0, (vip_exp - now).days)
-            is_vip = vip_exp > now
+            tier_raw = row["tier"] if "tier" in row.keys() else "VIP_TRIAL"
+            tier_val, is_vip, days_left, exp_str = _resolve_user_tier_and_vip(email, tier_raw, vip_exp)
 
             user_data = {
                 "id": user_id,
                 "email": email,
                 "name": name,
-                "tier": "VIP_TRIAL" if is_vip else "FREE",
-                "vip_expiry": vip_exp.strftime("%d/%m/%Y"),
+                "tier": tier_val,
+                "vip_expiry": exp_str,
                 "days_left": days_left,
                 "is_vip": is_vip
             }
@@ -762,16 +832,14 @@ def get_user_by_id(user_id: int) -> Optional[Dict]:
             if not row:
                 return None
             vip_exp = datetime.fromisoformat(row["vip_expiry"])
-            now = datetime.now()
-            days_left = max(0, (vip_exp - now).days)
-            is_vip = vip_exp > now
-            tier_val = row["tier"] if "tier" in row.keys() else "VIP_TRIAL"
+            tier_raw = row["tier"] if "tier" in row.keys() else "VIP_TRIAL"
+            tier_val, is_vip, days_left, exp_str = _resolve_user_tier_and_vip(row["email"], tier_raw, vip_exp)
             return {
                 "id": row["id"],
                 "email": row["email"],
                 "name": row["name"],
-                "tier": tier_val if is_vip else "FREE",
-                "vip_expiry": vip_exp.strftime("%d/%m/%Y"),
+                "tier": tier_val,
+                "vip_expiry": exp_str,
                 "days_left": days_left,
                 "is_vip": is_vip
             }
@@ -788,41 +856,49 @@ def login_or_register_google(email: str, name: str) -> Tuple[bool, str, Optional
             row = cursor.fetchone()
             if row:
                 vip_exp = datetime.fromisoformat(row["vip_expiry"])
-                now = datetime.now()
-                days_left = max(0, (vip_exp - now).days)
-                is_vip = vip_exp > now
-                tier_val = row["tier"] if "tier" in row.keys() else "VIP_TRIAL"
+                tier_raw = row["tier"] if "tier" in row.keys() else "VIP_TRIAL"
+                tier_val, is_vip, days_left, exp_str = _resolve_user_tier_and_vip(email, tier_raw, vip_exp)
+                # If admin or registered paid, persist update to database
+                if tier_val in ("VIP_PAID", "LIFETIME") and row["tier"] != "VIP_PAID":
+                    try:
+                        cursor.execute("UPDATE users SET tier = 'VIP_PAID' WHERE id = ?", (row["id"],))
+                        conn.commit()
+                    except Exception:
+                        pass
                 user_data = {
                     "id": row["id"],
                     "email": email,
                     "name": row["name"],
-                    "tier": tier_val if is_vip else "FREE",
-                    "vip_expiry": vip_exp.strftime("%d/%m/%Y"),
+                    "tier": tier_val,
+                    "vip_expiry": exp_str,
                     "days_left": days_left,
                     "is_vip": is_vip
                 }
                 return True, f"Google से सफल लॉगिन: {user_data['name']}", user_data
             else:
-                # Register new google user with 30-day VIP trial
+                # Register new google user
                 now = datetime.now()
-                vip_expiry = now + timedelta(days=30)
+                is_admin = email in ADMIN_PRO_EMAILS
+                vip_expiry = now + timedelta(days=3650 if is_admin else 30)
+                tier_str = "VIP_PAID" if is_admin else "VIP_TRIAL"
                 pwd_hash = _hash_password(f"google_oauth_{email}")
                 cursor.execute("""
                     INSERT INTO users (email, name, password_hash, created_at, vip_expiry, tier)
-                    VALUES (?, ?, ?, ?, ?, 'VIP_TRIAL')
-                """, (email, name.strip() or "Google User", pwd_hash, now.isoformat(), vip_expiry.isoformat()))
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (email, name.strip() or "Google User", pwd_hash, now.isoformat(), vip_expiry.isoformat(), tier_str))
                 user_id = cursor.lastrowid
                 conn.commit()
+                tier_val, is_vip, days_left, exp_str = _resolve_user_tier_and_vip(email, tier_str, vip_expiry)
                 user_data = {
                     "id": user_id,
                     "email": email,
                     "name": name.strip() or "Google User",
-                    "tier": "VIP_TRIAL",
-                    "vip_expiry": vip_expiry.strftime("%d/%m/%Y"),
-                    "days_left": 30,
-                    "is_vip": True
+                    "tier": tier_val,
+                    "vip_expiry": exp_str,
+                    "days_left": days_left,
+                    "is_vip": is_vip
                 }
-                return True, "Google से सफल पंजीकरण! 30-दिन का VIP Pro निःशुल्क सक्रिय।", user_data
+                return True, "Google से सफल पंजीकरण! VIP Pro सक्रिय।", user_data
     except Exception as e:
         return False, f"Google लॉगिन त्रुटि: {str(e)}", None
 
@@ -1039,11 +1115,12 @@ def upgrade_vip(user_id: int, plan_type: str, txn_id: str) -> Tuple[bool, str]:
     try:
         with _get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT vip_expiry FROM users WHERE id = ?", (user_id,))
+            cursor.execute("SELECT email, vip_expiry FROM users WHERE id = ?", (user_id,))
             row = cursor.fetchone()
             if not row:
                 return False, "उपयोगकर्ता नहीं मिला।"
             
+            u_email = row["email"]
             curr_exp = datetime.fromisoformat(row["vip_expiry"])
             base_date = max(datetime.now(), curr_exp)
             new_exp = base_date + timedelta(days=add_days)
@@ -1052,6 +1129,20 @@ def upgrade_vip(user_id: int, plan_type: str, txn_id: str) -> Tuple[bool, str]:
                 UPDATE users SET vip_expiry = ?, tier = 'VIP_PAID' WHERE id = ?
             """, (new_exp.isoformat(), user_id))
             conn.commit()
+
+            # Persist in JSON registry so it survives container restarts
+            reg = _load_vip_registry()
+            reg[u_email.lower()] = {
+                "user_id": user_id,
+                "email": u_email.lower(),
+                "tier": "VIP_PAID" if plan_type.lower() != "lifetime" else "LIFETIME",
+                "plan": plan_type,
+                "txn_id": txn_id,
+                "updated_at": datetime.now().isoformat(),
+                "expiry": new_exp.isoformat()
+            }
+            _save_vip_registry(reg)
+
             return True, f"सफल अपग्रेड! आपका VIP प्लान {new_exp.strftime('%d/%m/%Y')} तक सक्रिय कर दिया गया है।"
     except Exception as e:
         return False, f"अपग्रेड में त्रुटि: {str(e)}"
