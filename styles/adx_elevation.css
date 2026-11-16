@@ -280,14 +280,16 @@ body {
     background: rgba(255, 255, 255, 0.08) !important;
 }
 
-
-
 /* =========================================================================
-   ANIMATED COSMIC LIVING WALLPAPER & GLASS SURFACE ELEVATION
+   ANIMATED COSMIC LIVING WALLPAPER (NON-INTRUSIVE BACKGROUND)
    ========================================================================= */
-html, body {
-    background: #050814 !important;
-    background-color: #050814 !important;
+html {
+    background-color: #060913 !important;
+}
+
+body {
+    background: transparent !important;
+    background-color: transparent !important;
     background-image: none !important;
 }
 
@@ -298,35 +300,24 @@ html, body {
     width: 100vw !important;
     height: 100vh !important;
     pointer-events: none !important;
-    z-index: 0 !important;
-    opacity: 1 !important;
+    z-index: -1 !important;
+    opacity: 0.95 !important;
 }
 
-.master-header, .cockpit-container, .modal-backdrop, .toast-container,
-.tab-view-container, .mobile-view-container, .m-header, .m-bottom-nav {
-    position: relative !important;
-    z-index: 1 !important;
+.cockpit-container {
+    position: relative;
+    z-index: 1;
 }
 
 .cockpit-col {
-    background: rgba(8, 14, 28, 0.72) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border: 1px solid rgba(229, 193, 88, 0.22) !important;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    background: rgba(10, 16, 30, 0.78) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(229, 193, 88, 0.18) !important;
 }
 
 .content-card {
-    background: rgba(13, 20, 38, 0.70) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(212, 175, 55, 0.18) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
-}
-
-.master-header {
-    background: rgba(5, 9, 18, 0.78) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.24) !important;
+    background: rgba(14, 22, 42, 0.72) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
 }
