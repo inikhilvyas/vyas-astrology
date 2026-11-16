@@ -198,3 +198,4 @@ def fix_file(filepath, canvas_id, fn_name, is_mobile=False):
 if __name__ == '__main__':
     fix_file('index.html', 'cosmicVoidCanvas', 'initCosmicWallpaper', is_mobile=False)
     fix_file('mobile/index.html', 'cosmicVoidCanvasMobile', 'initMobileCosmicWallpaper', is_mobile=True)
+

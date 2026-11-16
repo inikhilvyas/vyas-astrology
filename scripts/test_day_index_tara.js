@@ -84,3 +84,4 @@ if (elements['vIndexVal'].textContent !== '--' &&
     console.error(">>> FAIL: Loaded chart did not compute dynamic Day Index or Navatara!");
     process.exit(1);
 }
+

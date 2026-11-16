@@ -84,3 +84,4 @@ for (const t of tabs) {
         console.error(`  ❌ ERROR switching tab '${t}' (loaded chart):`, e.message);
     }
 }
+

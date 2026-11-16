@@ -492,3 +492,4 @@ def update_mobile():
 if __name__ == '__main__':
     update_desktop()
     update_mobile()
+
