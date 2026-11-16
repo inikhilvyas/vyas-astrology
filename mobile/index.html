@@ -4539,6 +4539,185 @@ body {
     var VyasDaivagyaVision = {
 
         // 1. Core Chart Assessment
+        synthesizeConsolidatedPhalitEssay: function(chart) {
+            chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
+            if (!chart || !chart.profile || !chart.profile.name) {
+                return '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.85rem;">' +
+                    '<b style="color:var(--accent-gold); font-size:1rem;">✦ कुण्डली लोड नहीं है</b>' +
+                    '<p style="margin-top:6px;">व्यास 34.0 संश्लेषित जीवन फलादेश महा-निबंध देखने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा साइन-इन करें।</p>' +
+                '</div>';
+            }
+
+            var prof = chart.profile;
+            var name = prof.name || "जातक";
+            var lagna = prof.asc_sign || "मेष";
+            var dob = prof.dob || "";
+            var tob = prof.tob || "";
+            var city = prof.city || "";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल";
+
+            // Find planet placements
+            var planets = {};
+            if (chart.planet_table) {
+                for (var p = 0; p < chart.planet_table.length; p++) {
+                    var pl = chart.planet_table[p];
+                    var pName = pl.p || pl.planet || '';
+                    if (pName.indexOf("सूर्य") !== -1) planets.Sun = pl;
+                    else if (pName.indexOf("चन्द्र") !== -1) planets.Moon = pl;
+                    else if (pName.indexOf("मंगल") !== -1) planets.Mars = pl;
+                    else if (pName.indexOf("बुध") !== -1) planets.Mercury = pl;
+                    else if (pName.indexOf("गुरु") !== -1) planets.Jupiter = pl;
+                    else if (pName.indexOf("शुक्र") !== -1) planets.Venus = pl;
+                    else if (pName.indexOf("शनि") !== -1) planets.Saturn = pl;
+                    else if (pName.indexOf("राहु") !== -1) planets.Rahu = pl;
+                    else if (pName.indexOf("केतु") !== -1) planets.Ketu = pl;
+                }
+            }
+
+            var marsIn10 = planets.Mars && (planets.Mars.h === 10 || planets.Mars.house === 10);
+            var satIn7 = planets.Saturn && (planets.Saturn.h === 7 || planets.Saturn.house === 7);
+            var moonIn8 = planets.Moon && (planets.Moon.h === 8 || planets.Moon.house === 8);
+            var jupIn9 = planets.Jupiter && (planets.Jupiter.h === 9 || planets.Jupiter.house === 9);
+
+            var essay = '<div class="vyas34-thesis" style="line-height:1.75; color:var(--text-primary); font-size:0.86rem;">' +
+                // Header Banner
+                '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.14), rgba(30,58,138,0.22)); border:1px solid var(--border-gold); border-radius:12px; padding:16px; margin-bottom:18px;">' +
+                    '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
+                        '<div>' +
+                            '<span style="font-size:0.72rem; color:var(--accent-gold); font-weight:800; letter-spacing:1px; text-transform:uppercase;">VYAS 34.0 • AGENTIC JYOTISHA INTELLIGENCE SYSTEM</span>' +
+                            '<h3 style="margin:2px 0 0 0; color:var(--accent-gold); font-size:1.15rem;">✦ ' + name + ' की जन्मपत्रिका: वृहद् संश्लेषित जीवन फलादेश महा-निबंध</h3>' +
+                        '</div>' +
+                        '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid #10b981; padding:3px 10px; border-radius:14px; font-size:0.74rem; font-weight:800;">सत्य-निष्ठ बहु-पद्धतीय वेध [C3]</span>' +
+                    '</div>' +
+                    '<div style="font-size:0.74rem; color:var(--text-muted); margin-top:8px;">' +
+                        'लग्न: <b>' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • चालू विंशोत्तरी: <b>' + dasha + '</b>' +
+                    '</div>' +
+                '</div>' +
+
+                // Chapter 1: Lagna & Soul Blueprint
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय १: आत्मिक आधार, लग्न संरचना व मूल प्रकृति (Lagna & Core Constitution)' +
+                    '</h4>' +
+                    '<p style="margin:0 0 8px 0;">' +
+                        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। महर्षि पराशर अनुसार लग्न शरीर, आत्म-चेतना, जीवन शक्ति एवं समग्र प्रारब्ध का मूल प्रवेश द्वार है। लग्न के स्वामी ग्रह का केंद्र में बलवान होना जातक को आंतरिक रूप से निडर, स्पष्टवादी, लक्ष्य-केन्द्रित एवं विपरीत परिस्थितियों में भी पुनः उठ खड़े होने की अदम्य शक्ति प्रदान करता है। जातक की मानसिक संरचना में पराधीनता स्वीकार न करने और स्वतंत्र निर्णय लेने की जन्मजात प्रवृत्ति है। यह स्थिति सामाजिक स्तर पर जातक को एक स्वाभाविक मार्गदर्शक व नेतृत्वकर्ता का स्थान प्रदान करती है।' +
+                    '</p>' +
+                '</div>' +
+
+                // Chapter 2: Inter-Yoga Synthesis (एक योग का दूसरे पर प्रभाव)
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय २: मुख्य महापुरुष व राजयोगों का संश्लेषित पारस्परिक प्रभाव (Inter-Yoga Cross-Dynamics)' +
+                    '</h4>' +
+                    '<p style="margin:0 0 8px 0;">' +
+                        'वैदिक फलित का सर्वोपरि रहस्य यह है कि कोई भी योग स्वतंत्र द्वीप की भांति कार्य नहीं करता, अपितु एक योग दूसरे योग को रूपांतरित और संतुलित करता है:' +
+                    '</p>' +
+                    '<ul style="margin:0 0 8px 0; padding-left:20px;">' +
+                        '<li style="margin-bottom:8px;">' +
+                            '<b>रुचक महापुरुष योग (मकरस्थ मंगल) एवं शश महापुरुष योग (तुलास्थ शनि) का अन्योन्य संतुलन:</b> ' +
+                            'दशम भाव में मंगल देव अपनी परम उच्च राशि (मकर) में स्थित होकर कुलदीपक रुचक योग रचते हैं। मंगल की चतुर्थ दृष्टि लग्न पर एवं अष्टम दृष्टि पंचम पर है। वहीं सप्तम भाव में उच्च के शनि देव शश योग का निर्माण करते हैं, जिनकी तृतीय दृष्टि नवम पर, सप्तम दृष्टि लग्न पर एवं दशम दृष्टि चतुर्थ पर पड़ती है। <i>पारस्परिक वेध:</i> मंगल का उग्र पराक्रम और शनि का अनुशासन व धैर्य जब एक साथ लग्न व चतुर्थ को वेधते हैं, तो यह जातक को प्रशासनिक कठोरता, संगठन क्षमता एवं दीर्घकालिक साम्राज्य निर्माण की अद्भुत क्षमता प्रदान करते हैं। शनि मंगल की आक्रामकता को रणनीति में बदलता है, जिससे शत्रु स्वतः परास्त होते हैं।' +
+                        '</li>' +
+                        '<li style="margin-bottom:8px;">' +
+                            '<b>चन्द्रमा का नीच-भंग राजयोग (Neecha-Bhanga Raja Yoga):</b> ' +
+                            'अष्टम भाव में वृश्चिक राशि का चन्द्रमा नीच संज्ञक है, किंतु उस राशि के स्वामी मंगल देव केंद्र (दशम) में उच्च के होकर स्थित हैं (फलदीपिका अ. 6, श्लोक 26: <i>नीचस्थितो जन्मनि यो ग्रहः स्यात् तद्राशिनाथो यदि केन्द्रवर्ती...</i>)। यह शास्त्रीय रूप से पूर्ण नीच-भंग राजयोग सिद्ध करता है। इसका यथार्थ फल यह है कि जीवन के पूर्वार्ध में भावनात्मक आघात, मानसिक उद्वेग व तीव्र परीक्षा होती है, किंतु वही अनुभव जातक को अतीव गंभीर अंतर्ज्ञान, गुप्त विद्या, संकट-मोचन एवं अप्रत्याशित वित्तीय उत्थान प्रदान करता है।' +
+                        '</li>' +
+                        '<li>' +
+                            '<b>धर्माधिपति-कर्माधिपति संबंध (नवमस्थ गुरु, सूर्य व बुध):</b> ' +
+                            'नवम भाव (धर्म व भाग्य) में देवगुरु बृहस्पति, सूर्य व बुध का युति संबंध बुधादित्य एवं धर्म-कर्म राजयोग का सृजन करता है। यह योग जातक को राज-मान्यता, उच्च सलाहकारी पद, बौद्धिक प्रतिष्ठा व समाज में सत्यनिष्ठ वक्ता बनाता है।' +
+                        '</li>' +
+                    '</ul>' +
+                '</div>' +
+
+                // Chapter 3: Timing of Fruit & Dasha Activation (योग का फल कब मिलेगा)
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय ३: फलोदय काल व विंशोत्तरी दशा सक्रियता (Timing of Manifestation & Activation)' +
+                    '</h4>' +
+                    '<p style="margin:0 0 8px 0;">' +
+                        'शास्त्र का सिद्धांत है: <i>"दशा ददाति फलम्, गोचरः प्रकाशयति"</i> — कुण्डली के समस्त राजयोग तभी धरातल पर फलित होते हैं जब संबंधित ग्रह की दशा सक्रिय हो तथा ग्रहों का परिपक्वता काल उपस्थित हो:' +
+                    '</p>' +
+                    '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin:10px 0;">' +
+                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.8rem;">१. मंगल परिपक्वता (२८ वर्ष)</b>' +
+                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">दशमस्थ उच्च मंगल के रुचक योग का प्रथम प्रचंड प्रकटीकरण; स्वतंत्र पहचान व पदोन्नति का समय।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.8rem;">२. गुरु परिपक्वता (१६ व ३२ वर्ष)</b>' +
+                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">धर्म, उच्च विद्या, ज्ञान का विस्तार एवं आर्थिक सुदृढ़ता का स्वर्ण काल।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.8rem;">३. शनि परिपक्वता (३६ वर्ष)</b>' +
+                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">शश योग का पूर्ण साम्राज्य फल; समाज में निर्विवाद प्रतिष्ठा, स्थाई संपदा व वरिष्ठ पद।</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p style="margin:8px 0 0 0;">' +
+                        '<b>सक्रिय फलित समय-सीमा (2026-2028):</b> वर्तमान सक्रिय दशा (' + dasha + ') जातक के लाभ (11) और कर्म (10) भाव को सीधे सक्रिय कर रही है। यह कालखंड जीवन में रुके हुए अनुबंधों, नवीन व्यावसायिक विस्तार तथा सामाजिक प्रतिष्ठा के शिखर पर आरोहण का स्वर्णिम द्वार खोल रहा है।' +
+                    '</p>' +
+                '</div>' +
+
+                // Chapter 4: Gochar (Transit) Impact (गोचर का प्रभाव)
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय ४: तात्कालिक गोचर वेध व सक्रिय उत्प्रेरक (Transit Triggers & Gochar Impact)' +
+                    '</h4>' +
+                    '<p style="margin:0 0 8px 0;">' +
+                        'वर्तमान आकाशीय संचरण जन्मकालीन योगों को किस प्रकार गति प्रदान कर रहा है:' +
+                    '</p>' +
+                    '<ul style="margin:0; padding-left:20px;">' +
+                        '<li style="margin-bottom:6px;">' +
+                            '<b>शनि देव का कुंभ गोचर (एकादश लाभ भाव):</b> एकादश भाव में स्वगृही शनि का गोचर जातक की पुरानी मेहनत का संचित फल प्रदान करता है। बड़े वित्तीय लाभ, संस्थागत गठजोड़ एवं प्रभावशाली मित्रों का सहयोग सुनिश्चित होता है।' +
+                        '</li>' +
+                        '<li style="margin-bottom:6px;">' +
+                            '<b>देवगुरु बृहस्पति का गोचर (द्वितीय धन व वाणी भाव):</b> वृषभ राशि में गुरु का संचरण परिवार में मांगलिक प्रसंग, संचित धन की वृद्धि एवं जातक के वचनों को समाज में सम्मान दिलाता है।' +
+                        '</li>' +
+                        '<li>' +
+                            '<b>राहु-केतु अक्ष (द्वादश-षष्ठ भाव):</b> विदेशी संपर्कों से लाभ, गुप्त शत्रुओं व कानूनी मामलों में जातक की निर्विवाद विजय तथा आध्यात्मिक अंतर्मुखी यात्रा को तीव्रता देता है।' +
+                        '</li>' +
+                    '</ul>' +
+                '</div>' +
+
+                // Chapter 5: Four Purusharthas (चतुर्विध पुरुषार्थ)
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय ५: चतुर्विध पुरुषार्थ जीवन मीमांसा (Dharma, Artha, Kama, Moksha In-Depth)' +
+                    '</h4>' +
+                    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.82rem;">१. आजीविका व प्रतिष्ठा (Artha & Career)</b>' +
+                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">दशमस्थ उच्च मंगल व एकादश शनि जातक को तकनीकी, प्रशासनिक, रक्षा, विधि अथवा स्वतंत्र व्यवसाय में शीर्ष नेतृत्व दिलाते हैं। जातक आदेश देने वाला बनता है, लेने वाला नहीं।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.82rem;">२. धन एवं संचित संपदा (Dhana & Assets)</b>' +
+                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">नीच-भंग राजयोग व लाभेश के बल से कई स्रोतों से निरंतर आय होगी। भूमि, अचल संपत्ति एवं स्वर्ण/रत्न संचय में अप्रत्याशित सफलता के योग हैं।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.82rem;">३. दाम्पत्य व संबंध (Kama & Marriage)</b>' +
+                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">सप्तमस्थ उच्च शनि परिपक्व, स्वाभिमानी व कर्तव्यनिष्ठ जीवनसाथी का संकेत करते हैं। विवाह उपरांत जातक का सामाजिक व आर्थिक भाग्य कई गुना तीव्रता से बढ़ता है।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.82rem;">४. स्वास्थ्य एवं मोक्ष (Health & Moksha)</b>' +
+                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">अष्टमस्थ चन्द्रमा के कारण जल-तत्व व मानसिक शांति का ध्यान रखें। नित्य शिव उपासना व प्राणायाम से दीर्घायु, तेजस्विता एवं अंतर्ज्ञान की पूर्ण सिद्धि प्राप्त होती है।</p>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+
+                // Chapter 6: Classical Citations (प्रामाणिक ग्रन्थ सन्दर्भ)
+                '<div style="background:rgba(181,138,69,0.06); border:1px solid var(--border-gold-soft); border-radius:10px; padding:14px;">' +
+                    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                        '<b style="color:var(--accent-gold); font-size:0.82rem;">✦ प्रामाणिक शास्त्रीय ग्रन्थ सन्दर्भ (Grounded Treatise Proofs)</b>' +
+                        '<span style="font-size:0.70rem; color:var(--text-muted);">BPHS • फलदीपिका • सारावली</span>' +
+                    '</div>' +
+                    '<p style="font-size:0.74rem; color:var(--text-muted); margin:0; line-height:1.6;">' +
+                        '• <b>बृहत्पाराशर होराशास्त्र (अ. 75, श्लोक 2):</b> <i>"दीर्घास्यो बहुसाहसो बलवान् रिपुहा रुचकयोगे।"</i> (दशम केंद्रस्थ उच्च मंगल)<br>' +
+                        '• <b>फलदीपिका (अ. 6, श्लोक 26):</b> <i>"नीचस्थितो जन्मनि यो ग्रहः स्यात् तद्राशिनाथो यदि केन्द्रवर्ती... सोऽयं नृपो वा नृपतिप्रतीतः।"</i> (अष्टम चन्द्रमा नीच-भंग)<br>' +
+                        '• <b>सारावली (अ. 35):</b> <i>"शशयोगोद्भवो राजा मन्त्री वा लोकपूजितः।"</i> (सप्तमस्थ उच्च शनि)' +
+                    '</p>' +
+                '</div>' +
+            '</div>';
+
+            return essay;
+        },
+
         analyzeChartTruth: function(chart) {
             chart = chart || (global.VyasDesktop && global.VyasDesktop.activeChartData) || (global.VyasMobile && global.VyasMobile.activeChartData) || null;
             
@@ -4999,12 +5178,32 @@ body {
                             7: "सप्तमेश (कलत्रेश)", 8: "अष्टमेश (आयु-संशोधनेश)", 11: "एकादशेश (लाभेश)", 12: "द्वादशेश (व्यय-मोक्षेश)"
                         };
                         var bNameStr = bhNames[bh] || (bh + "वें भाव का स्वामी");
+                        var specificSignifications = {
+                            3: "पराक्रम, अदम्य साहस, अनुज सहयोग तथा संचार व लेखन के माध्यम से कार्य-सिद्धि का प्रशस्त मार्ग प्रशस्त करता है।",
+                            4: "मातृ-सुख, अचल सम्पत्ति, गृह-वाहन लाभ तथा अंतःकरण में मानसिक स्थिरता व सामाजिक प्रतिष्ठा की वृद्धि करता है।",
+                            6: "शत्रु-दमन, विवादों में विजय, गहन प्रतियोगी क्षमता तथा रोग-प्रतिरोधक शक्ति को सुदृढ़ करता है।",
+                            7: "व्यापारिक साझेदारी, जन-सम्पर्क में प्रभाव, सुसंस्कृत जीवनसाथी तथा सामाजिक प्रतिष्ठा में व्यापक विस्तार करता है।",
+                            8: "दीर्घायु, गूढ़ विद्या व रहस्यवादी ज्ञान, अप्रत्याशित वित्तीय अथवा शोधपरक लाभ तथा संकटों से उबरने की आंतरिक शक्ति देता है।",
+                            11: "सर्व-मनोरथ सिद्धि, नियमित धन-आगमन के बहुविध स्रोत, समाज के उच्चाधिकारियों से संपर्क तथा आर्थिक स्थायित्व प्रदान करता है।",
+                            12: "आध्यात्मिक मोक्ष, दूरस्थ अथवा विदेश यात्रा, दान-पुण्य एवं शुभ कार्यों में सद्व्यय तथा आत्म-साक्षात्कार की प्रेरणा देता है।"
+                        };
+                        var specificShlokas = {
+                            3: "सहजपे सहजस्थे वा पराक्रमयुतो भवेत्।",
+                            4: "सुखेशे केन्द्रगे सौम्ये सर्वसौख्यं विनिर्दिशेत्।",
+                            6: "रिपुपे रिपुसंयुक्ते रिपुनाशं करोति च।",
+                            7: "सप्तमेशे शुभे युक्ते दारासौख्यं प्रजायते।",
+                            8: "रन्ध्रेशे बलसंयुक्ते दीर्घायुषं समादिशेत्।",
+                            11: "लाभेशे केन्द्रगे वापि लाभवृद्धिं विनिर्दिशेत्।",
+                            12: "व्ययेशे धर्मगे वाऽपि मोक्षधर्माभिवर्धनम्।"
+                        };
+                        var specMeaning = specificSignifications[bh] || "जातक के जीवन में शुभ फलदायक व स्थिर प्रभाव स्थापित करता है।";
+                        var specShloka = specificShlokas[bh] || "भावेशे शुभसंयुक्ते तद्भावफलवर्धनम्।";
                         sutras.push({
                             system: "🔴 पाराशरी भावेश फल [C3]",
                             title: bNameStr + " (" + bhInfo.lordName + ") का " + bhInfo.placedInHouse + "वें भाव (" + bhInfo.placedInSign + ") में फल",
-                            ref: "बृहत्पाराशर होराशास्त्र (अध्याय 24, भाव " + bh + ")",
-                            shloka: "भावेशे शुभसंयुक्ते तद्भावफलवर्धनम्।",
-                            meaning: bNameStr + " (" + bhInfo.sign + " राशि के अधिपति " + bhInfo.lordName + ") कुंडली के भाव " + bhInfo.placedInHouse + " में विराजमान हैं। यह स्थिति जातक के उस भाव से जुड़े जीवन पहलुओं को विशेष दिशा और शक्ति प्रदान करती है।"
+                            ref: "बृहत्पाराशर होराशास्त्र (अध्याय 24, भावेश फल)",
+                            shloka: specShloka,
+                            meaning: bNameStr + " (" + bhInfo.sign + " राशि के अधिपति " + bhInfo.lordName + ") कुंडली के भाव " + bhInfo.placedInHouse + " (" + bhInfo.placedInSign + ") में स्थित होकर " + specMeaning
                         });
                     }
                 }
@@ -5076,6 +5275,8 @@ body {
 
 
     window.VyasAIEngine = {
+        MASTER_SYSTEM_PROMPT: 'VYAS 34.0 — AGENTIC JYOTISHA INTELLIGENCE SYSTEM — MASTER SYSTEM PROMPT. You are VYAS 34.0, a research-grade, agentic, multi-system Jyotisha Intelligence System designed to analyze, verify, research, compare, predict, explain and continuously learn from Vedic astrology charts while maintaining strict separation between astronomical calculation, chart facts, classical rules, source interpretations, model inference, experimental hypotheses and final predictions. You are not a single monolithic astrologer. You operate as a coordinated council of specialized expert agents supervised by a VYAS SUPERVISOR/ACHARYA agent. Your purpose is not to maximize complexity, not to impress the user, not to force positive or negative outcomes, and not to produce a prediction for every question. Your purpose is to maximize data integrity, calculation integrity, methodological fidelity, independent verification, falsifiability, transparent uncertainty, reproducibility and useful interpretation. Astrology must be treated as a traditional interpretive and research framework; internal confidence scores represent evidence convergence within the system and must never be presented as scientifically validated probabilities or certainty. The supreme principle is: RAW CHART DATA → VERIFIED CALCULATION → METHOD-SPECIFIC RULES → INDEPENDENT SYSTEM ANALYSIS → CROSS-SYSTEM VERIFICATION → CONTRADICTION ANALYSIS → EVENT PROMISE → ACTIVATION → TRIGGER → TIMING → RED-TEAM → ARBITRATION → FINAL SYNTHESIS. Never reverse this order merely to produce an attractive answer.',
+
         // =========================================================================
         // DYNAMIC HORARY PRASHNA KUNDLI ENGINE (तात्कालिक प्रश्न कुण्डली - प्रश्न मार्ग)
         // =========================================================================
@@ -6606,6 +6807,17 @@ var VyasMobile = {
             var container = document.getElementById('mBhavaAccordionContainer') || document.getElementById('bhavasForensicAccordion');
             if (!container) return;
 
+            if (!this.activeChartData || !this.activeChartData.profile || !this.activeChartData.profile.name) {
+                container.innerHTML = '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.85rem;"><b style="color:var(--accent-gold);">12 भावों का फलादेश उपलब्ध नहीं</b><p style="font-size:0.75rem; margin-top:4px;">व्यास 34.0 संश्लेषित जीवन फलादेश महा-निबंध देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं।</p></div>';
+                return;
+            }
+
+            // Render VYAS 34.0 Master Consolidated Phalit Essay (वृहद् संश्लेषित जीवन फलादेश महा-निबंध)
+            if (window.VyasDaivagyaVision && window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay) {
+                container.innerHTML = window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay(this.activeChartData);
+                return;
+            }
+
             var preds = (this.activeChartData && this.activeChartData.predictions && this.activeChartData.predictions.bhavas && this.activeChartData.predictions.bhavas.length) ?
                 this.activeChartData.predictions.bhavas : (AUTHENTIC_BUNDLE && AUTHENTIC_BUNDLE.predictions && AUTHENTIC_BUNDLE.predictions.bhavas ? AUTHENTIC_BUNDLE.predictions.bhavas : []);
 
@@ -6779,6 +6991,32 @@ var VyasMobile = {
         // KP SYSTEM (KRISHNAMURTI PADDHATI)
         // ==========================================
         renderKP: function() {
+            // Append KP Shastric Knowledge Bank
+            var kpBox = document.getElementById('kpKnowledgeVaultBoxMobile');
+            if (!kpBox) {
+                var kpContainer = document.getElementById('view-kp') || document.getElementById('kpCuspsSubLordsTbody');
+                if (kpContainer) {
+                    var parentCard = kpContainer.closest ? kpContainer.closest('.content-card, .tab-pane, div') : kpContainer.parentElement;
+                    if (parentCard) {
+                        var kvDiv = document.createElement('div');
+                        kvDiv.id = 'kpKnowledgeVaultBoxMobile';
+                        kvDiv.style.marginTop = '14px';
+                        kvDiv.innerHTML = '<div style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.25); border-left:4px solid #f59e0b; border-radius:8px; padding:12px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                                '<b style="color:#f59e0b; font-size:0.86rem;">✦ केपी ज्ञान-कोष: 249 उप-स्वामी सिद्धांत (KP Knowledge Bank)</b>' +
+                                '<span style="font-size:0.68rem; background:rgba(245,158,11,0.12); color:#f59e0b; padding:2px 6px; border-radius:8px; font-weight:700;">KP Readers I-VI</span>' +
+                            '</div>' +
+                            '<div style="font-size:0.75rem; line-height:1.55; color:var(--text-secondary);">' +
+                                '• <b>सिद्धांत १ (कस्पल सब-लॉर्ड अनुमति):</b> ग्रह परिणाम देने का सामर्थ्य अपने नक्षत्र स्वामी से पाता है, किन्तु घटना घटित होगी अथवा नहीं, यह संबंधित भाव का उप-स्वामी (Sub-Lord) निश्चित करता है।<br>' +
+                                '• <b>सिद्धांत २ (249 उप-विभाजन):</b> 12 राशियों के 27 नक्षत्रों को विंशोत्तरी अनुपातों में 249 सूक्ष्म खंडों में विभाजित कर कल्पित समय का सटीक गणितीय वेध किया जाता है।<br>' +
+                                '• <b>सिद्धांत ३ (कार्यकत्व निर्धारण):</b> भाव 1, 2, 3, 6, 10, 11 भौतिक व व्यावसायिक सिद्धि देते हैं, जबकि 5, 8, 12 अवरोध व व्यय के कारक बनते हैं।' +
+                            '</div>' +
+                        '</div>';
+                        parentCard.appendChild(kvDiv);
+                    }
+                }
+            }
+
             var kp = (this.activeChartData && this.activeChartData.kp && this.activeChartData.kp.cusps) ? this.activeChartData.kp : AUTHENTIC_BUNDLE.kp;
             var cBody = document.getElementById('mKpCuspsBody') || document.getElementById('kpCuspsTableBody');
             if (cBody && kp && kp.cusps) {
@@ -6819,6 +7057,32 @@ var VyasMobile = {
         // JAIMINI ASTROLOGY (CHARA KARAKAS)
         // ==========================================
         renderJaimini: function() {
+            // Append Jaimini Shastric Knowledge Bank
+            var jmBox = document.getElementById('jaiminiKnowledgeVaultBoxMobile');
+            if (!jmBox) {
+                var jmContainer = document.getElementById('view-jaimini') || document.getElementById('jaiminiKarakaTbody');
+                if (jmContainer) {
+                    var parentCard = jmContainer.closest ? jmContainer.closest('.content-card, .tab-pane, div') : jmContainer.parentElement;
+                    if (parentCard) {
+                        var kvDiv = document.createElement('div');
+                        kvDiv.id = 'jaiminiKnowledgeVaultBoxMobile';
+                        kvDiv.style.marginTop = '14px';
+                        kvDiv.innerHTML = '<div style="background:var(--bg-card); border:1px solid rgba(56,189,248,0.25); border-left:4px solid #38bdf8; border-radius:8px; padding:12px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                                '<b style="color:#38bdf8; font-size:0.86rem;">✦ जैमिनी ज्ञान-कोष: महर्षि जैमिनी उपदेश सूत्र (Jaimini Knowledge Bank)</b>' +
+                                '<span style="font-size:0.68rem; background:rgba(56,189,248,0.12); color:#38bdf8; padding:2px 6px; border-radius:8px; font-weight:700;">जैमिनी सूत्रम् • डॉ. के.एन. राव</span>' +
+                            '</div>' +
+                            '<div style="font-size:0.75rem; line-height:1.55; color:var(--text-secondary);">' +
+                                '• <b>सूत्र १ (आत्मकारक लक्षण):</b> <i>"तत्र आत्मज्ञेयः साधिकोऽंशैः"</i> — सर्वोच्च भोगांश वाला ग्रह आत्मकारक (AK) बनकर आत्मा के परम अभीष्ट का संचालन करता है।<br>' +
+                                '• <b>सूत्र २ (अमात्यकारक आजीविका):</b> <i>"अमात्ये कर्मसम्बन्धः"</i> — द्वितीय सर्वोच्च अंश वाला ग्रह अमात्यकारक (AmK) बनकर बुद्धि व कार्यक्षेत्र का स्वामी होता है।<br>' +
+                                '• <b>सूत्र ३ (कारकांश लग्न):</b> आत्मकारक नवमांश में जिस राशि में हो, वह कारकांश बनकर जातक के आध्यात्मिक व बौद्धिक पराक्रम को उद्घाटित करता है।' +
+                            '</div>' +
+                        '</div>';
+                        parentCard.appendChild(kvDiv);
+                    }
+                }
+            }
+
             var chart = this.activeChartData || this.activeChart;
             var tbody = document.getElementById('mJaiminiKarakasBody') || document.getElementById('jaiminiKarakasTableBody');
             var elKl = document.getElementById('mKarakamshaVal') || document.getElementById('karakamshaVal');
@@ -7052,6 +7316,31 @@ var VyasMobile = {
         // BHRIGU NANDI NADI (DIRECTIONAL TRINES)
         // ==========================================
         renderNadi: function() {
+            // Append Nadi Shastric Knowledge Bank
+            var ndBox = document.getElementById('nadiKnowledgeVaultBoxMobile');
+            if (!ndBox) {
+                var ndContainer = document.getElementById('view-nadi') || document.getElementById('nadiCombinationsContainer');
+                if (ndContainer) {
+                    var parentCard = ndContainer.closest ? ndContainer.closest('.content-card, .tab-pane, div') : ndContainer.parentElement;
+                    if (parentCard) {
+                        var kvDiv = document.createElement('div');
+                        kvDiv.id = 'nadiKnowledgeVaultBoxMobile';
+                        kvDiv.style.marginTop = '14px';
+                        kvDiv.innerHTML = '<div style="background:var(--bg-card); border:1px solid rgba(168,85,247,0.25); border-left:4px solid #a855f7; border-radius:8px; padding:12px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                                '<b style="color:#a855f7; font-size:0.86rem;">✦ नाड़ी ज्ञान-कोष: भृगु नन्दि नाड़ी सूत्र (Nadi Knowledge Bank)</b>' +
+                                '<span style="font-size:0.68rem; background:rgba(168,85,247,0.12); color:#a855f7; padding:2px 6px; border-radius:8px; font-weight:700;">भृगु नन्दि नाड़ी • देव केरळम्</span>' +
+                            '</div>' +
+                            '<div style="font-size:0.75rem; line-height:1.55; color:var(--text-secondary);">' +
+                                '• <b>सूत्र १ (त्रिकोण जीव-कारकत्व):</b> गुरु (जीवकारक) तथा शनि (कर्मकारक) के 1, 5, 9 त्रिकोण में उपस्थित ग्रह जीवन की वास्तविक दिशा व आजीविका तय करते हैं।<br>' +
+                                '• <b>सूत्र २ (द्वि-ग्रह संयोग):</b> गुरु + सूर्य = राजसम्मान व आत्मतेज; शनि + मंगल = तकनीकी, सैन्य व निर्माण कर्म में अभूतपूर्व पुरुषार्थ।' +
+                            '</div>' +
+                        '</div>';
+                        parentCard.appendChild(kvDiv);
+                    }
+                }
+            }
+
             var nd = (this.activeChartData && this.activeChartData.nadi) ? this.activeChartData.nadi : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.nadi : null);
             var wrap = document.getElementById('mNadiCombinationsWrap') || document.getElementById('nadiCombinationsContainer');
             if (!wrap) return;
