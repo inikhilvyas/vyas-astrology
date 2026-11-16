@@ -1,8 +1,10 @@
-// VYAS ASTRA High-Performance PWA Service Worker (v2.0)
-const CACHE_NAME = 'vyas-astra-v2';
+// VYAS ASTRA High-Performance PWA Service Worker (v7.0 Turbo - Ultra Instant Launch)
+const CACHE_NAME = 'vyas-astra-v2026-fresh-1';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
+    '/mobile/',
+    '/mobile/index.html',
     '/manifest.json',
     '/favicon.ico',
     '/logo_icon.png',
@@ -11,7 +13,7 @@ const STATIC_ASSETS = [
     '/llms.txt'
 ];
 
-// Install: Pre-cache core shell assets
+// Install: Pre-cache core shell assets & skip waiting immediately
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
@@ -23,13 +25,14 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activate: Purge old cache generations & claim clients immediately
+// Activate: Immediately purge all older cache generations (v1 to v6)
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
                 keys.map((key) => {
                     if (key !== CACHE_NAME) {
+                        console.log('[SW] Deleting obsolete cache:', key);
                         return caches.delete(key);
                     }
                 })
@@ -38,18 +41,17 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-// Fetch: Stale-While-Revalidate for HTML, Cache-First for static assets
+// Fetch: Ultra-Fast Network-First with Cache Fallback for HTML
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     const url = new URL(req.url);
 
-    // Skip non-GET requests or WebSocket / Streamlit stream requests
     if (req.method !== 'GET') return;
-    if (url.origin !== self.location.origin && !url.hostname.includes('fonts.g') && !url.hostname.includes('raw.githubusercontent.com')) {
+    if (url.origin !== self.location.origin && !url.hostname.includes('fonts.g') && !url.hostname.includes('accounts.google.com')) {
         return;
     }
 
-    // Cache-First for Static Assets (Images, Icons, Fonts)
+    // Cache-First for static assets (images, fonts, icons) -> 0ms instant render
     if (
         req.destination === 'image' ||
         req.destination === 'font' ||
@@ -72,24 +74,44 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Stale-While-Revalidate for HTML shell (Instant 0ms launch + background sync)
+    // Network-First for HTML document with 800ms timeout fallback to cache
+    // This guarantees the user ALWAYS gets the fresh version instantly without lag
     if (req.destination === 'document' || url.pathname === '/' || url.pathname.endsWith('index.html')) {
         event.respondWith(
-            caches.match(req).then((cached) => {
-                const fetchPromise = fetch(req).then((networkRes) => {
-                    if (networkRes && networkRes.status === 200) {
+            new Promise((resolve) => {
+                let resolved = false;
+                const timeoutId = setTimeout(() => {
+                    if (!resolved) {
+                        caches.match(req).then((cached) => {
+                            if (cached) {
+                                resolved = true;
+                                resolve(cached);
+                            }
+                        });
+                    }
+                }, 800);
+
+                fetch(req).then((networkRes) => {
+                    if (!resolved && networkRes && networkRes.status === 200) {
+                        resolved = true;
+                        clearTimeout(timeoutId);
                         const clone = networkRes.clone();
                         caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+                        resolve(networkRes);
                     }
-                    return networkRes;
-                }).catch(() => cached);
-                return cached || fetchPromise;
+                }).catch(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        clearTimeout(timeoutId);
+                        caches.match(req).then((cached) => resolve(cached || new Response('Offline', { status: 503 })));
+                    }
+                });
             })
         );
         return;
     }
 
-    // Network with cache fallback for everything else
+    // Default: Fetch from network, fallback to cache
     event.respondWith(
         fetch(req).catch(() => caches.match(req))
     );
