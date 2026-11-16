@@ -33,3 +33,4 @@ def get_kp_sublord(longitude):
 print("Test get_kp_sublord at 0.0:", get_kp_sublord(0.0))
 print("Test get_kp_sublord at 23.45 (Aries):", get_kp_sublord(23.45))
 print("Test get_kp_sublord at 230.5 (Scorpio):", get_kp_sublord(230.5))
+

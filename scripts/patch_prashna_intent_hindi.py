@@ -51,3 +51,4 @@ for path in ['index.html', 'mobile/index.html']:
         print(f"✓ Successfully upgraded Prashna regex in {path}")
     else:
         print(f"! Old intent not found in {path}")
+

@@ -1553,8 +1553,8 @@ body {
                 <!-- 1. TAB: PERSONAL DAILY HOROSCOPE & PANCHANG -->
                 <div class="view-panel active" id="view-daily">
                     <!-- Daily Forecast Dashboard -->
-                    <div class="content-card">
-                        <div class="card-heading">
+                    <div class="content-card" id="personalizedDailyCard">
+                        <div class="card-heading" id="personalizedDailyHeading">
                             <span>✦ जातक का व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</span>
                             <span style="font-size:0.75rem; color:#10b981; font-weight:700;">नवतारा चक्र + गोचर + चालू दशा</span>
                         </div>
@@ -1566,8 +1566,8 @@ body {
                             </div>
                             <div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">
                                 <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">TODAY'S TARA INSIGHT</div>
-                                <div style="font-size:0.82rem; font-weight:800; color:var(--primary-navy);">Sadhak (साधक तारा - पर्याय 1)</div>
-                                <div style="font-size:0.70rem; color:var(--text-secondary); margin-top:2px;">महत्वपूर्ण वार्ता, निर्णय व सिद्धि हेतु श्रेष्ठ दिन।</div>
+                                <div style="font-size:0.82rem; font-weight:800; color:var(--primary-navy);" id="vTodayTaraVal">नवतारा चक्र (अज्ञात)</div>
+                                <div style="font-size:0.70rem; color:var(--text-secondary); margin-top:2px;" id="vTodayTaraDesc">व्यक्तिगत तारा वेध हेतु कृपया ऊपर '+ नई कुण्डली' बनाएं।</div>
                             </div>
                             <div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">
                                 <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">CELESTIAL TRANSIT</div>
@@ -6519,60 +6519,95 @@ if (!this.activeChartData) { var s = localStorage.getItem('vyas_active_profile')
             var card = document.getElementById('personalizedDailyCard');
             if (!card) return;
 
-            if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name) {
-                var prof = this.activeChartData.profile;
-                card.innerHTML = '<div class="card-heading">' +
-                    '<span>✦ ' + prof.name + ' का व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</span>' +
-                    '<span style="font-size:0.75rem; color:#10b981; font-weight:700;">नवतारा चक्र + गोचर + चालू दशा</span>' +
-                '</div>' +
-                '<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:12px;">' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px; text-align:center;">' +
-                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">VYAS DAY INDEX</div>' +
-                        '<div style="font-size:1.6rem; font-weight:900; color:var(--primary-navy);" id="vIndexVal">74</div>' +
-                        '<div style="font-size:0.72rem; color:#10b981; font-weight:800;">साधक (Success Day)</div>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">TODAY STARA INSIGHT</div>' +
-                        '<div style="font-size:0.82rem; font-weight:800; color:var(--primary-navy);">Sadhak (साधक तारा - पर्याय 1)</div>' +
-                        '<div style="font-size:0.70rem; color:var(--text-secondary); margin-top:2px;">महत्वपूर्ण वार्ता, निर्णय व सिद्धि हेतु श्रेष्ठ दिन।</div>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">CELESTIAL TRANSIT</div>' +
-                        '<div style="font-size:0.78rem; font-weight:700; color:var(--text-secondary);">सूर्य: वृश्चिक 21° • चन्द्र: मकर 04°<br>गुरु: धनु 19° • शनि: कुंभ 03°</div>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">TIMINGS & COLORS</div>' +
-                        '<div style="font-size:0.78rem; font-weight:700; color:var(--text-secondary);">अभिजीत: 11:58 - 12:44 PM<br>राहुकाल: 01:30 PM - 03:00 PM<br>शुभ रंग: पीला / श्वेत</div>' +
-                    '</div>' +
-                '</div>' +
-                '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:12px; border-radius:8px;">' +
-                        '<b style="font-size:0.84rem; color:var(--accent-gold);">धन एवं वाणी विचार (Wealth & Speech)</b>' +
-                        '<p style="font-size:0.78rem; color:var(--text-secondary); margin:4px 0 0; line-height:1.5;">गोचरस्थ चन्द्रमा दशम भाव में संचरण कर रहे हैं। आर्थिक लेन-देन में विवेकपूर्ण निर्णय लाभ देंगे। कटु वचनों से बचें और स्पष्ट संवाद रखें।</p>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:12px; border-radius:8px;">' +
-                        '<b style="font-size:0.84rem; color:var(--accent-gold);">आजीविका एवं कार्यक्षेत्र (Career)</b>' +
-                        '<p style="font-size:0.78rem; color:var(--text-secondary); margin:4px 0 0; line-height:1.5;">दशम भाव में मकर राशि का चन्द्रमा कर्मक्षेत्र में मान-प्रतिष्ठा, वरिष्ठों का सहयोग व व्यावसायिक अनुबंधों में गति का संकेत दे रहा है।</p>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:12px; border-radius:8px;">' +
-                        '<b style="font-size:0.84rem; color:#e74c3c;">❤️ संबंध व परिवार (Relationships)</b>' +
-                        '<p style="font-size:0.78rem; color:var(--text-secondary); margin:4px 0 0; line-height:1.5;">पारिवारिक वातावरण सौहार्दपूर्ण रहेगा। जीवनसाथी के सुझावों को महत्व दें। पुराने मित्रों अथवा शुभचिंतकों से संपर्क लाभकारी रहेगा।</p>' +
-                    '</div>' +
-                    '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:12px; border-radius:8px;">' +
-                        '<b style="font-size:0.84rem; color:#10b981;">🌿 स्वास्थ्य एवं ऊर्जा (Health)</b>' +
-                        '<p style="font-size:0.78rem; color:var(--text-secondary); margin:4px 0 0; line-height:1.5;">मानसिक ऊर्जा व एकाग्रता 74% अनुकूल है। पर्याप्त जल ग्रहण करें, हल्का सात्विक आहार लें और रात्रि को समय पर विश्राम करें।</p>' +
-                    '</div>' +
-                '</div>';
-            } else {
-                card.innerHTML = '<div style="padding:24px 16px; text-align:center;">' +
-                    '<div style="font-size:1.1rem; font-weight:800; color:var(--accent-gold); margin-bottom:6px;">✦ व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</div>' +
-                    '<p style="font-size:0.82rem; color:var(--text-secondary); max-width:540px; margin:0 auto 14px auto; line-height:1.6;">' +
-                        'व्यक्तिगत नवतारा चक्र, दैनिक शुभ अंक, भाग्यशाली रंग एवं अनुकूल समय जानने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा साइन-इन करें।' +
-                    '</p>' +
-                    '<button onclick="VyasDesktop.openNewProfileModal()" class="header-btn primary" style="display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:20px; font-size:0.82rem; cursor:pointer;">' +
-                        '✦ नई कुण्डली बनाएं' +
-                    '</button>' +
-                '</div>';
+            var vVal = document.getElementById('vIndexVal');
+            var vSub = document.getElementById('vIndexSub');
+            var taraVal = document.getElementById('vTodayTaraVal');
+            var taraDesc = document.getElementById('vTodayTaraDesc');
+            var heading = document.getElementById('personalizedDailyHeading');
+
+            if (!this.activeChartData || !this.activeChartData.profile || !this.activeChartData.profile.name) {
+                if (heading) {
+                    heading.innerHTML = '<span>✦ जातक का व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</span><span style="font-size:0.75rem; color:#f59e0b; font-weight:700;"> (कुण्डली लोड नहीं है)</span>';
+                }
+                if (vVal) vVal.textContent = '--';
+                if (vSub) {
+                    vSub.textContent = 'कुण्डली आवश्यक';
+                    vSub.style.color = 'var(--text-muted)';
+                }
+                if (taraVal) {
+                    taraVal.textContent = 'नवतारा चक्र (अज्ञात)';
+                    taraVal.style.color = 'var(--primary-navy)';
+                }
+                if (taraDesc) {
+                    taraDesc.textContent = "व्यक्तिगत तारा वेध हेतु कृपया ऊपर '+ नई कुण्डली' बनाएं।";
+                }
+                return;
+            }
+
+            var prof = this.activeChartData.profile;
+            if (heading) {
+                heading.innerHTML = '<span>✦ ' + (prof.name || 'जातक') + ' का व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</span><span style="font-size:0.75rem; color:#10b981; font-weight:700;"> नवतारा चक्र + गोचर + चालू दशा</span>';
+            }
+
+            // Authentic Navatara calculation based on native\'s Moon Nakshatra
+            var nakList = ["अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशिरा", "आर्द्रा", "पुनर्वसु", "पुष्य", "आश्लेषा", "मघा", "पूर्वाफाल्गुनी", "उत्तराफाल्गुनी", "हस्त", "चित्रा", "स्वाति", "विशाखा", "अनुराधा", "ज्येष्ठा", "मूल", "पूर्वाषाढ़ा", "उत्तराषाढ़ा", "श्रवण", "धनिष्ठा", "शतभिषा", "पूर्वाभाद्रपद", "उत्तराभाद्रपद", "रेवती"];
+            var birthNakIdx = 0;
+            if (this.activeChartData.planet_table) {
+                for (var p = 0; p < this.activeChartData.planet_table.length; p++) {
+                    var pl = this.activeChartData.planet_table[p];
+                    if ((pl.p && pl.p.indexOf("चन्द्र") !== -1) || (pl.planet && pl.planet.indexOf("Moon") !== -1)) {
+                        var nakStr = pl.n || pl.nakshatra || pl.nak || '';
+                        for (var ni = 0; ni < nakList.length; ni++) {
+                            if (nakStr.indexOf(nakList[ni]) !== -1) { birthNakIdx = ni; break; }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Current transit Moon calculation
+            var now = new Date();
+            var yr = now.getFullYear(), mo = now.getMonth() + 1, dy = now.getDate();
+            var hr = now.getHours(), mn = now.getMinutes();
+            var y2 = mo <= 2 ? yr - 1 : yr, m2 = mo <= 2 ? mo + 12 : mo;
+            var A = Math.floor(y2 / 100), B = 2 - A + Math.floor(A / 4);
+            var jd = Math.floor(365.25 * (y2 + 4716)) + Math.floor(30.6001 * (m2 + 1)) + dy + B - 1524.5 + (hr + mn / 60.0 - 5.5) / 24.0;
+            var d = jd - 2451543.5;
+            var T_j2000 = (jd - 2451545.0) / 36525.0;
+            var ayanamsa = 23.857 + 1.39697 * T_j2000;
+            function norm(x) { x = x % 360.0; return x < 0 ? x + 360.0 : x; }
+            var moonSid = norm(norm(125.1228 + 115.3654 + 13.0649929509 * d) - ayanamsa);
+            var todayNakIdx = Math.floor(moonSid / (360.0 / 27.0)) % 27;
+
+            var diff = ((todayNakIdx - birthNakIdx + 27) % 27) % 9;
+            var TARA_INFO = [
+                { name: "Janma (जन्म तारा - पर्याय 1)", score: "72", sub: "मध्यम अनुकूल", color: "#38bdf8", desc: "शारीरिक ऊर्जा व आत्मचिंतन हेतु अनुकूल। मानसिक संतुलन बनाए रखें।" },
+                { name: "Sampat (सम्पत तारा - पर्याय 1)", score: "94", sub: "अति शुभ (धन लाभ)", color: "#10b981", desc: "धन लाभ, आर्थिक विस्तार, नए अनुबंध व ऐश्वर्य प्राप्ति का श्रेष्ठ दिन।" },
+                { name: "Vipat (विपत तारा - पर्याय 1)", score: "42", sub: "सावधानी आवश्यक", color: "#ef4444", desc: "सावधानी, धैर्य व अनपेक्षित जोखिम से बचने की आवश्यकता। वाहन संभलकर चलाएं।" },
+                { name: "Kshema (क्षेम तारा - पर्याय 1)", score: "88", sub: "कल्याणकारी शुभ", color: "#10b981", desc: "कल्याण, आरोग्य, सुरक्षा एवं पारिवारिक सुख-शांति हेतु अति शुभ।" },
+                { name: "Pratyari (प्रत्यरि तारा - पर्याय 1)", score: "48", sub: "विवाद से बचें", color: "#f59e0b", desc: "शत्रु-प्रतिस्पर्धा व मतभेद से बचें। महत्वपूर्ण निर्णय टालें।" },
+                { name: "Sadhak (साधक तारा - पर्याय 1)", score: "96", sub: "साधक (Success Day)", color: "#10b981", desc: "महत्वपूर्ण वार्ता, पदोन्नति, राजकार्य व सभी अभीष्ट कार्यों में सफलता।" },
+                { name: "Vadha (वध/निधन तारा - पर्याय 1)", score: "35", sub: "अत्यंत सतर्क रहें", color: "#ef4444", desc: "अत्यंत सतर्क रहें। वाद-विवाद से दूर रहें व महामृत्युंजय जप करें।" },
+                { name: "Mitra (मित्र तारा - पर्याय 1)", score: "85", sub: "सौहार्दपूर्ण शुभ", color: "#38bdf8", desc: "मित्रों, वरिष्ठों व सहयोगियों से पूर्ण समर्थन एवं सौहार्द प्राप्त होगा।" },
+                { name: "Param Mitra (परम मित्र - पर्याय 1)", score: "92", sub: "सर्वकार्य सिद्धि", color: "#10b981", desc: "सर्वकार्य सिद्धि, प्रतिष्ठा में वृद्धि एवं आनंददायक वातावरण।" }
+            ];
+
+            var info = TARA_INFO[diff] || TARA_INFO[0];
+            if (vVal) vVal.textContent = info.score;
+            if (vSub) {
+                vSub.textContent = info.sub;
+                vSub.style.color = info.color;
+            }
+            if (taraVal) {
+                taraVal.textContent = info.name;
+                taraVal.style.color = info.color;
+            }
+            if (taraDesc) taraDesc.textContent = info.desc;
+        },
+
+        renderDashaTree: function() {
+            if (typeof this.initDashaTree === 'function') {
+                return this.initDashaTree();
             }
         },
 
@@ -6700,8 +6735,7 @@ if (!this.activeChartData) { var s = localStorage.getItem('vyas_active_profile')
                 '<tbody>' + pRows + '</tbody></table>' +
                 '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:11px; color:#64748b; text-align:center;">' +
                     'प्रमाणित दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
-                '</div>' +
-                '</body></html>';
+                '</div></body></html>';
 
             printWin.document.open();
             printWin.document.write(html);
@@ -7772,7 +7806,8 @@ initDashaTree() {
 
         // 4. ASHTAKAVARGA SUITE (SAV, BAV & PRASTARASHATAKVARGA)
         renderAshtakavarga() {
-            var av = this.activeChartData.ashtakavarga || AUTHENTIC_BUNDLE.ashtakavarga;
+            var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.ashtakavarga : null);
+            if (!av) return;
             var sav = av.sav || [33, 25, 25, 30, 31, 39, 29, 26, 19, 31, 27, 22];
 
             // 1. SAV Grid
@@ -8028,14 +8063,15 @@ initDashaTree() {
 
         // 5. LIVE SKY GOCHAR & TAJIK VARSHPHAL
         renderGochar() {
+            var gb = (typeof GOCHAR_BUNDLE !== 'undefined') ? GOCHAR_BUNDLE : (window.GOCHAR_BUNDLE || null);
             var wrap = document.getElementById('gocharChartSvgWrap');
-            if (wrap && GOCHAR_BUNDLE && GOCHAR_BUNDLE.transit_houses) {
+            if (wrap && gb && gb.transit_houses) {
                 wrap.innerHTML = this.generateDiamondSVG(GOCHAR_BUNDLE.transit_houses, 270, 'तात्कालिक गोचर');
             }
 
             var tbody = document.getElementById('gocharPlanetsTableBody');
-            if (tbody && GOCHAR_BUNDLE) {
-                var rows = GOCHAR_BUNDLE.transit_rows || GOCHAR_BUNDLE.transit_planets || [];
+            if (tbody && gb) {
+                var rows = gb.transit_rows || gb.transit_planets || [];
                 var html = '';
                 for (var i = 0; i < rows.length; i++) {
                     var p = rows[i];
@@ -8058,10 +8094,10 @@ initDashaTree() {
             }
 
             var mdBox = document.getElementById('muddaDashaBox');
-            if (mdBox && GOCHAR_BUNDLE && GOCHAR_BUNDLE.varshphal && GOCHAR_BUNDLE.varshphal.mudda_dasha) {
+            if (mdBox && gb && gb.varshphal && gb.varshphal.mudda_dasha) {
                 var mHtml = '<table class="astronomy-table"><thead><tr><th>मुद्धा दशा अधिपति</th><th>अवधि</th><th>प्रारम्भ</th><th>समाप्ति</th></tr></thead><tbody>';
-                for (var j = 0; j < GOCHAR_BUNDLE.varshphal.mudda_dasha.length; j++) {
-                    var mu = GOCHAR_BUNDLE.varshphal.mudda_dasha[j];
+                for (var j = 0; j < gb.varshphal.mudda_dasha.length; j++) {
+                    var mu = gb.varshphal.mudda_dasha[j];
                     var durVal = mu.dur || mu.duration || (mu.days ? mu.days + ' दिन' : '21 दिन');
                     mHtml += '<tr><td><b>' + mu.lord + '</b></td><td>' + durVal + '</td><td>' + mu.start + '</td><td>' + mu.end + '</td></tr>';
                 }
@@ -8074,7 +8110,8 @@ initDashaTree() {
         renderShodashavarga() {
             var grid = document.getElementById('vargas16SelectorGrid');
             if (!grid) return;
-            var data = SHODASHAVARGA_DATA;
+            var data = (typeof SHODASHAVARGA_DATA !== 'undefined') ? SHODASHAVARGA_DATA : (window.SHODASHAVARGA_DATA || null);
+            if (!data) return;
             var keys = Object.keys(data);
             var html = '';
             for (var i = 0; i < keys.length; i++) {
@@ -8093,7 +8130,7 @@ initDashaTree() {
 
         selectShodashaVarga(vk) {
             this.selectedShodashaVarga = vk;
-            var data = SHODASHAVARGA_DATA;
+            var data = (typeof SHODASHAVARGA_DATA !== 'undefined') ? SHODASHAVARGA_DATA : (window.SHODASHAVARGA_DATA || null);
             if (!data || !data[vk]) return;
             var vInfo = data[vk];
 
@@ -8141,7 +8178,12 @@ initDashaTree() {
 
         // 7. KP SYSTEM (KRISHNAMURTI PADDHATI)
         renderKP() {
-            var kp = this.activeChartData.kp || AUTHENTIC_BUNDLE.kp;
+            var kp = (this.activeChartData && this.activeChartData.kp) ? this.activeChartData.kp : null;
+            if (!kp) {
+                var cBody = document.getElementById('kpCuspsTableBody');
+                if (cBody) cBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 12 कस्प सब-लॉर्ड्स प्रदर्शित होंगे।</td></tr>';
+                return;
+            }
             var cBody = document.getElementById('kpCuspsTableBody');
             if (cBody && kp.cusps) {
                 var html = '';
@@ -8179,7 +8221,12 @@ initDashaTree() {
 
         // 8. JAIMINI ASTROLOGY
         renderJaimini() {
-            var jm = this.activeChartData.jaimini || AUTHENTIC_BUNDLE.jaimini;
+            var jm = (this.activeChartData && this.activeChartData.jaimini) ? this.activeChartData.jaimini : null;
+            if (!jm) {
+                var tbody = document.getElementById('jaiminiKarakasTableBody');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 7 चर कारक प्रदर्शित होंगे।</td></tr>';
+                return;
+            }
             var tbody = document.getElementById('jaiminiKarakasTableBody');
             if (tbody && jm.karakas) {
                 var html = '';
@@ -9112,5 +9159,172 @@ initDashaTree() {
             btn.classList.add('active');
         }
     </script>
+
+    <!-- =========================================================================
+         COSMIC VOID CANVAS: ANIMATED LIVING CELESTIAL BACKGROUND & SHOOTING STARS
+         ========================================================================= -->
+    <script>
+    (function initCosmicWallpaper() {
+        if (document.getElementById('cosmicVoidCanvas')) return;
+        var canvas = document.createElement('canvas');
+        canvas.id = 'cosmicVoidCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '-1';
+        canvas.style.opacity = '0.90';
+        document.body.prepend(canvas);
+
+        var ctx = canvas.getContext('2d');
+        var width, height;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // 1. Drifting Twinkling Stars
+        var stars = [];
+        var STAR_COLORS = ['#FFFFFF', '#FFE8A3', '#93C5FD', '#FDE047', '#E0F2FE'];
+        for (var i = 0; i < 140; i++) {
+            stars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 1.5 + 0.4,
+                color: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
+                alpha: Math.random(),
+                speed: Math.random() * 0.02 + 0.005,
+                vx: (Math.random() - 0.5) * 0.14,
+                vy: (Math.random() - 0.5) * 0.14
+            });
+        }
+
+        
+        // Slow Orbiting Cosmic Halos (Jupiter / Golden Surya Aura)
+        var planets = [
+            { x: width * 0.85, y: height * 0.25, r: 50, color1: 'rgba(229, 193, 88, 0.20)', color2: 'rgba(229, 193, 88, 0)', vx: -0.04, vy: 0.02 },
+            { x: width * 0.12, y: height * 0.75, r: 70, color1: 'rgba(59, 130, 246, 0.15)', color2: 'rgba(59, 130, 246, 0)', vx: 0.03, vy: -0.03 }
+        ];
+    
+
+        // 2. Shooting Stars / Meteors (तारे गुजरते हुए)
+        var meteors = [];
+        function spawnMeteor() {
+            meteors.push({
+                x: Math.random() * width * 0.8 + width * 0.1,
+                y: Math.random() * height * 0.35,
+                len: Math.random() * 100 + 70,
+                speed: Math.random() * 6 + 6,
+                angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2, // ~45 deg downward
+                alpha: 1,
+                fade: Math.random() * 0.015 + 0.012,
+                width: Math.random() * 1.4 + 1
+            });
+        }
+
+        var meteorTimer = 0;
+        var nextMeteorInterval = 120 + Math.floor(Math.random() * 180);
+
+        function animate() {
+            if (document.hidden) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Planetary Halos
+            for (var p = 0; p < planets.length; p++) {
+                var pl = planets[p];
+                pl.x += pl.vx;
+                pl.y += pl.vy;
+                if (pl.x < -100) pl.x = width + 100;
+                if (pl.x > width + 100) pl.x = -100;
+                if (pl.y < -100) pl.y = height + 100;
+                if (pl.y > height + 100) pl.y = -100;
+
+                var grad = ctx.createRadialGradient(pl.x, pl.y, 0, pl.x, pl.y, pl.r * 2);
+                grad.addColorStop(0, pl.color1);
+                grad.addColorStop(1, pl.color2);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(pl.x, pl.y, pl.r * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Stars
+            for (var i = 0; i < stars.length; i++) {
+                var s = stars[i];
+                s.x += s.vx;
+                s.y += s.vy;
+                if (s.x < 0) s.x = width;
+                if (s.x > width) s.x = 0;
+                if (s.y < 0) s.y = height;
+                if (s.y > height) s.y = 0;
+
+                s.alpha += s.speed;
+                var currentAlpha = Math.abs(Math.sin(s.alpha));
+
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = currentAlpha * 0.85 + 0.15;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Shooting Stars
+            meteorTimer++;
+            if (meteorTimer > nextMeteorInterval) {
+                spawnMeteor();
+                meteorTimer = 0;
+                nextMeteorInterval = 130 + Math.floor(Math.random() * 190);
+            }
+
+            for (var m = meteors.length - 1; m >= 0; m--) {
+                var met = meteors[m];
+                met.x += Math.cos(met.angle) * met.speed;
+                met.y += Math.sin(met.angle) * met.speed;
+                met.alpha -= met.fade;
+
+                if (met.alpha <= 0 || met.x > width + 200 || met.y > height + 200) {
+                    meteors.splice(m, 1);
+                    continue;
+                }
+
+                var tailX = met.x - Math.cos(met.angle) * met.len;
+                var tailY = met.y - Math.sin(met.angle) * met.len;
+
+                var mGrad = ctx.createLinearGradient(tailX, tailY, met.x, met.y);
+                mGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                mGrad.addColorStop(0.6, 'rgba(147, 197, 253, ' + (met.alpha * 0.4) + ')');
+                mGrad.addColorStop(1, 'rgba(255, 243, 191, ' + met.alpha + ')');
+
+                ctx.strokeStyle = mGrad;
+                ctx.lineWidth = met.width;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(tailX, tailY);
+                ctx.lineTo(met.x, met.y);
+                ctx.stroke();
+
+                ctx.fillStyle = 'rgba(255, 255, 255, ' + met.alpha + ')';
+                ctx.beginPath();
+                ctx.arc(met.x, met.y, met.width * 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    })();
+    </script>
+    
 </body>
 </html>

@@ -23,3 +23,4 @@ with open('mobile/index.html', 'w', encoding='utf-8') as f:
     f.write(m)
 
 print("✓ Cleaned remaining DMS degrees")
+

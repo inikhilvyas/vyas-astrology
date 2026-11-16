@@ -119,3 +119,4 @@ def replace_in_file(filepath, var_name):
 
 replace_in_file('index.html', 'var AUTHENTIC_BUNDLE')
 replace_in_file('mobile/index.html', 'window.AUTHENTIC_BUNDLE')
+

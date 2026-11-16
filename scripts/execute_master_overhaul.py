@@ -577,3 +577,4 @@ def patch_mobile():
 if __name__ == '__main__':
     patch_desktop()
     patch_mobile()
+

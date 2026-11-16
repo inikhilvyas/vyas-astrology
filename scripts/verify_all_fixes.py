@@ -53,3 +53,4 @@ if __name__ == '__main__':
     verify_desktop()
     verify_mobile()
     print("\n🎉 ALL VERIFICATION CHECKS PASSED!")
+
