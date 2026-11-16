@@ -37,3 +37,4 @@ print("✓ mobile/index.html clean complete")
 with open("android_app/app/src/main/assets/mobile/index.html", "w", encoding="utf-8") as f:
     f.write(m_text)
 print("✓ Synchronized to android_app/app/src/main/assets/mobile/index.html")
+

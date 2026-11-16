@@ -1,0 +1,281 @@
+/* =========================================================================
+   ADX DESIGN ENGINEER X: ROYAL VEDIC LUXURY & AWWWARDS DIGITAL ELEVATION
+   Bespoke Typography, 24K Gold Luminescence, Glassmorphic Surfaces & Micro-Physics
+   ========================================================================= */
+
+:root {
+    --gold-24k: #E5C158;
+    --gold-glow-high: 0 0 28px rgba(229, 193, 88, 0.35);
+    --gold-glow-subtle: 0 0 16px rgba(229, 193, 88, 0.16);
+    --surface-glass-lux: rgba(13, 19, 36, 0.72);
+    --surface-glass-border: rgba(229, 193, 88, 0.22);
+    --text-stellar: #F8FAFC;
+    --text-deva: #E2E8F0;
+}
+
+/* 1. Global Page Atmosphere: Dynamic Royal Obsidian Void */
+body {
+    background-color: #060913 !important;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 85% 15%, rgba(229, 193, 88, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 10% 80%, rgba(59, 130, 246, 0.10) 0%, transparent 50%) !important;
+    background-attachment: fixed !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Devanagari', sans-serif !important;
+    color: var(--text-stellar) !important;
+    letter-spacing: 0.015em !important;
+}
+
+/* 2. Sleek Glass Header Elevation */
+.app-header {
+    background: rgba(8, 12, 24, 0.82) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(229, 193, 88, 0.25) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45) !important;
+    padding: 10px 24px !important;
+}
+
+.brand-title {
+    font-family: 'Cinzel', serif !important;
+    letter-spacing: 0.12em !important;
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, #FFF6D1 0%, #E5C158 50%, #B8860B 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 20px rgba(229, 193, 88, 0.3) !important;
+}
+
+.brand-badge {
+    color: var(--gold-24k) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+}
+
+/* Header Buttons: Rounded Luxury Glass Pills */
+.header-btn {
+    border-radius: 9999px !important;
+    padding: 7px 16px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: #E2E8F0 !important;
+    backdrop-filter: blur(12px) !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.header-btn:hover {
+    background: rgba(229, 193, 88, 0.15) !important;
+    border-color: rgba(229, 193, 88, 0.5) !important;
+    color: #FFF !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 4px 16px rgba(229, 193, 88, 0.25) !important;
+}
+
+.header-btn.primary {
+    background: linear-gradient(135deg, #E5C158 0%, #B8860B 100%) !important;
+    color: #0B0E17 !important;
+    font-weight: 700 !important;
+    border: 1px solid #FFE485 !important;
+    box-shadow: 0 4px 18px rgba(229, 193, 88, 0.35) !important;
+}
+
+.header-btn.primary:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 6px 24px rgba(229, 193, 88, 0.55) !important;
+}
+
+/* 3. Cockpit Surface Cards & Modern Grid */
+.cockpit-col {
+    background: rgba(11, 16, 32, 0.65) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    border: 1px solid rgba(229, 193, 88, 0.18) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35) !important;
+    padding: 16px !important;
+    transition: border-color 0.3s ease !important;
+}
+
+.cockpit-col:hover {
+    border-color: rgba(229, 193, 88, 0.32) !important;
+}
+
+/* 4. Tab Navigation: Sleek Fluid Segments */
+.tab-scroll-nav {
+    display: flex !important;
+    gap: 8px !important;
+    padding: 6px !important;
+    background: rgba(7, 10, 20, 0.75) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    margin-bottom: 16px !important;
+}
+
+.tab-nav-btn {
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #94A3B8 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.tab-nav-btn:hover {
+    color: #F1F5F9 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.tab-nav-btn.active {
+    color: #FFF !important;
+    background: linear-gradient(135deg, rgba(229, 193, 88, 0.22) 0%, rgba(229, 193, 88, 0.08) 100%) !important;
+    border: 1px solid rgba(229, 193, 88, 0.45) !important;
+    box-shadow: 0 4px 16px rgba(229, 193, 88, 0.18) !important;
+}
+
+/* 5. Astronomical Planet Table: High-Contrast Luxury Grid */
+.astronomy-table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 6px !important;
+}
+
+.astronomy-table thead th {
+    background: rgba(229, 193, 88, 0.08) !important;
+    color: var(--gold-24k) !important;
+    font-size: 0.80rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    padding: 12px 14px !important;
+    border-top: 1px solid rgba(229, 193, 88, 0.25) !important;
+    border-bottom: 1px solid rgba(229, 193, 88, 0.25) !important;
+}
+
+.astronomy-table tbody tr {
+    background: rgba(15, 23, 42, 0.55) !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.astronomy-table tbody tr:hover {
+    background: rgba(30, 41, 59, 0.85) !important;
+    transform: translateX(2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.astronomy-table tbody td {
+    padding: 11px 14px !important;
+    font-size: 0.84rem !important;
+    color: #E2E8F0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+.astronomy-table tbody td:first-child {
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    font-weight: 700 !important;
+    color: #FFF !important;
+}
+
+.astronomy-table tbody td:last-child {
+    border-top-right-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
+}
+
+/* 6. Acharya Vyas Royal AI Sanctum */
+.sage-chat-wrapper {
+    background: rgba(8, 13, 28, 0.75) !important;
+    border: 1px solid rgba(229, 193, 88, 0.25) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45) !important;
+    overflow: hidden !important;
+}
+
+.sage-header {
+    background: linear-gradient(135deg, rgba(229, 193, 88, 0.15) 0%, rgba(8, 13, 28, 0.85) 100%) !important;
+    border-bottom: 1px solid rgba(229, 193, 88, 0.25) !important;
+    padding: 14px 18px !important;
+}
+
+.sage-header-title {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: var(--gold-24k) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.sage-status-indicator {
+    width: 8px !important;
+    height: 8px !important;
+    background: #10B981 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 0 12px #10B981 !important;
+    animation: pulseGlow 2s infinite !important;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+/* Chat Messages */
+.chat-bubble.user {
+    background: linear-gradient(135deg, #1E3A8A 0%, #172554 100%) !important;
+    border: 1px solid rgba(96, 165, 250, 0.35) !important;
+    color: #F8FAFC !important;
+    border-radius: 14px 14px 2px 14px !important;
+    padding: 12px 16px !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+.chat-bubble.sage {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border: 1px solid rgba(229, 193, 88, 0.28) !important;
+    color: #F1F5F9 !important;
+    border-radius: 14px 14px 14px 2px !important;
+    padding: 14px 18px !important;
+    font-size: 0.88rem !important;
+    line-height: 1.65 !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.chat-bubble.sage b {
+    color: var(--gold-24k) !important;
+    font-weight: 700 !important;
+}
+
+/* Chat Input Field */
+.chat-input-wrapper {
+    background: rgba(8, 12, 24, 0.9) !important;
+    border-top: 1px solid rgba(229, 193, 88, 0.22) !important;
+    padding: 12px 16px !important;
+}
+
+.chat-input-field {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(229, 193, 88, 0.25) !important;
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    color: #FFF !important;
+    font-size: 0.88rem !important;
+    transition: all 0.25s ease !important;
+}
+
+.chat-input-field:focus {
+    outline: none !important;
+    border-color: var(--gold-24k) !important;
+    box-shadow: 0 0 16px rgba(229, 193, 88, 0.35) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}

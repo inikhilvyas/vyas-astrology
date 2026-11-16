@@ -139,3 +139,4 @@ html = html.replace('var city = document.getElementById(\'edit_city\').value.tri
 with open(desktop_file, "w", encoding="utf-8") as f:
     f.write(html)
 print(f"✓ Saved updated {desktop_file} ({len(html)} chars)")
+

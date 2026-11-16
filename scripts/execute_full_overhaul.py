@@ -86,3 +86,4 @@ with open(main_act_path, "w", encoding="utf-8") as f:
 print("✓ MainActivity.java updated with intelligent online live update + offline fallback")
 
 print("Step 1 and 2 complete.")
+
