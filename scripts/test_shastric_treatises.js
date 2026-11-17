@@ -33,3 +33,4 @@ assert(!html.includes('if (!kp) {\n                if (cBody) cBody.innerHTML = 
 assert(!html.includes('if (!jm) {\n                if (tbody) tbody.innerHTML = \'<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 7 चर कारक प्रदर्शित होंगे।</td></tr>\';\n                return;'), 'Found old early return in renderJaimini');
 
 console.log('✓ ALL SHASTRIC TREATISE & KNOWLEDGE VAULT TESTS PASSED!');
+

@@ -3,3 +3,4 @@ with open('mobile/index.html', 'r', encoding='utf-8') as f:
 
 idx = text.find('id="view-kp"')
 print(text[idx-50:idx+800])
+

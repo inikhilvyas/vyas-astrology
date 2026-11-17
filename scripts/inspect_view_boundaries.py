@@ -17,3 +17,4 @@ for v in views:
         print(text[start:start+400])
         print("... [snip] ...")
         print(text[end-300:end])
+

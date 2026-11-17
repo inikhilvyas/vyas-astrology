@@ -13,3 +13,4 @@ for v in ['view-kp', 'view-jaimini', 'view-nadi', 'view-predictions']:
         print(text[start:start+600])
         print("... [snip] ...")
         print(text[end-200:end+20])
+

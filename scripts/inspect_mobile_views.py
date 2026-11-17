@@ -7,3 +7,4 @@ for v in ['view-kp', 'view-jaimini', 'view-nadi', 'view-predictions']:
     if idx != -1:
         print(text[idx:idx+400])
         print("...")
+

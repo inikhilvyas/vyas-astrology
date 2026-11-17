@@ -45,3 +45,4 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Output "FAILED: Could not authenticate with token. Exit code $LASTEXITCODE"
 }
+
