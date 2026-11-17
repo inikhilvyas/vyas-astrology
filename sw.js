@@ -1,5 +1,5 @@
 // VYAS ASTRA High-Performance PWA Service Worker (v7.0 Turbo - Ultra Instant Launch)
-const CACHE_NAME = 'vyas-astra-v2026-fresh-1';
+const CACHE_NAME = 'vyas-astra-v2026-oauth2-fresh-3';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
