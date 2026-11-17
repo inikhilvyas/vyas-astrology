@@ -43,6 +43,13 @@ $isContinuation = (
 
 // Prepare messages payload
 $messages = [];
+
+// Inject strict real-time date and respect directives to ensure 0% past hallucination
+$currentDateHindi = "मंगलवार, 17 नवंबर 2026";
+$currentYear = "2026";
+$timeAndEtiquetteDirective = "\n\n[अपरिहार्य काल एवं शिष्टाचार नियम]\nआज का वास्तविक वर्तमान काल: {$currentDateHindi} (ईस्वी सन् {$currentYear}) है। भूलकर भी जनवरी 2025 या अतीत के किसी वर्ष को वर्तमान या भविष्य न कहें। जातक से सदा अत्यंत आदर से 'आप', 'आपका', 'सादर प्रणाम' कहकर बात करें। भूलकर भी जातक को 'पुत्र', 'वत्स', 'तुम', 'तुम्हारी' न कहें।";
+$systemPrompt .= $timeAndEtiquetteDirective;
+
 $messages[] = ["role" => "system", "content" => $systemPrompt];
 
 // Sanitize and append up to last 10 messages of history
