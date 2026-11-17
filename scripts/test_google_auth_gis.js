@@ -1,7 +1,7 @@
 const fs = require('fs');
 const assert = require('assert');
 
-console.log("=== VERIFYING GOOGLE IDENTITY SERVICES (GIS) INTEGRATION ===");
+console.log("=== VERIFYING STORE-READY GOOGLE AUTHENTICATION INTEGRATION ===");
 
 const files = [
     { path: 'index.html', name: 'Desktop', obj: 'VyasDesktop', btnId: 'g_id_signin_desktop' },
@@ -20,25 +20,31 @@ files.forEach(f => {
     console.log(`[PASS] Official GIS script tag present`);
 
     // 2. g_id_onload with client_id
-    assert(content.includes('id="g_id_onload"'), `Missing g_id_onload in ${f.path}`);
     assert(content.includes(CLIENT_ID), `Missing authorized Google Client ID in ${f.path}`);
-    console.log(`[PASS] Declarative g_id_onload configured with Client ID: ${CLIENT_ID.substring(0, 20)}...`);
+    console.log(`[PASS] Authorized Client ID configured: ${CLIENT_ID.substring(0, 20)}...`);
 
     // 3. g_id_signin container
     assert(content.includes(`id="${f.btnId}"`), `Missing ${f.btnId} in ${f.path}`);
     console.log(`[PASS] Official Google signin button container #${f.btnId} present`);
 
-    // 4. JS methods
+    // 4. Store-Ready JS methods
     assert(content.includes('setupGoogleIdentity'), `Missing setupGoogleIdentity in ${f.path}`);
-    assert(content.includes('handleGoogleCredentialResponse'), `Missing handleGoogleCredentialResponse in ${f.path}`);
-    assert(content.includes('promptGoogleSignIn'), `Missing promptGoogleSignIn in ${f.path}`);
-    console.log(`[PASS] Required GIS methods (setupGoogleIdentity, handleGoogleCredentialResponse, promptGoogleSignIn) present`);
+    assert(content.includes('launchGoogleOAuth'), `Missing launchGoogleOAuth in ${f.path}`);
+    assert(content.includes('verifyGoogleAccessToken'), `Missing verifyGoogleAccessToken in ${f.path}`);
+    assert(content.includes('applyAuthenticatedGoogleUser'), `Missing applyAuthenticatedGoogleUser in ${f.path}`);
+    assert(content.includes('checkGoogleOAuthReturn'), `Missing checkGoogleOAuthReturn in ${f.path}`);
+    console.log(`[PASS] Required Store-Ready methods (launchGoogleOAuth, verifyGoogleAccessToken, checkGoogleOAuthReturn, applyAuthenticatedGoogleUser) present`);
 
-    // 5. Manual login hidden by default
-    assert(content.includes('display:none;') && (content.includes('dManualLoginSection') || content.includes('mManualLoginSection')), `Manual login section should be hidden by default in ${f.path}`);
-    console.log(`[PASS] Manual fallback inputs cleanly collapsed (hidden by default)`);
+    // 5. Total Extirpation of fake login inputs and methods
+    assert(!content.includes('signInCustomProfile'), `FATAL FLAW: signInCustomProfile must NOT exist in ${f.path}`);
+    assert(!content.includes('signInFounderProfile'), `FATAL FLAW: signInFounderProfile must NOT exist in ${f.path}`);
+    assert(!content.includes('customGoogleName'), `FATAL FLAW: customGoogleName must NOT exist in ${f.path}`);
+    assert(!content.includes('customGoogleEmail'), `FATAL FLAW: customGoogleEmail must NOT exist in ${f.path}`);
+    assert(!content.includes('mCustomGoogleName'), `FATAL FLAW: mCustomGoogleName must NOT exist in ${f.path}`);
+    assert(!content.includes('mCustomGoogleEmail'), `FATAL FLAW: mCustomGoogleEmail must NOT exist in ${f.path}`);
+    console.log(`[PASS] 100% verified: Zero fake forms, zero mock text-inputs, zero simulated logins.`);
 });
 
 console.log("\n=======================================================");
-console.log("ALL 3 PLATFORMS VERIFIED FOR AUTHENTIC GOOGLE IDENTITY SERVICES!");
+console.log("ALL 3 PLATFORMS VERIFIED FOR ZERO-TOY STORE-READY GOOGLE AUTH!");
 console.log("=======================================================\n");

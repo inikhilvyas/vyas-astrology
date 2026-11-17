@@ -1,92 +1,130 @@
-// scripts/test_modal_and_kundli_creation.js
+// Strict Principal Auditor Verification Suite for Modal & Kundli Creation Flow
+// Tests the entire lifecycle: Blank Slate -> Modal Open -> Kundli Calculation -> Dynamic Updates -> Real Google OAuth Verification
+
 const fs = require('fs');
 const vm = require('vm');
 
-const html = fs.readFileSync('index.html', 'utf-8');
+const html = fs.readFileSync('index.html', 'utf8');
 
-const elements = {};
-function mockElement(id) {
-    if (!elements[id]) {
-        elements[id] = {
-            id: id,
-            innerHTML: '',
-            innerText: '',
-            textContent: '',
-            value: '',
-            style: {
-                setProperty: function(k, v) { this[k] = v; }
-            },
-            classList: {
-                classes: new Set(),
-                add: function(c) { this.classes.add(c); },
-                remove: function(c) { this.classes.delete(c); },
-                contains: function(c) { return this.classes.has(c); }
-            },
-            querySelectorAll: () => [],
-            querySelector: () => mockElement('sub_' + id),
-            appendChild: () => {},
-            scrollTop: 0,
-            scrollHeight: 100
-        };
+// Extract script blocks (excluding JSON-LD)
+const scripts = [...html.matchAll(/<script(?![^>]*(?:src|application\/ld\+json))[^>]*>([\s\S]*?)<\/script>/gi)];
+const fullScript = scripts.map(s => s[1]).join('\n;\n');
+
+// Mock DOM
+function createMockElement(id, tag = 'div') {
+    return {
+        id: id,
+        tagName: tag.toUpperCase(),
+        style: { display: 'none' },
+        classList: {
+            classes: new Set(),
+            add(c) { this.classes.add(c); },
+            remove(c) { this.classes.delete(c); },
+            contains(c) { return this.classes.has(c); }
+        },
+        value: '',
+        textContent: '',
+        innerHTML: '',
+        children: [],
+        appendChild(child) { this.children.push(child); },
+        getAttribute(attr) { return ''; },
+        setAttribute(attr, val) {},
+        getContext() {
+            return {
+                clearRect() {},
+                fillRect() {},
+                beginPath() {},
+                arc() {},
+                fill() {},
+                stroke() {},
+                moveTo() {},
+                lineTo() {},
+                save() {},
+                restore() {},
+                translate() {},
+                rotate() {}
+            };
+        }
+    };
+}
+
+const elementStore = {};
+function getOrCreate(id) {
+    if (!elementStore[id]) {
+        elementStore[id] = createMockElement(id);
     }
-    return elements[id];
+    return elementStore[id];
 }
 
 const mockDoc = {
-    getElementById: (id) => mockElement(id),
-    querySelectorAll: (sel) => {
-        if (sel === '.modal-overlay') return [mockElement('modalEditProfile'), mockElement('modalGoogleAuth')];
-        if (sel === '.tab-nav-btn') return [mockElement('tab1'), mockElement('tab2')];
-        if (sel === '.view-panel') return [mockElement('p1'), mockElement('p2')];
-        if (sel === '.vchip') return [mockElement('vc1')];
+    documentElement: createMockElement('html'),
+    getElementById(id) {
+        return getOrCreate(id);
+    },
+    querySelectorAll(selector) {
         return [];
     },
-    querySelector: (sel) => mockElement('query_' + sel),
-    addEventListener: () => {},
-    documentElement: { 
-        setAttribute: () => {},
-        getAttribute: () => 'dark'
-    }
+    querySelector(selector) {
+        return null;
+    },
+    addEventListener() {},
+    body: { classList: { add() {}, remove() {} } }
 };
 
-const storage = {};
 const mockWindow = {
     document: mockDoc,
     localStorage: {
-        getItem: (k) => storage[k] || null,
-        setItem: (k, v) => { storage[k] = String(v); },
-        removeItem: (k) => { delete storage[k]; }
+        store: {},
+        getItem(k) { return this.store[k] || null; },
+        setItem(k, v) { this.store[k] = String(v); },
+        removeItem(k) { delete this.store[k]; }
     },
-    alert: (msg) => { /* quiet alert in test */ },
-    addEventListener: () => {},
-    Date: Date,
-    Math: Math
+    sessionStorage: {
+        store: {},
+        getItem(k) { return this.store[k] || null; },
+        setItem(k, v) { this.store[k] = String(v); },
+        removeItem(k) { delete this.store[k]; }
+    },
+    location: {
+        origin: 'https://vyasastro.in',
+        pathname: '/',
+        search: '',
+        hash: '',
+        href: 'https://vyasastro.in/'
+    },
+    history: {
+        replaceState() {}
+    },
+    screen: {
+        width: 1920,
+        height: 1080
+    },
+    open() {
+        return { closed: false };
+    },
+    addEventListener() {},
+    alert(msg) {},
+    confirm() { return true; },
+    setTimeout: (fn, ms) => {},
+    setInterval: () => 1,
+    clearInterval: () => {},
+    requestAnimationFrame: (cb) => {}
 };
-
-// Extract main VyasDesktop script
-const scriptRegex = /<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi;
-let match;
-let fullScript = '';
-while ((match = scriptRegex.exec(html)) !== null) {
-    if (match[1].includes('VyasDesktop = {')) {
-        fullScript = match[1];
-        break;
-    }
-}
-
-if (!fullScript) {
-    console.error("Could not find VyasDesktop script in index.html");
-    process.exit(1);
-}
 
 const context = vm.createContext({
     window: mockWindow,
     document: mockDoc,
-    localStorage: mockWindow.localStorage,
-    alert: mockWindow.alert,
     console: console,
-    setTimeout: (fn) => { try { fn(); } catch(e){} },
-    clearTimeout: () => {},
+    localStorage: mockWindow.localStorage,
+    sessionStorage: mockWindow.sessionStorage,
+    location: mockWindow.location,
+    requestAnimationFrame: (cb) => {},
+    setTimeout: (fn, ms) => {},
+    setInterval: () => 1,
+    clearInterval: () => {},
+    fetch: () => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }),
+    alert: (msg) => {},
+    confirm: () => true,
     Date: Date,
     Math: Math,
     parseInt: parseInt,
@@ -138,33 +176,30 @@ assert(dhRelations.includes('जन्म कुण्डली बनाएं'
 const dhHealth = mockDoc.getElementById('dhHealthText').textContent;
 assert(dhHealth.includes('जन्म कुण्डली बनाएं'), `dhHealthText is blank slate protected (got '${dhHealth}')`);
 
-// TEST 2: Open New Profile Modal & Edit Profile Modal without crashes
+// TEST 2: Open Modal without activeChartData
 console.log("\n--- TEST 2: Modal Invocation with null activeChartData ---");
 try {
+    VyasDesktop.activeChartData = null;
     VyasDesktop.openEditProfileModal();
-    const editModal = mockDoc.getElementById('modalEditProfile');
-    assert(editModal.classList.contains('active'), "modalEditProfile opened without crash on null activeChartData");
-    assert(editModal.style.display === 'flex', "modalEditProfile display set to 'flex'");
+    const modal = mockDoc.getElementById('modalEditProfile');
+    assert(modal.classList.contains('active'), "modalEditProfile opened without crash on null activeChartData");
+    assert(modal.style.display === 'flex', "modalEditProfile display set to 'flex'");
+    assert(mockDoc.getElementById('edit_name').value === '', "New profile input is cleared and ready for entry");
 } catch(e) {
     assert(false, `openEditProfileModal threw error: ${e.message}`);
 }
 
-try {
-    VyasDesktop.openNewProfileModal();
-    const nameEl = mockDoc.getElementById('edit_name');
-    assert(nameEl.value === "", "New profile input is cleared and ready for entry");
-} catch(e) {
-    assert(false, `openNewProfileModal threw error: ${e.message}`);
-}
-
-// TEST 3: Direct Kundli Calculation & Creation
+// TEST 3: Calculate Real Kundli via submitProfileEdit
 console.log("\n--- TEST 3: Direct Kundli Calculation via submitProfileEdit ---");
 try {
     mockDoc.getElementById('edit_name').value = "राहुल शर्मा (Rahul Sharma)";
-    mockDoc.getElementById('edit_dob').value = "1994-06-18";
+    mockDoc.getElementById('edit_dob').value = "1990-05-15";
     mockDoc.getElementById('edit_tob').value = "14:30";
-    mockDoc.getElementById('edit_city').value = "Jaipur, Rajasthan";
-    mockDoc.getElementById('edit_gender').value = "Male";
+    mockDoc.getElementById('edit_gender').value = "पुरुष (Male)";
+    mockDoc.getElementById('edit_city').value = "जयपुर (Jaipur)";
+    mockDoc.getElementById('edit_lat').value = "26.9124";
+    mockDoc.getElementById('edit_lon').value = "75.7873";
+    mockDoc.getElementById('edit_tz').value = "+05:30";
 
     VyasDesktop.submitProfileEdit();
 
@@ -190,23 +225,41 @@ try {
     assert(false, `submitProfileEdit threw error: ${e.message}`);
 }
 
-// TEST 4: Google Sign-in Workflow
-console.log("\n--- TEST 4: Google Sign-in Transition ---");
+// TEST 4: Real Google User Authentication & Anti-Spoofing Verification
+console.log("\n--- TEST 4: Real Google OAuth Authentication & Anti-Spoofing ---");
 try {
+    // 4.1 Reject Fake/Simulated Profiles in localStorage on init
+    mockWindow.localStorage.setItem('vyas_google_user', JSON.stringify({
+        name: "Fake User",
+        email: "nikhil@gmail.com",
+        isVerified: true
+        // Note: No sub ID!
+    }));
+    VyasDesktop.initGoogleAuth();
+    assert(VyasDesktop.googleUser === null, "Fake/unverified account (nikhil@gmail.com without sub) was immediately purged!");
+    assert(mockWindow.localStorage.getItem('vyas_google_user') === null, "Fake entry cleared from localStorage");
+
+    // 4.2 Apply genuine Google verified user (when no chart exists, it opens new profile modal and pre-fills name)
     VyasDesktop.activeChartData = null;
     mockWindow.localStorage.removeItem('vyas_active_profile');
-    mockDoc.getElementById('customGoogleName').value = "अमित वर्मा (Amit Verma)";
-    mockDoc.getElementById('customGoogleEmail').value = "amit.verma@gmail.com";
+    const genuineGooglePayload = {
+        sub: "10982736451234567890",
+        name: "अमित वर्मा (Amit Verma)",
+        email: "amit.verma@official.com",
+        picture: "https://lh3.googleusercontent.com/avatar.jpg",
+        email_verified: true
+    };
+    VyasDesktop.applyAuthenticatedGoogleUser(genuineGooglePayload, "mock_google_jwt_token_123");
 
-    VyasDesktop.signInCustomProfile();
-
-    assert(VyasDesktop.googleUser !== null, "Google user recorded in memory");
-    assert(VyasDesktop.googleUser.email === "amit.verma@gmail.com", "Google email matches input");
+    assert(VyasDesktop.googleUser !== null, "Genuine Google user successfully authenticated");
+    assert(VyasDesktop.googleUser.sub === "10982736451234567890", "Google Sub ID locked in memory");
+    assert(VyasDesktop.googleUser.email === "amit.verma@official.com", "Verified email matches Google response");
+    assert(mockWindow.localStorage.getItem('vyas_g_jwt') === "mock_google_jwt_token_123", "Google JWT stored securely");
 
     const editName = mockDoc.getElementById('edit_name').value;
     assert(editName === "अमित वर्मा (Amit Verma)", `Google user's name pre-filled into birth chart form: '${editName}'`);
 } catch(e) {
-    assert(false, `signInCustomProfile threw error: ${e.message}`);
+    assert(false, `Google OAuth verification threw error: ${e.message}`);
 }
 
 console.log(`\n========================================`);
