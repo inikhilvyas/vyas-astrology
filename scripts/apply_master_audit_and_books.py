@@ -619,3 +619,4 @@ if (!this.activeChartData) { var s = localStorage.getItem('vyas_active_profile')
 
 if __name__ == '__main__':
     apply_all()
+

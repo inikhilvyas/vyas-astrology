@@ -306,3 +306,4 @@ if __name__ == '__main__':
     fix_css()
     update_file('index.html', is_mobile=False)
     update_file('mobile/index.html', is_mobile=True)
+

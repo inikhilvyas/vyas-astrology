@@ -392,3 +392,4 @@ if __name__ == '__main__':
     update_css()
     update_html('index.html', is_mobile=False)
     update_html('mobile/index.html', is_mobile=True)
+
