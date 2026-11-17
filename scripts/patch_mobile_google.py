@@ -1,0 +1,313 @@
+import re
+
+def update_mobile(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    # 1. Add global callback and g_id_onload if not present
+    if "handleGlobalGoogleCredential" not in html:
+        global_cb = """    <script>
+        function handleGlobalGoogleCredential(response) {
+            if (window.VyasMobile && typeof VyasMobile.handleGoogleCredentialResponse === 'function') {
+                VyasMobile.handleGoogleCredentialResponse(response);
+            }
+        }
+    </script>
+    <div id="g_id_onload"
+         data-client_id="341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com"
+         data-context="signin"
+         data-ux_mode="popup"
+         data-callback="handleGlobalGoogleCredential"
+         data-auto_prompt="false"
+         data-cancel_on_tap_outside="true">
+    </div>
+"""
+        html = html.replace('<div class="m-modal-overlay" id="modalGoogleAuthMobile"', global_cb + '    <div class="m-modal-overlay" id="modalGoogleAuthMobile"')
+
+    # 2. Update mGoogleUnauth
+    old_unauth = """            <div id="mGoogleUnauth">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(212,175,55,0.1); border:1.5px solid var(--primary); margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <h4 style="margin:0 0 6px 0; color:#f8fafc; font-size:1.0rem; font-weight:700;">VYAS ASTRA VIP क्लब</h4>
+                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 16px 0; line-height:1.5;">
+                    पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं VIP PDF एक्सेस हेतु साइन-इन करें।
+                </p>
+
+
+
+                <div style="display:flex; flex-direction:column; gap:10px; text-align:left; margin-bottom:14px;">
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-bottom:4px;">जातक / आपका नाम:</label>
+                        <input type="text" id="mCustomGoogleName" placeholder="उदा. राहुल शर्मा" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:9px 12px; color:#f8fafc; font-size:0.85rem;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; color:var(--text-secondary); display:block; margin-bottom:4px;">Google Email ID:</label>
+                        <input type="email" id="mCustomGoogleEmail" placeholder="उदा. rahul@gmail.com" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:9px 12px; color:#f8fafc; font-size:0.85rem;">
+                    </div>
+                </div>
+
+                <button onclick="VyasMobile.signInCustomProfile()" style="width:100%; background:linear-gradient(135deg, var(--primary), #b8860b); border:none; border-radius:8px; padding:11px; color:#0b1324; font-weight:800; font-size:0.86rem; cursor:pointer; box-shadow:0 4px 14px rgba(212,175,55,0.3);">
+                    Google खाते से सुरक्षित लॉगिन करें
+                </button>
+            </div>"""
+
+    new_unauth = """            <div id="mGoogleUnauth">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(212,175,55,0.1); border:1.5px solid var(--primary); margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <h4 style="margin:0 0 6px 0; color:#f8fafc; font-size:1.0rem; font-weight:700;">VYAS ASTRA VIP क्लब</h4>
+                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 16px 0; line-height:1.5;">
+                    पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं VIP PDF एक्सेस हेतु आधिकारिक Google खाते से साइन-इन करें।
+                </p>
+
+                <!-- Official Google Identity Services Sign-In Button Container -->
+                <div style="display:flex; justify-content:center; align-items:center; margin:16px 0 12px 0; min-height:44px;">
+                    <div id="g_id_signin_mobile" class="g_id_signin"
+                         data-type="standard"
+                         data-shape="pill"
+                         data-theme="filled_blue"
+                         data-text="continue_with"
+                         data-size="large"
+                         data-logo_alignment="left"
+                         data-width="260">
+                    </div>
+                </div>
+
+                <div style="font-size:0.75rem; color:var(--text-secondary); margin:8px 0 14px 0;">
+                    🔒 Google Identity Services द्वारा सुरक्षित 256-बिट प्रमाणीकरण
+                </div>
+
+                <!-- Secondary Manual Fallback (Collapsed by default) -->
+                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; margin-top:10px;">
+                    <a href="javascript:void(0)" onclick="var s = document.getElementById('mManualLoginSection'); if(s) s.style.display = (s.style.display==='none'?'block':'none');" style="color:var(--primary); font-size:0.74rem; text-decoration:none;">
+                        ⚙️ वैकल्पिक: बिना Google मैन्युअल नाम से जारी रखें ▾
+                    </a>
+                    <div id="mManualLoginSection" style="display:none; margin-top:10px; text-align:left;">
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:3px;">जातक / आपका नाम:</label>
+                            <input type="text" id="mCustomGoogleName" placeholder="उदा. राहुल शर्मा" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:7px 10px; color:#f8fafc; font-size:0.82rem;">
+                        </div>
+                        <div style="margin-bottom:8px;">
+                            <label style="font-size:0.72rem; color:var(--text-secondary); display:block; margin-bottom:3px;">Email ID:</label>
+                            <input type="email" id="mCustomGoogleEmail" placeholder="उदा. rahul@gmail.com" style="width:100%; box-sizing:border-box; background:#0f172a; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:7px 10px; color:#f8fafc; font-size:0.82rem;">
+                        </div>
+                        <button onclick="VyasMobile.signInCustomProfile()" style="width:100%; background:rgba(212,175,55,0.2); border:1px solid var(--primary); border-radius:6px; padding:8px; color:var(--primary); font-weight:700; font-size:0.80rem; cursor:pointer;">
+                            नाम दर्ज कर जारी रखें
+                        </button>
+                    </div>
+                </div>
+            </div>"""
+
+    if old_unauth in html:
+        html = html.replace(old_unauth, new_unauth)
+        print(f"✓ mGoogleUnauth replaced in {file_path}")
+    else:
+        print(f"! Warning: mGoogleUnauth not matched in {file_path}")
+
+    # 3. Update initGoogleAuth, setupGoogleIdentity, promptGoogleSignIn, handleGoogleCredentialResponse in VyasMobile
+    old_methods = """        initGoogleAuth: function() {
+            try {
+                var saved = localStorage.getItem('vyas_google_user');
+                if (saved) {
+                    this.googleUser = JSON.parse(saved);
+                    this.updateGoogleAuthUI();
+                }
+            } catch (e) {
+                console.warn(e);
+            }
+        },
+
+                promptGoogleSignIn: function() {
+            var modal = document.getElementById('modalGoogleAuthMobile');
+            if (!modal) return;
+            var unauth = document.getElementById('mGoogleUnauth');
+            var auth = document.getElementById('mGoogleAuth');
+            if (this.googleUser) {
+                if (unauth) unauth.style.display = 'none';
+                if (auth) auth.style.display = 'block';
+                var nameEl = document.getElementById('mAuthName');
+                var emailEl = document.getElementById('mAuthEmail');
+                if (nameEl) nameEl.textContent = this.googleUser.name || 'सत्यापित जातक';
+                if (emailEl) emailEl.textContent = this.googleUser.email || '';
+            } else {
+                if (unauth) unauth.style.display = 'block';
+                if (auth) auth.style.display = 'none';
+            }
+            modal.classList.add('active');
+            modal.style.setProperty('display', 'flex', 'important');
+        },"""
+
+    new_methods = """        initGoogleAuth: function() {
+            try {
+                var saved = localStorage.getItem('vyas_google_user');
+                if (saved) {
+                    var parsed = JSON.parse(saved);
+                    if (!parsed || !parsed.email || (parsed.name && parsed.name.indexOf('वैदिक') !== -1) || parsed.email.indexOf('user@') !== -1 || parsed.email === 'nikhilvyas@vyasastro.in') {
+                        localStorage.removeItem('vyas_google_user');
+                        this.googleUser = null;
+                    } else {
+                        this.googleUser = parsed;
+                    }
+                    this.updateGoogleAuthUI();
+                } else {
+                    this.googleUser = null;
+                    this.updateGoogleAuthUI();
+                }
+            } catch (e) {
+                console.warn(e);
+                this.googleUser = null;
+                this.updateGoogleAuthUI();
+            }
+            this.setupGoogleIdentity();
+        },
+
+        setupGoogleIdentity: function() {
+            var self = this;
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: "341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com",
+                        callback: function(resp) { self.handleGoogleCredentialResponse(resp); },
+                        auto_select: false,
+                        cancel_on_tap_outside: true
+                    });
+                    var gDiv = document.getElementById("g_id_signin_mobile");
+                    if (gDiv) {
+                        google.accounts.id.renderButton(gDiv, {
+                            theme: "filled_blue",
+                            size: "large",
+                            shape: "pill",
+                            text: "continue_with",
+                            logo_alignment: "left",
+                            width: 260
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Mobile GIS setup error:", e);
+                }
+            } else {
+                setTimeout(function() { self.setupGoogleIdentity(); }, 350);
+            }
+        },
+
+        promptGoogleSignIn: function() {
+            // Trigger Google Identity One-Tap prompt
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                try {
+                    google.accounts.id.prompt();
+                } catch(e) {
+                    console.warn("One-tap prompt error:", e);
+                }
+            }
+
+            var modal = document.getElementById('modalGoogleAuthMobile');
+            if (!modal) return;
+            var unauth = document.getElementById('mGoogleUnauth');
+            var auth = document.getElementById('mGoogleAuth');
+            if (this.googleUser) {
+                if (unauth) unauth.style.display = 'none';
+                if (auth) auth.style.display = 'block';
+                var nameEl = document.getElementById('mAuthName');
+                var emailEl = document.getElementById('mAuthEmail');
+                if (nameEl) nameEl.textContent = this.googleUser.name || 'सत्यापित VIP जातक';
+                if (emailEl) emailEl.textContent = this.googleUser.email || '';
+            } else {
+                if (unauth) unauth.style.display = 'block';
+                if (auth) auth.style.display = 'none';
+            }
+            modal.classList.add('active');
+            modal.style.setProperty('display', 'flex', 'important');
+
+            // Render Google Button in modal if not yet rendered
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                var gDiv = document.getElementById("g_id_signin_mobile");
+                if (gDiv) {
+                    try {
+                        google.accounts.id.renderButton(gDiv, {
+                            theme: "filled_blue",
+                            size: "large",
+                            shape: "pill",
+                            text: "continue_with",
+                            logo_alignment: "left",
+                            width: 260
+                        });
+                    } catch(e) {}
+                }
+            }
+        },
+
+        handleGoogleCredentialResponse: function(response) {
+            try {
+                var base64Url = response.credential.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                var data = JSON.parse(jsonPayload);
+                this.googleUser = {
+                    name: data.name,
+                    email: data.email,
+                    picture: data.picture || "logo_icon.png",
+                    sub: data.sub,
+                    isVerified: true
+                };
+                localStorage.setItem('vyas_google_user', JSON.stringify(this.googleUser));
+                localStorage.setItem('vyas_g_jwt', response.credential);
+                this.updateGoogleAuthUI();
+                this.closeModals();
+
+                if (!this.activeChartData) {
+                    var s = localStorage.getItem('vyas_active_profile');
+                    if (s) { try { this.activeChartData = JSON.parse(s); this.activeChart = this.activeChartData; } catch(e) {} }
+                }
+
+                if (this.activeChartData) {
+                    this.loadProfile();
+                    this.renderChart(this.currentVarga || 'd1');
+                    this.renderPlanetTable();
+                    this.renderPredictions();
+                    this.renderDashaTree();
+                } else {
+                    this.openNewProfileModal();
+                }
+                alert("✓ स्वागतम् " + this.googleUser.name + " जी! Google प्रमाणीकरण सफल।");
+            } catch (e) {
+                console.error("JWT Decode error:", e);
+            }
+        },"""
+
+    if old_methods in html:
+        html = html.replace(old_methods, new_methods)
+        print(f"✓ Google auth methods replaced in {file_path}")
+    else:
+        print(f"! Warning: Google auth methods pattern not found in {file_path}")
+
+    # 4. Fix loadProfile typo: saved = true; -> hasStored = true;
+    old_load = """                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                        this.activeChartData = data;
+                        saved = true;
+                    } else if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                        this.activeChartData = data;
+                        this.activeChart = data;
+                        hasStored = true;
+                    }"""
+
+    new_load = """                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                        this.activeChartData = data;
+                        this.activeChart = data;
+                        hasStored = true;
+                    }"""
+
+    if old_load in html:
+        html = html.replace(old_load, new_load)
+        print(f"✓ loadProfile typo fixed in {file_path}")
+    else:
+        print(f"! Warning: loadProfile pattern not found in {file_path}")
+
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"{file_path} updated")
+
+update_mobile("mobile/index.html")
+update_mobile("android_app/app/src/main/assets/mobile/index.html")
