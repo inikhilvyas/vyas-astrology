@@ -133,3 +133,4 @@ def patch_file(p):
 patch_file('index.html')
 patch_file('mobile/index.html')
 patch_file('android_app/app/src/main/assets/mobile/index.html')
+

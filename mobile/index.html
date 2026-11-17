@@ -6391,6 +6391,37 @@ var VyasMobile = {
             this.signOutGoogleUser();
         },
 
+                isProAccount: function(email) {
+            if (!email) return false;
+            var norm = email.trim().toLowerCase();
+            try {
+                var proList = JSON.parse(localStorage.getItem('vyas_pro_users') || '[]');
+                if (proList.indexOf(norm) !== -1) return true;
+                if (localStorage.getItem('vyas_pro_active') === 'true') return true;
+                if (localStorage.getItem('vyas_vip_member_' + norm) === 'true') return true;
+            } catch(e) {}
+            var authorizedPro = ['inikhilvyas@gmail.com', 'nikhilvyas007@gmail.com', 'vyasbilawas@gmail.com'];
+            if (authorizedPro.indexOf(norm) !== -1) return true;
+            return false;
+        },
+
+        setProAccount: function(email, isPro) {
+            if (!email) return;
+            var norm = email.trim().toLowerCase();
+            try {
+                var proList = JSON.parse(localStorage.getItem('vyas_pro_users') || '[]');
+                var idx = proList.indexOf(norm);
+                if (isPro && idx === -1) {
+                    proList.push(norm);
+                } else if (!isPro && idx !== -1) {
+                    proList.splice(idx, 1);
+                }
+                localStorage.setItem('vyas_pro_users', JSON.stringify(proList));
+                localStorage.setItem('vyas_vip_member_' + norm, isPro ? 'true' : 'false');
+            } catch(e) {}
+            this.updateGoogleAuthUI();
+        },
+
         updateGoogleAuthUI: function() {
             var btnText = document.getElementById('mGoogleBtnText');
             var btn = document.getElementById('mGoogleSignInBtn');
