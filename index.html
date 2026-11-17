@@ -1428,7 +1428,7 @@ body {
                     <div class="user-popover-header">
                         <img id="userAvatarImg" src="logo_icon.png" class="user-avatar-circle" alt="User">
                         <div class="user-meta">
-                            <div class="user-display-name" id="userDisplayName">वैदिक जातक (VIP)</div>
+                            <div class="user-display-name" id="userDisplayName">अतिथि जातक (साइन-इन नहीं)</div>
                             <div class="user-display-email" id="userDisplayEmail">user@vyasastro.in</div>
                         </div>
                     </div>
@@ -6041,11 +6041,23 @@ var VyasDesktop = {
             try {
                 var saved = localStorage.getItem('vyas_google_user');
                 if (saved) {
-                    this.googleUser = JSON.parse(saved);
+                    var parsed = JSON.parse(saved);
+                    // PURGE FAKE/DUMMY ACCOUNTS (e.g. "वैदिक जातक", "user@gmail.com", etc.)
+                    if (!parsed || !parsed.email || parsed.name.indexOf('वैदिक') !== -1 || parsed.email.indexOf('user@') !== -1 || parsed.email === 'nikhilvyas@vyasastro.in') {
+                        localStorage.removeItem('vyas_google_user');
+                        this.googleUser = null;
+                    } else {
+                        this.googleUser = parsed;
+                    }
+                    this.updateGoogleAuthUI();
+                } else {
+                    this.googleUser = null;
                     this.updateGoogleAuthUI();
                 }
             } catch (e) {
                 console.warn('Google Auth Load Exception:', e);
+                this.googleUser = null;
+                this.updateGoogleAuthUI();
             }
         },
 
@@ -6096,8 +6108,12 @@ var VyasDesktop = {
         signInCustomProfile: function() {
             var nameIn = document.getElementById('customGoogleName');
             var emailIn = document.getElementById('customGoogleEmail');
-            var name = (nameIn && nameIn.value.trim()) ? nameIn.value.trim() : "वैदिक जातक";
-            var email = (emailIn && emailIn.value.trim()) ? emailIn.value.trim() : "user@gmail.com";
+            var name = (nameIn && nameIn.value.trim()) ? nameIn.value.trim() : "";
+            var email = (emailIn && emailIn.value.trim()) ? emailIn.value.trim() : "";
+            if (!name || !email || email.indexOf('@') === -1) {
+                alert("कृपया अपना वास्तविक नाम एवं वैध Google Email ID दर्ज करें।");
+                return;
+            }
             this.googleUser = {
                 name: name,
                 email: email,

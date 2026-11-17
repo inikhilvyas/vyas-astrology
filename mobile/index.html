@@ -6402,6 +6402,11 @@ var VyasMobile = {
             tbody.innerHTML = html;
         },
 
+        renderRemedies() {
+            var rView = document.getElementById('view-remedies');
+            if (!rView) return;
+        },
+
         renderMatch() {
             var tbody = document.getElementById('mMatchKootaBody');
             var sample = (this.activeChartData && this.activeChartData.ashtakoota_sample) ? this.activeChartData.ashtakoota_sample : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.ashtakoota_sample : null);
@@ -6884,7 +6889,8 @@ var VyasMobile = {
         // ASHTAKAVARGA (SAV 337, PRASTARA, BAV)
         // ==========================================
         renderAshtakavarga: function() {
-            var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : AUTHENTIC_BUNDLE.ashtakavarga;
+            var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.ashtakavarga : null);
+            if (!av) av = { sav: [33, 25, 25, 30, 31, 39, 29, 26, 19, 31, 27, 22] };
             var sav = av.sav || [33, 25, 25, 30, 31, 39, 29, 26, 19, 31, 27, 22];
 
             // 1. SAV Grid
@@ -6911,7 +6917,7 @@ var VyasMobile = {
 
             // 3. BAV Summary
             var bavTable = document.getElementById('mBavSummaryTable') || document.getElementById('bavSummaryTable');
-            if (bavTable && av.bav) {
+            if (bavTable && av && av.bav) {
                 var SIGNS_HI = ["मेष", "वृष", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
                 var h = '<thead><tr><th>ग्रह</th>';
                 for (var s = 0; s < 12; s++) h += '<th>' + SIGNS_HI[s] + '</th>';
@@ -6942,7 +6948,8 @@ var VyasMobile = {
             var wrap = document.getElementById('mPavTableWrap') || document.getElementById('pavTableContainer');
             if (!wrap) return;
 
-            var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : AUTHENTIC_BUNDLE.ashtakavarga;
+            var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.ashtakavarga : null);
+            var pav = (av && av.pav) ? av.pav : {};
             var pav = av.pav || {};
             var matrix = pav[planetName] || [
                 [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1],
@@ -7017,39 +7024,47 @@ var VyasMobile = {
                 }
             }
 
-            var kp = (this.activeChartData && this.activeChartData.kp && this.activeChartData.kp.cusps) ? this.activeChartData.kp : AUTHENTIC_BUNDLE.kp;
+            var kp = (this.activeChartData && this.activeChartData.kp && this.activeChartData.kp.cusps) ? this.activeChartData.kp : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.kp : null);
             var cBody = document.getElementById('mKpCuspsBody') || document.getElementById('kpCuspsTableBody');
-            if (cBody && kp && kp.cusps) {
-                var html = '';
-                for (var i = 0; i < kp.cusps.length; i++) {
-                    var c = kp.cusps[i];
-                    html += '<tr>' +
-                        '<td><b>कस्प ' + c.cusp + '</b></td>' +
-                        '<td>' + c.sign + '</td>' +
-                        '<td style="font-family:var(--font-mono);">' + c.deg + '</td>' +
-                        '<td>' + c.rl + '</td>' +
-                        '<td>' + c.nl + '</td>' +
-                        '<td><b style="color:var(--accent-gold);">' + c.sl + '</b></td>' +
-                        '<td>' + (c.ssl || '-') + '</td>' +
-                    '</tr>';
+            if (cBody) {
+                if (kp && kp.cusps) {
+                    var html = '';
+                    for (var i = 0; i < kp.cusps.length; i++) {
+                        var c = kp.cusps[i];
+                        html += '<tr>' +
+                            '<td><b>कस्प ' + c.cusp + '</b></td>' +
+                            '<td>' + c.sign + '</td>' +
+                            '<td style="font-family:var(--font-mono);">' + c.deg + '</td>' +
+                            '<td>' + c.rl + '</td>' +
+                            '<td>' + c.nl + '</td>' +
+                            '<td><b style="color:var(--accent-gold);">' + c.sl + '</b></td>' +
+                            '<td>' + (c.ssl || '-') + '</td>' +
+                        '</tr>';
+                    }
+                    cBody.innerHTML = html;
+                } else {
+                    cBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:var(--text-muted);">कुण्डली लोड होने पर 12 कस्पल सब-लॉर्ड्स प्रदर्शित होंगे।</td></tr>';
                 }
-                cBody.innerHTML = html;
             }
 
             var pBody = document.getElementById('mKpPlanetsBody') || document.getElementById('kpPlanetsTableBody');
-            if (pBody && kp.planets) {
-                var html = '';
-                for (var j = 0; j < kp.planets.length; j++) {
-                    var p = kp.planets[j];
-                    html += '<tr>' +
-                        '<td><b>' + p.planet + '</b></td>' +
-                        '<td>' + p.rl + '</td>' +
-                        '<td>' + p.nl + '</td>' +
-                        '<td><b style="color:var(--accent-gold);">' + p.sl + '</b></td>' +
-                        '<td>' + (p.ssl || '-') + '</td>' +
-                    '</tr>';
+            if (pBody) {
+                if (kp && kp.planets) {
+                    var html = '';
+                    for (var j = 0; j < kp.planets.length; j++) {
+                        var p = kp.planets[j];
+                        html += '<tr>' +
+                            '<td><b>' + p.planet + '</b></td>' +
+                            '<td>' + p.rl + '</td>' +
+                            '<td>' + p.nl + '</td>' +
+                            '<td><b style="color:var(--accent-gold);">' + p.sl + '</b></td>' +
+                            '<td>' + (p.ssl || '-') + '</td>' +
+                        '</tr>';
+                    }
+                    pBody.innerHTML = html;
+                } else {
+                    pBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:16px; color:var(--text-muted);">कुण्डली लोड होने पर केपी ग्रह सिग्निफिकेटर्स प्रदर्शित होंगे।</td></tr>';
                 }
-                pBody.innerHTML = html;
             }
         },
 
@@ -7378,30 +7393,39 @@ var VyasMobile = {
             var box = document.getElementById('mVargaSvgBox');
             if (!box) return;
 
+            var d1Data = this.activeChartData || (window.AUTHENTIC_BUNDLE || null);
+            var d9Data = (this.activeChartData && this.activeChartData.vargas && this.activeChartData.vargas.D9) ? this.activeChartData.vargas.D9 : (window.AUTHENTIC_BUNDLE && window.AUTHENTIC_BUNDLE.vargas ? window.AUTHENTIC_BUNDLE.vargas.D9 : null);
+            var d10Data = (this.activeChartData && this.activeChartData.vargas && this.activeChartData.vargas.D10) ? this.activeChartData.vargas.D10 : (window.AUTHENTIC_BUNDLE && window.AUTHENTIC_BUNDLE.vargas ? window.AUTHENTIC_BUNDLE.vargas.D10 : d9Data);
+
             var vMap = {
-                'D1': { name: 'लग्न कुण्डली (D-1)', data: this.activeChartData || AUTHENTIC_BUNDLE },
-                'D9': { name: 'नवमांश चक्र (D-9)', data: (this.activeChartData && this.activeChartData.vargas && this.activeChartData.vargas.D9) ? this.activeChartData.vargas.D9 : AUTHENTIC_BUNDLE.vargas.D9 },
-                'D10': { name: 'दशमांश चक्र (D-10)', data: (this.activeChartData && this.activeChartData.vargas && this.activeChartData.vargas.D10) ? this.activeChartData.vargas.D10 : (AUTHENTIC_BUNDLE.vargas ? AUTHENTIC_BUNDLE.vargas.D10 : AUTHENTIC_BUNDLE.vargas.D9) }
+                'D1': { name: 'लग्न कुण्डली (D-1)', data: d1Data },
+                'D9': { name: 'नवमांश चक्र (D-9)', data: d9Data },
+                'D10': { name: 'दशमांश चक्र (D-10)', data: d10Data }
             };
 
             var target = vMap[vargaKey] || vMap['D9'];
-            var houses = (target.data && target.data.houses) ? target.data.houses : ((this.activeChartData && this.activeChartData.houses) ? this.activeChartData.houses : AUTHENTIC_BUNDLE.houses);
+            var houses = (target && target.data && target.data.houses) ? target.data.houses : ((this.activeChartData && this.activeChartData.houses) ? this.activeChartData.houses : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.houses : null));
 
-            box.innerHTML = this.generateDiamondSVG(houses, 260, target.name);
+            if (houses) {
+                box.innerHTML = this.generateDiamondSVG(houses, 260, target.name);
+            } else {
+                box.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted); font-size:0.82rem;">' + (target ? target.name : 'वर्ग चक्र') + ' देखने हेतु कृपया अपनी कुण्डली बनाएं।</div>';
+            }
         },
 
         // ==========================================
         // CELESTIAL TRANSITS & SADE SATI
         // ==========================================
         renderGochar: function() {
+            var gb = window.GOCHAR_BUNDLE || null;
             var wrap = document.getElementById('mGocharChartSvgWrap');
-            if (wrap && GOCHAR_BUNDLE && GOCHAR_BUNDLE.transit_houses) {
-                wrap.innerHTML = this.generateDiamondSVG(GOCHAR_BUNDLE.transit_houses, 250, 'तात्कालिक गोचर');
+            if (wrap && gb && gb.transit_houses) {
+                wrap.innerHTML = this.generateDiamondSVG(gb.transit_houses, 250, 'तात्कालिक गोचर');
             }
 
             var tbody = document.getElementById('mGocharPlanetsTableBody');
-            if (tbody && GOCHAR_BUNDLE) {
-                var rows = GOCHAR_BUNDLE.transit_rows || GOCHAR_BUNDLE.transit_planets || [];
+            if (tbody && gb) {
+                var rows = gb.transit_rows || gb.transit_planets || [];
                 var html = '';
                 for (var i = 0; i < rows.length; i++) {
                     var p = rows[i];
@@ -7424,10 +7448,10 @@ var VyasMobile = {
             }
 
             var mdBox = document.getElementById('mMuddaDashaBox');
-            if (mdBox && GOCHAR_BUNDLE && GOCHAR_BUNDLE.varshphal && GOCHAR_BUNDLE.varshphal.mudda_dasha) {
+            if (mdBox && gb && gb.varshphal && gb.varshphal.mudda_dasha) {
                 var mHtml = '<table class="astronomy-table" style="width:100%;"><thead><tr><th>मुद्धा दशा अधिपति</th><th>अवधि</th><th>प्रारम्भ</th><th>समाप्ति</th></tr></thead><tbody>';
-                for (var j = 0; j < GOCHAR_BUNDLE.varshphal.mudda_dasha.length; j++) {
-                    var mu = GOCHAR_BUNDLE.varshphal.mudda_dasha[j];
+                for (var j = 0; j < (gb.varshphal.mudda_dasha ? gb.varshphal.mudda_dasha.length : 0); j++) {
+                    var mu = gb.varshphal.mudda_dasha[j];
                     var durVal = mu.dur || mu.duration || (mu.days ? mu.days + ' दिन' : '21 दिन');
                     mHtml += '<tr><td><b>' + mu.lord + '</b></td><td>' + durVal + '</td><td>' + mu.start + '</td><td>' + mu.end + '</td></tr>';
                 }
@@ -7445,8 +7469,13 @@ var VyasMobile = {
                 document.getElementById('mQuickPlanetTableBody')
             ];
 
-            var list = (this.activeChartData && this.activeChartData.planet_table) ? this.activeChartData.planet_table : AUTHENTIC_BUNDLE.planet_table;
-            if (!list || !list.length) return;
+            var list = (this.activeChartData && this.activeChartData.planet_table) ? this.activeChartData.planet_table : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.planet_table : null);
+            if (!list || !list.length) {
+                for (var t = 0; t < tbodies.length; t++) {
+                    if (tbodies[t]) tbodies[t].innerHTML = '<tr><td colspan="6" style="text-align:center; padding:16px; color:var(--text-muted);">कुण्डली लोड होने पर स्पष्ट ग्रह स्थिति प्रदर्शित होगी।</td></tr>';
+                }
+                return;
+            }
 
             var pEn = { 'सूर्य (Sun)': 'Sun (सूर्य)', 'चन्द्र (Moon)': 'Moon (चन्द्र)', 'मंगल (Mars)': 'Mars (मंगल)', 'बुध (Mercury)': 'Mercury (बुध)', 'गुरु (Jupiter)': 'Jupiter (गुरु)', 'शुक्र (Venus)': 'Venus (शुक्र)', 'शनि (Saturn)': 'Saturn (शनि)', 'राहु (Rahu)': 'Rahu (राहु)', 'केतु (Ketu)': 'Ketu (केतु)' };
 
@@ -7478,6 +7507,22 @@ var VyasMobile = {
 
         renderMobileKundliPlanets: function() {
             this.renderPlanetTable();
+            var svgWrap = document.getElementById('mMainKundliSvgWrap');
+            if (svgWrap) {
+                var houses = (this.activeChartData && this.activeChartData.houses) ? this.activeChartData.houses : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.houses : null);
+                if (houses) {
+                    svgWrap.innerHTML = this.generateDiamondSVG(houses, 280, 'D-1 लग्न कुण्डली');
+                } else {
+                    svgWrap.innerHTML = this.generateDiamondSVG({
+                        1: { rashi: 1, sign: 'मेष', planets: [] }, 2: { rashi: 2, sign: 'वृषभ', planets: [] },
+                        3: { rashi: 3, sign: 'मिथुन', planets: [] }, 4: { rashi: 4, sign: 'कर्क', planets: [] },
+                        5: { rashi: 5, sign: 'सिंह', planets: [] }, 6: { rashi: 6, sign: 'कन्या', planets: [] },
+                        7: { rashi: 7, sign: 'तुला', planets: [] }, 8: { rashi: 8, sign: 'वृश्चिक', planets: [] },
+                        9: { rashi: 9, sign: 'धनु', planets: [] }, 10: { rashi: 10, sign: 'मकर', planets: [] },
+                        11: { rashi: 11, sign: 'कुंभ', planets: [] }, 12: { rashi: 12, sign: 'मीन', planets: [] }
+                    }, 280, 'D-1 लग्न कुण्डली (रिक्त खाका)');
+                }
+            }
         },
 
         // ==========================================
@@ -7852,7 +7897,10 @@ renderChart(chartKey) {
                 var pos = positions[house];
                 var x = pos[0], y = pos[1];
                 var data = housesData[house] || [];
-                if (!data || data.length === 0) continue;
+                if (data && typeof data === 'object' && !Array.isArray(data)) {
+                    data = [data.rashi || house].concat(data.planets || []);
+                }
+                if (!data || !data.slice || data.length === 0) continue;
 
                 var signNum = data[0];
                 var planets = data.slice(1);
@@ -7905,7 +7953,11 @@ renderChart(chartKey) {
             var tbody = document.getElementById('mPlanetTableBody') || document.getElementById('mQuickPlanetTableBody');
             if (!tbody) return;
             var isEn = this.isEnglishMode;
-            var list = (this.activeChartData && this.activeChartData.planet_table) ? this.activeChartData.planet_table : AUTHENTIC_BUNDLE.planet_table;
+            var list = (this.activeChartData && this.activeChartData.planet_table) ? this.activeChartData.planet_table : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.planet_table : null);
+            if (!list || !list.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:16px; color:var(--text-muted);">कुण्डली लोड होने पर स्पष्ट ग्रह स्थिति प्रदर्शित होगी।</td></tr>';
+                return;
+            }
 
             var pEn = { 'सूर्य (Sun)': 'Sun (सूर्य)', 'चन्द्र (Moon)': 'Moon (चन्द्र)', 'मंगल (Mars)': 'Mars (मंगल)', 'बुध (Mercury)': 'Mercury (बुध)', 'गुरु (Jupiter)': 'Jupiter (गुरु)', 'शुक्र (Venus)': 'Venus (शुक्र)', 'शनि (Saturn)': 'Saturn (शनि)', 'राहु (Rahu)': 'Rahu (राहु)', 'केतु (Ketu)': 'Ketu (केतु)' };
             var rEn = { 'मेष': 'Aries', 'वृषभ': 'Taurus', 'मिथुन': 'Gemini', 'कर्क': 'Cancer', 'सिंह': 'Leo', 'कन्या': 'Virgo', 'तुला': 'Libra', 'वृश्चिक': 'Scorpio', 'धनु': 'Sagittarius', 'मकर': 'Capricorn', 'कुंभ': 'Aquarius', 'मीन': 'Pisces' };
@@ -8365,7 +8417,7 @@ renderChart(chartKey) {
             var m = document.getElementById('mEditProfileModal');
             if (!m) return;
             document.getElementById('mEditModalTitle').innerText = "जन्म विवरण सम्पादित करें";
-            var prof = this.activeChartData.profile || AUTHENTIC_BUNDLE.profile;
+            var prof = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.profile : {});
             document.getElementById('m_inp_name').value = prof.name || "";
             document.getElementById('m_inp_dob').value = prof.dob || "";
             document.getElementById('m_inp_tob').value = prof.tob || "";
@@ -8816,7 +8868,8 @@ renderChart(chartKey) {
         var icon = document.getElementById('mThemeIcon');
         if (icon) icon.innerText = savedTheme === 'dark' ? '' : '';
 
-        VyasMobile.init();
+        window.VyasMobile = VyasMobile;
+    VyasMobile.init();
     });
     </script>
 
