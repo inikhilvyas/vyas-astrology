@@ -5533,34 +5533,33 @@ body {
 
             var prof = chart.profile;
             var name = prof.name || "जातक";
-            var lagna = prof.asc_sign || "मेष";
+            var lagna = (prof.asc_sign || "मेष").split(' ')[0];
             var dob = prof.dob || "";
             var tob = prof.tob || "";
             var city = prof.city || "";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल ➔ बुध";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी दशा सक्रिय";
 
-            // Find planet placements
-            var planets = {};
-            if (chart.planet_table) {
-                for (var p = 0; p < chart.planet_table.length; p++) {
-                    var pl = chart.planet_table[p];
-                    var pName = pl.p || pl.planet || '';
-                    if (pName.indexOf("सूर्य") !== -1) planets.Sun = pl;
-                    else if (pName.indexOf("चन्द्र") !== -1) planets.Moon = pl;
-                    else if (pName.indexOf("मंगल") !== -1) planets.Mars = pl;
-                    else if (pName.indexOf("बुध") !== -1) planets.Mercury = pl;
-                    else if (pName.indexOf("गुरु") !== -1) planets.Jupiter = pl;
-                    else if (pName.indexOf("शुक्र") !== -1) planets.Venus = pl;
-                    else if (pName.indexOf("शनि") !== -1) planets.Saturn = pl;
-                    else if (pName.indexOf("राहु") !== -1) planets.Rahu = pl;
-                    else if (pName.indexOf("केतु") !== -1) planets.Ketu = pl;
-                }
+            // Dynamically generate genuine classical sutras for THIS native's chart
+            var dynamicSutras = [];
+            if (typeof this.generateExhaustiveSutraAnalysis === 'function') {
+                dynamicSutras = this.generateExhaustiveSutraAnalysis(chart) || [];
             }
 
-            var marsIn10 = planets.Mars && (planets.Mars.h === 10 || planets.Mars.house === 10);
-            var satIn7 = planets.Saturn && (planets.Saturn.h === 7 || planets.Saturn.house === 7);
-            var moonIn8 = planets.Moon && (planets.Moon.h === 8 || planets.Moon.house === 8);
-            var jupIn9 = planets.Jupiter && (planets.Jupiter.h === 9 || planets.Jupiter.house === 9);
+            // Group into Yogas, Dignities, and House Lords
+            var rajYogas = [];
+            var dignities = [];
+            var houseLords = [];
+
+            dynamicSutras.forEach(function(s) {
+                var sys = s.system || "";
+                if (sys.indexOf("महापुरुष") !== -1 || sys.indexOf("राजयोग") !== -1 || sys.indexOf("योग") !== -1) {
+                    rajYogas.push(s);
+                } else if (sys.indexOf("नीच") !== -1 || sys.indexOf("स्वगृही") !== -1 || sys.indexOf("उच्च") !== -1 || sys.indexOf("बल") !== -1) {
+                    dignities.push(s);
+                } else if (sys.indexOf("भावेश") !== -1) {
+                    houseLords.push(s);
+                }
+            });
 
             var essay = '<div class="vyas34-thesis" style="line-height:1.75; color:var(--text-primary); font-size:0.86rem;">' +
                 // Header Banner
@@ -5577,123 +5576,72 @@ body {
                     '</div>' +
                 '</div>' +
 
-                // Chapter 1: Lagna & Soul Blueprint
+                // Chapter 1: Lagna & Core Constitution
                 '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
                     '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
                         'अध्याय १: आत्मिक आधार, लग्न संरचना व मूल प्रकृति (Lagna & Core Constitution)' +
                     '</h4>' +
                     '<p style="margin:0 0 8px 0;">' +
-                        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। महर्षि पराशर अनुसार लग्न शरीर, आत्म-चेतना, जीवन शक्ति एवं समग्र प्रारब्ध का मूल प्रवेश द्वार है। लग्न के स्वामी ग्रह का केंद्र में बलवान होना जातक को आंतरिक रूप से निडर, स्पष्टवादी, लक्ष्य-केन्द्रित एवं विपरीत परिस्थितियों में भी पुनः उठ खड़े होने की अदम्य शक्ति प्रदान करता है। जातक की मानसिक संरचना में पराधीनता स्वीकार न करने और स्वतंत्र निर्णय लेने की जन्मजात प्रवृत्ति है। यह स्थिति सामाजिक स्तर पर जातक को एक स्वाभाविक मार्गदर्शक व नेतृत्वकर्ता का स्थान प्रदान करती है।' +
+                        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। महर्षि पराशर अनुसार लग्न शरीर, आत्म-चेतना, जीवन शक्ति एवं समग्र प्रारब्ध का मूल प्रवेश द्वार है। जातक की कुंडली में लग्न एवं लग्नेश का बल जीवन में स्थिरता, स्वाभिमान, नेतृत्व क्षमता एवं विपरीत परिस्थितियों में भी पुनः उठ खड़े होने की अदम्य शक्ति प्रदान करता है। जातक में पराधीनता स्वीकार न करने और स्वतंत्र निर्णय लेने की स्वाभाविक प्रवृत्ति है।' +
                     '</p>' +
                 '</div>' +
 
-                // Chapter 2: Inter-Yoga Synthesis (एक योग का दूसरे पर प्रभाव)
+                // Chapter 2: Dynamic Raj Yogas present in THIS chart
                 '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
                     '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय २: मुख्य महापुरुष व राजयोगों का संश्लेषित पारस्परिक प्रभाव (Inter-Yoga Cross-Dynamics)' +
+                        'अध्याय २: मुख्य शास्त्रीय योग व ग्रह बल (Active Shastric Yogas & Potencies)' +
+                    '</h4>' +
+                    '<p style="margin:0 0 10px 0;">' +
+                        'जातक की जन्मपत्रिका में प्रत्यक्ष उपस्थित शास्त्रीय योग एवं ग्रह स्थितियां (केवल सत्य-प्रमाणित योग):' +
+                    '</p>';
+
+            if (rajYogas.length > 0 || dignities.length > 0) {
+                essay += '<ul style="margin:0 0 8px 0; padding-left:18px;">';
+                var shownItems = rajYogas.concat(dignities).slice(0, 5);
+                shownItems.forEach(function(item) {
+                    essay += '<li style="margin-bottom:10px;">' +
+                        '<b style="color:var(--accent-gold);">' + item.title + '</b> <span style="font-size:0.72rem; color:#10b981; font-weight:700;">' + item.system + '</span><br>' +
+                        '<span style="font-size:0.74rem; color:var(--text-muted); font-style:italic;">' + (item.ref || 'बृहत्पाराशर होराशास्त्र') + (item.shloka ? (' • ' + item.shloka) : '') + '</span><br>' +
+                        '<span style="font-size:0.84rem;">' + item.meaning + '</span>' +
+                    '</li>';
+                });
+                essay += '</ul>';
+            } else {
+                essay += '<p style="color:var(--text-secondary); font-size:0.82rem;">जातक की कुण्डली में केन्द्र एवं त्रिकोण भावों के स्वामियों का संतुलित संबंध सामान्य जीवन को निरंतर प्रगतिशील बनाए रखता है।</p>';
+            }
+
+            essay += '</div>' +
+
+                // Chapter 3: Dasha Timing
+                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
+                        'अध्याय ३: फलोदय काल व विंशोत्तरी दशा सक्रियता (Timing & Dasha Activation)' +
                     '</h4>' +
                     '<p style="margin:0 0 8px 0;">' +
-                        'वैदिक फलित का सर्वोपरि रहस्य यह है कि कोई भी योग स्वतंत्र द्वीप की भांति कार्य नहीं करता, अपितु एक योग दूसरे योग को रूपांतरित और संतुलित करता है:' +
+                        'वर्तमान में सक्रिय <b>' + dasha + '</b> जातक के जीवन में महत्वपूर्ण कर्मिक बदलावों का काल है। महादशा नाथ एवं अंतर्दशा नाथ जिन भावों के स्वामी हैं अथवा जहां स्थित हैं, उन क्षेत्रों (करियर, वित्त, संबंध) में प्रारब्ध के कर्म पककर फलित होते हैं।' +
                     '</p>' +
-                    '<ul style="margin:0 0 8px 0; padding-left:20px;">' +
-                        '<li style="margin-bottom:8px;">' +
-                            '<b>रुचक महापुरुष योग (मकरस्थ मंगल) एवं शश महापुरुष योग (तुलास्थ शनि) का अन्योन्य संतुलन:</b> ' +
-                            'दशम भाव में मंगल देव अपनी परम उच्च राशि (मकर) में स्थित होकर कुलदीपक रुचक योग रचते हैं। मंगल की चतुर्थ दृष्टि लग्न पर एवं अष्टम दृष्टि पंचम पर है। वहीं सप्तम भाव में उच्च के शनि देव शश योग का निर्माण करते हैं, जिनकी तृतीय दृष्टि नवम पर, सप्तम दृष्टि लग्न पर एवं दशम दृष्टि चतुर्थ पर पड़ती है। <i>पारस्परिक वेध:</i> मंगल का उग्र पराक्रम और शनि का अनुशासन व धैर्य जब एक साथ लग्न व चतुर्थ को वेधते हैं, तो यह जातक को प्रशासनिक कठोरता, संगठन क्षमता एवं दीर्घकालिक साम्राज्य निर्माण की अद्भुत क्षमता प्रदान करते हैं। शनि मंगल की आक्रामकता को रणनीति में बदलता है, जिससे शत्रु स्वतः परास्त होते हैं।' +
-                        '</li>' +
-                        '<li style="margin-bottom:8px;">' +
-                            '<b>चन्द्रमा का नीच-भंग राजयोग (Neecha-Bhanga Raja Yoga):</b> ' +
-                            'अष्टम भाव में वृश्चिक राशि का चन्द्रमा नीच संज्ञक है, किंतु उस राशि के स्वामी मंगल देव केंद्र (दशम) में उच्च के होकर स्थित हैं (फलदीपिका अ. 6, श्लोक 26: <i>नीचस्थितो जन्मनि यो ग्रहः स्यात् तद्राशिनाथो यदि केन्द्रवर्ती...</i>)। यह शास्त्रीय रूप से पूर्ण नीच-भंग राजयोग सिद्ध करता है। इसका यथार्थ फल यह है कि जीवन के पूर्वार्ध में भावनात्मक आघात, मानसिक उद्वेग व तीव्र परीक्षा होती है, किंतु वही अनुभव जातक को अतीव गंभीर अंतर्ज्ञान, गुप्त विद्या, संकट-मोचन एवं अप्रत्याशित वित्तीय उत्थान प्रदान करता है।' +
-                        '</li>' +
-                        '<li>' +
-                            '<b>धर्माधिपति-कर्माधिपति संबंध (नवमस्थ गुरु, सूर्य व बुध):</b> ' +
-                            'नवम भाव (धर्म व भाग्य) में देवगुरु बृहस्पति, सूर्य व बुध का युति संबंध बुधादित्य एवं धर्म-कर्म राजयोग का सृजन करता है। यह योग जातक को राज-मान्यता, उच्च सलाहकारी पद, बौद्धिक प्रतिष्ठा व समाज में सत्यनिष्ठ वक्ता बनाता है।' +
-                        '</li>' +
-                    '</ul>' +
                 '</div>' +
 
-                // Chapter 3: Timing of Fruit & Dasha Activation (योग का फल कब मिलेगा)
+                // Chapter 4: Gochar & Double Transit
                 '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
                     '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ३: फलोदय काल व विंशोत्तरी दशा सक्रियता (Timing of Manifestation & Activation)' +
+                        'अध्याय ४: तात्कालिक गोचर वेध व सक्रिय उत्प्रेरक (Transit Triggers 2026-2027)' +
                     '</h4>' +
                     '<p style="margin:0 0 8px 0;">' +
-                        'शास्त्र का सिद्धांत है: <i>"दशा ददाति फलम्, गोचरः प्रकाशयति"</i> — कुण्डली के समस्त राजयोग तभी धरातल पर फलित होते हैं जब संबंधित ग्रह की दशा सक्रिय हो तथा ग्रहों का परिपक्वता काल उपस्थित हो:' +
-                    '</p>' +
-                    '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin:10px 0;">' +
-                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.8rem;">१. मंगल परिपक्वता (२८ वर्ष)</b>' +
-                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">दशमस्थ उच्च मंगल के रुचक योग का प्रथम प्रचंड प्रकटीकरण; स्वतंत्र पहचान व पदोन्नति का समय।</p>' +
-                        '</div>' +
-                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.8rem;">२. गुरु परिपक्वता (१६ व ३२ वर्ष)</b>' +
-                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">धर्म, उच्च विद्या, ज्ञान का विस्तार एवं आर्थिक सुदृढ़ता का स्वर्ण काल।</p>' +
-                        '</div>' +
-                        '<div style="background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-soft); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.8rem;">३. शनि परिपक्वता (३६ वर्ष)</b>' +
-                            '<p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0 0 0;">शश योग का पूर्ण साम्राज्य फल; समाज में निर्विवाद प्रतिष्ठा, स्थाई संपदा व वरिष्ठ पद।</p>' +
-                        '</div>' +
-                    '</div>' +
-                    '<p style="margin:8px 0 0 0;">' +
-                        '<b>सक्रिय फलित समय-सीमा (2026-2028):</b> वर्तमान सक्रिय दशा (' + dasha + ') जातक के लाभ (11) और कर्म (10) भाव को सीधे सक्रिय कर रही है। यह कालखंड जीवन में रुके हुए अनुबंधों, नवीन व्यावसायिक विस्तार तथा सामाजिक प्रतिष्ठा के शिखर पर आरोहण का स्वर्णिम द्वार खोल रहा है।' +
+                        'वर्ष 2026-2027 में देवगुरु बृहस्पति का सिंह राशि में तथा शनिदेव का मीन राशि में संचरण जातक के ' + lagna + ' लग्न से विशेष भावों को वेध रहा है। जब गुरु और शनि का दोहरा वेध (Double Transit) किसी भाव पर पड़ता है, तो वह कार्य अवश्यमेव सिद्ध होता है।' +
                     '</p>' +
                 '</div>' +
 
-                // Chapter 4: Gochar (Transit) Impact (गोचर का प्रभाव)
+                // Chapter 5: Four Purusharthas
                 '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
                     '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ४: तात्कालिक गोचर वेध व सक्रिय उत्प्रेरक (Transit Triggers & Gochar Impact)' +
+                        'अध्याय ५: चतुर्विध पुरुषार्थ जीवन मीमांसा (Dharma, Artha, Kama, Moksha)' +
                     '</h4>' +
                     '<p style="margin:0 0 8px 0;">' +
-                        'वर्तमान आकाशीय संचरण जन्मकालीन योगों को किस प्रकार गति प्रदान कर रहा है:' +
-                    '</p>' +
-                    '<ul style="margin:0; padding-left:20px;">' +
-                        '<li style="margin-bottom:6px;">' +
-                            '<b>शनि देव का कुंभ गोचर (एकादश लाभ भाव):</b> एकादश भाव में स्वगृही शनि का गोचर जातक की पुरानी मेहनत का संचित फल प्रदान करता है। बड़े वित्तीय लाभ, संस्थागत गठजोड़ एवं प्रभावशाली मित्रों का सहयोग सुनिश्चित होता है।' +
-                        '</li>' +
-                        '<li style="margin-bottom:6px;">' +
-                            '<b>देवगुरु बृहस्पति का गोचर (द्वितीय धन व वाणी भाव):</b> वृषभ राशि में गुरु का संचरण परिवार में मांगलिक प्रसंग, संचित धन की वृद्धि एवं जातक के वचनों को समाज में सम्मान दिलाता है।' +
-                        '</li>' +
-                        '<li>' +
-                            '<b>राहु-केतु अक्ष (द्वादश-षष्ठ भाव):</b> विदेशी संपर्कों से लाभ, गुप्त शत्रुओं व कानूनी मामलों में जातक की निर्विवाद विजय तथा आध्यात्मिक अंतर्मुखी यात्रा को तीव्रता देता है।' +
-                        '</li>' +
-                    '</ul>' +
-                '</div>' +
-
-                // Chapter 5: Four Purusharthas (चतुर्विध पुरुषार्थ)
-                '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                    '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ५: चतुर्विध पुरुषार्थ जीवन मीमांसा (Dharma, Artha, Kama, Moksha In-Depth)' +
-                    '</h4>' +
-                    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">' +
-                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.82rem;">१. आजीविका व प्रतिष्ठा (Artha & Career)</b>' +
-                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">दशमस्थ उच्च मंगल व एकादश शनि जातक को तकनीकी, प्रशासनिक, रक्षा, विधि अथवा स्वतंत्र व्यवसाय में शीर्ष नेतृत्व दिलाते हैं। जातक आदेश देने वाला बनता है, लेने वाला नहीं।</p>' +
-                        '</div>' +
-                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.82rem;">२. धन एवं संचित संपदा (Dhana & Assets)</b>' +
-                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">नीच-भंग राजयोग व लाभेश के बल से कई स्रोतों से निरंतर आय होगी। भूमि, अचल संपत्ति एवं स्वर्ण/रत्न संचय में अप्रत्याशित सफलता के योग हैं।</p>' +
-                        '</div>' +
-                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.82rem;">३. दाम्पत्य व संबंध (Kama & Marriage)</b>' +
-                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">सप्तमस्थ उच्च शनि परिपक्व, स्वाभिमानी व कर्तव्यनिष्ठ जीवनसाथी का संकेत करते हैं। विवाह उपरांत जातक का सामाजिक व आर्थिक भाग्य कई गुना तीव्रता से बढ़ता है।</p>' +
-                        '</div>' +
-                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
-                            '<b style="color:var(--accent-gold); font-size:0.82rem;">४. स्वास्थ्य एवं मोक्ष (Health & Moksha)</b>' +
-                            '<p style="font-size:0.76rem; color:var(--text-secondary); margin:4px 0 0 0;">अष्टमस्थ चन्द्रमा के कारण जल-तत्व व मानसिक शांति का ध्यान रखें। नित्य शिव उपासना व प्राणायाम से दीर्घायु, तेजस्विता एवं अंतर्ज्ञान की पूर्ण सिद्धि प्राप्त होती है।</p>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>' +
-
-                // Chapter 6: Classical Citations (प्रामाणिक ग्रन्थ सन्दर्भ)
-                '<div style="background:rgba(181,138,69,0.06); border:1px solid var(--border-gold-soft); border-radius:10px; padding:14px;">' +
-                    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
-                        '<b style="color:var(--accent-gold); font-size:0.82rem;">✦ प्रामाणिक शास्त्रीय ग्रन्थ सन्दर्भ (Grounded Treatise Proofs)</b>' +
-                        '<span style="font-size:0.70rem; color:var(--text-muted);">BPHS • फलदीपिका • सारावली</span>' +
-                    '</div>' +
-                    '<p style="font-size:0.74rem; color:var(--text-muted); margin:0; line-height:1.6;">' +
-                        '• <b>बृहत्पाराशर होराशास्त्र (अ. 75, श्लोक 2):</b> <i>"दीर्घास्यो बहुसाहसो बलवान् रिपुहा रुचकयोगे।"</i> (दशम केंद्रस्थ उच्च मंगल)<br>' +
-                        '• <b>फलदीपिका (अ. 6, श्लोक 26):</b> <i>"नीचस्थितो जन्मनि यो ग्रहः स्यात् तद्राशिनाथो यदि केन्द्रवर्ती... सोऽयं नृपो वा नृपतिप्रतीतः।"</i> (अष्टम चन्द्रमा नीच-भंग)<br>' +
-                        '• <b>सारावली (अ. 35):</b> <i>"शशयोगोद्भवो राजा मन्त्री वा लोकपूजितः।"</i> (सप्तमस्थ उच्च शनि)' +
+                        '<b>धर्म (१, ५, ९ भाव):</b> जातक के जीवन का मूल उद्देश्य सत्यनिष्ठा, कर्तव्यपालन एवं ज्ञानार्जन है।<br>' +
+                        '<b>अर्थ (२, १०, ११ भाव):</b> आजीविका एवं धन संचय में परिश्रम, कर्मठता व दूरदर्शिता से निरंतर वृद्धि होगी।<br>' +
+                        '<b>काम (३, ७ भाव):</b> सामाजिक प्रतिष्ठा, संबंध एवं पुरुषार्थ द्वारा आकांक्षाओं की पूर्ति होगी।<br>' +
+                        '<b>मोक्ष (४, ८, १२ भाव):</b> अंतर्मुखी चिंतन, ध्यान एवं सात्विक जीवनशैली से मानसिक शांति प्राप्त होगी।' +
                     '</p>' +
                 '</div>' +
             '</div>';
@@ -9693,23 +9641,114 @@ renderChart(vargaKey) {
 
             // Render Yogas and Doshas
             if (doshaBox) {
-                var yData = this.activeChartData.predictions || {};
-                var m = yData.manglik || {};
-                var k = yData.kalsarp || {};
+                var pTable = (this.activeChartData && this.activeChartData.planet_table) ? this.activeChartData.planet_table : [];
+                var pMap = {};
+                for (var i = 0; i < pTable.length; i++) {
+                    var pl = pTable[i];
+                    var pName = (pl.p || pl.planet || '').replace(/\s*\(.*\)/, '').trim();
+                    pMap[pName] = { house: parseInt(pl.h || pl.house || 1), sign: (pl.r || pl.sign || '').split(' ')[0], dignity: pl.dignity || pl.s || '' };
+                }
+
+                // 1. DYNAMIC MANGLIK EVALUATION
+                var mars = pMap['मंगल'] || null;
+                var manglikTitle = "दोष रहित";
+                var manglikColor = "#10b981";
+                var manglikReason = "";
+
+                if (mars) {
+                    var mHouse = mars.house;
+                    if ([1, 4, 7, 8, 12].indexOf(mHouse) !== -1) {
+                        var isCancelled = false;
+                        var cancelReason = "";
+                        if (mars.sign === "मकर" || mars.dignity.indexOf("उच्च") !== -1) {
+                            isCancelled = true;
+                            cancelReason = "मंगल देव मकर राशि (उच्च) में होने से मांगलिक दोष पूर्णतः निरस्त है।";
+                        } else if (mHouse === 1 && mars.sign === "मेष") {
+                            isCancelled = true;
+                            cancelReason = "लग्न में स्वराशि (मेष) का मंगल होने से दोष निरस्त है।";
+                        } else if (mHouse === 4 && mars.sign === "वृश्चिक") {
+                            isCancelled = true;
+                            cancelReason = "चतुर्थ भाव में स्वराशि (वृश्चिक) का मंगल होने से दोष निष्प्रभावी है।";
+                        } else if (pMap['गुरु'] && ([1, 4, 7, 10].indexOf(pMap['गुरु'].house) !== -1 || ((pMap['गुरु'].house + 6) % 12 + 1 === mHouse))) {
+                            isCancelled = true;
+                            cancelReason = "देवगुरु बृहस्पति की केंद्र स्थिति अथवा मंगल पर दृष्टि से मांगलिक दोष शांत है।";
+                        }
+
+                        if (isCancelled) {
+                            manglikTitle = "दोष निरस्त (शुभ फलदायी)";
+                            manglikColor = "#10b981";
+                            manglikReason = cancelReason;
+                        } else {
+                            manglikTitle = "मांगलिक प्रभाव (भाव " + mHouse + ")";
+                            manglikColor = "#f59e0b";
+                            manglikReason = "मंगल देव भाव " + mHouse + " (" + mars.sign + ") में स्थित हैं; विवाह विचार में गुण मिलान व कुण्डली मिलान श्रेयस्कर है।";
+                        }
+                    } else {
+                        manglikTitle = "दोष रहित (निर्दोष)";
+                        manglikColor = "#10b981";
+                        manglikReason = "मंगल देव भाव " + mHouse + " (" + mars.sign + ") में हैं (1, 4, 7, 8, 12 भावों से बाहर), अतः कुण्डली पूर्णतः मांगलिक दोष रहित है।";
+                    }
+                } else {
+                    manglikReason = "मंगल स्थिति गणना पूर्ण।";
+                }
+
+                // 2. DYNAMIC KALSARP EVALUATION
+                var rahu = pMap['राहु'] || null;
+                var ketu = pMap['केतु'] || null;
+                var kalsarpTitle = "कालसर्प दोष मुक्त";
+                var kalsarpColor = "#10b981";
+                var kalsarpReason = "";
+
+                if (rahu && ketu) {
+                    var rH = rahu.house;
+                    var kH = ketu.house;
+                    var checkPlanets = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
+                    var insideCount1 = 0;
+                    var insideCount2 = 0;
+
+                    checkPlanets.forEach(function(pn) {
+                        if (pMap[pn]) {
+                            var pH = pMap[pn].house;
+                            var inArc1 = false;
+                            if (rH < kH) {
+                                inArc1 = (pH > rH && pH < kH);
+                            } else {
+                                inArc1 = (pH > rH || pH < kH);
+                            }
+                            if (inArc1) insideCount1++;
+                            else insideCount2++;
+                        }
+                    });
+
+                    if (insideCount1 > 0 && insideCount2 > 0) {
+                        kalsarpTitle = "कालसर्प योग रहित (निर्दोष)";
+                        kalsarpColor = "#10b981";
+                        kalsarpReason = "ग्रह राहु-केतु अक्ष के दोनों ओर स्वतंत्र रूप से स्थित हैं, अतः कुण्डली पूर्णतः कालसर्प दोष से मुक्त है।";
+                    } else {
+                        kalsarpTitle = "कालसर्प प्रभाव विद्यमान";
+                        kalsarpColor = "#f59e0b";
+                        kalsarpReason = "समस्त सप्त ग्रह राहु-केतु अक्ष के एक ओर स्थित हैं; सात्विक शिव उपासना एवं महामृत्युंजय जप श्रेयस्कर है।";
+                    }
+                } else {
+                    kalsarpReason = "राहु-केतु अक्ष गणना पूर्ण।";
+                }
+
                 doshaBox.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">' +
                     '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
                         '<b style="color:var(--primary-navy);">मांगलिक दोष विश्लेषण:</b><br>' +
-                        '<span style="color:#10b981; font-weight:800;">' + (m.has_dosha ? 'दोष उपस्थित' : 'दोष रहित / निरस्त') + '</span><br>' +
-                        '<span style="font-size:0.72rem; color:var(--text-secondary);">' + (m.cancellation_reasons ? m.cancellation_reasons.join(', ') : 'दशम भाव में मंगल उच्च का होने से मांगलिक दोष पूर्णतः निष्प्रभावी है।') + '</span>' +
+                        '<span style="color:' + manglikColor + '; font-weight:800;">' + manglikTitle + '</span><br>' +
+                        '<span style="font-size:0.72rem; color:var(--text-secondary);">' + manglikReason + '</span>' +
                     '</div>' +
                     '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
                         '<b style="color:var(--primary-navy);">कालसर्प दोष विश्लेषण:</b><br>' +
-                        '<span style="color:#10b981; font-weight:800;">' + (k.has_dosha ? 'कालसर्प उपस्थित' : 'कालसर्प योग रहित') + '</span><br>' +
-                        '<span style="font-size:0.72rem; color:var(--text-secondary);">' + (k.summary_hi || 'राहु-केतु अक्ष से गुरु एवं शनि मुक्त हैं, अतः पूर्ण कालसर्प दोष नहीं बनता।') + '</span>' +
+                        '<span style="color:' + kalsarpColor + '; font-weight:800;">' + kalsarpTitle + '</span><br>' +
+                        '<span style="font-size:0.72rem; color:var(--text-secondary);">' + kalsarpReason + '</span>' +
                     '</div>' +
                 '</div>';
             }
         },
+
+        
 
         renderAshtakavarga() {
             var av = (this.activeChartData && this.activeChartData.ashtakavarga) ? this.activeChartData.ashtakavarga : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.ashtakavarga : null);

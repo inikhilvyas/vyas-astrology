@@ -47,6 +47,8 @@ function lookupClassicalSutras($query, $systemPrompt) {
         $domain = 'health';
     } elseif (preg_match('/संतान|पुत्र|संतानहीन|बुद्धि|पढ़ाई|विद्या|ज्ञान|children|education/u', $text)) {
         $domain = 'mind';
+    } elseif (preg_match('/धर्म|अध्यात्म|उपासना|गुरु|मंत्र|साधना|spiritual/u', $text)) {
+        $domain = 'spirituality';
     }
 
     $fastIndexPath = __DIR__ . '/../data/vyas_sutras_fast_index.json';
@@ -55,50 +57,102 @@ function lookupClassicalSutras($query, $systemPrompt) {
     // Parse native's actual chart tokens from systemPrompt for authentic matching
     $chartSigns = [];
     $chartHouses = [];
-    $chartPlanets = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'राहु', 'केतु'];
-    $rashiList = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
-    
-    foreach ($chartPlanets as $pl) {
-        if (preg_match('/' . $pl . '[^:]*:\s*([^\s\d]+)\s*[\d°']*\s*\(.*?भाव\s*(\d+)/u', $systemPrompt, $m)) {
-            $chartSigns[$pl] = trim($m[1]);
-            $chartHouses[$pl] = intval($m[2]);
+    $chartDignities = [];
+    $chartPlanets = [
+        'सूर्य' => 'Sun', 'चन्द्र' => 'Moon', 'मंगल' => 'Mars',
+        'बुध' => 'Mercury', 'गुरु' => 'Jupiter', 'शुक्र' => 'Venus',
+        'शनि' => 'Saturn', 'राहु' => 'Rahu', 'केतु' => 'Ketu'
+    ];
+    $signEngMap = [
+        'मेष' => 'Aries', 'वृषभ' => 'Taurus', 'मिथुन' => 'Gemini', 'कर्क' => 'Cancer',
+        'सिंह' => 'Leo', 'कन्या' => 'Virgo', 'तुला' => 'Libra', 'वृश्चिक' => 'Scorpio',
+        'धनु' => 'Sagittarius', 'मकर' => 'Capricorn', 'कुंभ' => 'Aquarius', 'मीन' => 'Pisces'
+    ];
+
+    foreach ($chartPlanets as $plHi => $plEn) {
+        if (preg_match('/' . $plHi . '[^:]*:\s*([^\s\d]+)\s*[\d°']*\s*\(.*?भाव\s*(\d+).*?स्थिति:\s*([^\)]+)\)/u', $systemPrompt, $m)) {
+            $rashiHi = trim($m[1]);
+            $chartSigns[$plEn] = $signEngMap[$rashiHi] ?? $rashiHi;
+            $chartHouses[$plEn] = intval($m[2]);
+            $stateHi = trim($m[3]);
+            if (mb_strpos($stateHi, 'उच्च', 0, 'UTF-8') !== false) {
+                $chartDignities[$plEn] = 'Exalted';
+            } elseif (mb_strpos($stateHi, 'नीच', 0, 'UTF-8') !== false) {
+                $chartDignities[$plEn] = 'Debilitated';
+            } elseif (mb_strpos($stateHi, 'स्वक्षेत्र', 0, 'UTF-8') !== false || mb_strpos($stateHi, 'मूलत्रिकोण', 0, 'UTF-8') !== false) {
+                $chartDignities[$plEn] = 'Own';
+            }
         }
     }
 
     if (file_exists($fastIndexPath)) {
         $indexData = json_decode(file_get_contents($fastIndexPath), true);
-        if (isset($indexData['domains'][$domain]) && !empty($indexData['domains'][$domain])) {
-            $pool = $indexData['domains'][$domain];
-            
-            // STRICT CONDITION-FILTER: Only select sutras whose planetary condition matches this native's chart!
-            foreach ($pool as $item) {
-                $cond = $item['cond_hi'] ?? '';
-                $factor = $item['factor'] ?? '';
-                $matched = false;
+        if ($indexData) {
+            $candidateKeys = [];
 
-                // Check planetary condition against native's chart
-                foreach ($chartPlanets as $pl) {
-                    if (mb_strpos($cond, $pl, 0, 'UTF-8') !== false || mb_strpos($cond, $factor, 0, 'UTF-8') !== false) {
-                        $pSign = $chartSigns[$pl] ?? '';
-                        $pHouse = $chartHouses[$pl] ?? 0;
+            // 1. Keys based on relevant planets for the domain
+            $priorityPlanets = ['Saturn', 'Jupiter'];
+            if ($domain === 'career') {
+                $priorityPlanets = ['Mars', 'Saturn', 'Sun'];
+            } elseif ($domain === 'wealth') {
+                $priorityPlanets = ['Jupiter', 'Mercury', 'Venus'];
+            } elseif ($domain === 'marriage') {
+                $priorityPlanets = ['Venus', 'Jupiter', 'Saturn'];
+            } elseif ($domain === 'health') {
+                $priorityPlanets = ['Sun', 'Moon', 'Saturn'];
+            }
 
-                        // If sutra specifies a sign, verify native has that planet in that sign
-                        if (!empty($pSign) && mb_strpos($cond, $pSign, 0, 'UTF-8') !== false) {
-                            $matched = true;
-                        }
-                        // If sutra specifies a house, verify native has that planet in that house
-                        if ($pHouse > 0) {
-                            $houseOrdinals = [1=>'प्रथम|लग्न', 2=>'द्वितीय', 3=>'तृतीय', 4=>'चतुर्थ', 5=>'पंचम', 6=>'षष्ठ', 7=>'सप्तम', 8=>'अष्टम', 9=>'नवम', 10=>'दशम', 11=>'एकादश', 12=>'द्वादश'];
-                            if (isset($houseOrdinals[$pHouse]) && preg_match('/(' . $houseOrdinals[$pHouse] . ')\s*भाव/u', $cond)) {
-                                $matched = true;
-                            }
+            // Collect exact keys that match THIS native's chart
+            foreach ($priorityPlanets as $pl) {
+                if (isset($chartSigns[$pl])) {
+                    $candidateKeys[] = ['planet_signs', "{$pl}_{$chartSigns[$pl]}"];
+                }
+                if (isset($chartHouses[$pl])) {
+                    $candidateKeys[] = ['planet_houses', "{$pl}_{$chartHouses[$pl]}"];
+                }
+                if (isset($chartDignities[$pl])) {
+                    $candidateKeys[] = ['dignities', "{$pl}_{$chartDignities[$pl]}"];
+                }
+            }
+
+            // Check Yutis (conjunctions) present in native's chart
+            $houseToPlanets = [];
+            foreach ($chartHouses as $pl => $h) {
+                $houseToPlanets[$h][] = $pl;
+            }
+            foreach ($houseToPlanets as $h => $pList) {
+                if (count($pList) >= 2) {
+                    sort($pList);
+                    for ($i = 0; $i < count($pList); $i++) {
+                        for ($j = $i + 1; $j < count($pList); $j++) {
+                            $candidateKeys[] = ['yutis', "{$pList[$i]}_{$pList[$j]}"];
                         }
                     }
                 }
+            }
 
-                if ($matched) {
-                    $selectedSutras[] = $item;
-                    if (count($selectedSutras) >= 3) break;
+            // Retrieve only matching sutras from index
+            foreach ($candidateKeys as $ck) {
+                $cat = $ck[0];
+                $k = $ck[1];
+                if (isset($indexData[$cat][$k]) && !empty($indexData[$cat][$k])) {
+                    foreach ($indexData[$cat][$k] as $sutra) {
+                        $selectedSutras[$sutra['id']] = $sutra;
+                        if (count($selectedSutras) >= 4) break 2;
+                    }
+                }
+            }
+
+            // If empty, look up general placement keys
+            if (empty($selectedSutras)) {
+                foreach ($chartPlanets as $plEn) {
+                    if (isset($chartSigns[$plEn])) {
+                        $k = "{$plEn}_{$chartSigns[$plEn]}";
+                        if (isset($indexData['planet_signs'][$k]) && !empty($indexData['planet_signs'][$k])) {
+                            $selectedSutras[$indexData['planet_signs'][$k][0]['id']] = $indexData['planet_signs'][$k][0];
+                            if (count($selectedSutras) >= 3) break;
+                        }
+                    }
                 }
             }
         }
@@ -110,7 +164,7 @@ function lookupClassicalSutras($query, $systemPrompt) {
     ];
 
     if (!empty($selectedSutras)) {
-        $contextLines[] = "जातक की कुण्डली पर प्रत्यक्ष घटित होने वाले प्रामाणिक शास्त्र सूत्र:";
+        $contextLines[] = "जातक की कुण्डली पर प्रत्यक्ष घटित होने वाले प्रामाणिक शास्त्र सूत्र (Authentic Matched Sutras):";
         foreach ($selectedSutras as $s) {
             $src = htmlspecialchars_decode($s['src'] ?? 'बृहत्पाराशर होराशास्त्र / फलदीपिका');
             $cond = htmlspecialchars_decode($s['cond_hi'] ?? '');
@@ -118,7 +172,6 @@ function lookupClassicalSutras($query, $systemPrompt) {
             $contextLines[] = "• शास्त्र प्रमाण ({$src}): जब '{$cond}' की स्थिति बनती है, तो शास्त्र सम्मत फल — {$pred}";
         }
     } else {
-        // Fallback to classical house lord & karaka principles without asserting false placements
         $contextLines[] = "• शास्त्र प्रमाण (बृहत्पाराशर होराशास्त्र): फलित निर्णय सदा संबंधित भाव, भावेश, कारक ग्रह की स्थिति, उनकी वास्तविक दृष्टि एवं वर्तमान विंशोत्तरी दशा के अनुसार ही करें।";
     }
 
