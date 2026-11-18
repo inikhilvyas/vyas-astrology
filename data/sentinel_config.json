@@ -1,0 +1,18 @@
+{
+  "whatsapp": {
+    "enabled": true,
+    "provider": "callmebot",
+    "primary_phone": "+919414121172",
+    "secondary_phone": "+919251021800",
+    "phone": "+919414121172",
+    "apikey": ""
+  },
+  "push_notifications": {
+    "enabled": true,
+    "daily_time_ist": "06:00"
+  },
+  "monitoring": {
+    "check_interval_seconds": 3600,
+    "live_site_url": "https://vyasastro.in"
+  }
+}

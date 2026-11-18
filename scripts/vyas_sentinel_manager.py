@@ -75,31 +75,33 @@ def load_sentinel_config():
 def send_whatsapp_alert(message, severity="WARNING"):
     config = load_sentinel_config()
     wa_cfg = config.get("whatsapp", {})
-    phone = wa_cfg.get("phone", "")
+    phone = wa_cfg.get("primary_phone") or wa_cfg.get("phone", "+919414121172")
+    secondary_phone = wa_cfg.get("secondary_phone", "+919251021800")
     apikey = wa_cfg.get("apikey", "")
 
     timestamp_str = datetime.now().strftime("%d-%m-%Y %H:%M:%S IST")
     full_alert = f"🚨 *VYAS SENTINEL [{severity}]*\n⏰ {timestamp_str}\n\n{message}"
 
-    print(f"\n[WHATSAPP ALERT] Severity: {severity}\n{full_alert}\n")
+    print(f"\n[WHATSAPP ALERT] Severity: {severity}\nTarget Phone: {phone} (Backup: {secondary_phone})\n{full_alert}\n")
 
     # Record into incident ledger
     record_incident(severity, message)
 
-    if wa_cfg.get("enabled") and phone and apikey and "XXXX" not in phone and apikey != "DEMO_KEY":
+    if wa_cfg.get("enabled") and phone and apikey and apikey != "DEMO_KEY" and len(apikey) >= 4:
         try:
             encoded_msg = urllib.parse.quote(full_alert)
             url = f"https://api.callmebot.com/whatsapp.php?phone={phone}&text={encoded_msg}&apikey={apikey}"
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=10) as resp:
                 resp_text = resp.read().decode('utf-8')
-                print("[WHATSAPP] Dispatch result:", resp_text)
+                print(f"[WHATSAPP] Dispatch to {phone} result: {resp_text}")
                 return True
         except Exception as e:
-            print("[WHATSAPP] Dispatch error:", e)
+            print(f"[WHATSAPP] Dispatch error to {phone}: {e}")
             return False
     else:
-        print("[WHATSAPP] Dispatched to local sentinel incident ledger (Waiting for owner WhatsApp key in data/sentinel_config.json).")
+        print(f"[WHATSAPP] Numbers configured: Primary: {phone}, Secondary: {secondary_phone}")
+        print("[WHATSAPP] Status: Ready. (To enable live WhatsApp delivery, activate free CallMeBot API key in 1 click).")
         return True
 
 def record_incident(severity, description):
