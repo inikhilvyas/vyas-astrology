@@ -17,7 +17,7 @@ $keys = [
     "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",
     "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"
 ];
-$models = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "openai/gpt-oss-20b"];
+$models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"];
 
 $rawInput = file_get_contents('php://input');
 $input = json_decode($rawInput, true);
@@ -45,7 +45,7 @@ $isContinuation = (
 $messages = [];
 
 // Inject strict real-time date and respect directives to ensure 0% past hallucination
-$currentDateHindi = "मंगलवार, 17 नवंबर 2026";
+$currentDateHindi = "बुधवार, 18 नवंबर 2026";
 $currentYear = "2026";
 $timeAndEtiquetteDirective = "\n\n[अपरिहार्य काल एवं शिष्टाचार नियम]\nआज का वास्तविक वर्तमान काल: {$currentDateHindi} (ईस्वी सन् {$currentYear}) है। भूलकर भी जनवरी 2025 या अतीत के किसी वर्ष को वर्तमान या भविष्य न कहें। जातक से सदा अत्यंत आदर से 'आप', 'आपका', 'सादर प्रणाम' कहकर बात करें। भूलकर भी जातक को 'पुत्र', 'वत्स', 'तुम', 'तुम्हारी' न कहें।";
 $systemPrompt .= $timeAndEtiquetteDirective;
