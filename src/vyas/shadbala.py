@@ -85,7 +85,31 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
     eps = 23.4392911
     sun_lon = chart.planets["Sun"].longitude
     moon_lon = chart.planets["Moon"].longitude
-    is_benefic = {p: p in ("Jupiter", "Venus", "Moon", "Mercury") for p in MIN_VIRUPAS}
+
+    # Classical Benefic determination (BPHS ch. 27-30):
+    # - Jupiter & Venus: Natural Benefics
+    # - Sun, Mars, Saturn: Natural Malefics
+    # - Moon: Benefic when waxing / bright (Paksha factor >= 30), Malefic when waning
+    # - Mercury: Benefic unless conjunct with natural malefics (Sun, Mars, Saturn)
+    moon_sun_elong = (moon_lon - sun_lon) % 360.0
+    moon_is_benefic = (moon_sun_elong < 180.0) or (abs(moon_sun_elong - 180.0) < 15.0)
+
+    merc_sign = chart.planets["Mercury"].sign_index
+    merc_conjunct_malefic = any(
+        chart.planets[mal].sign_index == merc_sign 
+        for mal in ("Sun", "Mars", "Saturn")
+    )
+    merc_is_benefic = not merc_conjunct_malefic
+
+    is_benefic = {
+        "Jupiter": True,
+        "Venus": True,
+        "Moon": moon_is_benefic,
+        "Mercury": merc_is_benefic,
+        "Sun": False,
+        "Mars": False,
+        "Saturn": False
+    }
 
     # Declination of each graha from its sidereal longitude and latitude.
     declinations = {}
@@ -111,10 +135,11 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
 
     # Hour angle of the Sun at birth -> day/night interpolation + tribhaga.
     if birth_utc is not None:
-        from vyas import ephem as _e
-        t = _e._t(birth_utc)
-        ramc = t.gast * 15.0
-        hour_angle_deg = ((ramc - (sun_lon + _e.ayanamsa_deg(t.tt))) + 180.0) % 360.0 - 180.0
+        import swisseph as _swe
+        jd_ut = _ephem.julian_day_ut(birth_utc)
+        jd_tt = _ephem.julian_day_tt(birth_utc)
+        ramc = _swe.sidtime(jd_ut) * 15.0
+        hour_angle_deg = ((ramc - (sun_lon + _ephem.ayanamsa_deg(jd_tt))) + 180.0) % 360.0 - 180.0
         local_hour = (birth_utc.hour + birth_utc.minute / 60.0
                       + tz_hours + (sun_lon % 15.0) / 15.0) % 24.0
         birth_utc_ = birth_utc
@@ -229,7 +254,7 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
         moon_sun_elong = (moon_lon - sun_lon) % 360.0
         paksha_factor = 60.0 * (moon_sun_elong / 180.0) if moon_sun_elong <= 180.0 \
             else 60.0 * ((360.0 - moon_sun_elong) / 180.0)
-        if is_benefic:
+        if is_benefic[p_name]:
             paksha_bala = paksha_factor
         else:
             paksha_bala = 60.0 - paksha_factor
@@ -280,8 +305,7 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
         # (benefic) and negative (malefic) column added to the total.
         drik_bala = 0.0
         for other, val in drik_contributions[p_name]:
-            sign_ = 1.0 if other in ("Jupiter", "Venus") else \
-                -1.0 if other in ("Sun", "Mars", "Saturn") else 0.0
+            sign_ = 1.0 if is_benefic.get(other, False) else -1.0
             drik_bala += sign_ * val / 4.0
 
         # TOTAL VIRUPAS & RUPAS
@@ -325,8 +349,8 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
             verdict=verdict
         )
 
-    # 7. BHAVABALA (House Strengths for 12 Houses)
-    # Bhava Bala = Bhavadhipati Bala + Bhava Digbala + Bhava Drishti
+    # 7. BHAVABALA (House Strengths for 12 Houses per BPHS ch. 30)
+    # Bhava Bala = Bhavadhipati Bala (Lord strength) + Bhava Digbala + Bhava Drishti Bala (Aspectual)
     bhava_bala: Dict[int, float] = {}
     for h in range(1, 13):
         h_sign = (asc_sign + h - 1) % 12
@@ -334,6 +358,27 @@ def compute_shadbala(chart, is_day_birth: bool = True, paksha: str = "Shukla",
         lord_v = final_shadbala.get(h_lord, final_shadbala["Sun"]).total_virupas
         # Digbala for houses (Kendra 60, Panaphara 30, Apoklima 15)
         h_dig = 60.0 if h in (1, 4, 7, 10) else (30.0 if h in (2, 5, 8, 11) else 15.0)
-        bhava_bala[h] = round(lord_v + h_dig, 2)
+
+        # Bhava Drishti Bala: Aspects cast on the house center by benefics and malefics
+        h_center_lon = (h_sign * 30.0 + 15.0) % 360.0
+        h_drishti = 0.0
+        for pl_name, pl in chart.planets.items():
+            if pl_name not in is_benefic:
+                continue
+            diff = (h_center_lon - pl.longitude) % 360.0
+            asp_val = 0.0
+            if 165.0 <= diff <= 195.0:  # 7th house aspect (mutual opposition)
+                asp_val = 60.0 * (1.0 - abs(diff - 180.0) / 15.0)
+            elif pl_name == "Mars" and ((75.0 <= diff <= 105.0) or (195.0 <= diff <= 225.0)):  # 4th & 8th
+                asp_val = 45.0
+            elif pl_name == "Jupiter" and ((105.0 <= diff <= 135.0) or (225.0 <= diff <= 255.0)):  # 5th & 9th
+                asp_val = 45.0
+            elif pl_name == "Saturn" and ((45.0 <= diff <= 75.0) or (255.0 <= diff <= 285.0)):  # 3rd & 10th
+                asp_val = 45.0
+
+            pl_factor = 1.0 if is_benefic[pl_name] else -1.0
+            h_drishti += (pl_factor * asp_val / 4.0)
+
+        bhava_bala[h] = round(max(0.0, lord_v + h_dig + h_drishti), 2)
 
     return final_shadbala, bhava_bala
