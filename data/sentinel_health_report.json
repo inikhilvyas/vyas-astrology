@@ -1,0 +1,62 @@
+{
+  "status": "HEALTHY",
+  "last_audit_ist": "18-11-2026 22:30:54 IST",
+  "audits": [
+    {
+      "name": "0.0000° High-Precision Ephemeris",
+      "status": "PASS",
+      "variance_arcsec": 0.0,
+      "details": [
+        "Lagna exact alignment verified: मेष 23°42'",
+        "Planetary degrees exact alignment verified (Sun 07°42', Moon 14°38', Mars 12°09')"
+      ]
+    },
+    {
+      "name": "Horary Prashna Marga Engine",
+      "status": "PASS",
+      "details": "Real-time query timestamp horary calculation is operational."
+    },
+    {
+      "name": "56-Page VIP Pro PDF Dossier Generator",
+      "status": "PASS",
+      "details": "Client-side high-resolution PDF generator and tabs are active."
+    },
+    {
+      "name": "Classical Phalit Vault (10,500 Sutras)",
+      "status": "PASS",
+      "total_sutras": 10500,
+      "fast_index_available": true,
+      "details": "All 10500 classical sutras across 16 volumes indexed & queryable."
+    },
+    {
+      "name": "Live vyasastro.in Hostinger Gateway",
+      "status": "PASS",
+      "http_code": 200,
+      "details": "Website responds with HTTP 200 OK."
+    }
+  ],
+  "panchang_today": {
+    "date_hi": "बुधवार, 18 नवंबर 2026",
+    "tithi": "मार्गशीर्ष शुक्ल नवमी / दशमी",
+    "nakshatra": "शतभिषा / पूर्वभाद्रपद",
+    "abhijit": "11:44 पूर्वाह्न - 12:28 अपराह्न",
+    "rahu_kaal": "12:05 अपराह्न - 01:25 अपराह्न",
+    "special_event": "मार्गशीर्ष मास पावन व्रत एवं एकादशी संक्रांति वेध",
+    "notification_preview": "🌅 बुधवार, 18 नवंबर 2026 | मार्गशीर्ष शुक्ल नवमी / दशमी | अभिजित: 11:44 पूर्वाह्न - 12:28 अपराह्न | राहुकाल: 12:05 अपराह्न - 01:25 अपराह्न"
+  },
+  "push_status": {
+    "timestamp": "2026-11-18 22:30:54 IST",
+    "subscribers_targeted": 0,
+    "payload": {
+      "title": "🌅 आज का पंचांग व शुभ मुहूर्त | बुधवार, 18 नवंबर 2026",
+      "body": "तिथि: मार्गशीर्ष शुक्ल नवमी / दशमी\nअभिजीत मुहूर्त: 11:44 पूर्वाह्न - 12:28 अपराह्न\nराहुकाल: 12:05 अपराह्न - 01:25 अपराह्न",
+      "icon": "/logo_icon.png",
+      "badge": "/logo_icon.png",
+      "data": {
+        "url": "/#daily",
+        "type": "daily_panchang"
+      }
+    },
+    "status": "NO_SUBSCRIBERS_YET"
+  }
+}

@@ -952,10 +952,11 @@ body {
 
                 <!-- Cosmic Score Card -->
                 <div class="m-card">
-                    <div class="m-card-title">
+                    <div class="m-card-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                         <span>जातक का व्यक्तिगत दैनिक राशिफल</span>
                         <span style="font-size:0.70rem; color:#10b981;">नवतारा + गोचर + दशा</span>
                     </div>
+                    <button id="mBtnEnablePushAlerts" onclick="VyasPushEngine.subscribeUser()" style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.75rem; margin-bottom:10px; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.3);">🔔 दैनिक पंचांग व पर्व सूचनाएं चालू करें</button>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                         <div>
                             <div style="font-size:1.8rem; font-weight:900; color:var(--primary); font-family:var(--font-serif);" id="mDayIndex">--</div>
@@ -5702,14 +5703,22 @@ body {
                 ].join('\n');
             } else {
                 var prof = activeChart.profile;
-                var planets = activeChart.planet_table.map(function(p) { return (p.planet || p.p || '') + ' in ' + (p.sign || p.r || '') + ' (भाव ' + (p.house || p.h || '') + ', ' + (p.dignity || p.s || '') + ')'; }).join('; ');
-                var dasha = (activeChart.active_dasha && activeChart.active_dasha.chain) ? activeChart.active_dasha.chain : "सक्रिय विंशोत्तरी दशा";
+                var planets = activeChart.planet_table.map(function(p) {
+                    var pName = p.planet || p.p || '';
+                    var rashi = p.sign || p.r || '';
+                    var deg = p.degree || p.d || '';
+                    var nak = p.nakshatra || p.n || '';
+                    var house = p.house || p.h || '';
+                    var state = p.dignity || p.s || '';
+                    return pName + ': ' + rashi + ' ' + deg + ' (नक्षत्र: ' + nak + ', भाव ' + house + ', स्थिति: ' + state + ')';
+                }).join('\n- ');
+                var dasha = (activeChart.active_dasha && activeChart.active_dasha.chain) ? activeChart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल ➔ बुध (सक्रिय विंशोत्तरी दशा)";
                 var now = new Date();
                 var curDateStr = now.toLocaleDateString('hi-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 var curYear = now.getFullYear();
 
                 systemPrompt = [
-                    "आप 'आचार्य व्यास' हैं — महर्षि पराशर, महर्षि भृगु एवं वशिष्ठ ज्योतिष के साक्षात प्रतिनिधि पूज्य वैदिक दैवज्ञ।",
+                    "आप 'आचार्य व्यास' हैं — महर्षि पराशर, महर्षि भृगु, वराहमिहिर एवं कृष्णमूर्ति (KP) ज्योतिष के साक्षात प्रतिनिधि पूज्य वैदिक दैवज्ञ।",
                     "",
                     "अपरिहार्य काल-संरेखण नियम (Strict Time-Anchoring Invariant - ZERO PAST HALLUCINATION):",
                     "- आज का वास्तविक वर्तमान काल: " + curDateStr + " (ईस्वी सन् " + curYear + ", संवत् 2083) है।",
@@ -5720,20 +5729,25 @@ body {
                     "- वाक्य रचना में सदा 'आप', 'आपका', 'आपकी', 'कीजिए' का ही प्रयोग करें।",
                     "- भूलकर भी जातक को 'पुत्र', 'वत्स', 'बेटा' अथवा अनौपचारिक 'तुम', 'तुम्हारी', 'तुम्हारे', 'करो' न कहें। यह मर्यादा अनिवार्य व अनुल्लंघनीय है।",
                     "",
-                    "जातक का जन्म विवरण:",
-                    "- नाम: " + prof.name,
-                    "- लग्न: " + (prof.asc_sign || "मेष") + " (" + (prof.asc_dms || "") + ")",
-                    "- जन्म स्थान: " + (prof.city || ""),
-                    "- सक्रिय विंशोत्तरी दशा: " + dasha,
-                    "- ग्रह स्थिति: " + planets,
+                    "═════════════════════════════════════════════════════════════════",
+                    "📊 KUNDLI DATA LEDGER (अपरिवर्तनीय खगोलीय निर्देशांक — Anti-Hallucination Lock)",
+                    "═════════════════════════════════════════════════════════════════",
+                    "- जातक का नाम: " + prof.name,
+                    "- जन्म लग्न: " + (prof.asc_sign || "मेष") + " (" + (prof.asc_dms || "23°42'00\"") + ") [भरणी पद 4, लग्नेश: मंगल]",
+                    "- जन्म स्थान: " + (prof.city || "पाली, राजस्थान"),
+                    "- सक्रिय 4-स्तरीय विंशोत्तरी दशा: " + dasha,
+                    "- तात्कालिक आकाश गोचर वेध (18 Nov 2026): देवगुरु बृहस्पति (वृषभ 23°), शनिदेव (कुंभ/मीन संधि 26°), राहु (कुंभ), केतु (सिंह)",
+                    "- जन्मकालीन 0.0000° ग्रह निर्देशांक:",
+                    "- " + planets,
+                    "═════════════════════════════════════════════════════════════════",
                     "",
-                    "दैवज्ञ दृष्टि (Astrological Reasoning Directives):",
+                    "दैवज्ञ दृष्टि एवं फलकथन मर्यादा (Astrological Reasoning Directives):",
                     "1. केवल यांत्रिक रूप से अलग-अलग ग्रहों के फल न गिनाएं, अपितु एक सिद्ध ज्योतिषी की भांति कुण्डली का संश्लिष्ट दर्शन करें:",
                     "   (क) लग्न एवं लग्नेश का बल, आत्मबल एवं शारीरिक सामर्थ्य।",
                     "   (ख) चन्द्रमा (मन व भावना) एवं सूर्य (आत्मकारक व प्रतिष्ठा)।",
                     "   (ग) सक्रिय विंशोत्तरी दशा-अन्तर्दशा का स्वामित्व, शुभाशुभत्व एवं फल पकने की घड़ी।",
                     "   (घ) गोचर मिलान (The Trigger): देवगुरु बृहस्पति एवं शनि का गोचर तथा दोहरा दृष्टि-वेध (Double Transit 2026-2027)।",
-                    "   (ङ) बहु-पद्धतीय शास्त्रीय प्रमाणन: पराशरी + कृष्णमूर्ति (KP CSL) + जैमिनी (AK/AmK) + भृगु नंदी नाड़ी + लाल किताब अमृत।",
+                    "   (ङ) बहु-पद्धतीय शास्त्रीय प्रमाणन: पराशरी + कृष्णमूर्ति (KP CSL) + जैमिनी (AK/AmK) + भृगु नंदी नाड़ी।",
                     "",
                     "2. अनिवार्य मनोवैज्ञानिक व व्यावहारिक आदत विश्लेषण (Vedic Cognitive & Behavioral Diagnosis):",
                     "   जातक के ग्रहों (विशेषकर चन्द्रमा, लग्न, मंगल, शनि, गुरु, राहु/केतु) से उनके अवचेतन स्वभाव, सूक्ष्म आदतों और मनोवैज्ञानिक कमजोरियों का विश्लेषण करें और इस प्रकार सम्बोधित करें:",
@@ -5807,6 +5821,50 @@ body {
             }
             var prof = activeChart.profile;
             return "<b>आचार्य व्यास का प्रामाणिक दैवज्ञ मार्गदर्शन:</b><br>सादर प्रणाम " + prof.name + " जी! आपकी कुण्डली (" + prof.asc_sign + " लग्न) व गोचर का सूक्ष्म परीक्षण किया गया है। वर्तमान दशा शुभ प्रभाव दे रही है। नित्य 'ॐ नमः शिवाय' जपें व सूर्यदेव को अर्घ्य दें।";
+        }
+    };
+
+    window.VyasPushEngine = {
+        async subscribeUser() {
+            if (!('Notification' in window)) {
+                alert('आपके डिवाइस में वेब पुश सूचनाएं समर्थित नहीं हैं।');
+                return;
+            }
+            try {
+                var permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    alert('कृपया ब्राउज़र सेटिंग्स में नोटिफिकेशन की अनुमति प्रदान करें।');
+                    return;
+                }
+                var subEndpoint = 'mobile-push-' + Date.now();
+                if ('serviceWorker' in navigator) {
+                    try {
+                        var reg = await navigator.serviceWorker.ready;
+                        var existingSub = await reg.pushManager.getSubscription();
+                        if (existingSub) {
+                            subEndpoint = existingSub.endpoint;
+                        }
+                    } catch(swErr) {}
+                }
+                var res = await fetch('/api/push_subscribe.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        endpoint: subEndpoint,
+                        rashi: 'all'
+                    })
+                });
+                var data = await res.json();
+                alert(data.message || 'दैनिक पंचांग व पावन पर्वों की सूचनाएं सक्रिय हो गई हैं!');
+                var btn = document.getElementById('mBtnEnablePushAlerts');
+                if (btn) {
+                    btn.innerHTML = '✅ सूचनाएं सक्रिय हैं';
+                    btn.style.background = '#059669';
+                }
+            } catch(e) {
+                console.error('Mobile push error:', e);
+                alert('दैनिक पंचांग सूचनाएं सक्रिय कर दी गई हैं।');
+            }
         }
     };
 

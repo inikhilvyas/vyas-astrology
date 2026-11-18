@@ -1,7 +1,7 @@
 <?php
 // ----------------------------------------------------------------------
 // VYAS ASTRA — AI COPILOT HIGH SPEED PROXY (GROQ MULTI-KEY FAILOVER)
-// STORE-READY RESILIENT FULL-DIALOGUE CHAT ENGINE
+// AUTONOMOUS DAIVAGYA AGENT CORE WITH CLASSICAL SUTRAS VAULT INTEGRATION
 // ----------------------------------------------------------------------
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
@@ -17,7 +17,7 @@ $keys = [
     "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",
     "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"
 ];
-$models = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768", "gemma2-9b-it"];
+$models = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "openai/gpt-oss-20b"];
 
 $rawInput = file_get_contents('php://input');
 $input = json_decode($rawInput, true);
@@ -28,6 +28,61 @@ $chatHistory = (isset($input['chatHistory']) && is_array($input['chatHistory']))
 if (empty($query)) {
     echo json_encode(["error" => "Empty query"]);
     exit();
+}
+
+// ----------------------------------------------------------------------
+// 1. SHLASTRIC VAULT LOOKUP (10,500 Classical Sutras Silent Injection)
+// ----------------------------------------------------------------------
+function lookupClassicalSutras($query, $systemPrompt) {
+    $text = mb_strtolower($query . ' ' . $systemPrompt, 'UTF-8');
+    $domain = 'general';
+    
+    if (preg_match('/करियर|नौकरी|व्यापार|व्यवसाय|काम|प्रोजेक्ट|आजीविका|कैरियर|दशम|job|career|business/u', $text)) {
+        $domain = 'career';
+    } elseif (preg_match('/धन|रुपया|पैसा|लाभ|आय|सम्पत्ति|कर्ज|ऋण|आर्थिक|wealth|money|finance/u', $text)) {
+        $domain = 'wealth';
+    } elseif (preg_match('/विवाह|शादी|सप्तम|जीवनसाथी|पत्नी|पति|प्रेम|संबंध|marriage|spouse/u', $text)) {
+        $domain = 'marriage';
+    } elseif (preg_match('/स्वास्थ्य|रोग|कष्ट|बीमारी|आयु|मानसिक|दवा|health|disease/u', $text)) {
+        $domain = 'health';
+    } elseif (preg_match('/संतान|पुत्र|संतानहीन|बुद्धि|पढ़ाई|विद्या|ज्ञान|children|education/u', $text)) {
+        $domain = 'mind';
+    }
+
+    $fastIndexPath = __DIR__ . '/../data/vyas_sutras_fast_index.json';
+    $selectedSutras = [];
+
+    if (file_exists($fastIndexPath)) {
+        $indexData = json_decode(file_get_contents($fastIndexPath), true);
+        if (isset($indexData['domains'][$domain]) && !empty($indexData['domains'][$domain])) {
+            $pool = $indexData['domains'][$domain];
+            // Deterministically select 3-4 rich sutras using query hash to stay consistent
+            $hash = crc32($query);
+            $totalInPool = count($pool);
+            for ($i = 0; $i < min(4, $totalInPool); $i++) {
+                $idx = abs(($hash + ($i * 7)) % $totalInPool);
+                $selectedSutras[] = $pool[$idx];
+            }
+        }
+    }
+
+    if (empty($selectedSutras)) {
+        return "";
+    }
+
+    $contextLines = [
+        "\n[अपरिहार्य दैवज्ञ ज्ञान-स्मृति एवं शास्त्रीय प्रमाण — Shastric Context Lock]",
+        "इन प्रामाणिक शास्त्रीय सूत्रों को अपने विश्लेषण में स्वाभाविक अधिकार व विद्वता से उद्धृत करें (भूलकर भी 'डेटाबेस में मिला' या 'सर्च रिजल्ट' न कहें):"
+    ];
+
+    foreach ($selectedSutras as $s) {
+        $src = htmlspecialchars_decode($s['src'] ?? 'बृहत्पाराशर होराशास्त्र / फलदीपिका');
+        $cond = htmlspecialchars_decode($s['cond_hi'] ?? '');
+        $pred = htmlspecialchars_decode($s['pred_hi'] ?? '');
+        $contextLines[] = "• शास्त्र प्रमाण ({$src}): जब '{$cond}' की स्थिति बनती है, तो शास्त्र सम्मत फल यह होता है — {$pred}";
+    }
+
+    return implode("\n", $contextLines);
 }
 
 // Check for continuation intent
@@ -49,6 +104,22 @@ $currentDateHindi = "बुधवार, 18 नवंबर 2026";
 $currentYear = "2026";
 $timeAndEtiquetteDirective = "\n\n[अपरिहार्य काल एवं शिष्टाचार नियम]\nआज का वास्तविक वर्तमान काल: {$currentDateHindi} (ईस्वी सन् {$currentYear}) है। भूलकर भी जनवरी 2025 या अतीत के किसी वर्ष को वर्तमान या भविष्य न कहें। जातक से सदा अत्यंत आदर से 'आप', 'आपका', 'सादर प्रणाम' कहकर बात करें। भूलकर भी जातक को 'पुत्र', 'वत्स', 'तुम', 'तुम्हारी' न कहें।";
 $systemPrompt .= $timeAndEtiquetteDirective;
+
+// Inject silent Shastric Classical Sutras
+$sutraContext = lookupClassicalSutras($query, $systemPrompt);
+if (!empty($sutraContext)) {
+    $systemPrompt .= "\n\n" . $sutraContext;
+}
+
+// Inject 5-Part Authoritative Daivagya Structure Directive
+$daivagyaStructureDirective = "\n\n[परम दैवज्ञ फलादेश संरचना नियम — MANDATORY 5-PART ARCHITECTURE]\n" .
+    "किसी भी बनावटी चैट या सतही बुलेट-पॉइंट्स से बचें। आपका फलादेश एक सिद्ध दैवज्ञ की भांति इन 5 गंभीर व गरिमामय शीर्षकों में होना चाहिए:\n" .
+    "I. दैवज्ञ पीठिका एवं कुण्डली दर्शन (लग्न, कस्प एवं ग्रह बल का सूक्ष्म समन्वय)\n" .
+    "II. प्रामाणिक शास्त्रीय संहिता प्रमाण (बृहत्पाराशर, फलदीपिका या नाड़ी सूत्रों का प्रत्यक्ष उद्धरण)\n" .
+    "III. अचूक काल-निर्णय (सक्रिय विंशोत्तरी दशा + 2026-2027 के शनि-गुरु गोचर वेध से निश्चित समय-सीमा)\n" .
+    "IV. मनोवैज्ञानिक व व्यावहारिक स्वभाव दर्शन (ग्रहों से उत्पन्न वास्तविक आदतें एवं निर्णय प्रक्रिया)\n" .
+    "V. सिद्ध सात्विक त्रिविध उपाय विधान (संज्ञानात्मक बोध + 40-दिवसीय सूक्ष्म आचरण + शास्त्रीय वैदिक बीज-मंत्र जप संख्या सहित)";
+$systemPrompt .= $daivagyaStructureDirective;
 
 $messages[] = ["role" => "system", "content" => $systemPrompt];
 
