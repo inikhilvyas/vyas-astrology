@@ -143,14 +143,17 @@ def check_gochar_today():
     from vyas_sentinel_manager import calculate_daily_panchang
     p = calculate_daily_panchang()
     print("\n" + "═" * 70)
-    print("🪐 आज का तात्कालिक पंचांग व खगोलीय गोचर वेध:")
+    print(f"🪐 आज का तात्कालिक पंचांग व खगोलीय गोचर वेध ({p['date_hi']}):")
     print("═" * 70)
+    print("• अयनांश (Lahiri):", p.get("ayanamsha", "24°13'"))
     print("• तिथि:", p["tithi"])
     print("• नक्षत्र:", p["nakshatra"])
     print("• अभिजित मुहूर्त:", p["abhijit"])
     print("• राहुकाल:", p["rahu_kaal"])
     print("• विशेष पर्व/व्रत:", p["special_event"])
-    print("• गोचर वेध: देवगुरु बृहस्पति वृषभ राशि, शनिदेव कुंभ/मीन संधि, राहु कुंभ, केतु सिंह")
+    print("\n🔭 आकाश में 9 ग्रहों के सटीक भोगांश (NASA JPL/Swiss Ephemeris):")
+    for g in p.get("gochar_planets", []):
+        print(f"  • {g}")
     print("═" * 70)
 
 def test_whatsapp_alert():
@@ -199,3 +202,4 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
+
