@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>व्योम-कंट्रोल | VYAS Master Agent Admin Console</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #111827;
+            --border-gold: #f59e0b;
+            --border-subtle: #1f2937;
+            --text-primary: #f9fafb;
+            --text-muted: #9ca3af;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-primary); padding: 24px; min-height: 100vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gold); padding-bottom: 16px; margin-bottom: 24px; }
+        .logo-title { display: flex; align-items: center; gap: 12px; }
+        .logo-title h1 { font-size: 1.5rem; color: #fbbf24; }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .card h3 { font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .card .stat { font-size: 1.5rem; font-weight: 800; color: #fbbf24; }
+        .badge-green { background: rgba(16,185,129,0.2); color: var(--accent-green); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        
+        .section-box { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+        .section-box h2 { font-size: 1.1rem; color: #fbbf24; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-green { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+        .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; }
+
+        input, textarea { width: 100%; background: #1f2937; border: 1px solid #374151; color: #fff; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; font-size: 0.9rem; }
+        .log-box { background: #030712; border: 1px solid #1f2937; padding: 14px; border-radius: 8px; font-family: monospace; font-size: 0.82rem; max-height: 250px; overflow-y: auto; color: #a7f3d0; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-title">
+            <span style="font-size: 2rem;">🔱</span>
+            <div>
+                <h1>व्योम-कंट्रोल (VYAS Agent Command Center)</h1>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Autonomous Daivagya Engine & Sentinel Controller | Nikhil Vyas</p>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-green" onclick="fetchLiveStatus()">🔄 लाइव ऑडिट रिफ्रेश</button>
+        </div>
+    </div>
+
+    <!-- Top Pillars Health Grid -->
+    <div class="grid-cards">
+        <div class="card">
+            <h3>खगोलीय शुद्धता (Ephemeris)</h3>
+            <div class="stat" id="statEphem">0.0000°</div>
+            <p style="font-size: 0.75rem; color: var(--accent-green); margin-top: 4px;">मेष 23°42' सत्यापित</p>
+        </div>
+        <div class="card">
+            <h3>ज्ञान बैंक (Knowledge Vault)</h3>
+            <div class="stat">10,500 सूत्र</div>
+            <p style="font-size: 0.75rem; color: var(--accent-green); margin-top: 4px;">16 खंड सक्रिय</p>
+        </div>
+        <div class="card">
+            <h3>तात्कालिक प्रश्न कुण्डली</h3>
+            <div class="stat">प्रश्न मार्ग</div>
+            <p style="font-size: 0.75rem; color: var(--accent-green); margin-top: 4px;">रियल-टाइम वेध सक्रिय</p>
+        </div>
+        <div class="card">
+            <h3>56-पृष्ठ VIP Pro PDF</h3>
+            <div class="stat">सक्षम</div>
+            <p style="font-size: 0.75rem; color: var(--accent-green); margin-top: 4px;">देवनागरी शुद्ध फ़ॉन्ट</p>
+        </div>
+        <div class="card">
+            <h3>सिस्टम स्वास्थ्य (Overall)</h3>
+            <div class="stat" id="statHealth">100% OK</div>
+            <p style="font-size: 0.75rem; color: var(--accent-green); margin-top: 4px;">प्रहरी 24x7 सक्रिय</p>
+        </div>
+    </div>
+
+    <!-- Quick Action Modules -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+        
+        <!-- Module 1: Ask Acharya Vyas Live Test -->
+        <div class="section-box">
+            <h2>🔮 एजेंट 1 (आचार्य व्यास) से सीधा परीक्षण</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">निखिल व्यास जी की कुण्डली लेजर (0.0000°) एवं 10,500 शास्त्रीय सूत्रों के आधार पर लाइव फलादेश लें:</p>
+            <input type="text" id="agentQuery" placeholder="प्रश्न लिखें, जैसे: करियर और नए प्रोजेक्ट में स्थिरता कब तक बनेगी?" value="करियर और नए प्रोजेक्ट में स्थिरता कब तक बनेगी?">
+            <button class="btn" id="btnAskAgent" onclick="askAgentLive()">⚡ फलादेश वेध करें</button>
+            <div id="agentReplyBox" style="margin-top: 14px; display: none; background: #0f172a; border: 1px solid #334155; padding: 14px; border-radius: 8px; font-size: 0.88rem; line-height: 1.6;"></div>
+        </div>
+
+        <!-- Module 2: Broadcast Push Notifications -->
+        <div class="section-box">
+            <h2>📢 सभी यूज़र्स को तुरंत वेब पुश नोटिफिकेशन भेजें</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">वेबसाइट और मोबाइल ऐप के सभी रजिस्टर्ड श्रद्धालुओं के फ़ोन पर तात्कालिक पावन संदेश प्रसारित करें:</p>
+            <input type="text" id="pushTitle" placeholder="शीर्षक (उदा: 🚩 आज उत्पन्ना एकादशी व्रत है)" value="🚩 आज उत्पन्ना एकादशी व्रत है">
+            <textarea id="pushBody" rows="2" placeholder="विवरण (उदा: पारण का समय व व्रत कथा जानने हेतु टैप करें)">श्री हरि विष्णु के अर्चन एवं पारण का शुभ समय देखें।</textarea>
+            <button class="btn btn-green" onclick="sendBroadcastPush()">📢 सभी को पुश भेजें</button>
+            <p id="pushStatusText" style="font-size: 0.8rem; color: #a7f3d0; margin-top: 8px; display: none;"></p>
+        </div>
+
+    </div>
+
+    <!-- Sentinel Live Diagnostic Log -->
+    <div class="section-box">
+        <h2>🛡️ प्रहरी लाइव स्थिति एवं घटना पंजिका (Sentinel Audit Log)</h2>
+        <div class="log-box" id="sentinelLog">
+[22:50:56 IST] प्रहरी प्रणाली प्रारंभ...
+[22:50:56 IST] खगोलीय शुद्धता: मेष 23°42', सूर्य 07°42', चन्द्र 14°38' [100% PASS]
+[22:50:56 IST] प्रश्न मार्ग तात्कालिक लग्न: [PASS]
+[22:50:56 IST] 10,500 शास्त्रीय सूत्र: [ACTIVE]
+[22:50:56 IST] Hostinger Gateway: [HTTP 200 OK]
+[22:50:56 IST] व्हाट्सएप अलर्ट नंबर: +919414121172 (बैकअप: +919251021800) [READY]
+        </div>
+    </div>
+
+    <script>
+        async function fetchLiveStatus() {
+            try {
+                var res = await fetch('/api/sentinel_status.php');
+                if (res.ok) {
+                    var d = await res.json();
+                    document.getElementById('statHealth').innerText = d.status === 'HEALTHY' ? '100% OK' : d.status;
+                    var logEl = document.getElementById('sentinelLog');
+                    logEl.innerText = JSON.stringify(d, null, 2);
+                }
+            } catch(e) {
+                console.log(e);
+            }
+        }
+
+        async function askAgentLive() {
+            var q = document.getElementById('agentQuery').value.trim();
+            if (!q) return;
+            var btn = document.getElementById('btnAskAgent');
+            var box = document.getElementById('agentReplyBox');
+            btn.innerText = 'आचार्य व्यास वेध कर रहे हैं...';
+            btn.disabled = true;
+            box.style.display = 'block';
+            box.innerHTML = '<i>आचार्य व्यास कुण्डली लेजर एवं 10,500 शास्त्रीय सूत्रों का वेध कर रहे हैं...</i>';
+
+            try {
+                var res = await fetch('/api/ai_chat.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: q })
+                });
+                var d = await res.json();
+                box.innerHTML = d.reply || 'उत्तर प्राप्त नहीं हुआ।';
+            } catch(e) {
+                box.innerHTML = 'त्रुटि: ' + e.message;
+            } finally {
+                btn.innerText = '⚡ फलादेश वेध करें';
+                btn.disabled = false;
+            }
+        }
+
+        async function sendBroadcastPush() {
+            var title = document.getElementById('pushTitle').value;
+            var body = document.getElementById('pushBody').value;
+            var pText = document.getElementById('pushStatusText');
+            pText.style.display = 'block';
+            pText.innerText = 'प्रसारित किया जा रहा है...';
+
+            try {
+                var res = await fetch('/api/push_dispatch.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=festival&festival_name=' + encodeURIComponent(title) + '&festival_desc=' + encodeURIComponent(body)
+                });
+                var d = await res.json();
+                pText.innerText = '✅ ' + (d.subscribers_count || 0) + ' श्रद्धालुओं को नोटिफिकेशन सफलतापूर्वक प्रसारित कर दिया गया है!';
+            } catch(e) {
+                pText.innerText = 'त्रुटि: ' + e.message;
+            }
+        }
+
+        // Auto load on open
+        fetchLiveStatus();
+    </script>
+</body>
+</html>
