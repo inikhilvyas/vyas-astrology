@@ -7,3 +7,4 @@ print(f"Found {len(matches)} functions in app.py:")
 for m in matches[:25]:
     line = text[m:text.find('\n', m)]
     print(" ", line)
+

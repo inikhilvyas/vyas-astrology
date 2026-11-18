@@ -311,3 +311,4 @@ def update_mobile(file_path):
 
 update_mobile("mobile/index.html")
 update_mobile("android_app/app/src/main/assets/mobile/index.html")
+

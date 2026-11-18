@@ -59,3 +59,4 @@ for path in ['mobile/index.html', 'android_app/app/src/main/assets/mobile/index.
         print(f"✓ Added isProAccount & setProAccount to {path}")
     else:
         print(f"{path} already has isProAccount")
+

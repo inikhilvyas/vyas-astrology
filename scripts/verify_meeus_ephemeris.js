@@ -204,3 +204,4 @@ for (let p of ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "
     let diff = (calc.planets[p] - skyfield[p]);
     console.log(`${p.padEnd(8)}: Calculated = ${calc.planets[p].toFixed(2)}°, Skyfield = ${skyfield[p].toFixed(2)}°, Diff = ${diff.toFixed(2)}°`);
 }
+

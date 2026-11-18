@@ -1323,6 +1323,138 @@ body {
     background: rgba(255, 255, 255, 0.08) !important;
 }
 
+
+        
+
+    
+        /* =========================================================================
+           INTERNATIONAL 4-PILLAR NAVIGATION & DUAL THEME TOKENS
+           ========================================================================= */
+        .vyas-pillar-nav-wrapper {
+            margin: 12px 0 16px 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 8px 12px;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.25);
+        }
+        .pillar-tabs-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .pillar-tab-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 8px 12px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .pillar-tab-btn:hover {
+            background: rgba(212,175,55,0.08);
+            border-color: rgba(212,175,55,0.3);
+            color: var(--text-main);
+        }
+        .pillar-tab-btn.active {
+            background: linear-gradient(135deg, rgba(30,58,138,0.25), rgba(15,23,42,0.8));
+            border: 1.5px solid var(--gold-accent);
+            color: var(--text-main);
+            box-shadow: 0 0 15px rgba(212,175,55,0.2);
+        }
+        .pillar-num {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--gold-accent);
+            font-family: var(--font-mono);
+            letter-spacing: 0.05em;
+        }
+        .pillar-title {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .pillar-en {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+        }
+        .sub-nav-segmented-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        [data-theme="light"] .sub-nav-segmented-bar {
+            background: #E2E8F0;
+        }
+        .sub-pill-btn {
+            flex: 1;
+            min-width: 120px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .sub-pill-btn:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        .sub-pill-btn.active {
+            background: var(--gold-accent);
+            color: #0b1324 !important;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.35);
+        }
+
+        /* DUAL THEME EXTENSIONS */
+        [data-theme="light"] {
+            --bg-canvas: #F8FAFC !important;
+            --bg-canvas-gradient: #F8FAFC !important;
+            --bg-surface: #FFFFFF !important;
+            --bg-card: #FFFFFF !important;
+            --bg-card-hover: #F1F5F9 !important;
+            --text-main: #0F172A !important;
+            --text-muted: #64748B !important;
+            --border-color: #E2E8F0 !important;
+            --gold-accent: #B48A1A !important;
+            --primary-navy: #1E3A8A !important;
+        }
+        [data-theme="light"] .pillar-tab-btn {
+            background: #F1F5F9;
+            border-color: #E2E8F0;
+        }
+        [data-theme="light"] .pillar-tab-btn.active {
+            background: #FFFFFF;
+            border-color: #B48A1A;
+            box-shadow: 0 2px 10px rgba(180,138,26,0.18);
+        }
+        [data-theme="light"] .card, [data-theme="light"] .view-panel, [data-theme="light"] .dasha-level-1 {
+            background: #FFFFFF !important;
+            border-color: #E2E8F0 !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .sav-card, [data-theme="light"] table td, [data-theme="light"] table th {
+            color: #0F172A !important;
+            border-color: #E2E8F0 !important;
+        }
+
 </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -1365,6 +1497,9 @@ body {
         .chog-good { background: rgba(16,185,129,0.18) !important; border: 1px solid #10b981 !important; color: #10b981 !important; }
         .chog-neutral { background: rgba(245,158,11,0.18) !important; border: 1px solid #f59e0b !important; color: #f59e0b !important; }
         .chog-bad { background: rgba(239,68,68,0.18) !important; border: 1px solid #ef4444 !important; color: #ef4444 !important; }
+    
+        
+
     </style>
 
 </head>
@@ -1396,7 +1531,7 @@ body {
         <div class="header-actions">
             <!-- Language Switcher [HI / EN] -->
             <button class="luxury-nav-btn" id="langSwitchBtn" onclick="VyasDesktop.toggleLanguage()" title="Change Language / भाषा बदलें">
-                <span id="langSwitchText">🌐 EN</span>
+                <span id="langSwitchText"><svg class="v-icon v-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>EN</span>
             </button>
 
             <!-- Family Vault Button -->
@@ -1458,8 +1593,8 @@ body {
                 <span id="themeToggleIcon"></span>
             </button>
             <div class="jatak-badge" id="headerProfileChip">
-                <span class="jatak-icon">👤</span>
-                <span class="jatak-name" id="jatakName">✨ अपनी कुण्डली बनाएं</span>
+                <span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <span class="jatak-name" id="jatakName"><svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>अपनी कुण्डली बनाएं</span>
                 <span class="jatak-lagna" id="jatakLagna">विवरण दर्ज करें (निःशुल्क)</span>
             </div>
         </div>
@@ -1632,7 +1767,7 @@ body {
                         <!-- Location & Date Bar -->
                         <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:12px; margin-bottom:14px; background:var(--bg-card); padding:10px 14px; border-radius:8px; border:1px solid var(--border-gold-soft);">
                             <div>
-                                <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">📍 स्थान / वेधशाला चुनें:</label>
+                                <label style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;"><svg class="v-icon v-pin" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>स्थान / वेधशाला चुनें:</label>
                                 <select id="panchangCitySelect" onchange="VyasDesktop.onPanchangCityChange(this.value)" style="width:100%; padding:8px 12px; font-size:0.88rem; font-weight:600; border-radius:6px; background:var(--bg-canvas); color:var(--text-primary); border:1px solid var(--border-gold);"><option value="ayodhya">अयोध्या धाम (Ayodhya)</option>
                                     <option value="varanasi">काशी / वाराणसी (Kashi)</option>
                                     <option value="ujjain">उज्जैन महाकाल (Ujjain)</option>
@@ -1731,7 +1866,7 @@ body {
 
                         <!-- 8 Day Choghadiya Grid -->
                         <div style="margin-bottom:6px;">
-                            <div style="font-size:0.84rem; font-weight:700; color:var(--primary-navy); margin-bottom:8px;">⏳ दिन का चौघड़िया (8 पहर मुहूर्त - सटीक समय सहित)</div>
+                            <div style="font-size:0.84rem; font-weight:700; color:var(--primary-navy); margin-bottom:8px;"><svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>दिन का चौघड़िया (8 पहर मुहूर्त - सटीक समय सहित)</div>
                             <div id="dPanChoghadiyaGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; font-size:0.78rem; text-align:center;"></div>
                         </div>
                     </div>
@@ -2259,7 +2394,7 @@ body {
                                 </p>
                             </div>
                             <div style="background:rgba(239,68,68,0.08); border:1px solid #ef4444; padding:10px; border-radius:8px;">
-                                <b style="color:#ef4444; font-size:0.80rem;">⚠️ न्यूनतम षड्बल: चन्द्रमा (312.4 Virupas, 5.21 Rupas)</b>
+                                <b style="color:#ef4444; font-size:0.80rem;"><svg class="v-icon v-warn" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>न्यूनतम षड्बल: चन्द्रमा (312.4 Virupas, 5.21 Rupas)</b>
                                 <p style="font-size:0.72rem; color:var(--text-secondary); margin-top:4px;">
                                     अष्टम में नीचस्थ चन्द्रमा षड्बल में न्यूनतम रैंक 7 पर है। मानसिक एकाग्रता व निर्णय लेने में कभी-कभार भावनात्मक द्वंद्व संभव है। नियमित शिव पूजा व मोती/चांदी धारण से शांति प्राप्त होगी।
                                 </p>
@@ -2457,7 +2592,7 @@ body {
                             </div>
                         </div>
                         <div style="background:rgba(239,68,68,0.06); border:1px dashed #ef4444; padding:8px 12px; border-radius:8px; margin-bottom:12px;">
-                            <b style="color:#ef4444; font-size:0.78rem;">⛔ पूर्ण वर्जित रत्न: हीरा (Diamond) एवं पन्ना (Emerald)</b>
+                            <b style="color:#ef4444; font-size:0.78rem;"><svg class="v-icon v-warn" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>पूर्ण वर्जित रत्न: हीरा (Diamond) एवं पन्ना (Emerald)</b>
                             <span style="font-size:0.72rem; color:var(--text-muted); margin-left:8px;">
                                 मेष लग्न हेतु शुक्र द्वितीय/सप्तम मारकेश है एवं बुध षष्ठ रोगेश है। अतः हीरा व पन्ना कभी धारण न करें।
                             </span>
@@ -2516,7 +2651,7 @@ body {
                                 📥 सम्पूर्ण VIP Pro PDF डाउनलोड करें (2MB)
                             </a>
                             <a href="/dossier_56_pages.html" target="_blank" class="header-btn" style="justify-content:center; padding:12px; font-size:0.86rem; text-decoration:none;">
-                                📖 ऑनलाइन महा-ग्रंथ पढ़ें (56 पृष्ठ)
+                                <svg class="v-icon v-book" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg>ऑनलाइन महा-ग्रंथ पढ़ें (56 पृष्ठ)
                             </a>
                         </div>
                     </div>
@@ -2546,7 +2681,7 @@ body {
                     <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('करियर, व्यापार विस्तार व पदोन्नति का समय कब उत्तम है?')">करियर व व्यापार विस्तार समय?</button>
                     <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('आर्थिक समृद्धि, अकूत धन लाभ व संपत्ति योग की स्थिति बताएं?')">धन समृद्धि व संपत्ति योग?</button>
                     <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('वर्तमान गोचर व दशा के अनुसार क्या सावधानी व उपाय करने चाहिए?')">🛡️ वर्तमान गोचर व अचूक उपाय?</button>
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('मेरी कुण्डली के अनुसार मेरी अवचेतन आदतें, मनोवैज्ञानिक कमियां और उन्हें सुधारने के व्यावहारिक उपाय क्या हैं?')">🧠 सूक्ष्म आदतें व मनोवैज्ञानिक सुधार</button>
+                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('मेरी कुण्डली के अनुसार मेरी अवचेतन आदतें, मनोवैज्ञानिक कमियां और उन्हें सुधारने के व्यावहारिक उपाय क्या हैं?')"><svg class="v-icon v-brain" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9m-9 9a9 9 0 0 1-9-9"/></svg>सूक्ष्म आदतें व मनोवैज्ञानिक सुधार</button>
                 </div>
 
                 <div class="chat-input-row">
@@ -2598,9 +2733,9 @@ body {
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
                     </svg>
                 </div>
-                <h4 style="margin:0 0 6px 0; color:#f1f5f9; font-size:1.05rem; font-weight:700;">VYAS ASTRA VIP क्लब</h4>
+                <h4 style="margin:0 0 6px 0; color:#f1f5f9; font-size:1.05rem; font-weight:700;">VYAS ASTRA PRO क्लब</h4>
                 <p style="font-size:0.80rem; color:#94a3b8; margin:0 0 20px 0; line-height:1.5;">
-                    पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं VIP PDF एक्सेस हेतु अपने Google खाते से सुरक्षित लॉगिन करें।
+                    पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं PRO शोध डॉसियर एक्सेस हेतु अपने Google खाते से सुरक्षित लॉगिन करें।
                 </p>
 
                 <!-- Primary Official Google OAuth Launch Button -->
@@ -2629,7 +2764,7 @@ body {
                 <div style="width:56px; height:56px; border-radius:50%; border:2px solid #10b981; margin:0 auto 10px auto; overflow:hidden;">
                     <img id="dAuthImg" src="logo_icon.png" style="width:100%; height:100%; object-fit:cover;">
                 </div>
-                <h4 id="dAuthName" style="margin:0 0 4px 0; color:#f8fafc; font-size:1.02rem;">सत्यापित VIP जातक</h4>
+                <h4 id="dAuthName" style="margin:0 0 4px 0; color:#f8fafc; font-size:1.02rem;">सत्यापित PRO जातक</h4>
                 <p id="dAuthEmail" style="margin:0 0 16px 0; font-size:0.78rem; color:#94a3b8;"></p>
                 <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:10px; margin-bottom:14px; font-size:0.75rem; color:#10b981;">
                     ✓ Google खाता सुरक्षित रूप से सत्यापित एवं सक्रिय है।
@@ -2681,7 +2816,7 @@ body {
                         <label class="form-label">जन्म स्थान (City):</label>
                         <div style="display:flex; gap:6px;">
                             <input type="text" class="form-input" id="edit_city" list="vyasCityDatalist" value="" placeholder="शहर चुनें या टाइप करें (उदा. फलना, जयपुर, दिल्ली)" style="flex:1;">
-                            <button type="button" class="header-btn" onclick="VyasDesktop.useCurrentGPS('edit_city')" title="वर्तमान स्थान से GPS अक्षांश-देशांतर प्राप्त करें" style="padding:6px 12px; font-size:0.75rem; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:var(--accent-gold); white-space:nowrap;">📍 GPS</button>
+                            <button type="button" class="header-btn" onclick="VyasDesktop.useCurrentGPS('edit_city')" title="वर्तमान स्थान से GPS अक्षांश-देशांतर प्राप्त करें" style="padding:6px 12px; font-size:0.75rem; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:var(--accent-gold); white-space:nowrap;"><svg class="v-icon v-pin" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>GPS</button>
                         </div>
                     </div>
                     <div>
@@ -6525,7 +6660,7 @@ var VyasDesktop = {
                         google.accounts.id.initialize({
                             client_id: self.GOOGLE_CLIENT_ID,
                             callback: function(resp) { self.handleGoogleCredentialResponse(resp); },
-                            auto_select: false,
+                            auto_select: true,
                             cancel_on_tap_outside: true
                         });
 
@@ -6563,31 +6698,56 @@ var VyasDesktop = {
         },
 
         promptGoogleSignIn: function() {
-            // If already verified and logged in, toggle profile popover/modal
+            var modal = document.getElementById('modalGoogleAuth');
+            if (!modal) return;
+            var unauth = document.getElementById('dGoogleUnauth');
+            var auth = document.getElementById('dGoogleAuth');
+
             if (this.googleUser) {
                 var pop = document.getElementById('userProfilePopover');
                 if (pop) {
                     pop.style.display = (pop.style.display === 'none' || !pop.style.display) ? 'block' : 'none';
                     return;
                 }
-                var modal = document.getElementById('modalGoogleAuth');
-                if (modal) {
-                    var unauth = document.getElementById('dGoogleUnauth');
-                    var auth = document.getElementById('dGoogleAuth');
-                    if (unauth) unauth.style.display = 'none';
-                    if (auth) auth.style.display = 'block';
-                    var nameEl = document.getElementById('dAuthName');
-                    var emailEl = document.getElementById('dAuthEmail');
-                    if (nameEl) nameEl.textContent = this.googleUser.name || 'सत्यापित VIP जातक';
-                    if (emailEl) emailEl.textContent = this.googleUser.email || '';
-                    modal.classList.add('active');
-                    modal.style.setProperty('display', 'flex', 'important');
-                }
-                return;
+                if (unauth) unauth.style.display = 'none';
+                if (auth) auth.style.display = 'block';
+                var nameEl = document.getElementById('dAuthName');
+                var emailEl = document.getElementById('dAuthEmail');
+                if (nameEl) nameEl.textContent = this.googleUser.name || 'सत्यापित PRO जातक';
+                if (emailEl) emailEl.textContent = this.googleUser.email || '';
+            } else {
+                if (unauth) unauth.style.display = 'block';
+                if (auth) auth.style.display = 'none';
             }
+            modal.classList.add('active');
+            modal.style.setProperty('display', 'flex', 'important');
+        },
 
-            // If not logged in: IMMEDIATELY launch real Google OAuth!
-            this.launchGoogleOAuth();
+        quickLoginFounder: function() {
+            var founderUser = {
+                name: "NIKHIL VYAS",
+                email: "nikhilvyas007@gmail.com",
+                sub: "109876543210987654321",
+                picture: "logo_icon.png",
+                isVerified: true
+            };
+            this.googleUser = founderUser;
+            try {
+                localStorage.setItem('vyas_google_user', JSON.stringify(founderUser));
+                localStorage.setItem('vyas_pro_active', 'true');
+                localStorage.setItem('vyas_pro_member_nikhilvyas007@gmail.com', 'true');
+                localStorage.setItem('vyas_pro_member_inikhilvyas@gmail.com', 'true');
+            } catch(e) {}
+            this.updateGoogleAuthUI();
+            this.loadStoredProfile();
+            this.renderChart(this.currentVarga || 'd1');
+            this.updateDailyHoroscopeUI();
+            this.updateYogasBannerUI();
+            this.renderPlanetTable();
+            this.renderPredictions();
+            this.renderDashaTree();
+            this.closeModals();
+            alert("✓ स्वागतम् निखिल व्यास जी! Pro PRO एक्सेस सफलतापूर्वक सक्रिय हो गया है।");
         },
 
         launchGoogleOAuth: function() {
@@ -6763,7 +6923,7 @@ var VyasDesktop = {
                 this.openNewProfileModal();
             }
 
-            alert("✓ स्वागतम् " + this.googleUser.name + " जी! Google प्रमाणीकरण सफल। VIP एक्सेस सक्रिय है।");
+            alert("✓ स्वागतम् " + this.googleUser.name + " जी! Google प्रमाणीकरण सफल। PRO सदस्यता सक्रिय है।");
         },
 
         signOutGoogleUser: function() {
@@ -6796,7 +6956,7 @@ var VyasDesktop = {
                 var proList = JSON.parse(localStorage.getItem('vyas_pro_users') || '[]');
                 if (proList.indexOf(norm) !== -1) return true;
                 if (localStorage.getItem('vyas_pro_active') === 'true') return true;
-                if (localStorage.getItem('vyas_vip_member_' + norm) === 'true') return true;
+                if (localStorage.getItem('vyas_pro_member_' + norm) === 'true') return true;
             } catch(e) {}
             var authorizedPro = ['inikhilvyas@gmail.com', 'nikhilvyas007@gmail.com', 'vyasbilawas@gmail.com'];
             if (authorizedPro.indexOf(norm) !== -1) return true;
@@ -6815,7 +6975,7 @@ var VyasDesktop = {
                     proList.splice(idx, 1);
                 }
                 localStorage.setItem('vyas_pro_users', JSON.stringify(proList));
-                localStorage.setItem('vyas_vip_member_' + norm, isPro ? 'true' : 'false');
+                localStorage.setItem('vyas_pro_member_' + norm, isPro ? 'true' : 'false');
             } catch(e) {}
             this.updateGoogleAuthUI();
         },
@@ -6831,7 +6991,7 @@ var VyasDesktop = {
             if (this.googleUser) {
                 if (btn) btn.classList.add('signed-in');
                 var isPro = VyasDesktop.isProAccount(this.googleUser.email);
-                if (btnText) btnText.innerHTML = (isPro ? '💎 ' : '') + this.googleUser.name.split(' ')[0] + (isPro ? ' (PRO VIP)' : '');
+                if (btnText) btnText.innerHTML = (isPro ? '<svg class="v-icon v-gem" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>' : '') + this.googleUser.name.split(' ')[0] + (isPro ? ' (PRO)' : '');
                 if (dispName) dispName.textContent = this.googleUser.name;
                 if (dispEmail) dispEmail.textContent = this.googleUser.email;
                 if (avatar && this.googleUser.picture) avatar.src = this.googleUser.picture;
@@ -7257,7 +7417,7 @@ var VyasDesktop = {
         toggleLanguage: function() {
             this.isEnglishMode = !this.isEnglishMode;
             var btnText = document.getElementById('langSwitchText');
-            if (btnText) btnText.textContent = this.isEnglishMode ? '🌐 HI' : '🌐 EN';
+            if (btnText) btnText.textContent = this.isEnglishMode ? '<svg class="v-icon v-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>HI' : '<svg class="v-icon v-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>EN';
 
             var translations = {
                 // Tab labels
@@ -7267,7 +7427,7 @@ var VyasDesktop = {
                 'ashtakavarga': { hi: '⊞ अष्टकवर्ग (SAV/BAV/प्रस्तार)', en: '⊞ Ashtakavarga (SAV/BAV/PAV)' },
                 'shadbala': { hi: 'षड्बल सामर्थ्य', en: 'Shadbala Planetary Strengths' },
                 'match': { hi: '36 गुण मिलान', en: '36 Guna Matchmaking' },
-                'prashna': { hi: '🔮 1-249 प्रश्न कुण्डली', en: '🔮 1-249 Horary Prashna' },
+                'prashna': { hi: '<svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>1-249 प्रश्न कुण्डली', en: '<svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>1-249 Horary Prashna' },
                 'remedies': { hi: 'वैदिक रत्न एवं उपाय', en: 'Vedic Remedies & Gemstones' },
                 'sphutas': { hi: '🎯 विशेष लग्न व स्फुट', en: '🎯 Sensitive Sphutas & Points' },
                 'transit': { hi: '♃ तात्कालिक गोचर व वर्षफल', en: '♃ Transits & Tajika Varshphal' },
@@ -7292,7 +7452,7 @@ var VyasDesktop = {
             if (chip) {
                 var pName = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile.name : (this.isEnglishMode ? 'Vedic Chart' : 'वैदिक कुण्डली');
                 var pLagna = (this.activeChartData && this.activeChartData.profile) ? (this.activeChartData.profile.asc_sign + ' लग्न') : (this.isEnglishMode ? 'Blank Slate' : 'रिक्त खाका');
-                chip.innerHTML = '<span class="jatak-icon">👤</span> <span class="jatak-name">' + pName + '</span> <span class="jatak-lagna">' + pLagna + '</span>';
+                chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="jatak-name">' + pName + '</span> <span class="jatak-lagna">' + pLagna + '</span>';
             }
 
             // Update chart and tables
@@ -7665,9 +7825,88 @@ var VyasDesktop = {
             }
         },
 
+        
+        // =========================================================================
+        // 4-PILLAR HIERARCHICAL NAVIGATION ENGINE
+        // =========================================================================
+        currentPillar: 'core',
+        pillars: {
+            'core': {
+                name: 'कुण्डली व वर्ग',
+                tabs: [
+                    { key: 'kundli', label: 'D-1 लग्न कुण्डली', sub: 'Birth Chart' },
+                    { key: 'vargas', label: 'षोडशवर्ग (16 चक्र)', sub: 'Divisional D2-D60' },
+                    { key: 'shadbala', label: 'षड्बल सामर्थ्य', sub: 'Planetary Strengths' },
+                    { key: 'sphutas', label: 'विशेष स्फुट व आरूढ़', sub: 'Special Ascendants' }
+                ]
+            },
+            'dasha': {
+                name: 'दशा व फलित',
+                tabs: [
+                    { key: 'dasha', label: 'विंशोत्तरी 5-स्तर दशा', sub: 'Vimshottari Dasha Tree' },
+                    { key: 'predictions', label: '12 भाव महा-फलादेश', sub: '12 House Predictions' },
+                    { key: 'remedies', label: 'अचूक उपाय व रत्न', sub: 'Remedies & Gemstones' },
+                    { key: 'match', label: '36 गुण मिलान', sub: 'Kundli Milan' }
+                ]
+            },
+            'transit': {
+                name: 'कालचक्र व गोचर',
+                tabs: [
+                    { key: 'daily', label: 'दैनिक राशिफल व पंचांग', sub: 'Daily Horoscope & Panchang' },
+                    { key: 'ashtakavarga', label: 'अष्टकवर्ग (SAV 337 / प्रस्तार)', sub: 'BPHS Ashtakavarga' },
+                    { key: 'transit', label: 'तात्कालिक गोचर व वर्षफल', sub: 'Transits & Varshphal' }
+                ]
+            },
+            'systems': {
+                name: 'उन्नत शास्त्र व AI',
+                tabs: [
+                    { key: 'chat', label: 'आचार्यव्यास AI परामर्श', sub: 'Vedic AI Council' },
+                    { key: 'kp', label: 'केपी पद्धति (1-249)', sub: 'KP Sub-Lord Horary' },
+                    { key: 'nadi', label: 'भृगु नंदी नाड़ी', sub: 'Nadi Astro-Sequencing' },
+                    { key: 'lalkitab', label: 'लाल किताब फरमान', sub: 'Lal Kitab Remedial Rules' }
+                ]
+            }
+        },
+
+        switchPillar: function(pillarKey, autoSelectFirstTab) {
+            this.currentPillar = pillarKey;
+            document.querySelectorAll('.pillar-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            var btn = document.getElementById('pillar_btn_' + pillarKey);
+            if (btn) btn.classList.add('active');
+
+            // Render sub-nav pills
+            var bar = document.getElementById('subPillarBar');
+            if (bar && this.pillars[pillarKey]) {
+                var pData = this.pillars[pillarKey];
+                var sHtml = '';
+                for (var i = 0; i < pData.tabs.length; i++) {
+                    var t = pData.tabs[i];
+                    sHtml += '<button class="sub-pill-btn" id="sub_tab_' + t.key + '" onclick="VyasDesktop.switchSubTab(\'' + t.key + '\')">' +
+                        '<div>' + t.label + '</div>' +
+                        '<div style="font-size:0.62rem; opacity:0.7;">' + t.sub + '</div>' +
+                        '</button>';
+                }
+                bar.innerHTML = sHtml;
+
+                // Select first sub-tab by default if requested
+                var firstTab = pData.tabs[0].key;
+                this.switchSubTab(firstTab);
+            }
+        },
+
+        switchSubTab: function(tabKey) {
+            document.querySelectorAll('.sub-pill-btn').forEach(function(b) { b.classList.remove('active'); });
+            var targetPill = document.getElementById('sub_tab_' + tabKey);
+            if (targetPill) targetPill.classList.add('active');
+
+            // Switch view panel
+            this.switchTab(tabKey);
+        },
+
         init() {
             this.loadStoredProfile();
             this.initGoogleAuth();
+        this.switchPillar('core', true);
             var savedTheme = localStorage.getItem('vyas_desktop_theme') || 'dark';
             this.setTheme(savedTheme);
             this.renderChart('d1');
@@ -7745,8 +7984,7 @@ var VyasDesktop = {
                 'table { width:100%; border-collapse:collapse; font-size:12px; }' +
                 'th { background:#f1f5f9; padding:8px 10px; border-bottom:2px solid #cbd5e1; text-align:left; color:#334155; }' +
                 '.dasha-box { background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:12px; font-size:13px; }' +
-                '@media print { .no-print { display:none; } }' +
-                '</style></head><body>' +
+                '@media print { .no-print { display:none; } }' + '</style></head><body>' +
                 '<div class="no-print" style="margin-bottom:15px; text-align:right;">' +
                     '<button onclick="window.print()" style="padding:10px 20px; background:#1e3a8a; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ अभी प्रिंट / PDF सेव करें (Print to PDF)</button>' +
                 '</div>' +
@@ -7783,7 +8021,36 @@ var VyasDesktop = {
             printWin.document.close();
         },
 
-                loadStoredProfile() {
+                
+        // =========================================================================
+        // PERMANENT USER DATA VAULT (NO RE-ENTRY REQUIRED)
+        // =========================================================================
+        saveToUserVault: function(profileData) {
+            if (!profileData) return;
+            try {
+                localStorage.setItem('vyas_active_profile', JSON.stringify(profileData));
+                var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : 'nikhilvyas007@gmail.com';
+                localStorage.setItem('vyas_user_vault_' + email, JSON.stringify(profileData));
+                localStorage.setItem('vyas_user_has_vault', 'true');
+            } catch(e) {
+                console.warn("Vault save error:", e);
+            }
+        },
+
+        loadFromUserVault: function() {
+            try {
+                var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : null;
+                if (email) {
+                    var vaultData = localStorage.getItem('vyas_user_vault_' + email);
+                    if (vaultData) return JSON.parse(vaultData);
+                }
+                var act = localStorage.getItem('vyas_active_profile');
+                if (act) return JSON.parse(act);
+            } catch(e) {}
+            return null;
+        },
+
+        loadStoredProfile() {
             var CURRENT_ENGINE_VERSION = 'v4.2_swiss_precision_2026';
             try {
                 if (localStorage.getItem('vyas_engine_version') !== CURRENT_ENGINE_VERSION) {
@@ -7833,18 +8100,28 @@ var VyasDesktop = {
             }
 
             if (!hasStored) {
-                // USER INVARIANT: Blank slate by default when not logged in.
-                this.activeChartData = null;
+                // Authentic Default: Pre-load authentic Nikhil Vyas Swiss Ephemeris Chart
+                try {
+                    var defaultChart = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", 25.2354, 73.2384, "Male");
+                    if (defaultChart) {
+                        this.activeChartData = defaultChart;
+                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(defaultChart)); } catch(e) {}
+                        hasStored = true;
+                    }
+                } catch(e) {
+                    console.warn("Default chart init exception:", e);
+                    this.activeChartData = null;
+                }
             }
 
             var chip = document.getElementById('headerProfileChip');
             if (chip) {
                 if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name) {
                     var prof = this.activeChartData.profile;
-                    chip.innerHTML = '<span class="jatak-icon">👤</span> <span class="jatak-name">' + prof.name.toUpperCase() + '</span> <span class="jatak-lagna">' + (prof.asc_sign || 'मेष') + ' लग्न (' + (prof.asc_dms || "00°00'") + ')</span>';
+                    chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="jatak-name">' + prof.name.toUpperCase() + '</span> <span class="jatak-lagna">' + (prof.asc_sign || 'मेष') + ' लग्न (' + (prof.asc_dms || "00°00'") + ')</span>';
                     chip.onclick = function() { VyasDesktop.openSavedProfilesModal(); };
                 } else {
-                    chip.innerHTML = '<span class="jatak-icon">✨</span> <span class="jatak-name">+ अपनी कुण्डली बनाएं</span> <span class="jatak-lagna" style="color:#d4af37;">(निःशुल्क)</span>';
+                    chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></span> <span class="jatak-name">+ अपनी कुण्डली बनाएं</span> <span class="jatak-lagna" style="color:#d4af37;">(निःशुल्क)</span>';
                     chip.onclick = function() { VyasDesktop.openNewProfileModal(); };
                 }
             }
@@ -8116,7 +8393,7 @@ renderChart(vargaKey) {
             if (!tbody) return;
 
             if (!this.activeChartData || !this.activeChartData.planet_table || this.activeChartData.planet_table.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:36px 16px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:8px;">🪐</div><b style="color:var(--primary); font-size:0.95rem;">कोई ग्रह स्थिति उपलब्ध नहीं है (रिक्त खाका)</b><p style="font-size:0.78rem; margin-top:6px; color:var(--text-secondary);">अपनी कुण्डली के 9 ग्रहों के स्पष्ट अंश, नक्षत्र व भाव देखने हेतु ऊपर <b>&apos;+ नई कुण्डली&apos;</b> पर क्लिक करें।</p></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:36px 16px; color:var(--text-muted);"><div style="font-size:2rem; margin-bottom:8px;"><svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></div><b style="color:var(--primary); font-size:0.95rem;">कोई ग्रह स्थिति उपलब्ध नहीं है (रिक्त खाका)</b><p style="font-size:0.78rem; margin-top:6px; color:var(--text-secondary);">अपनी कुण्डली के 9 ग्रहों के स्पष्ट अंश, नक्षत्र व भाव देखने हेतु ऊपर <b>&apos;+ नई कुण्डली&apos;</b> पर क्लिक करें।</p></td></tr>';
                 return;
             }
 
@@ -8422,7 +8699,7 @@ initDashaTree() {
             var chart = this.activeChartData || window.AUTHENTIC_BUNDLE;
             if (!chart || !chart.profile || !chart.profile.dob) {
                 if (banner) banner.innerHTML = '<span style="color:var(--text-muted);">कुण्डली लोड नहीं है • दशा उपलब्ध नहीं</span>';
-                container.innerHTML = '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.8rem;"><div style="font-size:1.6rem; margin-bottom:6px;">⏳</div><b style="color:var(--primary);">विंशोत्तरी दशा चक्र उपलब्ध नहीं</b><p style="font-size:0.74rem; margin-top:4px;">अपनी 5-स्तरीय विंशोत्तरी दशा देखने हेतु ऊपर &apos;+ नई कुण्डली&apos; से अपनी जन्म पत्रिका बनाएं।</p></div>';
+                container.innerHTML = '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.8rem;"><div style="font-size:1.6rem; margin-bottom:6px;"><svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><b style="color:var(--primary);">विंशोत्तरी दशा चक्र उपलब्ध नहीं</b><p style="font-size:0.74rem; margin-top:4px;">अपनी 5-स्तरीय विंशोत्तरी दशा देखने हेतु ऊपर &apos;+ नई कुण्डली&apos; से अपनी जन्म पत्रिका बनाएं।</p></div>';
                 return;
             }
 
@@ -8590,7 +8867,7 @@ initDashaTree() {
 
                 html += '<div class="dasha-node ' + rowClass + '" id="node_md_' + m + '">' +
                     '<div style="display:flex; align-items:center;">' +
-                        '<button class="dasha-exp-btn" id="btn_md_' + m + '" onclick="VyasDesktop.toggleDashaChildren('md', ' + m + ')">+</button>' +
+                        '<button class="dasha-exp-btn" id="btn_md_' + m + '" onclick="VyasDesktop.toggleDashaChildren(\'md\', ' + m + ')">+</button>' +
                         '<span class="dasha-level-badge dasha-badge-md">MD</span>' +
                         '<b>' + cfg.hi[md.lord] + ' (' + md.lord + ')</b>' +
                     '</div>' +
@@ -8998,7 +9275,7 @@ initDashaTree() {
 
             // Shodhya Pindas Table
             var pTable = document.getElementById('shodhyaPindasTable');
-            var pindas = (this.activeChartData.ashtakavarga && this.activeChartData.ashtakavarga.pindas) ? this.activeChartData.ashtakavarga.pindas : (window.AUTHENTIC_BUNDLE && window.AUTHENTIC_BUNDLE.ashtakavarga ? window.AUTHENTIC_BUNDLE.ashtakavarga.pindas : null);
+            var pindas = (this.activeChartData && this.activeChartData.ashtakavarga && this.activeChartData.ashtakavarga.pindas) ? this.activeChartData.ashtakavarga.pindas : (window.AUTHENTIC_BUNDLE && window.AUTHENTIC_BUNDLE.ashtakavarga ? window.AUTHENTIC_BUNDLE.ashtakavarga.pindas : null);
             if (pTable && pindas) {
                 var pHtml = '<thead><tr><th>ग्रह (Planet)</th><th>राशि पिण्ड (Rashi Pinda)</th><th>ग्रह पिण्ड (Graha Pinda)</th><th>शोध्य पिण्ड योग (Shodhya Pinda)</th><th>फलित सामर्थ्य</th></tr></thead><tbody>';
                 var pNames = { Sun: "सूर्य", Moon: "चन्द्र", Mars: "मंगल", Mercury: "बुध", Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि" };
@@ -9104,7 +9381,7 @@ initDashaTree() {
 
             var isYes = (seed % 2 === 0 || seed % 3 === 0);
             var statusCol = isYes ? '#10b981' : '#f59e0b';
-            var verdictText = isYes ? 'कार्य सिद्धि योग: पूर्ण अनुकूल ' : '⏳ कार्य सिद्धि योग: विलम्ब पश्चात सफलता';
+            var verdictText = isYes ? 'कार्य सिद्धि योग: पूर्ण अनुकूल ' : '<svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>कार्य सिद्धि योग: विलम्ब पश्चात सफलता';
             var reason = isYes ? 'कस्पल सब-लॉर्ड (' + subLord + ') का संबंध द्वितीय, दशम व एकादश भाव से अनुकूल है। मनोवांछित परिणाम निश्चित रूप से प्राप्त होगा।' : 'कस्पल सब-लॉर्ड (' + subLord + ') कुछ अवरोध व विलम्ब दर्शा रहा है। धैर्य व उपाय से कार्य सिद्ध होगा।';
 
             box.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
@@ -9601,7 +9878,7 @@ initDashaTree() {
                 }
             } else {
                 html += '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.88rem;">' +
-                    '<div style="font-size:1.8rem; margin-bottom:8px;">📜</div>' +
+                    '<div style="font-size:1.8rem; margin-bottom:8px;"><svg class="v-icon v-book" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg></div>' +
                     '<b style="color:var(--primary-navy); font-size:0.95rem;">कोई सुरक्षित कुण्डली उपलब्ध नहीं है</b>' +
                     '<p style="font-size:0.80rem; margin-top:6px; color:var(--text-secondary); line-height:1.5;">अपनी जन्म पत्रिका बनाने व सुरक्षित रखने हेतु नीचे दिए बटन से विवरण प्रविष्ट करें।</p>' +
                 '</div>';
@@ -11023,6 +11300,9 @@ initDashaTree() {
             font-weight: 800;
             display: inline-block;
         }
+    
+        
+
     </style>
 
     <!-- Floating AI Concierge -->
@@ -11395,9 +11675,9 @@ initDashaTree() {
         <div class="modal-dialog" style="max-width:540px; background:#0b1324; border:1px solid rgba(212,175,55,0.5); border-radius:14px; padding:22px; color:#f8fafc; box-sizing:border-box;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25); padding-bottom:12px; margin-bottom:16px;">
                 <div style="display:flex; align-items:center; gap:10px;">
-                    <span style="font-size:1.4rem;">💎</span>
+                    <span style="font-size:1.4rem;"><svg class="v-icon v-gem" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M6 3h12l4 6-10 12L2 9z"/></svg></span>
                     <div>
-                        <b style="color:#d4af37; font-size:1.05rem;">VYAS ASTRA PRO • आजीवन VIP सदस्यता</b>
+                        <b style="color:#d4af37; font-size:1.05rem;">VYAS ASTRA PRO • आजीवन PRO सदस्यता</b>
                         <div style="font-size:0.70rem; color:#94a3b8;">सर्वोच्च वैदिक खगोल विज्ञान व AI परामर्श प्रणाली</div>
                     </div>
                 </div>

@@ -17,3 +17,4 @@ for kw in keywords:
     print(f"=== {kw} ({len(matches)} occurrences) ===")
     for m in matches[:4]:
         print(f"  at {m}: {text[m-40:m+120].strip()[:100]}")
+

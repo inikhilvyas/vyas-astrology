@@ -292,3 +292,4 @@ if os.path.exists('sw.js'):
     print("✓ Bumped sw.js CACHE_NAME to vyas-astra-v2026-v4-full-precision-8")
 
 print("\n✓ COMPLETED MASTER DYNAMIC DASHA & CACHE-BUSTING OVERHAUL!")
+

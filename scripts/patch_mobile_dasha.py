@@ -208,3 +208,4 @@ for path in ['mobile/index.html', 'android_app/app/src/main/assets/mobile/index.
         print(f'✓ Successfully updated {path}')
     else:
         print(f'Original block not found in {path}')
+

@@ -6,3 +6,4 @@ for fn in ['index.html', 'mobile/index.html']:
     print(f"=== {fn}: {len(matches)} removeItem occurrences ===")
     for m in matches:
         print(" ", text[m-50:m+150].strip().replace('\n', ' '))
+

@@ -6,3 +6,4 @@ if m == -1:
     m = text.find('computeMathematicalKundli(name')
 print(f"definition found at {m}")
 print(text[m:m+5000])
+

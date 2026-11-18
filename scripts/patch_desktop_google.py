@@ -271,3 +271,4 @@ def update_desktop():
     print("index.html written")
 
 update_desktop()
+

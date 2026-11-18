@@ -6,3 +6,4 @@ matches = [m.start() for m in re.finditer(r'computeMathematicalKundli', text)]
 print(f"computeMathematicalKundli in mobile/index.html: {len(matches)}")
 for m in matches:
     print(text[m-50:m+150])
+

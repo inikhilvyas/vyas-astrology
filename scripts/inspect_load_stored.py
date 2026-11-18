@@ -6,3 +6,4 @@ if idx == -1:
     idx = text.find('loadStoredProfile()')
 print(f"loadStoredProfile found at {idx}")
 print(text[idx:idx+2500])
+

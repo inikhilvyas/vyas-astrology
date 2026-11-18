@@ -35,7 +35,11 @@ const mockDoc = {
         return [];
     },
     querySelector: () => null,
-    documentElement: { setAttribute: () => {} }
+    documentElement: {
+        _attrs: {},
+        setAttribute: (name, value) => { mockDoc.documentElement._attrs[name] = value; },
+        getAttribute: (name) => mockDoc.documentElement._attrs[name] || null
+    }
 };
 
 const mockWindow = {
@@ -84,4 +88,5 @@ for (const t of tabs) {
         console.error(`  ❌ ERROR switching tab '${t}' (loaded chart):`, e.message);
     }
 }
+
 

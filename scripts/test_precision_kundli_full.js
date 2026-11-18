@@ -386,3 +386,4 @@ console.log("Jaimini Karakas:");
 for (let k of nikhilChart.jaimini.karakas) {
     console.log(`  ${k.abbr}: ${k.planet} (${k.sign} ${k.deg})`);
 }
+
