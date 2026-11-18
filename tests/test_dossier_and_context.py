@@ -81,3 +81,4 @@ def test_aspects_cast_and_received(sample_chart_context):
     assert 1 in mars_d.aspects_cast_to_houses
     assert 4 in mars_d.aspects_cast_to_houses
     assert 5 in mars_d.aspects_cast_to_houses
+

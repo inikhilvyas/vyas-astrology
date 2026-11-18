@@ -137,3 +137,4 @@ def test_calculation_metadata():
     assert meta["ayanamsa"] == "Lahiri"
     assert meta["precision"] == "double_precision_sub_arcsecond"
     assert meta["authoritative_verified"] is True
+

@@ -429,3 +429,4 @@ def build_normalized_chart_context(
         house_dossiers=house_dossiers,
         quality_flags=quality_flags
     )
+

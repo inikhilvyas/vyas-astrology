@@ -994,8 +994,8 @@ LIFE_SECTIONS_EN = {
         "text": "Outdoor exploration, scenic travel, and educational expeditions invigorate your spirit. You have a profound appetite for literary research, technological exploration, and philosophy. Immersing in intellectual hobbies provides rejuvenation and emotional balance."
     },
     "finance": {
-        "title": "Wealth Accumulation & Financial Destiny",
-        "text": "You are destined to be the master architect of your own fortune. Your shrewd commercial intellect and intuitive timing unlock abundant avenues for asset creation. Substantial wealth accrues through immovable property and systematic investments. Restraining impulsive expenses guarantees lasting financial sovereignty."
+        "title": "Wealth Accumulation & Financial Potential",
+        "text": "Your horoscope indicates strong natural potential for systematic asset creation through commercial acumen and disciplined timing. Favourable planetary alignments support growth through immovable property and prudent investments. By practicing mindful expenditure and risk mitigation, lasting financial stability and prosperity can be cultivated over time."
     },
     "education": {
         "title": "Education, Intellect & Higher Learning",
@@ -1075,7 +1075,7 @@ PAGE_56_MASTER_SYNTHESIS_EN = """
 
     <div style="font-weight: bold; font-size: 9.5pt; color: #8b0000; margin-bottom: 3px;">2. Golden Milestones & Auspicious Dasha Windows</div>
     <p style="font-size: 8.5pt; margin-bottom: 6px;">
-        Auspicious milestones are highlighted in the 28th, 36th, 42nd, and 48th years. Systematic perseverance undertaken during the running planetary periods guarantees commanding status, substantial immovable assets, and enduring societal reverence.
+        Auspicious milestones are highlighted in the 28th, 36th, 42nd, and 48th years. Systematic perseverance and prudent decisions undertaken during favorable planetary periods foster commanding status, immovable assets, and enduring societal respect.
     </p>
 
     <div style="font-weight: bold; font-size: 9.5pt; color: #8b0000; margin-bottom: 3px;">3. Prescribed Daily Practices & Core Life Rules</div>

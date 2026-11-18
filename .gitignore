@@ -28,6 +28,14 @@ vyas_users.db
 # contains a single stable package name (`chromium`) which is present in
 # every Debian release Streamlit Cloud has shipped. Earlier crashes came
 # from exotic names (chromium-driver, chromium-browser) -- do not re-add them.
-"old">
-# (placeholder)
+
+# Virtual environments & SDKs
+.venv311/
+AndroidDevsdk/
+temp_chrome_profile_*/
+
+# Large binaries & generated media
+ngrok.exe
+sample_report*.pdf
+page_*_rendered.png
 

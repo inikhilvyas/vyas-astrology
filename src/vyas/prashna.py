@@ -337,9 +337,20 @@ def detect_mook_prashna_intent(
     top_pred = scored_domains[0]
     runner_up = scored_domains[1]
 
-    # Astrological Reasoning paragraph
+    # Astrological Reasoning & Evidence Grading (Phase D standard - zero arbitrary clamping)
     p_domain = top_pred["domain"]
-    confidence_pct = min(96, max(75, int(top_pred["score"] * 1.1)))
+    raw_s = top_pred["score"]
+    if raw_s >= 40.0:
+        c_tier = "C3"
+        c_badge = "🔴 [C3] त्रि-संयोग सिद्ध (High Evidence Convergence)"
+    elif raw_s >= 20.0:
+        c_tier = "C2"
+        c_badge = "🟡 [C2] द्वि-संयोग प्रवृत्त (Moderate Indication)"
+    else:
+        c_tier = "C1"
+        c_badge = "🟠 [C1] एकल संकेत (Preliminary Indication)"
+
+    confidence_pct = int(min(95, max(15, raw_s)))
 
     reasoning_text = (
         f"केरलीय [प्रश्न मार्ग] एवं [के.पी. मूक प्रश्न सिद्धांत] के अनुसार: "
@@ -356,6 +367,8 @@ def detect_mook_prashna_intent(
         "top_domain": p_domain,
         "top_score": top_pred["score"],
         "confidence_pct": confidence_pct,
+        "confidence_tier": c_tier,
+        "confidence_badge": c_badge,
         "reasoning_hi": reasoning_text,
         "reasons_list": top_pred["reasons"],
         "runner_up_domain": runner_up["domain"],

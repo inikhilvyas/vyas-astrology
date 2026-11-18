@@ -47,4 +47,13 @@ Write-Output "Pushing main to inikhil/main..."
 $res2 = git push $remoteUrl main:main 2>&1
 $res2 | ForEach-Object { $_ -replace $token, "[REDACTED]" }
 
-Write-Output "FINISHED PUSH TO INIKHIL MASTER AND MAIN!"
+$originUrl = "https://inikhilvyas:$token@github.com/vyasbilawas-ctrl/vyas-astrology.git"
+Write-Output "Pushing main to origin/main..."
+$res3 = git push $originUrl main:main 2>&1
+$res3 | ForEach-Object { $_ -replace $token, "[REDACTED]" }
+
+Write-Output "Pushing main to origin/master..."
+$res4 = git push $originUrl main:master 2>&1
+$res4 | ForEach-Object { $_ -replace $token, "[REDACTED]" }
+
+Write-Output "FINISHED PUSH TO BOTH INIKHIL AND ORIGIN!"

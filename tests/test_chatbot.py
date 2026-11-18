@@ -50,6 +50,8 @@ def test_career_followup_aage_kya(sample_chart_and_dasha):
     assert "उपाय" in reply
 
 def test_ai_engine_live(sample_chart_and_dasha):
+    if not os.environ.get("GEMINI_API_KEY"):
+        pytest.skip("GEMINI_API_KEY not set")
     chart, cur_dasha, birth_info = sample_chart_and_dasha
     # Test live AI call with force_classical=False
     os.environ.pop("VYAS_TEST_OFFLINE", None)
