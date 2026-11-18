@@ -47,8 +47,9 @@ LEVEL_NAMES = {
 
 class VimshottariDasha:
     def __init__(self, moon_longitude: float, birth_date: datetime):
+        from vyas.ephem import ensure_utc
         self.moon_longitude = moon_longitude % 360.0
-        self.birth_date = birth_date
+        self.birth_date = ensure_utc(birth_date, "birth_date", assume_tz_hours=0.0) if isinstance(birth_date, datetime) else birth_date
         
         # Calculate birth nakshatra and balance
         nakshatra_idx = int(self.moon_longitude // constants.NAKSHATRA_SPAN) % 27

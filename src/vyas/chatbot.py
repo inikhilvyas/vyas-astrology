@@ -221,18 +221,8 @@ class VyasChatbotEngine:
             speed = getattr(tp, "speed", 1.0) if tp else 1.0
 
             if lon is None:
-                try:
-                    from vyas.ephem import sidereal_lon
-                    lon = sidereal_lon(p_name, now_utc)
-                except Exception:
-                    # Astronomical ground truth defaults for 2026 transits
-                    _fallback_2026_lons = {
-                        "Saturn": 350.0,  # Pisces / मीन
-                        "Jupiter": 65.0,  # Gemini / मिथुन
-                        "Rahu": 315.0,    # Aquarius / कुंभ
-                        "Ketu": 135.0,    # Leo / सिंह
-                    }
-                    lon = _fallback_2026_lons.get(p_name, 0.0)
+                from vyas.ephem import sidereal_lon
+                lon = sidereal_lon(p_name, now_utc)
 
             s_idx = int(lon // 30) % 12
             deg_in_sign = round(lon % 30, 2)

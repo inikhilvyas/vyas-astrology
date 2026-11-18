@@ -95,10 +95,7 @@ def next_ingress(name: str, start_utc: datetime, max_days: int = 1200) -> dateti
 
 def transits(at_local: datetime, tz_hours: float, natal_moon_lon: float,
              natal_asc_lon: float, with_ingress: bool = True) -> list[TransitRow]:
-    tz = timezone(timedelta(hours=tz_hours))
-    if at_local.tzinfo is None:
-        at_local = at_local.replace(tzinfo=tz)
-    at_u = at_local.astimezone(timezone.utc)
+    at_u = ephem.ensure_utc(at_local, "at_local", assume_tz_hours=tz_hours)
     pos = ephem.planet_positions(at_u)
 
     moon_sign = int(natal_moon_lon // 30)
@@ -173,10 +170,7 @@ def get_current_transit_positions(at_local: datetime = None, tz_hours: float = 5
     from .chart import PlanetState
     if at_local is None:
         at_local = datetime.now()
-    tz = timezone(timedelta(hours=tz_hours))
-    if at_local.tzinfo is None:
-        at_local = at_local.replace(tzinfo=tz)
-    at_u = at_local.astimezone(timezone.utc)
+    at_u = ephem.ensure_utc(at_local, "at_local", assume_tz_hours=tz_hours)
     pos = ephem.planet_positions(at_u)
     return {name: PlanetState(name=name, longitude=p.longitude, speed=p.speed) for name, p in pos.items()}
 

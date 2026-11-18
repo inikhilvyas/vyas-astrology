@@ -8,7 +8,7 @@ Mantra, Tantra, Yantra & Daan).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from typing import Dict, List, Optional, Any, Tuple
 
 from . import constants as C
@@ -186,17 +186,19 @@ def compute_triple_convergence_predictions(
     3. Double Transit of Jupiter (Grace) & Saturn (Karmic Manifestation)
     """
     asc_sign = chart.ascendant_sign
-    now_year = (current_dt or datetime.now()).year
+    target_dt = current_dt or datetime.now(timezone.utc)
+    now_year = target_dt.year
 
-    # Approximate Jupiter and Saturn transits if not supplied
-    jup_transit_sign = (now_year - 2024 + 1) % 12  # Taurus/Gemini approximate sidereal
-    sat_transit_sign = (now_year - 2023 + 10) % 12 # Aquarius/Pisces approximate sidereal
-
-    if transit_positions:
-        if "Jupiter" in transit_positions:
-            jup_transit_sign = int(transit_positions["Jupiter"] // 30) % 12
-        if "Saturn" in transit_positions:
-            sat_transit_sign = int(transit_positions["Saturn"] // 30) % 12
+    # Compute actual astronomical transit positions if not supplied
+    if transit_positions and "Jupiter" in transit_positions and "Saturn" in transit_positions:
+        jup_transit_sign = int(transit_positions["Jupiter"] // 30) % 12
+        sat_transit_sign = int(transit_positions["Saturn"] // 30) % 12
+    else:
+        from vyas.ephem import sidereal_lon
+        j_lon = transit_positions.get("Jupiter") if transit_positions else None
+        s_lon = transit_positions.get("Saturn") if transit_positions else None
+        jup_transit_sign = int((j_lon if j_lon is not None else sidereal_lon("Jupiter", target_dt)) // 30) % 12
+        sat_transit_sign = int((s_lon if s_lon is not None else sidereal_lon("Saturn", target_dt)) // 30) % 12
 
     # Classical Aspects:
     # Jupiter aspects 5th, 7th, 9th from its sign (and conjunct 1st)

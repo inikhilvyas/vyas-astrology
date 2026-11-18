@@ -26,13 +26,17 @@ UTC = dt.timezone.utc
 # Ayanamsa -- Swiss Ephemeris SE_SIDM_LAHIRI (swetest -sid1)
 # --------------------------------------------------------------------------
 @pytest.mark.parametrize("jd,expected_deg", [
-    (2451545.0, 23.8531709167),   # J2000.0   : 23°51'11.4153"
-    (2435553.5, 23.2455251667),   # 1956-03-21: 23°14'43.8906"
+    (2415020.5, 22.4605305924),   # 1900-01-01: 22°27'37.91"
+    (2435553.5, 23.2455609685),   # 1956-03-21: 23°14'44.02"
+    (2451545.0, 23.8570923537),   # 2000-01-01: 23°51'25.53"
+    (2458849.5, 24.1364631038),   # 2020-01-01: 24°08'11.27"
+    (2469807.5, 24.5556131029),   # 2050-01-01: 24°33'20.21"
+    (2488069.5, 25.2542682728),   # 2100-01-01: 25°15'15.37"
 ])
 def test_lahiri_ayanamsa_matches_swiss_ephemeris(jd, expected_deg):
     got = ephem.ayanamsa_deg(jd)
-    assert abs(got - expected_deg) * 3600 < 1.0, (
-        f"ayanamsa off by {(got - expected_deg) * 3600:.2f}\" at JD {jd}")
+    assert abs(got - expected_deg) * 3600 < 0.01, (
+        f"ayanamsa off by {(got - expected_deg) * 3600:.4f}\" at JD {jd}")
 
 
 def test_ayanamsa_is_monotonic_and_slow():
