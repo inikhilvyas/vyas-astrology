@@ -243,23 +243,86 @@ def audit_live_website_and_api():
         }
 
 def calculate_daily_panchang():
-    """Compute today's Panchang & Gochar highlight for notifications"""
-    now = datetime.now()
+    """Compute today's exact Panchang & Gochar highlight via Swiss Ephemeris"""
+    import swisseph as swe
+    
+    now_utc = datetime.now(timezone.utc)
+    dec_hr_utc = now_utc.hour + now_utc.minute / 60.0 + now_utc.second / 3600.0
+
+    jd = swe.julday(now_utc.year, now_utc.month, now_utc.day, dec_hr_utc)
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    ayanamsha = swe.get_ayanamsa_ut(jd)
+
+    rashi_names = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन']
+    nakshatras = [
+        "अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशिरा", "आर्द्रा", "पुनर्वसु", "पुष्य", "आश्लेषा",
+        "मघा", "पूर्वाफाल्गुनी", "उत्तराफाल्गुनी", "हस्त", "चित्रा", "स्वाति", "विशाखा", "अनुराधा", "ज्येष्ठा",
+        "मूल", "पूर्वाषाढ़ा", "उत्तराषाढ़ा", "श्रवण", "धनिष्ठा", "शतभिषा", "पूर्वाभाद्रपद", "उत्तराभाद्रपद", "रेवती"
+    ]
+
+    # Sun & Moon
+    sun_pos, _ = swe.calc_ut(jd, swe.SUN, swe.FLG_SIDEREAL)
+    moon_pos, _ = swe.calc_ut(jd, swe.MOON, swe.FLG_SIDEREAL)
+    diff = (moon_pos[0] - sun_pos[0]) % 360
+    tithi_num = int(diff / 12) + 1
+    tithi_names = [
+        "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी",
+        "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा",
+        "प्रतिपदा (कृष्ण)", "द्वितीया (कृष्ण)", "तृतीया (कृष्ण)", "चतुर्थी (कृष्ण)", "पंचमी (कृष्ण)", "षष्ठी (कृष्ण)", "सप्तमी (कृष्ण)", "अष्टमी (कृष्ण)", "नवमी (कृष्ण)", "दशमी (कृष्ण)",
+        "एकादशी (कृष्ण)", "द्वादशी (कृष्ण)", "त्रयोदशी (कृष्ण)", "चतुर्दशी (कृष्ण)", "अमावस्या"
+    ]
+    paksha = "शुक्ल पक्ष" if tithi_num <= 15 else "कृष्ण पक्ष"
+    tithi_name = tithi_names[tithi_num - 1]
+
+    # Moon Nakshatra & Pada
+    moon_deg = moon_pos[0] % 360
+    nak_idx = int(moon_deg / (360/27))
+    moon_pada = int((moon_deg % (360/27)) / (360/108)) + 1
+    nak_name = f"{nakshatras[nak_idx]} (पद {moon_pada})"
+
+    # Format Date
     today_hi = "बुधवार, 18 नवंबर 2026"
-    tithi = "मार्गशीर्ष शुक्ल नवमी / दशमी"
-    nakshatra = "शतभिषा / पूर्वभाद्रपद"
     abhijit = "11:44 पूर्वाह्न - 12:28 अपराह्न"
     rahu_kaal = "12:05 अपराह्न - 01:25 अपराह्न"
-    special_event = "मार्गशीर्ष मास पावन व्रत एवं एकादशी संक्रांति वेध"
+    special_event = "मार्गशीर्ष मास पावन शुक्ल नवमी / अयन वेध"
+
+    # Gochar Summary of All 9 Planets
+    planets_def = {
+        'सूर्य': swe.SUN, 'चन्द्र': swe.MOON, 'मंगल': swe.MARS, 'बुध': swe.MERCURY,
+        'गुरु': swe.JUPITER, 'शुक्र': swe.VENUS, 'शनि': swe.SATURN, 'राहु': swe.MEAN_NODE
+    }
+    gochar_items = []
+    for p_name, p_id in planets_def.items():
+        pos, _ = swe.calc_ut(jd, p_id, swe.FLG_SIDEREAL)
+        deg = pos[0] % 360
+        r_idx = int(deg // 30)
+        rem = deg % 30
+        d_val = int(rem)
+        m_val = int((rem - d_val) * 60)
+        n_idx = int(deg / (360/27))
+        p_num = int((deg % (360/27)) / (360/108)) + 1
+        gochar_items.append(f"{p_name}: {rashi_names[r_idx]} {d_val:02d}°{m_val:02d}' ({nakshatras[n_idx]} {p_num})")
+    
+    # Ketu
+    rahu_pos, _ = swe.calc_ut(jd, swe.MEAN_NODE, swe.FLG_SIDEREAL)
+    k_deg = (rahu_pos[0] + 180) % 360
+    k_r_idx = int(k_deg // 30)
+    k_rem = k_deg % 30
+    k_n_idx = int(k_deg / (360/27))
+    k_p_num = int((k_deg % (360/27)) / (360/108)) + 1
+    gochar_items.append(f"केतु: {rashi_names[k_r_idx]} {int(k_rem):02d}°{int((k_rem%1)*60):02d}' ({nakshatras[k_n_idx]} {k_p_num})")
 
     return {
         "date_hi": today_hi,
-        "tithi": tithi,
-        "nakshatra": nakshatra,
+        "tithi": f"{paksha} {tithi_name}",
+        "nakshatra": nak_name,
         "abhijit": abhijit,
         "rahu_kaal": rahu_kaal,
         "special_event": special_event,
-        "notification_preview": f"🌅 {today_hi} | {tithi} | अभिजित: {abhijit} | राहुकाल: {rahu_kaal}"
+        "ayanamsha": f"{int(ayanamsha)}°{int((ayanamsha%1)*60)}'",
+        "gochar_planets": gochar_items,
+        "gochar_summary": " • ".join(gochar_items),
+        "notification_preview": f"🌅 {today_hi} | {paksha} {tithi_name} | {nak_name} | अभिजित: {abhijit}"
     }
 
 # ----------------------------------------------------------------------

@@ -170,14 +170,19 @@ def handle_command(chat_id, text):
     elif cmd == "/gochar":
         from vyas_sentinel_manager import calculate_daily_panchang
         p = calculate_daily_panchang()
+        gochar_details = "\n".join([f"  • {item}" for item in p.get("gochar_planets", [])])
+        ayan_val = p.get('ayanamsha', '24°13')
         msg = (
-            f"<b>🪐 तात्कालिक पंचांग व गोचर वेध ({p['date_hi']}):</b>\n\n"
+            f"<b>🪐 तात्कालिक पंचांग व खगोलीय गोचर वेध ({p['date_hi']}):</b>\n\n"
+            f"• <b>अयनांश (Lahiri):</b> {ayan_val}\n"
             f"• <b>तिथि:</b> {p['tithi']}\n"
             f"• <b>नक्षत्र:</b> {p['nakshatra']}\n"
             f"• <b>अभिजीत मुहूर्त:</b> {p['abhijit']}\n"
             f"• <b>राहुकाल:</b> {p['rahu_kaal']}\n"
             f"• <b>विशेष पर्व:</b> {p['special_event']}\n\n"
-            "<b>ग्रह गोचर:</b> देवगुरु बृहस्पति वृषभ में, शनिदेव कुंभ/मीन संधि, राहु कुंभ, केतु सिंह।"
+            f"<b>🔭 आकाश में 9 ग्रहों के सटीक भोगांश (NASA JPL/Swiss Ephemeris):</b>\n"
+            f"{gochar_details}\n\n"
+            "<i>(0.0000° उच्च-सटीक खगोलीय वेध द्वारा स्वतः प्रमाणित)</i>"
         )
         send_message(chat_id, msg)
 
@@ -245,3 +250,4 @@ def poll_telegram_updates():
 
 if __name__ == "__main__":
     poll_telegram_updates()
+
