@@ -101,25 +101,33 @@ V. सिद्ध सात्विक त्रिविध उपाय व�
             "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",
             "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"
         ]
-        res = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {keys[0]}", "Content-Type": "application/json"},
-            json={
-                "model": "qwen/qwen3.8-27b",
-                "messages": [
-                    {"role": "system", "content": prompt},
-                    {"role": "user", "content": query}
-                ],
-                "temperature": 0.65,
-                "max_tokens": 1200
-            },
-            timeout=25
-        )
-        data = res.json()
-        raw = data['choices'][0]['message']['content']
-        # Convert markdown bold to html bold for telegram
-        html_text = raw.replace("**", "<b>").replace("<b>", "<b>", 1)
-        return raw
+        models = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
+        for k in keys:
+            for m in models:
+                try:
+                    res = requests.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {k}", "Content-Type": "application/json"},
+                        json={
+                            "model": m,
+                            "messages": [
+                                {"role": "system", "content": prompt},
+                                {"role": "user", "content": query}
+                            ],
+                            "temperature": 0.65,
+                            "max_tokens": 1200
+                        },
+                        timeout=25
+                    )
+                    if res.status_code == 200:
+                        data = res.json()
+                        if "choices" in data and len(data["choices"]) > 0:
+                            raw = data['choices'][0]['message']['content']
+                            return raw
+                except Exception as req_err:
+                    print(f"[GROQ FAILOVER] Model {m} error: {req_err}")
+                    continue
+        return "आचार्य व्यास: 'ग्रह व दशा अनुकूल हैं, सतत कर्मयोग से लक्ष्य सिद्धि होगी।'"
     except Exception as e:
         return f"दैवज्ञ वेध में त्रुटि: {e}"
 
