@@ -39,3 +39,13 @@ ngrok.exe
 sample_report*.pdf
 page_*_rendered.png
 
+# Heavy PDF books & raw downloads (tracked locally / in knowledge bank database)
+books_downloaded/
+books/*.pdf
+books/**/*.pdf
+books/*.docx
+books/**/*.docx
+books/ASTROLOGY-BOOKS-DATABASE-master/
+books_converted/
+
+

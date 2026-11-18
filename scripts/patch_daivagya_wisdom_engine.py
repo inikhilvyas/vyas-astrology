@@ -86,3 +86,4 @@ def patch_file(filepath, is_mobile=False):
 if __name__ == '__main__':
     patch_file('index.html')
     patch_file('mobile/index.html', is_mobile=True)
+

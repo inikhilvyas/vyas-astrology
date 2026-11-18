@@ -8,3 +8,4 @@ s3 = scripts[3]
 lines = s3.split('\n')
 for i in range(max(0, 5140), min(len(lines), 5160)):
     print(f'{i+1}: {repr(lines[i])}')
+

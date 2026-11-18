@@ -420,3 +420,4 @@ with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
 
 print("SUCCESS: index.html overhauled!")
+

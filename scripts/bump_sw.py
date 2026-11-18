@@ -8,3 +8,4 @@ with open('sw.js', 'w', encoding='utf-8') as f:
     f.write(text)
 
 print("Bumped Service Worker to v9!")
+

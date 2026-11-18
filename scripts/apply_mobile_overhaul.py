@@ -102,3 +102,4 @@ with open('mobile/index.html', 'w', encoding='utf-8') as f:
     f.write(html)
 
 print("SUCCESS: mobile/index.html overhauled!")
+

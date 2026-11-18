@@ -770,7 +770,48 @@ body {
 }
 
 </style>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer>
+    window.useCurrentMobileGPS = function(targetInputId) {
+        var input = document.getElementById(targetInputId);
+        if (!navigator.geolocation) {
+            alert("आपके मोबाइल में GPS उपलब्ध नहीं है।");
+            return;
+        }
+        if (input) input.placeholder = "GPS उपग्रह से लोकेशन प्राप्त हो रही है...";
+        navigator.geolocation.getCurrentPosition(async function(pos) {
+            var lat = pos.coords.latitude;
+            var lon = pos.coords.longitude;
+            try {
+                var res = await fetch("https://photon.komoot.io/reverse?lat=" + lat + "&lon=" + lon);
+                var data = await res.json();
+                var locName = "";
+                if (data && data.features && data.features.length > 0) {
+                    var p = data.features[0].properties;
+                    var place = p.name || p.city || p.locality || p.district || "ज्ञात स्थान";
+                    var state = p.state || "भारत";
+                    locName = place + ", " + state + " (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                } else {
+                    locName = "GPS स्थान (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                }
+                if (input) {
+                    input.value = locName;
+                    input.setAttribute("data-lat", lat);
+                    input.setAttribute("data-lon", lon);
+                }
+                alert("📍 GPS स्थान प्राप्त:\n" + locName);
+            } catch(e) {
+                if (input) {
+                    input.value = "GPS स्थान (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                    input.setAttribute("data-lat", lat);
+                    input.setAttribute("data-lon", lon);
+                }
+            }
+        }, function(err) {
+            alert("GPS अनुमति आवश्यक है।");
+        }, { enableHighAccuracy: true, timeout: 12000 });
+    };
+
+</script>
 </head>
 <body>
 
@@ -4558,7 +4599,7 @@ body {
             var dob = prof.dob || "";
             var tob = prof.tob || "";
             var city = prof.city || "";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल ➔ बुध";
 
             // Find planet placements
             var planets = {};
@@ -5298,7 +5339,7 @@ body {
             var prof = chart.profile;
             var name = prof.name || "निखिल व्यास";
             var lagna = prof.asc_sign || "मेष";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र (MD) ➔ शनि (AD) ➔ मंगल (PD)";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र (MD) ➔ शनि (AD) ➔ मंगल (PD) ➔ बुध (SD)";
             var intent = this.detectIntent(query);
 
             var greeting = "<b>ॐ नमः शिवाय।</b><br><br>" +
@@ -6686,7 +6727,7 @@ var VyasMobile = {
                 if (mDay) mDay.innerText = tRes.score;
                 if (mSub) { mSub.innerText = tRes.name; mSub.style.color = tRes.color; }
                 
-                var dashaChain = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल";
+                var dashaChain = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल ➔ बुध";
                 if (mDashaHdr) mDashaHdr.innerText = dashaChain;
 
                 if (mDhana) mDhana.innerText = "आपकी कुण्डली के अनुसार " + tRes.desc + "। आर्थिक लेन-देन में विवेक रखें।";
@@ -9096,13 +9137,13 @@ renderChart(chartKey) {
                         name: "NIKHIL VYAS",
                         dob: "1984-11-23",
                         tob: "16:51",
-                        city: "Falna, Pali, Rajasthan",
-                        lat: 25.2354,
-                        lon: 73.2384,
+                        city: "Pali, India (25.77°, 73.32°)",
+                        lat: 25.7700,
+                        lon: 73.3200,
                         gender: "Male",
                         asc_sign: "मेष",
                         asc_sign_en: "Aries",
-                        asc_dms: "23°27'09\"",
+                        asc_dms: "23°42'00\"",
                         asc_deg: 23.4525,
                         btr_rectified_tob: "16:51:35",
                         is_pro: true

@@ -17,3 +17,4 @@ vars_light = re.findall(r'\[data-theme=["\']?light["\']?\]\s*\{([^}]+)\}', text)
 if vars_light:
     print("\nLight theme variables sample:")
     print(vars_light[0][:300])
+

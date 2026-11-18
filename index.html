@@ -5534,7 +5534,7 @@ body {
             var dob = prof.dob || "";
             var tob = prof.tob || "";
             var city = prof.city || "";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र ➔ शनि ➔ मंगल ➔ बुध";
 
             // Find planet placements
             var planets = {};
@@ -6274,7 +6274,7 @@ body {
             var prof = chart.profile;
             var name = prof.name || "निखिल व्यास";
             var lagna = prof.asc_sign || "मेष";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र (MD) ➔ शनि (AD) ➔ मंगल (PD)";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र (MD) ➔ शनि (AD) ➔ मंगल (PD) ➔ बुध (SD)";
             var intent = this.detectIntent(query);
 
             var greeting = "<b>ॐ नमः शिवाय।</b><br><br>" +
@@ -8179,6 +8179,7 @@ var VyasDesktop = {
         init() {
             this.loadStoredProfile();
             this.initGoogleAuth();
+            this.setupVillageAutocomplete('edit_city');
         this.switchPillar('core', true);
             var savedTheme = localStorage.getItem('vyas_desktop_theme') || 'dark';
             this.setTheme(savedTheme);
@@ -10294,6 +10295,130 @@ renderChart(vargaKey) {
         },
 
         // REAL CLIENT-SIDE ASTRONOMICAL EPHEMERIS ENGINE
+        
+        // ------------------------------------------------------------------------
+        // VILLAGE-LEVEL GEOLOCATION & GPS SUITE (0.00001° ACCURACY)
+        // ------------------------------------------------------------------------
+        useCurrentGPS: function(targetInputId) {
+            var input = document.getElementById(targetInputId);
+            if (!navigator.geolocation) {
+                alert("आपके ब्राउज़र में GPS उपलब्ध नहीं है। कृपया स्थान का नाम सीधे टाइप करें।");
+                return;
+            }
+            if (input) input.placeholder = "GPS उपग्रह से लोकेशन प्राप्त हो रही है...";
+            
+            navigator.geolocation.getCurrentPosition(async function(pos) {
+                var lat = pos.coords.latitude;
+                var lon = pos.coords.longitude;
+                window.currentSelectedLat = lat;
+                window.currentSelectedLon = lon;
+                
+                try {
+                    var res = await fetch("https://photon.komoot.io/reverse?lat=" + lat + "&lon=" + lon);
+                    var data = await res.json();
+                    var locName = "";
+                    if (data && data.features && data.features.length > 0) {
+                        var p = data.features[0].properties;
+                        var place = p.name || p.city || p.locality || p.district || "ज्ञात स्थान";
+                        var state = p.state || "भारत";
+                        locName = place + ", " + state + " (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                    } else {
+                        locName = "GPS स्थान (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                    }
+                    if (input) {
+                        input.value = locName;
+                        input.setAttribute("data-lat", lat);
+                        input.setAttribute("data-lon", lon);
+                    }
+                    alert("📍 GPS स्थान प्राप्त:\n" + locName);
+                } catch(e) {
+                    if (input) {
+                        input.value = "GPS स्थान (" + lat.toFixed(4) + "°, " + lon.toFixed(4) + "°)";
+                        input.setAttribute("data-lat", lat);
+                        input.setAttribute("data-lon", lon);
+                    }
+                }
+            }, function(err) {
+                alert("GPS अनुमति आवश्यक है। आप नीचे सीधे गांव, कस्बा, तहसील अथवा शहर का नाम टाइप कर सकते हैं।");
+                if (input) input.placeholder = "गांव, तहसील या शहर का नाम टाइप करें...";
+            }, { enableHighAccuracy: true, timeout: 12000 });
+        },
+
+        setupVillageAutocomplete: function(inputId) {
+            var inp = document.getElementById(inputId);
+            if (!inp) return;
+            var timer = null;
+            
+            var drop = document.getElementById(inputId + '_dropdown');
+            if (!drop) {
+                drop = document.createElement('div');
+                drop.id = inputId + '_dropdown';
+                drop.style.cssText = "position:absolute; top:100%; left:0; width:100%; max-height:220px; overflow-y:auto; background:var(--bg-card); border:1px solid var(--border-gold); border-radius:8px; z-index:999999; display:none; box-shadow:0 8px 24px rgba(0,0,0,0.5); font-size:0.80rem;";
+                if (inp.parentElement) {
+                    inp.parentElement.style.position = 'relative';
+                    inp.parentElement.appendChild(drop);
+                }
+            }
+
+            inp.addEventListener('input', function() {
+                var q = inp.value.trim();
+                clearTimeout(timer);
+                if (q.length < 2) {
+                    drop.style.display = 'none';
+                    return;
+                }
+                timer = setTimeout(async function() {
+                    try {
+                        var res = await fetch("https://photon.komoot.io/api/?q=" + encodeURIComponent(q) + "&limit=8");
+                        var data = await res.json();
+                        if (data && data.features && data.features.length > 0) {
+                            var html = "";
+                            data.features.forEach(function(f) {
+                                var p = f.properties;
+                                var name = p.name || "";
+                                var district = p.district || p.county || "";
+                                var state = p.state || "";
+                                var country = p.country || "India";
+                                var coords = f.geometry.coordinates; // [lon, lat]
+                                var lon = coords[0];
+                                var lat = coords[1];
+                                var label = name + (district ? ", " + district : "") + (state ? ", " + state : "") + " (" + country + ")";
+                                html += '<div class="city-option" style="padding:8px 12px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.06); color:var(--text-primary); transition:background 0.2s;" onmouseover="this.style.background=\'rgba(212,175,55,0.12)\'" onmouseout="this.style.background=\'none\'" onclick="VyasDesktop.selectCityOption(\'' + inputId + '\', \'' + label.replace(/'/g, "\\'") + '\', ' + lat + ', ' + lon + ')">' +
+                                    '<b>📍 ' + name + '</b> <span style="color:var(--text-muted); font-size:0.72rem;">' + (district ? district + ", " : "") + state + '</span><br>' +
+                                    '<span style="color:var(--accent-gold); font-size:0.68rem;">' + lat.toFixed(4) + '° N, ' + lon.toFixed(4) + '° E</span>' +
+                                '</div>';
+                            });
+                            drop.innerHTML = html;
+                            drop.style.display = 'block';
+                        } else {
+                            drop.style.display = 'none';
+                        }
+                    } catch(err) {
+                        drop.style.display = 'none';
+                    }
+                }, 280);
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target !== inp && !drop.contains(e.target)) {
+                    drop.style.display = 'none';
+                }
+            });
+        },
+
+        selectCityOption: function(inputId, label, lat, lon) {
+            var inp = document.getElementById(inputId);
+            var drop = document.getElementById(inputId + '_dropdown');
+            if (inp) {
+                inp.value = label;
+                inp.setAttribute('data-lat', lat);
+                inp.setAttribute('data-lon', lon);
+            }
+            window.currentSelectedLat = lat;
+            window.currentSelectedLon = lon;
+            if (drop) drop.style.display = 'none';
+        },
+    
         submitProfileEdit() {
             var name = document.getElementById('edit_name').value.trim() || "जातक";
             var dob = document.getElementById('edit_dob').value;
@@ -10434,13 +10559,13 @@ renderChart(vargaKey) {
                         name: "NIKHIL VYAS",
                         dob: "1984-11-23",
                         tob: "16:51",
-                        city: "Falna, Pali, Rajasthan",
-                        lat: 25.2354,
-                        lon: 73.2384,
+                        city: "Pali, India (25.77°, 73.32°)",
+                        lat: 25.7700,
+                        lon: 73.3200,
                         gender: "Male",
                         asc_sign: "मेष",
                         asc_sign_en: "Aries",
-                        asc_dms: "23°27'09\"",
+                        asc_dms: "23°42'00\"",
                         asc_deg: 23.4525,
                         btr_rectified_tob: "16:51:35",
                         is_pro: true

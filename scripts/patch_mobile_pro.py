@@ -16,3 +16,4 @@ with open('mobile/index.html', 'w', encoding='utf-8') as f:
     f.write(html)
 
 print("Safely replaced VIP with PRO in mobile/index.html!")
+

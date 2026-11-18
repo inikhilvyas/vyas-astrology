@@ -151,3 +151,4 @@ if first_style_close != -1:
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(content)
+

@@ -1,0 +1,6 @@
+with open('mobile/index.html', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+import re
+matches = re.findall(r'<input[^>]+id=["\']([^"\']+)["\']', text)
+print('Input IDs in mobile:', matches)

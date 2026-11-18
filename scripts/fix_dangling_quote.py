@@ -12,3 +12,4 @@ content = content.replace("                '@media print { .no-print { display:n
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(content)
 print("Cleaned dangling quote!")
+

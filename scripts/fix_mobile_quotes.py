@@ -22,3 +22,4 @@ with open('mobile/index.html', 'w', encoding='utf-8') as f:
     f.write('\n'.join(lines))
 
 print("Fixed quotes in mobile/index.html!")
+
