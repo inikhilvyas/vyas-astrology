@@ -285,7 +285,7 @@ def sidereal_lon(name: str, dt_utc: datetime) -> float:
     raise ValueError(f"Unknown planetary body {name!r}")
 
 
-def ascendant_sidereal(dt_utc: datetime, lat: float, lon: float, house_system: bytes = b'P') -> float:
+def ascendant_sidereal(dt_utc: datetime, lat: float, lon: float, house_system: Any = b'P') -> float:
     """Sidereal Ascendant (Lagna) from Swiss Ephemeris houses_ex.
 
     Defaults to Placidus cusps (b'P') for KP / classical accuracy without drift.
@@ -293,16 +293,18 @@ def ascendant_sidereal(dt_utc: datetime, lat: float, lon: float, house_system: b
     d = ensure_utc(dt_utc, "dt_utc")
     jd = julian_day_ut(d)
     swe.set_sid_mode(_AYANAMSA_MODES[AYANAMSA_NAME])
-    cusps, ascmc = swe.houses_ex(jd, lat, lon, house_system, swe.FLG_SIDEREAL)
+    hs = house_system.encode('ascii')[0:1] if isinstance(house_system, str) else house_system
+    cusps, ascmc = swe.houses_ex(jd, lat, lon, hs, swe.FLG_SIDEREAL)
     return ascmc[0] % 360.0
 
 
-def midheaven_sidereal(dt_utc: datetime, lat: float, lon: float, house_system: bytes = b'P') -> float:
+def midheaven_sidereal(dt_utc: datetime, lat: float, lon: float, house_system: Any = b'P') -> float:
     """Sidereal Midheaven (MC) from Swiss Ephemeris houses_ex."""
     d = ensure_utc(dt_utc, "dt_utc")
     jd = julian_day_ut(d)
     swe.set_sid_mode(_AYANAMSA_MODES[AYANAMSA_NAME])
-    cusps, ascmc = swe.houses_ex(jd, lat, lon, house_system, swe.FLG_SIDEREAL)
+    hs = house_system.encode('ascii')[0:1] if isinstance(house_system, str) else house_system
+    cusps, ascmc = swe.houses_ex(jd, lat, lon, hs, swe.FLG_SIDEREAL)
     return ascmc[1] % 360.0
 
 

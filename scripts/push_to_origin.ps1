@@ -32,9 +32,9 @@ public class CredReader {
 }
 '@
 
-$token = [CredReader]::GetPassUtf8("git:https://github.com")
+$token = [CredReader]::GetPassUtf8("gh:github.com:vyasbilawas-ctrl")
 if (-not $token) {
-    $token = [CredReader]::GetPassUtf8("gh:github.com:vyasbilawas-ctrl")
+    $token = [CredReader]::GetPassUtf8("git:https://github.com")
 }
 
 if (-not $token) {
