@@ -11011,33 +11011,79 @@ renderChart(vargaKey) {
         },
     
         submitProfileEdit() {
-            var name = document.getElementById('edit_name').value.trim() || "जातक";
-            var dob = document.getElementById('edit_dob').value;
-            var tob = document.getElementById('edit_tob').value;
-            var city = document.getElementById('edit_city').value.trim() || "नई दिल्ली";
-            var gender = document.getElementById('edit_gender').value;
+            try {
+                var nameEl = document.getElementById('edit_name');
+                var dobEl = document.getElementById('edit_dob');
+                var tobEl = document.getElementById('edit_tob');
+                var cityEl = document.getElementById('edit_city');
+                var genderEl = document.getElementById('edit_gender');
 
-            // Compute authentic sidereal chart using mathematical ephemeris
-            var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender);
-            this.activeChartData = newChart;
-            localStorage.setItem('vyas_active_profile', JSON.stringify(newChart));
+                var name = (nameEl && nameEl.value) ? nameEl.value.trim() : "जातक";
+                var dob = (dobEl && dobEl.value) ? dobEl.value.trim() : "";
+                var tob = (tobEl && tobEl.value) ? tobEl.value.trim() : "12:00";
+                var city = (cityEl && cityEl.value) ? cityEl.value.trim() : "नई दिल्ली";
+                var gender = (genderEl && genderEl.value) ? genderEl.value : "Male";
 
-            this.loadStoredProfile();
-            this.renderChart(this.currentVarga || 'd1');
-            this.updateDailyHoroscopeUI();
-            this.updateYogasBannerUI();
-            this.renderPlanetTable();
-            this.renderPredictions();
-            this.renderAshtakavarga();
-            this.renderKP();
-            this.renderJaimini();
-            this.renderNadi();
-            this.renderSphutas();
-            this.renderGochar();
-            this.renderShadbala();
-            this.initDashaTree();
-            this.closeModals();
-            alert("जातक " + name + " की जन्म कुण्डली (" + newChart.profile.asc_sign + " लग्न) की वास्तविक वैदिक गणना पूर्ण हो गई है!");
+                if (!dob) {
+                    alert("कृपया जन्म दिनांक (DOB) दर्ज करें।");
+                    return;
+                }
+
+                // Compute authentic sidereal chart using mathematical ephemeris
+                var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender);
+                if (!newChart || !newChart.profile) {
+                    alert("कुण्डली गणना विफल रही। कृपया जन्म विवरण पुनः जाँचें।");
+                    return;
+                }
+
+                this.activeChartData = newChart;
+                try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch(e) {}
+
+                // Save to User Vault (persists for authenticated user)
+                if (typeof this.saveToUserVault === 'function') {
+                    this.saveToUserVault(newChart);
+                }
+
+                // Also save to custom profiles list
+                try {
+                    var custom = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
+                    var exists = custom.some(function(x) { return x.name === name && x.dob === dob; });
+                    if (!exists) {
+                        custom.unshift({
+                            name: name,
+                            dob: dob,
+                            tob: tob,
+                            city: city,
+                            gender: gender,
+                            asc_sign: newChart.profile.asc_sign
+                        });
+                        localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom));
+                    }
+                } catch(e) {}
+
+                // Safely render all components
+                if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1');
+                if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI();
+                if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI();
+                if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable();
+                if (typeof this.renderPredictions === 'function') this.renderPredictions();
+                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
+                if (typeof this.renderKP === 'function') this.renderKP();
+                if (typeof this.renderJaimini === 'function') this.renderJaimini();
+                if (typeof this.renderNadi === 'function') this.renderNadi();
+                if (typeof this.renderSphutas === 'function') this.renderSphutas();
+                if (typeof this.renderGochar === 'function') this.renderGochar();
+                if (typeof this.renderShadbala === 'function') this.renderShadbala();
+                if (typeof this.initDashaTree === 'function') this.initDashaTree();
+
+                // Close modal FIRST so UI is immediately responsive
+                this.closeModals();
+
+                alert("✓ जातक " + name + " की जन्म कुण्डली (" + (newChart.profile.asc_sign || 'मेष') + " लग्न) सफलतापूर्वक सक्रिय व सुरक्षित हो गई है!");
+            } catch(err) {
+                console.error("submitProfileEdit error:", err);
+                alert("कुण्डली सहेजने में त्रुटि: " + err.message);
+            }
         },
 
         computeMathematicalKundli(name, dobStr, tobStr, cityStr, gender, customLat, customLon) {
