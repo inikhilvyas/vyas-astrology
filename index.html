@@ -8424,13 +8424,20 @@ var VyasDesktop = {
             var hasStored = false;
             try {
                 var stored = localStorage.getItem('vyas_active_profile');
+                if (!stored) {
+                    var fromVault = this.loadFromUserVault();
+                    if (fromVault) {
+                        stored = JSON.stringify(fromVault);
+                        try { localStorage.setItem('vyas_active_profile', stored); } catch(e) {}
+                    }
+                }
                 if (stored) {
                     var data = JSON.parse(stored);
                     if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
                         // Auto-Heal: Sanitize stale or dummy SAV (e.g. 346/356) to authentic BPHS 337
                         var curSavSum = (data.ashtakavarga && Array.isArray(data.ashtakavarga.sav)) ? data.ashtakavarga.sav.reduce(function(a, b) { return a + b; }, 0) : 0;
                         if (curSavSum !== 337 && data.profile.dob) {
-                            var fresh = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.lat || 25.0, data.profile.lon || 73.0, data.profile.gender || 'Male');
+                            var fresh = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat || 25.0, data.profile.lon || 73.0);
                             if (fresh && fresh.ashtakavarga) {
                                 data.ashtakavarga = fresh.ashtakavarga;
                                 data.charts = fresh.charts;
@@ -9836,7 +9843,7 @@ renderChart(vargaKey) {
             if (savSum !== 337) {
                 if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.dob) {
                     var prof = this.activeChartData.profile;
-                    var fresh = this.computeMathematicalKundli(prof.name, prof.dob, prof.tob || '12:00', prof.city || '', prof.lat || 25.0, prof.lon || 73.0, prof.gender || 'Male');
+                    var fresh = this.computeMathematicalKundli(prof.name, prof.dob, prof.tob || '12:00', prof.city || '', prof.gender || 'Male', prof.lat || 25.0, prof.lon || 73.0);
                     if (fresh && fresh.ashtakavarga) {
                         this.activeChartData.ashtakavarga = fresh.ashtakavarga;
                         av = fresh.ashtakavarga;
@@ -10778,6 +10785,17 @@ renderChart(vargaKey) {
         },
 
         computeMathematicalKundli(name, dobStr, tobStr, cityStr, gender, customLat, customLon) {
+            // Defensive parameter auto-correction: handle swapped arguments (lat/lon passed as gender)
+            if (typeof gender === 'number' && typeof customLat === 'number') {
+                var tmpLat = gender;
+                var tmpLon = customLat;
+                var tmpGender = (typeof customLon === 'string' && customLon) ? customLon : 'Male';
+                gender = tmpGender;
+                customLat = tmpLat;
+                customLon = tmpLon;
+            } else if (!gender || (typeof gender !== 'string')) {
+                gender = 'Male';
+            }
             // =========================================================
             // SWISS EPHEMERIS PRECISION LOCK FOR FOUNDER (NIKHIL VYAS)
             // Exact NASA/Swiss Ephemeris 0.001" arcsecond coordinates

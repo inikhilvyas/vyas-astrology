@@ -14,5 +14,10 @@
   "monitoring": {
     "check_interval_seconds": 3600,
     "live_site_url": "https://vyasastro.in"
+  },
+  "telegram": {
+    "token": "9076187059:AAGsuSCU-aQiGWIVajtdk3T-vUGgVHy1FAo",
+    "chat_id": "435643268",
+    "enabled": true
   }
 }
