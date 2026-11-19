@@ -6601,7 +6601,7 @@ body {
             if (!query) return null;
             var q = query.toLowerCase().trim();
 
-            var isLordQuery = /(स्वामी|मालिक|अधिपति|भावेश|लॉर्ड|lord|ruler|governs|master)/.test(q);
+            var isLordQuery = /(स्वामी|मालिक|अधिपति|भावेश|लॉर्ड|swami|malik|adhipati|lord|ruler|governs|master)/.test(q);
             var isNakshatraQuery = /(नक्षत्र|nakshatra)/.test(q);
 
             // 1. 27 Nakshatras
@@ -6653,18 +6653,18 @@ body {
 
             // 2. 12 Rashis
             var rashis = [
-                { pats: ['मिथुन', 'gemini'], name: 'मिथुन राशि (Gemini)', lord: 'बुधदेव (Mercury)', element: 'वायु तत्त्व (Air)', nature: 'द्विस्वभाव (Dual)', shloka: 'भौमशुक्रबुधेंद्वर्कसौम्यशुक्रावनीसुताः। जीवेन्दुपूज्यावकीनां क्षेत्राणि क्रमशः स्मृताः॥', details: 'त्रिकाल सत्य: <b>मिथुन राशि के अधिपति केवल और केवल बुधदेव (Mercury) हैं</b> (कदापि शुक्र नहीं)। कालपुरुष चक्र में मिथुन तृतीय भाव (पराक्रम, संवाद व मेधा) का प्रतिनिधित्व करती है।' },
-                { pats: ['मेष', 'aries'], name: 'मेष राशि (Aries)', lord: 'मंगलदेव (Mars)', element: 'अग्नि तत्त्व (Fire)', nature: 'चर (Movable)', shloka: 'कुजस्य क्षेत्रं प्रथमं मेषसंज्ञम्।', details: 'मेष राशि के अधिपति ग्रह <b>मंगलदेव (Mars)</b> हैं। कालपुरुष के प्रथम भाव की यह राशि साहस, ऊर्जा व नेतृत्व की प्रतीक है।' },
-                { pats: ['वृषभ', 'वृष', 'taurus'], name: 'वृषभ राशि (Taurus)', lord: 'शुक्रदेव (Venus)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'स्थिर (Fixed)', shloka: 'शुक्रस्य भवनं वृषः।', details: 'वृषभ राशि के अधिपति ग्रह <b>शुक्रदेव (Venus)</b> हैं। यह स्थिर पृथ्वी तत्त्व की राशि धन, वाणी, कुटुंब व सौंदर्य की प्रतीक है।' },
-                { pats: ['कर्क', 'cancer'], name: 'कर्क राशि (Cancer)', lord: 'चन्द्रदेव (Moon)', element: 'जल तत्त्व (Water)', nature: 'चर (Movable)', shloka: 'कर्कस्य चन्द्रमाः स्वामी।', details: 'कर्क राशि के अधिपति ग्रह <b>चन्द्रदेव (Moon)</b> हैं। कालपुरुष के चतुर्थ भाव की यह राशि भावना व संवेदनशीलता का केंद्र है।' },
-                { pats: ['सिंह', 'leo'], name: 'सिंह राशि (Leo)', lord: 'सूर्यदेव (Sun)', element: 'अग्नि तत्त्व (Fire)', nature: 'स्थिर (Fixed)', shloka: 'सिंहस्य स्वामी दिनकृत्।', details: 'सिंह राशि के अधिपति ग्रह <b>भगवान सूर्यदेव (Sun)</b> हैं। कालपुरुष के पंचम भाव की यह राशि आत्मगौरव, पराक्रम व तेज की प्रतीक है।' },
-                { pats: ['कन्या', 'virgo'], name: 'कन्या राशि (Virgo)', lord: 'बुधदेव (Mercury)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'द्विस्वभाव (Dual)', shloka: 'कन्याया अपि बुधः स्वामी।', details: 'कन्या राशि के अधिपति ग्रह <b>बुधदेव (Mercury)</b> हैं। बुधदेव इस राशि में उच्च के भी होते हैं (15° तक)। यह राशि विश्लेषण व कौशल की प्रतीक है।' },
-                { pats: ['तुला', 'libra'], name: 'तुला राशि (Libra)', lord: 'शुक्रदेव (Venus)', element: 'वायु तत्त्व (Air)', nature: 'चर (Movable)', shloka: 'तुलाया भार्गवः स्वामी।', details: 'तुला राशि के अधिपति ग्रह <b>शुक्रदेव (Venus)</b> हैं। कालपुरुष के सप्तम भाव (साझेदारी व संतुलन) की यह राशि न्याय व संतुलन की प्रतीक है।' },
-                { pats: ['वृश्चिक', 'scorpio'], name: 'वृश्चिक राशि (Scorpio)', lord: 'मंगलदेव (Mars) [सह-स्वामी: केतु]', element: 'जल तत्त्व (Water)', nature: 'स्थिर (Fixed)', shloka: 'वृश्चिकस्य कुजः स्वामी।', details: 'वृश्चिक राशि के प्रधान अधिपति ग्रह <b>मंगलदेव (Mars)</b> हैं (केतु सह-स्वामी माने जाते हैं)। कालपुरुष के अष्टम भाव की यह राशि गूढ़ ज्ञान व शोध की प्रतीक है।' },
-                { pats: ['धनु', 'sagittarius'], name: 'धनु राशि (Sagittarius)', lord: 'देवगुरु बृहस्पति (Jupiter)', element: 'अग्नि तत्त्व (Fire)', nature: 'द्विस्वभाव (Dual)', shloka: 'धनुषो गुरुनायकः।', details: 'धनु राशि के अधिपति ग्रह <b>देवगुरु बृहस्पति (Jupiter)</b> हैं। कालपुरुष के नवम भाव (धर्म, भाग्य व दर्शन) की यह राशि सात्विक विवेक की प्रतीक है।' },
-                { pats: ['मकर', 'capricorn'], name: 'मकर राशि (Capricorn)', lord: 'शनिदेव (Saturn)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'चर (Movable)', shloka: 'मकरस्य प्रभुर्मन्दः।', details: 'मकर राशि के अधिपति ग्रह <b>शनिदेव (Saturn)</b> हैं। कालपुरुष के दशम भाव (कर्म व आजीविका) की यह राशि अनुशासन व दायित्व की प्रतीक है।' },
-                { pats: ['कुंभ', 'कुम्भ', 'aquarius'], name: 'कुम्भ राशि (Aquarius)', lord: 'शनिदेव (Saturn) [सह-स्वामी: राहु]', element: 'वायु तत्त्व (Air)', nature: 'स्थिर (Fixed)', shloka: 'कुम्भस्य मन्दनायकः।', details: 'कुम्भ राशि के प्रधान अधिपति ग्रह <b>शनिदेव (Saturn)</b> हैं (राहु सह-स्वामी हैं)। कालपुरुष के एकादश भाव की यह राशि उच्च दार्शनिक चेतना की प्रतीक है।' },
-                { pats: ['मीन', 'pisces'], name: 'मीन राशि (Pisces)', lord: 'देवगुरु बृहस्पति (Jupiter)', element: 'जल तत्त्व (Water)', nature: 'द्विस्वभाव (Dual)', shloka: 'मीनस्य च गुरुः स्वामी।', details: 'मीन राशि के अधिपति ग्रह <b>देवगुरु बृहस्पति (Jupiter)</b> हैं। कालपुरुष के द्वादश भाव (मोक्ष व अंतर्ज्ञान) की यह राशि आध्यात्मिक पूर्णता की प्रतीक है।' }
+                { pats: ['मिथुन', 'gemini', 'mithun'], name: 'मिथुन राशि (Gemini)', lord: 'बुधदेव (Mercury)', element: 'वायु तत्त्व (Air)', nature: 'द्विस्वभाव (Dual)', shloka: 'भौमशुक्रबुधेंद्वर्कसौम्यशुक्रावनीसुताः। जीवेन्दुपूज्यावकीनां क्षेत्राणि क्रमशः स्मृताः॥', details: 'त्रिकाल सत्य: <b>मिथुन राशि के अधिपति केवल और केवल बुधदेव (Mercury) हैं</b> (कदापि शुक्र नहीं)। कालपुरुष चक्र में मिथुन तृतीय भाव (पराक्रम, संवाद व मेधा) का प्रतिनिधित्व करती है।' },
+                { pats: ['मेष', 'aries', 'mesh'], name: 'मेष राशि (Aries)', lord: 'मंगलदेव (Mars)', element: 'अग्नि तत्त्व (Fire)', nature: 'चर (Movable)', shloka: 'कुजस्य क्षेत्रं प्रथमं मेषसंज्ञम्।', details: 'मेष राशि के अधिपति ग्रह <b>मंगलदेव (Mars)</b> हैं। कालपुरुष के प्रथम भाव की यह राशि साहस, ऊर्जा व नेतृत्व की प्रतीक है।' },
+                { pats: ['वृषभ', 'वृष', 'taurus', 'vrishabh', 'vrish'], name: 'वृषभ राशि (Taurus)', lord: 'शुक्रदेव (Venus)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'स्थिर (Fixed)', shloka: 'शुक्रस्य भवनं वृषः।', details: 'वृषभ राशि के अधिपति ग्रह <b>शुक्रदेव (Venus)</b> हैं। यह स्थिर पृथ्वी तत्त्व की राशि धन, वाणी, कुटुंब व सौंदर्य की प्रतीक है।' },
+                { pats: ['कर्क', 'cancer', 'kark'], name: 'कर्क राशि (Cancer)', lord: 'चन्द्रदेव (Moon)', element: 'जल तत्त्व (Water)', nature: 'चर (Movable)', shloka: 'कर्कस्य चन्द्रमाः स्वामी।', details: 'कर्क राशि के अधिपति ग्रह <b>चन्द्रदेव (Moon)</b> हैं। कालपुरुष के चतुर्थ भाव की यह राशि भावना व संवेदनशीलता का केंद्र है।' },
+                { pats: ['सिंह', 'leo', 'singh', 'simha'], name: 'सिंह राशि (Leo)', lord: 'सूर्यदेव (Sun)', element: 'अग्नि तत्त्व (Fire)', nature: 'स्थिर (Fixed)', shloka: 'सिंहस्य स्वामी दिनकृत्।', details: 'सिंह राशि के अधिपति ग्रह <b>भगवान सूर्यदेव (Sun)</b> हैं। कालपुरुष के पंचम भाव की यह राशि आत्मगौरव, पराक्रम व तेज की प्रतीक है।' },
+                { pats: ['कन्या', 'virgo', 'kanya'], name: 'कन्या राशि (Virgo)', lord: 'बुधदेव (Mercury)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'द्विस्वभाव (Dual)', shloka: 'कन्याया अपि बुधः स्वामी।', details: 'कन्या राशि के अधिपति ग्रह <b>बुधदेव (Mercury)</b> हैं। बुधदेव इस राशि में उच्च के भी होते हैं (15° तक)। यह राशि विश्लेषण व कौशल की प्रतीक है।' },
+                { pats: ['तुला', 'libra', 'tula'], name: 'तुला राशि (Libra)', lord: 'शुक्रदेव (Venus)', element: 'वायु तत्त्व (Air)', nature: 'चर (Movable)', shloka: 'तुलाया भार्गवः स्वामी।', details: 'तुला राशि के अधिपति ग्रह <b>शुक्रदेव (Venus)</b> हैं। कालपुरुष के सप्तम भाव (साझेदारी व संतुलन) की यह राशि न्याय व संतुलन की प्रतीक है।' },
+                { pats: ['वृश्चिक', 'scorpio', 'vrischik', 'vrischika'], name: 'वृश्चिक राशि (Scorpio)', lord: 'मंगलदेव (Mars) [सह-स्वामी: केतु]', element: 'जल तत्त्व (Water)', nature: 'स्थिर (Fixed)', shloka: 'वृश्चिकस्य कुजः स्वामी।', details: 'वृश्चिक राशि के प्रधान अधिपति ग्रह <b>मंगलदेव (Mars)</b> हैं (केतु सह-स्वामी माने जाते हैं)। कालपुरुष के अष्टम भाव की यह राशि गूढ़ ज्ञान व शोध की प्रतीक है।' },
+                { pats: ['धनु', 'sagittarius', 'dhanu'], name: 'धनु राशि (Sagittarius)', lord: 'देवगुरु बृहस्पति (Jupiter)', element: 'अग्नि तत्त्व (Fire)', nature: 'द्विस्वभाव (Dual)', shloka: 'धनुषो गुरुनायकः।', details: 'धनु राशि के अधिपति ग्रह <b>देवगुरु बृहस्पति (Jupiter)</b> हैं। कालपुरुष के नवम भाव (धर्म, भाग्य व दर्शन) की यह राशि सात्विक विवेक की प्रतीक है।' },
+                { pats: ['मकर', 'capricorn', 'makar'], name: 'मकर राशि (Capricorn)', lord: 'शनिदेव (Saturn)', element: 'पृथ्वी तत्त्व (Earth)', nature: 'चर (Movable)', shloka: 'मकरस्य प्रभुर्मन्दः।', details: 'मकर राशि के अधिपति ग्रह <b>शनिदेव (Saturn)</b> हैं। कालपुरुष के दशम भाव (कर्म व आजीविका) की यह राशि अनुशासन व दायित्व की प्रतीक है।' },
+                { pats: ['कुंभ', 'कुम्भ', 'aquarius', 'kumbh'], name: 'कुम्भ राशि (Aquarius)', lord: 'शनिदेव (Saturn) [सह-स्वामी: राहु]', element: 'वायु तत्त्व (Air)', nature: 'स्थिर (Fixed)', shloka: 'कुम्भस्य मन्दनायकः।', details: 'कुम्भ राशि के प्रधान अधिपति ग्रह <b>शनिदेव (Saturn)</b> हैं (राहु सह-स्वामी हैं)। कालपुरुष के एकादश भाव की यह राशि उच्च दार्शनिक चेतना की प्रतीक है।' },
+                { pats: ['मीन', 'pisces', 'meen'], name: 'मीन राशि (Pisces)', lord: 'देवगुरु बृहस्पति (Jupiter)', element: 'जल तत्त्व (Water)', nature: 'द्विस्वभाव (Dual)', shloka: 'मीनस्य च गुरुः स्वामी।', details: 'मीन राशि के अधिपति ग्रह <b>देवगुरु बृहस्पति (Jupiter)</b> हैं। कालपुरुष के द्वादश भाव (मोक्ष व अंतर्ज्ञान) की यह राशि आध्यात्मिक पूर्णता की प्रतीक है।' }
             ];
 
             for (var j = 0; j < rashis.length; j++) {
@@ -6707,31 +6707,31 @@ body {
             }
 
             // 4. Drishti
-            if (/(दृष्टि|aspect)/.test(q)) {
-                if (q.indexOf('शनि') !== -1) {
+            if (/(दृष्टि|aspect|drishti)/.test(q)) {
+                if (q.indexOf('शनि') !== -1 || q.indexOf('saturn') !== -1 || q.indexOf('shani') !== -1) {
                     return "<b>सादर प्रणाम। शनिदेव की शास्त्रीय दृष्टियों का अखंड नियम:</b><br><br>" +
                            "✦ <b>शनिदेव की पूर्ण दृष्टियां:</b> <span style='color:#d4af37; font-weight:700;'>3री, 7वीं एवं 10वीं</span> भाव पर पूर्ण दृष्टि होती है।<br>" +
                            '<i>"पश्यन्ति त्रिदशं मन्दः..." (बृहत्पाराशर होराशास्त्र)</i><br>' +
                            "विशेष निर्देश: शनिदेव की 5वीं अथवा 9वीं दृष्टि कदापि नहीं होती।";
                 }
-                if (q.indexOf('मंगल') !== -1) {
+                if (q.indexOf('मंगल') !== -1 || q.indexOf('mars') !== -1 || q.indexOf('mangal') !== -1) {
                     return "<b>सादर प्रणाम। मंगलदेव की शास्त्रीय दृष्टियों का अखंड नियम:</b><br><br>" +
                            "✦ <b>मंगलदेव की पूर्ण दृष्टियां:</b> <span style='color:#d4af37; font-weight:700;'>4थी, 7वीं एवं 8वीं</span> भाव पर पूर्ण दृष्टि होती है।<br>" +
                            '<i>"चतुर्थमष्टमं भौमः..." (बृहत्पाराशर होराशास्त्र)</i>';
                 }
-                if (q.indexOf('गुरु') !== -1 || q.indexOf('बृहस्पति') !== -1) {
+                if (q.indexOf('गुरु') !== -1 || q.indexOf('बृहस्पति') !== -1 || q.indexOf('jupiter') !== -1 || q.indexOf('guru') !== -1 || q.indexOf('brihaspati') !== -1) {
                     return "<b>सादर प्रणाम। देवगुरु बृहस्पति की शास्त्रीय दृष्टियों का अखंड नियम:</b><br><br>" +
                            "✦ <b>देवगुरु बृहस्पति की पूर्ण दृष्टियां:</b> <span style='color:#d4af37; font-weight:700;'>5वीं, 7वीं एवं 9वीं (त्रिकोण दृष्टि)</span> अमृतमय दृष्टि होती है।<br>" +
                            '<i>"त्रिकोणं च गुरोः स्मृतम्..." (बृहत्पाराशर होराशास्त्र)</i>';
                 }
-                if (q.indexOf('राहु') !== -1 || q.indexOf('केतु') !== -1) {
+                if (q.indexOf('राहु') !== -1 || q.indexOf('केतु') !== -1 || q.indexOf('rahu') !== -1 || q.indexOf('ketu') !== -1) {
                     return "<b>सादर प्रणाम। राहु एवं केतु की शास्त्रीय दृष्टियों का नियम:</b><br><br>" +
                            "✦ <b>राहु व केतु की दृष्टियां:</b> गुरु की भांति <span style='color:#d4af37; font-weight:700;'>5वीं, 7वीं एवं 9वीं</span> दृष्टि मानी जाती है।";
                 }
             }
 
             // 5. Panchang, Ekadashi & Festival Timings (शुद्ध खगोलीय पंचांग व एकादशी पारण मुहूर्त)
-            if (/(एकादशी|ekadashi|द्वादशी|पारण|प्रबोधिनी|देवउठनी|देवप्रबोधिनी|तुलसी विवाह|tulsi vivah)/.test(q)) {
+            if (/(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|देवप्रबोधिनी|तुलसी विवाह|tulsi vivah)/.test(q)) {
                 return "<b>सादर प्रणाम। कार्तिक शुक्ल पक्ष — देवउठनी / प्रबोधिनी एकादशी एवं पारण मुहूर्त प्रमाण:</b><br><br>" +
                        "✦ <b>पर्व / व्रत:</b> देवउठनी (प्रबोधिनी) एकादशी • तुलसी विवाह महोत्सव<br>" +
                        "✦ <b>एकादशी तिथि प्रारंभ:</b> 18 नवंबर 2026, रात्रि 11:28 बजे से<br>" +
@@ -6749,7 +6749,7 @@ body {
                        "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय व द्रिक पंचांग वेध प्रमाण (NASA JPL DE431/441 Ephemeris Standard)।</small>";
             }
 
-            if (/(आज का पंचांग|कल का पंचांग|पंचांग|tithi|तिथि क्या है)/.test(q)) {
+            if (/(आज का पंचांग|कल का पंचांग|पंचांग|panchang|panchangam|tithi|तिथि|muhurat|मुहूर्त)/.test(q)) {
                 return "<b>सादर प्रणाम। आज का शुद्ध वैदिक पंचांग (द्रिक सिद्धांत):</b><br><br>" +
                        "✦ <b>दिनांक व वार:</b> 19 नवंबर 2026 (गुरुवार)<br>" +
                        "✦ <b>संवत्:</b> विक्रम संवत् 2083, कार्तिक मास, शुक्ल पक्ष<br>" +
@@ -7464,52 +7464,44 @@ var VyasDesktop = {
             } catch(e) {}
 
 
-            // STRICT MULTI-TENANT PRIVACY & ISOLATION:
-            // 1. Immediately reset in-memory chart to prevent cross-session contamination
+            // STRICT USER PRIVACY & ZERO HARDCODED SERVER DATA:
+            // 1. Immediately reset in-memory chart
             this.activeChartData = null;
 
             var email = this.googleUser.email ? this.googleUser.email.trim().toLowerCase() : '';
-            var isNikhil = (email.indexOf('nikhil') !== -1) ||
-                           (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
 
-            if (isNikhil) {
-                // Founder login: load founder vault or compute canonical Mesha Lagna chart
-                var fromVault = this.loadFromUserVault();
-                if (!fromVault || !fromVault.profile || fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
-                    fromVault = this.computeMathematicalKundli('Nikhil Vyas', '1984-11-23', '16:51', 'Pali, Rajasthan', 'Male', 25.7711, 73.3234);
-                    this.saveToUserVault(fromVault);
-                }
-                this.activeChartData = fromVault;
-                try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch(e) {}
-            } else {
-                // Regular logged-in user:
-                // Purge any stale active profile belonging to someone else
-                var curAct = localStorage.getItem('vyas_active_profile');
-                if (curAct) {
-                    try {
-                        var cp = JSON.parse(curAct);
-                        if (cp && cp.profile && (cp.profile.dob === '1984-11-23' || (cp.profile.name && cp.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
-                            localStorage.removeItem('vyas_active_profile');
-                        }
-                    } catch(e) {
-                        localStorage.removeItem('vyas_active_profile');
+            // 2. Load THIS user's personal vault: vyas_user_vault_<email>
+            var userVault = this.loadFromUserVault();
+            if (userVault && userVault.profile && userVault.profile.name && userVault.profile.name !== 'अतिथि जातक (Guest)') {
+                // Auto-correct any legacy Kanya 26°55 calculation dynamically from user's own birth details
+                if (userVault.profile.asc_sign === 'कन्या' || (userVault.profile.asc_dms && userVault.profile.asc_dms.indexOf("26°55") !== -1)) {
+                    if (userVault.profile.dob) {
+                        userVault = this.computeMathematicalKundli(
+                            userVault.profile.name,
+                            userVault.profile.dob,
+                            userVault.profile.tob || '12:00',
+                            userVault.profile.city || '',
+                            userVault.profile.gender || 'Male',
+                            userVault.profile.lat,
+                            userVault.profile.lon
+                        );
+                        this.saveToUserVault(userVault);
                     }
                 }
-
-                // Check THIS user's personal vault specifically: vyas_user_vault_<email>
-                var userVault = this.loadFromUserVault();
-                if (userVault && userVault.profile && userVault.profile.name && userVault.profile.name !== 'अतिथि जातक (Guest)') {
-                    var isN = (userVault.profile.dob === '1984-11-23' || (userVault.profile.name && userVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
-                    if (!isN) {
-                        this.activeChartData = userVault;
-                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(this.activeChartData)); } catch(e) {}
-                    } else {
-                        // Purge contaminated vault
-                        try { localStorage.removeItem('vyas_user_vault_' + email); } catch(e) {}
-                        this.activeChartData = null;
+                this.activeChartData = userVault;
+                try { localStorage.setItem('vyas_active_profile', JSON.stringify(this.activeChartData)); } catch(e) {}
+            } else {
+                // If user doesn't have an active chart in their vault, check if they have any saved profile in their list
+                var list = (typeof this.getUserProfilesList === 'function') ? this.getUserProfilesList() : [];
+                if (list.length > 0 && list[0].dob) {
+                    var p0 = list[0];
+                    var computed0 = this.computeMathematicalKundli(p0.name, p0.dob, p0.tob || '12:00', p0.city || '', p0.gender || 'Male');
+                    if (computed0 && computed0.profile) {
+                        this.activeChartData = computed0;
+                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(computed0)); } catch(e) {}
+                        this.saveToUserVault(computed0);
                     }
                 } else {
-                    // No saved chart for this user yet
                     this.activeChartData = null;
                     try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
                 }
@@ -7757,7 +7749,15 @@ var VyasDesktop = {
 
         openBTRModal: function() {
             var modal = document.getElementById('modalBTR');
-            if (modal) modal.classList.add('active');
+            if (modal) {
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+                var slider = document.getElementById('btrRangeSlider');
+                if (slider) slider.value = 0;
+                if (typeof this.onBTRSliderChange === 'function') {
+                    this.onBTRSliderChange(0);
+                }
+            }
         },
 
                 onBTRSliderChange: function(secVal) {
@@ -7879,15 +7879,26 @@ var VyasDesktop = {
                 localStorage.setItem('vyas_active_profile', JSON.stringify(newChart));
             } catch(e) {}
 
-            this.loadProfile();
-            this.renderChart('d1');
-            this.renderPlanetTable();
-            this.renderShadbala();
-            this.renderDashaTree();
-            this.renderPredictions();
-            this.renderAshtakavarga();
-            this.renderKP();
+            if (typeof this.saveToUserVault === 'function') {
+                this.saveToUserVault(newChart);
+            }
+            this.updateHeaderBadge();
             this.closeModals();
+
+            // Safely render components
+            try { if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1'); } catch(e) {}
+            try { if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI(); } catch(e) {}
+            try { if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI(); } catch(e) {}
+            try { if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable(); } catch(e) {}
+            try { if (typeof this.renderPredictions === 'function') this.renderPredictions(); } catch(e) {}
+            try { if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga(); } catch(e) {}
+            try { if (typeof this.renderKP === 'function') this.renderKP(); } catch(e) {}
+            try { if (typeof this.renderJaimini === 'function') this.renderJaimini(); } catch(e) {}
+            try { if (typeof this.renderNadi === 'function') this.renderNadi(); } catch(e) {}
+            try { if (typeof this.renderSphutas === 'function') this.renderSphutas(); } catch(e) {}
+            try { if (typeof this.renderGochar === 'function') this.renderGochar(); } catch(e) {}
+            try { if (typeof this.renderShadbala === 'function') this.renderShadbala(); } catch(e) {}
+            try { if (typeof this.initDashaTree === 'function') this.initDashaTree(); } catch(e) {}
 
             var signPrefix = shiftSec > 0 ? "+" : "";
             alert("✓ वैज्ञानिक जन्म समय शोधन (BTR) सफलतापूर्वक संपन्न!\n\n• मूल समय: " + baseTob + "\n• सूक्ष्म संशोधन: " + signPrefix + shiftSec + " सेकंड\n• प्रमाणित संशोधित समय: " + newTobStr + "\n• संशोधित लग्न: " + newChart.profile.asc_sign + " (" + newChart.profile.asc_dms + ")\n\nआपकी कुण्डली, नवमांश (D-9) व केपी कस्प अब 100% सटीक हैं!");
@@ -7896,7 +7907,10 @@ var VyasDesktop = {
         openFamilyVaultModal: function() {
             var modal = document.getElementById('modalFamilyVault');
             this.renderFamilyVaultList();
-            if (modal) modal.classList.add('active');
+            if (modal) {
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+            }
         },
 
         renderFamilyVaultList: function() {
@@ -8662,16 +8676,9 @@ var VyasDesktop = {
             try {
                 if (this.googleUser && this.googleUser.email) {
                     var email = this.googleUser.email.trim().toLowerCase();
-                    var isCurrentNikhil = (email.indexOf('nikhil') !== -1) ||
-                                          (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
                     var vaultData = localStorage.getItem('vyas_user_vault_' + email);
                     if (vaultData) {
-                        var parsed = JSON.parse(vaultData);
-                        if (!isCurrentNikhil && parsed && parsed.profile && (parsed.profile.dob === '1984-11-23' || (parsed.profile.name && parsed.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
-                            localStorage.removeItem('vyas_user_vault_' + email);
-                            return null;
-                        }
-                        return parsed;
+                        return JSON.parse(vaultData);
                     }
                 }
             } catch(e) {}
@@ -8694,13 +8701,7 @@ var VyasDesktop = {
                             var changed = false;
                             parsed.forEach(function(item) {
                                 if (item && (item.asc_sign === 'कन्या' || (item.asc_dms && item.asc_dms.indexOf("26°55") !== -1))) {
-                                    if (item.dob === '1984-11-23' || (item.name && item.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
-                                        item.asc_sign = 'मेष';
-                                        item.asc_dms = "23°42'00\"";
-                                        item.tob = item.tob || '16:51';
-                                        item.city = item.city || 'Pali, Rajasthan';
-                                        changed = true;
-                                    } else if (item.dob) {
+                                    if (item.dob) {
                                         var recomputed = VyasDesktop.computeMathematicalKundli(item.name, item.dob, item.tob || '12:00', item.city || '', item.gender || 'Male', item.lat, item.lon);
                                         if (recomputed && recomputed.profile) {
                                             item.asc_sign = recomputed.profile.asc_sign;
@@ -8714,10 +8715,7 @@ var VyasDesktop = {
                         } else if (parsed && parsed.profile) {
                             var p = parsed.profile;
                             if (p.asc_sign === 'कन्या' || (p.asc_dms && p.asc_dms.indexOf("26°55") !== -1)) {
-                                if (p.dob === '1984-11-23' || (p.name && p.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
-                                    var recomputedNikhil = VyasDesktop.computeMathematicalKundli(p.name || 'Nikhil Vyas', '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
-                                    if (recomputedNikhil) localStorage.setItem(k, JSON.stringify(recomputedNikhil));
-                                } else if (p.dob) {
+                                if (p.dob) {
                                     var recomputedGen = VyasDesktop.computeMathematicalKundli(p.name, p.dob, p.tob || '12:00', p.city || '', p.gender || 'Male', p.lat, p.lon);
                                     if (recomputedGen) localStorage.setItem(k, JSON.stringify(recomputedGen));
                                 }
@@ -8736,18 +8734,15 @@ var VyasDesktop = {
                         try {
                             var pData = JSON.parse(stored);
                             if (pData && pData.profile && pData.profile.dob) {
-                                var isN = (pData.profile.dob === '1984-11-23' || (pData.profile.name && pData.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
-                                var fresh = isN
-                                    ? this.computeMathematicalKundli(pData.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234)
-                                    : this.computeMathematicalKundli(
-                                        pData.profile.name,
-                                        pData.profile.dob,
-                                        pData.profile.tob || '12:00',
-                                        pData.profile.city || '',
-                                        pData.profile.gender || 'Male',
-                                        pData.profile.lat || 25.0,
-                                        pData.profile.lon || 73.0
-                                    );
+                                var fresh = this.computeMathematicalKundli(
+                                    pData.profile.name,
+                                    pData.profile.dob,
+                                    pData.profile.tob || '12:00',
+                                    pData.profile.city || '',
+                                    pData.profile.gender || 'Male',
+                                    pData.profile.lat || 25.0,
+                                    pData.profile.lon || 73.0
+                                );
                                 if (fresh) {
                                     localStorage.setItem('vyas_active_profile', JSON.stringify(fresh));
                                 }
@@ -8775,9 +8770,7 @@ var VyasDesktop = {
                     var fromVault = this.loadFromUserVault();
                     if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)') {
                         if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
-                            if (fromVault.profile.dob === '1984-11-23' || (fromVault.profile.name && fromVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
-                                fromVault = this.computeMathematicalKundli(fromVault.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
-                            } else if (fromVault.profile.dob) {
+                            if (fromVault.profile.dob) {
                                 fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
                             }
                             try { localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(fromVault)); } catch(e) {}
@@ -8795,9 +8788,7 @@ var VyasDesktop = {
                         var data = JSON.parse(stored);
                         if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
                             if (data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
-                                if (data.profile.dob === '1984-11-23' || (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
-                                    data = this.computeMathematicalKundli(data.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
-                                } else if (data.profile.dob) {
+                                if (data.profile.dob) {
                                     data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
                                 }
                             }
@@ -9502,22 +9493,6 @@ renderChart(vargaKey) {
             }
         },
 
-        verifyLifeEventBTR: function() {
-            var eventType = document.getElementById('dBtrEventType') ? document.getElementById('dBtrEventType').value : 'marriage';
-            var year = document.getElementById('dBtrEventYear') ? document.getElementById('dBtrEventYear').value : '2012';
-            var fb = document.getElementById('dBtrEventFeedback');
-            if (!fb) return;
-
-            var msgs = {
-                marriage: "✓ विवाह वर्ष (" + year + ") के समय विंशोत्तरी में शुक्र-शनि-मंगल दशा सक्रिय थी। 7वें भाव का कस्प सब-लॉर्ड बुध (भाव 2, 7, 11 का कार्येश) +35 सेकंड के सूक्ष्म समय पर पूर्णतः 100% संरेखित है!",
-                child: "✓ प्रथम संतान वर्ष (" + year + ") में पंचम भाव कस्प सब-लॉर्ड गुरु (भाव 2, 5, 11) से विंशोत्तरी महादशा का पूर्ण योग संरेखित पाया गया। समय शुद्ध है।",
-                career: "✓ करियर उत्कर्ष (" + year + ") में दशम भाव कस्प सब-लॉर्ड शनि (भाव 6, 10, 11) की दशा पूर्ण कार्यसिद्धि प्रमाणित करती है।",
-                health: "✓ दुर्घटना / शल्य-क्रिया (" + year + ") में अष्टम भाव कस्प सब-लॉर्ड मंगल व राहु का संबंध 100% सटीक पाया गया।"
-            };
-
-            fb.style.display = 'block';
-            fb.innerHTML = msgs[eventType] || msgs.marriage;
-        },
 
         initDailyDashboard() {
             this.renderPanchang();
@@ -10859,8 +10834,11 @@ renderChart(vargaKey) {
                 if (!seen[key]) {
                     seen[key] = true;
                     var sign = item.asc_sign || (item.profile ? item.profile.asc_sign : "");
-                    if (sign === 'कन्या' && (pDob === '1984-11-23' || pName.toUpperCase().indexOf('NIKHIL') !== -1)) {
-                        sign = 'मेष';
+                    if (sign === 'कन्या' && pDob) {
+                        try {
+                            var temp = VyasDesktop.computeMathematicalKundli(pName, pDob, pTob || '12:00', pCity, pGen);
+                            if (temp && temp.profile) sign = temp.profile.asc_sign;
+                        } catch(e) {}
                     }
                     if (!sign && pDob) {
                         try {
