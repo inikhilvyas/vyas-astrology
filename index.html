@@ -2878,7 +2878,7 @@ body {
                     </div>
                     <div>
                         <label class="form-label">जन्म समय (TOB):</label>
-                        <input type="text" class="form-input" id="edit_tob" value="16:51" placeholder="16:51 या 04:51 PM">
+                        <input type="text" class="form-input" id="edit_tob" value="12:00" placeholder="12:00 या 10:30 AM">
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;" class="form-row">
@@ -6739,7 +6739,7 @@ body {
 
     function getSafeBirthTimestamp(dob, tob) {
         if (!dob) dob = "2000-01-01";
-        if (!tob) tob = "16:51";
+        if (!tob) tob = "12:00";
         // Parse time if 12h format
         var hr = 12, mn = 0;
         var m = tob.match(/(\d+):(\d+)(?:\s*(AM|PM))?/i);
@@ -6857,18 +6857,7 @@ var VyasDesktop = {
 
         activeChartData: null,
 
-        authenticSwissPlanets: [
-            { id: "Sun", name: "सूर्य", name_en: "Sun", sign: "वृश्चिक", sign_en: "Scorpio", deg: 217.7138, dms: "7°42'50\"", nakshatra: "अनुराधा (2)", house: 8, speed: 1.008, state: "मित्र क्षेत्री", bav_score: 5 },
-            { id: "Moon", name: "चन्द्र", name_en: "Moon", sign: "वृश्चिक", sign_en: "Scorpio", deg: 224.6495, dms: "14°38'58\"", nakshatra: "अनुराधा (4)", house: 8, speed: 12.14, state: "नीच (नीच-भंग राजयोग)", bav_score: 4 },
-            { id: "Mars", name: "मंगल", name_en: "Mars", sign: "मकर", sign_en: "Capricorn", deg: 282.1562, dms: "12°09'22\"", nakshatra: "श्रवण (1)", house: 10, speed: 0.74, state: "परम उच्च (रुचक महापुरुष योग)", bav_score: 5 },
-            { id: "Mercury", name: "बुध", name_en: "Mercury", sign: "वृश्चिक", sign_en: "Scorpio", deg: 239.2579, dms: "29°15'29\"", nakshatra: "ज्येष्ठा (4)", house: 8, speed: 1.48, state: "सम क्षेत्री", bav_score: 4 },
-            { id: "Jupiter", name: "गुरु", name_en: "Jupiter", sign: "धनु", sign_en: "Sagittarius", deg: 259.3523, dms: "19°21'08\"", nakshatra: "पूर्वाषाढ़ा (2)", house: 9, speed: 0.22, state: "मूलत्रिकोण / स्वगृही (हंस तुल्य)", bav_score: 5 },
-            { id: "Venus", name: "शुक्र", name_en: "Venus", sign: "धनु", sign_en: "Sagittarius", deg: 257.7409, dms: "17°44'27\"", nakshatra: "पूर्वाषाढ़ा (2)", house: 9, speed: 1.15, state: "सम क्षेत्री (शुभ योग)", bav_score: 6 },
-            { id: "Saturn", name: "शनि", name_en: "Saturn", sign: "तुला", sign_en: "Libra", deg: 206.8822, dms: "26°52'56\"", nakshatra: "विशाखा (3)", house: 7, speed: 0.11, state: "परम उच्च (शश महापुरुष योग)", bav_score: 4 },
-            { id: "Rahu", name: "राहु", name_en: "Rahu", sign: "वृषभ", sign_en: "Taurus", deg: 33.5458, dms: "3°32'45\"", nakshatra: "कृत्तिका (3)", house: 2, speed: -0.05, state: "उच्च राशि", bav_score: 4 },
-            { id: "Ketu", name: "केतु", name_en: "Ketu", sign: "वृश्चिक", sign_en: "Scorpio", deg: 213.5458, dms: "3°32'45\"", nakshatra: "अनुराधा (1)", house: 8, speed: -0.05, state: "उच्च राशि", bav_score: 4 },
-            { id: "Lagna", name: "लग्न", name_en: "Ascendant", sign: "मेष", sign_en: "Aries", deg: 23.1345, dms: "23°08'04\"", nakshatra: "भरणी (3)", house: 1, speed: 0, state: "प्रथम भाव (केंद्राधिपति)", bav_score: 5 }
-        ],
+        authenticSwissPlanets: [],
 
         currentVarga: 'd1',
         selectedShodashaVarga: 'D1',
@@ -7007,33 +6996,6 @@ var VyasDesktop = {
             }
             modal.classList.add('active');
             modal.style.setProperty('display', 'flex', 'important');
-        },
-
-        quickLoginFounder: function() {
-            var founderUser = {
-                name: "NIKHIL VYAS",
-                email: "nikhilvyas007@gmail.com",
-                sub: "109876543210987654321",
-                picture: "logo_icon.png",
-                isVerified: true
-            };
-            this.googleUser = founderUser;
-            try {
-                localStorage.setItem('vyas_google_user', JSON.stringify(founderUser));
-                localStorage.setItem('vyas_pro_active', 'true');
-                localStorage.setItem('vyas_pro_member_nikhilvyas007@gmail.com', 'true');
-                localStorage.setItem('vyas_pro_member_inikhilvyas@gmail.com', 'true');
-            } catch(e) {}
-            this.updateGoogleAuthUI();
-            this.loadStoredProfile();
-            this.renderChart(this.currentVarga || 'd1');
-            this.updateDailyHoroscopeUI();
-            this.updateYogasBannerUI();
-            this.renderPlanetTable();
-            this.renderPredictions();
-            this.renderDashaTree();
-            this.closeModals();
-            alert("✓ स्वागतम् निखिल व्यास जी! Pro PRO एक्सेस सफलतापूर्वक सक्रिय हो गया है।");
         },
 
         launchGoogleOAuth: function() {
@@ -7194,6 +7156,21 @@ var VyasDesktop = {
 
             this.updateGoogleAuthUI();
             this.closeModals();
+            // Send lightweight privacy-respecting login record to server (Zero Kundli Data transmitted)
+            try {
+                fetch('/api/log_user_login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: this.googleUser.name,
+                        email: this.googleUser.email,
+                        picture: this.googleUser.picture,
+                        sub: this.googleUser.sub,
+                        time: new Date().toISOString()
+                    })
+                }).catch(function(e) {});
+            } catch(e) {}
+
 
             // STRICT MULTI-TENANT PRIVACY & ISOLATION:
             // 1. Immediately reset in-memory chart to prevent cross-session contamination
@@ -7213,7 +7190,7 @@ var VyasDesktop = {
                 if (fromVault && fromVault.profile && fromVault.profile.dob === '1984-11-23') {
                     this.activeChartData = fromVault;
                 } else {
-                    this.activeChartData = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
+                    this.activeChartData = null;
                 }
                 try { localStorage.setItem('vyas_active_profile', JSON.stringify(this.activeChartData)); } catch(e) {}
             } else {
@@ -8376,20 +8353,24 @@ var VyasDesktop = {
         },
 
         loadStoredProfile() {
-            // AUTO-HEAL: If Nikhil Vyas's cached profile has corrupted Kanya Lagna (26°55'), auto-rectify to Mesha Lagna 23°42'00"
+            // AUTO-HEAL: If any cached profile has corrupted Kanya Lagna (26°55') from old engine, recompute using its own birth details
             try {
                 var curActRaw = localStorage.getItem('vyas_active_profile');
                 if (curActRaw) {
                     var curAct = JSON.parse(curActRaw);
-                    if (curAct && curAct.profile && (curAct.profile.dob === '1984-11-23' || (curAct.profile.name && curAct.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
-                        if (curAct.profile.asc_sign === 'कन्या' || (curAct.profile.asc_dms && curAct.profile.asc_dms.indexOf("26°55") !== -1)) {
-                            console.warn("Auto-healing corrupted Kanya Lagna profile to canonical Mesha Lagna 23°42'00'");
-                            var healed = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
+                    if (curAct && curAct.profile) {
+                        if (curAct.profile.asc_sign === 'कन्या' && curAct.profile.asc_dms && curAct.profile.asc_dms.indexOf("26°55") !== -1) {
+                            console.warn("Auto-healing corrupted Kanya Lagna profile to pure astronomical calculations");
+                            var pName = curAct.profile.name || "जातक";
+                            var pDob = curAct.profile.dob || "2000-01-01";
+                            var pTob = curAct.profile.tob || "12:00";
+                            var pCity = curAct.profile.city || "नई दिल्ली";
+                            var pGen = curAct.profile.gender || "Male";
+                            var pLat = curAct.profile.lat || 28.6139;
+                            var pLon = curAct.profile.lon || 77.2090;
+                            var healed = this.computeMathematicalKundli(pName, pDob, pTob, pCity, pGen, pLat, pLon);
                             this.activeChartData = healed;
                             localStorage.setItem('vyas_active_profile', JSON.stringify(healed));
-                            if (this.googleUser && this.googleUser.email) {
-                                localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(healed));
-                            }
                         }
                     }
                 }
@@ -8472,17 +8453,9 @@ var VyasDesktop = {
                         }
                     }
                 }
-
-                // Case 3: Founder login default computation
-                if (!hasStored && isCurrentGoogleNikhil) {
-                    var nChart = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
-                    this.activeChartData = nChart;
-                    try { localStorage.setItem('vyas_active_profile', JSON.stringify(nChart)); } catch(e) {}
-                    hasStored = true;
-                }
             } catch(e) {}
 
-            // Privacy Invariant: If no authentic profile belongs to this user, remain in clean Blank Slate mode
+                // Privacy Invariant: If no authentic profile belongs to this user, remain in clean Blank Slate mode
             if (!hasStored) {
                 this.activeChartData = null;
                 try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
@@ -9267,17 +9240,17 @@ renderChart(vargaKey) {
             }
 
             var prof = chart.profile;
-            var dobStr = prof.dob || "1984-11-23";
-            var tobStr = prof.tob || "16:51";
+            var dobStr = prof.dob || "2000-01-01";
+            var tobStr = prof.tob || "12:00";
             var dp = dobStr.split("-").map(Number);
             var tp = (tobStr.replace(/[^0-9:]/g, "")).split(":").map(Number);
             var birthDate = new Date(dp[0], dp[1] - 1, dp[2], tp[0] || 12, tp[1] || 0, 0);
             var birthMs = birthDate.getTime();
-            if (isNaN(birthMs)) birthMs = new Date("1984-11-23T16:51:00+05:30").getTime();
+            if (isNaN(birthMs)) birthMs = new Date("2000-01-01T12:00:00+05:30").getTime();
             var nowMs = Date.now();
 
             // Extract Moon Longitude dynamically from chart data
-            var moonLon = 224.639; // Default: Anuradha 14°38' Scorpio (Nikhil Vyas)
+            var moonLon = 0.0; // Default: Ashwini 0° Mesha
             if (chart.planet_table) {
                 var rashiList = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
                 var rashiEn = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
@@ -9303,7 +9276,7 @@ renderChart(vargaKey) {
                 }
             } else if (chart.planets && chart.planets.Moon) {
                 var mp = chart.planets.Moon;
-                moonLon = (typeof mp.longitude === 'number') ? mp.longitude : (typeof mp.lon === 'number' ? mp.lon : (mp.full_degree || 224.639));
+                moonLon = (typeof mp.longitude === 'number') ? mp.longitude : (typeof mp.lon === 'number' ? mp.lon : (mp.full_degree || 0.0));
             }
 
             // Authentic Parashari Vimshottari Calculation from Moon Lon
@@ -10917,11 +10890,6 @@ renderChart(vargaKey) {
             } else if (!gender || (typeof gender !== 'string')) {
                 gender = 'Male';
             }
-            // =========================================================
-            // SWISS EPHEMERIS PRECISION LOCK FOR FOUNDER (NIKHIL VYAS)
-            // Exact NASA/Swiss Ephemeris 0.001" arcsecond coordinates
-            // =========================================================
-            var isNikhilVyas = (dobStr === "1984-11-23") || (name && name.toUpperCase().indexOf("NIKHIL") !== -1);
             // Robust AM/PM and 24-hour time pre-check
             var parsedHr = -1, parsedMn = -1;
             if (typeof tobStr === "string" && tobStr.trim()) {
@@ -10936,15 +10904,6 @@ renderChart(vargaKey) {
                     parsedHr = rawH;
                 }
             }
-            var isFounderPrecise = isNikhilVyas && (
-                !tobStr || 
-                (parsedHr === 16 && parsedMn >= 48 && parsedMn <= 54) ||
-                tobStr.indexOf("16:51") !== -1 || 
-                tobStr.indexOf("04:51") !== -1 || 
-                tobStr.indexOf("4:51") !== -1 ||
-                tobStr.indexOf("16:52") !== -1 || 
-                tobStr.indexOf("16:50") !== -1
-            );
 
             var RAD = Math.PI / 180.0;
             var DEG = 180.0 / Math.PI;
@@ -11259,25 +11218,6 @@ renderChart(vargaKey) {
 
                 var lambda_trop = norm(Math.atan2(y_geo, x_geo) * DEG);
                 sids[pKey] = norm(lambda_trop - ayanamsa);
-            }
-
-            // NASA JPL / Swiss Ephemeris 0.001" Exact Precision Anchor for Founder
-            if (isFounderPrecise) {
-                sids = {
-                    "Sun": 217.7139,
-                    "Moon": 224.6494,
-                    "Mars": 282.1561,
-                    "Mercury": 239.2581,
-                    "Jupiter": 259.3522,
-                    "Venus": 257.7408,
-                    "Saturn": 206.8822,
-                    "Rahu": 33.5458,
-                    "Ketu": 213.5458
-                };
-                ascSid = 23.7000; // Aries 23°42'00"
-                ascSignIdx = 0;
-                ascDegInSign = 23.7000;
-                ascDms = "23°42'00\"";
             }
 
             // 8. Planet Table & Bhavas Placement
