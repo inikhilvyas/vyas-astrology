@@ -424,19 +424,19 @@
             font-family: var(--font-mono);
         }
 
-        /* --- 3-Column Cockpit Workspace --- */
+        /* --- 2-Column High-Precision Cockpit Workspace (Dedicated Floating Concierge) --- */
         .cockpit-container {
             display: grid;
-            grid-template-columns: 420px 1fr 340px;
-            gap: 16px;
+            grid-template-columns: 480px 1fr;
+            gap: 18px;
             padding: 16px 20px;
             flex: 1;
             max-width: 1920px;
             margin: 0 auto;
             width: 100%;
         }
-        @media (max-width: 1440px) {
-            .cockpit-container { grid-template-columns: 420px 1fr; gap: 14px; padding: 14px; }
+        @media (max-width: 1200px) {
+            .cockpit-container { grid-template-columns: 1fr; gap: 14px; padding: 12px; }
         }
 
         .cockpit-col {
@@ -2758,35 +2758,7 @@ body {
         </div>
 
         <!-- RIGHT COLUMN: SAGE CHAT HIDDEN (DEDICATED FLOATING CONCIERGE ACTIVE) -->
-        <div class="cockpit-col" id="desktopSageChatCol" style="display:none !important;">
-            <div class="col-header">
-                <span class="col-title">✦ आचार्य व्यास • वैदिक AI परामर्श</span>
-                <span style="font-size:0.70rem; color:#10b981; font-weight:800;">सत्य-निष्ठ (Truth-Locked)</span>
-            </div>
-
-            <div class="chat-container">
-                <div class="chat-messages" id="sageChatMessages">
-                    <div class="chat-bubble sage" id="sageChatWelcome">
-                        <b>सादर प्रणाम!</b><br>
-                        मैं आचार्य व्यास हूँ। आपकी जन्म कुण्डली, सक्रिय विंशोत्तरी दशा एवं तात्कालिक गोचर वेध मेरे सम्मुख है। ज्योतिषीय मार्गदर्शन हेतु नीचे दिए प्रश्नों पर क्लिक करें अथवा अपना प्रश्न लिखें।
-                    </div>
-                </div>
-
-                <!-- Quick Query Buttons -->
-                <div class="quick-queries">
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('मेरी कुण्डली में राजनीति व शासन में पद प्राप्ति का योग कैसा है?')">राजनीति व पद प्राप्ति योग?</button>
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('करियर, व्यापार विस्तार व पदोन्नति का समय कब उत्तम है?')">करियर व व्यापार विस्तार समय?</button>
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('आर्थिक समृद्धि, अकूत धन लाभ व संपत्ति योग की स्थिति बताएं?')">धन समृद्धि व संपत्ति योग?</button>
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('वर्तमान गोचर व दशा के अनुसार क्या सावधानी व उपाय करने चाहिए?')">🛡️ वर्तमान गोचर व अचूक उपाय?</button>
-                    <button class="quick-q-btn" onclick="VyasDesktop.askQuickSage('मेरी कुण्डली के अनुसार मेरी अवचेतन आदतें, मनोवैज्ञानिक कमियां और उन्हें सुधारने के व्यावहारिक उपाय क्या हैं?')"><svg class="v-icon v-brain" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9m-9 9a9 9 0 0 1-9-9"/></svg>सूक्ष्म आदतें व मनोवैज्ञानिक सुधार</button>
-                </div>
-
-                <div class="chat-input-row">
-                    <input type="text" class="chat-input-field" id="sageChatInput" placeholder="अपना प्रश्न लिखें (उदा: राजनीति, करियर, विवाह)..." onkeydown="if(event.key==='Enter') VyasDesktop.sendSageQuery()">
-                    <button class="header-btn primary" onclick="VyasDesktop.sendSageQuery()">भेजें</button>
-                </div>
-            </div>
-        </div>
+        <!-- Redundant inline chatbot removed; dedicated floating AI concierge active -->
 
     </div>
 
@@ -8415,14 +8387,33 @@ var VyasDesktop = {
         },
 
         loadStoredProfile() {
-            var CURRENT_ENGINE_VERSION = 'v4.2_swiss_precision_2026';
+            var CURRENT_ENGINE_VERSION = 'v5.0_pure_math_parashari_2026';
             try {
-                if (localStorage.getItem('vyas_engine_version') !== CURRENT_ENGINE_VERSION) {
-                    var stored = localStorage.getItem('vyas_active_profile');
+                var storedVer = localStorage.getItem('vyas_engine_version');
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (storedVer !== CURRENT_ENGINE_VERSION || !stored) {
+                    // Universal Auto-Heal: Stale engine version or corrupted D-charts/SAV detected
                     if (stored) {
-                        var parsed = JSON.parse(stored);
-                        if (parsed && parsed.profile && (parsed.profile.name.indexOf('NIKHIL') !== -1 || parsed.profile.dob === '1984-11-23')) {
-                            // Purge stale cached profile to reload fresh Swiss Ephemeris 23°27'09" & accurate SAV 337
+                        try {
+                            var pData = JSON.parse(stored);
+                            if (pData && pData.profile && pData.profile.dob) {
+                                // Dynamically recompute pure mathematical kundli for ANY user
+                                var fresh = this.computeMathematicalKundli(
+                                    pData.profile.name,
+                                    pData.profile.dob,
+                                    pData.profile.tob || '12:00',
+                                    pData.profile.city || '',
+                                    pData.profile.gender || 'Male',
+                                    pData.profile.lat || 25.0,
+                                    pData.profile.lon || 73.0
+                                );
+                                if (fresh) {
+                                    localStorage.setItem('vyas_active_profile', JSON.stringify(fresh));
+                                }
+                            } else {
+                                localStorage.removeItem('vyas_active_profile');
+                            }
+                        } catch(err) {
                             localStorage.removeItem('vyas_active_profile');
                         }
                     }
@@ -8660,15 +8651,24 @@ renderChart(vargaKey) {
                 return;
             }
 
-            var chartTitle = (cData && cData.title) ? cData.title : (vk.toUpperCase() + " कुण्डली • जन्मपत्रिका");
+            var chartTitle = (cData && typeof cData.title === 'string' && cData.title.trim()) ? cData.title.trim() : ((vk ? vk.toUpperCase() : "D-1") + " कुण्डली • जन्मपत्रिका");
+            if (!chartTitle || chartTitle.indexOf('undefined') !== -1) chartTitle = "D-1 लग्न कुण्डली • जन्मपत्रिका";
             if (titleElem) titleElem.innerText = "✦ " + chartTitle;
 
             var hData = (cData && cData.houses) ? cData.houses : cData;
-            if (this.chartStyle === 'south') {
-                wrap.innerHTML = this.generateSouthIndianSVG(hData, 460, chartTitle);
-            } else {
-                wrap.innerHTML = this.generateDiamondSVG(hData, 460, chartTitle);
+            var chartSvg = (this.chartStyle === 'south') ? this.generateSouthIndianSVG(hData, 460, chartTitle) : this.generateDiamondSVG(hData, 460, chartTitle);
+
+            // Special Yogas banner for D-charts (e.g. Vargottama, Pushkar Navamsha)
+            var yogasHtml = '';
+            if (cData && cData.specialYogas && cData.specialYogas.length > 0) {
+                yogasHtml = '<div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:6px; justify-content:center;">' +
+                    cData.specialYogas.map(function(y) {
+                        return '<span style="background:rgba(212,175,55,0.14); border:1px solid #d4af37; color:#d4af37; padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">' + y + '</span>';
+                    }).join('') +
+                '</div>';
             }
+
+            wrap.innerHTML = chartSvg + yogasHtml;
         },
 
         generateDiamondSVG(housesData, size, title) {
@@ -8752,6 +8752,13 @@ renderChart(vargaKey) {
                 transitMap[getTransitHouse(11)] = 'शनि (मीन 14°)';
             }
 
+            // Determine authentic Varga Ascendant sign from House 1
+            var lagnaSignNum = 1;
+            if (housesData && housesData[1]) {
+                var d1Val = housesData[1][0];
+                lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? d1Val.sign : d1Val) || 1;
+            }
+
             for (var house = 1; house <= 12; house++) {
                 var pos = positions[house];
                 var x = pos[0];
@@ -8759,15 +8766,18 @@ renderChart(vargaKey) {
                 var data = housesData[house] || [];
                 if (!data || data.length === 0) continue;
 
-                var signNum = (typeof data[0] === 'object' && data[0] !== null) ? (data[0].sign || house) : data[0];
+                // Immutable Parashari North Indian Rule: House h sign = ((lagnaSignNum - 1 + house - 1) % 12) + 1
+                var signNum = ((lagnaSignNum - 1 + house - 1) % 12) + 1;
                 var rawPlanets = (typeof data[0] === 'object' && data[0] !== null) ? data : data.slice(1);
                 var planets = [];
                 for (var pi = 0; pi < rawPlanets.length; pi++) {
                     var item = rawPlanets[pi];
                     if (typeof item === 'object' && item !== null) {
-                        planets.push((item.p || item.planet || '') + (item.d ? (' ' + item.d) : ''));
+                        var pText = (item.p || item.planet || '').replace(/\s*D[0-9]+/gi, '') + (item.d ? (' ' + item.d) : '');
+                        planets.push(pText.trim());
                     } else if (item) {
-                        planets.push(String(item));
+                        var pStr = String(item).replace(/\s*D[0-9]+/gi, '').trim();
+                        if (pStr) planets.push(pStr);
                     }
                 }
                 var count = planets.length;
@@ -9060,37 +9070,105 @@ renderChart(vargaKey) {
                 htAbhijit.innerHTML = isWed ? "बुधवार: अभिजित मुहूर्त वर्जित" : ("अभिजित: " + fmtMin(solarNoonMinutes - 24) + " - " + fmtMin(solarNoonMinutes + 24));
             }
 
-            // Choghadiya
+            // =========================================================================
+            // AUTHENTIC 7-DAY DAY & NIGHT CHAUGHADIYA OBSERVATORY (SHASHTRIC ORDER)
+            // =========================================================================
             var chogDay = [
-                ["उद्वेग", "चल", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग"],
-                ["अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चल", "लाभ", "अमृत"],
-                ["रोग", "उद्वेग", "चल", "लाभ", "अमृत", "काल", "शुभ", "रोग"],
-                ["लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चल", "लाभ"],
-                ["शुभ", "रोग", "उद्वेग", "चल", "लाभ", "अमृत", "काल", "शुभ"],
-                ["चल", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चल"],
-                ["काल", "शुभ", "रोग", "उद्वेग", "चल", "लाभ", "अमृत", "काल"]
+                // 0: Sunday (रविवार दिन): उद्वेग, चर, लाभ, अमृत, काल, शुभ, रोग, उद्वेग
+                ["उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग"],
+                // 1: Monday (सोमवार दिन): अमृत, काल, शुभ, रोग, उद्वेग, चर, लाभ, अमृत
+                ["अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत"],
+                // 2: Tuesday (मंगलवार दिन): रोग, उद्वेग, चर, लाभ, अमृत, काल, शुभ, रोग
+                ["रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ", "रोग"],
+                // 3: Wednesday (बुधवार दिन): लाभ, अमृत, काल, शुभ, रोग, उद्वेग, चर, लाभ
+                ["लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ"],
+                // 4: Thursday (गुरुवार दिन): शुभ, रोग, उद्वेग, चर, लाभ, अमृत, काल, शुभ
+                ["शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ"],
+                // 5: Friday (शुक्रवार दिन): चर, लाभ, अमृत, काल, शुभ, रोग, उद्वेग, चर
+                ["चर", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर"],
+                // 6: Saturday (शनिवार दिन): काल, शुभ, रोग, उद्वेग, चर, लाभ, अमृत, काल
+                ["काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल"]
             ];
-            var cList = chogDay[dayOfWeek];
+
+            var chogNight = [
+                // 0: Sunday Night (रविवार रात्रि): शुभ, अमृत, चर, रोग, काल, लाभ, उद्वेग, शुभ
+                ["शुभ", "अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ"],
+                // 1: Monday Night (सोमवार रात्रि): चर, रोग, काल, लाभ, उद्वेग, शुभ, अमृत, चर
+                ["चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर"],
+                // 2: Tuesday Night (मंगलवार रात्रि): काल, लाभ, उद्वेग, शुभ, अमृत, चर, रोग, काल
+                ["काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल"],
+                // 3: Wednesday Night (बुधवार रात्रि): उद्वेग, शुभ, अमृत, चर, रोग, काल, लाभ, उद्वेग
+                ["उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग"],
+                // 4: Thursday Night (गुरुवार रात्रि): अमृत, चर, रोग, काल, लाभ, उद्वेग, शुभ, अमृत
+                ["अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत"],
+                // 5: Friday Night (शुक्रवार रात्रि): रोग, काल, लाभ, उद्वेग, शुभ, अमृत, चर, रोग
+                ["रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग"],
+                // 6: Saturday Night (शनिवार रात्रि): लाभ, उद्वेग, शुभ, अमृत, चर, रोग, काल, लाभ
+                ["लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल", "लाभ"]
+            ];
+
+            var dayList = chogDay[dayOfWeek];
+            var nightList = chogNight[dayOfWeek];
+            var dayPartLen = (sunsetMin - sunriseMin) / 8.0;
+            var nightLen = (1440 - sunsetMin + sunriseMin);
+            var nightPartLen = nightLen / 8.0;
+
+            var curNow = new Date();
+            var curMin = curNow.getHours() * 60 + curNow.getMinutes();
+            var isDayNow = (curMin >= sunriseMin && curMin < sunsetMin);
+
             var chogGrid = document.getElementById('dPanChoghadiyaGrid');
             if (chogGrid) {
-                var chHtml = '';
-                for (var c = 0; c < 8; c++) {
-                    var cName = cList[c];
-                    var cStart = fmtMin(sunriseMin + (c * partLen));
-                    var cEnd = fmtMin(sunriseMin + ((c + 1) * partLen));
-                    var isGood = (cName === "अमृत" || cName === "शुभ" || cName === "लाभ");
-                    var isNeutral = (cName === "चर");
-                    var bg = isGood ? "rgba(16,185,129,0.18)" : (isNeutral ? "rgba(56,189,248,0.15)" : "rgba(239,68,68,0.18)");
-                    var border = isGood ? "#10b981" : (isNeutral ? "#38bdf8" : "#ef4444");
-                    var col = isGood ? "#10b981" : (isNeutral ? "#38bdf8" : "#ef4444");
-                    var tag = isGood ? "शुभ" : (isNeutral ? "मध्यम" : "त्याज्य");
+                function renderChogCards(list, startMin, partLength, isNight) {
+                    var html = '';
+                    for (var c = 0; c < 8; c++) {
+                        var cName = list[c];
+                        var sMin = Math.round(startMin + (c * partLength)) % 1440;
+                        var eMin = Math.round(startMin + ((c + 1) * partLength)) % 1440;
 
-                    chHtml += '<div style="background:' + bg + '; border:1px solid ' + border + '; padding:8px 4px; border-radius:6px;">' +
-                        '<b style="color:' + col + '; font-size:0.92rem;">' + cName + '</b> (' + tag + ')<br>' +
-                        '<span style="font-size:0.76rem; font-family:var(--font-mono); color:var(--text-secondary);">' + cStart.replace(' AM','').replace(' PM','') + '-' + cEnd.replace(' AM','').replace(' PM','') + '</span>' +
-                    '</div>';
+                        var isActive = false;
+                        if (!isNight && isDayNow) {
+                            var sM = Math.round(startMin + (c * partLength));
+                            var eM = Math.round(startMin + ((c + 1) * partLength));
+                            if (curMin >= sM && curMin < eM) isActive = true;
+                        } else if (isNight && !isDayNow) {
+                            var relCur = (curMin >= sunsetMin) ? (curMin - sunsetMin) : (curMin + 1440 - sunsetMin);
+                            var relS = c * partLength;
+                            var relE = (c + 1) * partLength;
+                            if (relCur >= relS && relCur < relE) isActive = true;
+                        }
+
+                        var isGood = (cName === "अमृत" || cName === "शुभ" || cName === "लाभ");
+                        var isNeutral = (cName === "चर" || cName === "चल");
+                        var bg = isGood ? "rgba(16,185,129,0.18)" : (isNeutral ? "rgba(56,189,248,0.15)" : "rgba(239,68,68,0.18)");
+                        var border = isGood ? "#10b981" : (isNeutral ? "#38bdf8" : "#ef4444");
+                        var col = isGood ? "#10b981" : (isNeutral ? "#38bdf8" : "#ef4444");
+                        var tag = isGood ? "सर्वोत्तम" : (isNeutral ? "मध्यम" : "त्याज्य");
+
+                        var activeBadge = isActive ? '<div style="background:#f59e0b; color:#000; font-size:0.62rem; font-weight:900; padding:1px 4px; border-radius:4px; margin-bottom:3px; animation:pulse 1.5s infinite;">✦ सक्रिय चौघड़िया</div>' : '';
+                        var activeBorder = isActive ? 'border:2px solid #f59e0b; box-shadow:0 0 10px rgba(245,158,11,0.5);' : ('border:1px solid ' + border + ';');
+
+                        html += '<div style="background:' + bg + '; ' + activeBorder + ' padding:8px 4px; border-radius:6px;">' +
+                            activeBadge +
+                            '<b style="color:' + col + '; font-size:0.92rem;">' + cName + '</b> (' + tag + ')<br>' +
+                            '<span style="font-size:0.74rem; font-family:var(--font-mono); color:var(--text-secondary);">' + fmtMin(sMin).replace(' AM','').replace(' PM','') + ' - ' + fmtMin(eMin).replace(' AM','').replace(' PM','') + '</span>' +
+                        '</div>';
+                    }
+                    return html;
                 }
-                chogGrid.innerHTML = chHtml;
+
+                var fullHtml = '<div style="grid-column:1/-1; font-weight:800; color:var(--text-primary); font-size:0.85rem; margin-top:4px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">' +
+                    '<span>☀️ दिन का चौघड़िया (सूर्योदय से सूर्यास्त)</span>' +
+                    (isDayNow ? '<span style="color:#f59e0b; font-size:0.72rem; font-weight:700;">● दिन का पहर सक्रिय</span>' : '') +
+                '</div>' +
+                renderChogCards(dayList, sunriseMin, dayPartLen, false) +
+                '<div style="grid-column:1/-1; font-weight:800; color:var(--text-primary); font-size:0.85rem; margin-top:14px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">' +
+                    '<span>🌙 रात्रि का चौघड़िया (सूर्यास्त से अगले सूर्योदय)</span>' +
+                    (!isDayNow ? '<span style="color:#f59e0b; font-size:0.72rem; font-weight:700;">● रात्रि का पहर सक्रिय</span>' : '') +
+                '</div>' +
+                renderChogCards(nightList, sunsetMin, nightPartLen, true);
+
+                chogGrid.innerHTML = fullHtml;
             }
         },
 
@@ -9770,23 +9848,39 @@ renderChart(vargaKey) {
             if (!av) return;
             var sav = (av.sav && av.sav.reduce(function(a, b) { return a + b; }, 0) === 337) ? av.sav : [33, 25, 25, 30, 31, 39, 29, 26, 19, 31, 27, 22];
 
-            // 1. SAV 12 Cards Grid (100% Guaranteed 337 Points)
+            // 1. SAV 12 Cards Grid (Accurately mapped by Bhava from Native's Lagna Sign)
             var grid = document.getElementById('sav12Grid');
             if (grid) {
                 var SIGNS_HI = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+                var ascSignName = (this.activeChartData && this.activeChartData.profile) ? (this.activeChartData.profile.asc_sign || 'मेष') : 'मेष';
+                var ascSignIdx = SIGNS_HI.indexOf(ascSignName);
+                if (ascSignIdx === -1) ascSignIdx = 0;
+
+                var maxPts = -1, maxHouse = 1, maxSign = '';
                 var html = '';
                 for (var h = 1; h <= 12; h++) {
-                    var pts = sav[h - 1] || 28;
+                    var sIdx = (ascSignIdx + h - 1) % 12;
+                    var pts = sav[sIdx] || 28;
+                    if (pts > maxPts) { maxPts = pts; maxHouse = h; maxSign = SIGNS_HI[sIdx]; }
+
                     var cls = pts >= 32 ? 'sav-high' : (pts >= 28 ? 'sav-good' : 'sav-low');
                     var tag = pts >= 32 ? 'अति बलवान' : (pts >= 28 ? 'शुभ' : 'सावधानी');
 
                     html += '<div class="sav-card ' + cls + '">' +
-                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">' + h + ' भाव (' + SIGNS_HI[h - 1] + ')</div>' +
+                        '<div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">' + h + ' भाव (' + SIGNS_HI[sIdx] + ')</div>' +
                         '<div class="sav-score ' + cls + '">' + pts + '</div>' +
                         '<div style="font-size:0.68rem; font-weight:700;">' + tag + '</div>' +
                     '</div>';
                 }
                 grid.innerHTML = html;
+
+                // Dynamic Sutra Note quoting native's actual strongest house and Lagna points
+                var noteElem = document.getElementById('savSutraNote');
+                if (noteElem) {
+                    var lagnaPts = sav[ascSignIdx];
+                    var hNamesHi = ["प्रथम", "द्वितीय", "तृतीय", "चतुर्थ", "पंचम", "षष्ठ", "सप्तम", "अष्टम", "नवम", "दशम", "एकादश", "द्वादश"];
+                    noteElem.innerHTML = '<b>सर्वाष्टकवर्ग फलित सूत्र:</b> 28 से अधिक बिन्दु वाले भाव जीवन में विशेष शक्ति, कार्य सिद्धि व उन्नति देते हैं। सर्वाधिक बलवान: <b>' + hNamesHi[maxHouse - 1] + ' भाव (' + maxSign + ' ' + maxPts + ' बिन्दु)</b> एवं <b>प्रथम भाव (' + SIGNS_HI[ascSignIdx] + ' ' + lagnaPts + ' बिन्दु)</b> जातक को अद्वितीय प्रतिस्पर्धी क्षमता, दीर्घायु व पराक्रम प्रदान करते हैं।';
+                }
             }
 
             // 2. Render default Prastarashtakvarga for Mars or Moon
@@ -11223,13 +11317,54 @@ renderChart(vargaKey) {
                     });
                 }
 
+                // Pure Mathematical Special Yogas Engine (Vargottama, Pushkar Navamsha, Pushkar Bhaga)
+                var specialYogas = [];
+                if (vk === "D9") {
+                    if (ascVargas.D1.sign_index === ascVargas.D9.sign_index) {
+                        specialYogas.push("✦ लग्न वर्गोत्तम (Lagna Vargottama — " + SIGNS_HI[aSign] + " लग्न)");
+                    }
+                    var PUSHKAR_BHAGAS = [21, 14, 18, 8, 19, 9, 24, 11, 23, 14, 19, 9];
+                    for (var pi = 0; pi < order.length; pi++) {
+                        var pn = order[pi];
+                        var pD1 = planetVargas[pn].D1;
+                        var pD9 = planetVargas[pn].D9;
+                        var plon = sids[pn];
+                        var pdeg = plon % 30.0;
+                        var psign = Math.floor(plon / 30.0) % 12;
+                        var nPart = Math.floor(pdeg / (30.0 / 9.0));
+
+                        // 1. Planet Vargottama (D1 Rashi == D9 Rashi)
+                        if (pD1.sign_index === pD9.sign_index) {
+                            specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " वर्गोत्तम (" + SIGNS_HI[pD1.sign_index] + " राशि D1 व D9 समान)");
+                        }
+
+                        // 2. Pushkar Navamsha (24 Auspicious Nourishing Navamshas in Zodiac)
+                        var isPushkarNav = false;
+                        var elem = psign % 4; // 0: Fire, 1: Earth, 2: Air, 3: Water
+                        if (elem === 0 && (nPart === 6 || nPart === 8)) isPushkarNav = true; // 7th & 9th
+                        else if (elem === 1 && (nPart === 2 || nPart === 4)) isPushkarNav = true; // 3rd & 5th
+                        else if (elem === 2 && (nPart === 5 || nPart === 7)) isPushkarNav = true; // 6th & 8th
+                        else if (elem === 3 && (nPart === 0 || nPart === 2)) isPushkarNav = true; // 1st & 3rd
+
+                        if (isPushkarNav) {
+                            specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " पुष्कर नवमांश (कल्याणकारी आरोग्य व भाग्य वर्धक)");
+                        }
+
+                        // 3. Pushkar Bhaga (±1° tolerance)
+                        if (Math.abs(pdeg - PUSHKAR_BHAGAS[psign]) <= 1.0) {
+                            specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " पुष्कर भाग (परम सिद्धि व अमृतोपम योग)");
+                        }
+                    }
+                }
+
                 var cKeyLower = vk.toLowerCase();
                 var cObj = {
                     key: vk,
                     title: VARGA_TITLES[vk],
                     ascSign: SIGNS_HI[aSign] + " लग्न (" + Math.floor(ascV.deg) + "°" + Math.floor((ascV.deg * 60) % 60) + "')",
                     houses: vHouses,
-                    planetDetails: pDetails
+                    planetDetails: pDetails,
+                    specialYogas: specialYogas
                 };
 
                 builtCharts[cKeyLower] = cObj;
