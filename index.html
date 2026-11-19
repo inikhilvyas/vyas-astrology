@@ -2914,13 +2914,13 @@ body {
     var SAMPLE_BUNDLE = {"profile": {"name": "अतिथि जातक (Guest)", "dob": "1995-01-01", "tob": "10:30 AM", "city": "नई दिल्ली (New Delhi)", "lat": 28.61, "lon": 77.2, "gender": "Male", "asc_sign": "मेष", "asc_dms": "15°00'00\""}, "charts": {"d1": {"title": "D-1 लग्न कुण्डली (कालपुरुष चक्र)", "ascSign": "मेष लग्न (15°00')", "houses": {"1": ["1", "सूर्य (उच्च 10°)"], "2": ["2", "चन्द्र (उच्च 03°)"], "3": ["3"], "4": ["4", "गुरु (उच्च 05°)"], "5": ["5"], "6": ["6", "बुध (स्व 15°)"], "7": ["7", "शनि (उच्च 20°)"], "8": ["8"], "9": ["9"], "10": ["10", "मंगल (उच्च 28°)"], "11": ["11"], "12": ["12", "शुक्र (उच्च 27°)"]}}, "d9": {"title": "D-9 नवमांश चक्र", "ascSign": "सिंह नवमांश", "houses": {"1": ["5"], "2": ["6"], "3": ["7"], "4": ["8"], "5": ["9"], "6": ["10"], "7": ["11"], "8": ["12"], "9": ["1"], "10": ["2"], "11": ["3"], "12": ["4"]}}, "d10": {"title": "D-10 दशमांश चक्र", "ascSign": "मेष दशमांश", "houses": {"1": ["1"], "2": ["2"], "3": ["3"], "4": ["4"], "5": ["5"], "6": ["6"], "7": ["7"], "8": ["8"], "9": ["9"], "10": ["10"], "11": ["11"], "12": ["12"]}}, "chalit": {"title": "भाव चलित चक्र", "ascSign": "मेष लग्न", "houses": {"1": ["1"], "2": ["2"], "3": ["3"], "4": ["4"], "5": ["5"], "6": ["6"], "7": ["7"], "8": ["8"], "9": ["9"], "10": ["10"], "11": ["11"], "12": ["12"]}}}, "planet_table": [{"p": "सूर्य (Sun)", "r": "मेष", "d": "10°00'00\"", "n": "Ashwini (3)", "h": "1", "s": "उच्च"}, {"p": "चन्द्र (Moon)", "r": "वृषभ", "d": "03°00'00\"", "n": "Krittika (2)", "h": "2", "s": "उच्च"}, {"p": "मंगल (Mars)", "r": "मकर", "d": "28°00'00\"", "n": "Dhanishta (2)", "h": "10", "s": "उच्च"}, {"p": "बुध (Mercury)", "r": "कन्या", "d": "15°00'00\"", "n": "Hasta (2)", "h": "6", "s": "स्वक्षेत्री"}, {"p": "गुरु (Jupiter)", "r": "कर्क", "d": "05°00'00\"", "n": "Pushya (1)", "h": "4", "s": "उच्च"}, {"p": "शुक्र (Venus)", "r": "मीन", "d": "27°00'00\"", "n": "Revati (4)", "h": "12", "s": "उच्च"}, {"p": "शनि (Saturn)", "r": "तुला", "d": "20°00'00\"", "n": "Vishakha (1)", "h": "7", "s": "उच्च"}, {"p": "राहु (Rahu)", "r": "वृषभ", "d": "15°00'00\"", "n": "Rohini (2)", "h": "2", "s": "उच्च"}, {"p": "केतु (Ketu)", "r": "वृश्चिक", "d": "15°00'00\"", "n": "Anuradha (4)", "h": "8", "s": "उच्च"}], "active_dasha": {"md": "Sun", "ad": "Jupiter", "pd": "Mars", "chain": "Sun ➔ Jupiter ➔ Mars"}};
     var AUTHENTIC_BUNDLE = {
         "profile": {
-            "name": "निखिल व्यास (Nikhil Vyas)",
-            "dob": "1984-11-23",
-            "tob": "16:51",
-            "city": "Falna, Rajasthan",
+            "name": "आदर्श कुण्डली (Sample Chart)",
+            "dob": "1990-01-01",
+            "tob": "12:00",
+            "city": "Ujjain, India",
             "gender": "Male",
             "asc_sign": "मेष",
-            "asc_dms": "23°27'09\""
+            "asc_dms": "15°00'00\""
         },
         "charts": {
             "d1": {
@@ -8433,6 +8433,22 @@ var VyasDesktop = {
                 }
                 if (stored) {
                     var data = JSON.parse(stored);
+                    var isCurrentGoogleNikhil = (this.googleUser && (
+                        (this.googleUser.email && this.googleUser.email.toLowerCase().indexOf('nikhil') !== -1) ||
+                        (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1)
+                    ));
+                    var isNikhilProfile = (data && data.profile && (
+                        data.profile.dob === '1984-11-23' ||
+                        (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)
+                    ));
+
+                    // PRIVACY ENFORCEMENT: Never show Nikhil Vyas's chart to visitors/other users
+                    if (isNikhilProfile && !isCurrentGoogleNikhil) {
+                        try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
+                        data = null;
+                        stored = null;
+                    }
+
                     if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
                         // Auto-Heal: Sanitize stale or dummy SAV (e.g. 346/356) to authentic BPHS 337
                         var curSavSum = (data.ashtakavarga && Array.isArray(data.ashtakavarga.sav)) ? data.ashtakavarga.sav.reduce(function(a, b) { return a + b; }, 0) : 0;
@@ -8493,19 +8509,9 @@ var VyasDesktop = {
                 } catch(e) {}
             }
 
-            // Step C: Fallback to Authentic Nikhil Vyas Swiss Ephemeris 0.001\" Chart
+            // Step C: STRICT PRIVACY RULE - Never load Nikhil Vyas chart for unauthenticated visitors
             if (!hasStored) {
-                try {
-                    var defaultChart = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
-                    if (defaultChart) {
-                        this.activeChartData = defaultChart;
-                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(defaultChart)); } catch(e) {}
-                        hasStored = true;
-                    }
-                } catch(e) {
-                    console.warn("Default chart init exception:", e);
-                    this.activeChartData = null;
-                }
+                this.activeChartData = null;
             }
 
             var chip = document.getElementById('headerProfileChip');
@@ -9279,7 +9285,7 @@ renderChart(vargaKey) {
             if (!container) return;
             var banner = document.getElementById('activeDashaChainVal');
 
-            var chart = this.activeChartData || window.AUTHENTIC_BUNDLE;
+            var chart = this.activeChartData;
             if (!chart || !chart.profile || !chart.profile.dob) {
                 if (banner) banner.innerHTML = '<span style="color:var(--text-muted);">कुण्डली लोड नहीं है • दशा उपलब्ध नहीं</span>';
                 container.innerHTML = '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.8rem;"><div style="font-size:1.6rem; margin-bottom:6px;"><svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><b style="color:var(--primary);">विंशोत्तरी दशा चक्र उपलब्ध नहीं</b><p style="font-size:0.74rem; margin-top:4px;">अपनी 5-स्तरीय विंशोत्तरी दशा देखने हेतु ऊपर &apos;+ नई कुण्डली&apos; से अपनी जन्म पत्रिका बनाएं।</p></div>';
@@ -10578,7 +10584,7 @@ renderChart(vargaKey) {
 
         loadKalapurushaChart() {
             localStorage.removeItem('vyas_active_profile');
-            this.activeChartData = AUTHENTIC_BUNDLE;
+            this.activeChartData = (typeof SAMPLE_BUNDLE !== 'undefined') ? SAMPLE_BUNDLE : null;
             this.loadStoredProfile();
             this.renderChart('d1');
             this.renderPlanetTable();
