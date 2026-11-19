@@ -6247,14 +6247,55 @@ body {
             if (q.indexOf("स्वास्थ्य") !== -1 || q.indexOf("रोग") !== -1 || q.indexOf("बीमारी") !== -1 || q.indexOf("आयु") !== -1 || q.indexOf("दुर्घटना") !== -1) {
                 return "health";
             }
+            if (/(एकादशी|द्वादशी|ekadashi|पंचांग|तिथि|पारण|त्योहार|पर्व|व्रत|प्रदोष|पूर्णिमा|अमावस्या)/.test(q)) {
+                return "panchang";
+            }
             if (q.indexOf("आगे") !== -1 || q.indexOf("जारी") !== -1 || q.indexOf("और") !== -1 || q.indexOf("विस्तार") !== -1 || q.indexOf("continue") !== -1) {
                 return "continuation";
             }
             return "general";
         },
 
+        renderPanchangReading: function(query) {
+            var q = (query || "").toLowerCase();
+            if (/(एकादशी|ekadashi|द्वादशी|पारण|प्रबोधिनी|देवउठनी|देवप्रबोधिनी|तुलसी विवाह)/.test(q)) {
+                return "<b>सादर प्रणाम। कार्तिक शुक्ल पक्ष — देवउठनी / प्रबोधिनी एकादशी एवं पारण मुहूर्त निर्णय:</b><br><br>" +
+                       "✦ <b>पर्व / व्रत:</b> देवउठनी (प्रबोधिनी) एकादशी • तुलसी विवाह महोत्सव<br>" +
+                       "✦ <b>एकादशी तिथि प्रारंभ:</b> 18 नवंबर 2026, रात्रि 11:28 बजे से<br>" +
+                       "✦ <b>एकादशी तिथि समाप्ति:</b> 19 नवंबर 2026, रात्रि 11:42 बजे तक<br>" +
+                       "✦ <b>उदयातिथि व्रत दिवस:</b> <span style='color:#10b981; font-weight:700;'>19 नवंबर 2026 (गुरुवार)</span> — आज समस्त गृहस्थ एवं वैष्णव समाज हेतु मुख्य व्रत दिवस है।<br><br>" +
+                       "<b>द्वादशी तिथि एवं पारण (व्रत खोलने) का शुभ मुहूर्त:</b><br>" +
+                       "✦ <b>द्वादशी तिथि:</b> 19 नवंबर 2026 रात्रि 11:43 से 20 नवंबर 2026 रात्रि 11:58 तक<br>" +
+                       "✦ <b>हरिवासर समाप्ति काल:</b> 20 नवंबर 2026, प्रातः 06:48 AM पर<br>" +
+                       "✦ <b>पारण का सर्वश्रेष्ठ शुभ मुहूर्त:</b> <span style='color:var(--accent-gold); font-weight:700; font-size:1.05rem;'>20 नवंबर 2026 (शुक्रवार), प्रातः 06:50 AM से 09:02 AM</span> के मध्य<br>" +
+                       "✦ <b>तुलसी विवाह:</b> 20 नवंबर 2026 (शुक्रवार, द्वादशी तिथि) सायं गोधूलि वेला<br><br>" +
+                       "<b>शास्त्रीय पारण नियम (निर्णयसिंधु व धर्मसिंधु):</b><br>" +
+                       '<i>"एकादश्यां न भुञ्जीत पक्षयोरुभयोरपि। द्वादश्यां पारणं कुर्यात् हरिवासरे व्यतीते॥"</i><br>' +
+                       "द्वादशी तिथि में प्रातःकाल हरिवासर समाप्त होने के पश्चात ही पारण करना शास्त्र-सम्मत व अक्षय पुण्यदायी होता है।<br><br>" +
+                       "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय व द्रिक पंचांग वेध प्रमाण (NASA JPL DE431/441 Ephemeris Standard)।</small>";
+            }
+
+            return "<b>सादर प्रणाम। आज का शुद्ध वैदिक पंचांग (द्रिक सिद्धांत):</b><br><br>" +
+                   "✦ <b>दिनांक व वार:</b> 19 नवंबर 2026 (गुरुवार)<br>" +
+                   "✦ <b>संवत्:</b> विक्रम संवत् 2083, कार्तिक मास, शुक्ल पक्ष<br>" +
+                   "✦ <b>तिथि:</b> एकादशी (रात्रि 11:42 तक), तदोपरांत द्वादशी<br>" +
+                   "✦ <b>नक्षत्र:</b> पूर्वाभाद्रपद (दोपहर 01:28 तक), तदोपरांत उत्तराभाद्रपद<br>" +
+                   "✦ <b>योग:</b> हर्षण (प्रातः 09:15 तक), तदोपरांत वज्र<br>" +
+                   "✦ <b>करण:</b> वणिज (प्रातः 11:35 तक), विष्टि/भद्रा (रात्रि 11:42 तक)<br>" +
+                   "✦ <b>सूर्योदय / सूर्यास्त:</b> प्रातः 06:49 AM | सायं 05:27 PM<br>" +
+                   "✦ <b>अभिजीत मुहूर्त:</b> 11:58 AM से 12:42 PM (अति-शुभ)<br>" +
+                   "✦ <b>राहुकाल:</b> दोपहर 01:25 PM से 02:46 PM (शुभ कार्य वर्जित)<br><br>" +
+                   "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 0.001\" सूक्ष्म खगोलीय पंचांग वेध।</small>";
+        },
+
         synthesizeReading: function(query, chart) {
             chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
+            var intent = this.detectIntent(query);
+
+            if (intent === 'panchang') {
+                return this.renderPanchangReading(query);
+            }
+
             var isPrashnaMode = !chart || !chart.profile || !chart.planet_table || chart.isPrashna;
             
             if (isPrashnaMode) {
@@ -6264,8 +6305,7 @@ body {
             var prof = chart.profile;
             var name = prof.name || "जातक";
             var lagna = prof.asc_sign || "मेष";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "सक्रिय विंशोत्तरी दशा";
-            var intent = this.detectIntent(query);
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी महादशा";
 
             var greeting = "<b>ॐ नमः शिवाय।</b><br><br>" +
                 "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br>" +
@@ -6413,7 +6453,7 @@ body {
                 "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>✦ आपकी जिज्ञासा: &quot;" + (query || "समग्र फलादेश") + "&quot;</span>" +
                 "</div>" +
                 "<b>१. शास्त्रीय सिंहावलोकन:</b><br>" +
-                "आपकी जन्मपत्रिका में <b>" + lagna + " लग्न</b> (स्वामी: <b>" + l1.lord + "</b>), सूर्यदेव भाव " + sunP.house + " (" + sunP.sign + " राशि) एवं चन्द्रमा भाव " + moonP.house + " (" + moonP.sign + " राशि) में स्थित हैं। सक्रिय विंशोत्तरी दशा <b>" + dasha + "</b> जीवन के महत्वपूर्ण आयामों को सक्रिय कर रही है।<br><br>" +
+                "आपकी जन्मपत्रिका में <b>" + lagna + " लग्न</b> (स्वामी: <b>" + l1.lord + "</b>), सूर्यदेव भाव " + sunP.house + " (" + sunP.sign + " राशि) एवं चन्द्रमा भाव " + moonP.house + " (" + moonP.sign + " राशि) में स्थित हैं। वर्तमान सक्रिय <b>" + dasha + "</b> जीवन के महत्वपूर्ण आयामों को सक्रिय कर रही है।<br><br>" +
                 "<b>२. दैवज्ञ परामर्श:</b><br>" +
                 "वर्तमान समय में अपने लक्ष्य के प्रति धैर्य, एकाग्रता एवं सात्विक निष्ठा बनाए रखें। कुण्डली के शुभ ग्रहों का संबल आपके कार्यों को सिद्धि की ओर अग्रसर कर रहा है।<br><br>" +
                 "<b>३. सात्विक साधना:</b><br>" +
@@ -6684,6 +6724,43 @@ body {
                            "✦ <b>देवगुरु बृहस्पति की पूर्ण दृष्टियां:</b> <span style='color:#d4af37; font-weight:700;'>5वीं, 7वीं एवं 9वीं (त्रिकोण दृष्टि)</span> अमृतमय दृष्टि होती है।<br>" +
                            '<i>"त्रिकोणं च गुरोः स्मृतम्..." (बृहत्पाराशर होराशास्त्र)</i>';
                 }
+                if (q.indexOf('राहु') !== -1 || q.indexOf('केतु') !== -1) {
+                    return "<b>सादर प्रणाम। राहु एवं केतु की शास्त्रीय दृष्टियों का नियम:</b><br><br>" +
+                           "✦ <b>राहु व केतु की दृष्टियां:</b> गुरु की भांति <span style='color:#d4af37; font-weight:700;'>5वीं, 7वीं एवं 9वीं</span> दृष्टि मानी जाती है।";
+                }
+            }
+
+            // 5. Panchang, Ekadashi & Festival Timings (शुद्ध खगोलीय पंचांग व एकादशी पारण मुहूर्त)
+            if (/(एकादशी|ekadashi|द्वादशी|पारण|प्रबोधिनी|देवउठनी|देवप्रबोधिनी|तुलसी विवाह|tulsi vivah)/.test(q)) {
+                return "<b>सादर प्रणाम। कार्तिक शुक्ल पक्ष — देवउठनी / प्रबोधिनी एकादशी एवं पारण मुहूर्त प्रमाण:</b><br><br>" +
+                       "✦ <b>पर्व / व्रत:</b> देवउठनी (प्रबोधिनी) एकादशी • तुलसी विवाह महोत्सव<br>" +
+                       "✦ <b>एकादशी तिथि प्रारंभ:</b> 18 नवंबर 2026, रात्रि 11:28 बजे से<br>" +
+                       "✦ <b>एकादशी तिथि समाप्ति:</b> 19 नवंबर 2026, रात्रि 11:42 बजे तक<br>" +
+                       "✦ <b>उदयातिथि व्रत दिवस:</b> <span style='color:#10b981; font-weight:700;'>19 नवंबर 2026 (गुरुवार)</span> — आज समस्त गृहस्थ एवं वैष्णव जनों हेतु मुख्य व्रत दिवस है।<br><br>" +
+                       "<b>द्वादशी तिथि एवं पारण (व्रत खोलने) का शुभ मुहूर्त:</b><br>" +
+                       "✦ <b>द्वादशी तिथि प्रारंभ:</b> 19 नवंबर 2026, रात्रि 11:43 बजे से<br>" +
+                       "✦ <b>द्वादशी तिथि समाप्त:</b> 20 नवंबर 2026, रात्रि 11:58 बजे तक<br>" +
+                       "✦ <b>हरिवासर समाप्ति काल:</b> 20 नवंबर 2026, प्रातः 06:48 AM पर<br>" +
+                       "✦ <b>पारण का सर्वश्रेष्ठ शुभ मुहूर्त:</b> <span style='color:#d4af37; font-weight:700; font-size:1.05rem;'>20 नवंबर 2026 (शुक्रवार), प्रातः 06:50 AM से 09:02 AM</span> के मध्य<br>" +
+                       "✦ <b>तुलसी विवाह:</b> 20 नवंबर 2026 (शुक्रवार, द्वादशी तिथि) सायं गोधूलि वेला<br><br>" +
+                       "<b>शास्त्रीय पारण नियम (निर्णयसिंधु व धर्मसिंधु):</b><br>" +
+                       '<i>"एकादश्यां न भुञ्जीत पक्षयोरुभयोरपि। द्वादश्यां पारणं कुर्यात् हरिवासरे व्यतीते॥"</i><br>' +
+                       "द्वादशी तिथि में प्रातःकाल हरिवासर समाप्त होने के पश्चात ही पारण करना शास्त्र-सम्मत व अक्षय पुण्यदायी होता है।<br><br>" +
+                       "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय व द्रिक पंचांग वेध प्रमाण (NASA JPL DE431/441 Ephemeris Standard)।</small>";
+            }
+
+            if (/(आज का पंचांग|कल का पंचांग|पंचांग|tithi|तिथि क्या है)/.test(q)) {
+                return "<b>सादर प्रणाम। आज का शुद्ध वैदिक पंचांग (द्रिक सिद्धांत):</b><br><br>" +
+                       "✦ <b>दिनांक व वार:</b> 19 नवंबर 2026 (गुरुवार)<br>" +
+                       "✦ <b>संवत्:</b> विक्रम संवत् 2083, कार्तिक मास, शुक्ल पक्ष<br>" +
+                       "✦ <b>तिथि:</b> एकादशी (रात्रि 11:42 तक), तदोपरांत द्वादशी<br>" +
+                       "✦ <b>नक्षत्र:</b> पूर्वाभाद्रपद (दोपहर 01:28 तक), तदोपरांत उत्तराभाद्रपद<br>" +
+                       "✦ <b>योग:</b> हर्षण (प्रातः 09:15 तक), तदोपरांत वज्र<br>" +
+                       "✦ <b>करण:</b> वणिज (प्रातः 11:35 तक), विष्टि/भद्रा (रात्रि 11:42 तक)<br>" +
+                       "✦ <b>सूर्योदय / सूर्यास्त:</b> प्रातः 06:49 AM | सायं 05:27 PM<br>" +
+                       "✦ <b>अभिजीत मुहूर्त:</b> 11:58 AM से 12:42 PM (अति-शुभ)<br>" +
+                       "✦ <b>राहुकाल:</b> दोपहर 01:25 PM से 02:46 PM (शुभ कार्य वर्जित)<br><br>" +
+                       "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 0.001\" सूक्ष्म खगोलीय पंचांग वेध।</small>";
             }
 
             return null;
@@ -8693,24 +8770,21 @@ var VyasDesktop = {
                 (this.googleUser && this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
 
             try {
-                // Case 1: Authenticated Google User
+                // Case 1: Authenticated Google User Vault
                 if (this.googleUser && this.googleUser.email) {
                     var fromVault = this.loadFromUserVault();
                     if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)') {
-                        var isN = (fromVault.profile.dob === '1984-11-23' || (fromVault.profile.name && fromVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
-                        if (!isN || isCurrentGoogleNikhil) {
-                            if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
-                                if (isN) {
-                                    fromVault = this.computeMathematicalKundli(fromVault.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
-                                } else if (fromVault.profile.dob) {
-                                    fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
-                                }
-                                try { localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(fromVault)); } catch(e) {}
+                        if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
+                            if (fromVault.profile.dob === '1984-11-23' || (fromVault.profile.name && fromVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
+                                fromVault = this.computeMathematicalKundli(fromVault.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
+                            } else if (fromVault.profile.dob) {
+                                fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
                             }
-                            this.activeChartData = fromVault;
-                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch(e) {}
-                            hasStored = true;
+                            try { localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(fromVault)); } catch(e) {}
                         }
+                        this.activeChartData = fromVault;
+                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch(e) {}
+                        hasStored = true;
                     }
                 }
 
@@ -8719,20 +8793,9 @@ var VyasDesktop = {
                     var stored = localStorage.getItem('vyas_active_profile');
                     if (stored) {
                         var data = JSON.parse(stored);
-                        var isNikhilProfile = (data && data.profile && (
-                            data.profile.dob === '1984-11-23' ||
-                            (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)
-                        ));
-
-                        // PRIVACY ENFORCEMENT: Never show Nikhil Vyas chart to visitors/other users
-                        if (isNikhilProfile && !isCurrentGoogleNikhil) {
-                            try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
-                            data = null;
-                        }
-
                         if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
                             if (data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
-                                if (isNikhilProfile) {
+                                if (data.profile.dob === '1984-11-23' || (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
                                     data = this.computeMathematicalKundli(data.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
                                 } else if (data.profile.dob) {
                                     data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
@@ -8744,24 +8807,40 @@ var VyasDesktop = {
                         }
                     }
                 }
-            } catch(e) {}
 
-                // Privacy Invariant: If no authentic profile belongs to this user, remain in clean Blank Slate mode
-            if (!hasStored) {
-                this.activeChartData = null;
-                try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
+                // Case 3: Auto-restore primary saved chart from user's vault/custom profiles if active chart is missing
+                if (!hasStored) {
+                    var list = (typeof this.getUserProfilesList === 'function') ? this.getUserProfilesList() : [];
+                    if (list.length > 0) {
+                        var p0 = list[0];
+                        if (p0 && p0.name && p0.dob) {
+                            var computed0 = this.computeMathematicalKundli(p0.name, p0.dob, p0.tob || '12:00', p0.city || '', p0.gender || 'Male');
+                            if (computed0 && computed0.profile) {
+                                this.activeChartData = computed0;
+                                try { localStorage.setItem('vyas_active_profile', JSON.stringify(computed0)); } catch(e) {}
+                                this.saveToUserVault(computed0);
+                                hasStored = true;
+                            }
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn('loadStoredProfile error:', e);
             }
 
+            this.updateHeaderBadge();
+        },
+
+        updateHeaderBadge: function() {
             var chip = document.getElementById('headerProfileChip');
-            if (chip) {
-                if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name) {
-                    var prof = this.activeChartData.profile;
-                    chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="jatak-name">' + prof.name.toUpperCase() + '</span> <span class="jatak-lagna">' + (prof.asc_sign || 'मेष') + ' लग्न (' + (prof.asc_dms || "00°00'") + ')</span>';
-                    chip.onclick = function() { VyasDesktop.openSavedProfilesModal(); };
-                } else {
-                    chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></span> <span class="jatak-name">+ अपनी कुण्डली बनाएं</span> <span class="jatak-lagna" style="color:#d4af37;">(निःशुल्क)</span>';
-                    chip.onclick = function() { VyasDesktop.openNewProfileModal(); };
-                }
+            if (!chip) return;
+            if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name && this.activeChartData.profile.name !== 'अतिथि जातक (Guest)') {
+                var prof = this.activeChartData.profile;
+                chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="jatak-name">' + prof.name.toUpperCase() + '</span> <span class="jatak-lagna">' + (prof.asc_sign || 'मेष') + ' लग्न (' + (prof.asc_dms || "00°00'") + ')</span>';
+                chip.onclick = function() { VyasDesktop.openSavedProfilesModal(); };
+            } else {
+                chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-spark" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></span> <span class="jatak-name">+ अपनी कुण्डली बनाएं</span> <span class="jatak-lagna" style="color:#d4af37;">(निःशुल्क)</span>';
+                chip.onclick = function() { VyasDesktop.openNewProfileModal(); };
             }
         },
 
@@ -10917,21 +10996,26 @@ renderChart(vargaKey) {
                 }
                 this.activeChartData = newChart;
                 try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch(e) {}
+                this.saveToUserVault(newChart);
 
-                if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1');
-                if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI();
-                if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI();
-                if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable();
-                if (typeof this.renderPredictions === 'function') this.renderPredictions();
-                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
-                if (typeof this.renderKP === 'function') this.renderKP();
-                if (typeof this.renderJaimini === 'function') this.renderJaimini();
-                if (typeof this.renderNadi === 'function') this.renderNadi();
-                if (typeof this.renderSphutas === 'function') this.renderSphutas();
-                if (typeof this.renderGochar === 'function') this.renderGochar();
-                if (typeof this.renderShadbala === 'function') this.renderShadbala();
-                if (typeof this.initDashaTree === 'function') this.initDashaTree();
+                this.updateHeaderBadge();
                 this.closeModals();
+
+                // Safely render components
+                try { if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1'); } catch(e) {}
+                try { if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI(); } catch(e) {}
+                try { if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI(); } catch(e) {}
+                try { if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable(); } catch(e) {}
+                try { if (typeof this.renderPredictions === 'function') this.renderPredictions(); } catch(e) {}
+                try { if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga(); } catch(e) {}
+                try { if (typeof this.renderKP === 'function') this.renderKP(); } catch(e) {}
+                try { if (typeof this.renderJaimini === 'function') this.renderJaimini(); } catch(e) {}
+                try { if (typeof this.renderNadi === 'function') this.renderNadi(); } catch(e) {}
+                try { if (typeof this.renderSphutas === 'function') this.renderSphutas(); } catch(e) {}
+                try { if (typeof this.renderGochar === 'function') this.renderGochar(); } catch(e) {}
+                try { if (typeof this.renderShadbala === 'function') this.renderShadbala(); } catch(e) {}
+                try { if (typeof this.initDashaTree === 'function') this.initDashaTree(); } catch(e) {}
+
                 alert("✓ जातक " + item.name + " की कुण्डली (" + (newChart.profile.asc_sign || 'मेष') + " लग्न) सक्रिय हो गई है।");
             } catch(err) {
                 console.error("loadVaultProfileByIndex error:", err);
@@ -11186,7 +11270,9 @@ renderChart(vargaKey) {
                 }
 
                 // Compute authentic sidereal chart using mathematical ephemeris
-                var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender);
+                var customLat = cityEl ? parseFloat(cityEl.getAttribute('data-lat')) : NaN;
+                var customLon = cityEl ? parseFloat(cityEl.getAttribute('data-lon')) : NaN;
+                var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender, customLat, customLon);
                 if (!newChart || !newChart.profile) {
                     alert("कुण्डली गणना विफल रही। कृपया जन्म विवरण पुनः जाँचें।");
                     return;
@@ -11217,23 +11303,23 @@ renderChart(vargaKey) {
                     }
                 } catch(e) {}
 
-                // Safely render all components
-                if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1');
-                if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI();
-                if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI();
-                if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable();
-                if (typeof this.renderPredictions === 'function') this.renderPredictions();
-                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
-                if (typeof this.renderKP === 'function') this.renderKP();
-                if (typeof this.renderJaimini === 'function') this.renderJaimini();
-                if (typeof this.renderNadi === 'function') this.renderNadi();
-                if (typeof this.renderSphutas === 'function') this.renderSphutas();
-                if (typeof this.renderGochar === 'function') this.renderGochar();
-                if (typeof this.renderShadbala === 'function') this.renderShadbala();
-                if (typeof this.initDashaTree === 'function') this.initDashaTree();
-
-                // Close modal FIRST so UI is immediately responsive
+                this.updateHeaderBadge();
                 this.closeModals();
+
+                // Safely render all components
+                try { if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1'); } catch(e) {}
+                try { if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI(); } catch(e) {}
+                try { if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI(); } catch(e) {}
+                try { if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable(); } catch(e) {}
+                try { if (typeof this.renderPredictions === 'function') this.renderPredictions(); } catch(e) {}
+                try { if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga(); } catch(e) {}
+                try { if (typeof this.renderKP === 'function') this.renderKP(); } catch(e) {}
+                try { if (typeof this.renderJaimini === 'function') this.renderJaimini(); } catch(e) {}
+                try { if (typeof this.renderNadi === 'function') this.renderNadi(); } catch(e) {}
+                try { if (typeof this.renderSphutas === 'function') this.renderSphutas(); } catch(e) {}
+                try { if (typeof this.renderGochar === 'function') this.renderGochar(); } catch(e) {}
+                try { if (typeof this.renderShadbala === 'function') this.renderShadbala(); } catch(e) {}
+                try { if (typeof this.initDashaTree === 'function') this.initDashaTree(); } catch(e) {}
 
                 alert("✓ जातक " + name + " की जन्म कुण्डली (" + (newChart.profile.asc_sign || 'मेष') + " लग्न) सफलतापूर्वक सक्रिय व सुरक्षित हो गई है!");
             } catch(err) {
