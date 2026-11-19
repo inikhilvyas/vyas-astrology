@@ -13,7 +13,8 @@ import json
 import glob
 from typing import List, Dict, Any
 
-BOOKS_DIR = "books"
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BOOKS_DIR = os.path.join(PROJECT_ROOT, "books")
 OUTPUT_JSONL = os.path.join(BOOKS_DIR, "ai_jyotish_knowledge_bank_part23_shastric_md.jsonl")
 
 def extract_bhrigu_nandi_combinations() -> List[Dict[str, Any]]:

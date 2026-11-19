@@ -12,4 +12,4 @@ gatherUsageStats = false
 toolbarMode = "minimal"
 
 [server]
-enableStaticServing = true
+enableStaticServing = false

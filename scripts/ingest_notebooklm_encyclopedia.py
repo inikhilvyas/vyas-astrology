@@ -10,8 +10,9 @@ import os
 import json
 from datetime import datetime
 
-BOOKS_DIR = "books"
-DATA_DIR = os.path.join("data", "daivagya_sft")
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+BOOKS_DIR = os.path.join(PROJECT_ROOT, "books")
+DATA_DIR = os.path.join(PROJECT_ROOT, "data", "daivagya_sft")
 OUTPUT_JSONL = os.path.join(BOOKS_DIR, "ai_jyotish_knowledge_bank_part24_notebooklm_compendium.jsonl")
 TRAIN_FILE = os.path.join(DATA_DIR, "vyas_daivagya_sft_train.jsonl")
 

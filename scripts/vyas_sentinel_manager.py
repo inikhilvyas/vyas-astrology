@@ -58,7 +58,7 @@ def load_sentinel_config():
         },
         "telegram": {
             "enabled": True,
-            "token": "9076187059:AAGsuSCU-aQiGWIVajtdk3T-vUGgVHy1FAo",
+            "token": os.getenv("TELEGRAM_BOT_TOKEN", ""),
             "bot_username": "VyasSentinel_bot"
         },
         "push_notifications": {
