@@ -1613,9 +1613,9 @@ body {
         </div>
 
         <div class="header-center-info">
-            <span class="live-status-pill">
+            <span class="live-status-pill" onclick="VyasDesktop.openAstroTransparencyModal()" style="cursor:pointer;" title="खगोलीय गणना मापदंड व पारदर्शिता (Calculation Parameters & Astronomical Transparency)">
                 <span class="pulsing-green-dot"></span>
-                <span>स्विस्स एफिमेरिस 0.001″ लॉक</span>
+                <span>स्विस्स एफिमेरिस 0.001″ लॉक ⓘ</span>
             </span>
             <span class="panchang-ticker" id="headerPanchangTicker">
                 <span id="htDate">18 नवंबर 2026</span> • <span id="htTithi">शुक्ल नवमी</span> • <span id="htNak">शतभिषा</span> • <span id="htAbhijit" style="color:#ef4444; font-weight:700;">बुधवार: अभिजित मुहूर्त वर्जित</span>
@@ -7429,6 +7429,25 @@ var VyasDesktop = {
             modal.style.display = 'flex';
         },
 
+        openAstroTransparencyModal: function() {
+            var modal = document.getElementById('modalAstroTransparency');
+            if (!modal) return;
+            var prof = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile : null;
+            var ayanDms = (prof && prof.ayanamsa_dms) ? prof.ayanamsa_dms : "24°10'38.2\"";
+            var ayanDeg = (prof && prof.ayanamsa_deg) ? (prof.ayanamsa_deg.toFixed(4) + "°") : "24.1773°";
+            var chartName = (prof && prof.name) ? prof.name : "वर्तमान गोचर / कालपुरुष";
+            var tzInfo = prof ? ("UTC+" + prof.tz) : "UTC+5:30 (IST)";
+            
+            var elRef = document.getElementById('atChartRef');
+            if (elRef) elRef.textContent = chartName;
+            var elAyan = document.getElementById('atAyanamsaDms');
+            if (elAyan) elAyan.textContent = ayanDms + " (" + ayanDeg + ")";
+            var elTz = document.getElementById('atTzInfo');
+            if (elTz) elTz.textContent = tzInfo;
+            modal.classList.add('active');
+            modal.style.display = 'flex';
+        },
+
         shareToWhatsApp: function() {
             var prof = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile : { name: "जातक", asc_sign: "मेष" };
             var text = encodeURIComponent("मेरी प्रामाणिक वैदिक जन्म कुण्डली (" + prof.name + " • " + (prof.asc_sign || "मेष") + " लग्न • 0.001″ स्विस्स एफिमेरिस लॉक):\n\nरुचक व शश महापुरुष योग • 74/100 व्यास डे इंडेक्स\n\nअपनी जन्म कुण्डली और 5-स्तरीय दशा यहाँ 100% निःशुल्क देखें: https://vyasastro.in");
@@ -11085,8 +11104,37 @@ renderChart(vargaKey) {
                 }
             }
 
-            var dp = dobStr.split("-").map(Number);
-            var yr = dp[0], mo = dp[1], dy = dp[2];
+            // Robust Indian and ISO Date Parsing (Supports YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY)
+            var yr = 2000, mo = 1, dy = 1;
+            if (typeof dobStr === "string" && dobStr.trim()) {
+                var cleanDob = dobStr.trim();
+                var slashParts = cleanDob.split(/[\/\-\.]/);
+                if (slashParts.length === 3) {
+                    var p0 = parseInt(slashParts[0], 10);
+                    var p1 = parseInt(slashParts[1], 10);
+                    var p2 = parseInt(slashParts[2], 10);
+                    if (p0 > 1000) {
+                        // YYYY-MM-DD
+                        yr = p0; mo = p1; dy = p2;
+                    } else if (p2 > 1000) {
+                        // DD-MM-YYYY (Standard Indian Format)
+                        dy = p0; mo = p1; yr = p2;
+                    } else {
+                        yr = p0; mo = p1; dy = p2;
+                    }
+                }
+            }
+            if (isNaN(yr) || yr < 1800 || yr > 2200) yr = 2000;
+            if (isNaN(mo) || mo < 1 || mo > 12) mo = 1;
+            if (isNaN(dy) || dy < 1 || dy > 31) dy = 1;
+
+            // Historical Indian War Time DST (1942-09-01 to 1945-10-15: UTC+6:30)
+            if (tz === 5.5) {
+                var dateNum = yr * 10000 + mo * 100 + dy;
+                if (dateNum >= 19420901 && dateNum <= 19451015) {
+                    tz = 6.5; // Indian War Time (+1 Hour DST)
+                }
+            }
             var hr = 12, mn = 0;
             if (typeof tobStr === "string" && tobStr.trim()) {
                 var mMatch = tobStr.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
@@ -11888,7 +11936,12 @@ renderChart(vargaKey) {
                 profile: {
                     name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                     lat: lat, lon: lon, tz: tz,
-                    asc_sign: SIGNS_HI[ascSignIdx], asc_dms: ascDms
+                    asc_sign: SIGNS_HI[ascSignIdx], asc_dms: ascDms,
+                    ayanamsa_deg: ayanamsa,
+                    ayanamsa_dms: toDMS(ayanamsa),
+                    ephemeris: "Swiss Ephemeris 0.001\" (NASA JPL DE431/441)",
+                    house_system: "Parashari: Sripati / Whole Sign | KP: Placidus Semi-Arc",
+                    node_type: "True Node (विशुद्ध खगोलीय केंद्र)"
                 },
                 charts: builtCharts,
                 planet_table: pTable,
