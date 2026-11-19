@@ -10746,29 +10746,41 @@ renderChart(vargaKey) {
         },
 
         loadVaultProfileByIndex: function(idx) {
-            var list = this.getUserProfilesList();
-            var item = list[idx];
-            if (!item) return;
+            try {
+                var list = this.getUserProfilesList ? this.getUserProfilesList() : [];
+                var item = list[idx];
+                if (!item) {
+                    alert("कुण्डली प्रविष्टि नहीं मिली।");
+                    return;
+                }
 
-            var newChart = this.computeMathematicalKundli(item.name, item.dob, item.tob, item.city, item.gender);
-            this.activeChartData = newChart;
-            try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch(e) {}
+                var newChart = this.computeMathematicalKundli(item.name, item.dob, item.tob, item.city, item.gender);
+                if (!newChart || !newChart.profile) {
+                    alert("कुण्डली गणना विफल रही। कृपया पुनः प्रयास करें।");
+                    return;
+                }
+                this.activeChartData = newChart;
+                try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch(e) {}
 
-            this.renderChart(this.currentVarga || 'd1');
-            this.updateDailyHoroscopeUI();
-            this.updateYogasBannerUI();
-            this.renderPlanetTable();
-            this.renderPredictions();
-            this.renderAshtakavarga();
-            this.renderKP();
-            this.renderJaimini();
-            this.renderNadi();
-            this.renderSphutas();
-            this.renderGochar();
-            this.renderShadbala();
-            this.initDashaTree();
-            this.closeModals();
-            alert("✓ जातक " + item.name + " की कुण्डली (" + newChart.profile.asc_sign + " लग्न) सक्रिय हो गई है।");
+                if (typeof this.renderChart === 'function') this.renderChart(this.currentVarga || 'd1');
+                if (typeof this.updateDailyHoroscopeUI === 'function') this.updateDailyHoroscopeUI();
+                if (typeof this.updateYogasBannerUI === 'function') this.updateYogasBannerUI();
+                if (typeof this.renderPlanetTable === 'function') this.renderPlanetTable();
+                if (typeof this.renderPredictions === 'function') this.renderPredictions();
+                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
+                if (typeof this.renderKP === 'function') this.renderKP();
+                if (typeof this.renderJaimini === 'function') this.renderJaimini();
+                if (typeof this.renderNadi === 'function') this.renderNadi();
+                if (typeof this.renderSphutas === 'function') this.renderSphutas();
+                if (typeof this.renderGochar === 'function') this.renderGochar();
+                if (typeof this.renderShadbala === 'function') this.renderShadbala();
+                if (typeof this.initDashaTree === 'function') this.initDashaTree();
+                this.closeModals();
+                alert("✓ जातक " + item.name + " की कुण्डली (" + (newChart.profile.asc_sign || 'मेष') + " लग्न) सक्रिय हो गई है।");
+            } catch(err) {
+                console.error("loadVaultProfileByIndex error:", err);
+                alert("कुण्डली लोड करते समय त्रुटि: " + err.message);
+            }
         },
 
         loadCustomProfile: function(index) {
@@ -10869,7 +10881,7 @@ renderChart(vargaKey) {
         closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(function(m) {
                 m.classList.remove('active');
-                m.style.display = '';
+                m.style.display = 'none';
             });
         },
 
@@ -11057,6 +11069,14 @@ renderChart(vargaKey) {
 
             var RAD = Math.PI / 180.0;
             var DEG = 180.0 / Math.PI;
+
+            function toDMS(d) {
+                if (typeof d !== 'number' || isNaN(d)) return "00°00'00\"";
+                var dInt = Math.floor(d);
+                var m = Math.floor((d * 60) % 60);
+                var s = Math.floor((d * 3600) % 60);
+                return dInt + "°" + (m < 10 ? "0" + m : m) + "'" + (s < 10 ? "0" + s : s) + '"';
+            }
 
             function norm(x) {
                 x = x % 360.0;
