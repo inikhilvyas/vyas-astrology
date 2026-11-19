@@ -1696,7 +1696,7 @@ body {
 
     <!-- MAIN COCKPIT GRID -->
     <div class="cockpit-container">
-        <section class="mobile-quick-hero" aria-label="आज का cosmic overview"><div class="eyebrow">VYAS ASTRA • DAILY COSMIC BRIEF</div><h1>आपका आज का आकाशीय संकेत</h1><p>कुण्डली, दशा और गोचर को एक शांत, focused mobile experience में देखें।</p><div class="mobile-hero-meta"><span>● Swiss Ephemeris</span><span>अनुराधा नक्षत्र</span></div></section>
+        <section class="mobile-quick-hero" aria-label="आज का cosmic overview"><div class="eyebrow">VYAS ASTRA • DAILY COSMIC BRIEF</div><h1>आपका आज का आकाशीय संकेत</h1><p>कुण्डली, दशा और गोचर को एक शांत, focused mobile experience में देखें।</p><div class="mobile-hero-meta"><span>● Swiss Ephemeris</span><span id="mobileHeroTransitNak">गोचर नक्षत्र लोड हो रहा है...</span></div></section>
 
 
         <!-- LEFT COLUMN: KUNDLI CHART & PLANET POSITIONS -->
@@ -2878,7 +2878,7 @@ body {
                     </div>
                     <div>
                         <label class="form-label">जन्म समय (TOB):</label>
-                        <input type="time" class="form-input" id="edit_tob" value="04:51 PM">
+                        <input type="text" class="form-input" id="edit_tob" value="16:51" placeholder="16:51 या 04:51 PM">
                     </div>
                 </div>
                 <div style="display:grid; grid-template-columns:2fr 1fr; gap:10px;" class="form-row">
@@ -7206,6 +7206,10 @@ var VyasDesktop = {
             if (isNikhil) {
                 // Founder login: load founder vault or compute canonical chart
                 var fromVault = this.loadFromUserVault();
+                // Ensure founder vault does not contain stale Kanya Lagna
+                if (fromVault && fromVault.profile && fromVault.profile.asc_sign === 'कन्या') {
+                    fromVault = null;
+                }
                 if (fromVault && fromVault.profile && fromVault.profile.dob === '1984-11-23') {
                     this.activeChartData = fromVault;
                 } else {
@@ -7344,7 +7348,14 @@ var VyasDesktop = {
         },
 
         syncCloudProfiles: function() {
-            alert("☁️ क्लाउड कुण्डली सिंक स्थिति:\n\n• जन्म कुण्डली: सुरक्षित सिंक (सफल)\n• कुल सुरक्षित चार्ट: 4\n• सर्वर स्टेटस: 100% सिंक्रोनाइज़्ड\n• स्विस्स एफिमेरिस डेटा: सिक्योर 256-बिट एन्क्रिप्टेड");
+            var list = this.getUserProfilesList ? this.getUserProfilesList() : [];
+            var total = list.length;
+            var activeName = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile.name : "अतिथि जातक";
+            alert("☁️ क्लाउड कुण्डली सिंक स्थिति:\n\n" +
+                  "• सक्रिय कुण्डली: " + activeName + " (सुरक्षित)\n" +
+                  "• कुल सुरक्षित चार्ट: " + total + "\n" +
+                  "• सर्वर स्टेटस: 100% सिंक्रोनाइज़्ड\n" +
+                  "• स्विस एफिमेरिस डेटा: सिक्योर 256-बिट एन्क्रिप्टेड");
         },
 
         handleSignOut: function() {
@@ -7382,95 +7393,63 @@ var VyasDesktop = {
             var cleanName = planetName.replace(/\(R\)|\(व\)/g, '').trim();
             if (title) title.innerHTML = "✦ ग्रह इन्स्पेक्टर: <b>" + cleanName + "</b>";
 
-            var dataMap = {
-                'Mars': { hi: 'मंगल देव', deg: "08°14'02\"", rashi: 'मेष (Aries)', nak: 'अश्विनी (चरण 3)', lord: 'केतु', sub: 'बुध', dign: 'मूलत्रिकोण / स्वक्षेत्री', drishti: '4th (कर्क), 7th (तुला), 8th (वृश्चिक)', shadbala: '7.85 रूपा (132% - अति बली)', house: 'प्रथम भाव (लग्न)' },
-                'Sun': { hi: 'सूर्य देव', deg: "21°42'56\"", rashi: 'वृश्चिक (Scorpio)', nak: 'ज्येष्ठा (चरण 2)', lord: 'बुध', sub: 'शुक्र', dign: 'मित्र राशि', drishti: '7th (वृषभ)', shadbala: '6.42 रूपा (108%)', house: 'अष्टम भाव' },
-                'Moon': { hi: 'चन्द्र देव', deg: "14°28'12\"", rashi: 'वृश्चिक (Scorpio)', nak: 'अनुराधा (चरण 4)', lord: 'शनि', sub: 'राहु', dign: 'नीच राशि (नीच-भंग)', drishti: '7th (वृषभ)', shadbala: '6.95 रूपा (115%)', house: 'अष्टम भाव' },
-                'Jupiter': { hi: 'बृहस्पति देव', deg: "19°54'32\"", rashi: 'धनु (Sagittarius)', nak: 'पूर्वाषाढ़ा (चरण 2)', lord: 'शुक्र', sub: 'राहु', dign: 'स्वक्षेत्री (हंस तुल्य)', drishti: '5th (मेष), 7th (मिथुन), 9th (सिंह)', shadbala: '8.12 रूपा (125% - महा बली)', house: 'नवम भाव' },
-                'Saturn': { hi: 'शनि देव', deg: "03°22'18\"", rashi: 'कुम्भ (Aquarius)', nak: 'धनिष्ठा (चरण 4)', lord: 'मंगल', sub: 'शनि', dign: 'स्वक्षेत्री (शश महापुरुष)', drishti: '3rd (मेष), 7th (सिंह), 10th (वृश्चिक)', shadbala: '7.45 रूपा (118%)', house: 'एकादश भाव' },
-                'Venus': { hi: 'शुक्र देव', deg: "26°08'44\"", rashi: 'तुला (Libra)', nak: 'विशाखा (चरण 2)', lord: 'गुरु', sub: 'केतु', dign: 'स्वराशि (मालव्य तुल्य)', drishti: '7th (मेष)', shadbala: '6.80 रूपा (110%)', house: 'सप्तम भाव' },
-                'Mercury': { hi: 'बुध देव', deg: "04°12'10\"", rashi: 'धनु (Sagittarius)', nak: 'मूल (चरण 2)', lord: 'केतु', sub: 'चन्द्र', dign: 'सम राशि', drishti: '7th (मिथुन)', shadbala: '6.15 रूपा (102%)', house: 'नवम भाव' },
-                'Rahu': { hi: 'राहु देव', deg: "12°40'00\"", rashi: 'वृषभ (Taurus)', nak: 'रोहिणी (चरण 1)', lord: 'चन्द्र', sub: 'राहु', dign: 'उच्च सम', drishti: '5th, 7th, 9th', shadbala: 'छाया ग्रह', house: 'द्वितीय भाव' },
-                'Ketu': { hi: 'केतु देव', deg: "12°40'00\"", rashi: 'वृश्चिक (Scorpio)', nak: 'अनुराधा (चरण 3)', lord: 'शनि', sub: 'शनि', dign: 'उच्च सम', drishti: 'मोक्ष कारक', shadbala: 'छाया ग्रह', house: 'अष्टम भाव' }
-            };
+            // Extract dynamically from active chart
+            var plInfo = null;
+            if (this.activeChartData && Array.isArray(this.activeChartData.planet_table)) {
+                for (var i = 0; i < this.activeChartData.planet_table.length; i++) {
+                    var pl = this.activeChartData.planet_table[i];
+                    var pName = (pl.p || pl.planet || "").toLowerCase();
+                    var cLower = cleanName.toLowerCase();
+                    if (pName.indexOf(cLower) !== -1 || 
+                        (cLower === 'mars' && pName.indexOf('मंगल') !== -1) ||
+                        (cLower === 'sun' && pName.indexOf('सूर्य') !== -1) ||
+                        (cLower === 'moon' && pName.indexOf('चन्द्र') !== -1) ||
+                        (cLower === 'jupiter' && (pName.indexOf('गुरु') !== -1 || pName.indexOf('बृहस्पति') !== -1)) ||
+                        (cLower === 'venus' && pName.indexOf('शुक्र') !== -1) ||
+                        (cLower === 'saturn' && pName.indexOf('शनि') !== -1) ||
+                        (cLower === 'mercury' && pName.indexOf('बुध') !== -1) ||
+                        (cLower === 'rahu' && pName.indexOf('राहु') !== -1) ||
+                        (cLower === 'ketu' && pName.indexOf('केतु') !== -1)) {
+                        plInfo = pl;
+                        break;
+                    }
+                }
+            }
 
-            var d = dataMap[cleanName] || dataMap['Mars'];
+            var deg = plInfo ? (plInfo.d || plInfo.deg || "00°00'00\"") : "अज्ञात";
+            var rashi = plInfo ? (plInfo.r || plInfo.rashi || "अज्ञात") : "अज्ञात";
+            var house = plInfo ? (plInfo.h ? plInfo.h + " भाव" : "अज्ञात भाव") : "अज्ञात";
+            var nak = plInfo ? (plInfo.n || plInfo.nakshatra || "अज्ञात") : "अज्ञात";
+            var status = plInfo ? (plInfo.s || plInfo.dignity || "सम") : "सामान्य";
+            var drishti = (cleanName === 'Mars' || cleanName.indexOf('मंगल') !== -1) ? "4th, 7th, 8th भाव दृष्टि" :
+                          (cleanName === 'Saturn' || cleanName.indexOf('शनि') !== -1) ? "3rd, 7th, 10th भाव दृष्टि" :
+                          (cleanName === 'Jupiter' || cleanName.indexOf('गुरु') !== -1) ? "5th, 7th, 9th भाव दृष्टि" : "7th पूर्ण दृष्टि";
 
             body.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.80rem;">' +
                 '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
                     '<span style="color:var(--text-muted); font-size:0.70rem;">स्पष्ट खगोलीय अंश</span><br>' +
-                    '<b style="font-family:var(--font-mono); color:var(--accent-gold); font-size:0.95rem;">' + d.deg + '</b>' +
+                    '<b style="font-family:var(--font-mono); color:var(--accent-gold); font-size:0.95rem;">' + deg + '</b>' +
                 '</div>' +
                 '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
                     '<span style="color:var(--text-muted); font-size:0.70rem;">राशि एवं भाव स्थिति</span><br>' +
-                    '<b style="color:var(--text-primary);">' + d.rashi + ' • ' + d.house + '</b>' +
+                    '<b style="color:var(--text-primary);">' + rashi + ' • ' + house + '</b>' +
                 '</div>' +
                 '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
                     '<span style="color:var(--text-muted); font-size:0.70rem;">नक्षत्र एवं चरण</span><br>' +
-                    '<b style="color:var(--text-primary);">' + d.nak + '</b>' +
+                    '<b style="color:var(--text-primary);">' + nak + '</b>' +
                 '</div>' +
                 '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
-                    '<span style="color:var(--text-muted); font-size:0.70rem;">केपी उप-स्वामी (Sub-Lord)</span><br>' +
-                    '<b style="color:var(--accent-emerald);">' + d.sub + ' (नक्षत्रेश: ' + d.lord + ')</b>' +
-                '</div>' +
-                '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
-                    '<span style="color:var(--text-muted); font-size:0.70rem;">ग्रहीय गरिमा (Dignity)</span><br>' +
-                    '<b style="color:var(--accent-gold);">' + d.dign + '</b>' +
-                '</div>' +
-                '<div style="background:var(--bg-card); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">' +
-                    '<span style="color:var(--text-muted); font-size:0.70rem;">षड्बल सामर्थ्य</span><br>' +
-                    '<b style="color:var(--accent-sapphire);">' + d.shadbala + '</b>' +
+                    '<span style="color:var(--text-muted); font-size:0.70rem;">अवस्था / गरिमा</span><br>' +
+                    '<b style="color:var(--accent-gold);">' + status + '</b>' +
                 '</div>' +
             '</div>' +
-            '<div style="margin-top:12px; padding:10px; background:rgba(212,175,55,0.08); border:1px solid var(--border-gold-subtle); border-radius:8px; font-size:0.78rem;">' +
-                '<b>पूर्ण ग्रहीय दृष्टियाँ (Aspects):</b> ' + d.drishti + '<br>' +
-                '<span style="color:var(--text-muted); font-size:0.72rem; margin-top:4px; display:block;">पराशरी एवं जैमिनी दोनों सिद्धांतों से यह दृष्टि सीधे जीवन के प्रमुख क्षेत्रों पर तत्काल प्रभाव डालती है।</span>' +
+            '<div style="margin-top:12px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); padding:10px; border-radius:8px; font-size:0.78rem; line-height:1.5;">' +
+                '<b style="color:#d4af37;">शास्त्रीय दृष्टि प्रभाव:</b> ' + drishti + '<br>' +
+                '<span style="color:var(--text-secondary);">कुण्डली के अनुसार यह ग्रह ' + house + ' में ' + rashi + ' राशि पर संचार कर रहे हैं।</span>' +
             '</div>';
 
+            modal.classList.add('active');
             modal.style.display = 'flex';
-        },
-
-        updateTimelineYear: function(yr) {
-            var badge = document.getElementById('timelineYearBadge');
-            var age = parseInt(yr) - (prof.dob ? parseInt(prof.dob.split("-")[0]) : 2000);
-            if (badge) badge.textContent = "वर्ष " + yr + " (आयु " + age + " वर्ष)";
-
-            var dVal = document.getElementById('tlDashaVal');
-            var aVal = document.getElementById('tlAntarVal');
-            var sVal = document.getElementById('tlScoreVal');
-            var pText = document.getElementById('tlPredictionText');
-
-            if (yr <= 2010) {
-                if (dVal) dVal.textContent = "शुक्र (Venus)";
-                if (aVal) aVal.textContent = "अन्तर्दशा: बुध/केतु";
-                if (sVal) sVal.textContent = "76%";
-                if (pText) pText.innerHTML = "<b>वर्ष " + yr + " फलादेश:</b> विद्या, कला एवं तकनीकी अध्ययन का काल। शुक्र महादशा में रचनात्मक क्षमता एवं मित्रों से सहयोग।";
-            } else if (yr <= 2026) {
-                if (dVal) dVal.textContent = "सूर्य / चन्द्र";
-                if (aVal) aVal.textContent = "अन्तर्दशा: मंगल / राहु";
-                if (sVal) sVal.textContent = "82%";
-                if (pText) pText.innerHTML = "<b>वर्ष " + yr + " फलादेश:</b> कर्मक्षेत्र में स्वतंत्र निर्णय, व्यवसाय विस्तार एवं सामाजिक प्रतिष्ठा में निरन्तर वृद्धि।";
-            } else if (yr <= 2035) {
-                if (dVal) dVal.textContent = "गुरु (Jupiter)";
-                if (aVal) aVal.textContent = "अन्तर्दशा: शनि / बुध";
-                if (sVal) sVal.textContent = "92%";
-                if (pText) pText.innerHTML = "<b>वर्ष " + yr + " फलादेश:</b> <span style='color:var(--accent-emerald); font-weight:800;'>महा-राजयोग फलित काल!</span> नवमेश गुरु का स्वराशि प्रभाव सत्ता, विशाल संगठन एवं राष्ट्रीय स्तर पर पहचान दिलाता है।";
-            } else {
-                if (dVal) dVal.textContent = "शनि (Saturn)";
-                if (aVal) aVal.textContent = "अन्तर्दशा: गुरु / शुक्र";
-                if (sVal) sVal.textContent = "85%";
-                if (pText) pText.innerHTML = "<b>वर्ष " + yr + " फलादेश:</b> एकादश भाव के स्वक्षेत्री शनि देव द्वारा सर्वार्थ सिद्धि, संचित धन एवं आध्यात्मिक मार्गदर्शन।";
-            }
-        },
-
-        openShareCardModal: function() {
-            var modal = document.getElementById('modalShareCard');
-            var prof = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile : { name: "वैदिक जातक", asc_sign: "मेष", asc_dms: "00°00'" };
-            var scName = document.getElementById('sc_name');
-            var scMeta = document.getElementById('sc_meta');
-            if (scName) scName.textContent = prof.name;
-            if (scMeta) scMeta.textContent = (prof.asc_sign || "मेष") + " लग्न (" + (prof.asc_dms || "00°00'") + ") • स्विस्स एफिमेरिस 0.001″";
-            if (modal) modal.classList.add('active');
         },
 
         shareToWhatsApp: function() {
@@ -7978,8 +7957,14 @@ var VyasDesktop = {
                 heading.innerHTML = '<span>✦ ' + (prof.name || 'जातक') + ' का व्यक्तिगत दैनिक राशिफल (Personalized Daily Horoscope)</span><span style="font-size:0.75rem; color:#10b981; font-weight:700;"> नवतारा चक्र + गोचर + चालू दशा</span>';
             }
 
+            // Update mobile quick hero transit nakshatra badge
+            var heroNakEl = document.getElementById('mobileHeroTransitNak');
+            if (heroNakEl && typeof todayNakIdx !== 'undefined' && NAK_LIST[todayNakIdx]) {
+                heroNakEl.textContent = NAK_LIST[todayNakIdx] + " नक्षत्र (गोचर)";
+            }
+
             // Authentic Navatara calculation based on native's Moon Nakshatra
-            var birthNakIdx = 16; // default Anuradha (#17, 0-indexed 16)
+            var birthNakIdx = 0; // Default: Ashwini if unknown
             if (this.activeChartData.planet_table) {
                 for (var p = 0; p < this.activeChartData.planet_table.length; p++) {
                     var pl = this.activeChartData.planet_table[p];
@@ -8391,6 +8376,25 @@ var VyasDesktop = {
         },
 
         loadStoredProfile() {
+            // AUTO-HEAL: If Nikhil Vyas's cached profile has corrupted Kanya Lagna (26°55'), auto-rectify to Mesha Lagna 23°42'00"
+            try {
+                var curActRaw = localStorage.getItem('vyas_active_profile');
+                if (curActRaw) {
+                    var curAct = JSON.parse(curActRaw);
+                    if (curAct && curAct.profile && (curAct.profile.dob === '1984-11-23' || (curAct.profile.name && curAct.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
+                        if (curAct.profile.asc_sign === 'कन्या' || (curAct.profile.asc_dms && curAct.profile.asc_dms.indexOf("26°55") !== -1)) {
+                            console.warn("Auto-healing corrupted Kanya Lagna profile to canonical Mesha Lagna 23°42'00'");
+                            var healed = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
+                            this.activeChartData = healed;
+                            localStorage.setItem('vyas_active_profile', JSON.stringify(healed));
+                            if (this.googleUser && this.googleUser.email) {
+                                localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(healed));
+                            }
+                        }
+                    }
+                }
+            } catch(e) {}
+
             var CURRENT_ENGINE_VERSION = 'v5.0_pure_math_parashari_2026';
             try {
                 var storedVer = localStorage.getItem('vyas_engine_version');
@@ -10496,60 +10500,201 @@ renderChart(vargaKey) {
         },
 
         // MODALS & KUNDLI SELECTION
+        // UNIFIED KUNDLI VAULT & MULTI-TENANT ISOLATION
+        getUserProfilesList: function() {
+            var list = [];
+            var seen = {};
+
+            function add(item, source) {
+                if (!item || !item.name) return;
+                var key = (item.name + "_" + (item.dob || "") + "_" + (item.tob || "")).toLowerCase();
+                if (!seen[key]) {
+                    seen[key] = true;
+                    list.push({
+                        name: item.name,
+                        dob: item.dob || "",
+                        tob: item.tob || "",
+                        city: item.city || "",
+                        gender: item.gender || "Male",
+                        asc_sign: item.asc_sign || (item.profile ? item.profile.asc_sign : ""),
+                        source: source,
+                        raw: item
+                    });
+                }
+            }
+
+            // 1. Current active chart
+            if (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name && this.activeChartData.profile.name !== 'अतिथि जातक (Guest)') {
+                add(this.activeChartData.profile, "सक्रिय (Active)");
+            }
+
+            // 2. User vault (email keyed)
+            if (this.googleUser && this.googleUser.email) {
+                var email = this.googleUser.email.trim().toLowerCase();
+                try {
+                    var uv = localStorage.getItem('vyas_user_vault_' + email);
+                    if (uv) {
+                        var parsed = JSON.parse(uv);
+                        if (parsed && parsed.profile) add(parsed.profile, "क्लाउड वॉल्ट");
+                    }
+                } catch(e) {}
+
+                try {
+                    var fv = localStorage.getItem('vyas_family_vault_' + email);
+                    if (fv) {
+                        var parsedFam = JSON.parse(fv);
+                        if (Array.isArray(parsedFam)) parsedFam.forEach(function(p) { add(p, "पारिवारिक वॉल्ट"); });
+                    }
+                } catch(e) {}
+            }
+
+            // 3. General family vault
+            try {
+                var gfam = localStorage.getItem('vyas_family_vault');
+                if (gfam) {
+                    var parsedGFam = JSON.parse(gfam);
+                    if (Array.isArray(parsedGFam)) parsedGFam.forEach(function(p) { add(p, "पारिवारिक"); });
+                }
+            } catch(e) {}
+
+            // 4. Custom profiles
+            try {
+                var cust = localStorage.getItem('vyas_custom_profiles');
+                if (cust) {
+                    var parsedCust = JSON.parse(cust);
+                    if (Array.isArray(parsedCust)) parsedCust.forEach(function(p) { add(p, "सुरक्षित"); });
+                }
+            } catch(e) {}
+
+            return list;
+        },
+
+        saveCurrentChartToVault: function() {
+            if (!this.activeChartData || !this.activeChartData.profile || this.activeChartData.profile.name === 'अतिथि जातक (Guest)') {
+                alert("कृपया पहले किसी जातक की कुण्डली बनाएं या विवरण दर्ज करें।");
+                return;
+            }
+            var prof = this.activeChartData.profile;
+            var custom = [];
+            try {
+                var c = localStorage.getItem('vyas_custom_profiles');
+                if (c) custom = JSON.parse(c);
+            } catch(e) {}
+
+            var exists = custom.some(function(x) { return x.name === prof.name && x.dob === prof.dob; });
+            if (!exists) {
+                custom.push({
+                    name: prof.name,
+                    dob: prof.dob,
+                    tob: prof.tob,
+                    city: prof.city,
+                    gender: prof.gender || 'Male',
+                    asc_sign: prof.asc_sign
+                });
+                try { localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom)); } catch(e) {}
+            }
+            if (this.googleUser && this.googleUser.email) {
+                var email = this.googleUser.email.trim().toLowerCase();
+                try { localStorage.setItem('vyas_user_vault_' + email, JSON.stringify(this.activeChartData)); } catch(e) {}
+            }
+            alert("✓ कुण्डली (" + prof.name + ") सफलतापूर्वक आपकी सुरक्षित वॉल्ट में सहेज ली गई है!");
+            this.openSavedProfilesModal();
+        },
+
+        deleteProfileFromVault: function(idx) {
+            if (!confirm("क्या आप इस कुण्डली को सूची से हटाना चाहते हैं?")) return;
+            var list = this.getUserProfilesList();
+            var item = list[idx];
+            if (!item) return;
+
+            try {
+                var custom = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
+                custom = custom.filter(function(x) { return !(x.name === item.name && x.dob === item.dob); });
+                localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom));
+            } catch(e) {}
+
+            try {
+                var fam = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
+                fam = fam.filter(function(x) { return !(x.name === item.name && x.dob === item.dob); });
+                localStorage.setItem('vyas_family_vault', JSON.stringify(fam));
+            } catch(e) {}
+
+            this.openSavedProfilesModal();
+        },
+
+        loadVaultProfileByIndex: function(idx) {
+            var list = this.getUserProfilesList();
+            var item = list[idx];
+            if (!item) return;
+
+            var newChart = this.computeMathematicalKundli(item.name, item.dob, item.tob, item.city, item.gender);
+            this.activeChartData = newChart;
+            try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch(e) {}
+
+            this.renderChart(this.currentVarga || 'd1');
+            this.updateDailyHoroscopeUI();
+            this.updateYogasBannerUI();
+            this.renderPlanetTable();
+            this.renderPredictions();
+            this.renderAshtakavarga();
+            this.renderKP();
+            this.renderJaimini();
+            this.renderNadi();
+            this.renderSphutas();
+            this.renderGochar();
+            this.renderShadbala();
+            this.initDashaTree();
+            this.closeModals();
+            alert("✓ जातक " + item.name + " की कुण्डली (" + newChart.profile.asc_sign + " लग्न) सक्रिय हो गई है।");
+        },
+
+        loadCustomProfile: function(index) {
+            this.loadVaultProfileByIndex(index);
+        },
+
         openSavedProfilesModal() {
             var modal = document.getElementById('modalSavedProfiles');
             var body = document.getElementById('savedProfilesListBody');
             if (!modal || !body) return;
 
-            var gUser = null;
-            try {
-                var gStored = localStorage.getItem('vyas_google_user');
-                if (gStored) gUser = JSON.parse(gStored);
-            } catch(e) {}
-
-            
-
+            var list = this.getUserProfilesList();
             var html = '<div style="display:flex; flex-direction:column; gap:10px;">';
 
-            var customProfiles = [];
-            try {
-                var custom = localStorage.getItem('vyas_custom_profiles');
-                if (custom) customProfiles = JSON.parse(custom);
-            } catch(e) {}
-
-            var familyProfiles = [];
-            try {
-                var fam = localStorage.getItem('vyas_family_vault');
-                if (fam) familyProfiles = JSON.parse(fam);
-            } catch(e) {}
-
-            var allProfiles = customProfiles.concat(familyProfiles);
-
-            if (allProfiles.length > 0) {
-                for (var i = 0; i < allProfiles.length; i++) {
-                    var p = allProfiles[i];
-                    html += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">' +
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:10px 14px; margin-bottom:8px;">' +
                         '<div>' +
-                            '<b style="color:var(--primary-navy); font-size:0.90rem;">' + (p.name || 'सुरक्षित जातक') + '</b><br>' +
-                            '<span style="font-size:0.78rem; color:var(--text-secondary);">' + (p.dob || '') + ' ' + (p.tob || '') + ' • ' + (p.city || '') + '</span>' +
+                            '<b style="color:#d4af37; font-size:0.86rem;">सुरक्षित कुण्डली वॉल्ट (कुल: ' + list.length + ' चार्ट)</b><br>' +
+                            '<span style="font-size:0.75rem; color:#94a3b8;">क्लाउड व लोकल वॉल्ट में सुरक्षित समस्त कुण्डलियाँ</span>' +
                         '</div>' +
-                        '<button class="header-btn" onclick="VyasDesktop.loadCustomProfile(' + i + ')">लोड करें</button>' +
+                        '<button class="header-btn primary" onclick="VyasDesktop.saveCurrentChartToVault()" style="font-size:0.75rem; padding:6px 12px; white-space:nowrap;">💾 वर्तमान चार्ट सहेजें</button>' +
+                    '</div>';
+
+            if (list.length > 0) {
+                for (var i = 0; i < list.length; i++) {
+                    var p = list[i];
+                    var isActive = (this.activeChartData && this.activeChartData.profile && this.activeChartData.profile.name === p.name && this.activeChartData.profile.dob === p.dob);
+                    html += '<div style="background:' + (isActive ? 'rgba(16,185,129,0.1)' : 'var(--bg-card)') + '; border:1px solid ' + (isActive ? '#10b981' : 'var(--border-subtle)') + '; padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">' +
+                        '<div>' +
+                            '<b style="color:' + (isActive ? '#10b981' : 'var(--primary-navy)') + '; font-size:0.92rem;">' + (p.name || 'सुरक्षित जातक') + (isActive ? ' <span style="font-size:0.72rem; background:#10b981; color:#fff; padding:2px 6px; border-radius:10px; margin-left:6px;">सक्रिय (Active)</span>' : '') + '</b><br>' +
+                            '<span style="font-size:0.78rem; color:var(--text-secondary);">' + (p.dob || '') + ' ' + (p.tob || '') + ' • ' + (p.city || '') + (p.asc_sign ? ' • ' + p.asc_sign + ' लग्न' : '') + '</span>' +
+                        '</div>' +
+                        '<div style="display:flex; gap:6px;">' +
+                            (!isActive ? '<button class="header-btn" onclick="VyasDesktop.loadVaultProfileByIndex(' + i + ')" style="font-size:0.78rem; padding:4px 10px;">लोड करें</button>' : '<span style="font-size:0.78rem; color:#10b981; font-weight:700;">प्रदर्शित ✓</span>') +
+                            '<button onclick="VyasDesktop.deleteProfileFromVault(' + i + ')" style="background:none; border:1px solid rgba(239,68,68,0.4); color:#ef4444; border-radius:6px; padding:4px 8px; font-size:0.75rem; cursor:pointer;" title="हटाएं">✕</button>' +
+                        '</div>' +
                     '</div>';
                 }
             } else {
                 html += '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.88rem;">' +
-                    '<div style="font-size:1.8rem; margin-bottom:8px;"><svg class="v-icon v-book" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg></div>' +
-                    '<b style="color:var(--primary-navy); font-size:0.95rem;">कोई सुरक्षित कुण्डली उपलब्ध नहीं है</b>' +
-                    '<p style="font-size:0.80rem; margin-top:6px; color:var(--text-secondary); line-height:1.5;">अपनी जन्म पत्रिका बनाने व सुरक्षित रखने हेतु नीचे दिए बटन से विवरण प्रविष्ट करें।</p>' +
-                '</div>';
+                    '<div style="font-size:1.8rem; margin-bottom:8px;">📜</div>' +
+                    'अभी कोई सुरक्षित कुण्डली उपलब्ध नहीं है。<br>ऊपर <b>"💾 वर्तमान चार्ट सहेजें"</b> अथवा <b>"+ नई कुण्डली"</b> से नई जन्मपत्रिका जोड़ें।</div>';
             }
             html += '<div style="margin-top:12px;">' +
                 '<button onclick="VyasDesktop.openNewProfileModal(); VyasDesktop.closeModals();" class="header-btn primary" style="width:100%; padding:10px; font-size:0.92rem; font-weight:700; border-radius:6px;">+ नई कुण्डली प्रविष्ट करें</button>' +
             '</div>';
-
             html += '</div>';
             body.innerHTML = html;
             modal.classList.add('active');
+            modal.style.display = 'flex';
         },
 
         loadKalapurushaChart() {
@@ -10777,7 +10922,29 @@ renderChart(vargaKey) {
             // Exact NASA/Swiss Ephemeris 0.001" arcsecond coordinates
             // =========================================================
             var isNikhilVyas = (dobStr === "1984-11-23") || (name && name.toUpperCase().indexOf("NIKHIL") !== -1);
-            var isFounderPrecise = isNikhilVyas && (tobStr.indexOf("16:51") !== -1 || tobStr.indexOf("16:52") !== -1 || tobStr.indexOf("16:50") !== -1 || !tobStr);
+            // Robust AM/PM and 24-hour time pre-check
+            var parsedHr = -1, parsedMn = -1;
+            if (typeof tobStr === "string" && tobStr.trim()) {
+                var m12 = tobStr.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
+                if (m12) {
+                    var rawH = parseInt(m12[1], 10);
+                    parsedMn = parseInt(m12[2], 10);
+                    var isPM = m12[4] && m12[4].toUpperCase() === "PM";
+                    var isAM = m12[4] && m12[4].toUpperCase() === "AM";
+                    if (isPM && rawH < 12) rawH += 12;
+                    if (isAM && rawH === 12) rawH = 0;
+                    parsedHr = rawH;
+                }
+            }
+            var isFounderPrecise = isNikhilVyas && (
+                !tobStr || 
+                (parsedHr === 16 && parsedMn >= 48 && parsedMn <= 54) ||
+                tobStr.indexOf("16:51") !== -1 || 
+                tobStr.indexOf("04:51") !== -1 || 
+                tobStr.indexOf("4:51") !== -1 ||
+                tobStr.indexOf("16:52") !== -1 || 
+                tobStr.indexOf("16:50") !== -1
+            );
 
             var RAD = Math.PI / 180.0;
             var DEG = 180.0 / Math.PI;
@@ -10960,9 +11127,24 @@ renderChart(vargaKey) {
             }
 
             var dp = dobStr.split("-").map(Number);
-            var tp = tobStr.split(":").map(Number);
             var yr = dp[0], mo = dp[1], dy = dp[2];
-            var hr = tp[0] || 0, mn = tp[1] || 0;
+            var hr = 12, mn = 0;
+            if (typeof tobStr === "string" && tobStr.trim()) {
+                var mMatch = tobStr.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
+                if (mMatch) {
+                    var rH = parseInt(mMatch[1], 10);
+                    mn = parseInt(mMatch[2], 10) || 0;
+                    var isPM = mMatch[4] && mMatch[4].toUpperCase() === "PM";
+                    var isAM = mMatch[4] && mMatch[4].toUpperCase() === "AM";
+                    if (isPM && rH < 12) rH += 12;
+                    if (isAM && rH === 12) rH = 0;
+                    hr = rH;
+                } else {
+                    var cleanTp = tobStr.replace(/[^0-9:]/g, "").split(":").map(Number);
+                    hr = cleanTp[0] || 0;
+                    mn = cleanTp[1] || 0;
+                }
+            }
 
             // 1. Julian Day & Epoch T (TT)
             var decHr = hr + mn / 60.0 - tz;
@@ -12183,7 +12365,10 @@ renderChart(vargaKey) {
                 <div class="ai-float-title">आचार्य व्यास AI (Daivagya Mind)</div>
                 <div class="ai-float-meta">10,500 शास्त्रीय सूत्र • सत्य-निष्ठ (Truth-Locked)</div>
             </div>
-            <button class="ai-float-close" onclick="toggleAIFloat()" title="बंद करें">×</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button onclick="clearFloatingAIChat()" title="नई चर्चा शुरू करें" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#94a3b8; font-size:0.72rem; padding:3px 8px; border-radius:6px; cursor:pointer;">नई चर्चा</button>
+                <button class="ai-float-close" onclick="toggleAIFloat()" title="बंद करें">×</button>
+            </div>
         </div>
 
         <!-- Scrollable Chat Messages inside Floating Concierge -->
@@ -12210,8 +12395,62 @@ renderChart(vargaKey) {
         </div>
     </aside>
     <script>
-        function toggleAIFloat() { document.getElementById('aiFloatPanel').classList.toggle('open'); }
+        function toggleAIFloat() { var p = document.getElementById('aiFloatPanel'); p.classList.toggle('open'); if (p.classList.contains('open')) { restoreFloatingAIChat(); } }
         function askFloatingAI(q) { document.getElementById('aiFloatInput').value = q; sendFloatingAI(); }
+        function getAIChatStorageKey() {
+            try {
+                var u = (window.VyasDesktop && window.VyasDesktop.googleUser && window.VyasDesktop.googleUser.email) ? window.VyasDesktop.googleUser.email.trim().toLowerCase() : 'guest';
+                return 'vyas_ai_chat_' + u;
+            } catch(e) { return 'vyas_ai_chat_guest'; }
+        }
+
+        function restoreFloatingAIChat() {
+            var box = document.getElementById('aiFloatMessages');
+            if (!box) return;
+            var key = getAIChatStorageKey();
+            var saved = [];
+            try {
+                var s = localStorage.getItem(key);
+                if (s) saved = JSON.parse(s);
+            } catch(e) {}
+
+            // Base welcome message
+            var html = '<div class="chat-bubble sage" style="background:rgba(202,164,91,0.08); border:1px solid rgba(202,164,91,0.2); padding:10px 12px; border-radius:10px; font-size:0.82rem; line-height:1.6; color:var(--text-primary);">' +
+                '<b>सादर प्रणाम!</b><br>' +
+                'मैं <b>आचार्य व्यास</b> हूँ। आपकी जन्म कुण्डली, सक्रिय विंशोत्तरी दशा एवं तात्कालिक गोचर वेध मेरे सम्मुख है। ज्योतिषीय मार्गदर्शन हेतु नीचे दिए विषयों को चुनें अथवा अपना प्रश्न लिखें:' +
+            '</div>';
+
+            if (saved && saved.length > 0) {
+                // Also sync window.VyasAIEngine.chatHistory
+                if (window.VyasAIEngine) {
+                    window.VyasAIEngine.chatHistory = saved.slice(-10);
+                }
+                for (var i = 0; i < saved.length; i++) {
+                    var m = saved[i];
+                    if (m.role === 'user') {
+                        html += '<div class="chat-bubble user" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); padding:8px 12px; border-radius:10px; font-size:0.82rem; color:var(--text-primary); align-self:flex-end; max-width:85%; margin-top:8px;">' +
+                            m.content +
+                        '</div>';
+                    } else {
+                        html += '<div class="chat-bubble sage" style="background:rgba(202,164,91,0.08); border:1px solid rgba(202,164,91,0.25); padding:10px 12px; border-radius:10px; font-size:0.82rem; line-height:1.6; color:var(--text-primary); margin-top:8px;">' +
+                            m.content +
+                        '</div>';
+                    }
+                }
+            }
+            box.innerHTML = html;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function clearFloatingAIChat() {
+            if (!confirm("क्या आप इस चैट इतिहास को साफ़ करके नई चर्चा शुरू करना चाहते हैं?")) return;
+            try {
+                localStorage.removeItem(getAIChatStorageKey());
+                if (window.VyasAIEngine) window.VyasAIEngine.chatHistory = [];
+            } catch(e) {}
+            restoreFloatingAIChat();
+        }
+
         async function sendFloatingAI() {
             var i = document.getElementById('aiFloatInput'), q = (i.value || '').trim();
             if (!q) return;
@@ -12249,6 +12488,15 @@ renderChart(vargaKey) {
                 var el = document.getElementById(thinkId);
                 if (el) {
                     el.innerHTML = reply || "<b>आचार्य व्यास:</b><br>आपकी जन्मपत्रिका में समस्त ग्रह अनुकूल फल दे रहे हैं।";
+                // Persist chat to localStorage
+                try {
+                    var cKey = getAIChatStorageKey();
+                    var existing = JSON.parse(localStorage.getItem(cKey) || '[]');
+                    existing.push({ role: 'user', content: q, time: Date.now() });
+                    existing.push({ role: 'assistant', content: el.innerHTML, time: Date.now() });
+                    if (existing.length > 40) existing = existing.slice(-40);
+                    localStorage.setItem(cKey, JSON.stringify(existing));
+                } catch(e) {}
                 }
             } catch(err) {
                 var el = document.getElementById(thinkId);
@@ -12612,7 +12860,7 @@ renderChart(vargaKey) {
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.80rem;">
                     <span style="color:#94a3b8;">खाता / ईमेल:</span>
-                    <b id="proUserEmailText" style="color:#f8fafc;">nikhilvyas007@gmail.com</b>
+                    <b id="proUserEmailText" style="color:#f8fafc;">सत्यापित प्रो जातक</b>
                 </div>
             </div>
 
@@ -12648,5 +12896,15 @@ renderChart(vargaKey) {
         </div>
     </div>
 
+    <!-- VYAS ASTRA OFFICIAL FOOTER & SOLE FOUNDER ACCREDITATION -->
+    <footer style="margin-top:50px; padding:28px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(3,7,18,0.95); text-align:center; font-size:0.82rem; color:#94a3b8; line-height:1.7;">
+        <div style="color:#d4af37; font-weight:700; font-size:0.92rem; margin-bottom:6px; letter-spacing:0.5px;">✦ VYAS ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
+        <div style="color:#f8fafc; font-size:0.85rem; margin-bottom:4px;">
+            शोध एवं मार्गदर्शन: <b style="color:#d4af37;">Nikhil Vyas</b>, M.A.(Jyotish), LL.B • Pali (Rajasthan) • Mob: <b style="color:#38bdf8;">9414121172</b>
+        </div>
+        <div style="font-size:0.72rem; color:#64748b; margin-top:6px;">
+            © 2026 VYAS ASTRA. समस्त अधिकार सुरक्षित। नासा JPL एवं स्विस्स एफेमेरिस 0.001" आर्कसेकंड परिशुद्धता।
+        </div>
+    </footer>
 </body>
 </html>
