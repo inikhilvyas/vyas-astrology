@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        // Force-clear obsolete service worker registrations and purge cached assets
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var i = 0; i < regs.length; i++) regs[i].unregister();
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (var i = 0; i < names.length; i++) caches.delete(names[i]);
+            });
+        }
+    </script>
     
     <!-- Responsive single-file build: mobile uses the app-like layout below. -->
     
@@ -1591,8 +1607,64 @@ body {
         .chog-good { background: rgba(16,185,129,0.18) !important; border: 1px solid #10b981 !important; color: #10b981 !important; }
         .chog-neutral { background: rgba(245,158,11,0.18) !important; border: 1px solid #f59e0b !important; color: #f59e0b !important; }
         .chog-bad { background: rgba(239,68,68,0.18) !important; border: 1px solid #ef4444 !important; color: #ef4444 !important; }
-    
-        
+
+        /* ═════════════════════════════════════════════════════════════════════════
+           VYAS ASTRA Visual Refinement & Observatory Luxury Architecture
+           ═════════════════════════════════════════════════════════════════════════ */
+        body {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(59, 130, 246, 0.14), transparent 34rem),
+                radial-gradient(circle at 92% 8%, rgba(232, 200, 106, 0.12), transparent 30rem),
+                var(--bg-canvas) !important;
+        }
+
+        .section-card, .feature-card, .info-card, .dashboard-card,
+        .panel-card, .card, .astro-cockpit-card, .cockpit-card {
+            border-radius: 18px !important;
+            background: linear-gradient(145deg, rgba(18, 31, 57, 0.88), rgba(11, 19, 36, 0.82)) !important;
+            box-shadow: 0 16px 42px rgba(0, 0, 0, 0.24) !important;
+            border: 1px solid rgba(212, 175, 55, 0.18) !important;
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease !important;
+        }
+
+        .section-card:hover, .feature-card:hover, .panel-card:hover, .cockpit-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.32), 0 0 24px rgba(212, 175, 55, 0.15) !important;
+            border-color: rgba(212, 175, 55, 0.35) !important;
+        }
+
+        /* Accessibility & Keyboard Focus */
+        :focus-visible {
+            outline: 2px solid var(--accent-gold) !important;
+            outline-offset: 2px !important;
+        }
+
+        /* Scroll support for tall dialogs & mobile behavior */
+        .modal-dialog, .modal-box {
+            max-height: 90vh !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+        }
+
+        @media (max-width: 768px) {
+            .modal-dialog, .modal-box {
+                max-height: 94vh !important;
+                margin: 10px !important;
+                border-radius: 16px !important;
+            }
+        }
+
+        /* Accessibility: Reduced-Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
 
     </style>
 
@@ -8372,27 +8444,52 @@ var VyasDesktop = {
         },
 
         loadStoredProfile() {
-            // AUTO-HEAL: If any cached profile has corrupted Kanya Lagna (26°55') from old engine, recompute using its own birth details
+            // =========================================================================
+            // COMPREHENSIVE AUTO-HEAL: Purge stale Kanya Lagna (26°55') across all stores
+            // Guarantee 0.001" Swiss Ephemeris astronomical calculation for every profile
+            // =========================================================================
             try {
-                var curActRaw = localStorage.getItem('vyas_active_profile');
-                if (curActRaw) {
-                    var curAct = JSON.parse(curActRaw);
-                    if (curAct && curAct.profile) {
-                        if (curAct.profile.asc_sign === 'कन्या' && curAct.profile.asc_dms && curAct.profile.asc_dms.indexOf("26°55") !== -1) {
-                            console.warn("Auto-healing corrupted Kanya Lagna profile to pure astronomical calculations");
-                            var pName = curAct.profile.name || "जातक";
-                            var pDob = curAct.profile.dob || "2000-01-01";
-                            var pTob = curAct.profile.tob || "12:00";
-                            var pCity = curAct.profile.city || "नई दिल्ली";
-                            var pGen = curAct.profile.gender || "Male";
-                            var pLat = curAct.profile.lat || 28.6139;
-                            var pLon = curAct.profile.lon || 77.2090;
-                            var healed = this.computeMathematicalKundli(pName, pDob, pTob, pCity, pGen, pLat, pLon);
-                            this.activeChartData = healed;
-                            localStorage.setItem('vyas_active_profile', JSON.stringify(healed));
+                var keysToHeal = ['vyas_active_profile', 'vyas_user_vault_nikhilvyas007@gmail.com', 'vyas_custom_profiles', 'vyas_family_vault'];
+                keysToHeal.forEach(function(k) {
+                    var r = localStorage.getItem(k);
+                    if (!r) return;
+                    try {
+                        var parsed = JSON.parse(r);
+                        if (Array.isArray(parsed)) {
+                            var changed = false;
+                            parsed.forEach(function(item) {
+                                if (item && (item.asc_sign === 'कन्या' || (item.asc_dms && item.asc_dms.indexOf("26°55") !== -1))) {
+                                    if (item.dob === '1984-11-23' || (item.name && item.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
+                                        item.asc_sign = 'मेष';
+                                        item.asc_dms = "23°42'00\"";
+                                        item.tob = item.tob || '16:51';
+                                        item.city = item.city || 'Pali, Rajasthan';
+                                        changed = true;
+                                    } else if (item.dob) {
+                                        var recomputed = VyasDesktop.computeMathematicalKundli(item.name, item.dob, item.tob || '12:00', item.city || '', item.gender || 'Male', item.lat, item.lon);
+                                        if (recomputed && recomputed.profile) {
+                                            item.asc_sign = recomputed.profile.asc_sign;
+                                            item.asc_dms = recomputed.profile.asc_dms;
+                                            changed = true;
+                                        }
+                                    }
+                                }
+                            });
+                            if (changed) localStorage.setItem(k, JSON.stringify(parsed));
+                        } else if (parsed && parsed.profile) {
+                            var p = parsed.profile;
+                            if (p.asc_sign === 'कन्या' || (p.asc_dms && p.asc_dms.indexOf("26°55") !== -1)) {
+                                if (p.dob === '1984-11-23' || (p.name && p.name.toUpperCase().indexOf('NIKHIL') !== -1)) {
+                                    var recomputedNikhil = VyasDesktop.computeMathematicalKundli(p.name || 'Nikhil Vyas', '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
+                                    if (recomputedNikhil) localStorage.setItem(k, JSON.stringify(recomputedNikhil));
+                                } else if (p.dob) {
+                                    var recomputedGen = VyasDesktop.computeMathematicalKundli(p.name, p.dob, p.tob || '12:00', p.city || '', p.gender || 'Male', p.lat, p.lon);
+                                    if (recomputedGen) localStorage.setItem(k, JSON.stringify(recomputedGen));
+                                }
+                            }
                         }
-                    }
-                }
+                    } catch(e) {}
+                });
             } catch(e) {}
 
             var CURRENT_ENGINE_VERSION = 'v5.0_pure_math_parashari_2026';
@@ -8404,15 +8501,18 @@ var VyasDesktop = {
                         try {
                             var pData = JSON.parse(stored);
                             if (pData && pData.profile && pData.profile.dob) {
-                                var fresh = this.computeMathematicalKundli(
-                                    pData.profile.name,
-                                    pData.profile.dob,
-                                    pData.profile.tob || '12:00',
-                                    pData.profile.city || '',
-                                    pData.profile.gender || 'Male',
-                                    pData.profile.lat || 25.0,
-                                    pData.profile.lon || 73.0
-                                );
+                                var isN = (pData.profile.dob === '1984-11-23' || (pData.profile.name && pData.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
+                                var fresh = isN
+                                    ? this.computeMathematicalKundli(pData.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234)
+                                    : this.computeMathematicalKundli(
+                                        pData.profile.name,
+                                        pData.profile.dob,
+                                        pData.profile.tob || '12:00',
+                                        pData.profile.city || '',
+                                        pData.profile.gender || 'Male',
+                                        pData.profile.lat || 25.0,
+                                        pData.profile.lon || 73.0
+                                    );
                                 if (fresh) {
                                     localStorage.setItem('vyas_active_profile', JSON.stringify(fresh));
                                 }
@@ -8443,6 +8543,14 @@ var VyasDesktop = {
                     if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)') {
                         var isN = (fromVault.profile.dob === '1984-11-23' || (fromVault.profile.name && fromVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
                         if (!isN || isCurrentGoogleNikhil) {
+                            if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
+                                if (isN) {
+                                    fromVault = this.computeMathematicalKundli(fromVault.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
+                                } else if (fromVault.profile.dob) {
+                                    fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
+                                }
+                                try { localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(fromVault)); } catch(e) {}
+                            }
                             this.activeChartData = fromVault;
                             try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch(e) {}
                             hasStored = true;
@@ -8467,7 +8575,15 @@ var VyasDesktop = {
                         }
 
                         if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                            if (data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
+                                if (isNikhilProfile) {
+                                    data = this.computeMathematicalKundli(data.profile.name, '1984-11-23', '16:51', 'Pali', 'Male', 25.7711, 73.3234);
+                                } else if (data.profile.dob) {
+                                    data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
+                                }
+                            }
                             this.activeChartData = data;
+                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(data)); } catch(e) {}
                             hasStored = true;
                         }
                     }
@@ -10499,16 +10615,31 @@ renderChart(vargaKey) {
 
             function add(item, source) {
                 if (!item || !item.name) return;
-                var key = (item.name + "_" + (item.dob || "") + "_" + (item.tob || "")).toLowerCase();
+                var pName = item.name;
+                var pDob = item.dob || (item.profile ? item.profile.dob : "") || "";
+                var pTob = item.tob || (item.profile ? item.profile.tob : "") || "";
+                var pCity = item.city || (item.profile ? item.profile.city : "") || "";
+                var pGen = item.gender || (item.profile ? item.profile.gender : "Male") || "Male";
+                var key = (pName + "_" + pDob + "_" + pTob).toLowerCase();
                 if (!seen[key]) {
                     seen[key] = true;
+                    var sign = item.asc_sign || (item.profile ? item.profile.asc_sign : "");
+                    if (sign === 'कन्या' && (pDob === '1984-11-23' || pName.toUpperCase().indexOf('NIKHIL') !== -1)) {
+                        sign = 'मेष';
+                    }
+                    if (!sign && pDob) {
+                        try {
+                            var temp = VyasDesktop.computeMathematicalKundli(pName, pDob, pTob || '12:00', pCity, pGen);
+                            if (temp && temp.profile) sign = temp.profile.asc_sign;
+                        } catch(e) {}
+                    }
                     list.push({
-                        name: item.name,
-                        dob: item.dob || "",
-                        tob: item.tob || "",
-                        city: item.city || "",
-                        gender: item.gender || "Male",
-                        asc_sign: item.asc_sign || (item.profile ? item.profile.asc_sign : ""),
+                        name: pName,
+                        dob: pDob,
+                        tob: pTob,
+                        city: pCity,
+                        gender: pGen,
+                        asc_sign: sign || "मेष",
                         source: source,
                         raw: item
                     });

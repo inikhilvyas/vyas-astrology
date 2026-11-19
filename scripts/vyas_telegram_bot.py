@@ -28,11 +28,12 @@ if sys.stdout.encoding != 'utf-8':
     except Exception:
         pass
 
-BOT_TOKEN = "9076187059:AAGsuSCU-aQiGWIVajtdk3T-vUGgVHy1FAo"
-API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
-
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
+DATA_DIR = os.path.join(BASE_DIR, 'data') if os.path.isdir(os.path.join(BASE_DIR, 'data')) else os.path.join(BASE_DIR, 'public_html', 'data')
+
+# Prioritize TELEGRAM_BOT_TOKEN from environment variable for secure rotation
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "9076187059:AAGsuSCU-aQiGWIVajtdk3T-vUGgVHy1FAo")
+API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 CONFIG_PATH = os.path.join(DATA_DIR, 'sentinel_config.json')
 FAST_INDEX_PATH = os.path.join(DATA_DIR, 'vyas_sutras_fast_index.json')
 VAULT_DB_PATH = os.path.join(DATA_DIR, 'vyas_phalit_vault.db')

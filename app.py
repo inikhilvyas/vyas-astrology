@@ -1,4 +1,6 @@
 import streamlit as st
+import re
+import pandas as pd
 
 def format_bold_clean(text: str) -> str:
     """Converts any markdown bold/italic asterisks into clean HTML <b> tags."""

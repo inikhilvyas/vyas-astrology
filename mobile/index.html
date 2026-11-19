@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script>
+        // Force unregister obsolete mobile PWA service workers
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var i = 0; i < regs.length; i++) regs[i].unregister();
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (var i = 0; i < names.length; i++) caches.delete(names[i]);
+            });
+        }
+    </script>
     <title>VYAS ASTRA • प्रामाणिक वैदिक ज्योतिष मोबाइल ऐप</title>
     <meta name="description" content="व्यास अस्त्र मोबाइल ऐप - नक्षत्र तक व कुण्डली चक्र प्रो जैसा सम्पूर्ण वैदिक ज्योतिष अनुभव। 100% प्रामाणिक जन्म कुण्डली, 5-स्तरीय विंशोत्तरी दशा, अष्टकवर्ग, केपी, जैमिनी व नाड़ी।">
     

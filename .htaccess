@@ -1,0 +1,81 @@
+# ==============================================================================
+# VYAS ASTRA • High-Security Apache Web Server Configuration (.htaccess)
+# Protection Shield against Unauthorized Exposure of Code, Git & Data
+# ==============================================================================
+
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 1. Block access to hidden files and directories (including .git, .env, .cache, etc.)
+    # Exception: allow .well-known for SSL / ACME challenges
+    RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+    # 2. Block direct web access to sensitive backend, script and data directories
+    RewriteRule ^(data|scripts|tests|books|\.venv|\.venv311|tmp|\.streamlit|\.claude|\.gemini)(/.*)?$ - [F,L]
+</IfModule>
+
+# 3. Block sensitive and executable file extensions across the entire site
+<FilesMatch "(?i)\.(json|jsonl|db|sqlite|sqlite3|py|pyc|pyd|ps1|bat|cmd|sh|exe|zip|apk|tar|gz|7z|log|md|toml|yml|yaml|ini|conf|config|bak|swp|dist|env)$">
+    Require all denied
+</FilesMatch>
+
+# 4. Explicit whitelist exceptions for required client-side web assets
+<Files "manifest.json">
+    Require all granted
+</Files>
+<Files "robots.txt">
+    Require all granted
+</Files>
+<Files "sitemap.xml">
+    Require all granted
+</Files>
+<Files "llms.txt">
+    Require all granted
+</Files>
+
+# 5. Block access to git files specifically
+<FilesMatch "^\.git">
+    Require all denied
+</FilesMatch>
+
+# 6. Enterprise Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# 7. MIME Types
+<IfModule mod_mime.c>
+    AddType application/manifest+json .json
+    AddType application/pdf .pdf
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+</IfModule>
+
+# 8. Cache-Control: Force instant updates for HTML, JS and PHP (Zero-Stale Architecture)
+<FilesMatch "(?i)\.(html|php|js)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </IfModule>
+</FilesMatch>
+
+# 8. Caching & Performance for Static Web Assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType application/pdf "access plus 1 month"
+</IfModule>

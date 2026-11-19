@@ -36,7 +36,7 @@ if sys.stdout.encoding != 'utf-8':
         pass
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
+DATA_DIR = os.path.join(BASE_DIR, 'data') if os.path.isdir(os.path.join(BASE_DIR, 'data')) else os.path.join(BASE_DIR, 'public_html', 'data')
 VAULT_DB_PATH = os.path.join(DATA_DIR, 'vyas_phalit_vault.db')
 FAST_INDEX_PATH = os.path.join(DATA_DIR, 'vyas_sutras_fast_index.json')
 HEALTH_REPORT_PATH = os.path.join(DATA_DIR, 'sentinel_health_report.json')

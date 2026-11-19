@@ -55,17 +55,19 @@ for branch in ['main', 'master', 'fix-issues-20231025']:
     if res.returncode == 0:
         print(f"SUCCESS pushing to origin:{branch}")
     else:
-        print(f"FAIL pushing to origin:{branch}:\n{res.stderr}")
+        clean_err = res.stderr.replace(t1, "[REDACTED]").replace(t2 or "", "[REDACTED]")
+        print(f"FAIL pushing to origin:{branch}:\n{clean_err}")
 
 # 2. Push to inikhil (inikhilvyas)
 inikhil_url = f"https://{u2}:{t2}@github.com/inikhilvyas/vyas-astrology.git"
-for branch in ['main', 'master']:
+for branch in ['main', 'master', 'fix-issues-20231025']:
     print(f"Pushing to inikhil:{branch} ...")
     res = subprocess.run(['git', 'push', inikhil_url, f'main:{branch}'], capture_output=True, text=True)
     if res.returncode == 0:
         print(f"SUCCESS pushing to inikhil:{branch}")
     else:
-        print(f"FAIL pushing to inikhil:{branch}:\n{res.stderr}")
+        clean_err = res.stderr.replace(t1 or "", "[REDACTED]").replace(t2, "[REDACTED]")
+        print(f"FAIL pushing to inikhil:{branch}:\n{clean_err}")
 
 print("=== ALL PUSHES COMPLETED! ===")
 
