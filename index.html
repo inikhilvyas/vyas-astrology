@@ -1961,9 +1961,9 @@ body {
                             </div>
                         </div>
 
-                        <!-- 8 Day Choghadiya Grid -->
+                        <!-- 16 Day & Night Choghadiya Grid -->
                         <div style="margin-bottom:6px;">
-                            <div style="font-size:0.84rem; font-weight:700; color:var(--primary-navy); margin-bottom:8px;"><svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>दिन का चौघड़िया (8 पहर मुहूर्त - सटीक समय सहित)</div>
+                            <div style="font-size:0.84rem; font-weight:700; color:var(--primary-navy); margin-bottom:8px;"><svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>दैनिक दिन एवं रात्रि चौघड़िया (16 पहर मुहूर्त वेध - सूर्योदय व सूर्यास्त अनुसार)</div>
                             <div id="dPanChoghadiyaGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; font-size:0.78rem; text-align:center;"></div>
                         </div>
                     </div>
@@ -2818,11 +2818,6 @@ body {
                     <span>Google खाते से साइन-इन करें</span>
                 </button>
 
-                <!-- 1-Click Instant Safe Founder/Pro Access -->
-                <button type="button" onclick="VyasDesktop.quickLoginFounder()" style="width:100%; margin-top:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #1e293b, #0f172a); border:1.5px solid #d4af37; border-radius:24px; padding:11px 16px; color:#d4af37; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 2px 8px rgba(212,175,55,0.2); transition:all 0.2s ease;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
-                    <span>⚡ 1-क्लिक संस्थापक PRO लॉगिन (निखिल व्यास)</span>
-                </button>
 
                 <!-- GIS Container (for auto One-Tap & standard button fallback) -->
                 <div style="display:flex; justify-content:center; align-items:center; margin-top:12px; min-height:40px;">
@@ -6195,198 +6190,164 @@ body {
             }
 
             var prof = chart.profile;
-            var name = prof.name || "निखिल व्यास";
+            var name = prof.name || "जातक";
             var lagna = prof.asc_sign || "मेष";
-            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "शुक्र (MD) ➔ शनि (AD) ➔ मंगल (PD) ➔ बुध (SD)";
+            var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "सक्रिय विंशोत्तरी दशा";
             var intent = this.detectIntent(query);
 
             var greeting = "<b>ॐ नमः शिवाय।</b><br><br>" +
                 "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br>" +
                 "आपकी जन्मपत्रिका (<b>" + lagna + " लग्न</b>) एवं सक्रिय विंशोत्तरी दशा (<b>" + dasha + "</b>) का हमारी 200+ शास्त्रीय ग्रन्थ-शृंखला (पाराशरी, जैमिनि, फलदीपिका, होरारत्नम् एवं के.पी. कस्पल सब-लॉर्ड प्रणाली) द्वारा सूक्ष्म वेध कर यह प्रामाणिक दैवज्ञ निर्णय प्रस्तुत है:<br><br>";
 
-            switch (intent) {
-                case "politics":
-                    return greeting + this.renderPoliticsWisdom(name, lagna, dasha);
-                case "career":
-                    return greeting + this.renderCareerWisdom(name, lagna, dasha);
-                case "wealth":
-                    return greeting + this.renderWealthWisdom(name, lagna, dasha);
-                case "remedies":
-                    return greeting + this.renderRemediesWisdom(name, lagna, dasha);
-                case "psychology":
-                    return greeting + this.renderPsychologyWisdom(name, lagna, dasha);
-                case "marriage":
-                    return greeting + this.renderMarriageWisdom(name, lagna, dasha);
-                case "education":
-                    return greeting + this.renderEducationWisdom(name, lagna, dasha);
-                case "health":
-                    return greeting + this.renderHealthWisdom(name, lagna, dasha);
-                case "continuation":
-                    return greeting + this.renderContinuationWisdom(name, lagna, dasha);
-                default:
-                    return greeting + this.renderGeneralComprehensiveWisdom(query, name, lagna, dasha);
+            return greeting + this.renderDynamicWisdom(query, intent, chart, name, lagna, dasha);
+        },
+
+        renderDynamicWisdom: function(query, intent, chart, name, lagna, dasha) {
+            var pTable = chart.planet_table || [];
+            var pMap = {};
+            var houseMap = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [] };
+            
+            for (var i = 0; i < pTable.length; i++) {
+                var item = pTable[i];
+                var pRaw = (item.planet || item.p || '').replace(/\s*\(.*\)/, '').trim();
+                var sign = item.sign || item.r || '';
+                var deg = item.degree || item.d || '';
+                var house = parseInt(item.house || item.h || 1);
+                var dig = item.dignity || item.s || 'सम';
+                var nak = item.nakshatra || item.n || '';
+                
+                var pObj = { name: pRaw, sign: sign, deg: deg, house: house, dignity: dig, nak: nak };
+                pMap[pRaw] = pObj;
+                if (!houseMap[house]) houseMap[house] = [];
+                houseMap[house].push(pObj);
             }
-        },
 
-        // 1. POLITICS & HIGH PUBLIC OFFICE
-        renderPoliticsWisdom: function(name, lagna, dasha) {
+            var SIGNS = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var SIGN_LORDS = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
+            var lagnaIdx = SIGNS.indexOf(lagna);
+            if (lagnaIdx === -1) lagnaIdx = 0;
+
+            function getHouseLord(h) {
+                var sIdx = (lagnaIdx + h - 1) % 12;
+                return { house: h, sign: SIGNS[sIdx], lord: SIGN_LORDS[sIdx] };
+            }
+
+            var l1 = getHouseLord(1);
+            var l2 = getHouseLord(2);
+            var l5 = getHouseLord(5);
+            var l7 = getHouseLord(7);
+            var l9 = getHouseLord(9);
+            var l10 = getHouseLord(10);
+            var l11 = getHouseLord(11);
+
+            // Intent-specific rendering
+            if (intent === 'politics') {
+                var h10Planets = houseMap[10] || [];
+                var h10Text = h10Planets.length > 0 ? h10Planets.map(function(p){ return p.name + " (" + p.sign + ", " + p.dignity + ")"; }).join(", ") : "रिक्त (शुभ दृष्टि वेध)";
+                var h1Planets = houseMap[1] || [];
+                var h1Text = h1Planets.length > 0 ? h1Planets.map(function(p){ return p.name + " (" + p.sign + ")"; }).join(", ") : "रिक्त";
+                var sunObj = pMap["सूर्य"] || { sign: "अज्ञात", house: 1, dignity: "सम" };
+
+                return "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>🏛️ शासन, राजनीति व उच्च पद प्राप्ति मीमांसा (Political & Executive Authority)</span>" +
+                    "</div>" +
+                    "<b>१. शास्त्रीय आधार एवं आपकी कुण्डली के प्रत्यक्ष निर्देशांक:</b><br>" +
+                    "• <i>" + this.shastras.bphs + " (दशम भाव मीमांसा):</i> आपकी कुण्डली में दशम भाव में <b>" + l10.sign + "</b> राशि है जिसके स्वामी <b>" + l10.lord + "</b> हैं। दशम भाव में स्थित ग्रह: <b>" + h10Text + "</b>।<br>" +
+                    "• <i>सूर्य विचार (सत्ता व आत्मबल कारक):</i> सूर्यदेव आपकी पत्रिका में भाव <b>" + sunObj.house + "</b> (" + sunObj.sign + " राशि) में " + sunObj.dignity + " अवस्था में विराजमान हैं। यह स्थिति शासन व प्रतिष्ठित संस्थाओं से मान-सम्मान व प्रभाव का निर्णय करती है।<br>" +
+                    "• <i>प्रथम भाव (लग्न व आत्मतेज):</i> लग्नेश <b>" + l1.lord + "</b> का प्रभाव एवं लग्न में ग्रह स्थिति (" + h1Text + ") जातक के जन-प्रभाव व नेतृत्व क्षमता को गति प्रदान करती है।<br><br>" +
+                    "<b>२. सक्रिय दशा व काल-संरेखण:</b><br>" +
+                    "वर्तमान में सक्रिय <b>" + dasha + "</b> का गोचर-संरेखण आपकी सामाजिक प्रतिष्ठा, पद प्राप्ति एवं नीतिगत निर्णयों में निर्णायक भूमिका निभा रहा है।<br><br>" +
+                    "<b>३. दैवज्ञ परामर्श व सात्विक उपाय:</b><br>" +
+                    "• नित्य प्रातः तांबे के पात्र से भगवान सूर्यनारायण को <i>'ॐ घृणिः सूर्याय नमः'</i> का जप करते हुए अर्घ्य दें।<br>" +
+                    "• प्रत्येक रविवार <i>'आदित्य हृदय स्तोत्र'</i> का पाठ करें, यह नेतृत्व, प्रभाव व प्रतिष्ठा में स्थायी वृद्धि करता है।";
+            }
+
+            if (intent === 'career') {
+                var h10Planets = houseMap[10] || [];
+                var h10Text = h10Planets.length > 0 ? h10Planets.map(function(p){ return p.name + " (" + p.sign + " " + p.dignity + ")"; }).join(", ") : "रिक्त";
+                var h6Planets = houseMap[6] || [];
+                var h6Text = h6Planets.length > 0 ? h6Planets.map(function(p){ return p.name + " (" + p.sign + ")"; }).join(", ") : "रिक्त";
+
+                return "<div class='shastra-verdict-box' style='background:rgba(59,130,246,0.06); border-left:3px solid #3b82f6; padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:#60a5fa; font-weight:700; font-size:0.85rem;'>💼 करियर, व्यापार विस्तार व पदोन्नति समय (Career Elevation & Enterprise Matrix)</span>" +
+                    "</div>" +
+                    "<b>१. शास्त्रीय आधार एवं प्रत्यक्ष कर्म भाव स्थिति:</b><br>" +
+                    "• <i>" + this.shastras.phaladeepika + " (कर्मभावाध्याय):</i> आपकी कुण्डली में दशम कर्म भाव में <b>" + l10.sign + "</b> राशि है जिसके अधिपति <b>" + l10.lord + "</b> हैं। दशम भाव में ग्रह: <b>" + h10Text + "</b>।<br>" +
+                    "• <i>षष्ठ भाव (प्रतिस्पर्धा व सेवा सामर्थ्य):</i> षष्ठ भाव में स्थित ग्रह (" + h6Text + ") जातक की प्रतियोगी क्षमता, कठिन चुनौतियों से पार पाने तथा कार्यक्षेत्र में प्रभुत्व स्थापित करने की शक्ति दर्शाते हैं।<br><br>" +
+                    "<b>२. विस्तार का स्वर्णिम काल-खंड (2026-2027 Timing):</b><br>" +
+                    "वर्तमान सक्रिय <b>" + dasha + "</b> एवं तात्कालिक गोचर आपके कर्मेश (" + l10.lord + ") व भाग्य भाव पर अनुकूल दृष्टि-पात कर रहे हैं। व्यावसायिक अनुबंधों व कार्यक्षेत्र में उन्नति के मार्ग प्रशस्त हो रहे हैं।<br><br>" +
+                    "<b>३. कार्यक्षेत्र हेतु दैवज्ञ मार्गदर्शन व सात्विक उपाय:</b><br>" +
+                    "• नित्य प्रातः <i>'विष्णु सहस्रनाम'</i> अथवा <i>'ॐ नमो भगवते वासुदेवाय'</i> का 108 बार स्मरण करें।<br>" +
+                    "• महत्वपूर्ण व्यापारिक निर्णयों व अनुबंधों में विधिक स्पष्टता रखें।";
+            }
+
+            if (intent === 'wealth') {
+                var h2Planets = houseMap[2] || [];
+                var h2Text = h2Planets.length > 0 ? h2Planets.map(function(p){ return p.name + " (" + p.sign + ")"; }).join(", ") : "रिक्त";
+                var h11Planets = houseMap[11] || [];
+                var h11Text = h11Planets.length > 0 ? h11Planets.map(function(p){ return p.name + " (" + p.sign + ")"; }).join(", ") : "रिक्त";
+                var jup = pMap["गुरु"] || { sign: "अज्ञात", house: 1, dignity: "सम" };
+
+                return "<div class='shastra-verdict-box' style='background:rgba(16,185,129,0.06); border-left:3px solid #10b981; padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:#34d399; font-weight:700; font-size:0.85rem;'>💰 आर्थिक समृद्धि, धन लाभ व संपत्ति योग (Dhana Yogas & Asset Vault)</span>" +
+                    "</div>" +
+                    "<b>१. शास्त्रीय आधार एवं धन-लाभ भाव स्थिति:</b><br>" +
+                    "• <i>" + this.shastras.bphs + " (धनयोगाध्याय):</i> आपकी कुण्डली में द्वितीय (धन) भाव में <b>" + l2.sign + "</b> राशि (स्वामी: <b>" + l2.lord + "</b>) तथा एकादश (लाभ) भाव में <b>" + l11.sign + "</b> राशि (स्वामी: <b>" + l11.lord + "</b>) है।<br>" +
+                    "• <i>द्वितीय भाव स्थिति:</i> " + h2Text + "। <i>एकादश भाव स्थिति:</i> " + h11Text + "।<br>" +
+                    "• <i>देवगुरु बृहस्पति (धनकारक):</i> भाव " + jup.house + " (" + jup.sign + " राशि) में " + jup.dignity + " होकर धन के संचय व विस्तार को गति प्रदान कर रहे हैं।<br><br>" +
+                    "<b>२. वित्तीय प्रवाह व संचय समय:</b><br>" +
+                    "सक्रिय दशा (" + dasha + ") धन भावों से सम्बद्ध होकर वित्तीय स्थिरता प्रदान करेगी। आगामी समय में संचित प्रयासों का श्रेष्ठ प्रतिफल मिलेगा।<br><br>" +
+                    "<b>३. सात्विक धन रक्षण उपाय:</b><br>" +
+                    "• शुक्रवार को सात्विक मिष्ठान्न का दान करें व नित्य <i>'ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः'</i> का 11 बार स्मरण करें।";
+            }
+
+            if (intent === 'marriage') {
+                var h7Planets = houseMap[7] || [];
+                var h7Text = h7Planets.length > 0 ? h7Planets.map(function(p){ return p.name + " (" + p.sign + ")"; }).join(", ") : "रिक्त";
+                var ven = pMap["शुक्र"] || { sign: "अज्ञात", house: 1, dignity: "सम" };
+
+                return "<div class='shastra-verdict-box' style='background:rgba(236,72,153,0.06); border-left:3px solid #ec4899; padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:#f472b6; font-weight:700; font-size:0.85rem;'>💍 दांपत्य जीवन, विवाह व सम्बन्ध समन्वय (Marriage & Relationship Matrix)</span>" +
+                    "</div>" +
+                    "<b>१. शास्त्रीय आधार एवं सप्तम भाव परीक्षण:</b><br>" +
+                    "• <i>" + this.shastras.phaladeepika + " (स्त्री/पुरुष जातक):</i> सप्तम भाव में <b>" + l7.sign + "</b> राशि है जिसके स्वामी <b>" + l7.lord + "</b> हैं। सप्तम भाव में स्थित ग्रह: <b>" + h7Text + "</b>।<br>" +
+                    "• <i>शुक्रदेव (दांपत्य कारक):</i> भाव " + ven.house + " (" + ven.sign + " राशि) में स्थित होकर जीवनसाथी के स्वभाव व सामंजस्य का निर्धारण कर रहे हैं।<br><br>" +
+                    "<b>२. दैवज्ञ परामर्श व सात्विक उपाय:</b><br>" +
+                    "• दाम्पत्य में परस्पर विश्वास, सम्मान व सामंजस्य बनाए रखें।<br>" +
+                    "• नित्य <i>'ॐ उमामहेश्वराभ्यां नमः'</i> का जप करें, यह दांपत्य जीवन को प्रेम व सौहार्द से परिपूर्ण करता है।";
+            }
+
+            if (intent === 'health') {
+                var h6Planets = houseMap[6] || [];
+                var h6Text = h6Planets.length > 0 ? h6Planets.map(function(p){ return p.name; }).join(", ") : "रिक्त";
+                var h8Planets = houseMap[8] || [];
+                var h8Text = h8Planets.length > 0 ? h8Planets.map(function(p){ return p.name; }).join(", ") : "रिक्त";
+
+                return "<div class='shastra-verdict-box' style='background:rgba(16,185,129,0.06); border-left:3px solid #10b981; padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:#34d399; font-weight:700; font-size:0.85rem;'>🌿 स्वास्थ्य, जीवनी शक्ति व आरोग्य मीमांसा (Vitality & Health Shielder)</span>" +
+                    "</div>" +
+                    "<b>१. शास्त्रीय स्वास्थ्य परीक्षण:</b><br>" +
+                    "• <i>लग्न व लग्नेश:</i> आपका लग्न <b>" + lagna + "</b> है जिसके स्वामी <b>" + l1.lord + "</b> हैं। लग्नेश का बल मूल जीवनी शक्ति (Vitality) व रोग-प्रतिरोधक क्षमता का मुख्य आधार है।<br>" +
+                    "• <i>षष्ठ व अष्टम भाव:</i> षष्ठ भाव (" + h6Text + ") एवं अष्टम भाव (" + h8Text + ") की स्थिति का सूक्ष्म परीक्षण संतुलित दिनचर्या की महत्ता दर्शाता है।<br><br>" +
+                    "<b>२. आरोग्य संरक्षक सात्विक उपाय:</b><br>" +
+                    "• प्रातःकाल गुनगुने जल का सेवन करें व सूर्य नमस्कार का अभ्यास करें।<br>" +
+                    "• नित्य 11 बार <i>'महामृत्युंजय मंत्र'</i> का शांत मन से जप संपूर्ण आरोग्य का सर्वोत्तम कवच है।";
+            }
+
+            // General & Comprehensive Fallback
+            var sunP = pMap["सूर्य"] || { sign: "मेष", house: 1 };
+            var moonP = pMap["चन्द्र"] || { sign: "मेष", house: 1 };
             return "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>🏛️ शासन, राजनीति व उच्च पद प्राप्ति मीमांसा (Political & Executive Authority)</span>" +
+                "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>✦ आपकी जिज्ञासा: &quot;" + (query || "समग्र फलादेश") + "&quot;</span>" +
                 "</div>" +
-
-                "<b>१. शास्त्रीय आधार एवं ग्रंथ संदर्भ:</b><br>" +
-                "• <i>" + this.shastras.bphs + " (राजयोग अध्याय):</i> दशम भाव में मकर राशिस्थ मंगल अपनी परम उच्च अवस्था (12°09') में 'दिग्बली' होकर <b>'कुलदीपक रुचक महापुरुष योग'</b> की रचना करते हैं। शास्त्रानुसार यह योग जातक को अदम्य प्रशासनिक तेज, रणनीतिक प्रभुत्व एवं नीति-निर्धारण का सर्वोच्च सामर्थ्य देता है।<br>" +
-                "• <i>" + this.shastras.horaratnam + " (दशमेश-सप्तमेश वेध):</i> दशमेश शनि देव सप्तम भाव में अपनी परम उच्च राशि तुला (26°52') में <b>'शश महापुरुष योग'</b> बनाते हैं। यह स्थिति जन-समूह (Mass Base), कूटनीति, संगठन निर्माण एवं सार्वजनिक नीति पर जातक की अमिट छाप सिद्ध करती है।<br>" +
-                "• <i>" + this.shastras.bl_thakur + " (अष्टकवर्ग खंड):</i> अष्टकवर्ग में आपकी पत्रिका के दशम भाव को <b>36 शुभ रेखाएं (सर्वाधिक बिन्दु)</b> प्राप्त हैं। यह शास्त्रसम्मत नियम है कि दशम भाव में 30 से अधिक बिन्दु होने पर जातक का सामाजिक व राजनीतिक प्रभाव अडिग रहता है।<br><br>" +
-
-                "<b>२. सक्रिय दशा व काल-संरेखण (2026-2027 Timing):</b><br>" +
-                "वर्तमान में सक्रिय <b>शुक्र महादशा में शनि अंतर्दशा एवं मंगल प्रत्यंतर्दशा</b> का त्रिवेणी संचरण चल रहा है। शुक्र नवम भाव में धर्माधिपति होकर बैठे हैं, शनि कर्म-अधिकार के स्वामी हैं, और मंगल आपके लग्नेश हैं। यह काल-खंड शासन, सार्वजनिक संगठन, सलाहकार परिषदों अथवा संस्थागत सत्ता में जातक को शीर्ष दायित्व प्राप्त होने का स्पष्ट योग दर्शाता है।<br><br>" +
-
-                "<b>३. दैवज्ञ चेतावनी व नीतिगत सावधानी:</b><br>" +
-                "मेष लग्न हेतु एकादशेश शनि 'बाधक' भी बनते हैं। इसका गूढ़ फल यह है कि पद व यश तो सुनिश्चित है, किंतु विरोधियों द्वारा कूटनीतिक षड्यंत्र अथवा विलम्ब की चेष्टा होगी। अतः अपने रणनीतिक निर्णयों को सर्वदा गोपनीय रखें और प्रत्यक्ष टकराव के स्थान पर चाणक्य-नीति का अवलंबन करें।<br><br>" +
-
-                "<b>४. प्रामाणिक सात्विक उपाय विधान:</b><br>" +
-                "• नित्य प्रातः तांबे के पात्र से शुद्ध जल द्वारा भगवान सूर्यनारायण को <i>'ॐ घृणिः सूर्याय नमः'</i> का जप करते हुए अर्घ्य दें।<br>" +
-                "• प्रति रविवार <i>'आदित्य हृदय स्तोत्र'</i> का तीन बार पाठ करें। यह शासन व सत्ता से संबंधित समस्त बाधाओं का समूल नाश करता है।";
-        },
-
-        // 2. CAREER, BUSINESS & PROMOTION
-        renderCareerWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(59,130,246,0.06); border-left:3px solid #3b82f6; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#60a5fa; font-weight:700; font-size:0.85rem;'>💼 करियर, व्यापार विस्तार व पदोन्नति समय (Career Elevation & Enterprise Matrix)</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय आधार एवं ग्रंथ संदर्भ:</b><br>" +
-                "• <i>" + this.shastras.phaladeepika + " (कर्मभावाध्याय, श्लोक 1-4):</i> दशम भाव का स्वामी उच्च का होकर केंद्र में स्थित हो तथा लग्नेश स्वयं दशम में उच्च का हो, तो इसे <b>'साम्राज्य योग'</b> कहा गया है। आप किसी के अधीन सामान्य कार्य हेतु नहीं, अपितु स्वतंत्र उपक्रम, बौद्धिक नेतृत्व, कानून, तकनीकी एवं परामर्श के शीर्ष नेतृत्व हेतु अभिप्रेरित हैं।<br>" +
-                "• <i>" + this.shastras.jataka_parijata + " (नवम-दशम संबंध):</i> नवम भाव में स्वक्षेत्री देवगुरु बृहस्पति (धनु 19°21') एवं धनेश शुक्र (धनु 17°44') की युति ज्ञान-आधारित व्यापार, शिक्षा, अनुसंधान एवं वैश्विक प्रोजेक्ट्स में अभूतपूर्व विस्तार प्रदान करती है।<br>" +
-                "• <i>" + this.shastras.kp + ":</i> दशम कस्पल सब-लॉर्ड 10, 11, 2 भावों से सुदृढ़ संबंध बनाकर हर व्यवसायिक उद्यम को स्थायी लाभ में परिवर्तित करने की अनुमति देता है।<br><br>" +
-
-                "<b>२. विस्तार का स्वर्णिम समय (Golden Expansion Window 2026-2027):</b><br>" +
-                "• <b>दिसंबर 2026 से मई 2027:</b> मंगल की प्रत्यंतर्दशा एवं देवगुरु बृहस्पति का गोचर आपके दशम कर्म भाव व नवम भाग्य भाव को पूर्ण जागृत करेगा। नवीन व्यावसायिक अनुबंध, अंतरराष्ट्रीय विस्तार एवं डिजिटल/एआई-संचालित उपक्रमों में भारी छलांग की स्पष्ट ग्रह-स्थिति है।<br><br>" +
-
-                "<b>३. कार्यक्षेत्र हेतु दैवज्ञ मार्गदर्शन:</b><br>" +
-                "साझेदारी (Partnership) के मामलों में अत्यधिक सावधानी बरतें क्योंकि सप्तमस्थ उच्च का शनि अनुबंधों में अत्यंत कठोरता और स्पष्टता की मांग करता है। मौखिक समझौतों के स्थान पर पूर्ण विधिक (Legal) प्रलेखन पर ही कार्य करें।<br><br>" +
-
-                "<b>४. अभीष्ट सिद्धि सात्विक उपाय:</b><br>" +
-                "• कार्यस्थल पर नित्य प्रातः <i>'विष्णु सहस्रनाम'</i> का श्रवण करें अथवा पाठ करें।<br>" +
-                "• गुरुवार के दिन केसर का तिलक मस्तक व कंठ पर धारण करें। यह निर्णय क्षमता को निर्दोष बनाएगा।";
-        },
-
-        // 3. WEALTH, DHANA YOGAS & ASSETS
-        renderWealthWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(16,185,129,0.06); border-left:3px solid #10b981; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#34d399; font-weight:700; font-size:0.85rem;'>💰 आर्थिक समृद्धि, अकूत धन लाभ व संपत्ति योग (Dhana Yogas & Asset Vault)</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय आधार एवं ग्रंथ संदर्भ:</b><br>" +
-                "• <i>" + this.shastras.bphs + " (धनयोगाध्याय):</i> नवम भाव में द्वितीयेश (धनेष) शुक्र एवं नवमेश (भाग्याधिपति) गुरु की युति सर्वोच्च कोटि का <b>'महालक्ष्मी योग'</b> एवं <b>'धर्म-कर्माधिपति योग'</b> रचती है। शास्त्रानुसार जब 2, 9, 11 भावों के स्वामी त्रिकोण में शुभ स्थिति में हों, तो जातक को जीवन में कभी स्थायी धन की कमी नहीं रहती।<br>" +
-                "• <i>" + this.shastras.saravali + " (राहु धन विचार):</i> द्वितीय भाव (वृषभ) में उच्च का राहु बैठा है। यह स्थिति अपरिमित आकस्मिक वित्तीय लाभ, तकनीकी स्रोतों, विदेशी मुद्रा, तथा बौद्धिक संपदा (IPR/सॉफ्टवेयर) से विशाल धनार्जन का अकाट्य योग बनाती है।<br>" +
-                "• <i>" + this.shastras.horaratnam + " (भूमि-भवन योग):</i> चतुर्थेश चन्द्रमा का दशमस्थ उच्च मंगल के साथ दृष्टि-वेध एवं मंगल का दशम में उच्च होना जातक को बहु-मूल्य अचल संपत्ति, भूमि, भव्य आवास एवं वाहनों का स्वामी बनाता है।<br><br>" +
-
-                "<b>२. वित्तीय प्रवाह व धन संचय का समय:</b><br>" +
-                "वर्तमान शुक्र महादशा (धनेष) आपके संचित धन के द्वार को निरंतर विस्तारित कर रही है। आगामी वर्ष 2027 में शनि अंतर्दशा के अंतिम चरण में किसी बड़े रुके हुए धन, पैतृक लाभ अथवा विशाल व्यावसायिक निवेश का प्रतिफल प्राप्त होगा।<br><br>" +
-
-                "<b>३. सात्विक धन रक्षण उपाय:</b><br>" +
-                "• शुक्रवार के दिन कन्याओं को मिश्री व खीर का प्रसाद वितरित करें।<br>" +
-                "• अपने कार्यस्थल या तिजोरी में श्वेत चन्दन से अभिमंत्रित श्रीयंत्र स्थापित कर नित्य <i>'ॐ श्रीं ह्रीं क्लीं महालक्ष्म्यै नमः'</i> का 11 बार स्मरण करें।";
-        },
-
-        // 4. REMEDIES & RISK SHIELD
-        renderRemediesWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(239,68,68,0.06); border-left:3px solid #ef4444; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#f87171; font-weight:700; font-size:0.85rem;'>🛡️ प्रामाणिक वैदिक रक्षा कवच व सात्विक उपाय विधान (Authentic Vedic Risk Shield)</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय मर्यादा (Zero Superstition Mandate):</b><br>" +
-                "व्यास संहिता का अटल नियम है कि हम किसी भी प्रकार के अंधविश्वास, भ्रम या भय-कारक टोटकों का पूर्ण निषेध करते हैं। वैदिक ज्योतिष में केवल वे ही उपाय मान्य हैं जो वेदों, उपनिषदों एवं महर्षि पाराशर द्वारा प्रतिपादित हैं:<br><br>" +
-
-                "<b>२. ग्रह-दोष निवारण हेतु त्रि-स्तरीय वैदिक अनुष्ठान:</b><br>" +
-                "• <b>स्तर १: शनि बाधक व मारक शमन (Saturn Protocol):</b><br>" +
-                "  मेष लग्न हेतु एकादशेश शनि बाधक का कार्य करते हैं। अतः प्रत्येक शनिवार को काले तिल, उड़द अथवा सरसों के तेल का सात्विक दान किसी वृद्ध, निर्धन अथवा असहाय श्रमिक को करें। संध्या समय पीपल के वृक्ष के समीप सरसों के तेल का दीप प्रज्वलित करें।<br><br>" +
-                "• <b>स्तर २: अष्टमस्थ चन्द्रमा व सूर्य शुद्धि (Solar-Lunar Balance):</b><br>" +
-                "  अष्टम भाव में नीच-भंग चन्द्रमा एवं सूर्य के कारण मानसिक उद्वेग या नेत्र/पित्त विकार से बचने हेतु नित्य प्रातः <i>'ॐ नमः शिवाय'</i> का 108 बार मानसिक जप करें तथा तांबे के लोटे से सूर्य देव को अर्घ्य दें।<br><br>" +
-                "• <b>स्तर ३: शुक्र-गुरु नवम भाव सिद्धि (Maha-Lakshmi & Guru Grace):</b><br>" +
-                "  नित्य <i>'श्री विष्णु सहस्रनाम'</i> अथवा <i>'कनकधारा स्तोत्र'</i> का पाठ/श्रवण करें। यह आपके भाग्य स्थान को जागृत रखेगा।";
-        },
-
-        // 5. PSYCHOLOGY & COGNITIVE HABITS
-        renderPsychologyWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(168,85,247,0.06); border-left:3px solid #a855f7; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#c084fc; font-weight:700; font-size:0.85rem;'>🧠 सूक्ष्म आदतें, मानसिक स्वास्थ्य व अष्टम चन्द्रमा का संज्ञानात्मक वेध</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय मनोवैज्ञानिक आधार:</b><br>" +
-                "• <i>" + this.shastras.bphs + " (चन्द्रमा फल):</i> चन्द्रमा मनसो जातः। आपकी पत्रिका में चन्द्रमा अष्टम भाव (वृश्चिक) में अनुराधा नक्षत्र में स्थित हैं। अष्टम का चन्द्रमा जातक को असाधारण अंतर्ज्ञान (Intuition), गूढ़ रहस्यों को भेदने की दृष्टि, तथा अनुसंधान में अद्भुत एकाग्रता प्रदान करता है।<br>" +
-                "• <i>संज्ञानात्मक चुनौती:</i> किंतु यही स्थिति कभी-कभी अत्यधिक विश्लेषण (Overthinking), भावनात्मक अकेलापन, अनिद्रा, तथा अकारण मन में संशय या चिंता की लहरें उत्पन्न करती है।<br><br>" +
-
-                "<b>२. दैनिक जीवन में आवश्यक सूक्ष्म आदतें (Micro-Habits):</b><br>" +
-                "• <b>रात्रि काल-संयम:</b> रात्रि 10:30 बजे के उपरांत किसी भी गंभीर, रणनीतिक अथवा तनावपूर्ण विषय पर चिंतन और मोबाइल/लैपटॉप स्क्रीन से पूर्ण विराम लें।<br>" +
-                "• <b>चांदी पात्र जल-विज्ञान:</b> शुद्ध चांदी के गिलास अथवा पात्र में रखा हुआ जल प्रातःकाल ग्रहण करें। यह चन्द्रमा के जलीय तत्व को शीतल कर मन को तात्कालिक स्थिरता प्रदान करता है।<br>" +
-                "• <b>प्राणायाम व त्राटक:</b> नित्य प्रातः 10 मिनट अनुलोम-विलोम प्राणायाम का अभ्यास करें। यह मस्तिष्क के दोनों गोलार्धों को संतुलित कर अष्टमस्थ चन्द्रमा के नकारात्मक कम्पन को समाप्त कर देता है।";
-        },
-
-        // 6. MARRIAGE & PARTNERSHIP
-        renderMarriageWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(236,72,153,0.06); border-left:3px solid #ec4899; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#f472b6; font-weight:700; font-size:0.85rem;'>💍 दांपत्य जीवन, विवाह सुख व साझेदारी विश्लेषण</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय आधार एवं सप्तम भाव स्थिति:</b><br>" +
-                "• <i>" + this.shastras.phaladeepika + " (सप्तम भाव फल):</i> सप्तम भाव में तुला राशि में उच्च के शनि देव शश योग में विराजमान हैं। सप्तमेश शुक्र नवम भाव में देवगुरु बृहस्पति के साथ युति में हैं।<br>" +
-                "• <i>दांपत्य स्वरूप:</i> जीवनसाथी अत्यंत संभ्रांत, गंभीर, कर्तव्यनिष्ठ, धार्मिक एवं संस्कारवान होगा। उच्च का शनि दांपत्य में स्थायित्व व अटूट निष्ठा प्रदान करता है, यद्यपि दोनों के विचारों में परिपक्वता आने में कुछ समय लगता है।<br><br>" +
-                "• <b>मार्गदर्शन:</b> दांपत्य में किसी भी प्रकार के अहंकार अथवा अनावश्यक कठोर संवाद से बचें। शुक्रवार को मां महालक्ष्मी को श्वेत पुष्प अर्पित करना अत्यंत कल्याणकारी रहेगा।";
-        },
-
-        // 7. EDUCATION & INTELLECT
-        renderEducationWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(245,158,11,0.06); border-left:3px solid #f59e0b; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#fbbf24; font-weight:700; font-size:0.85rem;'>📚 विद्या, बौद्धिक प्रतिभा व उच्च अनुसंधान योग</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय विवेचन:</b><br>" +
-                "पंचम भाव पर दशमस्थ उच्च मंगल की अष्टम दृष्टि है तथा पंचमेश सूर्य अष्टम में स्थित होकर गुरु के नवम भाव से सुसंबद्ध हैं। यह जातक को उच्च कोटि की कुशाग्र बुद्धि, वैदिक शास्त्र, कानून, एआई, तथा उच्च शोध में अद्वितीय अधिकार प्रदान करता है।<br>" +
-                "नित्य सरस्वती स्तोत्र का पाठ एवं बुधवार को हरे मूंग का दान विद्या एवं बुद्धि को प्रखर बनाए रखेगा।";
-        },
-
-        // 8. HEALTH & LONGEVITY
-        renderHealthWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(20,184,166,0.06); border-left:3px solid #14b8a6; padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:#2dd4bf; font-weight:700; font-size:0.85rem;'>🌿 स्वास्थ्य, जीवन-ऊर्जा व दीर्घायु विचार</span>" +
-                "</div>" +
-
-                "<b>१. शास्त्रीय स्वास्थ्य परीक्षण:</b><br>" +
-                "लग्नेश मंगल दशम में परम उच्च के होने से जातक की मूल जीवनी शक्ति (Vitality) अत्यंत प्रखर एवं रोग-प्रतिरोधक क्षमता सुदृढ़ है। अष्टमस्थ सूर्य-चन्द्रमा के कारण पित्त, रक्तचाप, अथवा पाचन पर विशेष ध्यान देने की आवश्यकता है।<br>" +
-                "प्रातःकाल गुनगुने जल का सेवन, नियमित योग, एवं महामृत्युंजय मंत्र का नित्य 11 बार जप संपूर्ण आरोग्य का संरक्षक है।";
-        },
-
-        // 9. CONTINUATION / EXTENDED INSIGHTS
-        renderContinuationWisdom: function(name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>📜 आगामी काल-चक्र की सूक्ष्म भविष्यवाणी (Micro Timeline 2026-2028)</span>" +
-                "</div>" +
-
-                "<b>१. त्रिवर्षीय काल-चक्र वेध (2026-2028 Forecast):</b><br>" +
-                "• <b>प्रथम चरण (दिसंबर 2026 - जून 2027):</b> मंगल प्रत्यंतर्दशा आपके संचित प्रयासों को मूर्त रूप देगी। रुके हुए कार्य, प्रोजेक्ट की अंतरराष्ट्रीय स्वीकृति, तथा पद-प्रतिष्ठा में तीव्र उछाल आएगा।<br>" +
-                "• <b>द्वितीय चरण (मध्य 2027 - प्रारंभ 2028):</b> गुरु का सिंह राशि में गोचर आपके पंचम भाव पर अमृत दृष्टि डालेगा। नवीन बौद्धिक ग्रंथ, शोध-प्रकाशन अथवा विशाल उद्यम की स्थापना होगी।<br>" +
-                "• <b>तृतीय चरण (2028 एवं आगे):</b> सूर्य महादशा का पदार्पण जातक को राष्ट्रीय एवं अंतरराष्ट्रीय फलक पर मान-सम्मान एवं नेतृत्व की पराकाष्ठा प्रदान करेगा।<br><br>" +
-                "<i>धर्मो रक्षति रक्षितः — आप जिस सत्य एवं शास्त्रीय निष्ठा से अग्रसर हैं, समस्त ग्रह-नक्षत्र आपकी प्रगति के साक्षी और सहायक हैं।</i>";
-        },
-
-        // 10. GENERAL COMPREHENSIVE WISDOM
-        renderGeneralComprehensiveWisdom: function(query, name, lagna, dasha) {
-            return "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
-                "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>✦ आपकी जिज्ञासा: \"" + (query || "समग्र फलादेश") + "\"</span>" +
-                "</div>" +
-
                 "<b>१. शास्त्रीय सिंहावलोकन:</b><br>" +
-                "आपकी जन्मपत्रिका में दो परम उच्च महापुरुष योग (दशम में रुचक व सप्तम में शश) तथा नवम में धर्माधिपति गुरु-शुक्र की युति विद्यमान है। आपका पूछा गया प्रश्न आपकी वर्तमान विंशोत्तरी दशा (" + dasha + ") एवं तात्कालिक गोचर के पूर्ण संरेखण में है।<br><br>" +
+                "आपकी जन्मपत्रिका में <b>" + lagna + " लग्न</b> (स्वामी: <b>" + l1.lord + "</b>), सूर्यदेव भाव " + sunP.house + " (" + sunP.sign + " राशि) एवं चन्द्रमा भाव " + moonP.house + " (" + moonP.sign + " राशि) में स्थित हैं। सक्रिय विंशोत्तरी दशा <b>" + dasha + "</b> जीवन के महत्वपूर्ण आयामों को सक्रिय कर रही है।<br><br>" +
                 "<b>२. दैवज्ञ परामर्श:</b><br>" +
-                "वर्तमान समय आपके लिए धैर्य, निरंतरता एवं रणनीतिक तैयारी का है। किसी भी तात्कालिक उत्तेजना अथवा जल्दबाजी में निर्णय न लें। देवगुरु बृहस्पति का नवमस्थ प्रभाव आपको प्रत्येक विषम परिस्थिति से विजयी बनाकर निकालेगा।<br><br>" +
+                "वर्तमान समय में अपने लक्ष्य के प्रति धैर्य, एकाग्रता एवं सात्विक निष्ठा बनाए रखें। कुण्डली के शुभ ग्रहों का संबल आपके कार्यों को सिद्धि की ओर अग्रसर कर रहा है।<br><br>" +
                 "<b>३. सात्विक साधना:</b><br>" +
-                "नित्य प्रातः भगवान सूर्यनारायण को अर्घ्य एवं संध्या समय <i>'ॐ नमः शिवाय'</i> का जप आपके समस्त मनोरथों को सिद्ध करेगा।";
+                "नित्य प्रातः भगवान सूर्यनारायण को अर्घ्य दें एवं संध्या समय <i>'ॐ नमः शिवाय'</i> का जप करें। यह समस्त मनोरथों को सिद्ध करता है।";
         },
 
-        // PRASHNA HORARY SYNTHESIS
         synthesizePrashnaReading: function(query) {
             return "<b>ॐ नमः शिवाय।</b><br><br>" +
                 "<b>सादर प्रणाम!</b> चूंकि आपने अपनी जन्म पत्रिका प्रविष्ट नहीं की है, अतः वैदिक <b>'प्रश्न मार्ग' (Prashna Marga)</b> एवं 'दैवज्ञ वल्लभ' शास्त्र की मर्यादा अनुसार, आपके प्रश्न पूछने के इस पावन क्षण की <b>'तात्कालिक प्रश्न कुण्डली'</b> का सूक्ष्म वेध कर उत्तर प्रस्तुत कर रहा हूँ:<br><br>" +
@@ -6394,7 +6355,6 @@ body {
                 "• <b>मार्गदर्शन:</b> नित्य प्रातः <i>'ॐ नमः शिवाय'</i> का 108 बार जप करें। यदि आप अपने संपूर्ण जीवन (करियर, वित्त, स्वास्थ्य, दांपत्य) का विस्तृत 20-वर्षीय फलादेश चाहते हैं, तो ऊपर <b>'+ नई कुण्डली'</b> विकल्प से अपना वास्तविक जन्म विवरण दर्ज करें।";
         }
     };
-    
 
     window.VyasDaivagyaWisdom = VyasDaivagyaWisdom;
     window.VyasAIEngine = {
@@ -6631,7 +6591,7 @@ body {
                     "📊 KUNDLI DATA LEDGER (अपरिवर्तनीय खगोलीय निर्देशांक — Anti-Hallucination Lock)",
                     "═════════════════════════════════════════════════════════════════",
                     "- जातक का नाम: " + prof.name,
-                    "- जन्म लग्न: " + (prof.asc_sign || "मेष") + " (" + (prof.asc_dms || "23°42'00\"") + ") [लग्न भाव 1]",
+                    "- जन्म लग्न: " + (prof.asc_sign || "मेष") + (prof.asc_dms ? (" (" + prof.asc_dms + ")") : "") + " [लग्न भाव 1]",
                     "- जन्म स्थान: " + (prof.city || "भारत"),
                     "- सक्रिय 4-स्तरीय विंशोत्तरी दशा: " + dasha,
                     "- तात्कालिक आकाश गोचर वेध (18 Nov 2026): देवगुरु बृहस्पति (सिंह 01°51'), शनिदेव (मीन 14°08'), राहु (कुंभ 00°53'), केतु (सिंह 00°53') [NASA JPL/Swiss Ephemeris 0.0000°]",
@@ -6644,11 +6604,11 @@ body {
                     drishtiLines.join('\n'),
                     "",
                     "⚠️ अपरिवर्तनीय शास्त्रीय दृष्टि पाबंदी (STRICT ASPECT LAWS):",
-                    "1. शनिदेव की केवल 3री, 7वीं एवं 10वीं दृष्टि होती है। शनि की 5वीं या 9वीं दृष्टि कभी नहीं होती (शनि की दृष्टि कभी मिथुन पर नहीं है; मिथुन पर गुरु की 7वीं दृष्टि है)।",
+                    "1. शनिदेव की केवल 3री, 7वीं एवं 10वीं पूर्ण दृष्टि होती है। शनि की 4थी, 5वीं, 8वीं या 9वीं दृष्टि कभी नहीं होती।",
                     "2. मंगलदेव की केवल 4थी, 7वीं व 8वीं दृष्टि होती है।",
                     "3. गुरु, राहु एवं केतु की केवल 5वीं, 7वीं व 9वीं दृष्टि होती है।",
                     "4. सूर्य, चन्द्र, बुध, शुक्र की केवल 7वीं दृष्टि होती है।",
-                    "5. केवल उपरोक्त दृष्टि लेजर में दर्ज दृष्टि ही सत्य है। इसके अतिरिक्त किसी भाव पर दृष्टि बताना वर्जित है।",
+                    "5. केवल और केवल जातक की कुण्डली के दिए गए वास्तविक 'दृष्टि चक्र' में उल्लिखित दृष्टियों के आधार पर ही फलकथन करें। किसी अन्य कुण्डली या पूर्व डेटा को कदापि न जोड़ें।",
                     "═════════════════════════════════════════════════════════════════",
                     "",
                     "दैवज्ञ दृष्टि एवं फलकथन मर्यादा (Astrological Reasoning Directives):",
@@ -6668,7 +6628,6 @@ body {
                     "3. प्रामाणिक 4-स्तरीय सिद्ध उपाय विधान (Vashistha Remedial Shield):",
                     "   - स्तर 1 (काल संरेखण): घड़ी 11 मिनट आगे रखने का काल-विज्ञान, ब्रह्ममुहूर्त जागरण।",
                     "   - स्तर 2 (गंध व अर्घ्य विज्ञान): नाभि पर चन्दन इत्र, कानों के पीछे गुलाब इत्र, सूर्य अर्घ्य।",
-                    "   - स्तर 3 (लाल किताब अमृत सात्विक आचरण): 43 दिन पक्षियों को सप्तधान्य, चांदी का चौकोर टुकड़ा।",
                     "   - स्तर 4 (मंत्र संपुटीकरण): 'ॐ नमः शिवाय' संपुटित महामंत्र जप।",
                     "",
                     "4. भाषा अत्यंत आदरपूर्ण, विद्वतापूर्ण, शास्त्रीय एवं निर्भीक हो। सत्य का दर्पण दिखाएं किंतु जातक को आशा एवं आध्यात्मिक संबल दें।"
@@ -7222,7 +7181,7 @@ var VyasDesktop = {
 
         applyAuthenticatedGoogleUser: function(data, token) {
             this.googleUser = {
-                name: data.name || data.email.split('@')[0],
+                name: data.name,
                 email: data.email,
                 picture: data.picture || "logo_icon.png",
                 sub: String(data.sub),
@@ -7236,26 +7195,55 @@ var VyasDesktop = {
             this.updateGoogleAuthUI();
             this.closeModals();
 
-            // Refresh or invite to create birth chart
-            if (!this.activeChartData) {
-                var s = localStorage.getItem('vyas_active_profile');
-                if (s) {
-                    try {
-                        this.activeChartData = JSON.parse(s);
-                        
-                    } catch(e) {}
-                }
-            }
+            // STRICT MULTI-TENANT PRIVACY & ISOLATION:
+            // 1. Immediately reset in-memory chart to prevent cross-session contamination
+            this.activeChartData = null;
 
-            var isNikhil = (this.googleUser.email && this.googleUser.email.toLowerCase().indexOf('nikhil') !== -1) ||
+            var email = this.googleUser.email ? this.googleUser.email.trim().toLowerCase() : '';
+            var isNikhil = (email.indexOf('nikhil') !== -1) ||
                            (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
 
             if (isNikhil) {
-                var nChart = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
-                this.activeChartData = nChart;
-                try { localStorage.setItem('vyas_active_profile', JSON.stringify(nChart)); } catch(e) {}
+                // Founder login: load founder vault or compute canonical chart
+                var fromVault = this.loadFromUserVault();
+                if (fromVault && fromVault.profile && fromVault.profile.dob === '1984-11-23') {
+                    this.activeChartData = fromVault;
+                } else {
+                    this.activeChartData = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
+                }
+                try { localStorage.setItem('vyas_active_profile', JSON.stringify(this.activeChartData)); } catch(e) {}
             } else {
-                this.loadStoredProfile();
+                // Regular logged-in user:
+                // Purge any stale active profile belonging to someone else
+                var curAct = localStorage.getItem('vyas_active_profile');
+                if (curAct) {
+                    try {
+                        var cp = JSON.parse(curAct);
+                        if (cp && cp.profile && (cp.profile.dob === '1984-11-23' || (cp.profile.name && cp.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
+                            localStorage.removeItem('vyas_active_profile');
+                        }
+                    } catch(e) {
+                        localStorage.removeItem('vyas_active_profile');
+                    }
+                }
+
+                // Check THIS user's personal vault specifically: vyas_user_vault_<email>
+                var userVault = this.loadFromUserVault();
+                if (userVault && userVault.profile && userVault.profile.name && userVault.profile.name !== 'अतिथि जातक (Guest)') {
+                    var isN = (userVault.profile.dob === '1984-11-23' || (userVault.profile.name && userVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
+                    if (!isN) {
+                        this.activeChartData = userVault;
+                        try { localStorage.setItem('vyas_active_profile', JSON.stringify(this.activeChartData)); } catch(e) {}
+                    } else {
+                        // Purge contaminated vault
+                        try { localStorage.removeItem('vyas_user_vault_' + email); } catch(e) {}
+                        this.activeChartData = null;
+                    }
+                } else {
+                    // No saved chart for this user yet
+                    this.activeChartData = null;
+                    try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
+                }
             }
 
             if (this.activeChartData) {
@@ -7268,6 +7256,11 @@ var VyasDesktop = {
                 this.renderPredictions();
                 this.renderAshtakavarga();
             } else {
+                // Clean Blank Slate: Render empty chart and prompt user to enter their birth details
+                this.renderChart('d1');
+                this.updateDailyHoroscopeUI();
+                this.updateYogasBannerUI();
+                this.renderPlanetTable();
                 this.openNewProfileModal();
             }
 
@@ -8365,9 +8358,13 @@ var VyasDesktop = {
             if (!profileData) return;
             try {
                 localStorage.setItem('vyas_active_profile', JSON.stringify(profileData));
-                var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : 'nikhilvyas007@gmail.com';
-                localStorage.setItem('vyas_user_vault_' + email, JSON.stringify(profileData));
-                localStorage.setItem('vyas_user_has_vault', 'true');
+                if (this.googleUser && this.googleUser.email) {
+                    var email = this.googleUser.email.trim().toLowerCase();
+                    localStorage.setItem('vyas_user_vault_' + email, JSON.stringify(profileData));
+                    localStorage.setItem('vyas_user_has_vault', 'true');
+                } else {
+                    localStorage.setItem('vyas_guest_vault', JSON.stringify(profileData));
+                }
             } catch(e) {
                 console.warn("Vault save error:", e);
             }
@@ -8375,13 +8372,20 @@ var VyasDesktop = {
 
         loadFromUserVault: function() {
             try {
-                var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : null;
-                if (email) {
+                if (this.googleUser && this.googleUser.email) {
+                    var email = this.googleUser.email.trim().toLowerCase();
+                    var isCurrentNikhil = (email.indexOf('nikhil') !== -1) ||
+                                          (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
                     var vaultData = localStorage.getItem('vyas_user_vault_' + email);
-                    if (vaultData) return JSON.parse(vaultData);
+                    if (vaultData) {
+                        var parsed = JSON.parse(vaultData);
+                        if (!isCurrentNikhil && parsed && parsed.profile && (parsed.profile.dob === '1984-11-23' || (parsed.profile.name && parsed.profile.name.toUpperCase().indexOf('NIKHIL') !== -1))) {
+                            localStorage.removeItem('vyas_user_vault_' + email);
+                            return null;
+                        }
+                        return parsed;
+                    }
                 }
-                var act = localStorage.getItem('vyas_active_profile');
-                if (act) return JSON.parse(act);
             } catch(e) {}
             return null;
         },
@@ -8392,12 +8396,10 @@ var VyasDesktop = {
                 var storedVer = localStorage.getItem('vyas_engine_version');
                 var stored = localStorage.getItem('vyas_active_profile');
                 if (storedVer !== CURRENT_ENGINE_VERSION || !stored) {
-                    // Universal Auto-Heal: Stale engine version or corrupted D-charts/SAV detected
                     if (stored) {
                         try {
                             var pData = JSON.parse(stored);
                             if (pData && pData.profile && pData.profile.dob) {
-                                // Dynamically recompute pure mathematical kundli for ANY user
                                 var fresh = this.computeMathematicalKundli(
                                     pData.profile.name,
                                     pData.profile.dob,
@@ -8422,96 +8424,64 @@ var VyasDesktop = {
             } catch(e) {}
 
             var hasStored = false;
+            this.activeChartData = null; // Always clear RAM first
+
+            // Check if current authenticated user is Nikhil
+            var isCurrentGoogleNikhil = (this.googleUser && (
+                (this.googleUser.email && this.googleUser.email.toLowerCase().indexOf('nikhil') !== -1) ||
+                (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1)
+            ));
+
             try {
-                var stored = localStorage.getItem('vyas_active_profile');
-                if (!stored) {
+                // Case 1: Authenticated Google User
+                if (this.googleUser && this.googleUser.email) {
                     var fromVault = this.loadFromUserVault();
-                    if (fromVault) {
-                        stored = JSON.stringify(fromVault);
-                        try { localStorage.setItem('vyas_active_profile', stored); } catch(e) {}
+                    if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)') {
+                        var isN = (fromVault.profile.dob === '1984-11-23' || (fromVault.profile.name && fromVault.profile.name.toUpperCase().indexOf('NIKHIL') !== -1));
+                        if (!isN || isCurrentGoogleNikhil) {
+                            this.activeChartData = fromVault;
+                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch(e) {}
+                            hasStored = true;
+                        }
                     }
                 }
-                if (stored) {
-                    var data = JSON.parse(stored);
-                    var isCurrentGoogleNikhil = (this.googleUser && (
-                        (this.googleUser.email && this.googleUser.email.toLowerCase().indexOf('nikhil') !== -1) ||
-                        (this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1)
-                    ));
-                    var isNikhilProfile = (data && data.profile && (
-                        data.profile.dob === '1984-11-23' ||
-                        (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)
-                    ));
 
-                    // PRIVACY ENFORCEMENT: Never show Nikhil Vyas's chart to visitors/other users
-                    if (isNikhilProfile && !isCurrentGoogleNikhil) {
-                        try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
-                        data = null;
-                        stored = null;
-                    }
+                // Case 2: Check vyas_active_profile if not loaded from vault
+                if (!hasStored) {
+                    var stored = localStorage.getItem('vyas_active_profile');
+                    if (stored) {
+                        var data = JSON.parse(stored);
+                        var isNikhilProfile = (data && data.profile && (
+                            data.profile.dob === '1984-11-23' ||
+                            (data.profile.name && data.profile.name.toUpperCase().indexOf('NIKHIL') !== -1)
+                        ));
 
-                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
-                        // Auto-Heal: Sanitize stale or dummy SAV (e.g. 346/356) to authentic BPHS 337
-                        var curSavSum = (data.ashtakavarga && Array.isArray(data.ashtakavarga.sav)) ? data.ashtakavarga.sav.reduce(function(a, b) { return a + b; }, 0) : 0;
-                        if (curSavSum !== 337 && data.profile.dob) {
-                            var fresh = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat || 25.0, data.profile.lon || 73.0);
-                            if (fresh && fresh.ashtakavarga) {
-                                data.ashtakavarga = fresh.ashtakavarga;
-                                data.charts = fresh.charts;
-                                try { localStorage.setItem('vyas_active_profile', JSON.stringify(data)); } catch(e) {}
-                            }
+                        // PRIVACY ENFORCEMENT: Never show Nikhil Vyas chart to visitors/other users
+                        if (isNikhilProfile && !isCurrentGoogleNikhil) {
+                            try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
+                            data = null;
                         }
-                        this.activeChartData = data;
-                        hasStored = true;
+
+                        if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                            this.activeChartData = data;
+                            hasStored = true;
+                        }
                     }
+                }
+
+                // Case 3: Founder login default computation
+                if (!hasStored && isCurrentGoogleNikhil) {
+                    var nChart = this.computeMathematicalKundli("NIKHIL VYAS", "1984-11-23", "16:51", "Falna, Pali, Rajasthan", "Male", 25.2354, 73.2384);
+                    this.activeChartData = nChart;
+                    try { localStorage.setItem('vyas_active_profile', JSON.stringify(nChart)); } catch(e) {}
+                    hasStored = true;
                 }
             } catch(e) {}
 
-            if (!hasStored) {
-                // Check if Google user is logged in
-                var gUser = null;
-                try {
-                    var gStored = localStorage.getItem('vyas_google_user');
-                    if (gStored) gUser = JSON.parse(gStored);
-                } catch(e) {}
-
-                // No automatic founder chart loading on init
-            }
-
-            // Step A: Check family vault if active profile was missing or invalid
-            if (!hasStored) {
-                try {
-                    var fam = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
-                    if (fam && fam.length > 0) {
-                        var m = fam[0];
-                        var vChart = this.computeMathematicalKundli(m.name, m.dob, m.tob, m.city, m.gender || 'Male');
-                        if (vChart) {
-                            this.activeChartData = vChart;
-                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(vChart)); } catch(e) {}
-                            hasStored = true;
-                        }
-                    }
-                } catch(e) {}
-            }
-
-            // Step B: Check custom saved profiles
-            if (!hasStored) {
-                try {
-                    var cust = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
-                    if (cust && cust.length > 0) {
-                        var cp = cust[0];
-                        var cChart = (cp.charts && cp.profile) ? cp : this.computeMathematicalKundli(cp.name, cp.dob, cp.tob, cp.city, cp.gender || 'Male');
-                        if (cChart) {
-                            this.activeChartData = cChart;
-                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(cChart)); } catch(e) {}
-                            hasStored = true;
-                        }
-                    }
-                } catch(e) {}
-            }
-
-            // Step C: STRICT PRIVACY RULE - Never load Nikhil Vyas chart for unauthenticated visitors
+            // Privacy Invariant: If no authentic profile belongs to this user, remain in clean Blank Slate mode
             if (!hasStored) {
                 this.activeChartData = null;
+                try { localStorage.removeItem('vyas_active_profile'); } catch(e) {}
             }
 
             var chip = document.getElementById('headerProfileChip');

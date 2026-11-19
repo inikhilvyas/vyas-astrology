@@ -70,7 +70,7 @@ function lookupClassicalSutras($query, $systemPrompt) {
     ];
 
     foreach ($chartPlanets as $plHi => $plEn) {
-        if (preg_match('/' . $plHi . '[^:]*:\s*([^\s\d]+)\s*[\d°']*\s*\(.*?भाव\s*(\d+).*?स्थिति:\s*([^\)]+)\)/u', $systemPrompt, $m)) {
+        if (preg_match('/' . $plHi . '[^:]*:\s*([^\s\d]+)\s+[^()]*\(.*?भाव\s*(\d+).*?स्थिति:\s*([^\)]+)\)/u', $systemPrompt, $m)) {
             $rashiHi = trim($m[1]);
             $chartSigns[$plEn] = $signEngMap[$rashiHi] ?? $rashiHi;
             $chartHouses[$plEn] = intval($m[2]);
@@ -177,11 +177,11 @@ function lookupClassicalSutras($query, $systemPrompt) {
 
     // Append Inviolable Drishti (Aspect) Invariants
     $contextLines[] = "\n[अपरिवर्तनीय शास्त्रीय दृष्टि नियम — INVIOLABLE ASPECT INVARIANTS]:";
-    $contextLines[] = "1. शनिदेव की केवल 3री, 7वीं एवं 10वीं पूर्ण दृष्टि होती है। शनिदेव की 5वीं या 9वीं दृष्टि कभी नहीं होती (मिथुन पर शनि की दृष्टि का दावा सर्वथा असत्य व वर्जित है)।";
+    $contextLines[] = "1. शनिदेव की केवल 3री, 7वीं एवं 10वीं पूर्ण दृष्टि होती है। शनिदेव की 5वीं या 9वीं दृष्टि कभी नहीं होती।";
     $contextLines[] = "2. मंगलदेव की केवल 4थी, 7वीं एवं 8वीं दृष्टि होती है।";
     $contextLines[] = "3. देवगुरु बृहस्पति, राहु एवं केतु की केवल 5वीं, 7वीं एवं 9वीं दृष्टि होती है।";
     $contextLines[] = "4. सूर्य, चन्द्र, बुध, शुक्र की केवल 7वीं दृष्टि होती है।";
-    $contextLines[] = "5. फलादेश में केवल वही दृष्टियां उद्धृत करें जो ऊपर दिए गए 'दृष्टि चक्र' में साक्षात प्रमाणित हैं।";
+    $contextLines[] = "5. केवल जातक की प्रस्तुत कुण्डली के वास्तविक ग्रहों, भावों व दृष्टियों के आधार पर ही फलकथन करें। किसी भी अन्य कुण्डली या पूर्व डेटा के ग्रह (जैसे मकर में मंगल, तुला में शनि यदि जातक की कुण्डली में न हों) को कदापि लागू न करें।";
 
     return implode("\n", $contextLines);
 }
