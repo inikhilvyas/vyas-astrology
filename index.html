@@ -2789,6 +2789,7 @@
         }
     </style>
 
+        <script src="js/vyas_sutras_bank.js"></script>
     <script src="js/vyas_daivagya_engine.js"></script>
 </head>
 
@@ -8597,6 +8598,34 @@
 
             async askSage(query, activeChart) {
                 var q = (query || "").toLowerCase();
+                // RESOLVE ACTIVE CHART FROM MEMORY OR LOCALSTORAGE VAULT
+                activeChart = activeChart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || (function(){
+                    try {
+                        var p = localStorage.getItem('vyas_active_profile');
+                        return p ? JSON.parse(p) : null;
+                    } catch(e) { return null; }
+                })() || (typeof SAMPLE_BUNDLE !== 'undefined' ? SAMPLE_BUNDLE : null);
+
+                // DIRECT DAIVAGYA ENGINE INTERCEPTOR (Zero Hallucination / Zero Latency Gate)
+                // If query is an astrological inquiry on an active chart, formatReading produces the
+                // authentic, mathematically verified, non-hallucinated prediction instantly.
+                var isPanchangOrAxiom = /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q) &&
+                                        !/(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|करियर|विवाह|धन|स्वास्थ्य)/i.test(q);
+
+                if (!isPanchangOrAxiom && activeChart && activeChart.planet_table && window.VyasDaivagyaCore && typeof VyasDaivagyaCore.formatReading === 'function') {
+                    try {
+                        var verifiedReading = VyasDaivagyaCore.formatReading(query, activeChart);
+                        if (verifiedReading) {
+                            if (window.VyasAIEngine && window.VyasAIEngine.chatHistory) {
+                                window.VyasAIEngine.chatHistory.push({ role: "user", content: query });
+                                window.VyasAIEngine.chatHistory.push({ role: "assistant", content: verifiedReading });
+                            }
+                            return verifiedReading;
+                        }
+                    } catch(e) {
+                        console.warn("Direct formatReading error:", e);
+                    }
+                }
                 var isYogaOrNatalQuery = /(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|dosha|dasha|yoga|lagna|bhava|kundali|panchamahapurusha|neechabhanga|kaalsarpa|mangaladosha)/i.test(q);
                 var isPanchangOrAxiomQuery = !isYogaOrNatalQuery && /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q);
                 
