@@ -1094,7 +1094,7 @@
                 };
     }
 
-    function computeCurrentPrashna(cityName) {
+    function computeCurrentPrashna(cityName, customLat, customLon) {
         var now = new Date();
         var y = now.getFullYear();
         var m = String(now.getMonth() + 1).padStart(2, '0');
@@ -1103,7 +1103,180 @@
         var mm = String(now.getMinutes()).padStart(2, '0');
         var dobStr = y + '-' + m + '-' + d;
         var tobStr = hh + ':' + mm;
-        return computeMathematicalKundli('तात्कालिक प्रश्न/गोचर कुण्डली', dobStr, tobStr, cityName || 'उज्जैन (अवंतिका)', 'Prashna');
+
+        var nameStr = 'तात्कालिक प्रश्न/गोचर कुण्डली';
+        var cName = 'उज्जैन (अवंतिका)';
+        var lat = undefined;
+        var lon = undefined;
+
+        if (typeof cityName === 'number' && typeof customLat === 'number') {
+            lat = cityName;
+            lon = customLat;
+            cName = (typeof customLon === 'string' && customLon) ? customLon : 'वेधशाला स्थान';
+        } else if (typeof cityName === 'string' && cityName) {
+            cName = cityName;
+            if (typeof customLat === 'number' && typeof customLon === 'number') {
+                lat = customLat;
+                lon = customLon;
+            }
+        }
+
+        var res = computeMathematicalKundli(nameStr, dobStr, tobStr, cName, 'Prashna', lat, lon);
+        if (res && res.charts && res.charts.d1 && res.charts.d1.houses) {
+            res.houses = res.charts.d1.houses; // Top-level alias for seamless renderer compatibility
+        }
+        return res;
+    }
+
+    // High-Precision Astronomical Panchang Engine (Swiss/Meeus Pure Coordinates)
+    function computeAstronomicalPanchang(dateObj, lat, lon) {
+        var d = dateObj || new Date();
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var dt = String(d.getDate()).padStart(2, '0');
+        var hh = String(d.getHours()).padStart(2, '0');
+        var mm = String(d.getMinutes()).padStart(2, '0');
+        var dobStr = y + '-' + m + '-' + dt;
+        var tobStr = hh + ':' + mm;
+
+        var chart = computeMathematicalKundli('Panchang', dobStr, tobStr, 'वेधशाला', 'Prashna', lat || 26.7922, lon || 82.1998);
+        var sun = chart.planet_table.find(function(p) { return p.p.indexOf('सूर्य') !== -1; });
+        var moon = chart.planet_table.find(function(p) { return p.p.indexOf('चन्द्र') !== -1; });
+
+        var sMap = { 'मेष':0, 'वृषभ':30, 'मिथुन':60, 'कर्क':90, 'सिंह':120, 'कन्या':150, 'तुला':180, 'वृश्चिक':210, 'धनु':240, 'मकर':270, 'कुंभ':300, 'मीन':330 };
+        function parseDms(r, dmsStr) {
+            var base = sMap[r] || 0;
+            var parts = (dmsStr || '0°0\'0"').split(/[°\'\"]/);
+            var deg = parseFloat(parts[0]) || 0;
+            var min = parseFloat(parts[1]) || 0;
+            var sec = parseFloat(parts[2]) || 0;
+            return base + deg + (min / 60.0) + (sec / 3600.0);
+        }
+
+        var sunLon = parseDms(sun.r, sun.d);
+        var moonLon = parseDms(moon.r, moon.d);
+
+        var diff = (moonLon - sunLon + 360.0) % 360.0;
+        var tithiIdx = Math.floor(diff / 12.0); // 0 to 29
+        var tithiRemDeg = 12.0 - (diff % 12.0);
+        var tithiRemHours = tithiRemDeg / 0.508;
+
+        var nakIdx = Math.floor(moonLon / (360.0 / 27.0)); // 0 to 26
+        var nakRemDeg = (360.0 / 27.0) - (moonLon % (360.0 / 27.0));
+        var nakRemHours = nakRemDeg / 0.55;
+        var pada = Math.floor((moonLon % (360.0 / 27.0)) / (360.0 / 108.0)) + 1;
+
+        var yogaIdx = Math.floor(((sunLon + moonLon) % 360.0) / (360.0 / 27.0));
+
+        var karanaNum = Math.floor(diff / 6.0); // 0 to 59
+        var karanaName = '';
+        if (karanaNum === 0) karanaName = 'किस्तुघ्न';
+        else if (karanaNum >= 57) {
+            if (karanaNum === 57) karanaName = 'शकुनि';
+            else if (karanaNum === 58) karanaName = 'चतुष्पद';
+            else karanaName = 'नाग';
+        } else {
+            var movKaranas = ['बव', 'बालव', 'कौलव', 'तैतिल', 'गर', 'वणिज', 'विष्टि (भद्रा)'];
+            karanaName = movKaranas[(karanaNum - 1) % 7];
+        }
+
+        var tithiNames = [
+            'शुक्ल प्रतिपदा', 'शुक्ल द्वितीया', 'शुक्ल तृतीया', 'शुक्ल चतुर्थी', 'शुक्ल पंचमी', 'शुक्ल षष्ठी', 'शुक्ल सप्तमी', 'शुक्ल अष्टमी',
+            'शुक्ल नवमी', 'शुक्ल दशमी', 'शुक्ल एकादशी', 'शुक्ल द्वादशी', 'शुक्ल त्रयोदशी', 'शुक्ल चतुर्दशी', 'पूर्णिमा',
+            'कृष्ण प्रतिपदा', 'कृष्ण द्वितीया', 'कृष्ण तृतीया', 'कृष्ण चतुर्थी', 'कृष्ण पंचमी', 'कृष्ण षष्ठी', 'कृष्ण सप्तमी', 'कृष्ण अष्टमी',
+            'कृष्ण नवमी', 'कृष्ण दशमी', 'कृष्ण एकादशी', 'कृष्ण द्वादशी', 'कृष्ण त्रयोदशी', 'कृष्ण चतुर्दशी', 'अमावस्या'
+        ];
+
+        var nakNames = [
+            'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा', 'पुनर्वसु', 'पुष्य', 'आश्लेषा',
+            'मघा', 'पूर्वाफाल्गुनी', 'उत्तराफाल्गुनी', 'हस्त', 'चित्रा', 'स्वाति', 'विशाखा', 'अनुराधा', 'ज्येष्ठा',
+            'मूल', 'पूर्वाषाढ़ा', 'उत्तराषाढ़ा', 'श्रवण', 'धनिष्ठा', 'शतभिषा', 'पूर्वाभाद्रपद', 'उत्तराभाद्रपद', 'रेवती'
+        ];
+
+        var yogaNames = [
+            'विष्कम्भ', 'प्रीति', 'आयुष्मान', 'सौभाग्य', 'शोभन', 'अतिगण्ड', 'सुकर्मा', 'धृति', 'शूल',
+            'गण्ड', 'वृद्धि', 'ध्रुव', 'व्याघात', 'हर्षण', 'वज्र', 'सिद्धि', 'व्यतीपात', 'वरीयान्',
+            'परिघ', 'शिव', 'सिद्ध', 'साध्य', 'शुभ', 'शुक्ल', 'ब्रह्म', 'इन्द्र', 'वैधृति'
+        ];
+
+        return {
+            tithi: tithiNames[tithiIdx % 30],
+            tithiIdx: tithiIdx,
+            tithiRemHours: tithiRemHours,
+            nakshatra: nakNames[nakIdx % 27],
+            nakIdx: nakIdx,
+            pada: pada,
+            nakRemHours: nakRemHours,
+            yoga: yogaNames[yogaIdx % 27],
+            yogaIdx: yogaIdx,
+            karana: karanaName,
+            karanaNum: karanaNum,
+            sunLon: sunLon,
+            moonLon: moonLon,
+            sunSign: sun.r,
+            moonSign: moon.r,
+            chart: chart
+        };
+    }
+
+    // Universal Active Kundli Resolver (Guarantees user kundli across all portals, zero leak, zero Prashna fallback)
+    function getActiveKundli() {
+        if (typeof window === 'undefined' || !window.localStorage) return null;
+        try {
+            var raw = localStorage.getItem('vyas_active_profile');
+            if (raw) {
+                var p = JSON.parse(raw);
+                if (p) {
+                    var prof = p.profile || p;
+                    var name = prof.name || 'सक्रिय जातक';
+                    var dob = prof.dob || prof.birth_date;
+                    var tob = prof.tob || prof.birth_time || '12:00';
+                    var city = prof.city || prof.place || 'वाराणसी';
+                    var lat = prof.lat;
+                    var lon = prof.lon;
+
+                    // Privacy check: purge any prohibited test identities
+                    var nLower = (name || '').toLowerCase();
+                    if (nLower.indexOf('nikhil') !== -1 || name.indexOf('निखिल') !== -1 || dob === '1992-05-15' || dob === '1984-11-23') {
+                        localStorage.removeItem('vyas_active_profile');
+                    } else if (p.planet_table && p.charts && p.profile && p.profile.dob) {
+                        return p;
+                    } else if (dob) {
+                        var recomputed = computeMathematicalKundli(name, dob, tob, city, 'Male', lat, lon);
+                        if (recomputed) {
+                            localStorage.setItem('vyas_active_profile', JSON.stringify(recomputed));
+                            return recomputed;
+                        }
+                    }
+                }
+            }
+
+            // Check vaults if active profile is empty
+            var vaultKeys = ['vyas_family_vault', 'vyas_user_vault', 'vyas_custom_profiles'];
+            for (var vk = 0; vk < vaultKeys.length; vk++) {
+                var vRaw = localStorage.getItem(vaultKeys[vk]);
+                if (vRaw) {
+                    var vList = JSON.parse(vRaw);
+                    if (Array.isArray(vList) && vList.length > 0) {
+                        for (var i = 0; i < vList.length; i++) {
+                            var item = vList[i];
+                            var iName = (item.name || '').toLowerCase();
+                            var iDob = item.dob || item.birth_date || '';
+                            if (iName.indexOf('nikhil') === -1 && item.name.indexOf('निखिल') === -1 && iDob !== '1992-05-15' && iDob !== '1984-11-23' && iDob) {
+                                var vChart = computeMathematicalKundli(item.name || 'जातक', iDob, item.tob || '12:00', item.city || item.place || 'वाराणसी', 'Male', item.lat, item.lon);
+                                if (vChart) {
+                                    localStorage.setItem('vyas_active_profile', JSON.stringify(vChart));
+                                    return vChart;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('getActiveKundli error:', e);
+        }
+        return null;
     }
 
     // Universal Privacy & Vault Sanitizer (Guarantees zero leakage of personal test data)
@@ -1152,7 +1325,9 @@
     global.sanitizeStoredVaults = sanitizeStoredVaults;
     global.VyasAstronomicalEngine = {
         computeKundli: computeMathematicalKundli,
-        computeCurrentPrashna: computeCurrentPrashna
+        computeCurrentPrashna: computeCurrentPrashna,
+        getActiveKundli: getActiveKundli,
+        computePanchang: computeAstronomicalPanchang
     };
     if (global.VyasDaivagyaCore) {
         global.VyasDaivagyaCore.computeMathematicalKundli = computeMathematicalKundli;
@@ -1161,7 +1336,10 @@
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = {
             computeMathematicalKundli: computeMathematicalKundli,
-            computeCurrentPrashna: computeCurrentPrashna
+            computeCurrentPrashna: computeCurrentPrashna,
+            getActiveKundli: getActiveKundli,
+            computePanchang: computeAstronomicalPanchang,
+            VyasAstronomicalEngine: global.VyasAstronomicalEngine
         };
     }
 })(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

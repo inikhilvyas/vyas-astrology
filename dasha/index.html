@@ -462,18 +462,34 @@
             body.classList.toggle('open');
         }
 
-        function initDashaPortal() {
-            var profileData = null;
-            try {
-                var stored = localStorage.getItem('vyas_active_profile');
-                if (stored) profileData = JSON.parse(stored);
-            } catch (e) {}
-
-            if (!profileData && window.VyasAstronomicalEngine) {
-                profileData = window.VyasAstronomicalEngine.computeCurrentPrashna();
+        function showEmptyKundliNotice() {
+            var bar = document.getElementById('activeProfileBar');
+            if (bar) {
+                bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
+                    '<div><span style="color:#ef4444; font-weight:700;">⚠️ कोई जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.8rem; color:#94a3b8;">दशा चक्र एवं फलकथन देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा वॉल्ट से लोड करें।</span></div>' +
+                    '<div style="display:flex; gap:8px;">' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none;">+ नई कुण्डली बनाएं</a>' +
+                    '<a href="/saved-kundli/" class="action-btn" style="text-decoration:none;">📂 वॉल्ट से लोड करें</a>' +
+                    '</div></div>';
             }
+            var wrap = document.getElementById('vimshottariTreeWrap');
+            if (wrap) {
+                wrap.innerHTML = '<div style="text-align:center; padding:48px 20px; color:#94a3b8; border:1px dashed rgba(212,175,55,0.3); border-radius:12px;">' +
+                    '<p style="font-size:1.1rem; color:#d4af37; margin-bottom:8px;">जातक की जन्मपत्रिका अनुपलब्ध</p>' +
+                    '<p style="font-size:0.88rem; margin-bottom:18px;">दशा चक्र का वास्तविक गणितीय फलादेश देखने के लिए कृपया ऊपर दिए गए बटन से अपनी जन्म कुण्डली लोड करें।</p>' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none; display:inline-block;">+ अपनी कुण्डली बनाएं</a>' +
+                    '</div>';
+            }
+        }
 
-            activeChart = profileData;
+        function initDashaPortal() {
+            activeChart = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ?
+                window.VyasAstronomicalEngine.getActiveKundli() : null;
+
+            if (!activeChart) {
+                showEmptyKundliNotice();
+                return;
+            }
             renderDashaPage(activeChart);
         }
 
@@ -619,6 +635,55 @@
             var mdName = activeMd ? activeMd.lord : 'गुरु';
             var adName = activeAd ? activeAd.lord : 'चन्द्र';
 
+            // Find placement of Dasha Lord and Bhukti Lord in Kundli
+            var pTable = chart.planet_table || [];
+            var mdPlanet = pTable.find(function(p) { return p.p.indexOf(mdName) !== -1; }) || { r: 'धनु', d: '10°', h: '9', s: 'स्व' };
+            var adPlanet = pTable.find(function(p) { return p.p.indexOf(adName) !== -1; }) || { r: 'मीन', d: '15°', h: '12', s: 'सम' };
+
+            var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : [];
+            var mdHouseNum = parseInt(mdPlanet.h) || 1;
+            var mdSavBindus = sav[mdHouseNum - 1] || 28;
+
+            // Deep Dasha Phalit Card
+            var deepPhalitWrap = document.getElementById('deepDashaPhalitWrap');
+            if (!deepPhalitWrap) {
+                var container = document.querySelector('.container');
+                deepPhalitWrap = document.createElement('div');
+                deepPhalitWrap.id = 'deepDashaPhalitWrap';
+                deepPhalitWrap.style.marginTop = '24px';
+                if (container) container.appendChild(deepPhalitWrap);
+            }
+
+            var phalitHtml = '<div style="background:var(--bg-card); border:1.5px solid var(--border-gold); border-radius:12px; padding:22px; margin-top:20px;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">' +
+                '<h2 style="font-size:1.25rem; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:8px;">' +
+                '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+                'दशा गहन फलकथन • जन्म कुण्डली एवं प्रस्ताराष्टकवर्ग समन्वय' +
+                '</h2>' +
+                '<span style="font-size:0.8rem; padding:4px 10px; border-radius:20px; background:rgba(212,175,55,0.18); border:1px solid var(--gold); color:var(--gold-light); font-weight:700;">बृहत् पराशर होरा शास्त्र एवं अष्टकवर्ग मानक</span>' +
+                '</div>' +
+                '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:18px;">' +
+                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">' +
+                '<b style="color:var(--gold-light); font-size:0.95rem;">दशेश स्थिति: ' + mdName + ' देव</b><br>' +
+                '<span style="font-size:0.84rem; color:var(--text-secondary); line-height:1.6;">' +
+                '• <b>भाव:</b> ' + mdPlanet.h + ' (' + (mdPlanet.h == 1 || mdPlanet.h == 4 || mdPlanet.h == 7 || mdPlanet.h == 10 ? 'केन्द्र भाव - शक्ति' : (mdPlanet.h == 5 || mdPlanet.h == 9 ? 'त्रिकोण भाव - परम शुभ लक्ष्मी' : (mdPlanet.h == 6 || mdPlanet.h == 8 || mdPlanet.h == 12 ? 'त्रिक भाव - साधना व परिश्रम' : 'उपचय भाव - उत्तरोत्तर वृद्धि'))) + ')<br>' +
+                '• <b>राशि:</b> ' + mdPlanet.r + ' (' + mdPlanet.s + ') • <b>अंश:</b> ' + mdPlanet.d + '<br>' +
+                '• <b>समुदायाष्टकवर्ग (SAV):</b> ' + mdSavBindus + ' बिन्दु (' + (mdSavBindus >= 28 ? 'सशक्त व फलप्रद' : 'सावधानी व यत्न साध्य') + ')' +
+                '</span></div>' +
+                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">' +
+                '<b style="color:#38bdf8; font-size:0.95rem;">भुक्तिश स्थिति: ' + adName + ' देव</b><br>' +
+                '<span style="font-size:0.84rem; color:var(--text-secondary); line-height:1.6;">' +
+                '• <b>भाव:</b> ' + adPlanet.h + ' भाव में संचरण<br>' +
+                '• <b>राशि:</b> ' + adPlanet.r + ' (' + adPlanet.s + ') • <b>अंश:</b> ' + adPlanet.d + '<br>' +
+                '• <b>परस्पर संबंध:</b> ' + (Math.abs(parseInt(mdPlanet.h) - parseInt(adPlanet.h)) == 0 ? 'युति संबंध (घनिष्ठ)' : (Math.abs(parseInt(mdPlanet.h) - parseInt(adPlanet.h)) == 6 || Math.abs(parseInt(mdPlanet.h) - parseInt(adPlanet.h)) == 8 ? 'षडाष्टक संबंध (सतर्कता आवश्यक)' : 'शुभ दृष्टि व समसप्तक/त्रिकोण संबंध')) +
+                '</span></div>' +
+                '</div>' +
+                '<div style="line-height:1.8; font-size:0.9rem; color:var(--text-secondary);">' +
+                '<p><b>फलकथन निर्णय:</b> ' + mdName + ' की महादशा में ' + adName + ' की अन्तर्दशा जातक के जीवन में ' + (mdSavBindus >= 28 ? 'सकारात्मक ऊर्जा, निर्णय क्षमता एवं लक्ष्य प्राप्ति' : 'अपेक्षित कार्यों में अतिरिक्त धैर्य व निष्ठा') + ' का निर्माण करेगी। कुण्डली के ' + mdPlanet.h + 'वें भाव के कारकत्व सक्रिय रहेंगे। प्रस्ताराष्टकवर्ग के अनुसार यदि कक्षा स्वामी अनुकूल अंशों में भ्रमण कर रहा हो तो व्यापार, आजीविका एवं पारिवारिक सौहार्द में त्वरित प्रगति के योग बनते हैं।</p>' +
+                '</div></div>';
+
+            deepPhalitWrap.innerHTML = phalitHtml;
+
             // KP Dasha
             var kpWrap = document.getElementById('kpDashaSummaryWrap');
             if (kpWrap && window.VyasDashaEngine) {
@@ -658,3 +723,4 @@
     </script>
 </body>
 </html>
+

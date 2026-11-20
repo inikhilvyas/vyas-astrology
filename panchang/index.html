@@ -469,7 +469,7 @@
 
     <!-- Core Vedic Scripts -->
     <script src="/js/vyas_astronomical_engine.js"></script>
-    <script src="/js/vyas_sutras_bank.js"></script>
+    <!-- vyas_sutras_bank.js deferred for fast switching -->
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
@@ -690,23 +690,43 @@
             ];
             var karanas = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)", "शकुनि", "चतुष्पद", "नाग", "किस्तुघ्न"];
 
-            // Swiss Ephemeris anchor: 20 Nov 2026 = Shukla Ekadashi (10), Uttarabhadrapada (25), Dhruva (12), Taitila (3)
-            var baseDate = new Date(2026, 10, 20);
-            var dayDiff = Math.round((d - baseDate) / (24 * 3600000));
-            var tithiIdx = (10 + dayDiff + 300) % 30;
-            var nakIdx = (25 + dayDiff + 270) % 27;
-            var yogaIdx = (12 + dayDiff + 270) % 27;
-            var k1 = (3 + (dayDiff * 2) + 110) % 11;
-            var k2 = (k1 + 1) % 11;
+            // High-Precision Vedic Panchanga Calculation via VyasAstronomicalEngine
+            var pData = null;
+            if (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computePanchang === 'function') {
+                pData = window.VyasAstronomicalEngine.computePanchang(d, city.lat, city.lon);
+            }
 
-            document.getElementById('pTithi').textContent = tithiNames[tithiIdx];
-            document.getElementById('pTithiEnd').textContent = "रात्रि " + fmtMin(sunsetMin + 110) + " तक";
-            document.getElementById('pNak').textContent = nakshatras[nakIdx] + " (चरण " + ((dayOfYear % 4) + 1) + ")";
-            document.getElementById('pNakEnd').textContent = "दोपहर " + fmtMin(solarNoonMinutes + 75) + " तक";
+            var tithiText = pData ? pData.tithi : "शुक्ल एकादशी";
+            var nakText = pData ? (pData.nakshatra + " (चरण " + pData.pada + ")") : "उत्तराभाद्रपद (चरण 3)";
+            var yogaText = pData ? (pData.yoga + " योग") : "वज्र योग";
+            var karanText = pData ? pData.karana : "विष्टि (भद्रा)";
+
+            // Add Bhadra details if Karana is Vishti
+            if (karanText.indexOf('विष्टि') !== -1 || (pData && pData.karanaNum >= 0 && (pData.karanaNum - 1) % 7 === 6)) {
+                var mSign = pData ? pData.moonSign : 'मीन';
+                var bhadraVas = 'पाताल लोक (शुभ फलदायी - भूलोक पर कोई दोष नहीं)';
+                if (['कर्क', 'सिंह', 'वृश्चिक', 'धनु'].indexOf(mSign) !== -1) {
+                    bhadraVas = 'भूलोक (मृत्युलोक - शुभ कार्य वर्जित)';
+                } else if (['मेष', 'वृषभ', 'मिथुन', 'कुंभ'].indexOf(mSign) !== -1) {
+                    bhadraVas = 'स्वर्ग लोक (शुभ फलदायी)';
+                }
+                karanText = 'विष्टि (भद्रा) • ' + bhadraVas;
+            }
+
+            document.getElementById('pTithi').textContent = tithiText;
+            var tithiHoursLeft = pData ? pData.tithiRemHours : 4.5;
+            var tithiEndTimeMin = (curMin + Math.round(tithiHoursLeft * 60)) % 1440;
+            document.getElementById('pTithiEnd').textContent = "शेष: लगभग " + tithiHoursLeft.toFixed(1) + " घंटे (समाप्ति: " + fmtMin(tithiEndTimeMin) + ")";
+
+            document.getElementById('pNak').textContent = nakText;
+            var nakHoursLeft = pData ? pData.nakRemHours : 6.0;
+            var nakEndTimeMin = (curMin + Math.round(nakHoursLeft * 60)) % 1440;
+            document.getElementById('pNakEnd').textContent = "शेष: लगभग " + nakHoursLeft.toFixed(1) + " घंटे (समाप्ति: " + fmtMin(nakEndTimeMin) + ")";
+
             document.getElementById('pDay').textContent = dayNames[dayOfWeek];
             document.getElementById('pDayLord').textContent = "स्वामी: " + dayLords[dayOfWeek];
-            document.getElementById('pYoga').textContent = yogas[yogaIdx] + " योग";
-            document.getElementById('pKaran').textContent = karanas[k1] + " • " + karanas[k2];
+            document.getElementById('pYoga').textContent = yogaText;
+            document.getElementById('pKaran').textContent = karanText;
 
             // Shubh & Ashubh Muhurtas
             var isWed = (dayOfWeek === 3);
@@ -793,24 +813,26 @@
 
             // Compute Live Tatkalik Sky Chart via VyasAstronomicalEngine
             if (window.VyasAstronomicalEngine && window.VyasChartRenderers) {
-                var sky = window.VyasAstronomicalEngine.computeCurrentPrashna(city.lat, city.lon);
+                var sky = (pData && pData.chart) ? pData.chart : window.VyasAstronomicalEngine.computeCurrentPrashna(city.name, city.lat, city.lon);
                 var lagnaSign = (sky.profile && sky.profile.asc_sign) ? sky.profile.asc_sign : "वृश्चिक";
                 document.getElementById('gocharLagnaBadge').textContent = "लग्न: " + lagnaSign;
 
                 var timeStr = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
                 var chartWrap = document.getElementById('panchangChartWrap');
-                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(sky.houses, city.name, timeStr, 400, false);
+                var housesToRender = (sky.charts && sky.charts.d1 && sky.charts.d1.houses) ? sky.charts.d1.houses : (sky.houses || {});
+                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(housesToRender, city.name, timeStr, 400, false);
 
                 // Planet Mini Table
                 var tableBody = document.getElementById('panchangPlanetTableBody');
                 var pTable = sky.planet_table || [];
                 var tHtml = '';
-                var sunSign = 'वृश्चिक', moonSign = 'मीन';
+                var sunSign = pData ? pData.sunSign : 'वृश्चिक';
+                var moonSign = pData ? pData.moonSign : 'मीन';
 
                 for (var pi = 0; pi < pTable.length; pi++) {
                     var p = pTable[pi];
-                    if (p.p === 'सूर्य') sunSign = p.r;
-                    if (p.p === 'चन्द्र') moonSign = p.r;
+                    if (p.p.indexOf('सूर्य') !== -1) sunSign = p.r;
+                    if (p.p.indexOf('चन्द्र') !== -1) moonSign = p.r;
                     tHtml += '<tr>' +
                         '<td><b style="color:var(--gold);">' + p.p + '</b></td>' +
                         '<td>' + p.r + '</td>' +

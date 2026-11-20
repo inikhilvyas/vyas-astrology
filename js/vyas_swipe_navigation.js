@@ -109,4 +109,25 @@
 
         document.body.appendChild(toast);
     }
+    function prefetchAdjacentPages() {
+        try {
+            var curIdx = getCurrentPageIndex();
+            var toPrefetch = [];
+            if (curIdx < PORTAL_PAGES.length - 1) toPrefetch.push(PORTAL_PAGES[curIdx + 1].path);
+            if (curIdx > 0) toPrefetch.push(PORTAL_PAGES[curIdx - 1].path);
+
+            toPrefetch.forEach(function (url) {
+                var link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = url;
+                document.head.appendChild(link);
+            });
+        } catch (e) { }
+    }
+
+    if (document.readyState === 'complete') {
+        prefetchAdjacentPages();
+    } else {
+        window.addEventListener('load', prefetchAdjacentPages);
+    }
 })();

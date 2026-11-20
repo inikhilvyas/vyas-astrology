@@ -2808,7 +2808,7 @@
         .portal-pill svg { stroke: currentColor; flex-shrink: 0; }
     </style>
 
-    <script src="js/vyas_sutras_bank.js"></script>
+    <script src="js/vyas_sutras_bank.js" defer></script>
     <script src="js/vyas_daivagya_engine.js"></script>
     <script src="js/vyas_chart_renderers.js"></script>
 </head>
@@ -3253,33 +3253,32 @@
                     </div>
                 </div>
 
-                <!-- 2. TAB: 5-TIER VIMSHOTTARI DASHA TREE -->
+                <!-- 2. TAB: VIMSHOTTARI DASHA SUMMARY & DIRECT PORTAL LINK -->
                 <div class="view-panel" id="view-dasha">
                     <div class="content-card">
                         <div class="card-heading">
-                            <span>✦ 5-स्तरीय विंशोत्तरी दशा वृक्ष (Prana Dasha Level)</span>
-                            <span
-                                style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:10px;">सूक्ष्म
-                                गणितीय विस्तार</span>
+                            <span>✦ तात्कालिक सक्रिय दशा चक्र (Current Running Dasha)</span>
+                            <span style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:10px;">सटीक काल-निर्णय</span>
                         </div>
-                        <div
-                            style="background:var(--bg-card); border:1.5px solid var(--border-gold); padding:10px 14px; border-radius:8px; margin-bottom:12px;">
-                            <div style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">वर्तमान सक्रिय दशा
-                                कालखंड:</div>
-                            <div style="font-size:1.05rem; font-weight:900; color:var(--primary-navy); margin:2px 0;"
-                                id="activeDashaChainVal">
+                        <div style="background:var(--bg-card); border:1.5px solid var(--border-gold); padding:16px; border-radius:10px; margin-bottom:16px;">
+                            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">वर्तमान सक्रिय दशा कालखंड:</div>
+                            <div style="font-size:1.15rem; font-weight:900; color:var(--accent-gold); margin:6px 0;" id="activeDashaChainVal">
                                 महादशा: शुक्र ➔ अन्तर्दशा: शनि ➔ प्रत्यन्तर्दशा: मंगल (वर्तमान सक्रिय)
                             </div>
-                            <div style="font-size:0.72rem; color:#10b981;">अन्तर्दशा समाप्ति: 2027 • आगामी अन्तर्दशा:
-                                बुध देव</div>
+                            <div style="font-size:0.82rem; color:#10b981; margin-top:4px;" id="activeDashaEndVal">
+                                अन्तर्दशा सक्रिय • आगामी अन्तर्दशा: बुध देव
+                            </div>
                         </div>
-                        <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:10px;">
-                            प्रत्येक महादशा पर (+) दबाकर अन्तर्दशा, प्रत्यन्तर्दशा, सूक्ष्मदशा एवं प्राणदशा तक गहराई में
-                            जाएं:
-                        </div>
-                        <div id="dashaTreeContainer"
-                            style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:8px; overflow:hidden;">
-                            <!-- Populated dynamically by JS -->
+
+                        <div style="background:rgba(212,175,55,0.06); border:1px solid var(--border-gold); border-radius:10px; padding:16px; text-align:center;">
+                            <h3 style="color:var(--accent-gold); font-size:1.05rem; margin-bottom:6px;">पूर्ण 5-स्तरीय दशा चक्र, जैमिनी चर दशा एवं KP कस्पल दशा</h3>
+                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+                                महादशा, अन्तर्दशा, प्रत्यन्तर्दशा, सूक्ष्म एवं प्राण दशा का 100% विस्तृत वृक्ष, प्रस्ताराष्टकवर्ग कक्षा निर्णय तथा गहन फलादेश देखने हेतु समर्पित दशा पोर्टल पर जाएं:
+                            </p>
+                            <a href="/dasha/" class="header-btn primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; font-size:0.92rem; font-weight:700; text-decoration:none; border-radius:8px; width:auto;">
+                                <span>सम्पूर्ण दशा चक्र व गहन फलकथन देखें</span>
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -331,7 +331,7 @@
     </nav>
 
     <script src="/js/vyas_astronomical_engine.js"></script>
-    <script src="/js/vyas_sutras_bank.js"></script>
+    <!-- vyas_sutras_bank.js deferred for fast switching -->
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
@@ -350,18 +350,21 @@
             }
         }
 
-        function loadAndRenderVarshphal() {
-            var profileData = null;
-            try {
-                var stored = localStorage.getItem('vyas_active_profile');
-                if (stored) profileData = JSON.parse(stored);
-            } catch (e) { }
-
-            if (!profileData && window.VyasAstronomicalEngine) {
-                profileData = window.VyasAstronomicalEngine.computeCurrentPrashna();
+                function showEmptyKundliNotice() {
+            var bar = document.getElementById('activeProfileBar');
+            if (bar) {
+                bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
+                    '<div><span style="color:#ef4444; font-weight:700;">⚠️ कोई जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.8rem; color:#94a3b8;">' + 'वर्षफल' + ' विश्लेषण देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा वॉल्ट से लोड करें।</span></div>' +
+                    '<div style="display:flex; gap:8px;">' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none;">+ नई कुण्डली बनाएं</a>' +
+                    '<a href="/saved-kundli/" class="action-btn" style="text-decoration:none;">📂 वॉल्ट से लोड करें</a>' +
+                    '</div></div>';
             }
+        }
 
-            activeChart = profileData;
+        function loadAndRenderVarshphal() {
+            activeChart = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ? window.VyasAstronomicalEngine.getActiveKundli() : null;
+            if (!activeChart) { showEmptyKundliNotice(); return; }
             var targetYear = parseInt(document.getElementById('calcTargetYear') ? document.getElementById('calcTargetYear').value : 2026) || 2026;
             renderVarshphalView(activeChart, targetYear);
         }

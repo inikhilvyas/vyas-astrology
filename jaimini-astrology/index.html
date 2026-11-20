@@ -344,7 +344,7 @@
         </a>
     </nav>
 
-    <script src="/js/vyas_sutras_bank.js"></script>
+    <!-- vyas_sutras_bank.js deferred for fast switching -->
     <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
@@ -358,32 +358,33 @@
             initJaiminiPage();
         });
 
-        function initJaiminiPage() {
-            var profileData = null;
-            try {
-                var stored = localStorage.getItem('vyas_active_profile');
-                if (stored) profileData = JSON.parse(stored);
-            } catch (e) { }
-
-            if (profileData && profileData.dob) {
-                if (profileData.jaimini && profileData.jaimini.karakas) {
-                    activeChart = profileData;
-                } else if (typeof window.computeMathematicalKundli === 'function') {
-                    try {
-                        activeChart = window.computeMathematicalKundli(
-                            profileData.name || 'सक्रिय जातक',
-                            profileData.dob,
-                            profileData.tob || '12:00',
-                            profileData.place || profileData.city || '',
-                            profileData.gender || 'Male'
-                        );
-                        localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
-                    } catch (e) { console.warn(e); }
-                }
+        function showEmptyKundliNotice() {
+            var bar = document.getElementById('activeProfileBar');
+            if (bar) {
+                bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
+                    '<div><span style="color:#ef4444; font-weight:700;">⚠️ कोई जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.8rem; color:#94a3b8;">जैमिनी चर कारक, कारकांश एवं स्वांश विश्लेषण देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा वॉल्ट से लोड करें।</span></div>' +
+                    '<div style="display:flex; gap:8px;">' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none;">+ नई कुण्डली बनाएं</a>' +
+                    '<a href="/saved-kundli/" class="action-btn" style="text-decoration:none;">📂 वॉल्ट से लोड करें</a>' +
+                    '</div></div>';
             }
+            var wrap = document.getElementById('jaiminiChartWrap');
+            if (wrap) {
+                wrap.innerHTML = '<div style="text-align:center; padding:48px 20px; color:#94a3b8; border:1px dashed rgba(212,175,55,0.3); border-radius:12px;">' +
+                    '<p style="font-size:1.1rem; color:#d4af37; margin-bottom:8px;">जातक की जन्मपत्रिका अनुपलब्ध</p>' +
+                    '<p style="font-size:0.88rem; margin-bottom:18px;">जैमिनी सूत्र एवं 7 चर कारक देखने हेतु मुख्य पृष्ठ से अपनी कुण्डली बनाएं।</p>' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none; display:inline-block;">+ अपनी कुण्डली बनाएं</a>' +
+                    '</div>';
+            }
+        }
 
-            if (!activeChart && typeof window.VyasAstronomicalEngine !== 'undefined') {
-                activeChart = window.VyasAstronomicalEngine.computeCurrentPrashna();
+        function initJaiminiPage() {
+            activeChart = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ?
+                window.VyasAstronomicalEngine.getActiveKundli() : null;
+
+            if (!activeChart) {
+                showEmptyKundliNotice();
+                return;
             }
 
             renderJaiminiView(activeChart);

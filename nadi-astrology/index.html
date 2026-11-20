@@ -333,7 +333,7 @@
         </a>
     </nav>
 
-    <script src="/js/vyas_sutras_bank.js"></script>
+    <!-- vyas_sutras_bank.js deferred for fast switching -->
     <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
@@ -370,9 +370,7 @@
                 }
             }
 
-            if (!activeChart && typeof window.VyasAstronomicalEngine !== 'undefined') {
-                activeChart = window.VyasAstronomicalEngine.computeCurrentPrashna();
-            }
+            if (!activeChart) { showEmptyKundliNotice(); return; }
 
             renderNadiView(activeChart);
         }
