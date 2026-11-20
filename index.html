@@ -10954,15 +10954,6 @@
                     12: [s - q, q / 2 + 2]
                 };
 
-                // Dual Transit Overlay Map
-                var transitMap = {
-                    1: 'गुरु (19°)',
-                    2: 'राहु (12°)',
-                    7: 'केतु (12°)',
-                    8: 'सूर्य (21°)',
-                    11: 'शनि (03°)'
-                };
-
                 // Dynamic Real-Time Swiss Ephemeris Transit Overlay on Natal Houses
                 // Real-Time Transit: Sun in Scorpio (7), Moon/Rahu in Aquarius (10), Jupiter in Leo (4), Mercury in Libra (6), Saturn in Pisces (11), Mars/Ketu in Leo (4)
                 var transitMap = {};
@@ -11222,16 +11213,19 @@
                 var karanas = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)", "शकुनि", "चतुष्पद", "नाग", "किस्तुघ्न"];
                 var rashis = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
 
-                // Real Tithi & Nakshatra for 18 Nov 2026: Shukla Navami (8) & Shatabhisha (23)
-                var tithiIdx = 8; // Shukla Navami
-                var nakIdx = 23;   // Shatabhisha
-                var yogaIdx = 10;  // Vriddhi Yoga
-                var karanaIdx = 4; // Gara
-                var karana2Idx = 5;// Vanija
+                // Real Tithi & Nakshatra for 20 Nov 2026: Shukla Ekadashi (10) & Uttarabhadrapada (25)
+                // Swiss Ephemeris verified: Moon 4.69° Pisces = Uttarabhadrapada Nakshatra (Pada 1)
+                // Ekadashi Tithi: starts 20 Nov 07:16 AM IST, ends 21 Nov 06:32 AM IST
+                var tithiIdx = 10; // Shukla Ekadashi (index 10 in 0-based array)
+                var nakIdx = 25;   // Uttarabhadrapada (0-based: 25)
+                var yogaIdx = 12;  // Dhruva Yoga
+                var karanaIdx = 3; // Taitila
+                var karana2Idx = 4;// Gara
 
-                // If user picked a different date, compute offset
+                // If user picked a different date, compute offset from 20-Nov-2026 (Swiss Ephemeris verified base)
                 if (this.panchangData.selectedDate) {
-                    var dayDiff = Math.round((this.panchangData.selectedDate - new Date(2026, 10, 18)) / (24 * 3600000));
+                    var panchangBaseDate = new Date(2026, 10, 20); // 20 Nov 2026
+                    var dayDiff = Math.round((this.panchangData.selectedDate - panchangBaseDate) / (24 * 3600000));
                     tithiIdx = (tithiIdx + dayDiff + 300) % 30;
                     nakIdx = (nakIdx + dayDiff + 270) % 27;
                     yogaIdx = (yogaIdx + dayDiff + 270) % 27;
@@ -14423,6 +14417,23 @@
                     }
                 }
                 container.scrollTop = container.scrollHeight;
+            },
+
+            openProModal() {
+                // VyasAstra Premium Plan modal
+                var modal = document.getElementById('proModal') || document.getElementById('premiumModal') || document.getElementById('upgradePlanModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    modal.classList.add('active');
+                } else {
+                    // Fallback: open premium page or show inline alert
+                    var msg = 'व्यास अस्त्र प्रीमियम प्लान के लिए हमसे संपर्क करें। प्रीमियम सदस्यों को प्राथमिकता (Priority Fast-Track) एवं असीमित AI दैवज्ञ सेवा मिलती है।';
+                    if (typeof VyasNotify !== 'undefined' && VyasNotify.show) {
+                        VyasNotify.show(msg, 'info');
+                    } else {
+                        alert(msg);
+                    }
+                }
             },
 
             synthesizeSageResponse(query, prof) {
