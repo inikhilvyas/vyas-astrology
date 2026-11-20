@@ -1,4 +1,4 @@
-// VYAS ASTRA Service Worker - Web Push & Background Sync v14
+// VYAS ASTRA Service Worker - Web Push & Background Sync v15 (Privacy & Fresh Sync)
 'use strict';
 
 self.addEventListener('install', (event) => {

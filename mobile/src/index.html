@@ -154,12 +154,12 @@
                 <div class="royal-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div>
-                            <h2 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc;">लग्न कुण्डली (D-1)</h2>
-                            <p style="font-size: 0.72rem; color: var(--gold-300);">सक्रिय जातक • मेष लग्न (Aries Asc)</p>
+                            <h2 style="font-size: 1.15rem; font-weight: 800; color: #f8fafc;" id="kundliChartTitle">लग्न कुण्डली (D-1)</h2>
+                            <p style="font-size: 0.72rem; color: var(--gold-300);" id="kundliChartSub">सक्रिय जातक • मेष लग्न (Aries Asc)</p>
                         </div>
                         <div style="display: flex; gap: 6px;">
-                            <button style="padding: 4px 10px; border-radius: 12px; background: var(--gold-gradient); border: none; font-size: 0.7rem; font-weight: 700; color: #060913;">D1 लग्न</button>
-                            <button style="padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--border-gold); font-size: 0.7rem; color: #cbd5e1;">D9 नवांश</button>
+                            <button id="btnD1" onclick="VyasMobileApp.switchChart('D1')" style="padding: 4px 10px; border-radius: 12px; background: var(--gold-gradient); border: none; font-size: 0.7rem; font-weight: 700; color: #060913; cursor:pointer;">D1 लग्न</button>
+                            <button id="btnD9" onclick="VyasMobileApp.switchChart('D9')" style="padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--border-gold); font-size: 0.7rem; color: #cbd5e1; cursor:pointer;">D9 नवांश</button>
                         </div>
                     </div>
 

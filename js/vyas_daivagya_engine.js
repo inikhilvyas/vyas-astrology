@@ -1444,9 +1444,124 @@
     };
 
     // ═══════════════════════════════════════════════════════════════════
-    // MODULE 10: ASHTAKAVARGA PREDICTIVE ENGINE (SAV 337 बिंदु गणित)
+    // MODULE 10: ASHTAKAVARGA PREDICTIVE ENGINE (SAV 337 + प्रस्ताराष्टकवर्ग)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasAshtakavargaEngine = {
+        KAKSHYA_LORDS: ['शनि', 'गुरु', 'मंगल', 'सूर्य', 'शुक्र', 'बुध', 'चन्द्र', 'लग्न'],
+        KAKSHYA_LORDS_EN: ['Saturn', 'Jupiter', 'Mars', 'Sun', 'Venus', 'Mercury', 'Moon', 'Lagna'],
+
+        getKakshyaInfo: function (degInSign) {
+            var deg = parseFloat(degInSign) || 0;
+            deg = ((deg % 30) + 30) % 30;
+            var idx = Math.min(7, Math.floor(deg / 3.75));
+            var sDeg = (idx * 3.75).toFixed(2);
+            var eDeg = ((idx + 1) * 3.75).toFixed(2);
+            return {
+                index: idx,
+                lord: this.KAKSHYA_LORDS[idx],
+                lordEn: this.KAKSHYA_LORDS_EN[idx],
+                range: sDeg + "° - " + eDeg + "°"
+            };
+        },
+
+        // Evaluate Dasha-Antardasha results via Prastarashtakavarga
+        evaluateDashaPrastara: function (chart, mdPlanet, adPlanet) {
+            mdPlanet = mdPlanet || 'शुक्र';
+            adPlanet = adPlanet || 'शनि';
+
+            var bSign = 'तुला';
+            var mdSign = 'मेष';
+            if (chart && chart.planet_table) {
+                for (var i = 0; i < chart.planet_table.length; i++) {
+                    var pt = chart.planet_table[i];
+                    var pName = pt.p || pt.planet || '';
+                    if (pName.indexOf(mdPlanet) !== -1) mdSign = pt.r || pt.sign || 'मेष';
+                    if (pName.indexOf(adPlanet) !== -1) bSign = pt.r || pt.sign || 'तुला';
+                }
+            }
+
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var sIdx = signs.indexOf(bSign);
+            if (sIdx === -1) sIdx = 0;
+
+            // Check if active profile has bav
+            var bavPoints = 4;
+            if (chart && chart.ashtakavarga && chart.ashtakavarga.bav) {
+                var pKey = 'Venus';
+                if (mdPlanet.indexOf('सूर्य') !== -1) pKey = 'Sun';
+                else if (mdPlanet.indexOf('चन्द्र') !== -1) pKey = 'Moon';
+                else if (mdPlanet.indexOf('मंगल') !== -1) pKey = 'Mars';
+                else if (mdPlanet.indexOf('बुध') !== -1) pKey = 'Mercury';
+                else if (mdPlanet.indexOf('गुरु') !== -1) pKey = 'Jupiter';
+                else if (mdPlanet.indexOf('शुक्र') !== -1) pKey = 'Venus';
+                else if (mdPlanet.indexOf('शनि') !== -1) pKey = 'Saturn';
+
+                var bArr = chart.ashtakavarga.bav[pKey];
+                if (Array.isArray(bArr)) {
+                    bavPoints = bArr[sIdx] || 4;
+                }
+            }
+
+            // In classical Prastarashtakavarga, if BAV points >= 4, the contributing planet's kakshya has high probability of bindu 1
+            var hasBindu = (bavPoints >= 4);
+            var binduScore = hasBindu ? 1 : 0;
+
+            var verdict = hasBindu ? "शुभ फलदायी (1 बिन्दु प्राप्त)" : "कष्ट/बाधा वेध (0 बिन्दु - रिक्ता)";
+            var detail = hasBindu
+                ? "महादशाधिपति (" + mdPlanet + ") के अष्टकवर्ग में अन्तर्दशाधिपति (" + adPlanet + ") की कक्षा को <b>1 शुभ बिन्दु</b> प्राप्त है। यह कालखण्ड आर्थिक सुदृढ़ता, पद-सम्मान, अभीष्ट मनोरथ सिद्धि तथा पारिवारिक सौहार्द का शास्त्रीय संबल प्रदान करेगा।"
+                : "महादशाधिपति (" + mdPlanet + ") के अष्टकवर्ग में अन्तर्दशाधिपति (" + adPlanet + ") की कक्षा <b>शून्य (रिक्त)</b> है। अतः इस अन्तर्दशा में पुरुषार्थ अधिक व फल न्यून रहेगा; मानसिक व्यग्रता व व्यर्थ विवाद से बचें तथा धैर्य रखें।";
+
+            return {
+                mdPlanet: mdPlanet,
+                adPlanet: adPlanet,
+                targetSign: bSign,
+                bavPoints: bavPoints,
+                kakshyaBindu: binduScore,
+                verdict: verdict,
+                detail: detail
+            };
+        },
+
+        // Evaluate Daily Transit Kakshya for Daily Rashiphal
+        evaluateTransitKakshya: function (chart, transitMoonDeg, transitMoonSign) {
+            var deg = (typeof transitMoonDeg === 'number') ? transitMoonDeg : 4.69;
+            var sign = transitMoonSign || 'मीन';
+
+            var kInfo = this.getKakshyaInfo(deg);
+
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var sIdx = signs.indexOf(sign);
+            if (sIdx === -1) sIdx = 11;
+
+            var savPoints = 28;
+            var bavPoints = 4;
+            if (chart && chart.ashtakavarga) {
+                if (Array.isArray(chart.ashtakavarga.sav)) savPoints = chart.ashtakavarga.sav[sIdx] || 28;
+                if (chart.ashtakavarga.bav && Array.isArray(chart.ashtakavarga.bav.Moon)) {
+                    bavPoints = chart.ashtakavarga.bav.Moon[sIdx] || 4;
+                }
+            }
+
+            var hasBindu = (bavPoints >= 4);
+            var verdict = hasBindu ? "अनुकूल कक्षा (1 शुभ बिन्दु)" : "रिक्ता कक्षा (0 बिन्दु - संयम वेध)";
+            var advice = hasBindu
+                ? "गोचरस्थ चन्द्रमा आज <b>" + kInfo.lord + " की कक्षा (" + kInfo.range + ")</b> में संचरण कर रहे हैं। प्रस्ताराष्टकवर्ग में <b>1 शुभ बिन्दु</b> का सहयोग मिलने से आज का दिन महत्वपूर्ण निर्णय, नवीन अनुबंध, आर्थिक वार्ता व मानसिक प्रसन्नता हेतु अति उत्तम है।"
+                : "गोचरस्थ चन्द्रमा आज <b>" + kInfo.lord + " की कक्षा (" + kInfo.range + ")</b> में हैं, जहाँ प्रस्ताराष्टकवर्ग में <b>0 बिन्दु (रिक्ता)</b> है। अतः आज उतावलेपन में बड़े वित्तीय जोखिम या कटु संवाद से बचें; धैर्यपूर्वक दिनचर्या का पालन करें।";
+
+            return {
+                transitSign: sign,
+                transitDeg: deg,
+                kakshyaLord: kInfo.lord,
+                kakshyaRange: kInfo.range,
+                kakshyaIndex: kInfo.index,
+                kakshyaBindu: hasBindu ? 1 : 0,
+                savPoints: savPoints,
+                bavPoints: bavPoints,
+                verdict: verdict,
+                advice: advice
+            };
+        },
+
         computeSAV: function(planetTableOrChart, lagnaSign) {
             var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
             var savArray = null;

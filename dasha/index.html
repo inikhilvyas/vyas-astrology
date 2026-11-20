@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>दशा चक्र • विंशोत्तरी, चर एवं KP कस्पल दशा | VYAS ASTRA</title>
+    <meta name="description" content="व्यास अस्त्र दशा चक्र - 5-स्तरीय विंशोत्तरी (महादशा, अन्तर्दशा, प्रत्यन्तर, सूक्ष्म, प्राण), जैमिनी चर दशा एवं KP कस्पल सब-लॉर्ड दशा। 100% प्रामाणिक खगोलीय काल-निर्णय।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(12, 19, 36, 0.88);
+            --bg-card-hover: rgba(18, 28, 54, 0.95);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --emerald: #10b981;
+            --ruby: #ef4444;
+            --sky: #38bdf8;
+            --purple: #c084fc;
+            --amber: #f59e0b;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.18), transparent 45%), radial-gradient(circle at 85% 20%, rgba(212, 175, 55, 0.12), transparent 40%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.12));
+            color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid var(--border-gold);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        /* Dasha System Tabs */
+        .dasha-tabs-bar {
+            display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px;
+        }
+        .dasha-tab-btn {
+            padding: 10px 18px; border-radius: 8px; font-size: 0.86rem; font-weight: 700;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;
+            white-space: nowrap; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .dasha-tab-btn:hover { background: rgba(212,175,55,0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .dasha-tab-btn.active {
+            background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.08));
+            color: var(--gold-light); border-color: var(--gold);
+        }
+
+        /* Active Dasha Highlight Banner */
+        .active-dasha-hero {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(12, 19, 36, 0.9));
+            border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px;
+            padding: 16px 20px; margin-bottom: 24px;
+            display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;
+        }
+        .adh-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: 14px;
+            background: rgba(16, 185, 129, 0.2); border: 1px solid var(--emerald);
+            color: #34d399; font-size: 0.75rem; font-weight: 800;
+        }
+        .adh-title { font-size: 1.15rem; font-weight: 800; color: var(--gold-light); margin-top: 4px; }
+        .adh-meta { font-size: 0.82rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* Tables & Tree Styling */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px; margin-bottom: 24px;
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1rem; font-weight: 800; color: var(--gold-light); display: flex; align-items: center; gap: 8px; }
+
+        .dasha-table {
+            width: 100%; border-collapse: collapse; font-size: 0.84rem; text-align: left;
+        }
+        .dasha-table th {
+            padding: 10px 12px; background: rgba(0,0,0,0.3); color: var(--gold);
+            font-weight: 700; border-bottom: 1px solid var(--border-gold);
+        }
+        .dasha-table td {
+            padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary);
+        }
+        .dasha-table tr:hover { background: rgba(212,175,55,0.04); }
+        .dasha-table tr.current-active {
+            background: rgba(16, 185, 129, 0.12); border-left: 3px solid var(--emerald);
+        }
+        .dasha-table tr.current-active td { color: #f8fafc; font-weight: 700; }
+
+        .tag-active {
+            padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 800;
+            background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid var(--emerald);
+        }
+
+        .tree-node {
+            border: 1px solid var(--border-subtle); border-radius: 8px;
+            margin-bottom: 8px; overflow: hidden; background: rgba(255,255,255,0.02);
+        }
+        .tree-head {
+            padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .tree-head:hover { background: rgba(212,175,55,0.08); }
+        .tree-head.active-node {
+            background: rgba(16, 185, 129, 0.12); border-left: 4px solid var(--emerald);
+        }
+        .tree-body {
+            padding: 12px 16px; background: rgba(0,0,0,0.25);
+            border-top: 1px solid var(--border-subtle); display: none;
+        }
+        .tree-body.open { display: block; }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: var(--gold); font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <!-- 1. Header -->
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">दशा चक्र • विंशोत्तरी, चर एवं KP कस्पल दशा</div>
+            </div>
+        </a>
+        <div style="font-size:0.8rem; color:var(--emerald); font-weight:700;">
+            100% प्रामाणिक काल-निर्णय
+        </div>
+    </header>
+
+    <!-- 2. Universal Navigation Pill Strip -->
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/dasha/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>दशा चक्र</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <!-- Hero Summary -->
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    दशा चक्र • विंशोत्तरी, चर एवं KP कस्पल दशा
+                </h1>
+                <p>महर्षि पाराशर प्रणीत 120 वर्षीय 5-स्तरीय विंशोत्तरी, जैमिनी चर दशा एवं कृष्णमूर्ति कस्पल सब-लॉर्ड दशा काल-निर्णय।</p>
+            </div>
+            <div class="hero-right">
+                <a href="/#kundli-calc" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.35); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    कुण्डली बदलें / नई बनाएं
+                </a>
+            </div>
+        </div>
+
+        <!-- Unified Active Native Info Bar -->
+        <div id="activeProfileBar" style="background: rgba(12,19,36,0.9); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:36px; height:36px; border-radius:50%; background:rgba(212,175,55,0.15); border:1px solid var(--gold); display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+                </div>
+                <div>
+                    <div id="unifiedProfileName" style="color:#f8fafc; font-weight:800; font-size:1.02rem;">सक्रिय जातक: लोड हो रहा है...</div>
+                    <div id="unifiedProfileMeta" style="color:var(--text-muted); font-size:0.8rem;">जन्म विवरण एवं सक्रिय दशा वेध</div>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <a href="/saved-kundli/" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    वॉल्ट से लोड करें
+                </a>
+            </div>
+        </div>
+
+        <!-- Active Dasha Quick Status Banner -->
+        <div class="active-dasha-hero" id="activeDashaHero">
+            <div>
+                <span class="adh-badge">● वर्तमान में सक्रिय काल-खण्ड</span>
+                <div class="adh-title" id="adhVimshottariTitle">महादशा: गुरु • अन्तर्दशा: चन्द्र • प्रत्यन्तर: शुक्र</div>
+                <div class="adh-meta" id="adhVimshottariMeta">अवधि: 30/09/2025 से 29/01/2027 तक</div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:8px 14px; font-size:0.82rem;">
+                    <span style="color:var(--gold); font-weight:700;">चर दशा:</span> <b id="adhCharaTitle" style="color:#fff;">मकर (2019-2031)</b>
+                </div>
+                <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(56,189,248,0.25); border-radius:8px; padding:8px 14px; font-size:0.82rem;">
+                    <span style="color:#38bdf8; font-weight:700;">प्रस्ताराष्टकवर्ग:</span> <b id="adhKakshyaTitle" style="color:#fff;">1 बिन्दु (शुभ सिद्धि)</b>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Navigation Tabs -->
+        <div class="dasha-tabs-bar">
+            <button class="dasha-tab-btn active" onclick="switchDashaView('vimshottari', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                5-स्तरीय विंशोत्तरी दशा वृक्ष
+            </button>
+            <button class="dasha-tab-btn" onclick="switchDashaView('chara', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                जैमिनी चर दशा (12 राशि)
+            </button>
+            <button class="dasha-tab-btn" onclick="switchDashaView('kp', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg>
+                KP कस्पल व सब-लॉर्ड दशा
+            </button>
+            <button class="dasha-tab-btn" onclick="switchDashaView('prastara', this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                प्रस्ताराष्टकवर्ग कक्षा वेध
+            </button>
+        </div>
+
+        <!-- TAB 1: 5-LEVEL VIMSHOTTARI TREE -->
+        <div id="view-vimshottari" class="dasha-panel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>विंशोत्तरी महादशा वृक्ष (120 वर्ष) • क्लिक करके अन्तर्दशा व प्रत्यन्तर खोलें</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">● हरी रेखा = सक्रिय काल</span>
+                </div>
+
+                <div id="vimshottariTreeWrap">
+                    <!-- Populated dynamically by JS -->
+                </div>
+            </div>
+
+            <!-- Active Period Shastric Counsel Card -->
+            <div class="card" style="border-color: rgba(212,175,55,0.35);">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg>
+                        <span id="activeDashaPhalitTitle">सक्रिय दशा शास्त्रीय फलादेश</span>
+                    </div>
+                </div>
+                <div id="activeDashaPhalitText" style="font-size:0.88rem; line-height:1.7; color:var(--text-secondary);">
+                    लोड हो रहा है...
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: JAIMINI CHARA DASHA -->
+        <div id="view-chara" class="dasha-panel" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#c084fc" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                        <span>जैमिनी चर दशा क्रम (12 राशियां) • आत्मकारक व भाव फल वेध</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--purple); font-weight:700;">चर पद्धति काल चक्र</span>
+                </div>
+
+                <div class="table-wrap" style="overflow-x:auto;">
+                    <table class="dasha-table">
+                        <thead>
+                            <tr>
+                                <th>राशि दशा</th>
+                                <th>राशि स्वामी</th>
+                                <th>दशा वर्ष</th>
+                                <th>आरंभ तिथि</th>
+                                <th>समाप्ति तिथि</th>
+                                <th>स्थिति</th>
+                            </tr>
+                        </thead>
+                        <tbody id="charaTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: KP CUSPAL & SUB-LORD DASHA -->
+        <div id="view-kp" class="dasha-panel" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg>
+                        <span>KP कस्पल सब-लॉर्ड दशा वेध • घटना सिद्धि एवं बाधा भाव</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--sky); font-weight:700;">4-Step CSL Theory</span>
+                </div>
+
+                <div id="kpDashaSummaryWrap" style="font-size:0.88rem; line-height:1.7; color:var(--text-secondary);">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: PRASTARASHTAKAVARGA KAKSHYA DASHA -->
+        <div id="view-prastara" class="dasha-panel" style="display:none;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                        <span>प्रस्ताराष्टकवर्ग (कक्षा सिद्धांत) दशा-अन्तर्दशा बिंदु निर्णय</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">महर्षि पाराशर एवं सी.एस. पटेल सूत्र</span>
+                </div>
+
+                <div id="prastaraDashaWrap" style="font-size:0.88rem; line-height:1.7; color:var(--text-secondary);">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Mobile App Nav -->
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/dasha/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>दशा</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <script src="/js/vyas_astronomical_engine.js"></script>
+    <script src="/js/vyas_daivagya_engine.js"></script>
+    <script src="/js/vyas_dasha_engine.js"></script>
+    <script src="/js/vyas_swipe_navigation.js"></script>
+
+    <script>
+        var activeChart = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initDashaPortal();
+        });
+
+        function switchDashaView(tabName, btn) {
+            document.querySelectorAll('.dasha-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+
+            document.querySelectorAll('.dasha-panel').forEach(function(p) { p.style.display = 'none'; });
+            var target = document.getElementById('view-' + tabName);
+            if (target) target.style.display = 'block';
+        }
+
+        function toggleTreeNode(id) {
+            var body = document.getElementById(id);
+            if (!body) return;
+            body.classList.toggle('open');
+        }
+
+        function initDashaPortal() {
+            var profileData = null;
+            try {
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (stored) profileData = JSON.parse(stored);
+            } catch (e) {}
+
+            if (!profileData && window.VyasAstronomicalEngine) {
+                profileData = window.VyasAstronomicalEngine.computeCurrentPrashna();
+            }
+
+            activeChart = profileData;
+            renderDashaPage(activeChart);
+        }
+
+        function renderDashaPage(chart) {
+            if (!chart) return;
+
+            var prof = chart.profile || {};
+            var pName = prof.name || "सक्रिय जातक";
+            var dob = prof.dob || "1995-10-24";
+            var tob = prof.tob || "12:00";
+            var city = prof.city || "-";
+            var lagna = prof.asc_sign || "मेष";
+
+            var uNameEl = document.getElementById('unifiedProfileName');
+            var uMetaEl = document.getElementById('unifiedProfileMeta');
+            if (uNameEl) uNameEl.textContent = "सक्रिय जातक: " + pName;
+            if (uMetaEl) uMetaEl.textContent = "जन्म: " + dob + " (" + tob + ") • " + city + " • लग्न: " + lagna + " (5-स्तरीय दशा वेध)";
+
+            // Calculate Moon longitude
+            var moonLon = 185.5;
+            if (chart.planet_table) {
+                var mRow = chart.planet_table.find(function(p) { return p.p && p.p.indexOf('चन्द्र') !== -1; });
+                if (mRow && mRow.d) {
+                    var sMap = { 'मेष':0, 'वृषभ':30, 'मिथुन':60, 'कर्क':90, 'सिंह':120, 'कन्या':150, 'तुला':180, 'वृश्चिक':210, 'धनु':240, 'मकर':270, 'कुंभ':300, 'मीन':330 };
+                    var sBase = sMap[mRow.r] || 180;
+                    var dVal = parseFloat(mRow.d) || 5.0;
+                    moonLon = sBase + dVal;
+                }
+            }
+
+            // 1. Compute 5-Level Vimshottari
+            var vData = VyasDashaEngine.computeVimshottari5Levels(dob, tob, moonLon);
+            renderVimshottariTree(vData);
+
+            // 2. Compute Jaimini Chara Dasha
+            var cData = VyasDashaEngine.computeJaiminiCharaDasha(dob, lagna, chart.planet_table || []);
+            renderCharaTable(cData);
+
+            // 3. Compute KP & Prastara Dasha
+            renderKPAndPrastara(chart, vData, cData);
+        }
+
+        function renderVimshottariTree(vData) {
+            var wrap = document.getElementById('vimshottariTreeWrap');
+            if (!wrap || !vData || !vData.mahadashas) return;
+
+            var html = '';
+            var curActiveMd = null;
+            var curActiveAd = null;
+
+            vData.mahadashas.forEach(function(md, mdIdx) {
+                var isOpen = md.isActive;
+                if (md.isActive) curActiveMd = md;
+
+                html += '<div class="tree-node">' +
+                    '<div class="tree-head ' + (md.isActive ? 'active-node' : '') + '" onclick="toggleTreeNode(\'md_body_' + mdIdx + '\')">' +
+                    '<div style="display:flex; align-items:center; gap:10px;">' +
+                    '<b style="color:var(--gold); font-size:0.95rem;">' + md.lord + ' महादशा</b>' +
+                    '<span style="font-size:0.8rem; color:var(--text-muted);">(' + md.totalYears + ' वर्ष)</span>' +
+                    (md.isActive ? '<span class="tag-active">● वर्तमान सक्रिय</span>' : '') +
+                    '</div>' +
+                    '<div style="font-size:0.82rem; color:var(--text-secondary);">' +
+                    md.start + ' से ' + md.end +
+                    ' <span style="font-size:0.75rem; color:var(--gold); margin-left:6px;">▼</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div id="md_body_' + mdIdx + '" class="tree-body ' + (isOpen ? 'open' : '') + '">';
+
+                // Antardasha sub-table
+                html += '<div style="margin-top:6px; margin-bottom:12px; font-weight:700; color:var(--gold-light); font-size:0.84rem;">' + md.lord + ' महादशा की 9 अन्तर्दशाएं:</div>';
+                html += '<table class="dasha-table"><thead><tr><th>अन्तर्दशा स्वामी</th><th>आरंभ तिथि</th><th>समाप्ति तिथि</th><th>प्रत्यन्तर / सूक्ष्म</th><th>स्थिति</th></tr></thead><tbody>';
+
+                md.antardasha.forEach(function(ad, adIdx) {
+                    if (ad.isActive) curActiveAd = ad;
+                    var rowClass = ad.isActive ? 'current-active' : '';
+
+                    var detailBtn = '<button onclick="event.stopPropagation(); alert(\'विंशोत्तरी 4-स्तर (सूक्ष्म दशा): ' + md.lord + '-' + ad.lord + ' अवधि में दैनिक कार्य संपादन एवं मुहूर्त निर्णय हेतु सूक्ष्म काल अनुकूल है।\')" style="padding:3px 8px; font-size:0.72rem; border-radius:4px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); cursor:pointer;">सूक्ष्म देखें</button>';
+
+                    html += '<tr class="' + rowClass + '">' +
+                        '<td><b>' + md.lord + ' - ' + ad.lord + '</b></td>' +
+                        '<td>' + ad.start + '</td>' +
+                        '<td>' + ad.end + '</td>' +
+                        '<td>' + detailBtn + '</td>' +
+                        '<td>' + (ad.isActive ? '<span class="tag-active">● सक्रिय</span>' : '-') + '</td>' +
+                        '</tr>';
+                });
+
+                html += '</tbody></table></div></div>';
+            });
+
+            wrap.innerHTML = html;
+
+            // Update Header Status Banner
+            if (curActiveMd && curActiveAd) {
+                var titleEl = document.getElementById('adhVimshottariTitle');
+                var metaEl = document.getElementById('adhVimshottariMeta');
+                if (titleEl) titleEl.textContent = 'महादशा: ' + curActiveMd.lord + ' • अन्तर्दशा: ' + curActiveAd.lord;
+                if (metaEl) metaEl.textContent = 'अवधि: ' + curActiveAd.start + ' से ' + curActiveAd.end + ' तक';
+
+                // Phalit Text
+                var phalitTitle = document.getElementById('activeDashaPhalitTitle');
+                var phalitText = document.getElementById('activeDashaPhalitText');
+                if (phalitTitle) phalitTitle.textContent = curActiveMd.lord + ' की महादशा में ' + curActiveAd.lord + ' की अन्तर्दशा का शास्त्रीय फल';
+                if (phalitText) {
+                    phalitText.innerHTML = '• <b>महर्षि पाराशर सिद्धांत:</b> ' + curActiveMd.lord + ' की महादशा में जब ' + curActiveAd.lord + ' की अन्तर्दशा संचरण करती है, तब जातक के जीवन में ज्ञान, विवेक, आर्थिक निर्णय तथा सामाजिक प्रतिष्ठा का विशेष विस्तार होता है।<br>' +
+                        '• <b>कार्य-सिद्धि वेध:</b> सक्रिय दशा स्वामी यदि केन्द्र (1, 4, 7, 10) अथवा त्रिकोण (1, 5, 9) भावों से संबंध स्थापित करते हैं तो भाग्योदय, पदोन्नति एवं आर्थिक लाभ के प्रबल योग बनते हैं।<br>' +
+                        '• <b>दैनिक परामर्श:</b> नित्य प्रातः अपने इष्टदेव का स्मरण करें एवं दशेश ग्रह के बीज मंत्र का एकाग्रचित्त होकर जप करें।';
+                }
+            }
+        }
+
+        function renderCharaTable(cData) {
+            var tbody = document.getElementById('charaTableBody');
+            if (!tbody || !Array.isArray(cData)) return;
+
+            var html = '';
+            var activeChara = null;
+            cData.forEach(function(c) {
+                if (c.isActive) activeChara = c;
+                var rowClass = c.isActive ? 'current-active' : '';
+
+                html += '<tr class="' + rowClass + '">' +
+                    '<td><b style="color:var(--purple);">' + c.sign + '</b> राशि</td>' +
+                    '<td>' + c.lord + '</td>' +
+                    '<td>' + c.years + ' वर्ष</td>' +
+                    '<td>' + c.start + '</td>' +
+                    '<td>' + c.end + '</td>' +
+                    '<td>' + (c.isActive ? '<span class="tag-active">● सक्रिय चर दशा</span>' : '-') + '</td>' +
+                    '</tr>';
+            });
+            tbody.innerHTML = html;
+
+            if (activeChara) {
+                var chEl = document.getElementById('adhCharaTitle');
+                if (chEl) chEl.textContent = activeChara.sign + ' (' + activeChara.start.split('/')[2] + '-' + activeChara.end.split('/')[2] + ')';
+            }
+        }
+
+        function renderKPAndPrastara(chart, vData, cData) {
+            var activeMd = vData.mahadashas.find(function(m) { return m.isActive; });
+            var activeAd = activeMd ? activeMd.antardasha.find(function(a) { return a.isActive; }) : null;
+
+            var mdName = activeMd ? activeMd.lord : 'गुरु';
+            var adName = activeAd ? activeAd.lord : 'चन्द्र';
+
+            // KP Dasha
+            var kpWrap = document.getElementById('kpDashaSummaryWrap');
+            if (kpWrap && window.VyasDashaEngine) {
+                var kpRes = VyasDashaEngine.evaluateKPDasha(chart, mdName, adName, 'शुक्र');
+                if (kpRes) {
+                    kpWrap.innerHTML = '<div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25); border-radius:10px; padding:16px; margin-bottom:16px;">' +
+                        '<b style="color:#38bdf8; font-size:1rem;">✦ वर्तमान कस्पल सब-लॉर्ड संबंध: ' + mdName + ' (दशेश) ➔ ' + adName + ' (भुक्तिश)</b><br><br>' +
+                        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px;">' +
+                        '<div><b>करियर व आजीविका (2, 6, 10, 11):</b> <span style="color:var(--emerald); font-weight:700;">' + kpRes.verdicts.career + '</span></div>' +
+                        '<div><b>धन व संचित कोष (2, 11):</b> <span style="color:var(--gold-light); font-weight:700;">' + kpRes.verdicts.finance + '</span></div>' +
+                        '<div><b>बाधा व स्वास्थ्य सतर्कता (6, 8, 12):</b> <span style="color:var(--sky); font-weight:700;">' + kpRes.verdicts.obstacle + '</span></div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<p><b>KP 4-स्टेप कस्पल सिद्धांत:</b> कृष्णमूर्ति पद्धति के नियमानुसार, महादशा स्वामी कार्य का परिवेश तैयार करता है जबकि अन्तर्दशा स्वामी (Bhukti Lord) और उसका कस्पल सब-लॉर्ड घटना को वास्तविक रूप में घटित करने की स्वीकृति (Sanction) प्रदान करता है।</p>';
+                }
+            }
+
+            // Prastara Dasha
+            var prastaraWrap = document.getElementById('prastaraDashaWrap');
+            if (prastaraWrap && window.VyasDaivagyaCore && typeof window.VyasDaivagyaCore.evaluateDashaPrastara === 'function') {
+                var pVerdict = VyasDaivagyaCore.evaluateDashaPrastara(chart, mdName, adName);
+                if (pVerdict) {
+                    prastaraWrap.innerHTML = '<div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:16px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
+                        '<b style="color:var(--gold-light); font-size:1rem;">प्रस्ताराष्टकवर्ग कक्षा निर्णय: ' + mdName + ' महादशा में ' + adName + ' भुक्ति</b>' +
+                        '<span class="adh-badge" style="background:rgba(212,175,55,0.2); border-color:var(--gold); color:var(--gold-light);">' + (pVerdict.bindu === 1 ? '✦ 1 बिन्दु प्राप्त' : 'रिक्ता कक्षा') + '</span>' +
+                        '</div>' +
+                        '<p style="margin-bottom:8px;">' + pVerdict.interpretation + '</p>' +
+                        '<p style="font-size:0.8rem; color:var(--text-muted);">' + pVerdict.shastricRef + '</p>' +
+                        '</div>';
+
+                    var adhKakshya = document.getElementById('adhKakshyaTitle');
+                    if (adhKakshya) adhKakshya.textContent = (pVerdict.bindu === 1 ? '1 बिन्दु (शुभ सिद्धि)' : '0 बिन्दु (रिक्ता)');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

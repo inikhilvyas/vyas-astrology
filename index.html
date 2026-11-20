@@ -80,9 +80,9 @@
             "worstRating": "1"
           },
           "creator": {
-            "@type": "Person",
-            "name": "Nikhil Vyas",
-            "jobTitle": "Master Astrologer & Vedic Researcher"
+            "@type": "Organization",
+            "name": "VYAS ASTRA Research Guild",
+            "jobTitle": "Vedic Astrological Intelligence Group"
           }
         },
         {
@@ -92,8 +92,8 @@
           "url": "https://vyasastro.in",
           "logo": "https://vyasastro.in/logo_icon.png",
           "founder": {
-            "@type": "Person",
-            "name": "Nikhil Vyas"
+            "@type": "Organization",
+            "name": "VYAS Daivagya Systems"
           }
         },
         {
@@ -2971,6 +2971,10 @@
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>पंचांग</span>
         </a>
+        <a href="/dasha/" class="portal-pill" title="5-स्तरीय विंशोत्तरी, चर व KP दशा">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>दशा चक्र</span>
+        </a>
         <a href="/kp-astrology/" class="portal-pill" title="KP भाव चलित चक्र व कस्पल सब-लॉर्ड">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
             <span>KP पद्धति</span>
@@ -3168,6 +3172,17 @@
                                         वर्जित (निषेध)</span><br>
                                     <b>राहुकाल:</b> 12:00 PM - 01:30 PM<br>
                                     <b>शुभ रंग:</b> स्वर्ण पीला / क्रीम
+                                </div>
+                            </div>
+
+                            <!-- Dedicated Prastarashtakavarga Daily Transit Card -->
+                            <div style="background:var(--bg-card); border:1px solid var(--border-gold); padding:10px 12px; border-radius:8px; grid-column:1 / -1; margin-bottom:4px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:0.75rem; color:var(--primary-navy); font-weight:800;">✦ प्रस्ताराष्टकवर्ग गोचर वेध (Prastarashtakavarga Kakshya Transit)</span>
+                                    <span id="vKakshyaBadge" style="font-size:0.72rem; padding:2px 8px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.18); color:#10b981;">1 शुभ बिन्दु</span>
+                                </div>
+                                <div style="font-size:0.74rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;" id="vKakshyaDesc">
+                                    चन्द्रमा आज <b>देवगुरु बृहस्पति की कक्षा (03°45' - 07°30')</b> में गोचर कर रहे हैं। प्रस्ताराष्टकवर्ग में 1 शुभ बिन्दु प्राप्त होने से आज का दिन अनुकूल व फलदायी है।
                                 </div>
                             </div>
                         </div>
@@ -8326,7 +8341,7 @@
 
                 // MAUSAM & VRISHTI VIGYAN (मौसम, वृष्टि व प्राकृतिक जलवायु वेध - बृहत्संहिता)
                 if (/(मौसम|बारिश|बरसात|वर्षा|आंधी|तूफान|तापमान|weather|rain|monsoon|climate)/.test(q)) {
-                    return "### [SYSTEM-1 ROUTE] मेदिनी ज्योतिष: तात्कालिक मौसम व वृष्टि विज्ञान निर्णय\n\n" +
+                    return "### 🔱 मेदिनी ज्योतिष: तात्कालिक मौसम व वृष्टि विज्ञान निर्णय\n\n" +
                            "• <b>शास्त्रीय संदर्भ:</b> वराहमिहिर कृत *बृहत्संहिता* (मेघगर्भ व वृष्टि लक्षण अध्याय)\n" +
                            "• <b>तात्कालिक खगोलीय स्थिति (" + (new Date().toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" })) + "):</b><br>" +
                            "  - <b>जल तत्त्व राशि वेध:</b> शनिदेव एवं चन्द्रदेव दोनों मीन राशि (जल तत्त्व) में संचरणशील हैं।<br>" +
@@ -8338,7 +8353,7 @@
 
                 // ECONOMY & SHARE MARKET (मेदिनी अर्थशास्त्र, शेयर बाजार, स्वर्ण-रजत तेजी-मंदी - व्यापार रत्नाकर)
                 if (/(अर्थव्यवस्था|शेयर|बाजार|बाज़ार|सेंसेक्स|निफ्टी|सोना|चांदी|कमोडिटी|economy|stock|share market|sensex|nifty|gold|silver)/.test(q)) {
-                    return "### [SYSTEM-1 ROUTE] मेदिनी अर्थशास्त्र: शेयर बाजार व धातु तेजी-मंदी वेध\n\n" +
+                    return "### 🔱 मेदिनी अर्थशास्त्र: शेयर बाजार व धातु तेजी-मंदी वेध\n\n" +
                            "• <b>शास्त्रीय संदर्भ:</b> *बृहत्संहिता* (अर्घकाण्ड) एवं *व्यापार रत्नाकर*\n" +
                            "• <b>तात्कालिक ग्रह संचरण व बाजार प्रभाव:</b><br>" +
                            "  - <b>स्वर्ण (Gold) / पीली धातु:</b> सूर्यदेव वृश्चिक में एवं देवगुरु बृहस्पति सिंह में स्थित हैं। गुरु-सूर्य के मित्र राशि प्रभाव से स्वर्ण में सुदृढ़ता व दीर्घावधि तेजी का रुख बना रहेगा।<br>" +
@@ -10202,7 +10217,36 @@
                         dashaNote = " (चन्द्र सूक्ष्मदशा: भावुकता व अधीरता पर नियंत्रण रखें)";
                     }
                 }
-                finalDayIndex = Math.max(45, Math.min(92, finalDayIndex));
+                // Prastarashtakavarga Kakshya Evaluation
+                var kLord = KAKSHYA_HI[kIdx];
+                var kRange = KAKSHYA_RANGES[kIdx];
+                var kBindu = 1;
+                var kSav = 28;
+                if (this.activeChartData && this.activeChartData.ashtakavarga) {
+                    if (Array.isArray(this.activeChartData.ashtakavarga.sav)) {
+                        kSav = this.activeChartData.ashtakavarga.sav[sIdx] || 28;
+                    }
+                    if (this.activeChartData.ashtakavarga.bav && Array.isArray(this.activeChartData.ashtakavarga.bav.Moon)) {
+                        var mBav = this.activeChartData.ashtakavarga.bav.Moon[sIdx];
+                        kBindu = (mBav >= 4) ? 1 : 0;
+                    }
+                }
+
+                if (kBindu === 1) finalDayIndex += 6;
+                else finalDayIndex -= 6;
+                finalDayIndex = Math.max(45, Math.min(95, finalDayIndex));
+
+                var vKakshyaBadge = document.getElementById('vKakshyaBadge');
+                var vKakshyaDesc = document.getElementById('vKakshyaDesc');
+                if (vKakshyaBadge) {
+                    vKakshyaBadge.textContent = kBindu === 1 ? "1 शुभ बिन्दु (अनुकूल)" : "0 बिन्दु (रिक्ता कक्षा)";
+                    vKakshyaBadge.style.background = kBindu === 1 ? "rgba(16,185,129,0.18)" : "rgba(239,68,68,0.18)";
+                    vKakshyaBadge.style.color = kBindu === 1 ? "#10b981" : "#ef4444";
+                }
+                if (vKakshyaDesc) {
+                    vKakshyaDesc.innerHTML = "चन्द्रमा आज <b>" + SIGNS_HI[sIdx] + " राशि</b> में <b>" + kLord + " की कक्षा (" + kRange + ")</b> से गोचर कर रहे हैं। सर्वाष्टकवर्ग में इस राशि को <b>" + kSav + " बिन्दु</b> प्राप्त हैं। " +
+                        (kBindu === 1 ? "प्रस्ताराष्टकवर्ग में <b>1 शुभ बिन्दु</b> होने से आज का दिन आर्थिक निर्णय, पदोन्नति वार्ता व अनुबंधों हेतु विशेष फलदायी रहेगा।" : "प्रस्ताराष्टकवर्ग में <b>0 बिन्दु (रिक्ता)</b> होने से आज बड़े आर्थिक जोखिम या व्यर्थ वाद-विवाद से बचें; धैर्यपूर्वक कार्य करें।");
+                }
 
                 var subClassification = "मध्यम-संतुलित (कर्मठता आवश्यक, भावुकता व विवाद से बचें)";
                 var scoreColor = "#10b981";
@@ -10629,7 +10673,7 @@
                 // Guarantee 0.001" Swiss Ephemeris astronomical calculation for every profile
                 // =========================================================================
                 try {
-                    var keysToHeal = ['vyas_active_profile', 'vyas_user_vault_nikhilvyas007@gmail.com', 'vyas_custom_profiles', 'vyas_family_vault'];
+                    var keysToHeal = ['vyas_active_profile', 'vyas_custom_profiles', 'vyas_family_vault'];
                     keysToHeal.forEach(function (k) {
                         var r = localStorage.getItem(k);
                         if (!r) return;
@@ -10699,8 +10743,6 @@
                 this.activeChartData = null; // Always clear RAM first
 
                 var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : '';
-                var isCurrentGoogleNikhil = (email.indexOf('nikhil') !== -1) ||
-                    (this.googleUser && this.googleUser.name && this.googleUser.name.toUpperCase().indexOf('NIKHIL') !== -1);
 
                 try {
                     // Case 1: Authenticated Google User Vault
@@ -14407,6 +14449,13 @@
                 var chart = this.activeChartData; // Strict Privacy: No fallback to founder bundle
                 try {
                     var reply = await window.VyasAIEngine.askSage(q, chart);
+                    if (reply && typeof reply === 'string') {
+                        reply = reply.replace(/<[a-zA-Z_]+>.*?<\/[a-zA-Z_]+>/gs, '')
+                                     .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
+                                     .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
+                                     .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
+                                     .trim();
+                    }
                     var thinkEl = document.getElementById(thinkId);
                     // JEV AI AGENT: Track chat interaction count for Priority Queue monetization prompt
                     var qCountKey = 'vyas_user_chat_qcount';
@@ -15052,6 +15101,13 @@
                 } else if (window.VyasDesktop && typeof VyasDesktop.synthesizeSageResponse === 'function') {
                     reply = VyasDesktop.synthesizeSageResponse(q, chart ? chart.profile : null);
                 }
+                if (reply && typeof reply === 'string') {
+                    reply = reply.replace(/<[a-zA-Z_]+>.*?<\/[a-zA-Z_]+>/gs, '')
+                                 .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
+                                 .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
+                                 .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
+                                 .trim();
+                }
                 var el = document.getElementById(thinkId);
                 if (el) {
                     el.innerHTML = reply || "<b>आचार्य व्यास:</b><br>आपकी जन्मपत्रिका में समस्त ग्रह अनुकूल फल दे रहे हैं।";
@@ -15519,13 +15575,13 @@
         <div style="color:#d4af37; font-weight:700; font-size:0.92rem; margin-bottom:6px; letter-spacing:0.5px;">✦ VYAS
             ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
         <div style="color:#f8fafc; font-size:0.85rem; margin-bottom:4px;">
-            शोध एवं मार्गदर्शन: <b style="color:#d4af37;">Nikhil Vyas</b>, M.A.(Jyotish), LL.B • Pali (Rajasthan) • Mob:
-            <b style="color:#38bdf8;">9414121172</b>
+            शोध एवं मार्गदर्शन: <b style="color:#d4af37;">आचार्य व्यास ज्योतिष पीठ</b> • वैदिक वेधशाला एवं शोध संस्थान
         </div>
         <div style="font-size:0.72rem; color:#64748b; margin-top:6px;">
             © 2026 VYAS ASTRA. समस्त अधिकार सुरक्षित। नासा JPL एवं स्विस्स एफेमेरिस 0.001" आर्कसेकंड परिशुद्धता।
         </div>
     </footer>
+    <script src="/js/vyas_swipe_navigation.js"></script>
 </body>
 
 </html>

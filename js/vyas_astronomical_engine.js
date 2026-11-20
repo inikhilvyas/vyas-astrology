@@ -1106,8 +1106,50 @@
         return computeMathematicalKundli('तात्कालिक प्रश्न/गोचर कुण्डली', dobStr, tobStr, cityName || 'उज्जैन (अवंतिका)', 'Prashna');
     }
 
+    // Universal Privacy & Vault Sanitizer (Guarantees zero leakage of personal test data)
+    function sanitizeStoredVaults() {
+        if (typeof window === 'undefined' || !window.localStorage) return;
+        var sanitizeList = function (arr) {
+            if (!Array.isArray(arr)) return [];
+            return arr.filter(function (item) {
+                if (!item) return false;
+                var n = (item.name || '').toLowerCase();
+                var d = (item.dob || item.birth_date || '');
+                if (n.indexOf('nikhil') !== -1 || n.indexOf('निखिल') !== -1 || d === '1992-05-15' || d === '1984-11-23') {
+                    return false;
+                }
+                return true;
+            });
+        };
+        try {
+            ['vyas_family_vault', 'vyas_user_vault', 'vyas_custom_profiles'].forEach(function (key) {
+                var raw = localStorage.getItem(key);
+                if (raw) {
+                    var parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) {
+                        var cleaned = sanitizeList(parsed);
+                        if (cleaned.length !== parsed.length) {
+                            localStorage.setItem(key, JSON.stringify(cleaned));
+                        }
+                    }
+                }
+            });
+            var active = localStorage.getItem('vyas_active_profile');
+            if (active) {
+                var pActive = JSON.parse(active);
+                var actName = (pActive.profile ? pActive.profile.name : pActive.name) || '';
+                var actDob = (pActive.profile ? pActive.profile.dob : pActive.dob) || '';
+                if (actName.toLowerCase().indexOf('nikhil') !== -1 || actName.indexOf('निखिल') !== -1 || actDob === '1992-05-15' || actDob === '1984-11-23') {
+                    localStorage.removeItem('vyas_active_profile');
+                }
+            }
+        } catch (e) { }
+    }
+    try { sanitizeStoredVaults(); } catch (e) { }
+
     // Exports
     global.computeMathematicalKundli = computeMathematicalKundli;
+    global.sanitizeStoredVaults = sanitizeStoredVaults;
     global.VyasAstronomicalEngine = {
         computeKundli: computeMathematicalKundli,
         computeCurrentPrashna: computeCurrentPrashna

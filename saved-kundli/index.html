@@ -187,6 +187,10 @@
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>पंचांग</span>
         </a>
+        <a href="/dasha/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>दशा चक्र</span>
+        </a>
         <a href="/kp-astrology/" class="portal-pill">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
             <span>KP पद्धति</span>
@@ -279,6 +283,7 @@
     </nav>
 
     <script src="/js/vyas_astronomical_engine.js"></script>
+    <script src="/js/vyas_swipe_navigation.js"></script>
     <script>
         var vaultProfiles = [];
 
@@ -286,19 +291,51 @@
             loadVaultData();
         });
 
+        function sanitizeVaultList(arr) {
+            if (!Array.isArray(arr)) return [];
+            return arr.filter(function (p) {
+                if (!p) return false;
+                var n = (p.name || '').toLowerCase();
+                var d = (p.dob || p.birth_date || '');
+                if (n.indexOf('nikhil') !== -1 || n.indexOf('निखिल') !== -1 || d === '1992-05-15' || d === '1984-11-23') {
+                    return false;
+                }
+                return true;
+            });
+        }
+
         function loadVaultData() {
             vaultProfiles = [];
             try {
                 var p1 = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
-                if (Array.isArray(p1)) vaultProfiles = vaultProfiles.concat(p1);
+                if (Array.isArray(p1)) {
+                    var c1 = sanitizeVaultList(p1);
+                    if (c1.length !== p1.length) localStorage.setItem('vyas_family_vault', JSON.stringify(c1));
+                    vaultProfiles = vaultProfiles.concat(c1);
+                }
             } catch (e) { }
             try {
                 var p2 = JSON.parse(localStorage.getItem('vyas_user_vault') || '[]');
                 if (Array.isArray(p2)) {
-                    p2.forEach(function (x) {
+                    var c2 = sanitizeVaultList(p2);
+                    if (c2.length !== p2.length) localStorage.setItem('vyas_user_vault', JSON.stringify(c2));
+                    c2.forEach(function (x) {
                         var exists = vaultProfiles.some(function (v) { return v.name === x.name && v.dob === x.dob; });
                         if (!exists) vaultProfiles.push(x);
                     });
+                }
+            } catch (e) { }
+
+            // Clean active profile if it had stale test data
+            try {
+                var act = localStorage.getItem('vyas_active_profile');
+                if (act) {
+                    var parsedAct = JSON.parse(act);
+                    var aname = (parsedAct.profile ? parsedAct.profile.name : parsedAct.name) || '';
+                    var adob = (parsedAct.profile ? parsedAct.profile.dob : parsedAct.dob) || '';
+                    if (aname.toLowerCase().indexOf('nikhil') !== -1 || aname.indexOf('निखिल') !== -1 || adob === '1992-05-15' || adob === '1984-11-23') {
+                        localStorage.removeItem('vyas_active_profile');
+                    }
                 }
             } catch (e) { }
 

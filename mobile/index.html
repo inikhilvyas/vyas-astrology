@@ -6843,6 +6843,14 @@ var VyasMobile = {
                     // Discard Guest sample or corrupted Kanya lagna
                     // Auto-purge any stale cached founder profile with 1984-11-23 or Nikhil
                     if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
+                        var pn = (data.profile.name || '').toLowerCase();
+                        var pd = (data.profile.dob || '');
+                        if (pn.indexOf('nikhil') !== -1 || pn.indexOf('निखिल') !== -1 || pd === '1992-05-15' || pd === '1984-11-23') {
+                            localStorage.removeItem('vyas_active_profile');
+                            data = null;
+                        }
+                    }
+                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
                         this.activeChartData = data;
                         this.activeChart = data;
                         hasStored = true;
@@ -10568,5 +10576,6 @@ renderChart(chartKey) {
         </div>
     </div>
 
+    <script src="/js/vyas_swipe_navigation.js"></script>
 </body>
 </html>

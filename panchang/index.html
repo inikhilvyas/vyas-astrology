@@ -195,6 +195,10 @@
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
             <span>पंचांग</span>
         </a>
+        <a href="/dasha/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>दशा चक्र</span>
+        </a>
         <a href="/kp-astrology/" class="portal-pill">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
             <span>KP पद्धति</span>
@@ -246,7 +250,7 @@
 
         <!-- Observatory Controls (City + Date) -->
         <div class="control-bar">
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px;">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
                 <span style="color:#d4af37; font-weight:700; font-size:0.88rem;">स्थान चुनें:</span>
                 <select id="panchangCitySelect" onchange="onCityChanged(this.value)">
@@ -275,6 +279,16 @@
                     <option value="lucknow">लखनऊ (Lucknow)</option>
                     <option value="custom">✦ अन्य कस्टम अक्षांश/देशांतर...</option>
                 </select>
+
+                <button onclick="detectGPSLocation()" style="padding:6px 12px; background:rgba(16,185,129,0.18); border:1px solid var(--emerald); border-radius:6px; color:var(--emerald); font-size:0.82rem; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; gap:5px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                    <span>📍 GPS स्थान</span>
+                </button>
+
+                <button onclick="useKundliLocation()" style="padding:6px 12px; background:rgba(212,175,55,0.15); border:1px solid var(--border-gold); border-radius:6px; color:var(--gold); font-size:0.82rem; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; gap:5px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                    <span>✦ कुण्डली स्थान</span>
+                </button>
             </div>
 
             <div style="display:flex; align-items:center; gap:8px;">
@@ -458,6 +472,7 @@
     <script src="/js/vyas_sutras_bank.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
+    <script src="/js/vyas_swipe_navigation.js"></script>
 
     <script>
         var citiesDB = {
@@ -503,9 +518,76 @@
             setInterval(updateClock, 1000);
             updateClock();
 
+            // Check if Kundli location exists in profile and set as initial default
+            initKundliLocationDefault();
+
             // Calculate and render full Panchang
             renderPanchang();
         });
+
+        function initKundliLocationDefault() {
+            var prof = null;
+            try {
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (stored) prof = JSON.parse(stored);
+            } catch (e) { }
+
+            if (prof && prof.profile && (prof.profile.city || prof.profile.place || prof.profile.lat)) {
+                var pCity = prof.profile.city || prof.profile.place || 'कुण्डली स्थान';
+                var lat = parseFloat(prof.profile.lat) || 26.79;
+                var lon = parseFloat(prof.profile.lon) || 82.20;
+                citiesDB['kundli'] = { name: pCity + " (कुण्डली स्थान)", lat: lat, lon: lon, tz: 5.5 };
+                selectedCityKey = 'kundli';
+
+                var sel = document.getElementById('panchangCitySelect');
+                if (sel) {
+                    var opt = document.createElement('option');
+                    opt.id = 'optKundli';
+                    opt.value = 'kundli';
+                    opt.textContent = "✦ कुण्डली: " + pCity;
+                    sel.insertBefore(opt, sel.firstChild);
+                    opt.selected = true;
+                }
+            }
+        }
+
+        function useKundliLocation() {
+            initKundliLocationDefault();
+            renderPanchang();
+        }
+
+        function detectGPSLocation() {
+            if (!navigator.geolocation) {
+                alert('आपके डिवाइस में GPS सुविधा उपलब्ध नहीं है।');
+                return;
+            }
+            var badge = document.getElementById('selectedCityBadge');
+            if (badge) badge.textContent = "📍 GPS स्थान खोजा जा रहा है...";
+
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                var lat = pos.coords.latitude;
+                var lon = pos.coords.longitude;
+                citiesDB['gps'] = { name: "GPS वर्तमान स्थान (" + lat.toFixed(2) + "°, " + lon.toFixed(2) + "°)", lat: lat, lon: lon, tz: 5.5 };
+                selectedCityKey = 'gps';
+
+                var sel = document.getElementById('panchangCitySelect');
+                if (sel) {
+                    var opt = document.getElementById('optGps');
+                    if (!opt) {
+                        opt = document.createElement('option');
+                        opt.id = 'optGps';
+                        opt.value = 'gps';
+                        sel.insertBefore(opt, sel.firstChild);
+                    }
+                    opt.textContent = "📍 GPS स्थान (" + lat.toFixed(2) + "°, " + lon.toFixed(2) + "°)";
+                    opt.selected = true;
+                }
+                renderPanchang();
+            }, function (err) {
+                alert('GPS स्थान प्राप्त नहीं हो सका: ' + err.message + '\nकृपया ब्राउज़र में लोकेशन अनुमति (Location Permission) चालू करें।');
+                renderPanchang();
+            }, { timeout: 10000, enableHighAccuracy: true });
+        }
 
         function updateClock() {
             var now = new Date();
