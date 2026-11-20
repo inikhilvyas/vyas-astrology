@@ -8616,7 +8616,8 @@
                     } catch (e) { }
                     return this.lookupDirectAstrologicalTruth(query) || "खगोलीय वेध अनुसार आज का पंचांग व काल निर्णय उपलब्ध है।";
                 }
-                var isPrashnaMode = !activeChart || !activeChart.profile || !activeChart.planet_table || activeChart.isPrashna;
+                var isPoliticalOrThirdPersonQuery = /(चुनाव|राजनीति|नेता|विधायक|सांसद|मंत्री|इलेक्शन|सरकार|शासन|party|election|politics|bjp|congress|aap|trump|modi|pm|cm|minister|war|युद्ध|देश|भारत|अमेरिका)/i.test(q);
+                var isPrashnaMode = !activeChart || !activeChart.profile || !activeChart.planet_table || activeChart.isPrashna || isPoliticalOrThirdPersonQuery;
                 var systemPrompt = "";
 
                 if (isPrashnaMode) {

@@ -288,7 +288,11 @@ function lookupClassicalSutras($query, $systemPrompt) {
     $text = mb_strtolower($query . ' ' . $systemPrompt, 'UTF-8');
     $domain = 'general';
     
-    if (preg_match('/करियर|नौकरी|व्यापार|व्यवसाय|काम|प्रोजेक्ट|आजीविका|कैरियर|दशम|job|career|business/u', $text)) {
+    if (preg_match('/चुनाव|राजनीति|नेता|विधायक|सांसद|मंत्री|इलेक्शन|सरकार|शासन|party|election|politics|bjp|congress|aap|trump|modi|pm|cm|minister/ui', $text)) {
+        $domain = 'prashna';
+    } elseif (preg_match('/मौसम|बारिश|वर्षा|युद्ध|शांति|अर्थव्यवस्था|शेयर|बाजार|सोना|चांदी|weather|economy|war|gold|silver|market/ui', $text)) {
+        $domain = 'medini';
+    } elseif (preg_match('/करियर|नौकरी|व्यापार|व्यवसाय|काम|प्रोजेक्ट|आजीविका|कैरियर|दशम|job|career|business/u', $text)) {
         $domain = 'career';
     } elseif (preg_match('/धन|रुपया|पैसा|लाभ|आय|सम्पत्ति|कर्ज|ऋण|आर्थिक|wealth|money|finance/u', $text)) {
         $domain = 'wealth';

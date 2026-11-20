@@ -98708,6 +98708,127 @@
         "domain": "Parents & Lineage",
         "src": "Bhrigu Naadi Sangraha (Page 68)"
       }
+    ],
+    "prashna": [
+      {
+        "id": "PRASHNA_SUTRA_001",
+        "factor": "Lagnesha & Karyesha",
+        "cond_hi": "प्रश्नेश (लग्नेश) और कार्येश (10वें भाव के स्वामी) का परस्पर शुभ दृष्टि अथवा इत्थशाल योग होना।",
+        "cond_en": "Ithasala yoga between Lagnesha and 10th lord (Karyesha).",
+        "pred_hi": "राजनीतिक चुनाव, पद प्राप्ति अथवा अभीष्ट कार्य में पूर्ण एवं निश्चित विजय प्राप्त होगी।",
+        "domain": "Prashna & Politics",
+        "src": "ताजिक नीलकण्ठी (इत्थशाल योगाध्याय) एवं प्रश्न तन्त्र (अध्याय 2, श्लोक 14)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_002",
+        "factor": "Moon & Ithasala",
+        "cond_hi": "चन्द्रमा लग्नेश और कार्येश दोनों के साथ कम्बूल योग (Kamboola Yoga) बनाता हो और केन्द्र में स्थित हो।",
+        "cond_en": "Moon forms Kamboola yoga with Lagnesha and Karyesha in Kendra.",
+        "pred_hi": "जातक या दल को भारी जनसमर्थन प्राप्त होगा और बिना किसी बाधा के राज्याभिषेक व शासन सत्ता मिलेगी।",
+        "domain": "Prashna & Politics",
+        "src": "प्रश्न मार्ग (अध्याय 14) एवं दैवज्ञ वल्लभ (श्लोक 28)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_003",
+        "factor": "Easarapha / Musaripha",
+        "cond_hi": "लग्नेश और कार्येश के मध्य ईसराफ योग (तेज गति ग्रह दीप्तांश लांघ चुका हो) अथवा पापकर्तरी होना।",
+        "cond_en": "Easarapha yoga between Prashnesha and Karyesha.",
+        "pred_hi": "अवसर हाथ से निकल चुका है अथवा अंतिम क्षण में मतभेद व आंतरिक कलह के कारण असफलता होगी।",
+        "domain": "Prashna & Politics",
+        "src": "ताजिक नीलकण्ठी (ईसराफ योगाध्याय)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_004",
+        "factor": "Nakta Yoga",
+        "cond_hi": "लग्नेश और कार्येश में प्रत्यक्ष दृष्टि न हो किंतु एक तीसरा शीघ्रगामी ग्रह दोनों से इत्थशाल कर प्रकाश का संवहन (Light Transmission) करे।",
+        "cond_en": "Nakta yoga mediating light between Lagnesha and Karyesha.",
+        "pred_hi": "किसी वरिष्ठ मध्यस्थ, गठबंधन सहयोगी अथवा उच्चाधिकारी के सहयोग से सरकार/गठबंधन बनेगा।",
+        "domain": "Prashna & Politics",
+        "src": "प्रश्न तन्त्र (बी.वी. रमण, अध्याय 3)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_005",
+        "factor": "Yamaya Yoga",
+        "cond_hi": "लग्नेश और कार्येश के मध्य एक मन्दगामी ग्रह (शनि या गुरु) दोनों से दीप्तांश में दृष्टि संबंध स्थापित करे।",
+        "cond_en": "Yamaya yoga where a slower planet mediates between lords.",
+        "pred_hi": "वरिष्ठ नेतृत्व अथवा न्यायालय/संवैधानिक संस्था के हस्तक्षेप से कार्य में सफलता मिलेगी।",
+        "domain": "Prashna & Politics",
+        "src": "ताजिक नीलकण्ठी (यमया लक्षण)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_006",
+        "factor": "10th House Sun",
+        "cond_hi": "तात्कालिक प्रश्न कुण्डली के दशम भाव में सूर्यदेव दिग्बली होकर स्वराशि अथवा उच्च राशि में स्थित हों।",
+        "cond_en": "Sun in 10th house with Digbala in own or exaltation sign.",
+        "pred_hi": "सत्ताधारी दल या प्रमुख नेता का वर्चस्व अक्षुण्ण रहेगा; विरोधियों की पराजय होगी।",
+        "domain": "Prashna & Politics",
+        "src": "बृहत्संहिता एवं षट्पञ्चाशिका (अध्याय 4)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_007",
+        "factor": "6th & 7th House Affliction",
+        "cond_hi": "प्रश्न लग्न में षष्ठेश (विपक्ष/शत्रु) बली होकर लग्न को पीड़ित करे अथवा कार्येश वक्री हो।",
+        "cond_en": "6th lord powerful afflicting Lagna or Karyesha retrograde.",
+        "pred_hi": "कड़ा मुकाबला, अप्रत्याशित हार अथवा सत्ता विरोधी लहर (Anti-incumbency) का भारी प्रभाव रहेगा।",
+        "domain": "Prashna & Politics",
+        "src": "प्रश्न मार्ग (शत्रु-जय विचार)"
+      },
+      {
+        "id": "PRASHNA_SUTRA_008",
+        "factor": "Chandra Sthiti",
+        "cond_hi": "प्रश्न कुण्डली में चन्द्रमा 6, 8, 12 भाव में नीच अथवा राहु से ग्रस्त हो (ग्रहण योग)।",
+        "cond_en": "Moon in trik houses afflicted by Rahu/Ketu.",
+        "pred_hi": "जनता में असंतोष, भ्रम, अफवाहें एवं चुनावी प्रक्रिया में अप्रत्याशित विवाद के संकेत हैं।",
+        "domain": "Prashna & Politics",
+        "src": "दैवज्ञ वल्लभ (चन्द्र शुद्धि अध्याय)"
+      }
+    ],
+    "medini": [
+      {
+        "id": "MEDINI_SUTRA_001",
+        "factor": "Saturn-Rahu Mundane Axis",
+        "cond_hi": "शनि और राहु का किसी एक राशि में युति अथवा समसप्तक (180°) दृष्टि संबंध होना।",
+        "cond_en": "Saturn-Rahu conjunction or mutual aspect in mundane chart.",
+        "pred_hi": "वैश्विक भू-राजनीतिक तनाव, सीमा विवाद, सत्ता परिवर्तन एवं सत्ताधीशों में आंतरिक संघर्ष।",
+        "domain": "Medini & Geopolitics",
+        "src": "वराहमिहिर कृत बृहत्संहिता (शनि-चार एवं राहु-चार अध्याय)"
+      },
+      {
+        "id": "MEDINI_SUTRA_002",
+        "factor": "Koorma Chakra Geopolitics",
+        "cond_hi": "कूर्म चक्र अनुसार देश के हृदय अथवा सीमावर्ती दिशा के नक्षत्रों में क्रूर ग्रहों का गोचर वेध।",
+        "cond_en": "Malefic transit over sensitive national nakshatras in Koorma Chakra.",
+        "pred_hi": "संबंधित दिशा के राज्य में राजनीतिक उथल-पुथल, प्राकृतिक आपदा अथवा शासन परिवर्तन।",
+        "domain": "Medini & Geopolitics",
+        "src": "बृहत्संहिता (कूर्म-विभाग अध्याय 14)"
+      },
+      {
+        "id": "MEDINI_SUTRA_003",
+        "factor": "Solar Eclipse Ingress",
+        "cond_hi": "सूर्य ग्रहण जिस राशि व नक्षत्र में घटित हो, उस राशि के स्वामी देश अथवा शासक पर संकट।",
+        "cond_en": "Solar eclipse falling in ruler's natal or mundane sun sign.",
+        "pred_hi": "शासक वर्ग के प्रभाव में कमी, सत्ता परिवर्तन अथवा बड़े नीतिगत विरोध का सामना।",
+        "domain": "Medini & Geopolitics",
+        "src": "नारद संहिता (ग्रहण फल अध्याय)"
+      },
+      {
+        "id": "MEDINI_SUTRA_004",
+        "factor": "Jupiter Transit in Simha/Mesha",
+        "cond_hi": "देवगुरु बृहस्पति का सिंह अथवा मेष राशि में संचरण।",
+        "cond_en": "Jupiter transiting royal signs Leo or Aries.",
+        "pred_hi": "संवैधानिक संस्थाओं की सुदृढ़ता, आर्थिक सुधार, स्वर्ण में स्थिरता व सुदृढ़ शासन व्यवस्था।",
+        "domain": "Medini & Economy",
+        "src": "अर्घ मार्तण्ड एवं व्यापार रत्नाकर"
+      },
+      {
+        "id": "MEDINI_SUTRA_005",
+        "factor": "Mars Ingress in Royal Kendra",
+        "cond_hi": "मंगल का मकर अथवा मेष में उच्च/स्वक्षेत्री होकर 10वें भाव या गोचर में गोचर करना।",
+        "cond_en": "Mars in exaltation/own sign transiting 10th house of mundane chart.",
+        "pred_hi": "रक्षा क्षेत्र में आत्मनिर्भरता, सैन्य पराक्रम एवं कड़े प्रशासनिक/कानूनी निर्णयों का दौर।",
+        "domain": "Medini & Defense",
+        "src": "बृहत्संहिता (भौम-चार अध्याय)"
+      }
     ]
   }
 }
