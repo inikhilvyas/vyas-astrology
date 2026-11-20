@@ -2789,6 +2789,7 @@
         }
     </style>
 
+    <script src="js/vyas_daivagya_engine.js"></script>
 </head>
 
 <body>
@@ -8585,7 +8586,8 @@
 
             async askSage(query, activeChart) {
                 var q = (query || "").toLowerCase();
-                var isPanchangOrAxiomQuery = /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q);
+                var isYogaOrNatalQuery = /(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|dosha|dasha|yoga|lagna|bhava|kundali|panchamahapurusha|neechabhanga|kaalsarpa|mangaladosha)/i.test(q);
+                var isPanchangOrAxiomQuery = !isYogaOrNatalQuery && /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q);
                 
                 // JEV AI SYSTEM-1 ROUTE: If query is purely astronomical / calendar / shastric axiom, completely suppress natal chart injection
                 if (isPanchangOrAxiomQuery) {
@@ -8669,6 +8671,21 @@
 
                     // Build Mathematical Planetary Aspect (दृष्टि चक्र) Ledger for Active Chart
                     var SIGNS_HI_REF = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+                    
+                    // ═══════════════════════════════════════════════════════════════
+                    // DAIVAGYA ENGINE: Pre-computed Jyotish Context Injection
+                    // VyasDaivagyaCore computes yogas, dasha, bala, house analysis
+                    // before the AI prompt is sent — zero hallucination pre-computation
+                    // ═══════════════════════════════════════════════════════════════
+                    var daivagyaContext = '';
+                    if (window.VyasDaivagyaCore && typeof VyasDaivagyaCore.computeContext === 'function') {
+                        try {
+                            daivagyaContext = VyasDaivagyaCore.computeContext(query, activeChart);
+                        } catch(e) {
+                            console.warn('VyasDaivagyaCore error:', e);
+                        }
+                    }
+
                     var drishtiLines = [];
                     activeChart.planet_table.forEach(function (p) {
                         var pName = (p.p || p.planet || '').replace(/\s*\(.*\)/, '').trim();
@@ -8792,7 +8809,11 @@
                         "   - स्तर 2 (गंध व अर्घ्य विज्ञान): नाभि पर चन्दन इत्र, कानों के पीछे गुलाब इत्र, सूर्य अर्घ्य।",
                         "   - स्तर 4 (मंत्र संपुटीकरण): 'ॐ नमः शिवाय' संपुटित महामंत्र जप।",
                         "",
-                        "4. भाषा अत्यंत आदरपूर्ण, विद्वतापूर्ण, शास्त्रीय एवं निर्भीक हो। सत्य का दर्पण दिखाएं किंतु जातक को आशा एवं आध्यात्मिक संबल दें।"
+                        "4. भाषा अत्यंत आदरपूर्ण, विद्वतापूर्ण, शास्त्रीय एवं निर्भीक हो। सत्य का दर्पण दिखाएं किंतु जातक को आशा एवं आध्यात्मिक संबल दें।",
+                        "\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                        "🔮 PRE-COMPUTED DAIVAGYA ENGINE ANALYSIS (Zero-Hallucination Block):",
+                        daivagyaContext || "चार्ट डेटा उपलब्ध है।",
+                        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     ].join('\n');
                 }
 
