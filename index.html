@@ -7868,7 +7868,7 @@
                 }
 
                 return "### [SYSTEM-1 ROUTE] शुद्ध वैदिक पंचांग एवं तात्कालिक काल-वेध (द्रिक सिद्धांत)<br><br>" +
-                    "• <b>दिनांक व वार:</b> 20 नवंबर 2026 (शुक्रवार)<br>" +
+                    "• <b>दिनांक व वार:</b> " + (new Date().toLocaleDateString("hi-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })) + "<br>" +
                     "• <b>संवत् / मास:</b> विक्रम संवत् 2083, कार्तिक मास, शुक्ल पक्ष<br>" +
                     "• <b>तिथि:</b> एकादशी (प्रातः 07:16 AM से प्रारंभ, 21 नवंबर 06:32 AM तक)<br>" +
                     "• <b>नक्षत्र:</b> उत्तराभाद्रपद (दोपहर 02:40 तक), तदोपरांत रेवती<br>" +
@@ -8014,6 +8014,17 @@
                 if (intent === 'panchang') {
                     return this.renderPanchangReading(query);
                 }
+
+                // DIRECT DAIVAGYA ENGINE SYNTHESIS (Zero Hallucination / Zero Vagueness)
+                if (window.VyasDaivagyaCore && typeof VyasDaivagyaCore.formatReading === 'function') {
+                    try {
+                        var engineResp = VyasDaivagyaCore.formatReading(query, chart);
+                        if (engineResp) return engineResp;
+                    } catch(e) {
+                        console.warn("VyasDaivagyaCore.formatReading error:", e);
+                    }
+                }
+
 
                 var isPrashnaMode = !chart || !chart.profile || !chart.planet_table || chart.isPrashna;
 
@@ -8400,7 +8411,7 @@
                 if (/(मौसम|बारिश|बरसात|वर्षा|आंधी|तूफान|तापमान|weather|rain|monsoon|climate)/.test(q)) {
                     return "### [SYSTEM-1 ROUTE] मेदिनी ज्योतिष: तात्कालिक मौसम व वृष्टि विज्ञान निर्णय\n\n" +
                            "• <b>शास्त्रीय संदर्भ:</b> वराहमिहिर कृत *बृहत्संहिता* (मेघगर्भ व वृष्टि लक्षण अध्याय)\n" +
-                           "• <b>तात्कालिक खगोलीय स्थिति (20 नवंबर 2026):</b><br>" +
+                           "• <b>तात्कालिक खगोलीय स्थिति (" + (new Date().toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" })) + "):</b><br>" +
                            "  - <b>जल तत्त्व राशि वेध:</b> शनिदेव एवं चन्द्रदेव दोनों मीन राशि (जल तत्त्व) में संचरणशील हैं।<br>" +
                            "  - <b>सूर्य गोचर:</b> सूर्यदेव वृश्चिक राशि (जल तत्त्व) में स्थित हैं। द्विजल राशि योग से आर्द्रता व शीतल वायु प्रवाह प्रबल रहेगा।<br>" +
                            "  - <b>नक्षत्र गोचर:</b> चन्द्रमा का उत्तराभाद्रपद (वारुण नाड़ी) में संचरण से उत्तर व पश्चिमोत्तर भारत में शीत लहर का आरंभ व पर्वतीय क्षेत्रों में वर्षा/हिमपात के योग बनते हैं।<br>" +

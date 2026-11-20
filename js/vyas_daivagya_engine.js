@@ -655,6 +655,61 @@
             return blocks.join('\n');
         },
 
+        
+        /**
+         * Standalone / Direct HTML Formatter for UI & Fallbacks
+         * Provides zero-vagueness, instant mathematical answers for yogas, dasha, gochar
+         */
+        formatReading: function(query, chart) {
+            if (!chart || !chart.planet_table) return null;
+            var q = (query || '').toLowerCase();
+            var route = VyasQueryRouter.detect(query);
+            var analysis = VyasChartAnalyzer.analyze(chart);
+            if (!analysis) return null;
+
+            if (route === 'yoga' || /योग|yoga|केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|बुधादित्य|budhaditya|मंगल.*दोष|mangal|मांगलिक|नीचभंग|neechabhanga|गुरु.*चांडाल|काल.*सर्प|kaalsarp|विपरीत|raj.*yoga|राजयोग/i.test(q)) {
+                var yogas = VyasYogaEngine.detectAll(analysis, chart, query);
+                if (yogas && yogas.length > 0) {
+                    var html = "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
+                        "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>🔮 व्यास अस्त्र: सूक्ष्म योग परीक्षण व शास्त्रीय निर्णय (Vyas Yoga Engine)</span>" +
+                        "</div>" +
+                        "<b>ॐ नमः शिवाय।</b><br><br>" +
+                        "<b>सादर प्रणाम आदरणीय " + (analysis.name || 'जातक') + " जी,</b><br>" +
+                        "आपकी जन्म पत्रिका (लग्न: <b>" + analysis.lagna + "</b>, लग्नेश: <b>" + analysis.lagnaLord + "</b>) के गणितीय वेध अनुसार शास्त्रीय विश्लेषण प्रस्तुत है:<br><br>";
+
+                    yogas.forEach(function(y) {
+                        var det = (y.detail || '')
+                            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                            .replace(/\n\n/g, '<br><br>')
+                            .replace(/\n/g, '<br>');
+                        html += "<div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; margin-bottom:12px;'>" +
+                                "<div style='font-size:1.05rem; font-weight:700; color:" + (y.found ? (y.partial ? '#f59e0b' : '#10b981') : '#94a3b8') + "; margin-bottom:6px;'>" +
+                                (y.found ? (y.partial ? '⚠️ ' : '✦ ') : '• ') + y.name + "</div>" +
+                                det +
+                                "</div>";
+                    });
+
+                    html += "<br><small style='color:#94a3b8;'>✓ व्यास अस्त्र गणितीय योग वेध (Brihat Parashara Hora Shastra Standard)।</small>";
+                    return html;
+                }
+            }
+
+            if (route === 'dasha' || /दशा|महादशा|अन्तर्दशा|pratyantar/i.test(q)) {
+                var dashaText = VyasDashaEngine.analyze(analysis, query)
+                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                    .replace(/\n\n/g, '<br><br>')
+                    .replace(/\n/g, '<br>');
+                return "<div class='shastra-verdict-box' style='background:rgba(59,130,246,0.06); border-left:3px solid #3b82f6; padding:12px; margin-bottom:12px;'>" +
+                    "<span style='color:#60a5fa; font-weight:700; font-size:0.85rem;'>⏳ विंशोत्तरी दशा चक्र एवं समय-वेध (Vimshottari Dasha Engine)</span>" +
+                    "</div>" +
+                    "<b>सादर प्रणाम आदरणीय " + (analysis.name || 'जातक') + " जी,</b><br><br>" +
+                    dashaText + "<br><br>" +
+                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र सूक्ष्म विंशोत्तरी दशा काल वेध।</small>";
+            }
+
+            return null;
+        },
+
         _houseAnalysis: function(analysis, houses) {
             return houses.map(function(h) {
                 return VyasHouseEngine.analyzeHouse(analysis, h);
@@ -663,3 +718,4 @@
     };
 
 })(window);
+
