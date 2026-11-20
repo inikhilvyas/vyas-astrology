@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>कुण्डली मिलान • अष्टकूट 36 गुण एवं नाड़ी दोष परिहार | VYAS ASTRA</title>
+    <meta name="description" content="वैदिक कुण्डली मिलान (Kundli Matching) - 36 गुण मिलान (वर्ण, वश्य, तारा, योनि, ग्रहमैत्री, गण, भकूट, नाड़ी 8 अंक) व मांगलिक वेध।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(22, 12, 24, 0.88);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --rose: #f43f5e;
+            --emerald: #10b981;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 10% 20%, rgba(244, 63, 94, 0.16), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.28), rgba(212, 175, 55, 0.18));
+            color: #ffe4e6; border-color: var(--rose); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid rgba(244, 63, 94, 0.35);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: #fb7185; display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        .matching-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
+        @media (max-width: 900px) { .matching-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: #fb7185; display: flex; align-items: center; gap: 8px; }
+
+        .guna-score-box {
+            text-align: center; padding: 24px; border-radius: 10px;
+            background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border-subtle);
+        }
+        .guna-num { font-family: var(--font-serif); font-size: 3rem; font-weight: 900; color: var(--emerald); }
+        .guna-sub { font-size: 0.88rem; color: var(--text-muted); margin-top: 4px; }
+
+        .table-wrap { overflow-x: auto; margin-top: 14px; }
+        table.koota-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: center; }
+        table.koota-table th, table.koota-table td { padding: 8px 6px; border: 1px solid var(--border-subtle); }
+        table.koota-table th { background: rgba(244, 63, 94, 0.12); color: #fb7185; font-weight: 700; }
+        table.koota-table td.full { color: var(--emerald); font-weight: 800; }
+
+        .phalit-item {
+            padding: 14px; margin-bottom: 12px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--rose);
+            font-size: 0.88rem; line-height: 1.65;
+        }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: #fb7185; font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">विवाह कुण्डली मिलान • अष्टकूट 36 गुण</div>
+            </div>
+        </a>
+        <div style="font-size:0.8rem; color:var(--rose); font-weight:700;">
+            अष्टकूट प्रामाणिक वेध
+        </div>
+    </header>
+
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f43f5e" stroke-width="2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+                    अष्टकूट 36 गुण मिलान एवं नाड़ी दोष परिहार
+                </h1>
+                <p>वर-वधू की चन्द्र राशि व नक्षत्र आधारित 8 कूट (वर्ण, वश्य, तारा, योनि, ग्रहमैत्री, गण, भकूट, नाड़ी 8 अंक) व सूक्ष्म दांपत्य वेध।</p>
+            </div>
+        </div>
+
+        <div class="matching-grid">
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+                            <span>कुल प्राप्तांक (Total Score)</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">अति शुभ मिलान</span>
+                    </div>
+
+                    <div class="guna-score-box">
+                        <div class="guna-num">29.5 <span style="font-size:1.4rem; color:var(--text-muted);">/ 36</span></div>
+                        <div class="guna-sub">18 से अधिक अंक वैवाहिक स्वीकृति हेतु उत्तम माने जाते हैं।</div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="koota-table">
+                            <thead>
+                                <tr><th>कूट</th><th>महत्त्व</th><th>अधिकतम अंक</th><th>प्राप्त अंक</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>वर्ण</td><td>अहंकार व कार्य संस्कार</td><td>1</td><td class="full">1</td></tr>
+                                <tr><td>वश्य</td><td>पारस्परिक आकर्षण व नियंत्रण</td><td>2</td><td class="full">2</td></tr>
+                                <tr><td>तारा</td><td>भाग्य, स्वास्थ्य व दीर्घायु</td><td>3</td><td class="full">3</td></tr>
+                                <tr><td>योनि</td><td>शारीरिक व मानसिक सामंजस्य</td><td>4</td><td class="full">3</td></tr>
+                                <tr><td>ग्रहमैत्री</td><td>बौद्धिक संवाद व मित्रता</td><td>5</td><td class="full">4.5</td></tr>
+                                <tr><td>गण</td><td>स्वभाव व आध्यात्मिक स्तर</td><td>6</td><td class="full">6</td></tr>
+                                <tr><td>भकूट</td><td>पारिवारिक समृद्धि व संतान</td><td>7</td><td class="full">2</td></tr>
+                                <tr><td>नाड़ी</td><td>आरोग्य व अनुवांशिक अनुकूलता</td><td>8</td><td class="full">8</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span>दांपत्य फलादेश एवं नाड़ी दोष विश्लेषण</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="phalit-item">
+                            • <b>नाड़ी कूट विश्लेषण (8/8 पूर्ण अंक):</b> वर एवं वधू की नाड़ी भिन्न है (आदि बनाम अंत्य नाड़ी)। अतएव नाड़ी दोष पूर्णतः शून्य है। अनुवांशिक अनुकूलता एवं संतान सुख की शास्त्रीय पुष्टि होती है।
+                        </div>
+                        <div class="phalit-item">
+                            • <b>गण कूट (6/6 पूर्ण अंक):</b> दोनों जातकों का गण 'देव' एवं 'मनुष्य' है। यह दांपत्य जीवन में परस्पर आदर, समझदारी एवं मधुर संवाद का निर्माण करता है।
+                        </div>
+                        <div class="phalit-item">
+                            • <b>मांगलिक सामंजस्य:</b> दोनों की पत्रिकाओं में मंगल का प्रभाव संतुलित है। किसी भी प्रकार के अनिष्टकारी मंगल वेध का अभाव है।
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kundli-matching/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>मिलान</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+</body>
+</html>

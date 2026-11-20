@@ -9,15 +9,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script>
-        // Force-clear obsolete service worker registrations and purge cached assets
+        // Initialize Service Worker for Web Push & Daily Panchang Notifications
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function (regs) {
-                for (var i = 0; i < regs.length; i++) regs[i].unregister();
-            });
-        }
-        if ('caches' in window) {
-            caches.keys().then(function (names) {
-                for (var i = 0; i < names.length; i++) caches.delete(names[i]);
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').catch(function (e) {
+                    console.log('SW registration notice:', e);
+                });
             });
         }
     </script>
@@ -2787,10 +2784,33 @@
                 scroll-behavior: auto !important;
             }
         }
+        /* Universal Swipeable Gold Pill Bar */
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none; position: sticky; top: 62px; z-index: 90;
+            backdrop-filter: blur(12px);
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.12));
+            color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+        }
+        .portal-pill svg { stroke: currentColor; flex-shrink: 0; }
     </style>
 
-        <script src="js/vyas_sutras_bank.js"></script>
+    <script src="js/vyas_sutras_bank.js"></script>
     <script src="js/vyas_daivagya_engine.js"></script>
+    <script src="js/vyas_chart_renderers.js"></script>
 </head>
 
 <body>
@@ -2941,6 +2961,50 @@
         </div>
     </header>
 
+    <!-- UNIVERSAL MULTI-DISCIPLINARY GOLD PILL NAVIGATION STRIP -->
+    <nav class="vyas-portal-pill-strip" aria-label="मुख्य विधा नेविगेशन">
+        <a href="/" class="portal-pill active" title="लग्न कुण्डली एवं 16 वर्ग चक्र">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill" title="दैनिक पंचांग व तात्कालिक आकाश चक्र">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill" title="KP भाव चलित चक्र व कस्पल सब-लॉर्ड">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill" title="जैमिनी कारकांश व स्वंश चक्र">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill" title="भृगु नन्दी नाड़ी 4-दिशा चक्र">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill" title="अष्टकवर्ग 337 बिंदु चक्र व BAV">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill" title="ताजिक वर्षफल व मुंथा चक्र">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill" title="तात्कालिक प्रश्न मार्ग वेध">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill" title="36 गुण मिलान व नाड़ी दोष परिहार">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill" title="सुरक्षित कुण्डली वॉल्ट">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
     <!-- MAIN COCKPIT GRID -->
     <div class="cockpit-container">
         <section class="mobile-quick-hero" aria-label="आज का cosmic overview">
@@ -3064,7 +3128,8 @@
                                     चक्र + गोचर + चालू दशा</span>
                             </div>
                             <button id="btnEnablePushAlerts" onclick="VyasPushEngine.subscribeUser()"
-                                style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:4px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.78rem; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.3);">🔔
+                                style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:5px 14px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.78rem; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                                 दैनिक पंचांग व पर्व सूचनाएं चालू करें</button>
                         </div>
                         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:12px;">
@@ -8965,6 +9030,15 @@
                         alert('कृपया ब्राउज़र सेटिंग्स में नोटिफिकेशन की अनुमति प्रदान करें।');
                         return;
                     }
+
+                    // Direct desktop notification feedback
+                    try {
+                        new Notification("VYAS ASTRA • दैनिक वेध", {
+                            body: "दैनिक पंचांग, पावन पर्व एवं व्यक्तिगत वेध सूचनाएं सफलतापूर्वक सक्रिय हो गई हैं।",
+                            icon: "/logo_icon.png"
+                        });
+                    } catch (notifErr) { }
+
                     var subEndpoint = 'web-push-' + Date.now();
                     if ('serviceWorker' in navigator) {
                         try {
@@ -8987,7 +9061,7 @@
                     alert(data.message || 'दैनिक पंचांग व पावन पर्वों की सूचनाएं सक्रिय हो गई हैं!');
                     var btn = document.getElementById('btnEnablePushAlerts');
                     if (btn) {
-                        btn.innerHTML = '✅ सूचनाएं सक्रिय हैं';
+                        btn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> सूचनाएं सक्रिय हैं';
                         btn.style.background = '#059669';
                     }
                 } catch (e) {
@@ -10308,18 +10382,63 @@
                     taraDesc.textContent = curTara.desc + dashaNote;
                 }
 
-                // 4-Pillars Detailed Guidance
+                // 4-Pillars Detailed Guidance (Authentic Dynamic Personalized Engine)
+                var birthMoonSignIdx = -1;
+                if (this.activeChartData && this.activeChartData.planet_table) {
+                    for (var p = 0; p < this.activeChartData.planet_table.length; p++) {
+                        var pl = this.activeChartData.planet_table[p];
+                        if ((pl.p && pl.p.indexOf("चन्द्र") !== -1) || (pl.planet && pl.planet.indexOf("Moon") !== -1)) {
+                            var signStr = pl.r || pl.sign || '';
+                            for (var si = 0; si < SIGNS_HI.length; si++) {
+                                if (SIGNS_HI[si] && signStr.indexOf(SIGNS_HI[si]) !== -1) {
+                                    birthMoonSignIdx = si;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (birthMoonSignIdx === -1) birthMoonSignIdx = 6; // Default Tula
+
+                var transitHouseFromMoon = ((sIdx - birthMoonSignIdx + 12) % 12) + 1;
+                var isChandrashtama = (transitHouseFromMoon === 8);
+
                 if (dhWealth) {
-                    dhWealth.innerHTML = "<b>द्वितीय व एकादश भाव गोचर:</b> शुक्र-शनि युति वेध के कारण धन संचय हेतु संयमित बजट रखें। अनावश्यक त्वरित निवेश या सट्टेबाजी से बचें। नियमित आय स्थिर रहेगी।";
+                    if (transitHouseFromMoon === 11 || transitHouseFromMoon === 2) {
+                        dhWealth.innerHTML = "<b>द्वितीय व एकादश धन वेध (शुभ गोचर):</b> आज चन्द्रमा का गोचर आय व संचित धन भाव को सक्रिय कर रहा है। वित्तीय अनुबंध, बकाया धन की प्राप्ति एवं नए निवेश हेतु दिन अत्यंत अनुकूल है।";
+                    } else if (transitHouseFromMoon === 12 || transitHouseFromMoon === 8) {
+                        dhWealth.innerHTML = "<b>व्यय एवं आकस्मिक वेध:</b> आज गोचरस्थ चन्द्रमा " + (isChandrashtama ? "अष्टम भाव" : "द्वादश भाव") + " में होने से अप्रत्याशित व्यय संभव है। सट्टेबाजी या जोखिम भरे वित्तीय सौदों से बचें।";
+                    } else {
+                        dhWealth.innerHTML = "<b>नियमित आय गोचर:</b> आर्थिक स्थिति संतुलित रहेगी। दैनिक बजट अनुसार खर्च रखें, अनावश्यक दिखावे से बचें।";
+                    }
                 }
                 if (dhCareer) {
-                    dhCareer.innerHTML = "<b>दशम भाव कर्म वेध:</b> उच्च के मंगल की दृष्टि कर्मक्षेत्र में प्रभाव व तकनीकी कौशल को बढ़ाएगी। अधीनस्थों अथवा साझेदारों से वार्ता में स्पष्टता रखें।";
+                    if (transitHouseFromMoon === 10 || transitHouseFromMoon === 6 || transitHouseFromMoon === 3) {
+                        dhCareer.innerHTML = "<b>दशम/षष्ठ कर्म वेध (अति शुभ):</b> कार्यक्षेत्र में आपका पराक्रम व बौद्धिक सामर्थ्य वरिष्ठों को प्रभावित करेगा। नई जिम्मेदारियां व पद-प्रतिष्ठा वृद्धि के प्रबल संकेत हैं।";
+                    } else if (isChandrashtama) {
+                        dhCareer.innerHTML = "<b>चन्द्राष्टम कर्म वेध:</b> सहकर्मियों से संवाद में धैर्य रखें। कार्यस्थल पर किसी विवाद या उत्तेजक वार्ता से दूर रहें; केवल नियमित दायित्वों पर ध्यान दें।";
+                    } else {
+                        dhCareer.innerHTML = "<b>स्थिर कर्म क्षेत्र:</b> कार्यों में सामान्य गति रहेगी। योजनाबद्ध तरीके से लंबित कार्यों को पूर्ण करने हेतु दिन उपयुक्त है।";
+                    }
                 }
                 if (dhRelations) {
-                    dhRelations.innerHTML = "<b>सप्तम भाव व कुटुम्ब:</b> शनि गोचर के कारण वैवाहिक व पारिवारिक संवाद में विनम्रता बनाए रखें। परिजनों के स्वास्थ्य का ध्यान रखें।";
+                    if (transitHouseFromMoon === 7 || transitHouseFromMoon === 5 || transitHouseFromMoon === 9) {
+                        dhRelations.innerHTML = "<b>सप्तम व पंचम सौहार्द वेध:</b> जीवनसाथी व पारिवारिक सदस्यों से मधुर संवाद रहेगा। मांगलिक चर्चाओं व आत्मीय मिलन हेतु दिन श्रेष्ठ है।";
+                    } else if (isChandrashtama) {
+                        dhRelations.innerHTML = "<b>संयम वेध:</b> संवेदनशील विषयों पर परिजनों से धैर्यपूर्वक वार्ता करें। वाणी में विनम्रता बनाए रखें।";
+                    } else {
+                        dhRelations.innerHTML = "<b>पारिवारिक संतुलन:</b> घर-परिवार में शांति का वातावरण रहेगा। वरिष्ठ परिजनों का मार्गदर्शन प्राप्त होगा।";
+                    }
                 }
                 if (dhHealth) {
-                    dhHealth.innerHTML = "<b>अष्टम चन्द्र वेध:</b> आज गोचरस्थ चन्द्रमा शतभिषा में होने से जल सेवन बढ़ाएं, ध्यान व प्राणायाम से मानसिक शांति बनाए रखें।";
+                    if (isChandrashtama) {
+                        dhHealth.innerHTML = "<b>चन्द्राष्टम वेध (मानसिक शांति आवश्यक):</b> आज गोचरस्थ चन्द्रमा जन्म राशि से अष्टम भाव (" + SIGNS_HI[sIdx] + ") में हैं। मानसिक संवेदनशीलता व अधीरता पर नियंत्रण रखें। सात्विक जल सेवन बढ़ाएं व 'ॐ नमः शिवाय' जपें।";
+                    } else if (transitHouseFromMoon === 6) {
+                        dhHealth.innerHTML = "<b>रोग-विजय गोचर:</b> शारीरिक स्फूर्ति व रोग प्रतिरोधक क्षमता उत्तम रहेगी। नियमित व्यायाम व प्राणायाम से ओज में वृद्धि होगी।";
+                    } else {
+                        dhHealth.innerHTML = "<b>संतुलित स्वास्थ्य:</b> स्वास्थ्य सामान्य व अनुकूल है। सात्विक खानपान व संतुलित दिनचर्या बनाए रखें।";
+                    }
                 }
 
                 // -------------------------------------------------------------
@@ -15104,27 +15223,36 @@
     </script>
     <!-- Mobile App Bottom Navigation -->
     <nav class="mobile-app-nav" aria-label="Mobile app navigation">
-        <button class="active" onclick="mobileGo('view-daily',this)"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M3 12l9-8 9 8" />
-                <path d="M5 10v10h14V10" />
-            </svg><span>आज</span></button>
-        <button onclick="mobileGo('view-dasha',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 2" />
-            </svg><span>दशा</span></button>
-        <button onclick="mobileGo('chartHeaderTitle',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <path d="M4 4h16v16H4z" />
-                <path d="M4 12h16M12 4v16" />
+        <button class="active" onclick="mobileGo('chartHeaderTitle',this)"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
             </svg><span>कुण्डली</span></button>
+        <button onclick="location.href='/panchang/'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg><span>पंचांग</span></button>
+        <button onclick="location.href='/ashtakavarga/'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg><span>अष्टकवर्ग</span></button>
+        <button onclick="location.href='/saved-kundli/'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.8">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>वॉल्ट</span></button>
         <button
             onclick="toggleAIFloat();document.querySelectorAll('.mobile-app-nav button').forEach(function(x){x.classList.remove('active');});this.classList.add('active')"><svg
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <circle cx="12" cy="12" r="4" />
                 <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" />
-            </svg><span>AI Sage</span></button>
+            </svg><span>आचार्य व्यास</span></button>
     </nav>
     <script>
         function mobileGo(id, btn) {

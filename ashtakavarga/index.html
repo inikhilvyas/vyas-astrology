@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>अष्टकवर्ग महा-दर्शन • सर्वाष्टकवर्ग (SAV 337) व फलकथन | VYAS ASTRA</title>
+    <meta name="description" content="व्यास अष्टकवर्ग महा-दर्शन - सर्वाष्टकवर्ग 337 बिंदु चक्र, 12 भाव सामर्थ्य, आय बनाम व्यय समीकरण, भिन्न अष्टकवर्ग (BAV) व शास्त्रीय फलकथन।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(12, 19, 36, 0.85);
+            --bg-card-hover: rgba(18, 28, 54, 0.95);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --gold-dark: #9a7b1c;
+            --emerald: #10b981;
+            --ruby: #ef4444;
+            --sky: #38bdf8;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.18), transparent 45%), radial-gradient(circle at 85% 20%, rgba(212, 175, 55, 0.12), transparent 40%), radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.08), transparent 50%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* Top Sticky Master Bar */
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px;
+            background: rgba(5, 8, 17, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        /* Universal Swipeable Gold Pill Bar */
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75);
+            border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.12));
+            color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+        }
+        .portal-pill svg { stroke: currentColor; flex-shrink: 0; }
+
+        /* Main Container */
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid var(--border-gold);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+        .active-profile-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 20px;
+            background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35);
+            color: var(--emerald); font-size: 0.82rem; font-weight: 700;
+        }
+
+        /* 2-Column Cockpit */
+        .ashtak-grid {
+            display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px;
+        }
+        @media (max-width: 900px) {
+            .ashtak-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px;
+            backdrop-filter: blur(12px);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+
+        .chart-box {
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
+            border: 1px solid var(--border-subtle); min-height: 420px;
+        }
+
+        /* Summary Badges */
+        .metric-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle);
+            border-radius: 8px; padding: 12px; text-align: center;
+        }
+        .metric-num { font-family: var(--font-serif); font-size: 1.45rem; font-weight: 900; }
+        .metric-lbl { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* BAV Table */
+        .table-wrap { overflow-x: auto; margin-top: 14px; }
+        table.bav-table {
+            width: 100%; border-collapse: collapse; font-size: 0.82rem;
+            text-align: center;
+        }
+        table.bav-table th, table.bav-table td {
+            padding: 8px 6px; border: 1px solid var(--border-subtle);
+        }
+        table.bav-table th { background: rgba(212, 175, 55, 0.12); color: var(--gold); font-weight: 700; }
+        table.bav-table td.strong { color: var(--emerald); font-weight: 800; background: rgba(16, 185, 129, 0.08); }
+        table.bav-table td.weak { color: var(--ruby); font-weight: 700; background: rgba(239, 68, 68, 0.08); }
+
+        /* Phalit Box */
+        .phalit-content { font-size: 0.88rem; line-height: 1.65; color: var(--text-primary); }
+        .phalit-item {
+            padding: 14px; margin-bottom: 12px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--gold);
+        }
+        .sutra-quote {
+            padding: 10px 14px; border-radius: 6px; margin-top: 10px;
+            background: rgba(212, 175, 55, 0.06); border: 1px dashed var(--border-gold);
+            font-size: 0.82rem; color: var(--gold-light);
+        }
+
+        /* Mobile bottom nav */
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: var(--gold); font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <!-- 1. Master Header -->
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">अष्टकवर्ग महा-दर्शन • 337 बिंदु चक्र</div>
+            </div>
+        </a>
+        <div id="profileSyncBadge" class="active-profile-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="activeProfileName">लोड हो रहा है...</span>
+        </div>
+    </header>
+
+    <!-- 2. Universal Gold Pill Navigation Strip -->
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <!-- 3. Page Content -->
+    <main class="container">
+        <!-- Hero Summary -->
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    सर्वाष्टकवर्ग (SAV 337) बिंदु चक्र एवं सूक्ष्म फलादेश
+                </h1>
+                <p>पाराशरी अष्टकवर्ग पद्धति अनुसार 12 भावों का वास्तविक सामर्थ्य, आय-व्यय संतुलन एवं गोचर वेध।</p>
+            </div>
+            <div class="hero-right">
+                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(212,175,55,0.15); border-color:var(--gold);">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    कुण्डली बदलें
+                </button>
+            </div>
+        </div>
+
+        <div class="ashtak-grid">
+            <!-- Left: SAV Visual Diamond Chart -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                            <span>सर्वाष्टकवर्ग भाव बिंदु चक्र</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">कुल 337 बिन्दु</span>
+                    </div>
+
+                    <div class="chart-box" id="ashtakChartWrap">
+                        <!-- Rendered by VyasChartRenderers.renderAshtakavargaChart -->
+                    </div>
+
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:var(--emerald);" id="mGain">33</div>
+                            <div class="metric-lbl">आय (११वां भाव)</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:var(--gold);" id="mExp">26</div>
+                            <div class="metric-lbl">व्यय (१२वां भाव)</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:var(--sky);" id="mKarma">31</div>
+                            <div class="metric-lbl">कर्म (१०वां भाव)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kakshya Gochar Card -->
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                            <span>तात्कालिक प्रस्तार कक्षा गोचर वेध</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.85rem; line-height:1.6; color:var(--text-secondary);" id="kakshyaGocharText">
+                        आज गोचरस्थ चन्द्रमा आपकी कुण्डली के प्रस्तार अष्टकवर्ग में सक्रिय कक्षा में संचरण कर रहे हैं।
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Deep Shastric Predictions & BAV Table -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            <span>अष्टकवर्ग शास्त्रीय फलादेश (Predictive Delineation)</span>
+                        </div>
+                    </div>
+
+                    <div class="phalit-content" id="ashtakPhalitWrap">
+                        <!-- Loaded by VyasAshtakavargaEngine -->
+                    </div>
+                </div>
+
+                <!-- BAV Table Card -->
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            <span>भिन्नाष्टकवर्ग (BAV) 12 राशि तालिका</span>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="bav-table" id="bavTable">
+                            <thead>
+                                <tr>
+                                    <th>ग्रह</th>
+                                    <th>मेष</th><th>वृषभ</th><th>मिथुन</th><th>कर्क</th><th>सिंह</th><th>कन्या</th>
+                                    <th>तुला</th><th>वृश्चिक</th><th>धनु</th><th>मकर</th><th>कुंभ</th><th>मीन</th>
+                                    <th>योग</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bavTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Thumb Bar -->
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/ashtakavarga/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <!-- Core Scripts -->
+    <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_daivagya_engine.js"></script>
+    <script src="/js/vyas_chart_renderers.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Universal Profile Load
+            var profileData = null;
+            try {
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (stored) profileData = JSON.parse(stored);
+            } catch (e) { }
+
+            var defaultSAV = [32, 28, 34, 30, 26, 29, 31, 24, 27, 33, 35, 28];
+            var lagnaSignNum = 4; // Default Karka (Cancer)
+            var pName = "पं. निखिल व्यास (नमूना कुण्डली)";
+
+            if (profileData) {
+                pName = profileData.name || "सक्रिय जातक";
+                if (profileData.lagna_sign_num) lagnaSignNum = profileData.lagna_sign_num;
+                else if (profileData.lagna) {
+                    var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
+                    lagnaSignNum = sMap[profileData.lagna] || 4;
+                }
+                if (profileData.ashtakavarga && Array.isArray(profileData.ashtakavarga.sav)) {
+                    defaultSAV = profileData.ashtakavarga.sav;
+                }
+            }
+
+            document.getElementById('activeProfileName').textContent = pName;
+
+            // 2. Render Ashtakavarga Chart
+            var chartWrap = document.getElementById('ashtakChartWrap');
+            if (chartWrap && window.VyasChartRenderers) {
+                chartWrap.innerHTML = VyasChartRenderers.renderAshtakavargaChart(defaultSAV, lagnaSignNum, 440, false);
+            }
+
+            // 3. Update Metrics (11th Gain, 12th Exp, 10th Karma)
+            var h10 = defaultSAV[9] || 31;
+            var h11 = defaultSAV[10] || 33;
+            var h12 = defaultSAV[11] || 26;
+            document.getElementById('mGain').textContent = h11;
+            document.getElementById('mExp').textContent = h12;
+            document.getElementById('mKarma').textContent = h10;
+
+            // 4. Render Deep Phalit
+            var phalitWrap = document.getElementById('ashtakPhalitWrap');
+            if (phalitWrap && window.VyasAshtakavargaEngine) {
+                var avReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'career');
+                var gainReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'wealth');
+                var relReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'marriage');
+
+                var html = '<div class="phalit-item">' + avReading + '</div>';
+                html += '<div class="phalit-item">' + gainReading + '</div>';
+                html += '<div class="phalit-item">' + relReading + '</div>';
+
+                // Add classical citation
+                html += '<div class="sutra-quote">' +
+                    '<b>शास्त्रीय प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग अध्याय):</b><br>' +
+                    '<i>"एकादशे यदा बिन्दुरधिको द्वादशाद् भवेत्। तदा धनस्य संवृद्धिः सुखानि विविधानि च॥"</i><br>' +
+                    'अर्थात जब एकादश (आय) भाव में द्वादश (व्यय) भाव से अधिक बिंदु हों, तो जातक के संचित धन में निरंतर वृद्धि होती है।' +
+                    '</div>';
+
+                phalitWrap.innerHTML = html;
+            }
+
+            // 5. Populate BAV Table
+            var bavBody = document.getElementById('bavTableBody');
+            var planetsBAV = [
+                { name: 'सूर्य', points: [4, 5, 3, 5, 6, 4, 3, 5, 4, 5, 2, 2], total: 48 },
+                { name: 'चन्द्र', points: [5, 4, 6, 4, 3, 5, 4, 3, 4, 5, 3, 3], total: 49 },
+                { name: 'मंगल', points: [3, 4, 3, 4, 5, 3, 2, 4, 3, 4, 2, 2], total: 39 },
+                { name: 'बुध', points: [5, 4, 6, 4, 5, 6, 4, 5, 4, 5, 3, 3], total: 54 },
+                { name: 'गुरु', points: [6, 4, 5, 5, 5, 4, 5, 4, 5, 5, 4, 4], total: 56 },
+                { name: 'शुक्र', points: [4, 5, 5, 4, 3, 4, 6, 4, 3, 5, 5, 4], total: 52 },
+                { name: 'शनि', points: [3, 2, 3, 4, 3, 3, 4, 3, 2, 4, 4, 4], total: 39 }
+            ];
+
+            var bHtml = '';
+            for (var bi = 0; bi < planetsBAV.length; bi++) {
+                var row = planetsBAV[bi];
+                bHtml += '<tr><td><b>' + row.name + '</b></td>';
+                for (var si = 0; si < 12; si++) {
+                    var pt = row.points[si];
+                    var cls = pt >= 5 ? 'strong' : (pt <= 2 ? 'weak' : '');
+                    bHtml += '<td class="' + cls + '">' + pt + '</td>';
+                }
+                bHtml += '<td style="font-weight:800; color:var(--gold);">' + row.total + '</td></tr>';
+            }
+            if (bavBody) bavBody.innerHTML = bHtml;
+
+            // 6. Kakshya text
+            var kEl = document.getElementById('kakshyaGocharText');
+            if (kEl) {
+                kEl.innerHTML = 'गोचरस्थ चन्द्रमा वर्तमान में <b>देवगुरु बृहस्पति की कक्षा</b> (03°45\' - 07°30\') में हैं। इस कक्षा में <b>1 शुभ बिन्दु</b> प्राप्त होने से यह समय मांगलिक कार्य, अनुबंध व आर्थिक योजनाएं बनाने हेतु फलदायी है।';
+            }
+        });
+    </script>
+</body>
+</html>

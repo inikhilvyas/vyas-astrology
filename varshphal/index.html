@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>ताजिक वर्षफल • वर्ष प्रवेश कुण्डली, मुंथा व वर्षेश फलादेश | VYAS ASTRA</title>
+    <meta name="description" content="ताजिक वर्षफल (Solar Return Chart) - वर्ष प्रवेश कुण्डली, मुंथा स्थिति (Muntha), वर्षेश निर्धारण, 16 ताजिक योग व 12 माह फलादेश।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(18, 14, 8, 0.88);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --amber: #f59e0b;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.16), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(212, 175, 55, 0.18));
+            color: var(--gold-light); border-color: var(--amber); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+        .active-profile-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 20px;
+            background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #fbbf24; font-size: 0.82rem; font-weight: 700;
+        }
+
+        .varsh-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
+        @media (max-width: 900px) { .varsh-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: #fbbf24; display: flex; align-items: center; gap: 8px; }
+
+        .chart-box {
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
+            border: 1px solid var(--border-subtle); min-height: 420px;
+        }
+
+        .metric-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle);
+            border-radius: 8px; padding: 12px; text-align: center;
+        }
+        .metric-num { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 900; }
+        .metric-lbl { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+
+        .phalit-item {
+            padding: 14px; margin-bottom: 12px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02); border-left: 3px solid #f59e0b;
+            font-size: 0.88rem; line-height: 1.65;
+        }
+        .sutra-quote {
+            padding: 10px 14px; border-radius: 6px; margin-top: 10px;
+            background: rgba(245, 158, 11, 0.06); border: 1px dashed rgba(245, 158, 11, 0.3);
+            font-size: 0.82rem; color: #fde68a;
+        }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: #fbbf24; font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">ताजिक वर्षफल • सौर वर्ष प्रवेश व मुंथा</div>
+            </div>
+        </a>
+        <div class="active-profile-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="activeProfileName">लोड हो रहा है...</span>
+        </div>
+    </header>
+
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f59e0b" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/></svg>
+                    ताजिक वर्षफल कुण्डली एवं मुंथा फलादेश
+                </h1>
+                <p>सौर वर्ष प्रवेश (Solar Return) क्षण की लग्न कुण्डली, मुंथा का भाव फल, वर्षेश का प्रभाव एवं 16 ताजिक योग।</p>
+            </div>
+            <div class="hero-right">
+                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(245,158,11,0.15); border-color:var(--amber);">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    कुण्डली बदलें
+                </button>
+            </div>
+        </div>
+
+        <div class="varsh-grid">
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                            <span>वर्ष प्रवेश चक्र (Solar Return Chart)</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:#f59e0b; font-weight:700;" id="varshYearBadge">वर्ष 2026-27</span>
+                    </div>
+
+                    <div class="chart-box" id="varshChartWrap">
+                        <!-- Rendered by VyasChartRenderers.renderVarshphalChart -->
+                    </div>
+
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:#fbbf24;" id="mMuntha">चतुर्थ भाव</div>
+                            <div class="metric-lbl">मुंथा स्थिति</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:#10b981;" id="mVarshesha">देवगुरु बृहस्पति</div>
+                            <div class="metric-lbl">वर्षेश (Lord of Year)</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-num" style="color:#38bdf8;" id="mYoga">इत्थशाल योग</div>
+                            <div class="metric-lbl">प्रमुख ताजिक योग</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span>ताजिक वर्षफल शास्त्रीय फलादेश</span>
+                        </div>
+                    </div>
+                    <div id="varshPhalitWrap">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                            <span>16 ताजिक योगों का संक्षिप्त सार</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.86rem; line-height:1.65; color:var(--text-secondary);">
+                        <p style="margin-bottom:10px;">
+                            • <b>इत्थशाल योग (Muthashila):</b> जब शीघ्रगामी ग्रह मंदगामी ग्रह से कम अंशों पर होकर उसकी ओर बढ़ता है, तो कार्य में सफलता निश्चित होती है।
+                        </p>
+                        <p style="margin-bottom:10px;">
+                            • <b>मुंथा फल:</b> 4, 9, 10, 11 भावों में मुंथा की स्थिति वर्ष भर सुख, समृद्धि, पदोन्नति व सम्मान प्रदान करती है। 6, 8, 12 में मुंथा स्वास्थ्य के प्रति सतर्कता का संकेत देती है।
+                        </p>
+                        <p>
+                            • <b>वर्षेश बल:</b> पंचवर्गीय बल में जो ग्रह सर्वाधिक अंक प्राप्त करता है और वर्ष लग्न व जन्म लग्न को देखता है, वह वर्षेश बनकर संपूर्ण वर्ष का संचालन करता है।
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/varshphal/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_daivagya_engine.js"></script>
+    <script src="/js/vyas_chart_renderers.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var profileData = null;
+            try {
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (stored) profileData = JSON.parse(stored);
+            } catch (e) { }
+
+            var pName = profileData ? (profileData.name || "सक्रिय जातक") : "पं. निखिल व्यास (नमूना)";
+            document.getElementById('activeProfileName').textContent = pName;
+
+            var mockHouses = {
+                1: ['कर्क', { p: 'गुरु 05°30\'' }],
+                4: [{ p: 'सूर्य 14°20\'' }],
+                7: [{ p: 'मंगल 28°10\'' }],
+                9: [{ p: 'शुक्र 27°02\'' }, { p: 'बुध 19°45\'' }],
+                10: [{ p: 'चन्द्र 03°15\'' }],
+                11: [{ p: 'शनि 22°14\'' }]
+            };
+
+            var munthaSign = 4; // Karka
+            var varshesha = 'गुरु';
+
+            var chartWrap = document.getElementById('varshChartWrap');
+            if (chartWrap && window.VyasChartRenderers) {
+                chartWrap.innerHTML = VyasChartRenderers.renderVarshphalChart(mockHouses, munthaSign, varshesha, 34, 440, false);
+            }
+
+            var phalitWrap = document.getElementById('varshPhalitWrap');
+            if (phalitWrap) {
+                phalitWrap.innerHTML = '<div class="phalit-item">' +
+                    '• <b>मुंथा फलादेश (चतुर्थ भाव • सुख व कीर्ति):</b> इस वर्ष मुंथा चतुर्थ भाव (कर्क राशि) में देवगुरु बृहस्पति के साथ युत है। ताजिक नीलकंठी के अनुसार चतुर्थ भावस्थ शुभ मुंथा गृह सुख, वाहन प्राप्ति, प्रतिष्ठा में वृद्धि एवं पारिवारिक सौहार्द की स्पष्ट सूचक है।' +
+                    '</div>' +
+                    '<div class="phalit-item">' +
+                    '• <b>वर्षेश प्रभाव (देवगुरु बृहस्पति):</b> वर्षेश गुरु उच्चाभिलाषी स्थिति में होकर केंद्र में स्थित हैं। संपूर्ण वर्ष बौद्धिक विकास, आध्यात्मिक शांति, अध्ययन एवं प्रतिष्ठित व्यक्तियों से संपर्क का स्वर्णिम समय रहेगा।' +
+                    '</div>' +
+                    '<div class="phalit-item">' +
+                    '• <b>इत्थशाल योग सिद्धि:</b> वर्ष लग्नेश चन्द्रमा एवं कर्मेश मंगल का शुभ इत्थशाल योग निर्मित हो रहा है। यह वर्ष के मध्य में कार्यक्षेत्र में अप्रत्याशित पदोन्नति एवं आर्थिक विस्तार कराएगा।' +
+                    '</div>' +
+                    '<div class="sutra-quote"><b>ताजिक नीलकंठी सूत्र:</b><br><i>"मुंथा चतुर्थे यदि वा दशमे शुभान्विता सौख्यविवर्धिनी स्यात्। वर्षेश्वरो यस्य बली स जीवो राज्यं धनं कीर्तिमुपैति नूनम्॥"</i></div>';
+            }
+        });
+    </script>
+</body>
+</html>

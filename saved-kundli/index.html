@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>कुण्डली वॉल्ट • सुरक्षित जन्मपत्रिका संग्रह | VYAS ASTRA</title>
+    <meta name="description" content="व्यास कुण्डली वॉल्ट - सभी सुरक्षित पारिवारिक एवं क्लाइंट कुंडलियां एक स्थान पर। त्वरित खोज, 1-क्लिक लोड, JSON बैकअप एवं बहु-विधा नेविगेशन।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(12, 19, 36, 0.88);
+            --bg-card-hover: rgba(18, 28, 54, 0.95);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --emerald: #10b981;
+            --ruby: #ef4444;
+            --sky: #38bdf8;
+            --purple: #c084fc;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.18), transparent 45%), radial-gradient(circle at 85% 20%, rgba(212, 175, 55, 0.12), transparent 40%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.12));
+            color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid var(--border-gold);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        /* Search & Actions Bar */
+        .controls-bar {
+            display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 24px;
+        }
+        .search-box {
+            flex: 1; min-width: 260px; position: relative;
+        }
+        .search-input {
+            width: 100%; padding: 10px 14px 10px 38px; border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle);
+            color: #fff; font-family: var(--font-devanagari); font-size: 0.9rem;
+        }
+        .search-icon {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            stroke: var(--text-muted);
+        }
+        .action-btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 9px 16px; border-radius: 8px; font-size: 0.84rem; font-weight: 700;
+            cursor: pointer; border: 1px solid var(--border-gold);
+            background: rgba(212, 175, 55, 0.12); color: var(--gold-light);
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover { background: rgba(212, 175, 55, 0.25); }
+
+        /* Grid of Profiles */
+        .profiles-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px;
+        }
+        .profile-card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 18px; transition: all 0.2s ease;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .profile-card:hover { border-color: var(--border-gold); transform: translateY(-2px); }
+        .p-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .p-name { font-size: 1.1rem; font-weight: 800; color: var(--gold-light); }
+        .p-tag {
+            font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 12px;
+            background: rgba(212, 175, 55, 0.15); color: var(--gold); border: 1px solid var(--border-gold);
+        }
+        .p-details { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; }
+        .p-details b { color: var(--text-primary); }
+
+        .p-actions {
+            display: flex; flex-wrap: wrap; gap: 6px; padding-top: 12px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .p-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 10px; border-radius: 6px; font-size: 0.76rem; font-weight: 700;
+            border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary); text-decoration: none; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .p-btn:hover { background: rgba(212, 175, 55, 0.15); border-color: var(--gold); color: var(--gold-light); }
+        .p-btn.primary { background: rgba(212, 175, 55, 0.2); border-color: var(--gold); color: var(--gold-light); }
+        .p-btn.danger { color: var(--ruby); }
+        .p-btn.danger:hover { background: rgba(239, 68, 68, 0.15); border-color: var(--ruby); }
+
+        .empty-vault {
+            text-align: center; padding: 48px 20px; color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: var(--gold); font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">कुण्डली वॉल्ट • सुरक्षित जन्मपत्रिका संग्रह</div>
+            </div>
+        </a>
+        <div style="font-size:0.8rem; color:var(--emerald); font-weight:700;">
+            सुरक्षित वॉल्ट
+        </div>
+    </header>
+
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    कुण्डली वॉल्ट • सुरक्षित जन्मपत्रिका संग्रह
+                </h1>
+                <p>आपके द्वारा बनाई गई सभी कुंडलियां सुरक्षित हैं। एक क्लिक में किसी भी विधा (KP, जैमिनी, BNN, अष्टकवर्ग) में लोड करें।</p>
+            </div>
+            <div class="hero-right">
+                <button onclick="location.href='/'" class="action-btn">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    नई कुण्डली बनाएं
+                </button>
+            </div>
+        </div>
+
+        <div class="controls-bar">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="search-input" id="vaultSearchInput" placeholder="नाम, जन्म तिथि या शहर से खोजें..." oninput="filterVaultProfiles()">
+            </div>
+            <button class="action-btn" onclick="exportVaultJSON()">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export JSON
+            </button>
+            <label class="action-btn" style="cursor:pointer;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import JSON
+                <input type="file" id="importJsonInput" accept=".json" style="display:none;" onchange="importVaultJSON(event)">
+            </label>
+        </div>
+
+        <div class="profiles-grid" id="profilesGrid">
+            <!-- Populated dynamically -->
+        </div>
+    </main>
+
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/ashtakavarga/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/saved-kundli/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <script>
+        var vaultProfiles = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadVaultData();
+        });
+
+        function loadVaultData() {
+            vaultProfiles = [];
+            try {
+                var p1 = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
+                if (Array.isArray(p1)) vaultProfiles = vaultProfiles.concat(p1);
+            } catch (e) { }
+            try {
+                var p2 = JSON.parse(localStorage.getItem('vyas_user_vault') || '[]');
+                if (Array.isArray(p2)) {
+                    p2.forEach(function (x) {
+                        var exists = vaultProfiles.some(function (v) { return v.name === x.name && v.dob === x.dob; });
+                        if (!exists) vaultProfiles.push(x);
+                    });
+                }
+            } catch (e) { }
+
+            // If empty, add sample profile so user has immediate context
+            if (vaultProfiles.length === 0) {
+                vaultProfiles.push({
+                    name: "पं. निखिल व्यास",
+                    dob: "1992-05-15",
+                    tob: "14:30",
+                    place: "अयोध्या, भारत",
+                    lagna: "कर्क",
+                    moon_sign: "तुला",
+                    nakshatra: "स्वाति",
+                    dasha: "गुरु-शनि-बुध",
+                    tag: "मुख्य जातक"
+                });
+            }
+
+            renderProfiles(vaultProfiles);
+        }
+
+        function renderProfiles(list) {
+            var grid = document.getElementById('profilesGrid');
+            if (!grid) return;
+            if (!list || list.length === 0) {
+                grid.innerHTML = '<div class="empty-vault">कोई सुरक्षित कुण्डली नहीं मिली। ऊपर "+ नई कुण्डली बनाएं" पर क्लिक करें।</div>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < list.length; i++) {
+                var p = list[i];
+                var name = p.name || 'अज्ञात जातक';
+                var dob = p.dob || p.birth_date || '-';
+                var tob = p.tob || p.birth_time || '-';
+                var place = p.place || p.city || '-';
+                var lagna = p.lagna || 'कर्क';
+                var moon = p.moon_sign || p.rashi || 'तुला';
+                var nak = p.nakshatra || 'स्वाति';
+                var tag = p.tag || 'परिवार';
+
+                html += '<div class="profile-card">' +
+                    '<div>' +
+                    '<div class="p-head"><div class="p-name">' + name + '</div><span class="p-tag">' + tag + '</span></div>' +
+                    '<div class="p-details">' +
+                    '<div>📅 जन्म: <b>' + dob + '</b>, समय: <b>' + tob + '</b></div>' +
+                    '<div>📍 स्थान: <b>' + place + '</b></div>' +
+                    '<div style="margin-top:6px; color:var(--gold);">' +
+                    '<span>लग्न: <b>' + lagna + '</b></span> • <span>राशि: <b>' + moon + '</b></span> • <span>नक्षत्र: <b>' + nak + '</b></span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="p-actions">' +
+                    '<button class="p-btn primary" onclick="openProfileChart(' + i + ')">कुण्डली खोलें</button>' +
+                    '<a href="/kp-astrology/" class="p-btn" onclick="selectProfile(' + i + ')">KP</a>' +
+                    '<a href="/jaimini-astrology/" class="p-btn" onclick="selectProfile(' + i + ')">जैमिनी</a>' +
+                    '<a href="/ashtakavarga/" class="p-btn" onclick="selectProfile(' + i + ')">अष्टकवर्ग</a>' +
+                    '<button class="p-btn danger" onclick="deleteProfile(' + i + ')">हटाएं</button>' +
+                    '</div>' +
+                    '</div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function filterVaultProfiles() {
+            var q = document.getElementById('vaultSearchInput').value.toLowerCase().trim();
+            if (!q) { renderProfiles(vaultProfiles); return; }
+            var filtered = vaultProfiles.filter(function (p) {
+                var text = (p.name + ' ' + (p.dob || '') + ' ' + (p.place || '') + ' ' + (p.lagna || '')).toLowerCase();
+                return text.indexOf(q) !== -1;
+            });
+            renderProfiles(filtered);
+        }
+
+        function selectProfile(idx) {
+            var p = vaultProfiles[idx];
+            if (p) {
+                localStorage.setItem('vyas_active_profile', JSON.stringify(p));
+            }
+        }
+
+        function openProfileChart(idx) {
+            selectProfile(idx);
+            location.href = '/';
+        }
+
+        function deleteProfile(idx) {
+            if (confirm('क्या आप इस कुण्डली को वॉल्ट से हटाना चाहते हैं?')) {
+                vaultProfiles.splice(idx, 1);
+                localStorage.setItem('vyas_family_vault', JSON.stringify(vaultProfiles));
+                renderProfiles(vaultProfiles);
+            }
+        }
+
+        function exportVaultJSON() {
+            var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(vaultProfiles, null, 2));
+            var dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "vyas_kundli_vault_backup.json");
+            dl.click();
+        }
+
+        function importVaultJSON(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    var imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        imported.forEach(function (x) {
+                            var exists = vaultProfiles.some(function (v) { return v.name === x.name && v.dob === x.dob; });
+                            if (!exists) vaultProfiles.push(x);
+                        });
+                        localStorage.setItem('vyas_family_vault', JSON.stringify(vaultProfiles));
+                        renderProfiles(vaultProfiles);
+                        alert('✓ ' + imported.length + ' कुंडलियां सफलतापूर्वक वॉल्ट में आयात हो गई हैं।');
+                    }
+                } catch (err) {
+                    alert('अमान्य JSON फ़ाइल।');
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>जैमिनी ज्योतिष • कारकांश व स्वंश चक्र, चर कारक एवं फलित | VYAS ASTRA</title>
+    <meta name="description" content="महर्षि जैमिनी उपदेश सूत्र - कारकांश कुण्डली, स्वंश चक्र, 7 चर कारक (AK, AmK, BK, MK, PK, GK, DK) व पद एवं मोक्ष फलित।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(18, 10, 32, 0.88);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --purple: #c084fc;
+            --purple-dark: #7e22ce;
+            --emerald: #10b981;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 10% 20%, rgba(126, 34, 206, 0.18), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.28), rgba(212, 175, 55, 0.18));
+            color: #e9d5ff; border-color: var(--purple); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid rgba(192, 132, 252, 0.3);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: var(--purple); display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+        .active-profile-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 20px;
+            background: rgba(192, 132, 252, 0.12); border: 1px solid rgba(192, 132, 252, 0.35);
+            color: var(--purple); font-size: 0.82rem; font-weight: 700;
+        }
+
+        .jaimini-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
+        @media (max-width: 900px) { .jaimini-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: var(--purple); display: flex; align-items: center; gap: 8px; }
+
+        .chart-box {
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
+            border: 1px solid var(--border-subtle); min-height: 420px;
+        }
+
+        /* Karaka Table */
+        .table-wrap { overflow-x: auto; margin-top: 14px; }
+        table.karaka-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: center; }
+        table.karaka-table th, table.karaka-table td { padding: 8px 6px; border: 1px solid var(--border-subtle); }
+        table.karaka-table th { background: rgba(168, 85, 247, 0.12); color: var(--purple); font-weight: 700; }
+        table.karaka-table td.ak { color: #fbbf24; font-weight: 800; background: rgba(251, 191, 36, 0.1); }
+
+        .phalit-item {
+            padding: 14px; margin-bottom: 12px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--purple);
+            font-size: 0.88rem; line-height: 1.65;
+        }
+        .sutra-quote {
+            padding: 10px 14px; border-radius: 6px; margin-top: 10px;
+            background: rgba(192, 132, 252, 0.06); border: 1px dashed rgba(192, 132, 252, 0.3);
+            font-size: 0.82rem; color: #e9d5ff;
+        }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: var(--purple); font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">जैमिनी ज्योतिष • कारकांश एवं चर कारक</div>
+            </div>
+        </a>
+        <div class="active-profile-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span id="activeProfileName">लोड हो रहा है...</span>
+        </div>
+    </header>
+
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#c084fc" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                    जैमिनी कारकांश चक्र एवं 7 चर कारक फलादेश
+                </h1>
+                <p>आत्मकारक (AK) के नवांश चिन्ह को लग्न मानकर निर्मित कारकांश कुण्डली एवं जैमिनी उपदेश सूत्र।</p>
+            </div>
+            <div class="hero-right">
+                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(192,132,252,0.15); border-color:var(--purple);">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    कुण्डली बदलें
+                </button>
+            </div>
+        </div>
+
+        <div class="jaimini-grid">
+            <!-- Left: Karakamsha Chart -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                            <span>कारकांश कुण्डली (Karakamsha Chart)</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:#fbbf24; font-weight:700;">AK नवांश लग्न</span>
+                    </div>
+
+                    <div class="chart-box" id="jaiminiChartWrap">
+                        <!-- Rendered by VyasChartRenderers.renderJaiminiKarakamsaChart -->
+                    </div>
+                </div>
+
+                <!-- 7 Chara Karaka Table -->
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                            <span>7 चर कारक तालिका (Chara Karakas)</span>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="karaka-table">
+                            <thead>
+                                <tr>
+                                    <th>कारक</th><th>नाम</th><th>ग्रह</th><th>अंश</th><th>कार्यक्षेत्र</th>
+                                </tr>
+                            </thead>
+                            <tbody id="karakaTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Jaimini Upadesha Sutras Phalit -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span>महर्षि जैमिनी उपदेश सूत्र फलादेश</span>
+                        </div>
+                    </div>
+                    <div id="jaiminiPhalitWrap">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Jaimini Sutra Deep Guide -->
+                <div class="card" style="margin-top:20px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                            <span>कारकांश विशेष सूत्र वेध</span>
+                        </div>
+                    </div>
+                    <div style="font-size:0.86rem; line-height:1.65; color:var(--text-secondary);">
+                        <p style="margin-bottom:10px;">
+                            • <b>मोक्ष विचार (12th from Karakamsha):</b> कारकांश से द्वादश भाव में शुभ ग्रह अथवा केतु की उपस्थिति जातक को आध्यात्मिक मोक्ष व परम ज्ञान की ओर अग्रसर करती है।
+                        </p>
+                        <p style="margin-bottom:10px;">
+                            • <b>राजयोग वेध (Amk & AK sambandha):</b> आत्मकारक और अमात्यकारक का परस्पर दृष्टि या युति संबंध जातक को राजपूज्य व समाज में सर्वोच्च पद प्रतिष्ठा प्रदान करता है।
+                        </p>
+                        <p>
+                            • <b>दाराकारक (DK) वेध:</b> दाराकारक से 7वें या 10वें भाव की स्थिति वैवाहिक सुख एवं जीवनसाथी के बौद्धिक स्तर को उजागर करती है।
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/jaimini-astrology/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_daivagya_engine.js"></script>
+    <script src="/js/vyas_chart_renderers.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var profileData = null;
+            try {
+                var stored = localStorage.getItem('vyas_active_profile');
+                if (stored) profileData = JSON.parse(stored);
+            } catch (e) { }
+
+            var pName = profileData ? (profileData.name || "सक्रिय जातक") : "पं. निखिल व्यास (नमूना)";
+            document.getElementById('activeProfileName').textContent = pName;
+
+            var mockHouses = {
+                1: ['मीन', { p: 'मंगल 28°10\'' }],
+                5: [{ p: 'गुरु 05°30\'' }],
+                7: [{ p: 'शुक्र 27°02\'' }, { p: 'बुध 19°45\'' }],
+                8: [{ p: 'सूर्य 14°20\'' }],
+                9: [{ p: 'चन्द्र 03°15\'' }],
+                12: [{ p: 'शनि 22°14\'' }]
+            };
+
+            var karakas = {
+                AK: { planet: 'मंगल', deg: "28°10'", title: 'आत्मकारक', field: 'आत्मा, व्यक्तित्व व उद्देश्य' },
+                AmK: { planet: 'शुक्र', deg: "27°02'", title: 'अमात्यकारक', field: 'करियर, आजीविका व पद' },
+                BK: { planet: 'शनि', deg: "22°14'", title: 'भ्रातृकारक', field: 'गुरु, बंधु व संरक्षक' },
+                MK: { planet: 'बुध', deg: "19°45'", title: 'मातृकारक', field: 'माता, मन व स्थायी संपत्ति' },
+                PK: { planet: 'सूर्य', deg: "14°20'", title: 'पुत्रकारक', field: 'संतान, विद्या व प्रज्ञा' },
+                GK: { planet: 'गुरु', deg: "05°30'", title: 'ज्ञातिकारक', field: 'संघर्ष, प्रतिस्पर्धा व ऋण' },
+                DK: { planet: 'चन्द्र', deg: "03°15'", title: 'दाराकारक', field: 'जीवनसाथी व साझेदारी' }
+            };
+
+            // If active chart has planet_table, compute authentic Karakas
+            if (profileData && profileData.planet_table && window.VyasJaiminiEngine) {
+                var computed = VyasJaiminiEngine.computeKarakas(profileData.planet_table);
+                if (computed && computed.AK) {
+                    var keys = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK', 'DK'];
+                    for (var ki = 0; ki < keys.length; ki++) {
+                        var k = keys[ki];
+                        if (computed[k]) {
+                            karakas[k] = {
+                                planet: computed[k].planet,
+                                deg: computed[k].deg + '°',
+                                title: computed[k].title,
+                                field: computed[k].desc
+                            };
+                        }
+                    }
+                }
+            }
+
+            // Render Karakamsha Chart
+            var chartWrap = document.getElementById('jaiminiChartWrap');
+            if (chartWrap && window.VyasChartRenderers) {
+                chartWrap.innerHTML = VyasChartRenderers.renderJaiminiKarakamsaChart(12, mockHouses, karakas, 440, false);
+            }
+
+            // Populate Karaka Table
+            var tbody = document.getElementById('karakaTableBody');
+            var kHtml = '';
+            var kKeys = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK', 'DK'];
+            for (var i = 0; i < kKeys.length; i++) {
+                var code = kKeys[i];
+                var item = karakas[code];
+                var isAK = code === 'AK';
+                kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + item.title + '</td><td><b>' + item.planet + '</b></td><td>' + item.deg + '</td><td style="color:var(--text-muted);">' + item.field + '</td></tr>';
+            }
+            if (tbody) tbody.innerHTML = kHtml;
+
+            // Populate Phalit
+            var phalitWrap = document.getElementById('jaiminiPhalitWrap');
+            if (phalitWrap && window.VyasJaiminiEngine) {
+                var generalPred = VyasJaiminiEngine.predict(karakas, 'general');
+                var careerPred = VyasJaiminiEngine.predict(karakas, 'career');
+                var relPred = VyasJaiminiEngine.predict(karakas, 'marriage');
+
+                phalitWrap.innerHTML = '<div class="phalit-item">' + generalPred + '</div>' +
+                    '<div class="phalit-item">' + careerPred + '</div>' +
+                    '<div class="phalit-item">' + relPred + '</div>' +
+                    '<div class="sutra-quote"><b>महर्षि जैमिनी सूत्र (अध्याय १, पाद २):</b><br><i>"अमात्ये शुभे दृष्टे राजपूज्यः। कारकांशे केतौ मोक्षः॥"</i><br>अमात्यकारक पर शुभ दृष्टि होने से व्यक्ति समाज व राजसत्ता में पूजनीय होता है तथा कारकांश से केतु मोक्ष प्रदाता है।</div>';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1361,11 +1361,16 @@
             return res;
         },
 
-        predict: function(karakas, domain) {
-            if (!karakas || !karakas.AK) return "• जैमिनी कारक डेटा सामान्य संरेखित है।";
+        predict: function(karakasOrChart, domain) {
+            domain = domain || 'general';
+            var karakas = karakasOrChart;
+            if (karakasOrChart && karakasOrChart.planet_table) {
+                karakas = this.computeKarakas(karakasOrChart.planet_table);
+            }
+            if (!karakas || !karakas.AK) return "• जैमिनी चर कारक संरेखण सामान्य है।";
             var lines = [];
             var ak = karakas.AK, amk = karakas.AmK, dk = karakas.DK;
-            lines.push("• <b>आत्मकारक (AK - " + ak.planet + " " + ak.deg + "°):</b> भाव " + ak.house + " (" + ak.sign + " राशि) में विराजमान हैं। जैमिनी सूत्रानुसार जातक की आत्मा का मूल स्वभाव " + ak.planet + " के तत्त्वों से संचालित है।");
+            lines.push("• <b>आत्मकारक (AK - " + ak.planet + " " + ak.deg + "°):</b> भाव " + ak.house + " (" + ak.sign + " राशि) में स्थित हैं। जैमिनी सूत्रानुसार जातक की आत्मा का मूल स्वभाव व लक्ष्य " + ak.planet + " के तत्त्वों से संचालित है।");
             if (domain === 'career' || domain === 'wealth' || domain === 'general' || domain === 'yoga') {
                 if (amk) {
                     lines.push("• <b>अमात्यकारक (AmK - " + amk.planet + "):</b> भाव " + amk.house + " (" + amk.sign + ") में स्थित हैं। आजीविका में पद व अधिकार " + amk.planet + " की कृपा से प्राप्त होगा। जब भी " + amk.planet + " की दशा या कारकांश सक्रिय होगा, पदोन्नति अवश्यंभावी है।");
@@ -1390,8 +1395,11 @@
             'मिथुन': 'वायु', 'तुला': 'वायु', 'कुंभ': 'वायु',
             'कर्क': 'जल', 'वृश्चिक': 'जल', 'मीन': 'जल'
         },
-        predict: function(planetTable, domain) {
+        predict: function(planetTableOrChart, domain) {
+            domain = domain || 'general';
             var self = this;
+            var planetTable = Array.isArray(planetTableOrChart) ? planetTableOrChart :
+                (planetTableOrChart && planetTableOrChart.planet_table ? planetTableOrChart.planet_table : []);
             var pMap = {};
             planetTable.forEach(function(p) {
                 var name = (p.p || p.planet || '').replace(/\s*\(.*\)/, '').trim();
@@ -1457,8 +1465,15 @@
             return houseSAV;
         },
 
-        predict: function(houseSAV, domain) {
-            if (!houseSAV || !houseSAV[10]) return "• अष्टकवर्ग डेटा सामान्य संरेखित है।";
+        predict: function(houseSAVOrChart, domain) {
+            domain = domain || 'general';
+            var houseSAV = houseSAVOrChart;
+            if (houseSAVOrChart && (houseSAVOrChart.lagna || houseSAVOrChart.planet_table)) {
+                var lSign = houseSAVOrChart.lagna || 'मेष';
+                var sMap = (houseSAVOrChart.ashtakavarga && houseSAVOrChart.ashtakavarga.sav) ? null : null;
+                houseSAV = this.computeSAV(lSign, sMap);
+            }
+            if (!houseSAV || !houseSAV[10]) return "• अष्टकवर्ग संरेखण सामान्य है।";
             var lines = [];
             var h10 = houseSAV[10].bindus, h11 = houseSAV[11].bindus, h2 = houseSAV[2].bindus, h12 = houseSAV[12].bindus, h7 = houseSAV[7].bindus, h1 = houseSAV[1].bindus;
 
@@ -1484,7 +1499,8 @@
     // MODULE 11: KP SYSTEM ENGINE (कृष्णमूर्ति पद्धति कस्पल सब-लॉर्ड & 4-Step)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasKPEngine = {
-        predict: function(planetTable, domain) {
+        predict: function(planetTableOrChart, domain) {
+            domain = domain || 'general';
             var lines = [];
             if (domain === 'career' || domain === 'general' || domain === 'yoga') {
                 lines.push("• <b>दशम कस्पल सब-लॉर्ड वेध (KP 10th Cuspal Sub-Lord):</b> दशम भाव का कस्पल उप-स्वामी धन (2), सेवा/नौकरी (6) एवं लाभ (11) भावों का प्राथमिक सिग्निफिकेटर है। KP 4-स्टेप थ्योरी अनुसार यह कार्यक्षेत्र में स्वायत्तता, मान-सम्मान व निरंतर पदोन्नति का अकाट्य प्रमाण है।");

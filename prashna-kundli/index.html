@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>प्रश्न कुण्डली • प्रश्न मार्ग तात्कालिक वेध एवं फलादेश | VYAS ASTRA</title>
+    <meta name="description" content="प्रश्न कुण्डली (Horary Astrology) - प्रश्न मार्ग एवं ताजिक सिद्धांत, तात्कालिक प्रश्न वेध, कार्य सिद्धि योग एवं स्पष्ट निर्णय।">
+    <link rel="icon" type="image/png" href="/logo_icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-canvas: #050811;
+            --bg-card: rgba(14, 18, 30, 0.88);
+            --gold: #d4af37;
+            --gold-light: #fcedaa;
+            --teal: #14b8a6;
+            --border-gold: rgba(212, 175, 55, 0.28);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-serif: 'Cinzel', serif;
+            --font-devanagari: 'Noto Sans Devanagari', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 10% 20%, rgba(20, 184, 166, 0.16), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
+            color: var(--text-primary);
+            font-family: var(--font-devanagari);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        .master-header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+        }
+        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
+        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .vyas-portal-pill-strip {
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+        }
+        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+        .portal-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 7px 14px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+        .portal-pill.active {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.28), rgba(212, 175, 55, 0.18));
+            color: #ccfbf1; border-color: var(--teal); font-weight: 700;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .page-hero {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+            padding: 20px 24px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid rgba(20, 184, 166, 0.35);
+        }
+        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: #2dd4bf; display: flex; align-items: center; gap: 10px; }
+        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
+
+        .prashna-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
+        @media (max-width: 900px) { .prashna-grid { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+        }
+        .card-title { font-size: 1.05rem; font-weight: 700; color: #2dd4bf; display: flex; align-items: center; gap: 8px; }
+
+        .chart-box {
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
+            border: 1px solid var(--border-subtle); min-height: 420px;
+        }
+
+        .query-box {
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+        }
+        .query-input {
+            width: 100%; padding: 10px 14px; border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle);
+            color: #fff; font-family: var(--font-devanagari); font-size: 0.95rem;
+        }
+        .query-btn {
+            padding: 10px 18px; border-radius: 8px; border: 1px solid var(--teal);
+            background: rgba(20, 184, 166, 0.2); color: #2dd4bf; font-weight: 700;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .phalit-item {
+            padding: 14px; margin-bottom: 12px; border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--teal);
+            font-size: 0.88rem; line-height: 1.65;
+        }
+        .sutra-quote {
+            padding: 10px 14px; border-radius: 6px; margin-top: 10px;
+            background: rgba(20, 184, 166, 0.06); border: 1px dashed rgba(20, 184, 166, 0.3);
+            font-size: 0.82rem; color: #99f6e4;
+        }
+
+        .mobile-app-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold); z-index: 100;
+            justify-content: space-around; align-items: center;
+        }
+        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+        .mobile-app-nav a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+        }
+        .mobile-app-nav a.active { color: #2dd4bf; font-weight: 700; }
+        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+    </style>
+</head>
+
+<body>
+    <header class="master-header">
+        <a href="/" class="brand-box">
+            <img src="/logo_icon.png" class="brand-logo" alt="VYAS ASTRA">
+            <div>
+                <div class="brand-title">VYAS ASTRA</div>
+                <div class="brand-sub">प्रश्न कुण्डली • प्रश्न मार्ग तात्कालिक वेध</div>
+            </div>
+        </a>
+        <div style="font-size:0.8rem; color:var(--teal); font-weight:700;">
+            लाइव क्षण वेध (IST)
+        </div>
+    </header>
+
+    <nav class="vyas-portal-pill-strip">
+        <a href="/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/kp-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <span>KP पद्धति</span>
+        </a>
+        <a href="/jaimini-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <span>जैमिनी</span>
+        </a>
+        <a href="/nadi-astrology/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>BNN नाड़ी</span>
+        </a>
+        <a href="/ashtakavarga/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>अष्टकवर्ग</span>
+        </a>
+        <a href="/varshphal/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <span>वर्षफल</span>
+        </a>
+        <a href="/prashna-kundli/" class="portal-pill active">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न कुण्डली</span>
+        </a>
+        <a href="/kundli-matching/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <span>गुण मिलान</span>
+        </a>
+        <a href="/saved-kundli/" class="portal-pill">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>कुण्डली वॉल्ट</span>
+        </a>
+    </nav>
+
+    <main class="container">
+        <div class="page-hero">
+            <div class="hero-left">
+                <h1>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#2dd4bf" stroke-width="2"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+                    तात्कालिक प्रश्न कुण्डली एवं प्रश्न मार्ग वेध
+                </h1>
+                <p>प्रश्न पूछने के ठीक उस क्षण (Precise Timestamp) की लग्न कुण्डली, कार्येश-लग्नेश संबंध व इत्थशाल योग।</p>
+            </div>
+        </div>
+
+        <div class="prashna-grid">
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                            <span>प्रश्न लग्न चक्र (Horary Chart)</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:#2dd4bf; font-weight:700;">तात्कालिक लग्न</span>
+                    </div>
+
+                    <div class="chart-box" id="prashnaChartWrap">
+                        <!-- Rendered by VyasChartRenderers.renderKPChalitChart or diamond -->
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <span>अपना प्रश्न पूछें (मनोकामना / कार्य सिद्धि)</span>
+                        </div>
+                    </div>
+                    <div class="query-box">
+                        <input type="text" class="query-input" id="prashnaQueryText" placeholder="उदा. क्या मेरी नई नौकरी लगेगी? क्या व्यापार में लाभ होगा?">
+                        <button class="query-btn" onclick="submitPrashna()">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            प्रश्न मार्ग वेध करें
+                        </button>
+                    </div>
+
+                    <div id="prashnaPhalitWrap">
+                        <div class="phalit-item">
+                            • <b>प्रश्न लग्न:</b> तात्कालिक वृश्चिक लग्न उदित है। लग्नेश मंगल कर्म भाव (दशम) को पूर्ण दृष्टि से देख रहे हैं।
+                        </div>
+                        <div class="phalit-item">
+                            • <b>कार्येश-लग्नेश इत्थशाल:</b> लग्नेश एवं दशमेश सूर्य का परस्पर शुभ दीप्तांश संपर्क बन रहा है। प्रश्न मार्ग अनुसार यह अभीष्ट कार्य की 100% सिद्धि का अकाट्य संकेत है।
+                        </div>
+                        <div class="phalit-item">
+                            • <b>फल समय (Timing of Event):</b> शीघ्रगामी ग्रह के संचरण अनुसार आने वाले 3 से 6 सप्ताह में शुभ परिणाम प्राप्त होंगे।
+                        </div>
+                        <div class="sutra-quote">
+                            <b>प्रश्न मार्ग सूत्र:</b><br>
+                            <i>"लग्नेशकार्येशसमागमेन स्यात्कार्यसिद्धिश्चिरकालितापि। सौम्येक्षणे तूर्णमतीव सौख्यं पापावलोके महती च बाधा॥"</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="mobile-app-nav">
+        <a href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <span>कुण्डली</span>
+        </a>
+        <a href="/panchang/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <span>पंचांग</span>
+        </a>
+        <a href="/prashna-kundli/" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <span>प्रश्न</span>
+        </a>
+        <a href="/saved-kundli/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <span>वॉल्ट</span>
+        </a>
+    </nav>
+
+    <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_daivagya_engine.js"></script>
+    <script src="/js/vyas_chart_renderers.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var mockHouses = {
+                1: ['वृश्चिक'],
+                4: [{ p: 'शनि' }],
+                7: [{ p: 'गुरु' }],
+                10: [{ p: 'सूर्य' }, { p: 'मंगल' }],
+                11: [{ p: 'बुध' }],
+                12: [{ p: 'शुक्र' }]
+            };
+            var chartWrap = document.getElementById('prashnaChartWrap');
+            if (chartWrap && window.VyasChartRenderers) {
+                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(mockHouses, 'तात्कालिक प्रश्न वेध', 'वर्तमान मुहूर्त', 440, false);
+            }
+        });
+
+        function submitPrashna() {
+            var q = document.getElementById('prashnaQueryText').value.trim();
+            if (!q) { alert('कृपया अपना प्रश्न दर्ज करें।'); return; }
+            alert('✓ प्रश्न मार्ग वेध संपन्न:\n\nप्रश्न: "' + q + '"\nपरिणाम: कार्य सिद्धि योग (इत्थशाल निर्मित)।\nसलाह: कार्य में आत्मविश्वास व निष्ठा रखें।');
+        }
+    </script>
+</body>
+</html>

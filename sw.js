@@ -1,4 +1,6 @@
-// VYAS ASTRA Service Worker - Instant Self-Purge & Zero-Cache v12
+// VYAS ASTRA Service Worker - Web Push & Background Sync v14
+'use strict';
+
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
@@ -7,13 +9,11 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(keys.map((k) => caches.delete(k)));
-        }).then(() => {
-            return self.registration.unregister();
         }).then(() => self.clients.claim())
     );
 });
 
-// Network-only for all requests - no stale cache intercept
+// Network-only for all requests - ensures zero stale cache
 self.addEventListener('fetch', (event) => {
     event.respondWith(fetch(event.request));
 });
@@ -23,7 +23,7 @@ self.addEventListener('fetch', (event) => {
 // ----------------------------------------------------------------------
 self.addEventListener('push', (event) => {
     let data = {
-        title: '🌅 व्यास दैनिक पंचांग व शुभ मुहूर्त',
+        title: 'व्यास दैनिक पंचांग व शुभ मुहूर्त',
         body: 'आज का पंचांग, अभिजीत मुहूर्त एवं राहुकाल देखें।',
         icon: '/logo_icon.png',
         badge: '/logo_icon.png',
@@ -45,8 +45,8 @@ self.addEventListener('push', (event) => {
         vibrate: [100, 50, 100],
         data: data.data || { url: '/#daily' },
         actions: [
-            { action: 'open', title: '👁️ पंचांग देखें' },
-            { action: 'close', title: '✕ बंद करें' }
+            { action: 'open', title: 'पंचांग देखें' },
+            { action: 'close', title: 'बंद करें' }
         ]
     };
 
