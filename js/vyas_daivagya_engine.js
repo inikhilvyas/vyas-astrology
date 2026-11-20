@@ -1335,7 +1335,7 @@
 
             var blocks = [
                 '═══════════════════════════════════════════════════════',
-                '📊 VYAS DAIVAGYA ENGINE v3.0 — PRE-COMPUTED ANALYSIS',
+                '📊 VYAS DAIVAGYA ENGINE v4.0 — PRE-COMPUTED SHASTRA ANALYSIS',
                 '   Query Type: [' + route.toUpperCase() + '] | Zero-hallucination data',
                 '═══════════════════════════════════════════════════════',
                 '',
@@ -1384,19 +1384,51 @@
                 blocks.push(VyasDashaEngine.analyze(analysis, query));
             }
 
+            // Inject Classical Sutras from 22,000+ Bank
+            var sBank = (typeof window !== 'undefined' ? window.VyasSutrasBank : (typeof global !== 'undefined' ? global.VyasSutrasBank : null));
+            if (sBank && typeof sBank.matchChart === 'function') {
+                var matched = sBank.matchChart(analysis, route, 8);
+                if (matched && matched.length > 0) {
+                    blocks.push('');
+                    blocks.push('**📜 CLASSICAL SUTRAS CITATIONS (From 22,000+ Shastra Bank):**');
+                    matched.slice(0, 6).forEach(function(s) {
+                        blocks.push('• [' + s.src + '] ' + s.cond + ' => ' + s.pred);
+                    });
+                }
+            }
+
             blocks.push('');
             blocks.push('═══════════════════════════════════════════════════════');
-            blocks.push('⚠️ उपर्युक्त सभी डेटा chart.planet_table से गणित-आधारित है।');
-            blocks.push('आचार्य व्यास: इस pre-verified data को आधार बनाकर शास्त्रीय विश्लेषण करें।');
+            blocks.push('⚠️ उपर्युक्त सभी डेटा chart.planet_table एवं 22,000+ शास्त्रीय सूत्रों से गणित-आधारित है।');
+            blocks.push('आचार्य व्यास: इस pre-verified data को आधार बनाकर प्रामाणिक शास्त्रीय विश्लेषण करें।');
 
             return blocks.join('\n');
         },
 
-        
         /**
-         * Standalone / Direct HTML Formatter for UI & Fallbacks
-         * Provides zero-vagueness, instant mathematical answers for yogas, dasha, gochar
+         * Helper: Render Shastric Evidence Citation Card in HTML
          */
+        _renderSutrasHtml: function(sutras, maxCount) {
+            if (!sutras || !sutras.length) return '';
+            maxCount = maxCount || 4;
+            var list = sutras.slice(0, maxCount);
+            var h = "<div class='vyas-sutras-vault-card' style='margin-top:14px; margin-bottom:14px; padding:12px; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.25); border-radius:8px;'>" +
+                    "<div style='color:#d4af37; font-weight:700; font-size:0.86rem; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;'>" +
+                    "<span>📜 <b>शास्त्रीय प्रमाण (22,000+ सूत्र महा-वेध बैंक से प्रत्यक्ष वेध):</b></span>" +
+                    "<span style='font-size:0.75rem; background:rgba(212,175,55,0.15); color:#fbbf24; padding:2px 8px; border-radius:4px;'>प्रामाणिक श्लोक</span>" +
+                    "</div>";
+            list.forEach(function(s) {
+                h += "<div style='margin-bottom:8px; font-size:0.83rem; line-height:1.45; border-bottom:1px dashed rgba(255,255,255,0.08); padding-bottom:6px;'>" +
+                     "<b style='color:#60a5fa;'>[" + (s.src || "बृहत्पाराशर होराशास्त्र") + "]</b> " +
+                     "<span style='color:#f8fafc;'>स्थिति: <i>" + s.cond + "</i></span><br>" +
+                     "<span style='color:#94a3b8;'>➔ <b>शास्त्रीय फल:</b> " + s.pred + "</span>" +
+                     "</div>";
+            });
+            h += "<small style='color:#64748b; font-size:0.74rem;'>वेध आधार: महर्षि पराशर (BPHS), महर्षि भृगु, कल्याण वर्मा (सारावली), पृथुयशस (होरासार) व आधुनिक शोध।</small>" +
+                 "</div>";
+            return h;
+        },
+
         /**
          * Comprehensive Autonomous Predictive Formatter
          * Analyzes any query (Career, Wealth, Marriage, Health, Yogas, Dasha, Future)
@@ -1404,9 +1436,29 @@
          * and synthesizing an authentic, shastric prediction with 0 latency.
          */
         formatReading: function(query, chart) {
-            if (!chart || !chart.planet_table) return null;
             var q = (query || '').toLowerCase();
             var route = VyasQueryRouter.detect(query);
+            var sBank = (typeof window !== 'undefined' ? window.VyasSutrasBank : (typeof global !== 'undefined' ? global.VyasSutrasBank : null));
+
+            // SCENARIO 1: No active chart loaded — Shastric Axiom / Theoretical Query
+            if (!chart || !chart.planet_table) {
+                if (sBank && typeof sBank.searchSutras === 'function') {
+                    var searched = sBank.searchSutras(query, 6);
+                    if (searched && searched.length > 0) {
+                        var htmlShastra = "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
+                            "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>📜 शास्त्रीय सिद्धांत वेध: &quot;" + (query || "वैदिक ज्योतिष सूत्र") + "&quot;</span>" +
+                            "</div>" +
+                            "<b>ॐ नमः शिवाय। सादर प्रणाम जातक जी,</b><br><br>" +
+                            "आपके प्रश्न के संदर्भ में हमारे <b>22,000+ प्रामाणिक सूत्र महा-बैंक</b> से शास्त्रीय प्रमाण व फलित विधान इस प्रकार है:<br><br>" +
+                            this._renderSutrasHtml(searched, 5) +
+                            "<br><b>दैवज्ञ मार्गदर्शन:</b> किसी भी योग अथवा ग्रह स्थिति का व्यक्तिगत जीवन पर वास्तविक प्रभाव जानने के लिए लग्न, भावेश, नवांश (D-9) एवं वर्तमान विंशोत्तरी दशा का समन्वय अनिवार्य होता है।<br>" +
+                            "<small style='color:#94a3b8;'>💡 अपनी जन्मपत्रिका (जन्म तिथि, समय व स्थान) प्रविष्ट करने पर यह गणना आपकी व्यक्तिगत कुण्डली पर स्वतः परिकलित होगी।</small>";
+                        return htmlShastra;
+                    }
+                }
+                return null;
+            }
+
             var analysis = VyasChartAnalyzer.analyze(chart);
             if (!analysis) return null;
 
@@ -1419,13 +1471,28 @@
             var allYogas = VyasYogaEngine.detectAll(analysis, chart);
             var yogaNames = allYogas.filter(function(y){ return y.found; }).map(function(y){ return y.name; });
 
-            // Match classical sutras from in-memory VyasSutrasBank
+            // Match classical sutras from in-memory 22,000+ VyasSutrasBank
             var matchedSutras = [];
-            if (typeof window !== 'undefined' && window.VyasSutrasBank && typeof VyasSutrasBank.matchChart === 'function') {
-                try {
-                    matchedSutras = VyasSutrasBank.matchChart(analysis, route);
-                } catch(e) {}
+            var topicSutras = [];
+            if (sBank) {
+                if (typeof sBank.matchChart === 'function') {
+                    try { matchedSutras = sBank.matchChart(analysis, route, 15); } catch(e) {}
+                }
+                if (typeof sBank.searchSutras === 'function') {
+                    try { topicSutras = sBank.searchSutras(query, 6); } catch(e) {}
+                }
             }
+
+            // Combine and deduplicate
+            var combinedSutras = [];
+            var seenSutraText = {};
+            (topicSutras.concat(matchedSutras)).forEach(function(s) {
+                var k = (s.cond + ' ' + s.pred).substring(0, 45);
+                if (!seenSutraText[k]) {
+                    seenSutraText[k] = true;
+                    combinedSutras.push(s);
+                }
+            });
 
             // ─────────────────────────────────────────────────────────────
             // ROUTE A: YOGA & DOSHA INQUIRY
@@ -1437,7 +1504,7 @@
                         "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>🔮 व्यास अस्त्र: सूक्ष्म योग परीक्षण व शास्त्रीय निर्णय (Vyas Yoga Engine)</span>" +
                         "</div>" +
                         "<b>ॐ नमः शिवाय।</b><br><br>" +
-                        "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br>" +
+                        "<b> सादर प्रणाम आदरणीय " + name + " जी,</b><br>" +
                         "आपकी जन्म पत्रिका (लग्न: <b>" + lagna + "</b>, लग्नेश: <b>" + lagnaLord + "</b>) के गणितीय वेध अनुसार शास्त्रीय विश्लेषण प्रस्तुत है:<br><br>";
 
                     targetYogas.forEach(function(y) {
@@ -1452,17 +1519,12 @@
                                 "</div>";
                     });
 
-                    // Matched sutras supplement
-                    if (matchedSutras.length > 0) {
-                        html += "<div style='margin-top:10px; padding:10px; background:rgba(59,130,246,0.04); border:1px dashed rgba(59,130,246,0.25); border-radius:6px; font-size:0.83rem;'>" +
-                                "<b style='color:#60a5fa;'>📜 कुण्डली से प्रत्यक्ष सम्बद्ध प्रामाणिक शास्त्र सूत्र:</b><br>";
-                        matchedSutras.slice(0, 2).forEach(function(s) {
-                            html += "• <i>" + s.src + ":</i> जब '<b>" + s.cond + "</b>' हो, तो फल — " + s.pred + "<br>";
-                        });
-                        html += "</div>";
+                    // Matched sutras supplement from 22,000+ bank
+                    if (combinedSutras.length > 0) {
+                        html += this._renderSutrasHtml(combinedSutras, 4);
                     }
 
-                    html += "<br><small style='color:#94a3b8;'>✓ व्यास अस्त्र गणितीय योग वेध (Brihat Parashara Hora Shastra Standard)।</small>";
+                    html += "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र गणितीय वेध (Brihat Parashara Hora Shastra Standard)।</small>";
                     return html;
                 }
             }
@@ -1486,6 +1548,11 @@
                              "<b style='color:#d4af37;'>✨ इस दशा में फलित होने वाले मुख्य राजयोग:</b> " + yogaNames.slice(0, 4).join(', ') +
                              "</div>";
                 }
+
+                if (combinedSutras.length > 0) {
+                    dHtml += this._renderSutrasHtml(combinedSutras, 3);
+                }
+
                 dHtml += "<small style='color:#94a3b8;'>✓ व्यास अस्त्र सूक्ष्म विंशोत्तरी दशा काल वेध।</small>";
                 return dHtml;
             }
@@ -1521,21 +1588,17 @@
                 }
                 htmlC += "<br>";
 
-                // SFT Sutras for Career
-                var careerSutras = matchedSutras.filter(function(s){ return /career|profession|आजीविका|कर्म/i.test(s.domain); });
-                if (careerSutras.length > 0) {
-                    htmlC += "✦ <b>३. प्रामाणिक नाड़ी व पराशर सूत्र प्रमाण:</b><br>" +
-                             "<div style='background:rgba(255,255,255,0.02); border-left:2px solid #10b981; padding:8px 12px; border-radius:4px; font-size:0.83rem; margin-bottom:12px;'>" +
-                             "• <i>" + careerSutras[0].src + ":</i> " + careerSutras[0].pred + "<br>" +
-                             "</div>";
+                // SFT Sutras for Career from 22,000+ Bank
+                if (combinedSutras.length > 0) {
+                    htmlC += this._renderSutrasHtml(combinedSutras, 4);
                 }
 
-                htmlC += "✦ <b>४. दशा व आगामी स्वर्णिम समय-सीमा:</b><br>" +
-                         "वर्तमान में सक्रिय <b>" + dashaChain + "</b> आपके कर्म भाव को सक्रिय कर रही है। देवगुरु बृहस्पति का गोचर आपके कार्यक्षेत्र को संबल प्रदान कर रहा है, जिससे आगामी समय में नई जिम्मेदारियों व पदोन्नति का मार्ग प्रशस्त होगा।<br><br>" +
-                         "✦ <b>५. अचूक सात्विक कार्यक्षेत्र उपाय:</b><br>" +
+                htmlC += "✦ <b>३. दशा व आगामी स्वर्णिम समय-सीमा:</b><br>" +
+                         "वर्तमान में सक्रिय <b>" + dashaChain + "</b> आपके कर्म भाव को संबल प्रदान कर रही है। देवगुरु बृहस्पति का गोचर आपके कार्यक्षेत्र को गति दे रहा है, जिससे पदोन्नति एवं आर्थिक संवृद्धि का मार्ग प्रशस्त होगा।<br><br>" +
+                         "✦ <b>४. अचूक सात्विक कार्यक्षेत्र उपाय:</b><br>" +
                          "• नित्य प्रातः तांबे के लोटे से भगवान सूर्य को जल अर्पित कर <i>'ॐ घृणिः सूर्याय नमः'</i> का जप करें।<br>" +
                          "• शनिवार को किसी कर्मठ श्रमिक अथवा निर्धन को अन्न/वस्त्र का दान करें।<br><br>" +
-                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 0.001\" सूक्ष्म कर्मक्षेत्र वेध।</small>";
+                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र सूक्ष्म कर्मक्षेत्र वेध।</small>";
                 return htmlC;
             }
 
@@ -1567,12 +1630,16 @@
                              "• <b style='color:#fbbf24;'>" + dYogas.map(function(y){ return y.name; }).join(' • ') + "</b><br><br>";
                 }
 
+                if (combinedSutras.length > 0) {
+                    htmlW += this._renderSutrasHtml(combinedSutras, 4);
+                }
+
                 htmlW += "✦ <b>३. वित्तीय प्रवाह व समय-सीमा:</b><br>" +
                          "सक्रिय <b>" + dashaChain + "</b> धन भावों को संबल प्रदान कर रही है। व्यापारिक निर्णय अथवा निवेश में धैर्य रखें, संचित प्रयासों का श्रेष्ठ प्रतिफल प्राप्त होगा।<br><br>" +
                          "✦ <b>४. सात्विक धन संवर्धन उपाय:</b><br>" +
                          "• प्रत्येक शुक्रवार को सात्विक मिष्ठान्न का दान करें व घर में श्री सूक्त अथवा कनकधारा स्तोत्र का पाठ करें।<br>" +
                          "• पक्षियों को नियमित जल व दाना अर्पित करें।<br><br>" +
-                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध शास्त्रीय धन वेध।</small>";
+                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र शुद्ध शास्त्रीय धन वेध।</small>";
                 return htmlW;
             }
 
@@ -1595,11 +1662,16 @@
                     "• <b>सप्तम भाव:</b> " + h7.sign + " राशि (सप्तमेश: <b>" + l7 + "</b>, भाव " + (p7 ? p7.house : 1) + " में स्थित)।<br>" +
                     "• <b>दांपत्य कारक शुक्रदेव:</b> भाव " + (ven ? ven.house : 1) + " (" + (ven ? ven.sign : '') + " राशि) में संचरण कर रहे हैं।<br><br>" +
                     "✦ <b>२. मांगलिक दोष परीक्षण:</b><br>" +
-                    "• " + (mangal ? (mangal.found ? (mangal.partial ? '⚠️ <b>मंगल दोष उपस्थित किंतु शास्त्रीय परिहार से भंग।</b>' : '🔴 <b>मांगलिक प्रभाव उपस्थित — कुण्डली मिलान अनिवार्य।</b>') : '✅ <b>मांगलिक दोष पूर्णतः अनुपस्थित।</b>') : 'मांगलिक प्रभाव सामान्य।') + "<br><br>" +
-                    "✦ <b>३. सामंजस्य एवं सात्विक उपाय:</b><br>" +
-                    "• दांपत्य में परस्पर विश्वास, सम्मान व सामंजस्य को सर्वोच्च प्राथमिकता दें।<br>" +
-                    "• नित्य <i>'ॐ उमामहेश्वराभ्यां नमः'</i> का जप करें, यह दांपत्य जीवन को सुख व सौहार्द से परिपूर्ण करता है।<br><br>" +
-                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र सप्तम भाव वेध।</small>";
+                    "• " + (mangal ? (mangal.found ? (mangal.partial ? '⚠️ <b>मंगल दोष उपस्थित किंतु शास्त्रीय परिहार से भंग।</b>' : '🔴 <b>मांगलिक प्रभाव उपस्थित — कुण्डली मिलान अनिवार्य।</b>') : '✅ <b>मांगलिक दोष पूर्णतः अनुपस्थित।</b>') : 'मांगलिक प्रभाव सामान्य।') + "<br><br>";
+
+                if (combinedSutras.length > 0) {
+                    htmlM += this._renderSutrasHtml(combinedSutras, 4);
+                }
+
+                htmlM += "✦ <b>३. सामंजस्य एवं सात्विक उपाय:</b><br>" +
+                         "• दांपत्य में परस्पर विश्वास, सम्मान व सामंजस्य को सर्वोच्च प्राथमिकता दें।<br>" +
+                         "• नित्य <i>'ॐ उमामहेश्वराभ्यां नमः'</i> का जप करें, यह दांपत्य जीवन को सुख व सौहार्द से परिपूर्ण करता है।<br><br>" +
+                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र सप्तम भाव वेध।</small>";
                 return htmlM;
             }
 
@@ -1618,11 +1690,16 @@
                     "<b>चरक संहिता एवं पराशरीय होरा शास्त्र</b> अनुसार आरोग्य विश्लेषण:<br><br>" +
                     "• <b>लग्न एवं लग्नेश (" + lagnaLord + "):</b> भाव " + (l1 ? l1.house : 1) + " में " + analysis.lagnaStrength + " अवस्था में है।<br>" +
                     "• <b>षष्ठ (रोग) भाव:</b> " + h6.sign + " राशि (स्वामी: <b>" + h6.lord + "</b>)।<br>" +
-                    "• <b>आत्मकारक सूर्य एवं मन:कारक चन्द्रमा:</b> सूर्य (भाव " + (sun ? sun.house : 1) + ") व चन्द्र (भाव " + (moon ? moon.house : 1) + ") का संतुलन जीवन ऊर्जा निर्धारित कर रहा है।<br><br>" +
-                    "<b>सात्विक स्वास्थ्य संबल उपाय:</b><br>" +
-                    "• प्रातःकाल गुनगुने जल का सेवन करें व सूर्य नमस्कार का अभ्यास करें।<br>" +
-                    "• नित्य 11 बार <i>'महामृत्युंजय मंत्र'</i> का शांत मन से जप संपूर्ण आरोग्य का सर्वोत्तम कवच है।<br><br>" +
-                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र आरोग्य वेध।</small>";
+                    "• <b>आत्मकारक सूर्य एवं मन:कारक चन्द्रमा:</b> सूर्य (भाव " + (sun ? sun.house : 1) + ") व चन्द्र (भाव " + (moon ? moon.house : 1) + ") का संतुलन जीवन ऊर्जा निर्धारित कर रहा है।<br><br>";
+
+                if (combinedSutras.length > 0) {
+                    htmlH += this._renderSutrasHtml(combinedSutras, 4);
+                }
+
+                htmlH += "<b>सात्विक स्वास्थ्य संबल उपाय:</b><br>" +
+                         "• प्रातःकाल गुनगुने जल का सेवन करें व सूर्य नमस्कार का अभ्यास करें।<br>" +
+                         "• नित्य 11 बार <i>'महामृत्युंजय मंत्र'</i> का शांत मन से जप संपूर्ण आरोग्य का सर्वोत्तम कवच है।<br><br>" +
+                         "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र आरोग्य वेध।</small>";
                 return htmlH;
             }
 
@@ -1646,26 +1723,22 @@
                 "✦ <b>२. कुण्डली में सक्रिय प्रमुख वैदिक योग:</b><br>" +
                 "• <b style='color:#10b981;'>" + formedYogasStr + "</b><br><br>";
 
-            if (matchedSutras.length > 0) {
-                htmlGen += "✦ <b>३. प्रामाणिक शास्त्र सूत्र (Authentic Matched Sutras):</b><br>" +
-                           "<div style='background:rgba(255,255,255,0.02); border-left:2px solid var(--accent-gold); padding:8px 12px; border-radius:4px; font-size:0.83rem; margin-bottom:12px;'>" +
-                           "• <i>" + matchedSutras[0].src + ":</i> जब '<b>" + matchedSutras[0].cond + "</b>' हो ➔ " + matchedSutras[0].pred + "<br>" +
-                           "</div>";
+            if (combinedSutras.length > 0) {
+                htmlGen += this._renderSutrasHtml(combinedSutras, 4);
             }
 
-            htmlGen += "✦ <b>४. दैवज्ञ परामर्श व सात्विक साधना:</b><br>" +
+            htmlGen += "✦ <b>३. दैवज्ञ परामर्श व सात्विक साधना:</b><br>" +
                        "वर्तमान समय में अपने लक्ष्य के प्रति धैर्य, एकाग्रता एवं सात्विक निष्ठा बनाए रखें। कुण्डली के शुभ ग्रहों का संबल आपके कार्यों को सिद्धि की ओर अग्रसर कर रहा है।<br><br>" +
                        "• नित्य प्रातः भगवान सूर्यनारायण को अर्घ्य दें एवं संध्या समय <i>'ॐ नमः शिवाय'</i> का 108 बार मानसिक जप करें।<br><br>" +
-                       "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 0.001\" सूक्ष्म खगोलीय वेध प्रमाण।</small>";
+                       "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 22,000+ सूत्र सूक्ष्म खगोलीय वेध प्रमाण।</small>";
             return htmlGen;
         },
 
-                _houseAnalysis: function(analysis, houses) {
+        _houseAnalysis: function(analysis, houses) {
             return houses.map(function(h) {
                 return VyasHouseEngine.analyzeHouse(analysis, h);
             }).join('\n\n');
         }
     };
 
-})(window);
-
+})(typeof window !== 'undefined' ? window : global);
