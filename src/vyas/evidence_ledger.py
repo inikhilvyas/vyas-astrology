@@ -180,3 +180,4 @@ class EvidenceLedger:
             varga_confirmed=varga_confirmed,
             transit_triggered=transit_triggered
         )
+

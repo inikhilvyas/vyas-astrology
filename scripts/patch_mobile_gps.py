@@ -69,3 +69,4 @@ if "window.useCurrentMobileGPS" not in content:
 with open('mobile/index.html', 'w', encoding='utf-8') as f:
     f.write(content)
 print("Updated mobile/index.html successfully!")
+

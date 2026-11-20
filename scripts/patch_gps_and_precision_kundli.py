@@ -199,3 +199,4 @@ def patch_desktop(filepath):
 
 if __name__ == '__main__':
     patch_desktop('index.html')
+

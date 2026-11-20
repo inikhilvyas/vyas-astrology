@@ -120,3 +120,4 @@ def patch_ai_chat():
 
 if __name__ == "__main__":
     patch_ai_chat()
+

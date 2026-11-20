@@ -3,3 +3,4 @@ with open('index.html', 'r', encoding='utf-8') as f:
 
 idx = text.find('submitProfileEdit() {')
 print(text[idx:idx+2500])
+

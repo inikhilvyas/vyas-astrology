@@ -43,6 +43,10 @@ Write-Output "Pushing main to inikhil/master..."
 $res1 = git push $remoteUrl main:master 2>&1
 $res1 | ForEach-Object { $_ -replace $token, "[REDACTED]" }
 
+Write-Output "Pushing main to inikhil/fix-issues-20231025..."
+$res0 = git push $remoteUrl main:fix-issues-20231025 2>&1
+$res0 | ForEach-Object { $_ -replace $token, "[REDACTED]" }
+
 Write-Output "Pushing main to inikhil/main..."
 $res2 = git push $remoteUrl main:main 2>&1
 $res2 | ForEach-Object { $_ -replace $token, "[REDACTED]" }

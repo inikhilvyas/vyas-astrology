@@ -51,3 +51,4 @@ for p_name, p_id in planets:
 # Also calculate Mean Node (औसत राहु)
 res_mean, _ = swe.calc_ut(jd_ut, swe.MEAN_NODE, swe.FLG_SIDEREAL)
 print(f"{'राहु(औसत)':6s}: {fmt(res_mean[0])}")
+

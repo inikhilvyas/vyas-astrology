@@ -1,0 +1,58 @@
+# Chiron_in_Sign
+
+- Source: Google Drive file `0B8PLpDKw1NhKSy1jRlpEVVU0dlE`
+- Original filename: `Chiron_in_Sign.docx`
+- Extraction: DOCX text extraction
+- Converted (UTC): 2026-11-18T17:02:53.173367+00:00
+
+// PS Planet in Sign
+
+// Chiron in Sign
+
+[16.AR]
+
+Aries is the sign of selfhood and with Chiron here the sense of self may be weakened. Melanie Reinhart in Chiron and the Healing Journey says that sometimes the person feels as if they don't exist and have to take their sense of identity from others. I mentioned this to a friend who had Chiron in Aries opposing her Ascendant, and she said that it was true for her. She frequently felt that way. At the time, she was on her third marriage (there was also one live-in relationship), as she couldn't bear to be alone. Having a partner (opposition to the Ascendant) was the way she dealt with that feeling of non-being.
+
+[16.TA]
+
+Taurus is the sign of money and resources and it shows our ability to possess things. It also shows what we instinctively value, including ourselves. This is the sign that gives us our gut level sense of self-worth. Chiron here can give us a miser's urge to hold on to every penny while denying ourselves any of life's pleasures, or a rejection of "those low, materialistic values" and, consequently, a life of poverty. And guess what? Deep down inside, both are the same. They both deny themselves pleasure and enjoyment because they don't value themselves. Of course, as always with Chiron, there is the ability to give good advise to everyone else concerning their material needs and sense of self worth. People with Chiron in Taurus have to learn how to enjoy the basic physical pleasures of life. They won't be able to do this, however, until they deal with their damaged sense of self-worth.
+
+[16.GE]
+
+Gemini is communications. Those with Chiron here may talk compulsively, or, on the other hand, seldom speak. Both were, most likely, never listened to as children. The only difference is one keeps trying while the other gave up. This sounds something like Chiron in the third house, and, of course, there are similarities. Remember though, that the sign position shows how something acts while the house position shows where in your life it will manifest. Let's take a look at an example. Suppose you have two horoscopes in front of you. One has Chiron in Taurus in the 3rd house. The other has Chiron in Gemini in the 2nd house. Yes, there are similarities. You could say that both will spend a lot of time talking about money, possessions, and values. Both could be quite good at giving financial advice. What's the difference? The one with the Taurus Chiron in the 3rd house will tend to talk in a slower, methodical, and more practical way because that's how Taurus influences function. They would also tend to give financial advice that is conservative and rock solid. The person with Chiron in Gemini in the 2nd house, by contrast, could just as easily talk about trivial financial matters. Or they may constantly shift from one financial topic to another. They would be more likely to give financial advice that is based on the latest up to date information (or the latest fad). It is always good to keep in mind the difference between where a planet works and how.
+
+[16.CA]
+
+The superficial interpretation would be that there were childhood troubles with the mother. Brilliant deduction. Hey, who didn't have some childhood problems with both parents? The real key here is how we dealt with it. The positive part of Chiron in Cancer is that you can be very nurturing. This is a very good position for therapists and caregivers of any sort. The negative side is that you find it difficult to nurture yourself or let others nurture you. Everybody has some degree of difficulty in growing up and severing that psychological umbilical cord with mama. Chiron in Cancer people tend to take a longer time than most to do the job. Once you do this, though, and learn to accept as well as give nurturing, you should be fine. So stop whining and complaining.
+
+[16.LE]
+
+Chiron in Leo people have the ability to help others with their creativity. They could make good art teachers or art therapists. On the negative side, it could be an indicator that, as children, their creativity was either stifled or over stimulated. Some were blocked or ridiculed, ("Are you kidding? You'll never be a professional baseball player, or musician, or artist") while others were pushed by ambitious parents who liked to live through the child ("Hey, come to the Little League game and watch my kid play third base" or "My child is starring in the school play today"). Children may react by either trying extra hard to please Mommy and Daddy (even if they don't like their particular creative field) or they will shut down and stifle their own creative urge. The treatment for these Chiron problems is to get in touch with your own inner creative child again and relearn how to create for fun.
+
+[16.VI]
+
+Virgo in our horoscope shows where we can best deal with details, and how we deal with matters of health and general well being. Chiron placed here can produce a person who is excessively critical, obsessed with insignificant details, and cleanliness. Conversely, they may simply give up the struggle and be absolutely horrible when it comes to organizing, doing a decent job, or keeping clean. Hypochondria is also a possibility, but you could also get a person who neglects their own health while giving excellent advise about it to everyone else. Perhaps there was excessive criticism in their childhood.
+
+[16.LI]
+
+Relationships are affected by this placement. Libra shows the place in our life where we need (and usually want) to cooperate. With Chiron placed here, one possibility is that we could shun any cooperation and isolate ourselves (shades of the opposite sign, Aries). Another possibility is a partner who manages to open up our old psychological wounds (or causes some new ones). Conversely, the person with this placement could be the one to open other people's old wounds. Lots of times, Chiron in Libra people will desperately want a partner, but once they get one, they will drive them away.
+
+[16.SC]
+
+The issue here is power. Those with Chiron in Scorpio may fear their own power and try to suppress it. Conversely, they may feel powerless and try to cover this up by acting strong (even to the point of being a bully). Sex is only one way this may work out, and yes, having compulsive sex is one possibility. Another is an avoidance of sex because it's too "dangerous" (they may try to dominate me). This would be a perfect placement for a sex therapist who can help everyone else with their sexual problems but cannot help themselves. Inheritance matters may also be a sore point. Problems and upsets would tend to come with it.
+
+[16.SA]
+
+Sagittarius has to do with our ability to get the "big picture" and our ability to judge. The negative side of the sign is that it may show where we do not listen to anyone else because we already "understand" it all. For instance, if Chiron is in Sagittarius in the 2nd house (money) we may not listen to financial advice from others. We would be too busy giving our own. Always double-check any advice given to you by someone with Chiron in Sagittarius, especially if they claim to be an expert on the subject. Those with this Chiron placement who seem to be more modest and don't try to push their views on you are more likely to be the ones who give good advice.
+
+[16.CP]
+
+Capricorn has to do with our ability to control and organize. Chiron here can make you over organized and compulsively controlling. Conversely, there could be rebellion against being organized at all. As always, Chiron seems to do best when aimed outward, toward others. This is a good placement for an efficiency expert, or for someone whose career involves helping others organize things.
+
+[16.AQ]
+
+This can be a sort of Svengali placement. You may have a genius for helping other people express their genius. Aquarius (being an air sign) rules ideas. Its specialty is new, far-out, revolutionary, shocking, and bizarre ideas, the ones that society hasn't caught up with yet. As always with Chiron, someone with this placement may be devoted totally to radical, new systems of thought, or reject them entirely. In both cases, they may not even consider other points of view. The solution lies in remembering that Chiron serves as a bridge between Saturn (everything old and conservative) and Uranus (out with the old, in with the new, and do it damn fast). Don't stick blindly with the old, but don't throw it out before you think about it first. Look for a way to blend the old with the new and you will make a start to dealing with your Chiron in Aquarius.
+
+[16.PI]
+
+If you have this placement, make an extra effort to get rid of your unearned guilt. And please don't wander the world looking for people to "save," at least not until you have saved yourself first. Be careful of a tendency to play the "victim" yourself (or, more likely, to BE the victim). You do have the ability, however, to help everyone else be more imaginative and creative. In fact, doing that could be an excellent antidote for dealing with the negative side of this placement.

@@ -192,3 +192,4 @@ with open('api/ai_chat.php', 'w', encoding='utf-8') as f:
 print(f"📊 ai_chat.php changes: {abs(len(php) - len(original_php))} bytes {'removed' if len(php) < len(original_php) else 'added'}")
 
 print("\n✅ All patches applied. Run: node scripts/verify_index_syntax2.js")
+

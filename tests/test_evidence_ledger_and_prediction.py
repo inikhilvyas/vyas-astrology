@@ -100,3 +100,4 @@ def test_synthesize_prediction_full_flow():
         assert any(c in pred.confidence for c in ("[C1]", "[C2]", "[C3]"))
         assert len(pred.detailed_analysis) > 30
         assert len(pred.key_factors) > 0
+

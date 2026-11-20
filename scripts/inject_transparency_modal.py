@@ -86,3 +86,4 @@ with open('index.html', 'w', encoding='utf-8') as f:
     f.write(c)
 
 print('Successfully injected transparency modal and handler into index.html')
+

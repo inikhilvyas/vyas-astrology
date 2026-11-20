@@ -1,0 +1,9 @@
+with open('index.html', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+idx = text.find('computeMathematicalKundli(name, dobStr, tobStr, cityStr, gender, customLat, customLon) {')
+idx2 = text.find('return {', idx + 50000)
+print("Final return at", idx2)
+if idx2 != -1:
+    print(text[idx2:idx2+1500])
+

@@ -1,0 +1,12 @@
+{
+  "dispatched_at": "now",
+  "subscribers": 0,
+  "payload": {
+    "title": "🚩 पावन पर्व सूचना",
+    "body": "कल तुलसी विवाह है",
+    "icon": "/logo_icon.png",
+    "data": {
+      "url": "https://vyasastro.in/#daily"
+    }
+  }
+}

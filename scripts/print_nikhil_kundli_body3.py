@@ -3,3 +3,4 @@ with open('index.html', 'r', encoding='utf-8') as f:
 
 idx = text.find('isNikhilVyas &&')
 print(text[idx+5000:idx+7500])
+

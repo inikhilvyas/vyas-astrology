@@ -8835,7 +8835,7 @@
 
                 // 1. Try PHP Backend Proxy First (bypasses CORS on Hostinger & secures keys)
                 try {
-                    var historyToSend = (window.VyasAIEngine && window.VyasAIEngine.chatHistory) ? window.VyasAIEngine.chatHistory.slice(-8) : [];
+                    var historyToSend = (window.VyasAIEngine && window.VyasAIEngine.chatHistory) ? window.VyasAIEngine.chatHistory.slice(-4) : [];
                     var proxyRes = await fetch("/api/ai_chat.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -14339,7 +14339,7 @@
                     }
                     container.innerHTML = welcomeHtml + historyHtml;
                     if (window.VyasAIEngine) {
-                        window.VyasAIEngine.chatHistory = saved.slice(-10);
+                        window.VyasAIEngine.chatHistory = saved.slice(-6);
                     }
                 } else {
                     container.innerHTML = welcomeHtml;
@@ -14959,7 +14959,7 @@
             if (saved && saved.length > 0) {
                 // Also sync window.VyasAIEngine.chatHistory
                 if (window.VyasAIEngine) {
-                    window.VyasAIEngine.chatHistory = saved.slice(-10);
+                    window.VyasAIEngine.chatHistory = saved.slice(-6);
                 }
                 for (var i = 0; i < saved.length; i++) {
                     var m = saved[i];

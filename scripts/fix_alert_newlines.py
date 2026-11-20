@@ -6,3 +6,4 @@ for path in ['index.html', 'mobile/index.html']:
     with open(path, 'w', encoding='utf-8') as f:
         f.write(c)
 print('Fixed unescaped alert newlines successfully!')
+

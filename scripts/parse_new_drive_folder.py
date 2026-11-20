@@ -71,3 +71,4 @@ with open('scripts/new_drive_catalog.json', 'w', encoding='utf-8') as out:
         'folders': folders,
         'files': files
     }, out, indent=2, ensure_ascii=False)
+

@@ -1,6 +1,6 @@
 {
   "status": "HEALTHY",
-  "last_audit_ist": "18-11-2026 23:31:24 IST",
+  "last_audit_ist": "19-11-2026 10:04:37 IST",
   "audits": [
     {
       "name": "0.0000° Swiss Ephemeris NASA JPL Core",
@@ -20,35 +20,35 @@
     {
       "name": "Horary Prashna Marga Real-Time Engine",
       "status": "PASS",
-      "prashna_lagna": "कर्क 26.81°",
-      "prashnesha": "चन्द्र",
-      "moon_degree": "316.49°",
-      "details": "Live Horary Lagna: कर्क 26.81° (स्वामी: चन्द्र), चन्द्र भोगांश: 316.49°"
+      "prashna_lagna": "धनु 15.55°",
+      "prashnesha": "गुरु",
+      "moon_degree": "322.07°",
+      "details": "Live Horary Lagna: धनु 15.55° (स्वामी: गुरु), चन्द्र भोगांश: 322.07°"
     },
     {
       "name": "Classical Phalit Vault (10,500 Classical Sutras)",
       "status": "PASS",
-      "total_sutras": 10500,
-      "categories": 103,
-      "domains": 85,
+      "total_sutras": 15264,
+      "categories": 111,
+      "domains": 92,
       "fast_index_available": true,
       "sample_verified_sutra": "Bhrigu Naadi Sangraha (Page 21)",
-      "details": "Total 10500 classical sutras, 103 categories, 85 life domains actively queryable."
+      "details": "Total 15264 classical sutras, 111 categories, 92 life domains actively queryable."
     },
     {
       "name": "Groq AI LPU Copilot Gateway (Qwen 3.8-27B)",
       "status": "PASS",
       "active_keys": "2/2",
-      "latency_ms": 1034.5,
-      "details": "2 of 2 API failover keys active and responsive (1034.5 ms)."
+      "latency_ms": 532.8,
+      "details": "2 of 2 API failover keys active and responsive (532.8 ms)."
     },
     {
       "name": "Live vyasastro.in Hostinger Gateway",
       "status": "PASS",
       "http_code": 200,
-      "latency_ms": 374.0,
-      "payload_bytes": 903429,
-      "details": "HTTP 200 OK | Round-Trip Latency: 374.0 ms | Payload: 903429 bytes"
+      "latency_ms": 214.2,
+      "payload_bytes": 912596,
+      "details": "HTTP 200 OK | Round-Trip Latency: 214.2 ms | Payload: 912596 bytes"
     },
     {
       "name": "56-Page VIP Pro PDF Dossier Generator",
@@ -57,25 +57,25 @@
     }
   ],
   "panchang_today": {
-    "date_hi": "बुधवार, 18 नवंबर 2026",
-    "tithi": "शुक्ल पक्ष नवमी",
-    "nakshatra": "शतभिषा (पद 3)",
-    "abhijit": "❌ शास्त्रतः पूर्णतः वर्जित (बुधवार को अभिजित मुहूर्त का सर्वथा निषेध है)",
-    "rahu_kaal": "12:00 अपराह्न - 01:30 अपराह्न (पंचम भाग)",
+    "date_hi": "गुरुवार, 19 नवंबर 2026",
+    "tithi": "शुक्ल पक्ष दशमी",
+    "nakshatra": "पूर्वाभाद्रपद (पद 1)",
+    "abhijit": "11:44 पूर्वाह्न - 12:28 अपराह्न (8वाँ दिन-मुहूर्त)",
+    "rahu_kaal": "01:30 अपराह्न - 03:00 अपराह्न (षष्ठ भाग)",
     "special_event": "मार्गशीर्ष मास पावन शुक्ल नवमी / अयन वेध",
     "ayanamsha": "24°13'",
     "gochar_planets": [
-      "सूर्य: वृश्चिक 02°10' (विशाखा 4)",
-      "चन्द्र: कुंभ 16°29' (शतभिषा 3)",
-      "मंगल: सिंह 02°44' (मघा 1)",
-      "बुध: तुला 12°56' (स्वाति 2)",
-      "गुरु: सिंह 01°51' (मघा 1)",
-      "शुक्र: कन्या 29°04' (चित्रा 2)",
-      "शनि: मीन 14°08' (उत्तराभाद्रपद 4)",
-      "राहु: कुंभ 00°53' (धनिष्ठा 3)",
-      "केतु: सिंह 00°53' (मघा 1)"
+      "सूर्य: वृश्चिक 02°37' (विशाखा 4)",
+      "चन्द्र: कुंभ 22°04' (पूर्वाभाद्रपद 1)",
+      "मंगल: सिंह 02°56' (मघा 1)",
+      "बुध: तुला 13°17' (स्वाति 2)",
+      "गुरु: सिंह 01°52' (मघा 1)",
+      "शुक्र: कन्या 29°09' (चित्रा 2)",
+      "शनि: मीन 14°07' (उत्तराभाद्रपद 4)",
+      "राहु: कुंभ 00°52' (धनिष्ठा 3)",
+      "केतु: सिंह 00°52' (मघा 1)"
     ],
-    "gochar_summary": "सूर्य: वृश्चिक 02°10' (विशाखा 4) • चन्द्र: कुंभ 16°29' (शतभिषा 3) • मंगल: सिंह 02°44' (मघा 1) • बुध: तुला 12°56' (स्वाति 2) • गुरु: सिंह 01°51' (मघा 1) • शुक्र: कन्या 29°04' (चित्रा 2) • शनि: मीन 14°08' (उत्तराभाद्रपद 4) • राहु: कुंभ 00°53' (धनिष्ठा 3) • केतु: सिंह 00°53' (मघा 1)",
-    "notification_preview": "🌅 बुधवार, 18 नवंबर 2026 | शुक्ल पक्ष नवमी | शतभिषा (पद 3) | अभिजित: ❌ शास्त्रतः पूर्णतः वर्जित (बुधवार को अभिजित मुहूर्त का सर्वथा निषेध है)"
+    "gochar_summary": "सूर्य: वृश्चिक 02°37' (विशाखा 4) • चन्द्र: कुंभ 22°04' (पूर्वाभाद्रपद 1) • मंगल: सिंह 02°56' (मघा 1) • बुध: तुला 13°17' (स्वाति 2) • गुरु: सिंह 01°52' (मघा 1) • शुक्र: कन्या 29°09' (चित्रा 2) • शनि: मीन 14°07' (उत्तराभाद्रपद 4) • राहु: कुंभ 00°52' (धनिष्ठा 3) • केतु: सिंह 00°52' (मघा 1)",
+    "notification_preview": "🌅 गुरुवार, 19 नवंबर 2026 | शुक्ल पक्ष दशमी | पूर्वाभाद्रपद (पद 1) | अभिजित: 11:44 पूर्वाह्न - 12:28 अपराह्न (8वाँ दिन-मुहूर्त)"
   }
 }

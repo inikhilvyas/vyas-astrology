@@ -25,3 +25,4 @@ d = int(rem)
 m = int((rem - d) * 60)
 s = int(round(((rem - d) * 60 - m) * 60))
 print(f"Tropical Asc - Ayanamsa: {d:02d}°{m:02d}'{s:02d}\" ({asc_sid:.4f}°)")
+

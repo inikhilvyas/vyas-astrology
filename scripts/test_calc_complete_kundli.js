@@ -220,3 +220,4 @@ console.log("D1 Asc:", resUser.builtCharts.d1.ascSign, "| House 1:", resUser.bui
 console.log("D9 Asc:", resUser.builtCharts.d9.ascSign, "| House 1:", resUser.builtCharts.d9.houses[1]);
 console.log("D10 Asc:", resUser.builtCharts.d10.ascSign, "| House 1:", resUser.builtCharts.d10.houses[1]);
 console.log("D60 Asc:", resUser.builtCharts.d60.ascSign, "| House 1:", resUser.builtCharts.d60.houses[1]);
+

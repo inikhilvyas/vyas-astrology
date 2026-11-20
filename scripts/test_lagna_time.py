@@ -14,3 +14,4 @@ for sec in range(0, 180, 10):
     m = int((rem - d) * 60)
     s = int(round(((rem - d) * 60 - m) * 60))
     print(f"Time 16:{51 + sec//60}:{sec%60:02d} -> Lagna: {d:02d}°{m:02d}'{s:02d}\" ({lagna:.4f}°)")
+

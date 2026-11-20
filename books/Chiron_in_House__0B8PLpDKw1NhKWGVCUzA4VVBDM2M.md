@@ -1,0 +1,58 @@
+# Chiron_in_House
+
+- Source: Google Drive file `0B8PLpDKw1NhKWGVCUzA4VVBDM2M`
+- Original filename: `Chiron_in_House.docx`
+- Extraction: DOCX text extraction
+- Converted (UTC): 2026-11-18T17:02:47.813186+00:00
+
+// PH Planet in House
+
+// Chiron in House
+
+[16.01]
+
+Chiron here can make you like a knight in shining armor, always ready to fight for the underdog. Usually, while you are doing this, you are neglecting yourself. You could also be a wise councilor (especially in health matters) but you seem to have trouble taking your own advice. A 1st house Chiron can be a gifted teacher, and, of course, you can teach others how to do something better than you can do it yourself. A neat trick to get around this: Give yourself advice as if you were someone else. Then maybe you will take it.
+
+[16.02]
+
+Chiron teaches and gives advise. The 2nd house is money, possessions, and values. You can show other people how to take care of their money better than you take care of your own. In fact, your own finances could be a mess. Sometimes, this placement can make for a miser, but the money collected never brings any pleasure or get rid of the inner fear that there will be no resources. Most likely, this is because the person has a low sense of self-worth and feels that they don't really deserve any money or possessions. In other cases, they may squander or give away what they have for the same reason. It is important to remember that if there are problems with money or possessions, that these are most likely not the real issue. The sense of self-worth is the key here.
+
+[16.03]
+
+If you don't have any brothers or sisters, you may experience this Chiron placement as a lack, a hole in your life. If you do, then there could be continual problems with at least one sibling. This is a good placement for a voice coach or speech therapist. It is likely that you will be able to teach others to speak better than you do. This placement tends to increase the chance of communication problems of one sort or another. No, it does not guarantee a speech defect. Instead, there could be problems with making oneself understood. In some cases, this could indicate that one wasn't listened to as a child. That could trigger a lifelong quest to "make others listen to me." However, no matter how much they do, there is frequently a feeling that "they are still not listening." The problem is that no matter how much they listen to you now, it doesn't get rid of the pain you felt in childhood when they didn't. Mercury/Chiron stress aspects are likely to produce the same result. Recognizing this is a first step to leaving the pain behind.
+
+[16.04]
+
+Well, just about everyone had some trouble or other in childhood with their parents. Chiron in the 4th house will just make it a little more noticeable. The home itself would tend to be an issue here. Perhaps one is so busy outside the home that they cannot spend much time there, or their work forces them to travel and be away frequently. The father is more likely to have been chronically ill, away from home, or emotionally unavailable. Perhaps there could be a "don't feel at home anywhere" attitude. Chiron in the 4th house might work out in other ways as well. This placement could conceivably show a person who can help everyone else with their home, while their own place is a wreck.
+
+[16.05]
+
+If you need romantic advice, go to someone who has Chiron in the 5th house. Please don't ask them about their own love life, as that would embarrass them. You can also go to people who have this placement for advise on children, sports and games, gambling, and the stock market. Realistically, one does have to look at the rest of the chart because, after all, about one out of twelve people have this Chiron. And you wouldn't, of course, ask a five-year old who had it for advise. But this placement is generally good for counseling in those areas. Just remember to do as they say, but don't do as they do. Chiron in the 5th house can make for folks who are great coaches, helping players to perform better than they themselves could. It could also show people who are great with kids, but either have chronic troubles with their own, or have none of their own. This can be an indicator that you can train your children to be happier and more successful than you ever could. Watch out though. If Chiron is afflicted, you will drive your kids to succeed in the areas that you would have liked to succeed in but that they don't really like at all. The most frustrating one is the great lover who can always satisfy their partner better than they themselves could be satisfied.
+
+[16.06]
+
+You can always help (or teach) co-workers do the job better than you can do it. Perhaps you are a whiz at helping everyone else get healthy (the 6th house rules health) while you still smoke and eat junk food. Learn to take care of yourself every now and then. Sometimes it works out in the opposite fashion. Someone with a 6th house Chiron might demand that everyone else serve them, and they are usually never satisfied. Of course, obviously, this causes problems too. And oh yes, let us not forget the tendency toward eating disorders. This can also manifest as strange likes and dislikes in the food department.
+
+[16.07]
+
+This one might spend all of their time taking care of a partner who has some debility. It is also someone who gives great advise on marriage, while their own marriage is on the rocks (or they might not even be married). This can work for business partnerships as well. You can take great care of a partner and teach them how to do the business better than you ever could. Watch out that they don't dump you as soon as they learn all that they can from you.
+
+[16.08]
+
+What a great sex therapist you can be. A more likely scenario is that you have the ability to bring out the sexual best in a romantic partner, while giving yourself the short end of the stick (no pun intended). But the 8th house rules more than sex. You could also get stuck with taking care of partnership resources because "you're so good at it," or, conversely, keep getting partners who want to "take care" of it and do you out of your fair share. Perhaps you become too dependent on money from others for support, or too much of what you earn goes to support others. You might tend to accept other people's values (your family, group or society) too readily. One other thing. The myth of Chiron can actually come alive with this placement. You could have a talent for healing or rehabilitating others, but not yourself.
+
+[16.09]
+
+Perfect for a travel agent who sends everyone else on fantastic trips while they are stuck in the office doing the booking, or a publisher or writing teacher who gets everyone else's books before the public, while secretly longing to write and publish their own. Parents with this placement of Chiron frequently tend to push their children to pursue the higher education that they themselves never had a chance to get. Negatively, this could mean forcing them into studying what the parents wished that they had studied, and not what the kids really want. There could also be jealousy here (Saturn) and the parents could actually take steps to deprive their children of higher education. The 9th house also rules religion. Sometimes this leads to thinking that the fanatic pursuit of some religious doctrine will cure all of one's inner wounds. This could also manifest as obsessive travel or study.
+
+[16.10]
+
+Career and public prestige are the battlegrounds with this placement of Chiron. Yes, this is a great placement for running an organization in the medical or healing field, but frequently, no matter what the career, someone with a 10th house Chiron will feel that they are taking care of everybody and everything else except themselves. As usual, there will frequently be an uncanny ability to help everyone else succeed better than they could ever have done themselves. It could also work out the other way. There may be a total rejection of any sort of ambition or responsibility, most likely due to fear of failure. Perhaps the parents pushed you too hard to succeed and really got on your case when you slipped up (or even when you didn't). The other side of the coin is that some parents don't want their children to succeed and always put them down. You can get either reaction to an upbringing of that nature: a compulsive need to achieve or a rejection of any success or responsibility.
+
+[16.11]
+
+The problem areas are friends, hopes, and wishes. On the one hand, there could be difficulty having or holding on to friends, or a fear of crowds or groups. On the other hand, one may compulsively seek out friends (or join groups, especially groups that want to change society) in order to compensate for inner fears of loneliness. You might get more than your share of "friends" who take advantage and drain you. More often, you give to friends whether they want it or not because this gives you a feeling of control (Saturn). But you could be the drainer here, always asking things of friends in order to compensate for a psychological neediness that never seems to be filled.
+
+[16.12]
+
+ As always, Chiron shows where we can do more for others than ourselves. A 12th house Chiron may compulsively try to take care of the poor the sick, and the unfortunate while neglecting their own needs and those of their own family. Conversely, there may be malingering and the person with this placement may themselves always seem in "need" because of one (frequently self-caused) "problem" after another. This placement tends to make a person feel tired and fatigued. If you have this one, be sure to get plenty of rest.

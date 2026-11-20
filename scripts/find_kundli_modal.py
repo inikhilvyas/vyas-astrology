@@ -14,3 +14,4 @@ for m in re.finditer(r'नई कुण्डली', text):
     start = max(0, m.start() - 150)
     end = min(len(text), m.end() + 150)
     print("Match around 'नई कुण्डली':\n", text[start:end], "\n---")
+

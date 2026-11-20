@@ -383,3 +383,4 @@ def patch_index_html():
 
 if __name__ == "__main__":
     patch_index_html()
+
