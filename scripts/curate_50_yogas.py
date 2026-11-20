@@ -533,3 +533,4 @@ ALL_50_YOGAS_CURATED = [
 ]
 
 print(f"Total Curated Yoga Samples: {len(ALL_50_YOGAS_CURATED)}")
+

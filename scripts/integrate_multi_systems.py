@@ -596,3 +596,4 @@ with open(ENGINE_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
 
 print(f"Successfully integrated all 5 astrology systems into {ENGINE_PATH}!")
+

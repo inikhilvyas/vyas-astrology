@@ -25,9 +25,9 @@
     <meta name="description"
         content="व्यास अस्त्र - उच्च-परिशुद्धता वैदिक ज्योतिष, वास्तविक जन्म कुण्डली, 5-स्तरीय विंशोत्तरी दशा, अष्टकवर्ग (SAV/BAV/प्रस्तार), केपी, जैमिनी, नाड़ी एवं 56-पृष्ठ महा-दस्तावेज़।">
     <meta name="keywords"
-        content="वैदिक ज्योतिष, जन्म कुण्डली, अष्टकवर्ग, प्रस्तार अष्टकवर्ग, विंशोत्तरी दशा, केपी ज्योतिष, जैमिनी, नाड़ी, गोचर 2026, साढ़े साती, निखिल व्यास, vyas astra">
+        content="वैदिक ज्योतिष, जन्म कुण्डली, अष्टकवर्ग, प्रस्तार अष्टकवर्ग, विंशोत्तरी दशा, केपी ज्योतिष, जैमिनी, नाड़ी, गोचर 2026, साढ़े साती, vyas astra">
     <meta name="robots" content="index, follow">
-    <meta name="author" content="Nikhil Vyas">
+    <meta name="author" content="VYAS ASTRA">
 
     <!-- Canonical & Mobile Alternate Links -->
     <link rel="canonical" href="https://vyasastro.in/">
@@ -3087,8 +3087,7 @@
         <div class="cockpit-col">
             <!-- Scrollable Tab Bar -->
             <nav class="tab-scroll-nav">
-                <button class="tab-nav-btn active" onclick="VyasDesktop.switchTab('daily', this)">दैनिक राशिफल व
-                    पंचांग</button>
+                <button class="tab-nav-btn active" onclick="VyasDesktop.switchTab('daily', this)">दैनिक व्यक्तिगत राशिफल</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('dasha', this)">विंशोत्तरी दशा
                     (5-स्तर)</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('predictions', this)">विस्तृत
@@ -3221,169 +3220,21 @@
                         </div>
                     </div>
 
-                    <!-- Panchang & Choghadiya Box with City Selector -->
-                    <div class="content-card"
-                        style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(10,17,36,0.8)); border:1.5px solid var(--border-gold);">
-                        <div class="card-heading"
-                            style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="display:flex; align-items:center; gap:8px;">
-                                🏛️ दैनिक वैदिक पंचांग एवं चौघड़िया (Hindu Calendar Observatory)
-                            </span>
-                            <span id="panchangLiveClock"
-                                style="font-family:var(--font-mono); font-weight:700; color:var(--primary-navy); font-size:0.95rem;">--:--:--</span>
-                        </div>
-
-                        <!-- Location & Date Bar -->
-                        <div
-                            style="display:grid; grid-template-columns:1.5fr 1fr; gap:12px; margin-bottom:14px; background:var(--bg-card); padding:10px 14px; border-radius:8px; border:1px solid var(--border-gold-soft);">
-                            <div>
-                                <label
-                                    style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;"><svg
-                                        class="v-icon v-pin" viewBox="0 0 24 24" width="15" height="15" fill="none"
-                                        stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                        style="display:inline-block; vertical-align:middle; margin-right:4px;">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                                        <circle cx="12" cy="10" r="3" />
-                                    </svg>स्थान / वेधशाला चुनें:</label>
-                                <select id="panchangCitySelect" onchange="VyasDesktop.onPanchangCityChange(this.value)"
-                                    style="width:100%; padding:8px 12px; font-size:0.88rem; font-weight:600; border-radius:6px; background:var(--bg-canvas); color:var(--text-primary); border:1px solid var(--border-gold);">
-                                    <option value="ayodhya">अयोध्या धाम (Ayodhya)</option>
-                                    <option value="varanasi">काशी / वाराणसी (Kashi)</option>
-                                    <option value="ujjain">उज्जैन महाकाल (Ujjain)</option>
-                                    <option value="mathura">मथुरा / वृन्दावन (Mathura)</option>
-                                    <option value="haridwar">हरिद्वार (Haridwar)</option>
-                                    <option value="puri">श्री जगन्नाथ पुरी (Puri)</option>
-                                    <option value="tirupati">तिरुपति बालाजी (Tirupati)</option>
-                                    <option value="rameshwaram">रामेश्वरम (Rameshwaram)</option>
-                                    <option value="dwarka">द्वारका धाम (Dwarka)</option>
-                                    <option value="somnath">सोमनाथ (Somnath)</option>
-                                    <option value="jaipur" selected>जयपुर वेधशाला (Jaipur)</option>
-                                    <option value="jodhpur">जोधपुर (Jodhpur)</option>
-                                    <option value="pali">पाली (Pali, Rajasthan)</option>
-                                    <option value="delhi">नई दिल्ली (New Delhi)</option>
-                                    <option value="mumbai">मुंबई (Mumbai)</option>
-                                    <option value="kolkata">कोलकाता (Kolkata)</option>
-                                    <option value="bengaluru">बेंगलुरु (Bengaluru)</option>
-                                    <option value="chennai">चेन्नई (Chennai)</option>
-                                    <option value="hyderabad">हैदराबाद (Hyderabad)</option>
-                                    <option value="ahmedabad">अहमदाबाद (Ahmedabad)</option>
-                                    <option value="pune">पुणे (Pune)</option>
-                                    <option value="patna">पटना (Patna)</option>
-                                    <option value="lucknow">लखनऊ (Lucknow)</option>
-                                    <option value="kathmandu">काठमांडू (Kathmandu, Nepal)</option>
-                                    <option value="london">लंदन (London, UK)</option>
-                                    <option value="newyork">न्यू यॉर्क (New York, USA)</option>
-                                    <option value="sanfrancisco">सैन फ्रांसिस्को (San Francisco, USA)</option>
-                                    <option value="toronto">टोरंटो (Toronto, Canada)</option>
-                                    <option value="dubai">दुबई (Dubai, UAE)</option>
-                                    <option value="singapore">सिंगापुर (Singapore)</option>
-                                    <option value="sydney">सिडनी (Sydney, Australia)</option>
-                                    <option value="custom">+ कस्टम स्थान (Any Coordinates)</option>
-                                </select>
+                    <!-- Gateway to Dedicated Panchang Page -->
+                    <div style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(12,19,36,0.85)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 24px; margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+                        <div style="display:flex; align-items:center; gap:14px;">
+                            <div style="width:44px; height:44px; border-radius:10px; background:rgba(212,175,55,0.15); border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </div>
                             <div>
-                                <label
-                                    style="font-size:0.78rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">📅
-                                    दिनांक चुनें:</label>
-                                <input type="date" id="panchangDateInput"
-                                    onchange="VyasDesktop.onPanchangDateChange(this.value)"
-                                    style="width:100%; padding:8px 12px; font-size:0.84rem; border-radius:6px; background:var(--bg-canvas); color:var(--text-primary); border:1px solid var(--border-gold);">
+                                <b style="color:#d4af37; font-size:1.05rem; display:block;">दैनिक वैदिक पंचांग, चौघड़िया एवं शुभ मुहूर्त वेधशाला</b>
+                                <p style="color:#94a3b8; font-size:0.84rem; margin-top:3px;">तिथि, वार, नक्षत्र, योग, करण, अभिजित मुहूर्त, राहुकाल, 120+ नगर वेधशालाएं एवं 16 पहर दिन-रात्रि चौघड़िया।</p>
                             </div>
                         </div>
-
-                        <!-- Astronomical Sun / Moon Box -->
-                        <div
-                            style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:12px; text-align:center;">
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.76rem;">सूर्योदय (Sunrise)</div>
-                                <b style="color:#f59e0b; font-size:0.95rem;" id="dPanSunrise">06:46 AM</b>
-                            </div>
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.76rem;">सूर्यास्त (Sunset)</div>
-                                <b style="color:#ef4444; font-size:0.95rem;" id="dPanSunset">05:38 PM</b>
-                            </div>
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.76rem;">दिनमान (Day Length)</div>
-                                <b style="color:var(--primary-navy); font-size:0.95rem;" id="dPanDayLen">10 घं 52 मि</b>
-                            </div>
-                        </div>
-
-                        <!-- 5 Panchanga Angas with End Times -->
-                        <div
-                            style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin-bottom:14px; font-size:0.84rem;">
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.74rem;">वार (Vara)</div>
-                                <b id="dPanVara">शनिवार (शनि देव)</b>
-                            </div>
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.74rem;">तिथि (Tithi)</div>
-                                <b id="dPanTithi">शुक्ल पक्ष तृतीया</b><br>
-                                <span style="font-size:0.74rem; color:var(--primary-navy);" id="dPanTithiEnd">रात्रि
-                                    10:48 तक</span>
-                            </div>
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.74rem;">नक्षत्र (Nakshatra)</div>
-                                <b id="dPanNakshatra">अनुराधा (चरण 1)</b><br>
-                                <span style="font-size:0.74rem; color:var(--primary-navy);" id="dPanNakEnd">दोपहर 02:14
-                                    तक</span>
-                            </div>
-                            <div
-                                style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">
-                                <div style="color:var(--text-muted); font-size:0.74rem;">योग एवं करण (Yoga & Karana)
-                                </div>
-                                <b id="dPanYoga">सिद्धि योग</b> • <span id="dPanKarana">गर</span><br>
-                                <span style="font-size:0.74rem; color:var(--primary-navy);" id="dPanYogaEnd">सायं 06:22
-                                    तक</span>
-                            </div>
-                        </div>
-
-                        <!-- Shubh & Inauspicious Muhurats -->
-                        <div
-                            style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; font-size:0.84rem;">
-                            <div
-                                style="background:rgba(16,185,129,0.1); border:1px solid #10b981; padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <b style="color:#10b981;">अभिजीत मुहूर्त (सर्वकार्य सिद्धि):</b><br>
-                                    <span style="font-size:0.74rem; color:var(--text-secondary);">दोपहर का सर्वाधिक शुभ
-                                        मुहूर्त</span>
-                                </div>
-                                <b style="color:#10b981; font-family:var(--font-mono); font-size:0.92rem;"
-                                    id="dPanAbhijit">11:58 AM - 12:44 PM</b>
-                            </div>
-                            <div
-                                style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; padding:10px 14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <b style="color:#ef4444;">राहुकाल (वर्जित त्याज्य समय):</b><br>
-                                    <span style="font-size:0.74rem; color:var(--text-secondary);">नया कार्य व यात्रा
-                                        वर्जित</span>
-                                </div>
-                                <b style="color:#ef4444; font-family:var(--font-mono); font-size:0.92rem;"
-                                    id="dPanRahu">01:30 PM - 03:00 PM</b>
-                            </div>
-                        </div>
-
-                        <!-- 16 Day & Night Choghadiya Grid -->
-                        <div style="margin-bottom:6px;">
-                            <div
-                                style="font-size:0.84rem; font-weight:700; color:var(--primary-navy); margin-bottom:8px;">
-                                <svg class="v-icon v-time" viewBox="0 0 24 24" width="15" height="15" fill="none"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    style="display:inline-block; vertical-align:middle; margin-right:4px;">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                </svg>दैनिक दिन एवं रात्रि चौघड़िया (16 पहर मुहूर्त वेध - सूर्योदय व सूर्यास्त अनुसार)
-                            </div>
-                            <div id="dPanChoghadiyaGrid"
-                                style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; font-size:0.78rem; text-align:center;">
-                            </div>
-                        </div>
+                        <a href="/panchang/" class="p-btn primary" style="text-decoration:none; padding:10px 22px; font-weight:700; font-size:0.9rem; background:linear-gradient(135deg,#d4af37,#aa820a); color:#050811; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
+                            <span>पूर्ण पंचांग खोलें</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
                     </div>
                 </div>
 

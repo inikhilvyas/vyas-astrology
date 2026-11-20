@@ -132,7 +132,7 @@
          * 2. JAIMINI KARAKAMSHA & SWAMSHA CHART
          * Renders the Navamsha sign of Atmakaraka (AK) as House 1 (Lagna) with 7 Chara Karaka tags.
          */
-        renderJaiminiKarakamsaChart: function(karakamsaLagnaSignNum, housesData, karakas, size, isLight) {
+        renderJaiminiKarakamsaChart: function(karakamsaLagnaSignNum, housesData, karakas, size, isLight, chartTypeTitle) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;
@@ -179,7 +179,54 @@
                 12: [s - q, q / 2 + 2]
             };
 
+            var signsList = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
             var lagnaSign = parseInt(karakamsaLagnaSignNum) || 1;
+            var isSvamsa = (chartTypeTitle === 'स्वांश' || chartTypeTitle === 'Svamsa' || chartTypeTitle === 'Svamsha');
+            var chartHeaderLabel = isSvamsa ? 'स्वांश लग्न (D-9)' : 'कारकांश लग्न (D-1)';
+
+            // Build properly rotated houses based on the true sign of each planet
+            var rotatedHouses = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: [] };
+
+            if (Array.isArray(housesData)) {
+                housesData.forEach(function (p) {
+                    var sName = p.sign || p.r || '';
+                    var sIdx = signsList.indexOf(sName);
+                    if (sIdx !== -1) {
+                        var hNum = ((sIdx + 1 - lagnaSign + 12) % 12) + 1;
+                        rotatedHouses[hNum].push(p);
+                    }
+                });
+            } else if (housesData && typeof housesData === 'object') {
+                var hasSignMap = false;
+                for (var hKey = 1; hKey <= 12; hKey++) {
+                    var list = housesData[hKey] || [];
+                    for (var pi = 0; pi < list.length; pi++) {
+                        var it = list[pi];
+                        if (typeof it === 'object' && it !== null && (it.sign || it.r)) {
+                            hasSignMap = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (hasSignMap) {
+                    for (var hKey = 1; hKey <= 12; hKey++) {
+                        var list = housesData[hKey] || [];
+                        for (var pi = 0; pi < list.length; pi++) {
+                            var it = list[pi];
+                            if (typeof it === 'object' && it !== null && (it.sign || it.r)) {
+                                var sIdx = signsList.indexOf(it.sign || it.r);
+                                if (sIdx !== -1) {
+                                    var hNum = ((sIdx + 1 - lagnaSign + 12) % 12) + 1;
+                                    rotatedHouses[hNum].push(it);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    rotatedHouses = housesData;
+                }
+            }
 
             // Map karakas for fast tag lookup
             var karakaTagMap = {};
@@ -199,22 +246,22 @@
                 var x = pos[0];
                 var y = pos[1];
 
-                // Sign in this house (Karakamsha Sign as House 1)
+                // Sign in this house (Karakamsha/Svamsha Sign as House 1)
                 var signNum = ((lagnaSign - 1 + house - 1) % 12) + 1;
 
                 // Sign Badge
                 parts.push('<circle cx="' + x + '" cy="' + (y - 30) + '" r="12" fill="' + (isLight ? '#F3E8FF' : '#3b0764') + '" stroke="' + strokeBorder + '" stroke-width="1.2"/>');
                 parts.push('<text x="' + x + '" y="' + (y - 25) + '" font-family="Cinzel, serif" font-size="12" font-weight="900" fill="' + (isLight ? '#6B21A8' : '#e9d5ff') + '" text-anchor="middle">' + signNum + '</text>');
 
-                // House 1 Label: कारकांश लग्न
+                // House 1 Label: कारकांश / स्वांश लग्न
                 if (house === 1) {
-                    parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="800" fill="' + akGold + '" text-anchor="middle">कारकांश लग्न</text>');
+                    parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="800" fill="' + akGold + '" text-anchor="middle">' + chartHeaderLabel + '</text>');
                 } else if (house === 12) {
-                    parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="8.5" font-weight="600" fill="' + textMuted + '" text-anchor="middle">मोक्ष भाव</text>');
+                    parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="8.5" font-weight="600" fill="' + textMuted + '" text-anchor="middle">मोक्ष / इष्ट भाव</text>');
                 }
 
-                // Planets in this house
-                var pList = (housesData && housesData[house]) ? housesData[house] : [];
+                // Correct rotated planets in this house
+                var pList = rotatedHouses[house] || [];
                 var py = y + 2;
                 for (var pi = 0; pi < pList.length; pi++) {
                     var rawP = pList[pi];
@@ -233,8 +280,8 @@
             }
 
             // Center watermark
-            parts.push('<text x="' + h + '" y="' + (h - 6) + '" font-family="Cinzel, serif" font-size="12.5" font-weight="800" fill="' + akGold + '" text-anchor="middle" letter-spacing="1">KARAKAMSHA KUNDLI</text>');
-            parts.push('<text x="' + h + '" y="' + (h + 10) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="600" fill="' + textMuted + '" text-anchor="middle">जैमिनी कारकांश व स्वंश चक्र</text>');
+            parts.push('<text x="' + h + '" y="' + (h - 10) + '" font-family="Cinzel, serif" font-size="11" font-weight="800" fill="' + textMuted + '" fill-opacity="0.3" text-anchor="middle" letter-spacing="1">JAIMINI SUTRAM</text>');
+            parts.push('<text x="' + h + '" y="' + (h + 8) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="11.5" font-weight="800" fill="' + akGold + '" fill-opacity="0.5" text-anchor="middle">' + (isSvamsa ? 'स्वांश कुण्डली (D-9)' : 'कारकांश कुण्डली (D-1)') + '</text>');
 
             parts.push('</svg>');
             return parts.join('\n');
@@ -673,3 +720,4 @@
     global.VyasChartRenderers = VyasChartRenderers;
 
 })(typeof window !== 'undefined' ? window : global);
+

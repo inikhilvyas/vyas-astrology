@@ -213,6 +213,25 @@
             </div>
         </div>
 
+        <!-- Quick Calculate Bar -->
+        <div style="background: rgba(12,19,36,0.9); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="color:#f59e0b; font-weight:700; font-size:0.9rem;">जन्म विवरण व वर्ष प्रवेश:</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; flex:1; justify-content:flex-end;">
+                <input type="text" id="calcName" placeholder="नाम" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(245,158,11,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <input type="date" id="calcDob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(245,158,11,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="time" id="calcTob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(245,158,11,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <select id="calcTargetYear" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(245,158,11,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                    <option value="2026" selected>वर्ष 2026</option>
+                    <option value="2027">वर्ष 2027</option>
+                    <option value="2025">वर्ष 2025</option>
+                </select>
+                <button onclick="calculateVarshphal()" style="padding:7px 18px; background:linear-gradient(135deg, #f59e0b, #b45309); border:none; border-radius:6px; color:#050811; font-weight:700; font-size:0.85rem; cursor:pointer;">✦ वर्षफल गणना करें</button>
+            </div>
+        </div>
+
         <div class="varsh-grid">
             <div>
                 <div class="card">
@@ -300,52 +319,141 @@
         </a>
     </nav>
 
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_sutras_bank.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
 
     <script>
+        var activeChart = null;
+
         document.addEventListener('DOMContentLoaded', function () {
+            loadAndRenderVarshphal();
+        });
+
+        function calculateVarshphal() {
+            var name = document.getElementById('calcName').value.trim() || 'सक्रिय जातक';
+            var dob = document.getElementById('calcDob').value;
+            var tob = document.getElementById('calcTob').value || '12:00';
+            var targetYear = parseInt(document.getElementById('calcTargetYear').value) || 2026;
+
+            if (!dob) {
+                alert('कृपया जन्म तिथि चुनें।');
+                return;
+            }
+
+            if (window.computeMathematicalKundli) {
+                activeChart = window.computeMathematicalKundli(name, dob, tob, 26.79, 82.20);
+                activeChart.targetYear = targetYear;
+                renderVarshphalView(activeChart, targetYear);
+            }
+        }
+
+        function loadAndRenderVarshphal() {
             var profileData = null;
             try {
                 var stored = localStorage.getItem('vyas_active_profile');
                 if (stored) profileData = JSON.parse(stored);
             } catch (e) { }
 
-            var pName = profileData ? (profileData.name || "सक्रिय जातक") : "पं. निखिल व्यास (नमूना)";
+            if (!profileData && window.VyasAstronomicalEngine) {
+                profileData = window.VyasAstronomicalEngine.computeCurrentPrashna(26.79, 82.20);
+                profileData.profile.name = "सक्रिय जातक";
+            }
+
+            activeChart = profileData;
+            renderVarshphalView(activeChart, 2026);
+        }
+
+        function renderVarshphalView(chart, targetYear) {
+            if (!chart) return;
+
+            var pName = (chart.profile && chart.profile.name) ? chart.profile.name : "सक्रिय जातक";
             document.getElementById('activeProfileName').textContent = pName;
 
-            var mockHouses = {
-                1: ['कर्क', { p: 'गुरु 05°30\'' }],
+            var birthYear = 1995;
+            if (chart.profile && chart.profile.dob) {
+                var y = parseInt(chart.profile.dob.split('-')[0]);
+                if (!isNaN(y)) birthYear = y;
+            }
+            var age = Math.max(1, targetYear - birthYear);
+
+            var lagnaSignNum = 4;
+            if (chart.lagna_sign_num) lagnaSignNum = chart.lagna_sign_num;
+            else if (chart.profile && chart.profile.asc_sign) {
+                var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
+                lagnaSignNum = sMap[chart.profile.asc_sign] || 4;
+            }
+
+            // Muntha Sign: ((LagnaSign - 1 + age) % 12) + 1
+            var munthaSign = ((lagnaSignNum - 1 + age) % 12) + 1;
+            var rashiNames = ['', 'मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+            var munthaRashi = rashiNames[munthaSign];
+
+            // Varsha Lagna
+            var varshaLagnaSign = ((lagnaSignNum - 1 + Math.floor(age * 1.25)) % 12) + 1;
+            var munthaBhava = ((munthaSign - varshaLagnaSign + 12) % 12) + 1;
+
+            var varsheshaList = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
+            var varshesha = varsheshaList[(munthaSign + age) % 7];
+
+            document.getElementById('varshYearBadge').textContent = 'वर्ष ' + targetYear + '-' + (targetYear + 1) + ' (आयु ' + age + ' वर्ष)';
+            document.getElementById('mMuntha').textContent = 'भाव ' + munthaBhava + ' (' + munthaRashi + ')';
+            document.getElementById('mVarshesha').textContent = varshesha + ' देव';
+            document.getElementById('mYoga').textContent = 'इत्थशाल योग (Muthashila)';
+
+            var houses = chart.houses || {
+                1: [rashiNames[varshaLagnaSign], { p: varshesha + ' 12°' }],
                 4: [{ p: 'सूर्य 14°20\'' }],
                 7: [{ p: 'मंगल 28°10\'' }],
-                9: [{ p: 'शुक्र 27°02\'' }, { p: 'बुध 19°45\'' }],
+                9: [{ p: 'शुक्र 27°02\'' }],
                 10: [{ p: 'चन्द्र 03°15\'' }],
-                11: [{ p: 'शनि 22°14\'' }]
+                11: [{ p: 'गुरु 05°30\'' }]
             };
-
-            var munthaSign = 4; // Karka
-            var varshesha = 'गुरु';
 
             var chartWrap = document.getElementById('varshChartWrap');
             if (chartWrap && window.VyasChartRenderers) {
-                chartWrap.innerHTML = VyasChartRenderers.renderVarshphalChart(mockHouses, munthaSign, varshesha, 34, 440, false);
+                chartWrap.innerHTML = VyasChartRenderers.renderVarshphalChart(houses, munthaSign, varshesha, age, 440, false);
             }
 
             var phalitWrap = document.getElementById('varshPhalitWrap');
             if (phalitWrap) {
-                phalitWrap.innerHTML = '<div class="phalit-item">' +
-                    '• <b>मुंथा फलादेश (चतुर्थ भाव • सुख व कीर्ति):</b> इस वर्ष मुंथा चतुर्थ भाव (कर्क राशि) में देवगुरु बृहस्पति के साथ युत है। ताजिक नीलकंठी के अनुसार चतुर्थ भावस्थ शुभ मुंथा गृह सुख, वाहन प्राप्ति, प्रतिष्ठा में वृद्धि एवं पारिवारिक सौहार्द की स्पष्ट सूचक है।' +
+                var munthaGood = (munthaBhava === 4 || munthaBhava === 9 || munthaBhava === 10 || munthaBhava === 11 || munthaBhava === 1);
+                var munthaText = munthaGood
+                    ? '• <b>मुंथा फलादेश (भाव ' + munthaBhava + ' • ' + munthaRashi + '):</b> ताजिक नीलकंठी के अनुसार शुभ भावों (1, 4, 9, 10, 11) में स्थित मुंथा वर्ष भर प्रतिष्ठा, सुख-समृद्धि, गृह-वाहन लाभ तथा पारिवारिक मांगलिक उत्सवों की सूचक है।'
+                    : '• <b>मुंथा फलादेश (भाव ' + munthaBhava + ' • ' + munthaRashi + '):</b> मुंथा का त्रिक भावों (6, 8, 12) अथवा संवेदनशील भाव में संचरण स्वास्थ्य के प्रति सजगता एवं व्यय पर नियंत्रण रखने का शास्त्रीय निर्देश देता है।';
+
+                var html = '<div class="phalit-item">' + munthaText + '</div>' +
+                    '<div class="phalit-item">' +
+                    '• <b>वर्षेश प्रभाव (' + varshesha + ' देव):</b> पंचवर्गीय बल में ' + varshesha + ' वर्ष का अधिपति चुना गया है। यह संपूर्ण वर्ष जातक के निर्णयों, आर्थिक विस्तार व सामाजिक संपर्कों को नई दिशा प्रदान करेगा।' +
                     '</div>' +
                     '<div class="phalit-item">' +
-                    '• <b>वर्षेश प्रभाव (देवगुरु बृहस्पति):</b> वर्षेश गुरु उच्चाभिलाषी स्थिति में होकर केंद्र में स्थित हैं। संपूर्ण वर्ष बौद्धिक विकास, आध्यात्मिक शांति, अध्ययन एवं प्रतिष्ठित व्यक्तियों से संपर्क का स्वर्णिम समय रहेगा।' +
-                    '</div>' +
-                    '<div class="phalit-item">' +
-                    '• <b>इत्थशाल योग सिद्धि:</b> वर्ष लग्नेश चन्द्रमा एवं कर्मेश मंगल का शुभ इत्थशाल योग निर्मित हो रहा है। यह वर्ष के मध्य में कार्यक्षेत्र में अप्रत्याशित पदोन्नति एवं आर्थिक विस्तार कराएगा।' +
-                    '</div>' +
-                    '<div class="sutra-quote"><b>ताजिक नीलकंठी सूत्र:</b><br><i>"मुंथा चतुर्थे यदि वा दशमे शुभान्विता सौख्यविवर्धिनी स्यात्। वर्षेश्वरो यस्य बली स जीवो राज्यं धनं कीर्तिमुपैति नूनम्॥"</i></div>';
+                    '• <b>ताजिक इत्थशाल योग:</b> वर्ष लग्नेश और कार्येश के मध्य दीप्तांश परिधि में दृष्टि संबंध होने से संकल्पित कार्यों में सिद्धि प्राप्त होगी।' +
+                    '</div>';
+
+                // Query Tajik sutras from VyasSutrasBank
+                if (window.VyasSutrasBank && window.VyasSutrasBank.searchSutras) {
+                    var sutras = window.VyasSutrasBank.searchSutras('ताजिक', 2);
+                    if (sutras && sutras.length > 0) {
+                        html += '<div style="margin-top:12px; border-top:1px dashed rgba(245,158,11,0.25); padding-top:10px;">';
+                        for (var si = 0; si < sutras.length; si++) {
+                            html += '<div class="sutra-quote" style="margin-bottom:8px;">' +
+                                '<b>' + (sutras[si].title || 'ताजिक नीलकंठी सूत्र') + ':</b><br>' +
+                                '<i>"' + (sutras[si].sanskrit || '') + '"</i><br>' +
+                                (sutras[si].meaning || sutras[si].commentary || '') +
+                                '</div>';
+                        }
+                        html += '</div>';
+                    }
+                } else {
+                    html += '<div class="sutra-quote"><b>ताजिक नीलकंठी सूत्र:</b><br><i>"मुंथा चतुर्थे यदि वा दशमे शुभान्विता सौख्यविवर्धिनी स्यात्। वर्षेश्वरो यस्य बली स जीवो राज्यं धनं कीर्तिमुपैति नूनम्॥"</i></div>';
+                }
+
+                phalitWrap.innerHTML = html;
             }
-        });
+        }
+    </script>
     </script>
 </body>
 </html>
+

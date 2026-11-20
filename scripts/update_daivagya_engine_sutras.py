@@ -452,3 +452,4 @@ with open(FILE_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
 
 print(f"Successfully updated {FILE_PATH}!")
+

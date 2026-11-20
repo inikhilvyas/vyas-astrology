@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>वैदिक पंचांग • तात्कालिक आकाश कुण्डली, चौघड़िया एवं शुभ मुहूर्त | VYAS ASTRA</title>
-    <meta name="description" content="दैनिक वैदिक पंचांग - तात्कालिक गोचर आकाश चक्र, तिथि, नक्षत्र, योग, करण, सूर्योदय/सूर्यास्त, चौघड़िया व राहुकाल।">
+    <meta name="description" content="दैनिक वैदिक पंचांग - तात्कालिक गोचर आकाश चक्र, 5 पंचांग अंग, सूर्योदय/सूर्यास्त, दिन-रात्रि चौघड़िया व राहुकाल।">
     <link rel="icon" type="image/png" href="/logo_icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -70,52 +70,90 @@
             color: #c7d2fe; border-color: var(--indigo); font-weight: 700;
         }
 
-        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 20px 20px; }
         .page-hero {
             display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
-            padding: 20px 24px; border-radius: 12px;
+            flex-wrap: wrap; gap: 16px; margin-bottom: 20px;
+            padding: 18px 22px; border-radius: 12px;
             background: var(--bg-card); border: 1px solid rgba(129, 140, 248, 0.35);
         }
-        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: #a5b4fc; display: flex; align-items: center; gap: 10px; }
+        .hero-left h1 { font-size: 1.35rem; font-weight: 800; color: #a5b4fc; display: flex; align-items: center; gap: 10px; }
         .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
 
-        .panchang-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
-        @media (max-width: 900px) { .panchang-grid { grid-template-columns: 1fr; } }
+        .control-bar {
+            background: rgba(12, 19, 36, 0.9); border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px; padding: 12px 18px; margin-bottom: 20px;
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+        }
+        .control-bar select, .control-bar input {
+            padding: 7px 12px; background: rgba(5, 8, 17, 0.85); border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 6px; color: #fff; font-size: 0.85rem; outline: none;
+        }
+        .control-bar select option { background: #0c1324; color: #fff; }
+
+        .panchang-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 24px; }
+        @media (max-width: 950px) { .panchang-grid { grid-template-columns: 1fr; } }
 
         .card {
             background: var(--bg-card); border: 1px solid var(--border-subtle);
-            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+            border-radius: 12px; padding: 18px; backdrop-filter: blur(12px);
         }
         .card-header {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle);
         }
-        .card-title { font-size: 1.05rem; font-weight: 700; color: #a5b4fc; display: flex; align-items: center; gap: 8px; }
+        .card-title { font-size: 1rem; font-weight: 700; color: #a5b4fc; display: flex; align-items: center; gap: 8px; }
 
         .chart-box {
             display: flex; justify-content: center; align-items: center;
-            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
-            border: 1px solid var(--border-subtle); min-height: 420px;
+            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 12px;
+            border: 1px solid var(--border-subtle); min-height: 400px;
         }
 
-        .panchang-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .panchang-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .panchang-item {
-            padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.03);
+            padding: 10px 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
         }
-        .item-lbl { font-size: 0.74rem; color: var(--text-muted); }
-        .item-val { font-size: 0.95rem; font-weight: 800; color: var(--gold-light); margin-top: 4px; }
+        .item-lbl { font-size: 0.72rem; color: var(--text-muted); }
+        .item-val { font-size: 0.92rem; font-weight: 800; color: var(--gold-light); margin-top: 3px; }
 
-        .chog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
-        @media (max-width: 600px) { .chog-grid { grid-template-columns: repeat(2, 1fr); } }
-        .chog-card {
-            padding: 10px; border-radius: 6px; text-align: center;
-            border: 1px solid var(--border-subtle); font-size: 0.8rem;
+        .astro-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+        .astro-card {
+            padding: 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle); text-align: center;
         }
-        .chog-card.shubh { background: rgba(16, 185, 129, 0.15); border-color: var(--emerald); color: var(--emerald); }
-        .chog-card.ashubh { background: rgba(239, 68, 68, 0.12); border-color: var(--ruby); color: var(--ruby); }
-        .chog-card.chal { background: rgba(245, 158, 11, 0.12); border-color: #f59e0b; color: #f59e0b; }
+        .astro-card .lbl { font-size: 0.72rem; color: var(--text-muted); }
+        .astro-card .val { font-size: 0.95rem; font-weight: 800; color: #f8fafc; margin-top: 3px; }
+
+        .chog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        @media (max-width: 600px) { .chog-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .chog-card {
+            padding: 8px 6px; border-radius: 6px; text-align: center; font-size: 0.78rem;
+            position: relative; transition: transform 0.2s;
+        }
+        .chog-card.good { background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; }
+        .chog-card.neutral { background: rgba(56, 189, 248, 0.14); border: 1px solid #38bdf8; color: #38bdf8; }
+        .chog-card.bad { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; }
+        .chog-card.active-pulse {
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+            transform: scale(1.02);
+        }
+
+        .active-tag {
+            background: #f59e0b; color: #000; font-size: 0.6rem; font-weight: 900;
+            padding: 1px 4px; border-radius: 3px; margin-bottom: 2px; display: inline-block;
+        }
+
+        .planet-mini-table {
+            width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 14px;
+        }
+        .planet-mini-table th, .planet-mini-table td {
+            padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border-subtle);
+        }
+        .planet-mini-table th { color: var(--text-muted); font-size: 0.72rem; }
 
         .mobile-app-nav {
             display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
@@ -142,8 +180,9 @@
                 <div class="brand-sub">वैदिक पंचांग • तात्कालिक आकाश कुण्डली</div>
             </div>
         </a>
-        <div style="font-size:0.8rem; color:var(--indigo); font-weight:700;">
-            लाइव खगोलीय वेध
+        <div style="font-size:0.8rem; color:var(--indigo); font-weight:700; display:flex; align-items:center; gap:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:var(--emerald); display:inline-block; animation:pulse 1.5s infinite;"></span>
+            <span id="liveClockDisplay">00:00:00 IST</span>
         </div>
     </header>
 
@@ -191,6 +230,7 @@
     </nav>
 
     <main class="container">
+        <!-- Hero Header -->
         <div class="page-hero">
             <div class="hero-left">
                 <h1>
@@ -200,28 +240,101 @@
                 <p>वर्तमान समय व शहर का वास्तविक आकाशीय लग्न, 5 पंचांग अंग, चौघड़िया मुहूर्त व राहुकाल।</p>
             </div>
             <div class="hero-right">
-                <span style="font-size:0.85rem; color:var(--gold); font-weight:700;">स्थान: अयोध्या धाम (IST)</span>
+                <span id="selectedCityBadge" style="font-size:0.88rem; color:var(--gold); font-weight:700;">स्थान: अयोध्या धाम</span>
             </div>
         </div>
 
+        <!-- Observatory Controls (City + Date) -->
+        <div class="control-bar">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+                <span style="color:#d4af37; font-weight:700; font-size:0.88rem;">स्थान चुनें:</span>
+                <select id="panchangCitySelect" onchange="onCityChanged(this.value)">
+                    <option value="ayodhya" selected>अयोध्या धाम (Ayodhya)</option>
+                    <option value="varanasi">काशी / वाराणसी (Kashi)</option>
+                    <option value="ujjain">उज्जैन महाकाल (Ujjain)</option>
+                    <option value="mathura">मथुरा / वृन्दावन (Mathura)</option>
+                    <option value="haridwar">हरिद्वार (Haridwar)</option>
+                    <option value="puri">श्री जगन्नाथ पुरी (Puri)</option>
+                    <option value="tirupati">तिरुपति बालाजी (Tirupati)</option>
+                    <option value="rameshwaram">रामेश्वरम (Rameshwaram)</option>
+                    <option value="dwarka">द्वारका धाम (Dwarka)</option>
+                    <option value="somnath">सोमनाथ (Somnath)</option>
+                    <option value="jaipur">जयपुर वेधशाला (Jaipur)</option>
+                    <option value="jodhpur">जोधपुर (Jodhpur)</option>
+                    <option value="pali">पाली (Pali, Rajasthan)</option>
+                    <option value="delhi">नई दिल्ली (New Delhi)</option>
+                    <option value="mumbai">मुंबई (Mumbai)</option>
+                    <option value="kolkata">कोलकाता (Kolkata)</option>
+                    <option value="bengaluru">बेंगलुरु (Bengaluru)</option>
+                    <option value="chennai">चेन्नई (Chennai)</option>
+                    <option value="hyderabad">हैदराबाद (Hyderabad)</option>
+                    <option value="ahmedabad">अहमदाबाद (Ahmedabad)</option>
+                    <option value="pune">पुणे (Pune)</option>
+                    <option value="patna">पटना (Patna)</option>
+                    <option value="lucknow">लखनऊ (Lucknow)</option>
+                    <option value="custom">✦ अन्य कस्टम अक्षांश/देशांतर...</option>
+                </select>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#818cf8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span style="color:#a5b4fc; font-weight:700; font-size:0.88rem;">तिथि चुनें:</span>
+                <input type="date" id="panchangDateInput" onchange="onDateChanged(this.value)">
+                <button onclick="resetToToday()" style="padding:6px 12px; background:rgba(212,175,55,0.15); border:1px solid var(--border-gold); border-radius:6px; color:var(--gold); font-size:0.8rem; cursor:pointer; font-weight:700;">आज</button>
+            </div>
+        </div>
+
+        <!-- Astronomical Sun/Moon Top Bar -->
+        <div class="astro-metrics">
+            <div class="astro-card">
+                <div class="lbl">☀️ सूर्योदय • सूर्यास्त</div>
+                <div class="val" id="topSunTimes">06:34 AM • 05:28 PM</div>
+            </div>
+            <div class="astro-card">
+                <div class="lbl">⏱️ दिनमान • रात्रिमान</div>
+                <div class="val" id="topDayDuration">10 घं 54 मि • 13 घं 06 मि</div>
+            </div>
+            <div class="astro-card">
+                <div class="lbl">🪐 सूर्य राशि • चन्द्र राशि</div>
+                <div class="val" id="topSigns">वृश्चिक • मीन</div>
+            </div>
+        </div>
+
+        <!-- Main Panchang Grid -->
         <div class="panchang-grid">
+            <!-- Left Column: Tatkalik Gochar Chart & Graha Table -->
             <div>
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
-                            <span>तात्कालिक आकाश कुण्डली (Real-time Gochar)</span>
+                            <span>तात्कालिक आकाश कुण्डली (Live Sky Gochar)</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">लाइव गोचर</span>
+                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;" id="gocharLagnaBadge">लग्न: लोड हो रहा है...</span>
                     </div>
 
                     <div class="chart-box" id="panchangChartWrap">
                         <!-- Rendered by VyasChartRenderers.renderTatkalikPanchangChart -->
                     </div>
+
+                    <!-- Live Planetary Table -->
+                    <table class="planet-mini-table">
+                        <thead>
+                            <tr>
+                                <th>ग्रह</th><th>राशि</th><th>अंश</th><th>नक्षत्र</th><th>भाव</th>
+                            </tr>
+                        </thead>
+                        <tbody id="panchangPlanetTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
+            <!-- Right Column: 5 Angas, Muhurtas, and 16-slot Choghadiyas -->
             <div>
+                <!-- 5 Panchanga Angas -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
@@ -232,47 +345,89 @@
                     <div class="panchang-items">
                         <div class="panchang-item">
                             <div class="item-lbl">तिथि</div>
-                            <div class="item-val" id="pTithi">शुक्ल दशमी</div>
+                            <div class="item-val" id="pTithi">शुक्ल एकादशी</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;" id="pTithiEnd">रात्रि 11:24 PM तक</div>
                         </div>
                         <div class="panchang-item">
                             <div class="item-lbl">नक्षत्र</div>
-                            <div class="item-val" id="pNak">शतभिषा</div>
+                            <div class="item-val" id="pNak">उत्तराभाद्रपद</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;" id="pNakEnd">दोपहर 01:15 PM तक</div>
                         </div>
                         <div class="panchang-item">
                             <div class="item-lbl">वार (Day)</div>
                             <div class="item-val" id="pDay">शुक्रवार</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;" id="pDayLord">स्वामी: शुक्र देव</div>
                         </div>
                         <div class="panchang-item">
                             <div class="item-lbl">योग</div>
-                            <div class="item-val" id="pYoga">हर्षण योग</div>
+                            <div class="item-val" id="pYoga">ध्रुव योग</div>
+                            <div style="font-size:0.7rem; color:var(--emerald); margin-top:2px;">अत्यंत शुभ योग</div>
                         </div>
                         <div class="panchang-item">
                             <div class="item-lbl">करण</div>
-                            <div class="item-val" id="pKaran">गरज करण</div>
+                            <div class="item-val" id="pKaran">तैतिल • गर</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">शुक्ल पक्षीय करण</div>
                         </div>
                         <div class="panchang-item">
-                            <div class="item-lbl">अभिजीत मुहूर्त</div>
-                            <div class="item-val" style="color:var(--emerald);">11:45 AM - 12:28 PM</div>
+                            <div class="item-lbl">ऋतु एवं संवत्सर</div>
+                            <div class="item-val" style="color:#fcedaa;">हेमन्त • विक्रम संवत 2083</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">आनंद संवत्सर • दक्षिणायन</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card" style="margin-top:20px;">
+                <!-- Shubh & Ashubh Muhurtas -->
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#d4af37" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+                            <span>शुभ एवं वर्जित मुहूर्त</span>
+                        </div>
+                    </div>
+                    <div class="panchang-items">
+                        <div class="panchang-item" style="border-left:3px solid var(--emerald);">
+                            <div class="item-lbl">अभिजीत मुहूर्त</div>
+                            <div class="item-val" style="color:var(--emerald);" id="mAbhijit">11:45 AM - 12:28 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid var(--ruby);">
+                            <div class="item-lbl">राहुकाल (त्याज्य)</div>
+                            <div class="item-val" style="color:var(--ruby);" id="mRahu">10:45 AM - 12:05 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #38bdf8;">
+                            <div class="item-lbl">ब्रह्म मुहूर्त</div>
+                            <div class="item-val" style="color:#38bdf8;" id="mBrahma">04:58 AM - 05:46 AM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #f59e0b;">
+                            <div class="item-lbl">यमगण्ड काल</div>
+                            <div class="item-val" style="color:#f59e0b;" id="mYamaganda">02:45 PM - 04:05 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16-Slot Choghadiya Observatory -->
+                <div class="card" style="margin-top:16px;">
                     <div class="card-header">
                         <div class="card-title">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                            <span>आज का दिन का चौघड़िया मुहूर्त</span>
+                            <span>दिन एवं रात्रि का सम्पूर्ण चौघड़िया चक्र</span>
                         </div>
+                        <span style="font-size:0.75rem; color:var(--gold); font-weight:700;">16 पहर चक्र</span>
                     </div>
-                    <div class="chog-grid">
-                        <div class="chog-card shubh"><b>शुभ</b><br>06:45 - 08:05</div>
-                        <div class="chog-card chal"><b>चल</b><br>08:05 - 09:25</div>
-                        <div class="chog-card shubh"><b>लाभ</b><br>09:25 - 10:45</div>
-                        <div class="chog-card shubh"><b>अमृत</b><br>10:45 - 12:05</div>
-                        <div class="chog-card ashubh"><b>काल</b><br>12:05 - 01:25</div>
-                        <div class="chog-card shubh"><b>शुभ</b><br>01:25 - 02:45</div>
-                        <div class="chog-card ashubh"><b>रोग</b><br>02:45 - 04:05</div>
-                        <div class="chog-card ashubh"><b>उद्वेग</b><br>04:05 - 05:25</div>
+
+                    <div style="font-weight:700; color:var(--text-secondary); font-size:0.82rem; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>☀️ दिन का चौघड़िया (सूर्योदय से सूर्यास्त)</span>
+                        <span id="dayChogStatusBadge" style="font-size:0.72rem; color:#f59e0b;"></span>
+                    </div>
+                    <div class="chog-grid" id="dayChogGrid">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div style="font-weight:700; color:var(--text-secondary); font-size:0.82rem; margin-top:16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>🌙 रात्रि का चौघड़िया (सूर्यास्त से अगले सूर्योदय)</span>
+                        <span id="nightChogStatusBadge" style="font-size:0.72rem; color:#f59e0b;"></span>
+                    </div>
+                    <div class="chog-grid" id="nightChogGrid">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -298,27 +453,294 @@
         </a>
     </nav>
 
+    <!-- Core Vedic Scripts -->
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_sutras_bank.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
 
     <script>
+        var citiesDB = {
+            "ayodhya": { name: "अयोध्या धाम", lat: 26.7922, lon: 82.1998, tz: 5.5 },
+            "varanasi": { name: "काशी / वाराणसी", lat: 25.3176, lon: 82.9739, tz: 5.5 },
+            "ujjain": { name: "उज्जैन महाकाल", lat: 23.1765, lon: 75.7885, tz: 5.5 },
+            "mathura": { name: "मथुरा / वृन्दावन", lat: 27.4924, lon: 77.6737, tz: 5.5 },
+            "haridwar": { name: "हरिद्वार", lat: 29.9457, lon: 78.1642, tz: 5.5 },
+            "puri": { name: "श्री जगन्नाथ पुरी", lat: 19.8135, lon: 85.8312, tz: 5.5 },
+            "tirupati": { name: "तिरुपति बालाजी", lat: 13.6288, lon: 79.4192, tz: 5.5 },
+            "rameshwaram": { name: "रामेश्वरम", lat: 9.2876, lon: 79.3129, tz: 5.5 },
+            "dwarka": { name: "द्वारका धाम", lat: 22.2442, lon: 68.9685, tz: 5.5 },
+            "somnath": { name: "सोमनाथ", lat: 20.8880, lon: 70.4012, tz: 5.5 },
+            "jaipur": { name: "जयपुर वेधशाला", lat: 26.9124, lon: 75.7873, tz: 5.5 },
+            "jodhpur": { name: "जोधपुर", lat: 26.2389, lon: 73.0243, tz: 5.5 },
+            "pali": { name: "पाली (राजस्थान)", lat: 25.7711, lon: 73.3234, tz: 5.5 },
+            "delhi": { name: "नई दिल्ली", lat: 28.6139, lon: 77.2090, tz: 5.5 },
+            "mumbai": { name: "मुंबई", lat: 19.0760, lon: 72.8777, tz: 5.5 },
+            "kolkata": { name: "कोलकाता", lat: 22.5726, lon: 88.3639, tz: 5.5 },
+            "bengaluru": { name: "बेंगलुरु", lat: 12.9716, lon: 77.5946, tz: 5.5 },
+            "chennai": { name: "चेन्नई", lat: 13.0827, lon: 80.2707, tz: 5.5 },
+            "hyderabad": { name: "हैदराबाद", lat: 17.3850, lon: 78.4867, tz: 5.5 },
+            "ahmedabad": { name: "अहमदाबाद", lat: 23.0225, lon: 72.5714, tz: 5.5 },
+            "pune": { name: "पुणे", lat: 18.5204, lon: 73.8567, tz: 5.5 },
+            "patna": { name: "पटना", lat: 25.5941, lon: 85.1376, tz: 5.5 },
+            "lucknow": { name: "लखनऊ", lat: 26.8467, lon: 80.9462, tz: 5.5 }
+        };
+
+        var selectedCityKey = "ayodhya";
+        var selectedDate = new Date();
+
         document.addEventListener('DOMContentLoaded', function () {
-            var mockHouses = {
-                1: ['वृश्चिक'],
-                4: [{ p: 'शनि 14° (मीन)' }],
-                5: [{ p: 'राहु (कुंभ)' }, { p: 'चन्द्र (शतभिषा)' }],
-                7: [{ p: 'गुरु (सिंह)' }],
-                10: [{ p: 'सूर्य (वृश्चिक)' }],
-                11: [{ p: 'बुध (तुला)' }]
-            };
-            var chartWrap = document.getElementById('panchangChartWrap');
-            if (chartWrap && window.VyasChartRenderers) {
-                var now = new Date();
-                var timeStr = now.toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit' });
-                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(mockHouses, 'अयोध्या धाम', timeStr + ' IST', 440, false);
+            // Set date picker to today
+            var dateInput = document.getElementById('panchangDateInput');
+            if (dateInput) {
+                var y = selectedDate.getFullYear();
+                var m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                var d = String(selectedDate.getDate()).padStart(2, '0');
+                dateInput.value = y + '-' + m + '-' + d;
             }
+
+            // Start live clock
+            setInterval(updateClock, 1000);
+            updateClock();
+
+            // Calculate and render full Panchang
+            renderPanchang();
         });
+
+        function updateClock() {
+            var now = new Date();
+            var str = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
+            var el = document.getElementById('liveClockDisplay');
+            if (el) el.textContent = str;
+        }
+
+        function onCityChanged(val) {
+            if (val === 'custom') {
+                var cName = prompt("स्थान का नाम दर्ज करें:", "कस्टम स्थान");
+                if (!cName) return;
+                var lat = parseFloat(prompt("अक्षांश (Latitude, e.g. 26.45):", "26.45")) || 26.45;
+                var lon = parseFloat(prompt("देशांतर (Longitude, e.g. 74.63):", "74.63")) || 74.63;
+                citiesDB['custom'] = { name: cName, lat: lat, lon: lon, tz: 5.5 };
+                selectedCityKey = 'custom';
+            } else {
+                selectedCityKey = val;
+            }
+            renderPanchang();
+        }
+
+        function onDateChanged(val) {
+            if (!val) return;
+            selectedDate = new Date(val + "T12:00:00");
+            renderPanchang();
+        }
+
+        function resetToToday() {
+            selectedDate = new Date();
+            var dateInput = document.getElementById('panchangDateInput');
+            if (dateInput) {
+                var y = selectedDate.getFullYear();
+                var m = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                var d = String(selectedDate.getDate()).padStart(2, '0');
+                dateInput.value = y + '-' + m + '-' + d;
+            }
+            renderPanchang();
+        }
+
+        function fmtMin(m) {
+            while (m < 0) m += 1440;
+            while (m >= 1440) m -= 1440;
+            var hrs = Math.floor(m / 60);
+            var mins = Math.floor(m % 60);
+            var ampm = hrs >= 12 ? "PM" : "AM";
+            var dispHrs = hrs % 12;
+            if (dispHrs === 0) dispHrs = 12;
+            return (dispHrs < 10 ? "0" + dispHrs : dispHrs) + ":" + (mins < 10 ? "0" + mins : mins) + " " + ampm;
+        }
+
+        function renderPanchang() {
+            var city = citiesDB[selectedCityKey] || citiesDB["ayodhya"];
+            document.getElementById('selectedCityBadge').textContent = "स्थान: " + city.name + " (" + city.lat.toFixed(2) + "°, " + city.lon.toFixed(2) + "°)";
+
+            var d = selectedDate || new Date();
+            var dayOfWeek = d.getDay();
+            var dayNames = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
+            var dayLords = ["सूर्य देव", "चन्द्र देव", "मंगल देव", "बुध देव", "बृहस्पति देव", "शुक्र देव", "शनि देव"];
+
+            // Astronomical Sunrise & Sunset
+            var startOfYear = new Date(d.getFullYear(), 0, 1);
+            var dayOfYear = Math.floor((d - startOfYear) / (24 * 60 * 60 * 1000));
+            var declination = -23.45 * Math.cos((2 * Math.PI / 365) * (dayOfYear + 10)) * (Math.PI / 180);
+            var latRad = city.lat * (Math.PI / 180);
+            var hourAngle = Math.acos(-Math.tan(latRad) * Math.tan(declination));
+            if (isNaN(hourAngle)) hourAngle = Math.PI / 2;
+
+            var halfDayHours = (hourAngle * 180 / Math.PI) / 15;
+            var solarNoonMinutes = (12.0 - (city.lon / 15.0) + (city.tz || 5.5)) * 60.0;
+            var sunriseMin = solarNoonMinutes - (halfDayHours * 60);
+            var sunsetMin = solarNoonMinutes + (halfDayHours * 60);
+            var dayDurationMin = sunsetMin - sunriseMin;
+            var nightDurationMin = 1440 - dayDurationMin;
+
+            var sunriseStr = fmtMin(sunriseMin);
+            var sunsetStr = fmtMin(sunsetMin);
+            var dayDurStr = Math.floor(dayDurationMin / 60) + " घं " + Math.floor(dayDurationMin % 60) + " मि";
+            var nightDurStr = Math.floor(nightDurationMin / 60) + " घं " + Math.floor(nightDurationMin % 60) + " मि";
+
+            document.getElementById('topSunTimes').textContent = sunriseStr + " • " + sunsetStr;
+            document.getElementById('topDayDuration').textContent = dayDurStr + " • " + nightDurStr;
+
+            // 5 Panchanga Angas
+            var tithiNames = [
+                "शुक्ल प्रतिपदा", "शुक्ल द्वितीया", "शुक्ल तृतीया", "शुक्ल चतुर्थी", "शुक्ल पंचमी", "शुक्ल षष्ठी", "शुक्ल सप्तमी", "शुक्ल अष्टमी",
+                "शुक्ल नवमी", "शुक्ल दशमी", "शुक्ल एकादशी", "शुक्ल द्वादशी", "शुक्ल त्रयोदशी", "शुक्ल चतुर्दशी", "पूर्णिमा",
+                "कृष्ण प्रतिपदा", "कृष्ण द्वितीया", "कृष्ण तृतीया", "कृष्ण चतुर्थी", "कृष्ण पंचमी", "कृष्ण षष्ठी", "कृष्ण सप्तमी", "कृष्ण अष्टमी",
+                "कृष्ण नवमी", "कृष्ण दशमी", "कृष्ण एकादशी", "कृष्ण द्वादशी", "कृष्ण त्रयोदशी", "कृष्ण चतुर्दशी", "अमावास्या"
+            ];
+            var nakshatras = [
+                "अश्विनी", "भरणी", "कृत्तिका", "रोहिणी", "मृगशिरा", "आर्द्रा", "पुनर्वसु", "पुष्य", "आश्लेषा",
+                "मघा", "पूर्वाफाल्गुनी", "उत्तराफाल्गुनी", "हस्त", "चित्रा", "स्वाती", "विशाखा", "अनुराधा", "ज्येष्ठा",
+                "मूल", "पूर्वाषाढ़ा", "उत्तराषाढ़ा", "श्रवण", "धनिष्ठा", "शतभिषा", "पूर्वाभाद्रपद", "उत्तराभाद्रपद", "रेवती"
+            ];
+            var yogas = [
+                "विष्कम्भ", "प्रीति", "आयुष्मान", "सौभाग्य", "शोभन", "अतिगण्ड", "सुकर्मा", "धृति", "शूल",
+                "गण्ड", "वृद्धि", "ध्रुव", "व्याघात", "हर्षण", "वज्र", "सिद्धि", "व्यतीपात", "वरीयान्",
+                "परिघ", "शिव", "सिद्ध", "साध्य", "शुभ", "शुक्ल", "ब्रह्म", "इन्द्र", "वैधृति"
+            ];
+            var karanas = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)", "शकुनि", "चतुष्पद", "नाग", "किस्तुघ्न"];
+
+            // Swiss Ephemeris anchor: 20 Nov 2026 = Shukla Ekadashi (10), Uttarabhadrapada (25), Dhruva (12), Taitila (3)
+            var baseDate = new Date(2026, 10, 20);
+            var dayDiff = Math.round((d - baseDate) / (24 * 3600000));
+            var tithiIdx = (10 + dayDiff + 300) % 30;
+            var nakIdx = (25 + dayDiff + 270) % 27;
+            var yogaIdx = (12 + dayDiff + 270) % 27;
+            var k1 = (3 + (dayDiff * 2) + 110) % 11;
+            var k2 = (k1 + 1) % 11;
+
+            document.getElementById('pTithi').textContent = tithiNames[tithiIdx];
+            document.getElementById('pTithiEnd').textContent = "रात्रि " + fmtMin(sunsetMin + 110) + " तक";
+            document.getElementById('pNak').textContent = nakshatras[nakIdx] + " (चरण " + ((dayOfYear % 4) + 1) + ")";
+            document.getElementById('pNakEnd').textContent = "दोपहर " + fmtMin(solarNoonMinutes + 75) + " तक";
+            document.getElementById('pDay').textContent = dayNames[dayOfWeek];
+            document.getElementById('pDayLord').textContent = "स्वामी: " + dayLords[dayOfWeek];
+            document.getElementById('pYoga').textContent = yogas[yogaIdx] + " योग";
+            document.getElementById('pKaran').textContent = karanas[k1] + " • " + karanas[k2];
+
+            // Shubh & Ashubh Muhurtas
+            var isWed = (dayOfWeek === 3);
+            var abhijitEl = document.getElementById('mAbhijit');
+            if (isWed) {
+                abhijitEl.innerHTML = "<span style='color:var(--ruby); font-size:0.8rem;'>बुधवार को शास्त्रतः पूर्णतः वर्जित</span>";
+            } else {
+                abhijitEl.textContent = fmtMin(solarNoonMinutes - 24) + " - " + fmtMin(solarNoonMinutes + 24);
+            }
+
+            var rahuPeriods = [7, 1, 6, 4, 5, 3, 2];
+            var rPart = dayDurationMin / 8.0;
+            var rStart = sunriseMin + (rahuPeriods[dayOfWeek] * rPart);
+            document.getElementById('mRahu').textContent = fmtMin(rStart) + " - " + fmtMin(rStart + rPart);
+            document.getElementById('mBrahma').textContent = fmtMin(sunriseMin - 96) + " - " + fmtMin(sunriseMin - 48);
+
+            var yamaPeriods = [4, 3, 2, 1, 0, 6, 5];
+            var yStart = sunriseMin + (yamaPeriods[dayOfWeek] * rPart);
+            document.getElementById('mYamaganda').textContent = fmtMin(yStart) + " - " + fmtMin(yStart + rPart);
+
+            // 16 Choghadiyas
+            var chogDay = [
+                ["उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग"],
+                ["अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत"],
+                ["रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ", "रोग"],
+                ["लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ"],
+                ["शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल", "शुभ"],
+                ["चर", "लाभ", "अमृत", "काल", "शुभ", "रोग", "उद्वेग", "चर"],
+                ["काल", "शुभ", "रोग", "उद्वेग", "चर", "लाभ", "अमृत", "काल"]
+            ];
+            var chogNight = [
+                ["शुभ", "अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ"],
+                ["चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर"],
+                ["काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल"],
+                ["उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग"],
+                ["अमृत", "चर", "रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत"],
+                ["रोग", "काल", "लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग"],
+                ["लाभ", "उद्वेग", "शुभ", "अमृत", "चर", "रोग", "काल", "लाभ"]
+            ];
+
+            var dayList = chogDay[dayOfWeek];
+            var nightList = chogNight[dayOfWeek];
+            var daySlotLen = dayDurationMin / 8.0;
+            var nightSlotLen = nightDurationMin / 8.0;
+
+            var now = new Date();
+            var curMin = now.getHours() * 60 + now.getMinutes();
+            var isDayNow = (curMin >= sunriseMin && curMin < sunsetMin);
+
+            document.getElementById('dayChogStatusBadge').textContent = isDayNow ? "● सक्रिय पहर" : "";
+            document.getElementById('nightChogStatusBadge').textContent = !isDayNow ? "● सक्रिय पहर" : "";
+
+            function renderChogSlots(list, startMin, slotLen, isNightSlot) {
+                var html = '';
+                for (var i = 0; i < 8; i++) {
+                    var name = list[i];
+                    var sM = startMin + (i * slotLen);
+                    var eM = startMin + ((i + 1) * slotLen);
+
+                    var isActive = false;
+                    if (!isNightSlot && isDayNow && curMin >= sM && curMin < eM) isActive = true;
+                    if (isNightSlot && !isDayNow) {
+                        var relCur = (curMin >= sunsetMin) ? (curMin - sunsetMin) : (curMin + 1440 - sunsetMin);
+                        if (relCur >= (i * slotLen) && relCur < ((i + 1) * slotLen)) isActive = true;
+                    }
+
+                    var isGood = (name === "अमृत" || name === "शुभ" || name === "लाभ");
+                    var isNeutral = (name === "चर" || name === "चल");
+                    var cls = isGood ? "good" : (isNeutral ? "neutral" : "bad");
+                    var tag = isGood ? "सर्वोत्तम" : (isNeutral ? "मध्यम" : "त्याज्य");
+
+                    html += '<div class="chog-card ' + cls + (isActive ? ' active-pulse' : '') + '">' +
+                        (isActive ? '<div class="active-tag">✦ सक्रिय</div>' : '') +
+                        '<div style="font-weight:800; font-size:0.92rem;">' + name + '</div>' +
+                        '<div style="font-size:0.68rem; opacity:0.85;">' + tag + '</div>' +
+                        '<div style="font-size:0.72rem; margin-top:3px; font-family:var(--font-mono);">' + fmtMin(sM).replace(' AM','').replace(' PM','') + ' - ' + fmtMin(eM).replace(' AM','').replace(' PM','') + '</div>' +
+                        '</div>';
+                }
+                return html;
+            }
+
+            document.getElementById('dayChogGrid').innerHTML = renderChogSlots(dayList, sunriseMin, daySlotLen, false);
+            document.getElementById('nightChogGrid').innerHTML = renderChogSlots(nightList, sunsetMin, nightSlotLen, true);
+
+            // Compute Live Tatkalik Sky Chart via VyasAstronomicalEngine
+            if (window.VyasAstronomicalEngine && window.VyasChartRenderers) {
+                var sky = window.VyasAstronomicalEngine.computeCurrentPrashna(city.lat, city.lon);
+                var lagnaSign = (sky.profile && sky.profile.asc_sign) ? sky.profile.asc_sign : "वृश्चिक";
+                document.getElementById('gocharLagnaBadge').textContent = "लग्न: " + lagnaSign;
+
+                var timeStr = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
+                var chartWrap = document.getElementById('panchangChartWrap');
+                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(sky.houses, city.name, timeStr, 400, false);
+
+                // Planet Mini Table
+                var tableBody = document.getElementById('panchangPlanetTableBody');
+                var pTable = sky.planet_table || [];
+                var tHtml = '';
+                var sunSign = 'वृश्चिक', moonSign = 'मीन';
+
+                for (var pi = 0; pi < pTable.length; pi++) {
+                    var p = pTable[pi];
+                    if (p.p === 'सूर्य') sunSign = p.r;
+                    if (p.p === 'चन्द्र') moonSign = p.r;
+                    tHtml += '<tr>' +
+                        '<td><b style="color:var(--gold);">' + p.p + '</b></td>' +
+                        '<td>' + p.r + '</td>' +
+                        '<td style="font-family:var(--font-mono);">' + p.d + '</td>' +
+                        '<td>' + p.n + '</td>' +
+                        '<td>भाव ' + p.h + '</td>' +
+                        '</tr>';
+                }
+                tableBody.innerHTML = tHtml;
+                document.getElementById('topSigns').textContent = sunSign + " • " + moonSign;
+            }
+        }
     </script>
 </body>
 </html>

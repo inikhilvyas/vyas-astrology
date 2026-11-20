@@ -207,10 +207,22 @@
                 <p>आत्मकारक (AK) के नवांश चिन्ह को लग्न मानकर निर्मित कारकांश कुण्डली एवं जैमिनी उपदेश सूत्र।</p>
             </div>
             <div class="hero-right">
-                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(192,132,252,0.15); border-color:var(--purple);">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    कुण्डली बदलें
-                </button>
+                <span id="activeProfileName" style="color:var(--purple); font-weight:700; font-size:0.95rem;">सक्रिय जातक</span>
+            </div>
+        </div>
+
+        <!-- Quick Calculate Bar -->
+        <div style="background: rgba(12,19,36,0.9); border: 1px solid rgba(192,132,252,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#c084fc" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="color:#c084fc; font-weight:700; font-size:0.9rem;">जन्म विवरण दर्ज करें:</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; flex:1; justify-content:flex-end;">
+                <input type="text" id="calcName" placeholder="नाम" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <input type="date" id="calcDob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="time" id="calcTob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="text" id="calcCity" placeholder="शहर" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(192,132,252,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <button onclick="calculateAndRefresh()" style="padding:7px 18px; background:linear-gradient(135deg, #c084fc, #9333ea); border:none; border-radius:6px; color:#050811; font-weight:700; font-size:0.85rem; cursor:pointer;">✦ जैमिनी गणना करें</button>
             </div>
         </div>
 
@@ -218,12 +230,22 @@
             <!-- Left: Karakamsha Chart -->
             <div>
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="flex-wrap:wrap; gap:10px;">
                         <div class="card-title">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
-                            <span>कारकांश कुण्डली (Karakamsha Chart)</span>
+                            <span id="chartHeadingTitle">कारकांश कुण्डली (Karakamsha Chart)</span>
                         </div>
-                        <span style="font-size:0.75rem; color:#fbbf24; font-weight:700;">AK नवांश लग्न</span>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button id="btnTabKarakamsha" onclick="setJaiminiMode('karakamsha')" style="padding:4px 12px; font-size:0.76rem; font-weight:700; border-radius:6px; background:#fbbf24; color:#050811; border:none; cursor:pointer;">✦ कारकांश (D-1)</button>
+                            <button id="btnTabSvamsha" onclick="setJaiminiMode('svamsha')" style="padding:4px 12px; font-size:0.76rem; font-weight:700; border-radius:6px; background:rgba(255,255,255,0.08); color:var(--text-secondary); border:1px solid rgba(255,255,255,0.15); cursor:pointer;">✦ स्वांश (D-9)</button>
+                        </div>
+                    </div>
+
+                    <!-- Classical Distinction Note -->
+                    <div style="background:rgba(192,132,252,0.08); border:1px solid rgba(192,132,252,0.25); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:0.8rem; line-height:1.5;">
+                        <b style="color:#fbbf24;">शास्त्रीय भेद (महर्षि जैमिनी एवं पाराशर निर्णय):</b><br>
+                        • <b>स्वांश (Svamsha):</b> नवमांश (D-9) में आत्मकारक की राशि को लग्न बनाकर <i>नवमांश ग्रहों</i> का वेध। यह आत्मा की अंतश्चेतना, पूर्वजन्म संस्कार व इष्टदेवता का द्योतक है।<br>
+                        • <b>कारकांश (Karakamsha):</b> आत्मकारक की नवमांश राशि को लग्न बनाकर उस पर <i>D-1 राशि चक्र के ग्रहों</i> का आरोपण (BPHS अ. 33)। यह स्थूल जगत में राज्य सम्मान, पद, अधिकार व आजीविका सिद्ध करता है।
                     </div>
 
                     <div class="chart-box" id="jaiminiChartWrap">
@@ -312,63 +334,122 @@
     </nav>
 
     <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
 
     <script>
+        var activeChart = null;
+        var currentJaiminiMode = 'karakamsha'; // 'karakamsha' (D-1) or 'svamsha' (D-9)
+
         document.addEventListener('DOMContentLoaded', function () {
+            initJaiminiPage();
+        });
+
+        function initJaiminiPage() {
             var profileData = null;
             try {
                 var stored = localStorage.getItem('vyas_active_profile');
                 if (stored) profileData = JSON.parse(stored);
             } catch (e) { }
 
-            var pName = profileData ? (profileData.name || "सक्रिय जातक") : "पं. निखिल व्यास (नमूना)";
-            document.getElementById('activeProfileName').textContent = pName;
-
-            var mockHouses = {
-                1: ['मीन', { p: 'मंगल 28°10\'' }],
-                5: [{ p: 'गुरु 05°30\'' }],
-                7: [{ p: 'शुक्र 27°02\'' }, { p: 'बुध 19°45\'' }],
-                8: [{ p: 'सूर्य 14°20\'' }],
-                9: [{ p: 'चन्द्र 03°15\'' }],
-                12: [{ p: 'शनि 22°14\'' }]
-            };
-
-            var karakas = {
-                AK: { planet: 'मंगल', deg: "28°10'", title: 'आत्मकारक', field: 'आत्मा, व्यक्तित्व व उद्देश्य' },
-                AmK: { planet: 'शुक्र', deg: "27°02'", title: 'अमात्यकारक', field: 'करियर, आजीविका व पद' },
-                BK: { planet: 'शनि', deg: "22°14'", title: 'भ्रातृकारक', field: 'गुरु, बंधु व संरक्षक' },
-                MK: { planet: 'बुध', deg: "19°45'", title: 'मातृकारक', field: 'माता, मन व स्थायी संपत्ति' },
-                PK: { planet: 'सूर्य', deg: "14°20'", title: 'पुत्रकारक', field: 'संतान, विद्या व प्रज्ञा' },
-                GK: { planet: 'गुरु', deg: "05°30'", title: 'ज्ञातिकारक', field: 'संघर्ष, प्रतिस्पर्धा व ऋण' },
-                DK: { planet: 'चन्द्र', deg: "03°15'", title: 'दाराकारक', field: 'जीवनसाथी व साझेदारी' }
-            };
-
-            // If active chart has planet_table, compute authentic Karakas
-            if (profileData && profileData.planet_table && window.VyasJaiminiEngine) {
-                var computed = VyasJaiminiEngine.computeKarakas(profileData.planet_table);
-                if (computed && computed.AK) {
-                    var keys = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK', 'DK'];
-                    for (var ki = 0; ki < keys.length; ki++) {
-                        var k = keys[ki];
-                        if (computed[k]) {
-                            karakas[k] = {
-                                planet: computed[k].planet,
-                                deg: computed[k].deg + '°',
-                                title: computed[k].title,
-                                field: computed[k].desc
-                            };
-                        }
-                    }
+            if (profileData && profileData.dob) {
+                if (profileData.jaimini && profileData.jaimini.karakas) {
+                    activeChart = profileData;
+                } else if (typeof window.computeMathematicalKundli === 'function') {
+                    try {
+                        activeChart = window.computeMathematicalKundli(
+                            profileData.name || 'सक्रिय जातक',
+                            profileData.dob,
+                            profileData.tob || '12:00',
+                            profileData.place || profileData.city || '',
+                            profileData.gender || 'Male'
+                        );
+                        localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
+                    } catch (e) { console.warn(e); }
                 }
             }
 
-            // Render Karakamsha Chart
-            var chartWrap = document.getElementById('jaiminiChartWrap');
-            if (chartWrap && window.VyasChartRenderers) {
-                chartWrap.innerHTML = VyasChartRenderers.renderJaiminiKarakamsaChart(12, mockHouses, karakas, 440, false);
+            if (!activeChart && typeof window.VyasAstronomicalEngine !== 'undefined') {
+                activeChart = window.VyasAstronomicalEngine.computeCurrentPrashna();
             }
+
+            renderJaiminiView(activeChart);
+        }
+
+        function setJaiminiMode(mode) {
+            currentJaiminiMode = mode;
+            var btnK = document.getElementById('btnTabKarakamsha');
+            var btnS = document.getElementById('btnTabSvamsha');
+            var titleEl = document.getElementById('chartHeadingTitle');
+
+            if (mode === 'karakamsha') {
+                if (btnK) { btnK.style.background = '#fbbf24'; btnK.style.color = '#050811'; btnK.style.border = 'none'; }
+                if (btnS) { btnS.style.background = 'rgba(255,255,255,0.08)'; btnS.style.color = 'var(--text-secondary)'; btnS.style.border = '1px solid rgba(255,255,255,0.15)'; }
+                if (titleEl) titleEl.textContent = 'कारकांश कुण्डली (Karakamsha • D-1 राशि ग्रह AK नवांश लग्न से)';
+            } else {
+                if (btnS) { btnS.style.background = '#fbbf24'; btnS.style.color = '#050811'; btnS.style.border = 'none'; }
+                if (btnK) { btnK.style.background = 'rgba(255,255,255,0.08)'; btnK.style.color = 'var(--text-secondary)'; btnK.style.border = '1px solid rgba(255,255,255,0.15)'; }
+                if (titleEl) titleEl.textContent = 'स्वांश कुण्डली (Svamsha • D-9 नवमांश ग्रह AK नवमांश लग्न से)';
+            }
+
+            renderJaiminiChartOnly();
+        }
+
+        function renderJaiminiChartOnly() {
+            if (!activeChart) return;
+            var klSign = (activeChart.jaimini && activeChart.jaimini.karakamsha) ? activeChart.jaimini.karakamsha : "धनु";
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var klSignNum = signs.indexOf(klSign) + 1;
+            if (klSignNum < 1 || klSignNum > 12) klSignNum = 9;
+
+            var karakas = {};
+            if (activeChart.planet_table && window.VyasJaiminiEngine) {
+                karakas = VyasJaiminiEngine.computeKarakas(activeChart.planet_table) || {};
+            }
+
+            var chartWrap = document.getElementById('jaiminiChartWrap');
+            if (!chartWrap || !window.VyasChartRenderers) return;
+
+            if (currentJaiminiMode === 'svamsha') {
+                // Svamsha: Use D-9 Navamsha planetary placements
+                var d9Planets = [];
+                if (activeChart.charts && activeChart.charts.d9 && activeChart.charts.d9.planetDetails) {
+                    d9Planets = activeChart.charts.d9.planetDetails.map(function (p) {
+                        return { p: p.planet, sign: p.sign, d: p.degree };
+                    });
+                } else if (activeChart.planet_table) {
+                    d9Planets = activeChart.planet_table;
+                }
+                chartWrap.innerHTML = VyasChartRenderers.renderJaiminiKarakamsaChart(klSignNum, d9Planets, karakas, 440, false, 'स्वांश');
+            } else {
+                // Karakamsha: Use D-1 Rashi planetary placements mapped onto AK Navamsha sign
+                var d1Planets = activeChart.planet_table || [];
+                chartWrap.innerHTML = VyasChartRenderers.renderJaiminiKarakamsaChart(klSignNum, d1Planets, karakas, 440, false, 'कारकांश');
+            }
+        }
+
+        function renderJaiminiView(chart) {
+            if (!chart) return;
+            var prof = chart.profile || {};
+            var pName = prof.name || "सक्रिय जातक";
+            var lagna = prof.asc_sign || "मेष";
+            var akName = (chart.jaimini && chart.jaimini.atmakaraka) ? chart.jaimini.atmakaraka : "सूर्य";
+            var klSign = (chart.jaimini && chart.jaimini.karakamsha) ? chart.jaimini.karakamsha : "धनु";
+            document.getElementById('activeProfileName').textContent = pName + " • " + lagna + " लग्न (AK: " + akName + " ➔ कारकांश: " + klSign + ")";
+
+            // Pre-fill inputs
+            if (prof.name && prof.name !== 'तात्कालिक प्रश्न/गोचर कुण्डली') document.getElementById('calcName').value = prof.name;
+            if (prof.dob) document.getElementById('calcDob').value = prof.dob;
+            if (prof.tob) document.getElementById('calcTob').value = prof.tob;
+            if (prof.city) document.getElementById('calcCity').value = prof.city;
+
+            var karakas = {};
+            if (chart.planet_table && window.VyasJaiminiEngine) {
+                karakas = VyasJaiminiEngine.computeKarakas(chart.planet_table) || {};
+            }
+
+            renderJaiminiChartOnly();
 
             // Populate Karaka Table
             var tbody = document.getElementById('karakaTableBody');
@@ -376,25 +457,110 @@
             var kKeys = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK', 'DK'];
             for (var i = 0; i < kKeys.length; i++) {
                 var code = kKeys[i];
-                var item = karakas[code];
+                var item = karakas[code] || { title: code, planet: '-', deg: '-', sign: '-', desc: '-' };
                 var isAK = code === 'AK';
-                kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + item.title + '</td><td><b>' + item.planet + '</b></td><td>' + item.deg + '</td><td style="color:var(--text-muted);">' + item.field + '</td></tr>';
+                kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + item.title + '</td><td><b>' + item.planet + '</b> (' + (item.sign || '') + ')</td><td>' + item.deg + '°</td><td style="color:var(--text-muted); font-size:0.85rem;">' + item.desc + '</td></tr>';
             }
             if (tbody) tbody.innerHTML = kHtml;
 
-            // Populate Phalit
+            // Compute Ishta Devata from 12th from Karakamsha
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var klSignIdx = signs.indexOf(klSign);
+            if (klSignIdx === -1) klSignIdx = 8;
+            var h12SignIdx = (klSignIdx + 11) % 12;
+            var h12SignName = signs[h12SignIdx];
+
+            // Check planets in 12th from Karakamsha
+            var planetsIn12 = [];
+            (chart.planet_table || []).forEach(function (pt) {
+                if (pt.r === h12SignName || pt.sign === h12SignName) {
+                    planetsIn12.push((pt.p || pt.planet || '').replace(/\s*\(.*\)/, '').trim());
+                }
+            });
+
+            var ishtaDeity = "देवाधिदेव साम्ब सदाशिव (भगवान शिव / महेश्वर)";
+            var ishtaPlanet = planetsIn12.length > 0 ? planetsIn12[0] : "केतु";
+            var ishtaMap = {
+                'सूर्य': 'भगवान श्री सूर्यनारायण / गायत्री माता',
+                'चन्द्र': 'भगवती गौरी / श्री ललिता त्रिपुरसुंदरी',
+                'मंगल': 'भगवान स्कन्द (कार्तिकेय) / श्री हनुमान जी महाराज',
+                'बुध': 'भगवान श्री महाविष्णु / नारायण',
+                'गुरु': 'देवाधिदेव साम्ब सदाशिव / देवाचार्य बृहस्पति',
+                'शुक्र': 'भगवती महालक्ष्मी / अन्नपूर्णा देवी',
+                'शनि': 'भगवान श्री कृष्ण / यमराज / शनि देव',
+                'राहु': 'भगवती दुर्गा / काली माता',
+                'केतु': 'भगवान श्री गणेश / कैवल्य मोक्ष प्रदाता'
+            };
+            if (ishtaMap[ishtaPlanet]) ishtaDeity = ishtaMap[ishtaPlanet];
+
+            // In-depth Jaimini Sutras Bank Matching
+            var bankSutras = [];
+            if (window.VyasSutrasBank && typeof window.VyasSutrasBank.searchSutras === 'function') {
+                try {
+                    bankSutras = window.VyasSutrasBank.searchSutras('कारकांश ' + akName, 6);
+                    if (bankSutras.length === 0) {
+                        bankSutras = window.VyasSutrasBank.searchSutras('कारकांश', 4);
+                    }
+                } catch (e) { }
+            }
+
             var phalitWrap = document.getElementById('jaiminiPhalitWrap');
             if (phalitWrap && window.VyasJaiminiEngine) {
                 var generalPred = VyasJaiminiEngine.predict(karakas, 'general');
                 var careerPred = VyasJaiminiEngine.predict(karakas, 'career');
                 var relPred = VyasJaiminiEngine.predict(karakas, 'marriage');
 
+                var bankHtml = '';
+                if (bankSutras && bankSutras.length > 0) {
+                    bankHtml += '<div style="margin-top:14px; border-top:1px dashed rgba(212,175,55,0.3); padding-top:12px;">' +
+                        '<b style="color:#fbbf24; font-size:0.92rem;">✦ 22,000+ शास्त्रीय सूत्र कोष से प्रत्यक्ष जैमिनी वेध:</b>';
+                    bankSutras.forEach(function (s) {
+                        bankHtml += '<div class="phalit-item" style="border-left:3px solid #c084fc; margin-top:8px;">' +
+                            '<b>सूत्र संदर्भ:</b> ' + (s.cond || s.condition || '') + '<br>' +
+                            '<b>फलित निर्णय:</b> ' + (s.pred || s.prediction || '') + '<br>' +
+                            '<small style="color:var(--text-muted);">ग्रन्थ प्रमाण: ' + (s.source || 'Jaimini Upadesha Sutras') + '</small>' +
+                            '</div>';
+                    });
+                    bankHtml += '</div>';
+                }
+
                 phalitWrap.innerHTML = '<div class="phalit-item">' + generalPred + '</div>' +
                     '<div class="phalit-item">' + careerPred + '</div>' +
                     '<div class="phalit-item">' + relPred + '</div>' +
-                    '<div class="sutra-quote"><b>महर्षि जैमिनी सूत्र (अध्याय १, पाद २):</b><br><i>"अमात्ये शुभे दृष्टे राजपूज्यः। कारकांशे केतौ मोक्षः॥"</i><br>अमात्यकारक पर शुभ दृष्टि होने से व्यक्ति समाज व राजसत्ता में पूजनीय होता है तथा कारकांश से केतु मोक्ष प्रदाता है।</div>';
+                    '<div class="phalit-item" style="background:rgba(251,191,36,0.08); border-left:3px solid #fbbf24;">' +
+                    '<b>✦ जैमिनी इष्टदेवता निर्णय (कारकांश से द्वादश भाव • ' + h12SignName + '):</b><br>' +
+                    'कारकांश से 12वें मोक्ष भाव में ' + (planetsIn12.length > 0 ? (planetsIn12.join(' + ') + ' की स्थिति') : 'शुभ ग्रह दृष्टि') + ' होने से जातक के परम आराध्य व जीवन-रक्षक इष्टदेव <b>' + ishtaDeity + '</b> हैं। नित्य इनके मूल मंत्र का जप समस्त अरिष्टों का शमन करता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #10b981;">' +
+                    '<b>✦ अमात्यकारक (AmK) राजयोग वेध:</b><br>' +
+                    'जैमिनी सूत्रानुसार <i>"अमात्ये शुभे दृष्टे राजपूज्यः"</i> — आजीविका व सामाजिक प्रतिष्ठा का स्वामी ' + (karakas.AmK ? karakas.AmK.planet : 'अमात्य') + ' है। इस ग्रह की चर दशा अथवा गोचर में राज्य-कृपा, पदोन्नति एवं आर्थिक विस्तार अवश्य घटित होता है।' +
+                    '</div>' +
+                    bankHtml +
+                    '<div class="sutra-quote"><b>महर्षि जैमिनी सूत्र (अध्याय १, पाद २):</b><br><i>"अमात्ये शुभे दृष्टे राजपूज्यः। कारकांशे केतौ मोक्षः॥ तत्र प्रभुविष्णुश्च। उच्चे वैकुण्ठम्॥"</i><br>अमात्यकारक पर शुभ दृष्टि होने से व्यक्ति समाज व शासन में प्रतिष्ठित होता है। कारकांश से 12वें भाव में केतु मोक्ष प्रदाता है एवं शुभ ग्रहों के योग से उत्तम लोकों की प्राप्ति होती है।</div>';
             }
-        });
+        }
+
+        function calculateAndRefresh() {
+            var name = document.getElementById('calcName').value.trim() || 'जिज्ञासु जातक';
+            var dob = document.getElementById('calcDob').value;
+            var tob = document.getElementById('calcTob').value || '12:00';
+            var city = document.getElementById('calcCity').value.trim() || 'दिल्ली';
+
+            if (!dob) {
+                alert('कृपया जन्म तिथि चुनें।');
+                return;
+            }
+
+            if (typeof window.computeMathematicalKundli === 'function') {
+                activeChart = window.computeMathematicalKundli(name, dob, tob, city, 'Male');
+                try {
+                    localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
+                } catch (e) { }
+                renderJaiminiView(activeChart);
+                alert('✓ ' + name + ' की जैमिनी कारकांश व स्वांश कुण्डली (AK: ' + activeChart.jaimini.atmakaraka + ') की वास्तविक गणना पूर्ण हुई!');
+            }
+        }
     </script>
 </body>
 </html>
+

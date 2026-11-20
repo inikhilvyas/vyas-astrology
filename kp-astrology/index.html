@@ -218,10 +218,22 @@
                 <p>प्लैसिडस (Placidus) असमान भाव विभाजन, 12 भावों के कस्पल सब-लॉर्ड एवं घटना स्वीकृति सिद्धांत।</p>
             </div>
             <div class="hero-right">
-                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(56,189,248,0.15); border-color:var(--sky);">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    कुण्डली बदलें
-                </button>
+                <span id="activeProfileName" style="color:var(--sky); font-weight:700; font-size:0.95rem;">सक्रिय जातक</span>
+            </div>
+        </div>
+
+        <!-- Quick Calculate Bar -->
+        <div style="background: rgba(12,19,36,0.9); border: 1px solid rgba(56,189,248,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="color:#38bdf8; font-weight:700; font-size:0.9rem;">जन्म विवरण दर्ज करें:</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; flex:1; justify-content:flex-end;">
+                <input type="text" id="calcName" placeholder="नाम" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(56,189,248,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <input type="date" id="calcDob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(56,189,248,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="time" id="calcTob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(56,189,248,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="text" id="calcCity" placeholder="शहर" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(56,189,248,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <button onclick="calculateAndRefresh()" style="padding:7px 18px; background:linear-gradient(135deg, #38bdf8, #0284c7); border:none; border-radius:6px; color:#050811; font-weight:700; font-size:0.85rem; cursor:pointer;">✦ KP गणना करें</button>
             </div>
         </div>
 
@@ -333,79 +345,198 @@
     </nav>
 
     <script src="/js/vyas_sutras_bank.js"></script>
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
 
     <script>
+        var activeChart = null;
+
         document.addEventListener('DOMContentLoaded', function () {
+            initKPPage();
+        });
+
+        function initKPPage() {
             var profileData = null;
             try {
                 var stored = localStorage.getItem('vyas_active_profile');
                 if (stored) profileData = JSON.parse(stored);
             } catch (e) { }
 
-            var pName = profileData ? (profileData.name || "सक्रिय जातक") : "पं. निखिल व्यास (नमूना)";
-            document.getElementById('activeProfileName').textContent = pName;
+            if (profileData && profileData.dob) {
+                if (profileData.kp && profileData.kp.cusps) {
+                    activeChart = profileData;
+                } else if (typeof window.computeMathematicalKundli === 'function') {
+                    try {
+                        activeChart = window.computeMathematicalKundli(
+                            profileData.name || 'सक्रिय जातक',
+                            profileData.dob,
+                            profileData.tob || '12:00',
+                            profileData.place || profileData.city || '',
+                            profileData.gender || 'Male'
+                        );
+                        localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
+                    } catch (e) { console.warn(e); }
+                }
+            }
 
-            var mockHouses = {
-                1: ['कर्क', { p: 'गुरु 05°30\'' }],
-                7: [{ p: 'मंगल 28°10\'' }],
-                8: [{ p: 'शनि 22°14\'' }],
-                9: [{ p: 'शुक्र 27°02\'' }, { p: 'बुध 19°45\'' }],
-                10: [{ p: 'सूर्य 14°20\'' }],
-                11: [{ p: 'चन्द्र 03°15\'' }]
-            };
+            if (!activeChart && typeof window.VyasAstronomicalEngine !== 'undefined') {
+                activeChart = window.VyasAstronomicalEngine.computeCurrentPrashna();
+            }
 
-            var mockCusps = {
-                1: { sign: 'कर्क', deg: "15°24'", star: 'पुष्य', subLord: 'शनि' },
-                2: { sign: 'सिंह', deg: "11°40'", star: 'मघा', subLord: 'बुध' },
-                3: { sign: 'कन्या', deg: "10°12'", star: 'हस्त', subLord: 'चन्द्र' },
-                4: { sign: 'तुला', deg: "12°05'", star: 'स्वाति', subLord: 'राहु' },
-                5: { sign: 'वृश्चिक', deg: "15°18'", star: 'अनुराधा', subLord: 'गुरु' },
-                6: { sign: 'धनु', deg: "17°30'", star: 'पूर्वाषाढ़ा', subLord: 'शुक्र' },
-                7: { sign: 'मकर', deg: "15°24'", star: 'श्रवण', subLord: 'चन्द्र' },
-                8: { sign: 'कुंभ', deg: "11°40'", star: 'शतभिषा', subLord: 'शनि' },
-                9: { sign: 'मीन', deg: "10°12'", star: 'उत्तरभाद्रपद', subLord: 'मंगल' },
-                10: { sign: 'मेष', deg: "12°05'", star: 'अश्विनी', subLord: 'बुध' },
-                11: { sign: 'वृषभ', deg: "15°18'", star: 'रोहिणी', subLord: 'गुरु' },
-                12: { sign: 'मिथुन', deg: "17°30'", star: 'आर्द्रा', subLord: 'राहु' }
-            };
+            renderKPView(activeChart);
+        }
 
-            var chartHouses = (profileData && profileData.charts && profileData.charts.d1 && profileData.charts.d1.houses) ?
-                profileData.charts.d1.houses : mockHouses;
+        function renderKPView(chart) {
+            if (!chart) return;
+            var prof = chart.profile || {};
+            var pName = prof.name || "सक्रिय जातक";
+            var lagna = prof.asc_sign || "मेष";
+            var dms = prof.asc_dms || "";
+            document.getElementById('activeProfileName').textContent = pName + " • " + lagna + " लग्न (" + dms + ")";
+
+            // Pre-fill inputs if available
+            if (prof.name && prof.name !== 'तात्कालिक प्रश्न/गोचर कुण्डली') document.getElementById('calcName').value = prof.name;
+            if (prof.dob) document.getElementById('calcDob').value = prof.dob;
+            if (prof.tob) document.getElementById('calcTob').value = prof.tob;
+            if (prof.city) document.getElementById('calcCity').value = prof.city;
+
+            var chartHouses = (chart.charts && chart.charts.d1 && chart.charts.d1.houses) ? chart.charts.d1.houses : {};
+            var cusps = (chart.kp && chart.kp.cusps) ? chart.kp.cusps : {};
 
             // Render KP Chalit Chart
             var chartWrap = document.getElementById('kpChartWrap');
             if (chartWrap && window.VyasChartRenderers) {
-                chartWrap.innerHTML = VyasChartRenderers.renderKPChalitChart(chartHouses, mockCusps, 440, false);
+                chartWrap.innerHTML = VyasChartRenderers.renderKPChalitChart(chartHouses, cusps, 440, false);
             }
 
             // Populate Cusp Table
             var tbody = document.getElementById('kpCuspTableBody');
             var cHtml = '';
             for (var h = 1; h <= 12; h++) {
-                var c = mockCusps[h];
-                cHtml += '<tr><td><b>भाव ' + h + '</b></td><td>' + c.deg + '</td><td>' + c.sign + '</td><td>' + c.star + '</td><td class="sublord">' + c.subLord + '</td></tr>';
+                var c = cusps[h] || { deg: '-', sign: '-', star: '-', subLord: '-' };
+                cHtml += '<tr><td><b>भाव ' + h + '</b></td><td>' + (c.deg || '-') + '</td><td>' + (c.sign || '-') + '</td><td>' + (c.star || '-') + '</td><td class="sublord" style="color:var(--sky); font-weight:700;">' + (c.subLord || '-') + '</td></tr>';
             }
             if (tbody) tbody.innerHTML = cHtml;
 
-            // Populate KP Predictions
+            // Populate Comprehensive KP 4-Step & Cuspal Predictions
             var phalitWrap = document.getElementById('kpPhalitWrap');
             if (phalitWrap && window.VyasKPEngine) {
-                var careerKP = VyasKPEngine.predict(profileData || { planet_table: [] }, 'career');
-                var wealthKP = VyasKPEngine.predict(profileData || { planet_table: [] }, 'wealth');
-                var relKP = VyasKPEngine.predict(profileData || { planet_table: [] }, 'marriage');
+                var c1 = cusps[1] || { subLord: 'शनि', sign: 'मेष', star: 'अश्विनी' };
+                var c2 = cusps[2] || { subLord: 'बुध', sign: 'वृषभ', star: 'कृतिका' };
+                var c4 = cusps[4] || { subLord: 'शुक्र', sign: 'कर्क', star: 'पुष्य' };
+                var c5 = cusps[5] || { subLord: 'गुरु', sign: 'सिंह', star: 'मघा' };
+                var c6 = cusps[6] || { subLord: 'मंगल', sign: 'कन्या', star: 'उत्तराफाल्गुनी' };
+                var c7 = cusps[7] || { subLord: 'शुक्र', sign: 'तुला', star: 'चित्रा' };
+                var c10 = cusps[10] || { subLord: 'गुरु', sign: 'मकर', star: 'उत्तराषाढ़ा' };
+                var c11 = cusps[11] || { subLord: 'बुध', sign: 'कुंभ', star: 'धनिष्ठा' };
 
-                phalitWrap.innerHTML = '<div class="phalit-item">' + careerKP + '</div>' +
-                    '<div class="phalit-item">' + wealthKP + '</div>' +
-                    '<div class="phalit-item">' + relKP + '</div>';
+                var careerKP = VyasKPEngine.predict(chart, 'career');
+                var wealthKP = VyasKPEngine.predict(chart, 'wealth');
+                var relKP = VyasKPEngine.predict(chart, 'marriage');
+                var healthKP = VyasKPEngine.predict(chart, 'health');
+
+                // Search matching KP sutras from 22,000+ VyasSutrasBank
+                var kpBankSutras = [];
+                if (window.VyasSutrasBank && typeof window.VyasSutrasBank.searchSutras === 'function') {
+                    try {
+                        kpBankSutras = window.VyasSutrasBank.searchSutras('केपी ' + c10.subLord, 4);
+                        if (kpBankSutras.length === 0) {
+                            kpBankSutras = window.VyasSutrasBank.searchSutras('कस्पल ' + c2.subLord, 3);
+                        }
+                    } catch (e) { }
+                }
+
+                var bankHtml = '';
+                if (kpBankSutras && kpBankSutras.length > 0) {
+                    bankHtml += '<div style="margin-top:14px; border-top:1px dashed rgba(56,189,248,0.3); padding-top:12px;">' +
+                        '<b style="color:var(--sky); font-size:0.92rem;">✦ 22,000+ शास्त्रीय सूत्र कोष से प्रत्यक्ष के.पी. वेध:</b>';
+                    kpBankSutras.forEach(function (s) {
+                        bankHtml += '<div class="phalit-item" style="border-left:3px solid var(--sky); margin-top:8px;">' +
+                            '<b>सूत्र संदर्भ:</b> ' + (s.cond || s.condition || '') + '<br>' +
+                            '<b>फलित निर्णय:</b> ' + (s.pred || s.prediction || '') + '<br>' +
+                            '<small style="color:var(--text-muted);">ग्रन्थ प्रमाण: ' + (s.source || 'KP Reader IV / Krishnamurti Paddhati') + '</small>' +
+                            '</div>';
+                    });
+                    bankHtml += '</div>';
+                }
+
+                phalitWrap.innerHTML = '<div class="phalit-item" style="border-left:3px solid var(--sky);">' +
+                    '<b>✦ प्रथम भाव (तनु • स्वास्थ्य व दीर्घायु) कस्पल सब-लॉर्ड: ' + c1.subLord + '</b><br>' +
+                    'लग्न कस्प का नक्षत्र ' + c1.star + ' एवं उप-स्वामी <b>' + c1.subLord + '</b> है। यदि 1st कस्पल सब-लॉर्ड 1, 11 भावों का सिग्निफिकेटर बने तो उत्तम आरोग्य व दीर्घायु देता है। बाधक व मारक भाव (6, 8, 12) के संपर्क से सतर्कता अपेक्षित है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #10b981;">' +
+                    '<b>✦ द्वितीय भाव (धन व कुटुंब) कस्पल सब-लॉर्ड: ' + c2.subLord + '</b><br>' +
+                    'धन भाव का उप-स्वामी <b>' + c2.subLord + '</b> है। KP 4-स्टेप थ्योरी अनुसार यदि यह 2, 6, 10, 11 भावों के स्टार-लॉर्ड से जुड़े तो जातक प्रचुर मात्रा में संचित धन, अचल संपत्ति एवं निरंतर वित्तीय प्रवाह अर्जित करता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #f59e0b;">' +
+                    '<b>✦ चतुर्थ भाव (गृह, भूमि, वाहन व माता) कस्पल सब-लॉर्ड: ' + c4.subLord + '</b><br>' +
+                    'चतुर्थ कस्पल उप-स्वामी <b>' + c4.subLord + '</b> यदि 4, 11, 12 भावों की पुष्टि करे तो जातक को स्वयं के परिश्रम से भव्य भवन, वाहन एवं पैतृक संपत्ति का अखंड सुख मिलता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #8b5cf6;">' +
+                    '<b>✦ पंचम भाव (विद्या, संतान व सट्टा प्रज्ञा) कस्पल सब-लॉर्ड: ' + c5.subLord + '</b><br>' +
+                    'विद्या व संतान भाव का उप-स्वामी <b>' + c5.subLord + '</b> 2, 5, 11 भावों से सम्बद्ध होकर उच्च बौद्धिक दक्षता, शोध कार्य एवं सुयोग्य संतति का अकाट्य वरदान प्रदान करता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #ef4444;">' +
+                    '<b>✦ षष्ठ व दशम भाव (प्रतियोगिता, सेवा व राज्य सम्मान) कस्पल सब-लॉर्ड: ' + c6.subLord + ' / ' + c10.subLord + '</b><br>' +
+                    'दशम भाव का कस्पल सब-लॉर्ड <b>' + c10.subLord + '</b> कार्यक्षेत्र की स्वायत्तता का अंतिम निर्धारक है। जब यह 2, 6, 10, 11 भावों का कार्येश बनता है तो जातक उच्च प्रशासनिक सेवा, कॉर्पोरेट लीडरशिप अथवा सफल स्वतंत्र उद्योग में अपार ख्याति पाता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #ec4899;">' +
+                    '<b>✦ सप्तम भाव (दांपत्य, विवाह व साझेदारी) कस्पल सब-लॉर्ड: ' + c7.subLord + '</b><br>' +
+                    'सप्तम कस्प का उप-स्वामी <b>' + c7.subLord + '</b> 2, 7, 11 भावों के अनुकूल संपर्क में होने पर दांपत्य जीवन में स्थायित्व, सुसंस्कृत जीवनसाथी तथा दीर्घकालिक व्यापारिक साझेदारियों की शास्त्रीय अनुमति प्रदान करता है।' +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #06b6d4;">' +
+                    '<b>✦ एकादश भाव (सर्व मनोकामना पूर्ति व विपुल लाभ) कस्पल सब-लॉर्ड: ' + c11.subLord + '</b><br>' +
+                    'लाभ कस्प का उप-स्वामी <b>' + c11.subLord + '</b> जातक की सभी अभीष्ट इच्छाओं, वैश्विक संपर्कों व स्थायी आय स्रोतों को साकार करता है।' +
+                    '</div>' +
+                    bankHtml +
+                    '<div class="sutra-quote">' +
+                    '<b>के.पी. सिद्धांत (प्रो. के. एस. कृष्णमूर्ति प्रणीत):</b><br>' +
+                    '<i>"ग्रह अपने नक्षत्र स्वामी (Star-Lord) का फल देता है, परंतु घटना का परिणाम व स्वीकृति उसके कस्पल सब-लॉर्ड (Sub-Lord) के हाथों में होती है।"</i><br>' +
+                    'भाव के परिणाम का निर्धारण सब-लॉर्ड द्वारा भाव 2, 6, 10, 11 (सकारात्मक) अथवा 5, 8, 12 (नकारात्मक) के सिग्निफिकेशन पर पूर्णतः निर्भर करता है।' +
+                    '</div>';
             }
-        });
+        }
+
+        function calculateAndRefresh() {
+            var name = document.getElementById('calcName').value.trim() || 'जिज्ञासु जातक';
+            var dob = document.getElementById('calcDob').value;
+            var tob = document.getElementById('calcTob').value || '12:00';
+            var city = document.getElementById('calcCity').value.trim() || 'दिल्ली';
+
+            if (!dob) {
+                alert('कृपया जन्म तिथि चुनें।');
+                return;
+            }
+
+            if (typeof window.computeMathematicalKundli === 'function') {
+                activeChart = window.computeMathematicalKundli(name, dob, tob, city, 'Male');
+                try {
+                    localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
+                } catch (e) { }
+                renderKPView(activeChart);
+                alert('✓ ' + name + ' की KP कुण्डली (' + activeChart.profile.asc_sign + ' लग्न) की वास्तविक खगोलीय गणना पूर्ण हुई!');
+            }
+        }
 
         function castHorary() {
-            var seed = document.getElementById('kpHorarySeed').value;
-            alert('KP होरारी अंक ' + seed + ' का तात्कालिक वेध संपन्न।\nदशम कस्पल सब-लॉर्ड: बुध (2, 6, 10, 11 भावों की पुष्टि)। कार्य सिद्धि निश्चित है।');
+            var seed = parseInt(document.getElementById('kpHorarySeed').value, 10) || 108;
+            if (seed < 1 || seed > 249) seed = 108;
+            if (typeof window.computeMathematicalKundli === 'function') {
+                var now = new Date();
+                var y = now.getFullYear();
+                var m = String(now.getMonth() + 1).padStart(2, '0');
+                var d = String(now.getDate()).padStart(2, '0');
+                var hh = String(now.getHours()).padStart(2, '0');
+                var mm = String(now.getMinutes()).padStart(2, '0');
+                var hChart = window.computeMathematicalKundli('KP होरारी प्रश्न (' + seed + ')', y + '-' + m + '-' + d, hh + ':' + mm, 'उज्जैन', 'Prashna');
+                activeChart = hChart;
+                renderKPView(activeChart);
+                var sub10 = (hChart.kp && hChart.kp.cusps && hChart.kp.cusps[10]) ? hChart.kp.cusps[10].subLord : 'बुध';
+                alert('KP होरारी अंक ' + seed + ' का तात्कालिक वेध संपन्न।\nदशम कस्पल सब-लॉर्ड: ' + sub10 + '। 12 भावों के कस्पल सब-लॉर्ड अद्यतन हो गए हैं।');
+            }
         }
     </script>
 </body>
 </html>
+

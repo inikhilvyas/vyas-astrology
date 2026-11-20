@@ -247,10 +247,22 @@
                 <p>पाराशरी अष्टकवर्ग पद्धति अनुसार 12 भावों का वास्तविक सामर्थ्य, आय-व्यय संतुलन एवं गोचर वेध।</p>
             </div>
             <div class="hero-right">
-                <button onclick="location.href='/'" class="portal-pill" style="cursor:pointer; background:rgba(212,175,55,0.15); border-color:var(--gold);">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    कुण्डली बदलें
-                </button>
+                <span id="activeProfileName" style="color:var(--gold); font-weight:700; font-size:0.95rem;">सक्रिय जातक</span>
+            </div>
+        </div>
+
+        <!-- Quick Calculate Bar -->
+        <div style="background: rgba(12,19,36,0.9); border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="color:#d4af37; font-weight:700; font-size:0.9rem;">जन्म विवरण दर्ज करें:</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; flex:1; justify-content:flex-end;">
+                <input type="text" id="calcName" placeholder="नाम" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <input type="date" id="calcDob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="time" id="calcTob" style="padding:6px 10px; background:rgba(5,8,17,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:6px; color:#fff; font-size:0.85rem;">
+                <input type="text" id="calcCity" placeholder="शहर" style="padding:6px 12px; background:rgba(5,8,17,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:6px; color:#fff; font-size:0.85rem; width:130px;">
+                <button onclick="calculateAndRefresh()" style="padding:7px 18px; background:linear-gradient(135deg, #d4af37, #aa820a); border:none; border-radius:6px; color:#050811; font-weight:700; font-size:0.85rem; cursor:pointer;">✦ अष्टकवर्ग गणना करें</button>
             </div>
         </div>
 
@@ -364,75 +376,158 @@
     </nav>
 
     <!-- Core Scripts -->
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script src="/js/vyas_sutras_bank.js"></script>
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
 
     <script>
+        var activeChart = null;
+
         document.addEventListener('DOMContentLoaded', function () {
-            // 1. Universal Profile Load
+            loadAndRenderAshtakavarga();
+        });
+
+        function calculateAndRefresh() {
+            var name = document.getElementById('calcName').value.trim() || 'सक्रिय जातक';
+            var dob = document.getElementById('calcDob').value;
+            var tob = document.getElementById('calcTob').value || '12:00';
+            var city = document.getElementById('calcCity').value.trim() || 'अयोध्या';
+
+            if (!dob) {
+                alert('कृपया जन्म तिथि चुनें।');
+                return;
+            }
+
+            if (window.computeMathematicalKundli) {
+                activeChart = window.computeMathematicalKundli(name, dob, tob, 26.79, 82.20);
+                activeChart.profile.city = city;
+                try {
+                    localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
+                } catch (e) { }
+                renderAll(activeChart);
+            }
+        }
+
+        function loadAndRenderAshtakavarga() {
             var profileData = null;
             try {
                 var stored = localStorage.getItem('vyas_active_profile');
                 if (stored) profileData = JSON.parse(stored);
             } catch (e) { }
 
-            var defaultSAV = [32, 28, 34, 30, 26, 29, 31, 24, 27, 33, 35, 28];
-            var lagnaSignNum = 4; // Default Karka (Cancer)
-            var pName = "पं. निखिल व्यास (नमूना कुण्डली)";
-
-            if (profileData) {
-                pName = profileData.name || "सक्रिय जातक";
-                if (profileData.lagna_sign_num) lagnaSignNum = profileData.lagna_sign_num;
-                else if (profileData.lagna) {
-                    var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
-                    lagnaSignNum = sMap[profileData.lagna] || 4;
-                }
-                if (profileData.ashtakavarga && Array.isArray(profileData.ashtakavarga.sav)) {
-                    defaultSAV = profileData.ashtakavarga.sav;
-                }
+            if (!profileData && window.VyasAstronomicalEngine) {
+                profileData = window.VyasAstronomicalEngine.computeCurrentPrashna(26.79, 82.20);
+                profileData.profile.name = "सक्रिय जातक";
             }
 
-            document.getElementById('activeProfileName').textContent = pName;
+            activeChart = profileData;
+            renderAll(activeChart);
+        }
 
-            // 2. Render Ashtakavarga Chart
+        function renderAll(chart) {
+            if (!chart) return;
+
+            var pName = (chart.profile && chart.profile.name) ? chart.profile.name : "सक्रिय जातक";
+            var lagnaSignNum = 4;
+            if (chart.lagna_sign_num) lagnaSignNum = chart.lagna_sign_num;
+            else if (chart.profile && chart.profile.asc_sign) {
+                var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
+                lagnaSignNum = sMap[chart.profile.asc_sign] || 4;
+            }
+
+            var sav = (chart.ashtakavarga && Array.isArray(chart.ashtakavarga.sav)) ? chart.ashtakavarga.sav : [32, 28, 34, 30, 26, 29, 31, 24, 27, 33, 35, 28];
+
+            var nameEl = document.getElementById('activeProfileName');
+            if (nameEl) nameEl.textContent = pName;
+
+            // 1. Render Ashtakavarga SAV Chart
             var chartWrap = document.getElementById('ashtakChartWrap');
             if (chartWrap && window.VyasChartRenderers) {
-                chartWrap.innerHTML = VyasChartRenderers.renderAshtakavargaChart(defaultSAV, lagnaSignNum, 440, false);
+                chartWrap.innerHTML = VyasChartRenderers.renderAshtakavargaChart(sav, lagnaSignNum, 440, false);
             }
 
-            // 3. Update Metrics (11th Gain, 12th Exp, 10th Karma)
-            var h10 = defaultSAV[9] || 31;
-            var h11 = defaultSAV[10] || 33;
-            var h12 = defaultSAV[11] || 26;
-            document.getElementById('mGain').textContent = h11;
-            document.getElementById('mExp').textContent = h12;
-            document.getElementById('mKarma').textContent = h10;
+            // 2. Bhava Bindu Calculation based on Lagna
+            // House H sign index: ((lagnaSignNum - 1) + (H - 1)) % 12
+            var h1 = sav[((lagnaSignNum - 1) + 0) % 12] || 28;
+            var h2 = sav[((lagnaSignNum - 1) + 1) % 12] || 28;
+            var h4 = sav[((lagnaSignNum - 1) + 3) % 12] || 28;
+            var h5 = sav[((lagnaSignNum - 1) + 4) % 12] || 28;
+            var h7 = sav[((lagnaSignNum - 1) + 6) % 12] || 28;
+            var h9 = sav[((lagnaSignNum - 1) + 8) % 12] || 28;
+            var h10 = sav[((lagnaSignNum - 1) + 9) % 12] || 31;
+            var h11 = sav[((lagnaSignNum - 1) + 10) % 12] || 33;
+            var h12 = sav[((lagnaSignNum - 1) + 11) % 12] || 26;
 
-            // 4. Render Deep Phalit
+            var elGain = document.getElementById('mGain');
+            var elExp = document.getElementById('mExp');
+            var elKarma = document.getElementById('mKarma');
+            if (elGain) elGain.textContent = h11;
+            if (elExp) elExp.textContent = h12;
+            if (elKarma) elKarma.textContent = h10;
+
+            // 3. Render Deep Classical Phalit
             var phalitWrap = document.getElementById('ashtakPhalitWrap');
-            if (phalitWrap && window.VyasAshtakavargaEngine) {
-                var avReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'career');
-                var gainReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'wealth');
-                var relReading = VyasAshtakavargaEngine.predict(profileData || { lagna: 'कर्क' }, 'marriage');
+            if (phalitWrap) {
+                var wealthVerdict = (h11 > h12) 
+                    ? '<span style="color:var(--emerald); font-weight:700;">अखंड धन संचय योग</span> (आय भाव ' + h11 + ' > व्यय भाव ' + h12 + ')'
+                    : '<span style="color:var(--gold); font-weight:700;">व्यय संयम अपेक्षित</span> (आय ' + h11 + ' एवं व्यय ' + h12 + ')';
 
-                var html = '<div class="phalit-item">' + avReading + '</div>';
-                html += '<div class="phalit-item">' + gainReading + '</div>';
-                html += '<div class="phalit-item">' + relReading + '</div>';
+                var karmaVerdict = (h10 >= 30)
+                    ? 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु</b> प्राप्त हैं, जो कार्यक्षेत्र में अटूट स्थायित्व, नेतृत्व क्षमता व मान-सम्मान की शास्त्रीय गारंटी देते हैं।'
+                    : 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु</b> हैं। परिश्रम के उपरांत निरंतर प्रगति का संकेत है।';
 
-                // Add classical citation
-                html += '<div class="sutra-quote">' +
-                    '<b>शास्त्रीय प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग अध्याय):</b><br>' +
-                    '<i>"एकादशे यदा बिन्दुरधिको द्वादशाद् भवेत्। तदा धनस्य संवृद्धिः सुखानि विविधानि च॥"</i><br>' +
-                    'अर्थात जब एकादश (आय) भाव में द्वादश (व्यय) भाव से अधिक बिंदु हों, तो जातक के संचित धन में निरंतर वृद्धि होती है।' +
+                var kendraSum = h1 + h4 + h7 + h10;
+                var trikonaSum = h1 + h5 + h9;
+
+                var html = '<div class="phalit-item">' +
+                    '• <b>आय-व्यय अष्टकवर्ग महा-संतुलन:</b> ' + wealthVerdict + '। महर्षि पराशर अनुसार यदि एकादश भाव में द्वादश भाव से अधिक बिंदु हों तो जातक जीवन भर आर्थिक दृष्टि से स्वावलंबी व वैभवशाली रहता है।' +
+                    '</div>' +
+                    '<div class="phalit-item">' +
+                    '• <b>कर्म भाव (१०वां भाव) सामर्थ्य:</b> ' + karmaVerdict +
+                    '</div>' +
+                    '<div class="phalit-item">' +
+                    '• <b>केंद्र व त्रिकोण कुल शक्ति:</b> केंद्र भावों (1, 4, 7, 10) का कुल योग <b>' + kendraSum + ' बिन्दु</b> तथा त्रिकोण भावों (1, 5, 9) का योग <b>' + trikonaSum + ' बिन्दु</b> है। ' +
+                    (kendraSum >= 115 ? 'यह कुण्डली को स्वाभाविक रूप से पराक्रमी और दीर्घायु बनाता है।' : 'यह जीवन में संयमित संतुलन और पुरुषार्थ को दर्शाता है।') +
                     '</div>';
+
+                // Query authentic sutras from VyasSutrasBank
+                if (window.VyasSutrasBank && window.VyasSutrasBank.searchSutras) {
+                    var sutras = window.VyasSutrasBank.searchSutras('अष्टकवर्ग', 3);
+                    if (sutras && sutras.length > 0) {
+                        html += '<div style="margin-top:14px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:12px;">' +
+                            '<div style="font-size:0.85rem; font-weight:800; color:var(--gold); margin-bottom:8px;">✦ शास्त्रीय सूत्र प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग)</div>';
+                        for (var si = 0; si < sutras.length; si++) {
+                            html += '<div class="sutra-quote" style="margin-bottom:8px;">' +
+                                '<b>' + (sutras[si].title || 'अष्टकवर्ग सूत्र') + ' (' + (sutras[si].ref || 'BPHS') + '):</b><br>' +
+                                '<i>"' + (sutras[si].sanskrit || '') + '"</i><br>' +
+                                (sutras[si].meaning || sutras[si].commentary || '') +
+                                '</div>';
+                        }
+                        html += '</div>';
+                    }
+                } else {
+                    html += '<div class="sutra-quote">' +
+                        '<b>शास्त्रीय प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग अध्याय):</b><br>' +
+                        '<i>"एकादशे यदा बिन्दुरधिको द्वादशाद् भवेत्। तदा धनस्य संवृद्धिः सुखानि विविधानि च॥"</i><br>' +
+                        'अर्थात जब एकादश (आय) भाव में द्वादश (व्यय) भाव से अधिक बिंदु हों, तो जातक के संचित धन में निरंतर वृद्धि होती है।' +
+                        '</div>';
+                }
 
                 phalitWrap.innerHTML = html;
             }
 
-            // 5. Populate BAV Table
+            // 4. Populate BAV Table
             var bavBody = document.getElementById('bavTableBody');
-            var planetsBAV = [
+            var planetsBAV = (chart.ashtakavarga && chart.ashtakavarga.bav) ? [
+                { name: 'सूर्य', points: chart.ashtakavarga.bav.Sun || [4, 5, 3, 5, 6, 4, 3, 5, 4, 5, 2, 2], total: 48 },
+                { name: 'चन्द्र', points: chart.ashtakavarga.bav.Moon || [5, 4, 6, 4, 3, 5, 4, 3, 4, 5, 3, 3], total: 49 },
+                { name: 'मंगल', points: chart.ashtakavarga.bav.Mars || [3, 4, 3, 4, 5, 3, 2, 4, 3, 4, 2, 2], total: 39 },
+                { name: 'बुध', points: chart.ashtakavarga.bav.Mercury || [5, 4, 6, 4, 5, 6, 4, 5, 4, 5, 3, 3], total: 54 },
+                { name: 'गुरु', points: chart.ashtakavarga.bav.Jupiter || [6, 4, 5, 5, 5, 4, 5, 4, 5, 5, 4, 4], total: 56 },
+                { name: 'शुक्र', points: chart.ashtakavarga.bav.Venus || [4, 5, 5, 4, 3, 4, 6, 4, 3, 5, 5, 4], total: 52 },
+                { name: 'शनि', points: chart.ashtakavarga.bav.Saturn || [3, 2, 3, 4, 3, 3, 4, 3, 2, 4, 4, 4], total: 39 }
+            ] : [
                 { name: 'सूर्य', points: [4, 5, 3, 5, 6, 4, 3, 5, 4, 5, 2, 2], total: 48 },
                 { name: 'चन्द्र', points: [5, 4, 6, 4, 3, 5, 4, 3, 4, 5, 3, 3], total: 49 },
                 { name: 'मंगल', points: [3, 4, 3, 4, 5, 3, 2, 4, 3, 4, 2, 2], total: 39 },
@@ -447,7 +542,7 @@
                 var row = planetsBAV[bi];
                 bHtml += '<tr><td><b>' + row.name + '</b></td>';
                 for (var si = 0; si < 12; si++) {
-                    var pt = row.points[si];
+                    var pt = row.points[si] || 0;
                     var cls = pt >= 5 ? 'strong' : (pt <= 2 ? 'weak' : '');
                     bHtml += '<td class="' + cls + '">' + pt + '</td>';
                 }
@@ -455,12 +550,14 @@
             }
             if (bavBody) bavBody.innerHTML = bHtml;
 
-            // 6. Kakshya text
+            // 5. Kakshya Gochar text
             var kEl = document.getElementById('kakshyaGocharText');
             if (kEl) {
                 kEl.innerHTML = 'गोचरस्थ चन्द्रमा वर्तमान में <b>देवगुरु बृहस्पति की कक्षा</b> (03°45\' - 07°30\') में हैं। इस कक्षा में <b>1 शुभ बिन्दु</b> प्राप्त होने से यह समय मांगलिक कार्य, अनुबंध व आर्थिक योजनाएं बनाने हेतु फलदायी है।';
             }
-        });
+        }
+    </script>
     </script>
 </body>
 </html>
+

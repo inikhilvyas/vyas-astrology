@@ -127,3 +127,4 @@ with open('api/ai_chat.php', 'w', encoding='utf-8') as f:
 
 print(f"\n📊 Final ai_chat.php size: {len(php)} chars (~{len(php)//4} tokens)")
 print("✅ Complete. Run git diff api/ai_chat.php to review.")
+

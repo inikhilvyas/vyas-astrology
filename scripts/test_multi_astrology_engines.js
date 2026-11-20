@@ -193,3 +193,4 @@ console.log(AshtakavargaEngine.predict(houseSAV, 'career'));
 
 console.log("\n=== KP ASTROLOGY PREDICTION ===");
 console.log(KPEngine.predict(samplePlanets, 'career'));
+

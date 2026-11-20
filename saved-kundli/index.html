@@ -278,6 +278,7 @@
         </a>
     </nav>
 
+    <script src="/js/vyas_astronomical_engine.js"></script>
     <script>
         var vaultProfiles = [];
 
@@ -301,21 +302,6 @@
                 }
             } catch (e) { }
 
-            // If empty, add sample profile so user has immediate context
-            if (vaultProfiles.length === 0) {
-                vaultProfiles.push({
-                    name: "पं. निखिल व्यास",
-                    dob: "1992-05-15",
-                    tob: "14:30",
-                    place: "अयोध्या, भारत",
-                    lagna: "कर्क",
-                    moon_sign: "तुला",
-                    nakshatra: "स्वाति",
-                    dasha: "गुरु-शनि-बुध",
-                    tag: "मुख्य जातक"
-                });
-            }
-
             renderProfiles(vaultProfiles);
         }
 
@@ -323,7 +309,12 @@
             var grid = document.getElementById('profilesGrid');
             if (!grid) return;
             if (!list || list.length === 0) {
-                grid.innerHTML = '<div class="empty-vault">कोई सुरक्षित कुण्डली नहीं मिली। ऊपर "+ नई कुण्डली बनाएं" पर क्लिक करें।</div>';
+                grid.innerHTML = '<div class="empty-vault" style="grid-column: 1 / -1; text-align:center; padding: 48px 24px; border: 1px dashed rgba(212,175,55,0.3); border-radius: 14px; background: rgba(12,19,36,0.6);">' +
+                    '<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#d4af37" stroke-width="1.5" style="margin-bottom:12px; display:inline-block;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>' +
+                    '<h3 style="color:#d4af37; margin:0 0 8px 0; font-family:\'Cinzel\',serif; font-size:1.25rem;">वॉल्ट में कोई सुरक्षित कुण्डली नहीं है</h3>' +
+                    '<p style="color:#94a3b8; font-size:0.9rem; max-width:480px; margin:0 auto 20px auto; line-height:1.6;">अपनी अथवा अपने परिजनों की जन्मपत्रिका सुरक्षित करने हेतु नीचे <b>"+ नई कुण्डली बनाएं"</b> बटन पर क्लिक करें।</p>' +
+                    '<a href="/#kundli-calc" class="p-btn primary" style="display:inline-block; padding:10px 24px; text-decoration:none; font-weight:600;">+ नई कुण्डली बनाएं</a>' +
+                '</div>';
                 return;
             }
 
@@ -334,18 +325,24 @@
                 var dob = p.dob || p.birth_date || '-';
                 var tob = p.tob || p.birth_time || '-';
                 var place = p.place || p.city || '-';
-                var lagna = p.lagna || 'कर्क';
-                var moon = p.moon_sign || p.rashi || 'तुला';
-                var nak = p.nakshatra || 'स्वाति';
+                var lagna = p.lagna || (p.profile ? p.profile.asc_sign : 'मेष');
+                var moon = p.moon_sign || p.rashi || '-';
+                var nak = p.nakshatra || '-';
                 var tag = p.tag || 'परिवार';
 
                 html += '<div class="profile-card">' +
                     '<div>' +
                     '<div class="p-head"><div class="p-name">' + name + '</div><span class="p-tag">' + tag + '</span></div>' +
                     '<div class="p-details">' +
-                    '<div>📅 जन्म: <b>' + dob + '</b>, समय: <b>' + tob + '</b></div>' +
-                    '<div>📍 स्थान: <b>' + place + '</b></div>' +
-                    '<div style="margin-top:6px; color:var(--gold);">' +
+                    '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">' +
+                    '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#d4af37" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                    'जन्म: <b>' + dob + '</b>, समय: <b>' + tob + '</b>' +
+                    '</div>' +
+                    '<div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">' +
+                    '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#d4af37" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                    'स्थान: <b>' + place + '</b>' +
+                    '</div>' +
+                    '<div style="margin-top:6px; color:var(--gold); font-size:0.85rem;">' +
                     '<span>लग्न: <b>' + lagna + '</b></span> • <span>राशि: <b>' + moon + '</b></span> • <span>नक्षत्र: <b>' + nak + '</b></span>' +
                     '</div>' +
                     '</div>' +
@@ -375,7 +372,21 @@
         function selectProfile(idx) {
             var p = vaultProfiles[idx];
             if (p) {
-                localStorage.setItem('vyas_active_profile', JSON.stringify(p));
+                var fullChart = p;
+                if (typeof window.computeMathematicalKundli === 'function' && p.dob) {
+                    try {
+                        fullChart = window.computeMathematicalKundli(
+                            p.name || 'जातक',
+                            p.dob,
+                            p.tob || '12:00',
+                            p.place || p.city || '',
+                            p.gender || 'Male'
+                        );
+                    } catch (e) {
+                        console.warn('Mathematical compute error:', e);
+                    }
+                }
+                localStorage.setItem('vyas_active_profile', JSON.stringify(fullChart));
             }
         }
 
@@ -425,3 +436,4 @@
     </script>
 </body>
 </html>
+

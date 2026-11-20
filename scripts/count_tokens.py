@@ -11,3 +11,4 @@ print(f'Ground truth block found at char {gt_start}')
 
 # Find the total PHP file size
 print(f'Total PHP file: {len(content)} chars, ~{len(content)//4} tokens')
+

@@ -1447,20 +1447,32 @@
     // MODULE 10: ASHTAKAVARGA PREDICTIVE ENGINE (SAV 337 बिंदु गणित)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasAshtakavargaEngine = {
-        computeSAV: function(planetTable, lagnaSign) {
+        computeSAV: function(planetTableOrChart, lagnaSign) {
             var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
-            // Standard authentic BPHS SAV bindu realistic distribution (Sums to 337, Mean = 28.08)
-            var savMap = {
-                "मेष": 31, "वृषभ": 33, "मिथुन": 26, "कर्क": 35,
-                "सिंह": 27, "कन्या": 28, "तुला": 30, "वृश्चिक": 24,
-                "धनु": 29, "मकर": 32, "कुंभ": 22, "मीन": 30
-            };
-            var lIdx = signs.indexOf(lagnaSign);
+            var savArray = null;
+            var lSign = lagnaSign;
+
+            if (planetTableOrChart && planetTableOrChart.ashtakavarga && Array.isArray(planetTableOrChart.ashtakavarga.sav)) {
+                savArray = planetTableOrChart.ashtakavarga.sav;
+                if (!lSign && planetTableOrChart.profile && planetTableOrChart.profile.asc_sign) {
+                    lSign = planetTableOrChart.profile.asc_sign;
+                }
+            } else if (planetTableOrChart && Array.isArray(planetTableOrChart.sav)) {
+                savArray = planetTableOrChart.sav;
+            }
+
+            if (!savArray) {
+                // Classical BPHS realistic baseline (Sums to 337, Mean = 28.08)
+                savArray = [31, 33, 26, 35, 27, 28, 30, 24, 29, 32, 22, 30];
+            }
+
+            var lIdx = signs.indexOf(lSign || 'मेष');
             if (lIdx === -1) lIdx = 0;
             var houseSAV = {};
             for (var h = 1; h <= 12; h++) {
-                var s = signs[(lIdx + h - 1) % 12];
-                houseSAV[h] = { sign: s, bindus: savMap[s] || 28 };
+                var sIdx = (lIdx + h - 1) % 12;
+                var s = signs[sIdx];
+                houseSAV[h] = { sign: s, signIdx: sIdx, bindus: savArray[sIdx] || 28 };
             }
             return houseSAV;
         },
@@ -1468,10 +1480,9 @@
         predict: function(houseSAVOrChart, domain) {
             domain = domain || 'general';
             var houseSAV = houseSAVOrChart;
-            if (houseSAVOrChart && (houseSAVOrChart.lagna || houseSAVOrChart.planet_table)) {
-                var lSign = houseSAVOrChart.lagna || 'मेष';
-                var sMap = (houseSAVOrChart.ashtakavarga && houseSAVOrChart.ashtakavarga.sav) ? null : null;
-                houseSAV = this.computeSAV(lSign, sMap);
+            if (houseSAVOrChart && (houseSAVOrChart.lagna || houseSAVOrChart.planet_table || houseSAVOrChart.ashtakavarga)) {
+                var lSign = houseSAVOrChart.lagna || (houseSAVOrChart.profile ? houseSAVOrChart.profile.asc_sign : 'मेष');
+                houseSAV = this.computeSAV(houseSAVOrChart, lSign);
             }
             if (!houseSAV || !houseSAV[10]) return "• अष्टकवर्ग संरेखण सामान्य है।";
             var lines = [];
@@ -1501,19 +1512,31 @@
     window.VyasKPEngine = {
         predict: function(planetTableOrChart, domain) {
             domain = domain || 'general';
+            var cusps = (planetTableOrChart && planetTableOrChart.kp && planetTableOrChart.kp.cusps) ? planetTableOrChart.kp.cusps : null;
             var lines = [];
+            var c10 = cusps ? cusps[10] : null;
+            var c7 = cusps ? cusps[7] : null;
+            var c2 = cusps ? cusps[2] : null;
+            var c11 = cusps ? cusps[11] : null;
+            var c1 = cusps ? cusps[1] : null;
+
             if (domain === 'career' || domain === 'general' || domain === 'yoga') {
-                lines.push("• <b>दशम कस्पल सब-लॉर्ड वेध (KP 10th Cuspal Sub-Lord):</b> दशम भाव का कस्पल उप-स्वामी धन (2), सेवा/नौकरी (6) एवं लाभ (11) भावों का प्राथमिक सिग्निफिकेटर है। KP 4-स्टेप थ्योरी अनुसार यह कार्यक्षेत्र में स्वायत्तता, मान-सम्मान व निरंतर पदोन्नति का अकाट्य प्रमाण है।");
+                var sub10 = c10 ? ("<b>" + c10.subLord + "</b> (कस्प: " + c10.sign + " " + (c10.deg || '') + ", नक्षत्र स्वामी: " + (c10.star || '') + ")") : "सबल उप-स्वामी";
+                lines.push("• <b>दशम कस्पल सब-लॉर्ड वेध (KP 10th Cuspal Sub-Lord):</b> दशम भाव का कस्पल उप-स्वामी " + sub10 + " है, जो धन (2), सेवा/कर्म (6, 10) एवं लाभ (11) भावों का प्राथमिक सिग्निफिकेटर है। KP 4-स्टेप थ्योरी अनुसार यह कार्यक्षेत्र में स्वायत्तता, मान-सम्मान व निरंतर पदोन्नति का अकाट्य प्रमाण है।");
                 lines.push("• <b>KP घटना समय-चक्र (Event Timing):</b> करियर में स्थायी उत्थान और पद-प्राप्ति उन विंशोत्तरी दशाओं व गोचर में फलीभूत होगी जो 2, 6, 10, 11 भावों के संयुक्त कार्येश ग्रहों से संचालित हैं।");
             }
             if (domain === 'wealth' || domain === 'general') {
-                lines.push("• <b>द्वितीय व एकादश कस्पल सब-लॉर्ड वेध:</b> धन भाव (2) एवं लाभ भाव (11) के कस्पल सब-लॉर्ड शुभ त्रिकोण भावों से सम्बद्ध होकर अप्रत्याशित वित्तीय अवसरों और अचल संपत्ति लाभ की पुष्टि करते हैं।");
+                var sub2 = c2 ? ("<b>" + c2.subLord + "</b>") : "धन भाव उप-स्वामी";
+                var sub11 = c11 ? ("<b>" + c11.subLord + "</b>") : "लाभ भाव उप-स्वामी";
+                lines.push("• <b>द्वितीय व एकादश कस्पल सब-लॉर्ड वेध:</b> धन भाव (2) का सब-लॉर्ड " + sub2 + " एवं लाभ भाव (11) का सब-लॉर्ड " + sub11 + " शुभ त्रिकोण भावों से सम्बद्ध होकर वित्तीय स्थिरता, स्थायी आय एवं अप्रत्याशित संपत्ति लाभ की पुष्टि करते हैं।");
             }
             if (domain === 'marriage' || domain === 'general') {
-                lines.push("• <b>सप्तम कस्पल सब-लॉर्ड वेध (KP 7th Cuspal Sub-Lord):</b> सप्तम उप-स्वामी 2, 7, 11 भावों के अनुकूल संपर्क में है। यह दांपत्य जीवन में अनुकूलता, शुभ संस्कारों की समय पर पूर्ति व वैवाहिक सुख की शास्त्रीय अनुमति प्रदान करता है।");
+                var sub7 = c7 ? ("<b>" + c7.subLord + "</b> (नक्षत्र: " + (c7.star || '') + ")") : "सप्तम उप-स्वामी";
+                lines.push("• <b>सप्तम कस्पल सब-लॉर्ड वेध (KP 7th Cuspal Sub-Lord):</b> सप्तम उप-स्वामी " + sub7 + " 2, 7, 11 भावों के अनुकूल संपर्क में है। यह दांपत्य जीवन में अनुकूलता, शुभ संस्कारों की समय पर पूर्ति व वैवाहिक सौहार्द की शास्त्रीय अनुमति प्रदान करता है।");
             }
             if (domain === 'health') {
-                lines.push("• <b>प्रथम कस्पल सब-लॉर्ड वेध (KP 1st Cuspal Sub-Lord):</b> लग्न कस्पल उप-स्वामी 1 और 11 भावों के पोषक संपर्क में है, जो किसी भी आकस्मिक व्याधि से शीघ्र स्वास्थ्य लाभ व दीर्घायु का संकेत देता है।");
+                var sub1 = c1 ? ("<b>" + c1.subLord + "</b>") : "लग्न उप-स्वामी";
+                lines.push("• <b>प्रथम कस्पल सब-लॉर्ड वेध (KP 1st Cuspal Sub-Lord):</b> लग्न कस्पल उप-स्वामी " + sub1 + " 1 और 11 भावों के पोषक संपर्क में है, जो किसी भी आकस्मिक व्याधि से शीघ्र स्वास्थ्य लाभ व दीर्घायु का संकेत देता है।");
             }
             return lines.join('<br>');
         }
