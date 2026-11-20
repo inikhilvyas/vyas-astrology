@@ -185,7 +185,11 @@ if os.path.exists(fast_index_path):
 
     print(f"  Total records after processing all sutras: {len(records)}")
 
-# 3. APPEND CURATED HIGH-IMPACT YOGA SAMPLES
+# 3. APPEND CURATED HIGH-IMPACT YOGA SAMPLES (ALL 50+ VEDIC YOGAS)
+from curate_50_yogas import ALL_50_YOGAS_CURATED
+for q, a in ALL_50_YOGAS_CURATED:
+    add_record(q, a, category="yoga_curated_50")
+
 from generate_finetune_dataset import yoga_curated
 for q, a in yoga_curated:
     add_record(q, a, category="yoga_curated")
@@ -201,3 +205,4 @@ with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
 size_mb = os.path.getsize(OUTPUT_FILE) / (1024 * 1024)
 print(f"Generated: {OUTPUT_FILE}")
 print(f"Size: {size_mb:.2f} MB")
+
