@@ -22,3 +22,4 @@ The principles from these documents are implemented across:
 1. `js/vyas_astronomical_engine.js`: Swiss Ephemeris Astro-Calculus, Lahiri Ayanamsha, Whole Sign + Placidus, Shodashvarga D1-D60, Goodh Diagnostics v10.
 2. `js/vyas_daivagya_engine.js`: Multi-system synthesis (Parashara, Jaimini, Nadi, KP, Ashtakavarga, Goodh Diagnostics, 22,000+ Sutras Bank).
 3. `index.html`: Web portal, unified Kundli storage, live SVG chart renderers, AI Sage chatbot with `MASTER_SYSTEM_PROMPT`.
+

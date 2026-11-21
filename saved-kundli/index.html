@@ -294,13 +294,7 @@
         function sanitizeVaultList(arr) {
             if (!Array.isArray(arr)) return [];
             return arr.filter(function (p) {
-                if (!p) return false;
-                var n = (p.name || '').toLowerCase();
-                var d = (p.dob || p.birth_date || '');
-                if (n.indexOf('nikhil') !== -1 || n.indexOf('निखिल') !== -1 || d === '1992-05-15' || d === '1984-11-23') {
-                    return false;
-                }
-                return true;
+                return !!p;
             });
         }
 
@@ -352,9 +346,7 @@
                     var parsedAct = JSON.parse(act);
                     var aname = (parsedAct.profile ? parsedAct.profile.name : parsedAct.name) || '';
                     var adob = (parsedAct.profile ? parsedAct.profile.dob : parsedAct.dob) || '';
-                    if (aname.toLowerCase().indexOf('nikhil') !== -1 || aname.indexOf('निखिल') !== -1 || adob === '1992-05-15' || adob === '1984-11-23') {
-                        localStorage.removeItem('vyas_active_profile');
-                    } else if (adob) {
+                    if (adob) {
                         var atob = (parsedAct.profile ? parsedAct.profile.tob : parsedAct.tob) || '12:00';
                         var aplace = (parsedAct.profile ? (parsedAct.profile.city || parsedAct.profile.place) : (parsedAct.city || parsedAct.place)) || 'भारत';
                         var alagna = (parsedAct.profile ? parsedAct.profile.asc_sign : parsedAct.lagna) || 'मेष';

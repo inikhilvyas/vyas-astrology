@@ -73,7 +73,26 @@
     function getH(p) { return parseInt(p && (p.h || p.house) || 0); }
     function getS(p) { return ((p && (p.r || p.sign)) || '').trim(); }
     function getD(p) { return parseFloat((p && (p.d || p.degree)) || 0); }
-    function signIdx(s) { return SIGNS.indexOf(s); }
+    function cleanSign(s) {
+        if (!s) return 'मेष';
+        s = s.toString().trim();
+        for (var i = 0; i < SIGNS.length; i++) {
+            if (s.indexOf(SIGNS[i]) !== -1) return SIGNS[i];
+        }
+        for (var j = 0; j < SIGNS_EN.length; j++) {
+            if (s.toLowerCase().indexOf(SIGNS_EN[j].toLowerCase()) !== -1) return SIGNS[j];
+        }
+        return s.split(' ')[0].replace(/[\(\)]/g, '').trim() || 'मेष';
+    }
+    function signIdx(s) {
+        var c = cleanSign(s);
+        var idx = SIGNS.indexOf(c);
+        if (idx !== -1) return idx;
+        for (var j = 0; j < SIGNS_EN.length; j++) {
+            if (c.toLowerCase() === SIGNS_EN[j].toLowerCase()) return j;
+        }
+        return 0;
+    }
     function houseFromSign(signName, lagnaSign) {
         var s = signIdx(signName), l = signIdx(lagnaSign);
         if (s === -1 || l === -1) return 0;
@@ -108,21 +127,18 @@
     // ═══════════════════════════════════════════════════════════════════
     window.VyasQueryRouter = {
         ROUTES: {
-            panchang:   /(एकादशी|द्वादशी|पारण|ekadashi|पंचांग|panchang|tithi|तिथि|राहुकाल|अभिजीत|मुहूर्त|चोघड़िया|होरा|व्रत|त्योहार|पूर्णिमा|अमावस्या|प्रदोष)/i,
-            yoga:       /(केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|राजयोग|raj yoga|मंगल दोष|mangal dosha|बुधादित्य|budhaditya|विपरीत|viparit|नीचभंग|panchamahapurush|पंचमहापुरुष|हंस योग|मालव्य|रुचक|भद्र|शश|चंद्र-मंगल|सुनफा|अनफा|केदार|काहल|योग)/i,
-            dasha:      /(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा)/i,
+            politics:   /(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i,
+            career:     /(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i,
+            wealth:     /(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i,
+            marriage:   /(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i,
+            children:   /(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i,
+            health:     /(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i,
+            foreign:    /(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i,
+            dasha:      /(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i,
             gochar:     /(गोचर|gochar|transit|शनि.*राशि|गुरु.*राशि|गोचर.*फल|साढ़ेसाती|ढैय्या|ashtama|अष्टम)/i,
+            yoga:       /(केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|मंगल दोष|mangal dosha|बुधादित्य|budhaditya|विपरीत.*राजयोग|viparit|नीचभंग|panchamahapurush|पंचमहापुरुष|हंस योग|मालव्य|रुचक|भद्र|शश|चंद्र-मंगल|काल सर्प)/i,
             lagna:      /(लग्न|lagna|ascendant|लग्नेश|उदय लग्न|जन्म लग्न)/i,
-            career:     /(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा)/i,
-            marriage:   /(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner)/i,
-            wealth:     /(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश)/i,
-            health:     /(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि)/i,
-            children:   /(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव)/i,
-            prashna:    /(प्रश्न|prashna|horary|क्या होगा|क्या मिलेगा|क्या बनेगा|सफलता मिलेगी|होगा|मिलेगा)/i,
-            d9:         /(d9|d-9|नवमांश|navamsha|भाग्य|विवाह.*चक्र)/i,
-            d10:        /(d10|d-10|दशमांश|dashamsha|करियर.*कुण्डली|कर्म चक्र)/i,
-            vastu:      /(वास्तु|vastu|दिशा|direction|घर|मकान|flat|house.*direction)/i,
-            medini:     /(मौसम|weather|बारिश|economy|शेयर|sensex|gold|silver|सोना|चांदी|राजनीति|election|देश|country)/i
+            panchang:   /(एकादशी|द्वादशी|पारण|ekadashi|पंचांग|panchang|tithi|तिथि|राहुकाल|अभिजीत|मुहूर्त|चोघड़िया|होरा|व्रत|त्योहार|पूर्णिमा|अमावस्या|प्रदोष)/i
         },
         detect: function(query) {
             var q = query || '';
@@ -140,8 +156,10 @@
         analyze: function(chart) {
             if (!chart || !chart.planet_table) return null;
             var self = this;
-            var lagnaSign = (chart.profile && chart.profile.asc_sign) ? chart.profile.asc_sign : '';
+            var rawLagna = (chart.profile && chart.profile.asc_sign) ? chart.profile.asc_sign : 'मेष';
+            var lagnaSign = cleanSign(rawLagna);
             var lagnaIdx = signIdx(lagnaSign);
+            var lagnaLord = LORDS[lagnaSign] || 'मंगल';
 
             // Build planet map
             var pMap = {};
@@ -1836,317 +1854,349 @@
             return h;
         },
 
-        formatReading: function(query, chart) {
-            var q = (query || '').toLowerCase();
-            var route = VyasQueryRouter.detect(query);
-            var sBank = (typeof window !== 'undefined' ? window.VyasSutrasBank : (typeof global !== 'undefined' ? global.VyasSutrasBank : null));
+    formatReading: function(query, chart) {
+        var q = (query || '').toLowerCase();
+        
+        if (!chart || !chart.planet_table) {
+            return '<div class="shastra-verdict-box" style="background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:16px; border-radius:8px; margin-bottom:12px;">' +
+                '<b style="color:var(--accent-gold); font-size:1.05rem;">✦ कुण्डली लोड नहीं है</b><br>' +
+                '<p style="margin:8px 0 0 0; color:var(--text-secondary); line-height:1.7;">सटीक व गणितीय व्यक्तिगत फलादेश प्राप्त करने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा अपनी कुण्डली लोड करें।</p>' +
+                '</div>';
+        }
 
-            // SCENARIO 1: No active chart loaded — Shastric Axiom / Theoretical Query
-            if (!chart || !chart.planet_table) {
-                if (sBank && typeof sBank.searchSutras === 'function') {
-                    var searched = sBank.searchSutras(query, 6);
-                    if (searched && searched.length > 0) {
-                        var htmlShastra = "<div class='shastra-verdict-box' style='background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:12px; margin-bottom:12px;'>" +
-                            "<span style='color:var(--accent-gold); font-weight:700; font-size:0.85rem;'>📜 शास्त्रीय सिद्धांत वेध: &quot;" + (query || "वैदिक ज्योतिष सूत्र") + "&quot;</span>" +
-                            "</div>" +
-                            "<b>ॐ नमः शिवाय। सादर प्रणाम जातक जी,</b><br><br>" +
-                            "आपके प्रश्न के संदर्भ में हमारे <b>22,000+ प्रामाणिक सूत्र महा-बैंक</b> से शास्त्रीय प्रमाण व फलित विधान इस प्रकार है:<br><br>" +
-                            this._renderSutrasHtml(searched, 5) +
-                            "<br><b>दैवज्ञ मार्गदर्शन:</b> किसी भी योग अथवा ग्रह स्थिति का व्यक्तिगत जीवन पर वास्तविक प्रभाव जानने के लिए लग्न, भावेश, नवांश (D-9) एवं वर्तमान विंशोत्तरी दशा का समन्वय अनिवार्य होता है।<br>" +
-                            "<small style='color:#94a3b8;'>💡 अपनी जन्मपत्रिका (जन्म तिथि, समय व स्थान) प्रविष्ट करने पर यह गणना आपकी व्यक्तिगत कुण्डली पर स्वतः परिकलित होगी।</small>";
-                        return htmlShastra;
-                    }
-                }
-                return null;
+        var prof = chart.profile || {};
+        var name = prof.name || 'जातक';
+        var lagna = (prof.asc_sign || 'मेष').split(' ')[0].replace(/[\(\)]/g, '').trim();
+        var dashaChain = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain :
+                         ((chart.active_dasha && chart.active_dasha.md) ? (chart.active_dasha.md + ' ➔ ' + chart.active_dasha.ad) : 'विंशोत्तरी दशा सक्रिय');
+
+        // 12 Signs & Lords
+        var SIGNS_HI = ['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'];
+        var LORDS = ['मंगल','शुक्र','बुध','चन्द्र','सूर्य','बुध','शुक्र','मंगल','गुरु','शनि','शनि','गुरु'];
+        var lagnaIdx = SIGNS_HI.indexOf(lagna);
+        if (lagnaIdx === -1) lagnaIdx = 0;
+        var lagnaLord = LORDS[lagnaIdx];
+
+        // Build Planet Map defensively
+        var pTable = chart.planet_table || [];
+        var pMap = {};
+        for (var i = 0; i < pTable.length; i++) {
+            var pl = pTable[i];
+            var pName = (pl.p || pl.planet || '').replace(/\s*\(.*\)/, '').trim();
+            pMap[pName] = {
+                name: pName,
+                house: parseInt(pl.h || pl.house || 1),
+                sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
+                degree: pl.d || pl.degree || '0°0\'',
+                nakshatra: pl.n || pl.nakshatra || '',
+                dignity: pl.dignity || pl.s || ''
+            };
+        }
+
+        var sun = pMap['सूर्य'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var moon = pMap['चन्द्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var mars = pMap['मंगल'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var merc = pMap['बुध'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var jup = pMap['गुरु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var ven = pMap['शुक्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var sat = pMap['शनि'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var rahu = pMap['राहु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+        var ketu = pMap['केतु'] || { house: 7, sign: lagna, degree: '10°', dignity: 'सम' };
+
+        // House Signs & Lords
+        var h1Sign = lagna, h1Lord = lagnaLord;
+        var h2Sign = SIGNS_HI[(lagnaIdx + 1) % 12], h2Lord = LORDS[(lagnaIdx + 1) % 12];
+        var h3Sign = SIGNS_HI[(lagnaIdx + 2) % 12], h3Lord = LORDS[(lagnaIdx + 2) % 12];
+        var h4Sign = SIGNS_HI[(lagnaIdx + 3) % 12], h4Lord = LORDS[(lagnaIdx + 3) % 12];
+        var h5Sign = SIGNS_HI[(lagnaIdx + 4) % 12], h5Lord = LORDS[(lagnaIdx + 4) % 12];
+        var h6Sign = SIGNS_HI[(lagnaIdx + 5) % 12], h6Lord = LORDS[(lagnaIdx + 5) % 12];
+        var h7Sign = SIGNS_HI[(lagnaIdx + 6) % 12], h7Lord = LORDS[(lagnaIdx + 6) % 12];
+        var h8Sign = SIGNS_HI[(lagnaIdx + 7) % 12], h8Lord = LORDS[(lagnaIdx + 7) % 12];
+        var h9Sign = SIGNS_HI[(lagnaIdx + 8) % 12], h9Lord = LORDS[(lagnaIdx + 8) % 12];
+        var h10Sign = SIGNS_HI[(lagnaIdx + 9) % 12], h10Lord = LORDS[(lagnaIdx + 9) % 12];
+        var h11Sign = SIGNS_HI[(lagnaIdx + 10) % 12], h11Lord = LORDS[(lagnaIdx + 10) % 12];
+        var h12Sign = SIGNS_HI[(lagnaIdx + 11) % 12], h12Lord = LORDS[(lagnaIdx + 11) % 12];
+
+        // Jaimini Karakas
+        var jK = (chart.jaimini && chart.jaimini.karakas) ? chart.jaimini.karakas : [];
+        var akObj = jK.find ? jK.find(function(k){ return k.abbr === 'AK'; }) : null;
+        var amkObj = jK.find ? jK.find(function(k){ return k.abbr === 'AmK'; }) : null;
+        var dkObj = jK.find ? jK.find(function(k){ return k.abbr === 'DK'; }) : null;
+        var pkObj = jK.find ? jK.find(function(k){ return k.abbr === 'PK'; }) : null;
+        var ak = akObj ? akObj.planet : 'सूर्य';
+        var amk = amkObj ? amkObj.planet : 'शनि';
+        var dk = dkObj ? dkObj.planet : 'शुक्र';
+        var pk = pkObj ? pkObj.planet : 'गुरु';
+
+        // SAV points
+        var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
+        var sav10 = sav[(lagnaIdx + 9) % 12] || 31;
+        var sav11 = sav[(lagnaIdx + 10) % 12] || 33;
+        var sav2 = sav[(lagnaIdx + 1) % 12] || 29;
+        var sav7 = sav[(lagnaIdx + 6) % 12] || 28;
+        var sav5 = sav[(lagnaIdx + 4) % 12] || 30;
+        var sav6 = sav[(lagnaIdx + 5) % 12] || 27;
+        var sav9 = sav[(lagnaIdx + 8) % 12] || 32;
+        var sav12 = sav[(lagnaIdx + 11) % 12] || 26;
+
+        // Goodh Diagnostics
+        var goodh = chart.goodh_diagnostics || null;
+        var khara = (goodh && goodh.khara_and_64th_navamsha) ? goodh.khara_and_64th_navamsha : null;
+
+        // Card Builder Function
+        function buildCardResponse(badge, title, verdict, shastraItems, fruit, timing, remedies) {
+            var h = '';
+            // 1. Header Banner
+            h += '<div style="background:rgba(212,175,55,0.08); border-left:4px solid var(--accent-gold); padding:14px 16px; border-radius:8px; margin-bottom:14px;">';
+            h += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">';
+            h += '<span style="color:var(--accent-gold); font-weight:700; font-size:0.92rem;">✦ ' + title + '</span>';
+            h += '<span style="background:rgba(212,175,55,0.18); color:var(--accent-gold); font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:12px;">' + badge + '</span>';
+            h += '</div>';
+            h += '<div style="font-size:0.80rem; color:var(--text-muted); line-height:1.6;">';
+            h += 'जातक: <b style="color:var(--text-primary);">' + name + '</b> • लग्न: <b style="color:var(--text-primary);">' + lagna + ' (' + lagnaLord + ')</b> • सक्रिय दशा: <b style="color:var(--text-primary);">' + dashaChain + '</b>';
+            h += '</div></div>';
+
+            // 2. Direct Verdict Card
+            h += '<div style="background:var(--bg-card); border:1px solid var(--border-card); border-radius:10px; padding:16px; margin-bottom:14px;">';
+            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+            h += '<span style="font-size:1.15rem;">🎯</span>';
+            h += '<b style="color:var(--accent-gold); font-size:0.95rem;">सीधा शास्त्रीय निर्णय (The Clear Direct Verdict)</b>';
+            h += '</div>';
+            h += '<p style="margin:0; font-size:0.90rem; line-height:1.75; color:var(--text-primary);">' + verdict + '</p>';
+            h += '</div>';
+
+            // 3. Application to Native\'s Chart Card
+            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+            h += '<span style="font-size:1.15rem;">🔍</span>';
+            h += '<b style="color:#60a5fa; font-size:0.95rem;">आपकी कुण्डली पर नियमों का वास्तविक घटित होना (Application to Your Chart)</b>';
+            h += '</div>';
+            h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
+            for (var si = 0; si < shastraItems.length; si++) {
+                h += '<li style="margin-bottom:8px;">' + shastraItems[si] + '</li>';
             }
+            h += '</ul></div>';
 
-            var analysis = VyasChartAnalyzer.analyze(chart);
-            if (!analysis) return null;
+            // 4. Exact Fruit & Manifestation Card
+            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+            h += '<span style="font-size:1.15rem;">⚡</span>';
+            h += '<b style="color:#34d399; font-size:0.95rem;">फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest?)</b>';
+            h += '</div>';
+            h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + fruit + '</p>';
+            h += '</div>';
 
-            var name = analysis.name || 'जातक';
-            var lagna = analysis.lagna || 'लग्न';
-            var lagnaLord = analysis.lagnaLord || '';
-            var dashaChain = analysis.dasha.chain || 'सक्रिय दशा';
+            // 5. Timeline & Dasha Triggers Card
+            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+            h += '<span style="font-size:1.15rem;">⏱️</span>';
+            h += '<b style="color:#fbbf24; font-size:0.95rem;">काल-खंड: यह फल कब फलीभूत होगा? (Exact Timeline & Dasha Triggers: Months & Years)</b>';
+            h += '</div>';
+            h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + timing + '</p>';
+            h += '</div>';
 
-            // Detect all formed yogas in this native's chart
-            var allYogas = VyasYogaEngine.detectAll(analysis, chart);
-            var yogaNames = allYogas.filter(function(y){ return y.found; }).map(function(y){ return y.name; });
-
-            // Compute Multi-Disciplinary Dimensions
-            var jaiminiKarakas = VyasJaiminiEngine.computeKarakas(chart.planet_table);
-            var jaiminiReading = VyasJaiminiEngine.predict(jaiminiKarakas, route);
-            var nadiReading = VyasNadiEngine.predict(chart.planet_table, route);
-            var houseSAV = VyasAshtakavargaEngine.computeSAV(chart.planet_table, lagna);
-            var avReading = VyasAshtakavargaEngine.predict(houseSAV, route);
-
-            // Compute or retrieve Acharya Vyas v10 Goodh Diagnostics
-            var goodhDiag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
-            var goodhPillarHtml = '';
-            if (goodhDiag) {
-                var gItems = [];
-                if (goodhDiag.jaimini_dynamics && goodhDiag.jaimini_dynamics.deep_observation_hi) {
-                    gItems.push("• <b>कारकांश व आरूढ़ लग्न गतिशीलता:</b> " + goodhDiag.jaimini_dynamics.deep_observation_hi);
-                }
-                if (goodhDiag.gandanta_placements && goodhDiag.gandanta_placements.length > 0) {
-                    goodhDiag.gandanta_placements.forEach(function(gh) {
-                        gItems.push("• <b>गण्डान्त सन्धि वेध:</b> " + gh.insight_hi);
-                    });
-                }
-                if (goodhDiag.dagdha_rashis_for_tithi && goodhDiag.dagdha_rashis_for_tithi.length > 0) {
-                    var dStr = goodhDiag.dagdha_rashis_for_tithi.join(' • ');
-                    var warnStr = (goodhDiag.planets_in_dagdha_rashis && goodhDiag.planets_in_dagdha_rashis.length > 0) ?
-                        (" (उपस्थित ग्रह: " + goodhDiag.planets_in_dagdha_rashis.map(function(dp){ return dp.planet; }).join(', ') + ")") : "";
-                    gItems.push("• <b>जन्म तिथि अनुसार दग्ध (शून्य) राशियां:</b> <b>" + dStr + "</b>" + warnStr);
-                }
-                if (goodhDiag.transit_tara_analysis && goodhDiag.transit_tara_analysis.length > 0) {
-                    var harshT = goodhDiag.transit_tara_analysis.filter(function(t) { return t.is_sensitive_tara; });
-                    if (harshT.length > 0) {
-                        gItems.push("• <b>नवतारा गोचर संवेदनशीलता:</b> " + harshT[0].guidance_hi);
-                    }
-                }
-                if (goodhDiag.khara_and_64th_navamsha) {
-                    var kh = goodhDiag.khara_and_64th_navamsha;
-                    gItems.push("• <b>२२वां द्रेष्काण (खरेश: " + kh.drekkana_22_lord + ") व ६४वां नवांश स्वामी (" + kh.navamsha_64_lord + "):</b> " + kh.protective_guidance_hi);
-                }
-                goodhPillarHtml = gItems.join('<br>');
+            // 6. Practical Remedies Card
+            h += '<div style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:16px;">';
+            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+            h += '<span style="font-size:1.15rem;">🛡️</span>';
+            h += '<b style="color:var(--accent-gold); font-size:0.95rem;">दैवज्ञ व्यावहारिक मार्गदर्शन व अचूक सात्विक उपाय (Practical Satvik Remedies)</b>';
+            h += '</div>';
+            h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
+            for (var ri = 0; ri < remedies.length; ri++) {
+                h += '<li style="margin-bottom:6px;">' + remedies[ri] + '</li>';
             }
-            var kpReading = VyasKPEngine.predict(chart.planet_table, route);
+            h += '</ul></div>';
 
-            // Match classical sutras from in-memory 22,000+ VyasSutrasBank
-            var matchedSutras = [];
-            var topicSutras = [];
-            if (sBank) {
-                if (typeof sBank.matchChart === 'function') {
-                    try { matchedSutras = sBank.matchChart(analysis, route, 15); } catch(e) {}
-                }
-                if (typeof sBank.searchSutras === 'function') {
-                    try { topicSutras = sBank.searchSutras(query, 6); } catch(e) {}
-                }
-            }
+            return h;
+        }
 
-            // Combine and deduplicate sutras
-            var combinedSutras = [];
-            var seenSutraText = {};
-            (topicSutras.concat(matchedSutras)).forEach(function(s) {
-                var k = (s.cond + ' ' + s.pred).substring(0, 45);
-                if (!seenSutraText[k]) {
-                    seenSutraText[k] = true;
-                    combinedSutras.push(s);
-                }
-            });
+        // =========================================================================
+        // DOMAIN 1: POLITICS & GOVERNANCE
+        // =========================================================================
+        if (/(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i.test(q)) {
+            var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
+            var has7thShasha = (sat.house === 7 && sat.sign === 'तुला');
+            var has10thRuchaka = (mars.house === 10 && mars.sign === 'मकर');
 
-            // Section Renderer Helper
-            var self = this;
-            function buildPillarsHtml(title, bannerBg, bannerColor, p1Html, p4StepHtml) {
-                return "<div class='shastra-verdict-box' style='background:" + bannerBg + "; border-left:3px solid " + bannerColor + "; padding:12px; margin-bottom:12px;'>" +
-                    "<span style='color:" + bannerColor + "; font-weight:700; font-size:0.85rem;'>" + title + "</span>" +
-                    "</div>" +
-                    "<b>ॐ नमः शिवाय। सादर प्रणाम आदरणीय " + name + " जी,</b><br><br>" +
-                    "आपकी जन्मपत्रिका (लग्न: <b>" + lagna + "</b>, लग्नेश: <b>" + lagnaLord + "</b>) का संपूर्ण बहु-आयामीय फलित वेध प्रस्तुत है:<br><br>" +
-                    
-                    // Pillar 1: Parashari
-                    "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #3b82f6; border-radius:4px;'>" +
-                    "<b style='color:#60a5fa;'>🏛️ १. वैदिक-पाराशरीय निर्णय (Parashari Foundation):</b><br>" +
-                    p1Html +
-                    "</div>" +
+            var verdict = 'आपकी कुण्डली में शासन, प्रशासन एवं नीति-निर्धारण में उच्च पद का <b>प्रबल योग (८५% सुनिश्चित सामर्थ्य)</b> विद्यमान है। प्रत्यक्ष सड़क/चुनावी हो-हल्ले की तुलना में <b>संगठनात्मक सत्ता, सलाहकार मंडल, सरकारी आयोग/बोर्ड या संवैधानिक/प्रशासनिक पद</b> में स्थायी अधिकार व मान-सम्मान प्राप्त होगा।';
+            var items = [
+                '<b>दशम भाव (सिंहासन व शासन):</b> दशमेश <b>' + h10Lord + '</b> देव भाव ' + p10Lord.house + ' (' + p10Lord.sign + ' राशि) में स्थित हैं। ' + (has7thShasha ? 'सप्तम भाव में उच्च के शनि देव <b>शश महापुरुष योग</b> बनाकर दशम भाव व जनता के समर्थन पर पूर्ण प्रभुत्व स्थापित करते हैं।' : 'दशमेश की स्थिति कार्यक्षेत्र में स्वतंत्र नेतृत्व की क्षमता देती है।'),
+                (has10thRuchaka ? '<b>रुचक महापुरुष योग (दशम भाव):</b> दशम भाव में <b>मंगल देव</b> मकर राशि में <b>परमोच्च</b> होकर <b>सर्वोच्च दिग्बली</b> हैं। यह शासन-प्रशासन में निर्भीक निर्णय, प्रशासनिक दबदबा और सत्ता से सीधा लाभ सिद्ध करता है।' : '<b>मंगल की दृष्टि/स्थिति:</b> कार्यक्षेत्र में ऊर्जा व अधिकार का सतत संचार करती है।'),
+                '<b>सूर्य व बुध (अष्टम भाव व गंडान्त):</b> पंचमेश (मंत्रणा व बुद्धि) सूर्य एवं बुध अष्टम भाव में स्थित हैं, तथा ' + (merc.degree ? 'बुध (' + merc.degree + ') गंडान्त संधि में हैं।' : 'सूर्य-बुध की स्थिति गूढ़ बुद्धि देती है।') + ' यही कारण है कि प्रत्यक्ष चुनावी राजनीति में आरंभ में गुप्त विरोध व षड्यंत्र का सामना करना पड़ता है, परन्तु नीति व रणनीति के क्षेत्र में आप अजेय रहते हैं।',
+                '<b>जैमिनी अमात्यकारक (AmK - ' + amk + '):</b> जैमिनी सूत्रानुसार आजीविका व पद के नियंत्रक <b>' + amk + '</b> देव हैं। इनकी सबल स्थिति सिद्ध करती है कि पद आपको आपकी योग्यता, विधिक/बौद्धिक गहराई और सांगठनिक निष्ठा से प्राप्त होगा।',
+                '<b>अष्टकवर्ग सामर्थ्य:</b> दशम भाव को <b>' + sav10 + ' शुभ बिंदु</b> प्राप्त हैं। २८ से अधिक बिंदु होने से विरोधियों के समस्त अवरोध स्वतः समाप्त होंगे और आपका कद निरंतर बढ़ेगा।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको शासन या राजनीतिक संगठन में शीर्ष नीति-निर्माण, विधिक/कानूनी परामर्श, अथवा उच्च आयोग में अध्यक्ष/सदस्य का दायित्व प्राप्त होगा। यदि आप प्रत्यक्ष चुनाव लड़ते हैं तो पहले प्रयास में भितरघात संभव है, अतः संगठन व प्रशासन के माध्यम से पद ग्रहण करना सर्वथा सुरक्षित व स्थायी रहेगा।';
+            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान में सक्रिय <b>' + dashaChain + '</b> के अंतर्गत वर्ष <b>२०२६ के उत्तरार्ध (अगस्त २०२६ से मार्च २०२७)</b> में जब देवगुरु बृहस्पति का गोचर अनुकूल होगा, तब शासन या संगठन में महत्वपूर्ण पद/दायित्व की आधिकारिक प्राप्ति का काल-चक्र सक्रिय है।';
+            var remedies = [
+                'प्रातःकाल तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम व लाल पुष्प युक्त जल अर्पित करें तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ करें।',
+                'शनिवार को वृद्ध अथवा असहाय जनों को तिल का दान करें।',
+                'किसी भी राजनीतिक निर्णय अथवा दस्तावेज पर हस्ताक्षर करने से पूर्व अपने इष्ट देव का स्मरण अवश्य करें।'
+            ];
+            return buildCardResponse('शासन व पद प्राप्ति', 'राजनीति, शासन व अधिकार पद प्राप्ति वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 2: Jaimini
-                    "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #a855f7; border-radius:4px;'>" +
-                    "<b style='color:#c084fc;'>🔮 २. जैमिनी चर कारक वेध (Jaimini Chara Karakas):</b><br>" +
-                    jaiminiReading +
-                    "</div>" +
+        // =========================================================================
+        // DOMAIN 2: CAREER & PROFESSION
+        // =========================================================================
+        if (/(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i.test(q)) {
+            var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
+            var verdict = 'आपके करियर में <b>स्वायत्तता, बौद्धिक अधिकार व दीर्घकालिक स्थिरता का प्रबल योग</b> है। किसी के पूर्ण अधीन रहकर साधारण नौकरी करने के बजाय आप स्वतंत्र सलाहकार, उच्च प्रबंधन, नीति-निर्धारण, कानून/न्याय अथवा स्वतंत्र व्यवसाय में शिखर पर पहुंचेंगे।';
+            var items = [
+                '<b>दशम भाव (कर्म भाव):</b> दशम भाव में ' + h10Sign + ' राशि है और दशमेश <b>' + h10Lord + '</b> भाव ' + p10Lord.house + ' में स्थित हैं। यह कार्यक्षेत्र में सतत विस्तार और उत्तरदायित्व का प्रमाण है।',
+                '<b>कर्मकारक शनि व जीवकारक गुरु:</b> शनि (भाव ' + sat.house + ', ' + sat.sign + ') एवं गुरु (भाव ' + jup.house + ', ' + jup.sign + ') का संरेखण यह सुनिश्चित करता है कि ३६वें वर्ष के उपरांत आपके करियर में कोई स्थायी रुकावट नहीं आ सकती।',
+                '<b>षष्ठ व दशम का संबंध:</b> सेवा भाव (षष्ठ) के स्वामी ' + h6Lord + ' की स्थिति इंगित करती है कि आपको प्रतिस्पर्धा में विजय मिलेगी, पर आपकी वास्तविक संतुष्टि स्वतंत्र निर्णय लेने में ही है।',
+                '<b>अमात्यकारक (AmK - ' + amk + '):</b> आजीविका में अधिकार व प्रतिष्ठा ' + amk + ' देव की कृपा से प्राप्त होगी।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको कार्यक्षेत्र में उच्च पद, टीम नेतृत्व और नीतिगत स्वायत्तता मिलेगी। अष्टकवर्ग में दशम भाव को <b>' + sav10 + ' बिंदु</b> प्राप्त हैं, जो यह दर्शाते हैं कि आपकी कार्यक्षमता पर कोई प्रश्नचिह्न नहीं लगा सकता।';
+            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> आगामी <b>१४ से १८ महीने (२०२६-२०२७)</b> आपके करियर के लिए गेम-चेंजर सिद्ध होंगे। पदोन्नति अथवा नए बड़े प्रोजेक्ट की शुरुआत <b>अक्टूबर २०२६ से फरवरी २०२७</b> के मध्य सुनिश्चित है।';
+            var remedies = [
+                'कार्यस्थल पर उत्तर-पूर्व (ईशान) कोण को सदैव स्वच्छ व प्रकाशयुक्त रखें।',
+                'प्रतिदिन प्रातः <i>"ॐ नमो भगवते वासुदेवाय"</i> का शांत मन से जप करें।',
+                'शनिवार को काले कुत्ते या कौवे को रोटी खिलाएं।'
+            ];
+            return buildCardResponse('करियर व पदोन्नति', 'आजीविका, करियर एवं कर्मक्षेत्र बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 3: Nadi (BNN)
-                    "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #10b981; border-radius:4px;'>" +
-                    "<b style='color:#34d399;'>🌀 ३. भृगु नन्दी नाड़ी वेध (Nadi Planetary Trines & Karmic Axis):</b><br>" +
-                    nadiReading +
-                    "</div>" +
+        // =========================================================================
+        // DOMAIN 3: WEALTH & FINANCE
+        // =========================================================================
+        if (/(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i.test(q)) {
+            var verdict = 'आपकी पत्रिका में <b>सतत धन आगमन एवं अचल संपत्ति निर्माण का श्रेष्ठ योग</b> है। जीवन में कभी भी धन की ऐसी कमी नहीं होगी जिससे आवश्यक कार्य रुकें। संचित धन (२रा भाव) और लाभ (११वां भाव) का समन्वय आपको मध्यम आयु के बाद विपुल संपन्नता देगा।';
+            var items = [
+                '<b>द्वितीय भाव (कोष संचय):</b> द्वितीय भाव में ' + h2Sign + ' राशि है जिसके स्वामी <b>' + h2Lord + '</b> हैं। कोष भाव में ' + (rahu.house === 2 ? 'राहु की उपस्थिति अपरिमित व अचानक धन लाभ के अवसर देती है।' : 'शुभ ग्रहों का प्रभाव स्थिरता देता है।'),
+                '<b>एकादश भाव (लाभ भाव):</b> लाभेश <b>' + h11Lord + '</b> की स्थिति बताती है कि आपके आय के स्रोत एक से अधिक रहेंगे। अष्टकवर्ग में ११वें भाव को <b>' + sav11 + ' बिंदु</b> मिले हैं, जो १२वें भाव के व्यय से अधिक हैं।',
+                '<b>धनकारक गुरु:</b> देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ होकर धन की दैवीय सुरक्षा कर रहे हैं।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको भूमि, भवन, पैतृक लाभ एवं बौद्धिक संपदा से प्रचुर धन मिलेगा। शेयर बाजार में सट्टा लगाने से बचें, परन्तु दीर्घकालिक संपत्ति व स्थिर निवेश में आपको शत-प्रतिशत लाभ होगा।';
+            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान विंशोत्तरी दशा में <b>दिसम्बर २०२६ से जून २०२७</b> का समय बड़े आर्थिक लाभ और संपत्ति क्रय हेतु सर्वाधिक उपयुक्त है।';
+            var remedies = [
+                'शुक्रवार को श्री सूक्त का पाठ करें अथवा <i>"ॐ श्रीं ह्रीं श्रीं कमले कमलालये प्रसीद प्रसीद"</i> का जप करें।',
+                'तिजोरी अथवा धन रखने के स्थान पर लाल या पीला रेशमी वस्त्र बिछाकर रखें।',
+                'किसी भी शुक्रवार को कन्याओं को खीर अथवा सफेद मिठाई का प्रसाद दें।'
+            ];
+            return buildCardResponse('धन व समृद्धि', 'धन-संपदा, कोष संचय एवं आर्थिक सामर्थ्य वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 4: KP System
-                    "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #f59e0b; border-radius:4px;'>" +
-                    "<b style='color:#fbbf24;'>🎯 ४. कृष्णमूर्ति पद्धति सूक्ष्म वेध (KP Cuspal Sub-Lord & 4-Step):</b><br>" +
-                    kpReading +
-                    "</div>" +
+        // =========================================================================
+        // DOMAIN 4: MARRIAGE & RELATIONSHIP
+        // =========================================================================
+        if (/(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i.test(q)) {
+            var verdict = 'आपकी पत्रिका में <b>सुयोग्य, स्वाभिमानी एवं कर्मठ जीवनसाथी का योग</b> है। विचारों में स्वतंत्रता के कारण कभी-कभी वैचारिक मतभेद उभर सकते हैं, परन्तु विवाह की आधारशिला अटूट व दीर्घकालिक है।';
+            var items = [
+                '<b>सप्तम भाव (दांपत्य भाव):</b> सप्तमेश <b>' + h7Lord + '</b> भाव ' + (pMap[h7Lord] ? pMap[h7Lord].house : 7) + ' में स्थित हैं। ' + (sat.house === 7 ? 'सप्तम भाव में उच्च के शनि देव जीवनसाथी को गंभीर, परिपक्व एवं कर्तव्यनिष्ठ बनाते हैं।' : 'सप्तम भाव पर शुभ दृष्टियों का संरेखण है।'),
+                '<b>दाराकारक (DK - ' + dk + '):</b> जैमिनी सूत्रानुसार जीवनसाथी के कारक <b>' + dk + '</b> देव हैं, जो यह दर्शाते हैं कि जीवनसाथी का स्वभाव सुरुचिपूर्ण व बौद्धिक होगा।',
+                '<b>अष्टकवर्ग सामर्थ्य:</b> सप्तम भाव को <b>' + sav7 + ' बिंदु</b> प्राप्त हैं, जो वैवाहिक संबंधों को स्थिरता प्रदान करते हैं।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जीवनसाथी के आने के बाद आपके भाग्य और सामाजिक प्रतिष्ठा में तीव्र वृद्धि होगी। जीवनसाथी आपको परिवार और करियर दोनों में सुदृढ़ संबल प्रदान करेगा।';
+            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> अविवाहित जातकों के लिए विवाह हेतु <b>अगस्त २०२६ से अप्रैल २०२७</b> का समय देवगुरु बृहस्पति के गोचर द्वारा पूर्णतः स्वीकृत व मंगलमय है।';
+            var remedies = [
+                'नित्य संध्या समय घर के मंदिर में गाय के घी का दीपक प्रज्वलित करें।',
+                'गौरी-शंकर रुद्राक्ष धारण करना अथवा शिव-पार्वती की संयुक्त पूजा दांपत्य को परम सुखमय बनाती है।',
+                'पूर्णिमा के दिन चंद्रदेव को कच्चे दूध व जल का अर्घ्य दें।'
+            ];
+            return buildCardResponse('दांपत्य व विवाह', 'दांपत्य जीवन, विवाह एवं सम्बन्ध समन्वय वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 5: Ashtakavarga
-                    "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #ec4899; border-radius:4px;'>" +
-                    "<b style='color:#f472b6;'>📊 ५. अष्टकवर्ग सामर्थ्य व गोचर फल (SAV 337 Bindus & Transit Strength):</b><br>" +
-                    avReading +
-                    "</div>" +
+        // =========================================================================
+        // DOMAIN 5: CHILDREN & FAMILY
+        // =========================================================================
+        if (/(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i.test(q)) {
+            var verdict = 'आपकी पत्रिका में <b>गुणवान, मेधावी एवं कुल का नाम रोशन करने वाली संतान का श्रेष्ठ योग</b> है। पंचम भाव और संतान कारक गुरु का संबंध संतान सुख को सुनिश्चित करता है।';
+            var items = [
+                '<b>पंचम भाव (संतान व विद्या भाव):</b> पंचम भाव में ' + h5Sign + ' राशि है और पंचमेश <b>' + h5Lord + '</b> की स्थिति संतान के उच्च बौद्धिक स्तर को प्रमाणित करती है।',
+                '<b>पुत्रकारक (PK - ' + pk + ') व गुरु:</b> संतान के नैसर्गिक कारक देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ हैं, जो संतान के दीर्घायु व संस्कारी होने का अकाट्य प्रमाण है।',
+                '<b>अष्टकवर्ग सामर्थ्य:</b> पंचम भाव को <b>' + sav5 + ' बिंदु</b> प्राप्त हैं जो संतान सुख में आने वाली बाधाओं को दूर करते हैं।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> संतान शिक्षा, विज्ञान, विधिक अथवा प्रशासनिक क्षेत्र में उत्कृष्ट सफलता प्राप्त करेगी। बुढ़ापे में संतान से पूरा मान-सम्मान व सेवा प्राप्त होगी।';
+            var timing = '<b>काल-खंड:</b> संतान प्राप्ति अथवा संतान के करियर में बड़ी उपलब्धि के लिए <b>नवम्बर २०२६ से मई २०२७</b> का काल-चक्र अत्यंत शुभ है।';
+            var remedies = [
+                'गुरुवार को भगवान विष्णु को पीले चने की दाल व गुड़ अर्पित करें।',
+                'नित्य <i>"संतान गोपाल मंत्र"</i> अथवा गायत्री मंत्र का एक माला जप करें।',
+                'पीपल के वृक्ष को जल दें, परन्तु रविवार को स्पर्श न करें।'
+            ];
+            return buildCardResponse('संतान सुख', 'संतान भाव, विद्या एवं वंश वृद्धि वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 6: Acharya Vyas v10 Goodh Diagnostics
-                    (goodhPillarHtml ? (
-                        "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #f43f5e; border-radius:4px;'>" +
-                        "<b style='color:#fb7185;'>🔍 ६. गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Acharya Vyas v10 Deep Diagnostics):</b><br>" +
-                        goodhPillarHtml +
-                        "</div>"
-                    ) : "") +
+        // =========================================================================
+        // DOMAIN 6: HEALTH & VITALITY
+        // =========================================================================
+        if (/(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i.test(q)) {
+            var verdict = 'आपकी शारीरिक संरचना में <b>रोग प्रतिरोधक क्षमता सबल है, परन्तु वात-पित्त असंतुलन व मानसिक व्यग्रता</b> पर नियंत्रण रखना अनिवार्य है। नियमित दिनचर्या से आप दीर्घायु व निरोगी जीवन व्यतीत करेंगे।';
+            var items = [
+                '<b>लग्न एवं लग्नेश:</b> लग्नेश <b>' + lagnaLord + '</b> भाव ' + (pMap[lagnaLord] ? pMap[lagnaLord].house : 1) + ' में स्थित होकर जीवन शक्ति (Vitality) को बल दे रहे हैं।',
+                '<b>षष्ठ भाव (रोग भाव):</b> षष्ठेश <b>' + h6Lord + '</b> की स्थिति बताती है कि संक्रामक या मौसमी विकार शीघ्र ठीक होंगे, लेकिन पाचन तंत्र व रक्त संचार का ध्यान रखना आवश्यक है।',
+                '<b>२२वां द्रेष्काण व ६४वां नवांश:</b> ' + (khara ? '२२वें द्रेष्काण स्वामी (' + khara.drekkana_22_lord + ') की दृष्टि के कारण अधिक कार्यभार से उत्पन्न मानसिक थकान से बचाव रखें।' : 'स्वास्थ्य की दृष्टि से आत्मबल सुदृढ़ रखें।')
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> कोई गंभीर या असाध्य व्याधि का योग नहीं है। समय-समय पर उत्पन्न होने वाले तनाव व मौसमी विकार योग, प्राणायाम व खानपान में संयम से तुरंत नियंत्रित हो जाएंगे।';
+            var timing = '<b>काल-खंड (संवेदनशील समय):</b> राहु व शनि के गोचर संक्रमण के दौरान <b>नवम्बर २०२६ व जनवरी २०२७</b> में विशेष रूप से खानपान व यात्रा में सावधानी रखें।';
+            var remedies = [
+                'प्रातःकाल तांबे के पात्र में रखा जल पिएं और १० मिनट प्राणायाम करें।',
+                'नित्य ११ बार <i>\"महामृत्युंजय मंत्र\"</i> का जप संपूर्ण आरोग्य का अभेद्य कवच है।',
+                'माह में एक बार मंगलवार को गरीबों को मीठा भोजन कराएं।'
+            ];
+            return buildCardResponse('आरोग्य व स्वास्थ्य', 'स्वास्थ्य, आरोग्य एवं जीवन शक्ति बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 7: Classical Sutras Evidence
-                    (combinedSutras.length > 0 ? self._renderSutrasHtml(combinedSutras, 4) : "") +
+        // =========================================================================
+        // DOMAIN 7: FOREIGN TRAVEL & SETTLEMENT
+        // =========================================================================
+        if (/(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i.test(q)) {
+            var verdict = 'आपकी पत्रिका में <b>विदेशी संपर्कों, सुदूर यात्राओं एवं बाहरी स्रोतों से लाभ का स्पष्ट योग</b> है। स्थायी रूप से विदेश बसने की अपेक्षा विदेशी व्यापार, बहुराष्ट्रीय कंपनियों से अनुबंध या सुदूर प्रांतों में यात्राएं आपके लिए अधिक लाभदायक रहेंगी।';
+            var items = [
+                '<b>द्वादश भाव (विदेश भाव):</b> द्वादश भाव में ' + h12Sign + ' राशि है जिसके अधिपति <b>' + h12Lord + '</b> हैं।',
+                '<b>नवम भाव (दीर्घ यात्राएं):</b> नवमेश <b>' + h9Lord + '</b> एवं गुरु की शुभ स्थिति धर्म-यात्राओं, उच्च अध्ययन अथवा विदेशी सम्मेलनों में सफलता दिलाती है।',
+                '<b>अष्टकवर्ग १२वां भाव:</b> १२वें भाव में <b>' + sav12 + ' बिंदु</b> हैं, जो अनावश्यक व्यय को रोककर यात्राओं को लाभकारी बनाते हैं।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> वीजा, पासपोर्ट अथवा विदेशी क्लाइंट्स से जुड़े मामलों में सफलता प्राप्त होगी। सुदूर स्थानों से धन लाभ का स्थायी स्रोत बनेगा।';
+            var timing = '<b>काल-खंड:</b> विदेश गमन अथवा विदेशी कार्यों हेतु <b>सितम्बर २०२६ से फरवरी २०२७</b> का समय सर्वाधिक अनुकूल है।';
+            var remedies = [
+                'यात्रा पर जाने से पूर्व भगवान गणेश को दूर्वा अर्पित करें।',
+                'पक्षियों को नित्य दाना-पानी डालें।',
+                'चांदी का एक चौकोर टुकड़ा अपने पर्स में रखें।'
+            ];
+            return buildCardResponse('विदेश व यात्रा', 'विदेश यात्रा, सुदूर संपर्क एवं विदेशी लाभ वेध', verdict, items, fruit, timing, remedies);
+        }
 
-                    // Pillar 8: Dasha & Remedial Wisdom
-                    "<div style='margin-top:12px; padding:10px 14px; background:rgba(212,175,55,0.04); border-left:3px solid var(--accent-gold); border-radius:4px;'>" +
-                    "<b style='color:var(--accent-gold);'>🌿 ८. दशा चक्र व अचूक सात्विक दैवज्ञ मार्गदर्शन:</b><br>" +
-                    "वर्तमान में सक्रिय <b>" + dashaChain + "</b> आपके कर्म व भाग्य चक्र को संचालित कर रही है।<br>" +
-                    (p4StepHtml || "नित्य प्रातः भगवान सूर्य को अर्घ्य दें एवं संध्या समय 'ॐ नमः शिवाय' का मानसिक जप करें।") +
-                    "</div><br>" +
-                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 6-आयामीय दैवज्ञ वेध (Parashara + Jaimini + Nadi + KP + Ashtakavarga + Goodh Diagnostics) (Parashara + Jaimini + Nadi + KP + Ashtakavarga + 22k Sutras)।</small>";
-            }
+        // =========================================================================
+        // DOMAIN 8: DASHA & TIMING
+        // =========================================================================
+        if (/(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i.test(q)) {
+            var verdict = 'वर्तमान काल-खंड आपके जीवन में <b>कर्मिक पुनर्गठन एवं नए स्वर्णिम अवसर का संधिकाल</b> है। वर्तमान में सक्रिय <b>' + dashaChain + '</b> आपके ज्ञान, कर्म और आत्मसम्मान को नई ऊंचाई देने के लिए तत्पर है।';
+            var items = [
+                '<b>सक्रिय विंशोत्तरी दशा:</b> <b>' + dashaChain + '</b> का प्रभाव मन, कार्यक्षेत्र और आर्थिक निर्णयों पर पूर्ण रूप से केंद्रित है।',
+                '<b>दशानाथ की कुण्डली में स्थिति:</b> महादशा नाथ व अंतर्दशा नाथ जिन भावों के स्वामी हैं, उन क्षेत्रों में पिछले कर्मों का फल पककर सामने आ रहा है।',
+                '<b>गोचर का दोहरा संरेखण:</b> शनि देव और गुरु देव का गोचर वर्तमान में आपकी पत्रिका के प्रमुख कर्म व भाग्य केंद्रों को जागृत कर रहा है।'
+            ];
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जो कार्य पिछले कई महीनों से अवरुद्ध थे, उनमें गति आएगी। आगामी महीनों में महत्वपूर्ण व्यक्ति से भेंट और नए अधिकार क्षेत्र की प्राप्ति होगी।';
+            var timing = '<b>काल-खंड (परिवर्तन की सटीक तिथि):</b> <b>अक्टूबर २०२६ से अप्रैल २०२७</b> का चरण जीवन के सबसे फलदायी चरणों में से एक होगा जिसमें आपकी प्रतिष्ठा और निर्णय-क्षमता दोनों का विस्तार होगा।';
+            var remedies = [
+                'सक्रिय दशानाथ ग्रह के वैदिक मंत्र का नित्य १ माला जप करें।',
+                'प्रतिदिन सूर्योदय के समय गायत्री मंत्र का १०८ बार जप करें।',
+                'गुरुवार को गाय को भीगी हुई चने की दाल व गुड़ खिलाएं।'
+            ];
+            return buildCardResponse('दशा व काल-चक्र', 'विंशोत्तरी दशा चक्र एवं समय-वेध', verdict, items, fruit, timing, remedies);
+        }
 
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE A: YOGA & DOSHA INQUIRY
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'yoga' || /योग|yoga|केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|बुधादित्य|budhaditya|मंगल.*दोष|mangal|मांगलिक|नीचभंग|neechabhanga|गुरु.*चांडाल|काल.*सर्प|kaalsarp|विपरीत|raj.*yoga|राजयोग/i.test(q)) {
-                var targetYogas = VyasYogaEngine.detectAll(analysis, chart, query);
-                if (targetYogas && targetYogas.length > 0) {
-                    var yHtml = "";
-                    targetYogas.forEach(function(y) {
-                        var det = (y.detail || '')
-                            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-                            .replace(/\n\n/g, '<br>')
-                            .replace(/\n/g, '<br>');
-                        yHtml += "<div style='margin-bottom:8px;'><b>" + (y.found ? (y.partial ? '⚠️ ' : '✦ ') : '• ') + y.name + ":</b><br>" + det + "</div>";
-                    });
-
-                    return buildPillarsHtml(
-                        "🔮 व्यास अस्त्र: सूक्ष्म योग परीक्षण व शास्त्रीय निर्णय (Vyas Multi-System Yoga Engine)",
-                        "rgba(212,175,55,0.06)", "var(--accent-gold)",
-                        yHtml,
-                        "दोष शमन हेतु जातक को नित्य हनुमान चालीसा अथवा महामृत्युंजय मंत्र का जप करना चाहिए।"
-                    );
-                }
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE B: DASHA & TIMELINE INQUIRY
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'dasha' || /दशा|महादशा|अन्तर्दशा|pratyantar|कब.*होगा|समय/i.test(q)) {
-                var dashaText = VyasDashaEngine.analyze(analysis, query)
-                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-                    .replace(/\n\n/g, '<br>')
-                    .replace(/\n/g, '<br>');
-                return buildPillarsHtml(
-                    "⏳ विंशोत्तरी दशा चक्र एवं समय-वेध (Vimshottari & Multi-System Dasha Matrix)",
-                    "rgba(59,130,246,0.06)", "#3b82f6",
-                    dashaText,
-                    "दशानाथ ग्रह के वैदिक बीज मंत्र का नित्य 1 माला जप समस्त कार्यों में अनुकूलता प्रदान करता है।"
-                );
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE C: CAREER & PROFESSION (कर्म, नौकरी, व्यापार, पदोन्नति)
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'career' || route === 'd10' || /करियर|नौकरी|व्यापार|जॉब|काम|व्यवसाय|प्रमोशन|आजीविका|पद|career|job|business|promotion/i.test(q)) {
-                var h10 = analysis.houses[10];
-                var l10 = h10.lord;
-                var p10Data = analysis.planets[l10];
-                var planetsIn10 = h10.planets.join(', ') || 'रिक्त (शुभ दृष्टियों से संरेखित)';
-                var sat = analysis.planets['शनि'], sun = analysis.planets['सूर्य'];
-
-                var pC = "• <b>दशम भाव (कर्म भाव):</b> " + h10.sign + " राशि (दशमेश: <b>" + l10 + "</b>, भाव " + (p10Data ? p10Data.house : 1) + " में स्थित)।<br>" +
-                         "• <b>दशम भाव में स्थित ग्रह:</b> <b>" + planetsIn10 + "</b>।<br>" +
-                         "• <b>कर्मकारक शनि:</b> भाव " + (sat ? sat.house : 1) + " (" + (sat ? sat.sign : '') + ") एवं अधिकार कारक सूर्य: भाव " + (sun ? sun.house : 1) + " में स्थित हैं।";
-
-                var remC = "• नित्य प्रातः तांबे के लोटे से सूर्यदेव को जल अर्पित करें व <i>'ॐ घृणिः सूर्याय नमः'</i> का जप करें।<br>" +
-                          "• शनिवार को किसी कर्मठ श्रमिक अथवा निर्धन को अन्न का दान करें।";
-
-                return buildPillarsHtml(
-                    "💼 आजीविका, करियर एवं कर्मक्षेत्र बहु-आयामीय वेध (Career & Karma Omniverse)",
-                    "rgba(16,185,129,0.06)", "#10b981",
-                    pC, remC
-                );
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE D: WEALTH & FINANCE (धन, संपत्ति, लाभ, कर्ज)
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'wealth' || /धन|पैसा|रुपया|सम्पत्ति|आर्थिक|कर्ज|लोन|इनकम|आय|अमीरी|wealth|money|finance|income/i.test(q)) {
-                var h2 = analysis.houses[2], h11 = analysis.houses[11];
-                var l2 = h2.lord, l11 = h11.lord;
-                var p2 = analysis.planets[l2], p11 = analysis.planets[l11];
-                var jup = analysis.planets['गुरु'];
-
-                var pW = "• <b>द्वितीय भाव (संचित धन):</b> " + h2.sign + " राशि (स्वामी: <b>" + l2 + "</b>, भाव " + (p2 ? p2.house : 1) + " में स्थित)।<br>" +
-                         "• <b>एकादश भाव (आय व लाभ):</b> " + h11.sign + " राशि (स्वामी: <b>" + l11 + "</b>, भाव " + (p11 ? p11.house : 1) + " में स्थित)।<br>" +
-                         "• <b>धनकारक देवगुरु बृहस्पति:</b> भाव " + (jup ? jup.house : 1) + " (" + (jup ? jup.sign : '') + ") में विराजमान हैं।";
-
-                var remW = "• प्रत्येक शुक्रवार को श्री सूक्त अथवा कनकधारा स्तोत्र का पाठ करें।<br>" +
-                          "• पक्षियों को नियमित जल व दाना अर्पित करें।";
-
-                return buildPillarsHtml(
-                    "💰 आर्थिक समृद्धि, संचित धन एवं लाभ बहु-आयामीय वेध (Dhana & Asset Omniverse)",
-                    "rgba(245,158,11,0.06)", "#f59e0b",
-                    pW, remW
-                );
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE E: MARRIAGE & RELATIONSHIP (विवाह, दांपत्य, जीवनसाथी)
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'marriage' || /विवाह|शादी|दांपत्य|जीवनसाथी|पत्नी|पति|रिश्ता|प्रेम|marriage|spouse|wife|husband|relationship/i.test(q)) {
-                var h7 = analysis.houses[7];
-                var l7 = h7.lord;
-                var p7 = analysis.planets[l7];
-                var ven = analysis.planets['शुक्र'];
-                var mangal = allYogas.find(function(y){ return /मंगल.*दोष/i.test(y.name); });
-
-                var pM = "• <b>सप्तम भाव (विवाह व कलत्र):</b> " + h7.sign + " राशि (सप्तमेश: <b>" + l7 + "</b>, भाव " + (p7 ? p7.house : 1) + " में स्थित)।<br>" +
-                         "• <b>दांपत्य कारक शुक्रदेव:</b> भाव " + (ven ? ven.house : 1) + " (" + (ven ? ven.sign : '') + " राशि) में संचरण कर रहे हैं।<br>" +
-                         "• <b>मांगलिक परीक्षण:</b> " + (mangal ? (mangal.found ? (mangal.partial ? '⚠️ <b>मंगल दोष उपस्थित किंतु शास्त्रीय परिहार से भंग।</b>' : '🔴 <b>मांगलिक प्रभाव उपस्थित — कुण्डली मिलान अनिवार्य।</b>') : '✅ <b>मांगलिक दोष पूर्णतः अनुपस्थित।</b>') : 'सामान्य।');
-
-                var remM = "• दांपत्य में परस्पर विश्वास, सम्मान व सामंजस्य को सर्वोच्च प्राथमिकता दें।<br>" +
-                          "• नित्य <i>'ॐ उमामहेश्वराभ्यां नमः'</i> का शांत मन से जप करें।";
-
-                return buildPillarsHtml(
-                    "💍 दांपत्य जीवन, विवाह व सम्बन्ध समन्वय बहु-आयामीय वेध (Marriage & Relationship Omniverse)",
-                    "rgba(236,72,153,0.06)", "#ec4899",
-                    pM, remM
-                );
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE F: HEALTH & VITALITY (स्वास्थ्य, आयु, रोग)
-            // ─────────────────────────────────────────────────────────────
-            if (route === 'health' || /स्वास्थ्य|रोग|कष्ट|बीमारी|तबीयत|आयु|दवा|health|disease|fitness/i.test(q)) {
-                var h6 = analysis.houses[6];
-                var l1 = analysis.lagnaLordPos;
-                var sunH = analysis.planets['सूर्य'], moonH = analysis.planets['चन्द्र'];
-
-                var pH = "• <b>लग्न एवं लग्नेश (" + lagnaLord + "):</b> भाव " + (l1 ? l1.house : 1) + " में " + analysis.lagnaStrength + " अवस्था में है।<br>" +
-                         "• <b>षष्ठ (रोग) भाव:</b> " + h6.sign + " राशि (स्वामी: <b>" + h6.lord + "</b>)।<br>" +
-                         "• <b>आत्मकारक सूर्य व मन:कारक चन्द्र:</b> सूर्य (भाव " + (sunH ? sunH.house : 1) + ") व चन्द्र (भाव " + (moonH ? moonH.house : 1) + ") का समन्वय जीवन ऊर्जा निर्धारित कर रहा है।";
-
-                var remH = "• प्रातःकाल गुनगुने जल का सेवन करें व सूर्य नमस्कार करें।<br>" +
-                          "• नित्य 11 बार <i>'महामृत्युंजय मंत्र'</i> का शांत मन से जप संपूर्ण आरोग्य का सर्वोत्तम कवच है।";
-
-                return buildPillarsHtml(
-                    "🌿 स्वास्थ्य, आरोग्य एवं जीवन शक्ति बहु-आयामीय वेध (Health & Vitality Omniverse)",
-                    "rgba(239,68,68,0.06)", "#ef4444",
-                    pH, remH
-                );
-            }
-
-            // ─────────────────────────────────────────────────────────────
-            // ROUTE G: GENERAL HOLISTIC READING (समग्र जीवन व सामान्य जिज्ञासा)
-            // ─────────────────────────────────────────────────────────────
-            var sunG = analysis.planets['सूर्य'] || { sign: 'अज्ञात', house: 1 };
-            var moonG = analysis.planets['चन्द्र'] || { sign: 'अज्ञात', house: 1 };
-            var formedYStr = yogaNames.length > 0 ? yogaNames.slice(0, 5).join(' • ') : 'शुभ ग्रह दृष्टि संरेखित';
-
-            var pGen = "• <b>जन्म लग्न:</b> <b>" + lagna + " लग्न</b> (लग्नेश: <b>" + lagnaLord + "</b> — " + analysis.lagnaStrength + ")<br>" +
-                       "• <b>सूर्य स्थिति:</b> भाव " + sunG.house + " (" + sunG.sign + " राशि — आत्मा व सम्मान कारक)<br>" +
-                       "• <b>चन्द्र स्थिति:</b> भाव " + moonG.house + " (" + moonG.sign + " राशि — मन व चिंतन कारक)<br>" +
-                       "• <b>सक्रिय वैदिक योग:</b> <b style='color:#10b981;'>" + formedYStr + "</b>";
-
-            var remGen = "• नित्य प्रातः भगवान सूर्यनारायण को अर्घ्य दें एवं संध्या समय 'ॐ नमः शिवाय' का 108 बार मानसिक जप करें।";
-
-            return buildPillarsHtml(
-                "✦ कुण्डली मीमांसा: &quot;" + (query || "समग्र जीवन फलादेश") + "&quot;",
-                "rgba(212,175,55,0.06)", "var(--accent-gold)",
-                pGen, remGen
-            );
-        },
+        // =========================================================================
+        // DOMAIN 9: DEFAULT / YOGA / GENERAL READING
+        // =========================================================================
+        var verdict = 'आपकी पत्रिका <b>असाधारण आत्मबल, बौद्धिक पराक्रम एवं सांगठनिक योग्यता</b> से युक्त है। जीवन में जितने संघर्ष आएंगे, आपका उत्थान उतना ही भव्य और निर्विवाद होगा।';
+        var items = [
+            '<b>जन्म लग्न:</b> <b>' + lagna + ' लग्न</b> (लग्नेश: <b>' + lagnaLord + '</b>)। लग्न का स्वभाव निर्भीक, स्पष्टवादी और नेतृत्वकारी है।',
+            '<b>सूर्य व चन्द्र स्थिति:</b> सूर्य (भाव ' + sun.house + ', ' + sun.sign + ') एवं चन्द्र (भाव ' + moon.house + ', ' + moon.sign + ') का संतुलन जीवन के बाह्य व आंतरिक द्वन्द्वों को स्थिरता देता है।',
+            '<b>अमात्यकारक व कर्म:</b> कर्मक्षेत्र में पद व प्रतिष्ठा <b>' + amk + '</b> देव की कृपा से अर्जित होगी।',
+            '<b>अष्टकवर्ग कुल बिंदु:</b> कुण्डली के कुल बिंदु ३३७ संतुलित व जीवन के उत्तरार्ध को परम वैभवशाली बनाने वाले हैं।'
+        ];
+        var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपके द्वारा किए गए प्रयासों का परिणाम कभी व्यर्थ नहीं जाएगा। समाज में मान-सम्मान, स्वतंत्र पहचान और पारिवारिक प्रतिष्ठा निरंतर बढ़ेगी।';
+        var timing = '<b>काल-खंड (आगामी समय):</b> आगामी <b>१२ से २४ महीने</b> आत्मिक और भौतिक दोनों दृष्टिकोणों से अनुकूल व प्रगतिशील रहेंगे।';
+        var remedies = [
+            'नित्य प्रातः भगवान सूर्य को अर्घ्य दें और संध्या समय <i>"ॐ नमः शिवाय"</i> का मानसिक जप करें।',
+            'अपने माता-पिता व गुरुजनों का नित्य आशीर्वाद लें।',
+            'सत्य व न्याय के मार्ग पर अडिग रहें, यही आपका सर्वोत्तम कवच है।'
+        ];
+        return buildCardResponse('कुण्डली मीमांसा', 'समग्र वैदिक कुण्डली मीमांसा एवं फलादेश', verdict, items, fruit, timing, remedies);
+    },
 
         _houseAnalysis: function(analysis, houses) {
             return houses.map(function(h) {

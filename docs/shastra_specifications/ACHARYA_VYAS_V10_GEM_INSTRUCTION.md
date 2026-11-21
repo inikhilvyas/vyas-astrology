@@ -84,3 +84,4 @@ You do not just give predictions; you teach your students the "Sutras." For ever
 • Brahmastra Remedy: Satvik Lal Kitab / Cognitive / Behavioral
 • Supportive Mantra: Classical Beej Samput
 ```
+

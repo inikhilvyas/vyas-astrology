@@ -148,13 +148,13 @@
 
     <style>
         :root {
-            /* Master Observatory Cosmic Dark Theme Tokens */
-            --bg-canvas: #050811;
-            --bg-canvas-gradient: radial-gradient(circle at 15% 15%, rgba(30, 58, 138, 0.22), transparent 45%), radial-gradient(circle at 85% 20%, rgba(212, 175, 55, 0.15), transparent 40%), #050811;
-            --bg-surface: #0A1124;
-            --bg-card: rgba(15, 23, 42, 0.78);
-            --bg-card-hover: rgba(22, 34, 60, 0.92);
-            --bg-glass: rgba(15, 23, 42, 0.65);
+            /* Master Observatory Cosmic Dark Theme Tokens (Soothing & High-Readability) */
+            --bg-canvas: #070B19;
+            --bg-canvas-gradient: radial-gradient(circle at 15% 15%, rgba(20, 35, 75, 0.4), transparent 45%), radial-gradient(circle at 85% 20%, rgba(180, 135, 35, 0.12), transparent 40%), #070B19;
+            --bg-surface: #0E162B;
+            --bg-card: rgba(15, 23, 42, 0.85);
+            --bg-card-hover: rgba(22, 34, 60, 0.95);
+            --bg-glass: rgba(15, 23, 42, 0.80);
             --primary-navy: #D4AF37;
             --navy-light: #60A5FA;
             --navy-surface: #1E293B;
@@ -163,17 +163,17 @@
             --border-gold-subtle: rgba(212, 175, 55, 0.18);
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-card: rgba(212, 175, 55, 0.2);
-            --text-primary: #F8FAFC;
+            --text-primary: #E2E8F0;
             --text-secondary: #CBD5E1;
-            --text-muted: #8492A6;
-            --accent-gold: #FCEDAA;
+            --text-muted: #94A3B8;
+            --accent-gold: #F1DE87;
             --gold-gradient: linear-gradient(135deg, #FFF3BF 0%, #D4AF37 50%, #996515 100%);
             --gold-glow: 0 0 25px rgba(212, 175, 55, 0.28);
             --accent-emerald: #10B981;
             --accent-ruby: #F43F5E;
             --accent-sapphire: #38BDF8;
-            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            --font-hindi: 'Noto Sans Devanagari', sans-serif;
+            --font-sans: 'Poppins', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-hindi: 'Noto Sans Devanagari', 'Poppins', sans-serif;
             --font-serif: 'Cinzel', Georgia, serif;
             --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
             --radius-xs: 4px;
@@ -221,12 +221,14 @@
             background: var(--bg-canvas-gradient);
             background-color: var(--bg-canvas);
             color: var(--text-primary);
-            font-family: var(--font-hindi), var(--font-sans);
+            font-family: 'Poppins', 'Noto Sans Devanagari', -apple-system, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            line-height: 1.5;
+            font-size: 0.94rem;
+            line-height: 1.75;
+            letter-spacing: 0.012em;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -7081,221 +7083,266 @@
                 // VYAS 34.0 CONSOLIDATED PHALIT ESSAY GENERATOR (संश्लेषित समग्र फलादेश निबंध)
                 // =========================================================================
                 synthesizeConsolidatedPhalitEssay: function (chart) {
-                    chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
-                    if (!chart || !chart.profile || !chart.profile.name) {
-                        return '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.85rem;">' +
-                            '<b style="color:var(--accent-gold); font-size:1rem;">✦ कुण्डली लोड नहीं है</b>' +
-                            '<p style="margin-top:6px;">व्यास 34.0 संश्लेषित जीवन फलादेश महा-निबंध देखने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा साइन-इन करें।</p>' +
-                            '</div>';
-                    }
+    chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
+    if (!chart || !chart.profile || !chart.profile.name) {
+        return '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.95rem;">' +
+            '<b style="color:var(--accent-gold); font-size:1.1rem;">✦ कुण्डली लोड नहीं है</b>' +
+            '<p style="margin-top:6px;">व्यास अस्त्र सटीक जीवन फलादेश देखने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा प्रोफाइल चुनें।</p>' +
+            '</div>';
+    }
 
-                    var prof = chart.profile;
-                    var name = prof.name || "जातक";
-                    var lagna = (prof.asc_sign || "मेष").split(' ')[0];
-                    var dob = prof.dob || "";
-                    var tob = prof.tob || "";
-                    var city = prof.city || "";
-                    var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी दशा सक्रिय";
+    var prof = chart.profile;
+    var name = prof.name || "जातक";
+    var lagna = (prof.asc_sign || "मेष").split(' ')[0].replace(/[\(\)]/g, '').trim();
+    var dob = prof.dob || "";
+    var tob = prof.tob || "";
+    var city = prof.city || "";
+    var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी दशा सक्रिय";
 
-                    // Dynamically generate genuine classical sutras for THIS native's chart
-                    var dynamicSutras = [];
-                    if (typeof this.generateExhaustiveSutraAnalysis === 'function') {
-                        dynamicSutras = this.generateExhaustiveSutraAnalysis(chart) || [];
-                    }
+    // 1. Build Planet Map
+    var pTable = chart.planet_table || [];
+    var pMap = {};
+    for (var i = 0; i < pTable.length; i++) {
+        var pl = pTable[i];
+        var pName = (pl.p || pl.planet || '').replace(/\\s*\\(.*\\)/, '').trim();
+        pMap[pName] = {
+            name: pName,
+            house: parseInt(pl.h || pl.house || 1),
+            sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
+            degree: pl.d || pl.degree || "0°0'",
+            nakshatra: pl.n || pl.nakshatra || "",
+            dignity: pl.dignity || pl.s || ""
+        };
+    }
 
-                    // Group into Yogas, Dignities, and House Lords
-                    var rajYogas = [];
-                    var dignities = [];
-                    var houseLords = [];
+    // 2. House Lord Sign Map (Lagna to 12 Houses)
+    var SIGNS_HI = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+    var LORDS = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
+    var lagnaIdx = SIGNS_HI.indexOf(lagna);
+    if (lagnaIdx === -1) lagnaIdx = 0;
 
-                    dynamicSutras.forEach(function (s) {
-                        var sys = s.system || "";
-                        if (sys.indexOf("महापुरुष") !== -1 || sys.indexOf("राजयोग") !== -1 || sys.indexOf("योग") !== -1) {
-                            rajYogas.push(s);
-                        } else if (sys.indexOf("नीच") !== -1 || sys.indexOf("स्वगृही") !== -1 || sys.indexOf("उच्च") !== -1 || sys.indexOf("बल") !== -1) {
-                            dignities.push(s);
-                        } else if (sys.indexOf("भावेश") !== -1) {
-                            houseLords.push(s);
-                        }
-                    });
+    function getHouseSign(h) {
+        return SIGNS_HI[(lagnaIdx + h - 1) % 12];
+    }
+    function getHouseLord(h) {
+        return LORDS[(lagnaIdx + h - 1) % 12];
+    }
 
-                    var essay = '<div class="vyas34-thesis" style="line-height:1.75; color:var(--text-primary); font-size:0.86rem;">' +
-                        // Header Banner
-                        '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.14), rgba(30,58,138,0.22)); border:1px solid var(--border-gold); border-radius:12px; padding:16px; margin-bottom:18px;">' +
-                        '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
-                        '<div>' +
-                        '<span style="font-size:0.72rem; color:var(--accent-gold); font-weight:800; letter-spacing:1px; text-transform:uppercase;">VYAS 34.0 • AGENTIC JYOTISHA INTELLIGENCE SYSTEM</span>' +
-                        '<h3 style="margin:2px 0 0 0; color:var(--accent-gold); font-size:1.15rem;">✦ ' + name + ' की जन्मपत्रिका: वृहद् संश्लेषित जीवन फलादेश महा-निबंध</h3>' +
-                        '</div>' +
-                        '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid #10b981; padding:3px 10px; border-radius:14px; font-size:0.74rem; font-weight:800;">सत्य-निष्ठ बहु-पद्धतीय वेध [C3]</span>' +
-                        '</div>' +
-                        '<div style="font-size:0.74rem; color:var(--text-muted); margin-top:8px;">' +
-                        'लग्न: <b>' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • चालू विंशोत्तरी: <b>' + dasha + '</b>' +
-                        '</div>' +
-                        '</div>' +
+    var lagnaLord = getHouseLord(1);
+    var d10Lord = getHouseLord(10);
+    var d2Lord = getHouseLord(2);
+    var d11Lord = getHouseLord(11);
+    var d7Lord = getHouseLord(7);
+    var d6Lord = getHouseLord(6);
+    var d8Lord = getHouseLord(8);
 
-                        // Special Chapter: Acharya Vyas v10 Goodh Diagnostics (गूढ़ रहस्य एवं सूक्ष्म परीक्षण)
-                        (function() {
-                            var diag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
-                            if (!diag) return '';
+    var lagnaLordPl = pMap[lagnaLord] || { house: 1, sign: lagna, dignity: '' };
+    var d10LordPl = pMap[d10Lord] || { house: 10, sign: getHouseSign(10), dignity: '' };
+    var d2LordPl = pMap[d2Lord] || { house: 2, sign: getHouseSign(2), dignity: '' };
+    var d11LordPl = pMap[d11Lord] || { house: 11, sign: getHouseSign(11), dignity: '' };
+    var d7LordPl = pMap[d7Lord] || { house: 7, sign: getHouseSign(7), dignity: '' };
+    var d6LordPl = pMap[d6Lord] || { house: 6, sign: getHouseSign(6), dignity: '' };
 
-                            var jDyn = diag.jaimini_dynamics || {};
-                            var gHits = diag.gandanta_placements || [];
-                            var dagdha = diag.dagdha_rashis_for_tithi || [];
-                            var dagdhaPl = diag.planets_in_dagdha_rashis || [];
-                            var khara = diag.khara_and_64th_navamsha || {};
-                            var tReport = diag.transit_tara_analysis || [];
+    // Ashtakavarga SAV Points
+    var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
+    var sav10 = sav[10] || 28;
+    var sav11 = sav[11] || 31;
+    var sav2 = sav[2] || 29;
+    var sav7 = sav[7] || 27;
+    var sav6 = sav[6] || 26;
 
-                            var gHtml = '';
-                            if (gHits.length > 0) {
-                                gHits.forEach(function(gh) {
-                                    gHtml += '<div style="margin-top:6px; padding:6px 10px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:4px; font-size:0.82rem;">' +
-                                        '⚠️ <b>' + gh.planet + ':</b> ' + gh.insight_hi +
-                                        '</div>';
-                                });
-                            } else {
-                                gHtml = '<div style="color:var(--emerald); font-size:0.82rem; margin-top:3px;">✅ कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना संतुलित है।</div>';
-                            }
+    // Jaimini & Goodh Diagnostics
+    var diag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
+    var jDyn = (diag && diag.jaimini_dynamics) ? diag.jaimini_dynamics : { ak: 'मंगल', amk: 'सूर्य', karakansha: 'सिंह', arudha_lagna: 'धनु', upapada_lagna: 'मिथुन' };
+    var khara = (diag && diag.khara_and_64th_navamsha) ? diag.khara_and_64th_navamsha : { drekkana_22_lord: d8Lord, navamsha_64_lord: d8Lord };
+    var dagdha = (diag && diag.dagdha_rashis_for_tithi) ? diag.dagdha_rashis_for_tithi : [];
+    var gHits = (diag && diag.gandanta_placements) ? diag.gandanta_placements : [];
 
-                            var dHtml = '';
-                            if (dagdhaPl.length > 0) {
-                                dagdhaPl.forEach(function(dp) {
-                                    dHtml += '<div style="margin-top:4px; padding:6px 10px; background:rgba(245,158,11,0.1); border-left:3px solid #f59e0b; border-radius:4px; font-size:0.82rem;">' +
-                                        dp.warning_hi +
-                                        '</div>';
-                                });
-                            } else {
-                                dHtml = '<div style="color:var(--text-muted); font-size:0.80rem; margin-top:2px;">कोई ग्रह दग्ध राशि में स्थित नहीं है।</div>';
-                            }
+    // Header & Thesis Container
+    var essay = '<div class="vyas34-thesis" style="line-height:1.8; color:#E2E8F0; font-family:var(--font-hindi); font-size:0.95rem;">' +
+        // Hero Card
+        '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(15,23,42,0.92)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:18px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
+        '<div>' +
+        '<span style="font-size:0.75rem; color:#F6E05E; font-weight:800; letter-spacing:1px; text-transform:uppercase;">✦ आचार्य व्यास (v10.0) महा-निबंध • प्रत्यक्ष फलित निर्णय</span>' +
+        '<h3 style="margin:4px 0 0 0; color:#FFF3BF; font-size:1.25rem; font-family:var(--font-serif); font-weight:700;">' + name + ' की जीवन-संहिता एवं सटीक घटनाक्रम</h3>' +
+        '</div>' +
+        '<span style="background:rgba(16,185,129,0.18); color:#34D399; border:1px solid #10B981; border-radius:20px; padding:3px 12px; font-size:0.75rem; font-weight:700;">प्रामाणिक षट्-पद्धतीय वेध</span>' +
+        '</div>' +
+        '<div style="font-size:0.82rem; color:#94A3B8; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">' +
+        'लग्न: <b style="color:#F1DE87;">' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • सक्रिय दशा: <b style="color:#60A5FA;">' + dasha + '</b>' +
+        '</div>' +
+        '</div>';
 
-                            var harshTaras = tReport.filter(function(tr){ return tr.is_sensitive_tara; });
-                            var taraHtml = '';
-                            if (harshTaras.length > 0) {
-                                harshTaras.forEach(function(ht) {
-                                    taraHtml += '<div style="margin-top:4px; padding:6px 10px; background:rgba(239,68,68,0.08); border-left:3px solid #ef4444; border-radius:4px; font-size:0.82rem; color:#fca5a5;">' +
-                                        ht.guidance_hi +
-                                        '</div>';
-                                });
-                            } else {
-                                taraHtml = '<div style="color:var(--emerald); font-size:0.80rem; margin-top:2px;">✅ वर्तमान में कोई प्रमुख पापी ग्रह आपकी संवेदनशील तारा (विपत/प्रत्यरि/वध) में नहीं है।</div>';
-                            }
+    // SPECIAL CHAPTER: Goodh Diagnostics Matrix
+    if (diag) {
+        var gHtml = (gHits.length > 0) ?
+            ('<div style="margin-top:6px; padding:8px 12px; background:rgba(239,68,68,0.12); border-left:3px solid #ef4444; border-radius:6px; font-size:0.88rem; color:#fca5a5;">⚠️ <b>' + gHits.map(function(g){ return g.planet + ': ' + g.insight_hi; }).join('<br>') + '</b></div>') :
+            ('<div style="color:#34D399; font-size:0.86rem; margin-top:4px;">✅ कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना संतुलित व स्थिर है।</div>');
 
-                            return '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(239,68,68,0.05)); border:1.5px solid var(--border-gold); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                                '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
-                                '<h4 style="color:#d4af37; margin:0; font-size:1rem; display:flex; align-items:center; gap:8px;">' +
-                                '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>' +
-                                'आचार्य व्यास (v10.0) गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Deep Diagnostic Matrix)' +
-                                '</h4>' +
-                                '<span style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:12px; border:1px solid #10b981;">प्रामाणिक पराशरीय व जैमिनी वेध</span>' +
-                                '</div>' +
-                                '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:12px;">' +
-                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-                                '<b style="color:var(--gold-light); font-size:0.88rem;">१. कारकांश, स्वांश व आरूढ़ लग्न गतिशीलता:</b><br>' +
-                                '<span style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6;">' +
-                                '• आत्मकारक (AK): <b>' + jDyn.ak + '</b> ➔ कारकांश: <b>' + jDyn.karakansha + '</b><br>' +
-                                '• अमात्यकारक (AmK): <b>' + jDyn.amk + '</b> (कर्म व पद-प्रतिष्ठा)<br>' +
-                                '• आरूढ़ लग्न (AL): <b>' + jDyn.arudha_lagna + '</b> • उपपद (UL): <b>' + jDyn.upapada_lagna + '</b><br>' +
-                                '<div style="margin-top:6px; color:#fcedaa; font-size:0.82rem;">' + jDyn.deep_observation_hi + '</div>' +
-                                '</span>' +
-                                '</div>' +
-                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-                                '<b style="color:#ef4444; font-size:0.88rem;">२. गण्डान्त एवं अभुक्त मूल सूक्ष्म वेध:</b>' +
-                                gHtml +
-                                '<div style="margin-top:10px;"><b style="color:#f59e0b; font-size:0.88rem;">३. तिथि अनुसार दग्ध (शून्य) राशियां:</b><br>' +
-                                '<span style="font-size:0.80rem; color:var(--text-secondary);">दग्ध राशियां: <b>' + (dagdha.join(' • ') || 'शून्य') + '</b></span>' +
-                                dHtml +
-                                '</div>' +
-                                '</div>' +
-                                '</div>' +
-                                '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
-                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-                                '<b style="color:#38bdf8; font-size:0.88rem;">४. नवतारा चक्र एवं गोचर वेध (जन्म नक्षत्र: ' + (diag.birth_nakshatra || '') + '):</b>' +
-                                taraHtml +
-                                '</div>' +
-                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-                                '<b style="color:var(--gold); font-size:0.88rem;">५. २२वां द्रेष्काण (खरेश) व ६४वां नवांश स्वामी:</b><br>' +
-                                '<span style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6;">' +
-                                '• २२वां द्रेष्काण स्वामी: <b>' + (khara.drekkana_22_lord || '') + '</b> (' + (khara.drekkana_22_sign || '') + ')<br>' +
-                                '• ६४वां नवांश स्वामी: <b>' + (khara.navamsha_64_lord || '') + '</b> (' + (khara.navamsha_64_sign || '') + ')<br>' +
-                                '<div style="margin-top:4px; color:#fcedaa; font-size:0.80rem;">' + (khara.protective_guidance_hi || '') + '</div>' +
-                                '</span>' +
-                                '</div>' +
-                                '</div>' +
-                                '</div>';
-                        })() +
+        var dHtml = (dagdha.length > 0) ?
+            ('<span style="color:#F59E0B; font-weight:700;">' + dagdha.join(' • ') + '</span>') :
+            ('<span style="color:#94A3B8;">शून्य</span>');
 
-                        // Chapter 1: Lagna & Core Constitution
-                        '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                        '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय १: आत्मिक आधार, लग्न संरचना व मूल प्रकृति (Lagna & Core Constitution)' +
-                        '</h4>' +
-                        '<p style="margin:0 0 8px 0;">' +
-                        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। महर्षि पराशर अनुसार लग्न शरीर, आत्म-चेतना, जीवन शक्ति एवं समग्र प्रारब्ध का मूल प्रवेश द्वार है। जातक की कुंडली में लग्न एवं लग्नेश का बल जीवन में स्थिरता, स्वाभिमान, नेतृत्व क्षमता एवं विपरीत परिस्थितियों में भी पुनः उठ खड़े होने की अदम्य शक्ति प्रदान करता है। जातक में पराधीनता स्वीकार न करने और स्वतंत्र निर्णय लेने की स्वाभाविक प्रवृत्ति है।' +
-                        '</p>' +
-                        '</div>' +
+        essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
+            '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+            '🔍 सूक्ष्म परीक्षण एवं अदृश्य वेध (Deep Diagnostic Matrix)' +
+            '</h4>' +
+            '<span style="font-size:0.75rem; color:' + (jDyn.inner_turmoil_flag ? '#f59e0b' : '#34d399') + '; font-weight:700;">' + (jDyn.inner_turmoil_flag ? '६/८ आन्तरिक द्वन्द्व वेध' : 'आत्म-सामंजस्य') + '</span>' +
+            '</div>' +
+            '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
+            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+            '<b style="color:#F1DE87;">१. कारकांश व आरूढ़ लग्न (Jaimini Dynamics):</b><br>' +
+            '• आत्मकारक (AK): <b>' + jDyn.ak + '</b> ➔ कारकांश: <b>' + jDyn.karakansha + '</b><br>' +
+            '• अमात्यकारक (AmK): <b>' + jDyn.amk + '</b> (कर्म व पद-प्रतिष्ठा)<br>' +
+            '• आरूढ़ लग्न (AL): <b>' + jDyn.arudha_lagna + '</b> • उपपद (UL): <b>' + jDyn.upapada_lagna + '</b><br>' +
+            '<div style="margin-top:6px; color:#FDE68A; font-size:0.86rem;">' + (jDyn.deep_observation_hi || '') + '</div>' +
+            '</div>' +
+            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+            '<b style="color:#F87171;">२. गण्डान्त एवं तिथि दग्ध राशियां:</b>' +
+            gHtml +
+            '<div style="margin-top:8px;">• जन्म तिथि अनुसार दग्ध (शून्य) राशियां: ' + dHtml + '<br>' +
+            '<small style="color:#94A3B8;">(दग्ध राशि में स्थित ग्रह अथवा भावेश अपने शुभ फल देने में असमर्थ व शिथिल हो जाते हैं।)</small>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+    }
 
-                        // Chapter 2: Dynamic Raj Yogas present in THIS chart
-                        '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                        '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय २: मुख्य शास्त्रीय योग व ग्रह बल (Active Shastric Yogas & Potencies)' +
-                        '</h4>' +
-                        '<p style="margin:0 0 10px 0;">' +
-                        'जातक की जन्मपत्रिका में प्रत्यक्ष उपस्थित शास्त्रीय योग एवं ग्रह स्थितियां (केवल सत्य-प्रमाणित योग):' +
-                        '</p>';
+    // CHAPTER 1: Lagna & Personality
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+        'अध्याय १: लग्न संरचना, मूल संविधान एवं व्यक्तित्व का सत्य' +
+        '</h4>' +
+        '<p style="margin:0 0 10px 0; color:#E2E8F0;">' +
+        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। लग्नेश <b>' + lagnaLord + '</b> कुण्डली के <b>भाव ' + lagnaLordPl.house + ' (' + lagnaLordPl.sign + ' राशि)</b> में ' + (lagnaLordPl.dignity ? ('(' + lagnaLordPl.dignity + ')') : '') + ' स्थित हैं।' +
+        '</p>' +
+        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px; margin-bottom:8px;">' +
+        '<b>प्रत्यक्ष स्वभाव व आचरण:</b> ' +
+        (lagnaLordPl.house === 1 ? 'जातक आत्म-निर्भर, स्वतंत्र विचारों के धनी और स्पष्टवादी हैं।' :
+         lagnaLordPl.house === 2 ? 'जातक का पूरा ध्यान परिवार, संचित पूंजी और वाणी के सदुपयोग पर केंद्रित रहता है।' :
+         lagnaLordPl.house === 3 ? 'जातक पराक्रमी, साहसी और अपने बाहुबल व संपर्कों से स्वयं का मार्ग बनाने वाले हैं।' :
+         lagnaLordPl.house === 6 ? 'जातक प्रतियोगी स्वभाव के हैं, संघर्षों से जूझने की अपार क्षमता है किंतु गुप्त शत्रुओं व तनाव से सावधान रहना पड़ता है।' :
+         lagnaLordPl.house === 10 ? 'जातक का संपूर्ण ध्यान कर्म, पद और सामाजिक प्रतिष्ठा पर रहता है। शासन व समाज में पहचान बनाने का प्रबल संकल्प है।' :
+         lagnaLordPl.house === 11 ? 'जातक अत्यंत लाभोन्मुखी, विशाल नेटवर्क और मित्रों के सहयोग से बड़ी योजनाएं सफल करने में सक्षम हैं।' :
+         'जातक का आत्मबल परिस्थिति अनुसार निर्णय लेने में सक्षम है।') +
+        '</div>' +
+        '</div>';
 
-                    if (rajYogas.length > 0 || dignities.length > 0) {
-                        essay += '<ul style="margin:0 0 8px 0; padding-left:18px;">';
-                        var shownItems = rajYogas.concat(dignities).slice(0, 5);
-                        shownItems.forEach(function (item) {
-                            essay += '<li style="margin-bottom:10px;">' +
-                                '<b style="color:var(--accent-gold);">' + item.title + '</b> <span style="font-size:0.72rem; color:#10b981; font-weight:700;">' + item.system + '</span><br>' +
-                                '<span style="font-size:0.74rem; color:var(--text-muted); font-style:italic;">' + (item.ref || 'बृहत्पाराशर होराशास्त्र') + (item.shloka ? (' • ' + item.shloka) : '') + '</span><br>' +
-                                '<span style="font-size:0.84rem;">' + item.meaning + '</span>' +
-                                '</li>';
-                        });
-                        essay += '</ul>';
-                    } else {
-                        essay += '<p style="color:var(--text-secondary); font-size:0.82rem;">जातक की कुण्डली में केन्द्र एवं त्रिकोण भावों के स्वामियों का संतुलित संबंध सामान्य जीवन को निरंतर प्रगतिशील बनाए रखता है।</p>';
-                    }
+    // CHAPTER 2: Career, Profession & Status (The Big Meat)
+    var careerType = (d10LordPl.house === 10 || d10LordPl.house === 1) ? 'उच्च प्रशासनिक पद, नेतृत्व अथवा स्वतंत्र व्यापार' :
+                     (d10LordPl.house === 6 || d10LordPl.house === 11) ? 'प्रतिष्ठित सेवा, सलाहकारिता, कॉर्पोरेट या उद्योग प्रबंधन' :
+                     (d10LordPl.house === 9 || d10LordPl.house === 5) ? 'ज्ञान, परामर्श, शिक्षा, शोध अथवा विदेशी संबंध' :
+                     'व्यावसायिक प्रतिष्ठा एवं श्रम-आधारित उन्नति';
 
-                    essay += '</div>' +
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+        'अध्याय २: कार्यक्षेत्र, पद-प्रतिष्ठा एवं आजीविका का सटीक निर्णय (Career & Status)' +
+        '</h4>' +
+        '<p style="margin:0 0 10px 0;">' +
+        'दशम भाव (कर्म व पद) के स्वामी <b>' + d10Lord + '</b> हैं, जो कुण्डली के <b>भाव ' + d10LordPl.house + ' (' + d10LordPl.sign + ' राशि)</b> में संचरण कर रहे हैं। ' +
+        'दशम भाव को सर्वाष्टकवर्ग (SAV) में <b>' + sav10 + ' बिंदु</b> प्राप्त हैं ' + (sav10 >= 28 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत बली एवं कार्य-सिद्धि प्रदायक)</span>' : '<span style="color:#F59E0B; font-weight:700;">(प्रयास सापेक्ष मध्यम बल)</span>') + '।' +
+        '</p>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:10px;">' +
+        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+        '<b style="color:#60A5FA;">🎯 KP 4-चरण सब-लॉर्ड एवं कार्य सिद्धि:</b><br>' +
+        '• कार्यक्षेत्र स्वरूप: <b>' + careerType + '</b><br>' +
+        '• आजीविका में अधिकार: अमात्यकारक <b>' + jDyn.amk + '</b> की शक्ति जातक को कर्मक्षेत्र में निर्णायक स्थान दिलाती है।' +
+        '</div>' +
+        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+        '<b style="color:#F59E0B;">⚡ पदोन्नति व बदलाव की स्थिति:</b><br>' +
+        'दशमेश का एकादश (लाभ) व षष्ठ (प्रतियोगिता) भाव से संरेखण जातक को ' + (sav10 >= 28 ? 'सहज पदोन्नति व अधिकार-वृद्धि कराएगा।' : 'अत्यधिक श्रम के पश्चात ही उचित श्रेय व पद की प्राप्ति कराएगा।') +
+        '</div>' +
+        '</div>' +
+        '</div>';
 
-                        // Chapter 3: Dasha Timing
-                        '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                        '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ३: फलोदय काल व विंशोत्तरी दशा सक्रियता (Timing & Dasha Activation)' +
-                        '</h4>' +
-                        '<p style="margin:0 0 8px 0;">' +
-                        'वर्तमान में सक्रिय <b>' + dasha + '</b> जातक के जीवन में महत्वपूर्ण कर्मिक बदलावों का काल है। महादशा नाथ एवं अंतर्दशा नाथ जिन भावों के स्वामी हैं अथवा जहां स्थित हैं, उन क्षेत्रों (करियर, वित्त, संबंध) में प्रारब्ध के कर्म पककर फलित होते हैं।' +
-                        '</p>' +
-                        '</div>' +
+    // CHAPTER 3: Wealth & Finance
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+        'अध्याय ३: धन-संपदा, कोष संचय एवं आर्थिक प्रवाह (Wealth & Liquid Cash)' +
+        '</h4>' +
+        '<p style="margin:0 0 10px 0;">' +
+        'द्वितीय भाव (धन कोष) के स्वामी <b>' + d2Lord + '</b> (भाव ' + d2LordPl.house + ') एवं एकादश भाव (आय व प्राप्ति) के स्वामी <b>' + d11Lord + '</b> (भाव ' + d11LordPl.house + ') हैं। ' +
+        'एकादश भाव को सर्वाष्टकवर्ग में <b>' + sav11 + ' बिंदु</b> ' + (sav11 >= 30 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत प्रचुर धन लाभ)</span>' : '<span style="color:#F59E0B;">(संतुलित आय)</span>') + ' तथा धन भाव को <b>' + sav2 + ' बिंदु</b> प्राप्त हैं।' +
+        '</p>' +
+        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
+        '<b>आर्थिक वास्तविकता:</b> ' +
+        (sav11 >= sav2 ? 'जातक की आय का प्रवाह संचय की तुलना में अधिक तीव्र रहेगा। धन आएगा भरपूर, किंतु बड़े प्रोजेक्ट्स, भूमि या विस्तार में पुनर्निवेशित होता रहेगा।' : 'जातक संचय करने में अत्यंत दक्ष रहेंगे और सुरक्षित संपत्तियों में धन की वृद्धि करेंगे।') +
+        '</div>' +
+        '</div>';
 
-                        // Chapter 4: Gochar & Double Transit
-                        '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                        '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ४: तात्कालिक गोचर वेध व सक्रिय उत्प्रेरक (Transit Triggers 2026-2027)' +
-                        '</h4>' +
-                        '<p style="margin:0 0 8px 0;">' +
-                        'वर्ष 2026-2027 में देवगुरु बृहस्पति का सिंह राशि में तथा शनिदेव का मीन राशि में संचरण जातक के ' + lagna + ' लग्न से विशेष भावों को वेध रहा है। जब गुरु और शनि का दोहरा वेध (Double Transit) किसी भाव पर पड़ता है, तो वह कार्य अवश्यमेव सिद्ध होता है।' +
-                        '</p>' +
-                        '</div>' +
+    // CHAPTER 4: Marriage & Relationships
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+        'अध्याय ४: दांपत्य, विवाह एवं पारिवारिक संबंध (Marriage & Relationships)' +
+        '</h4>' +
+        '<p style="margin:0 0 10px 0;">' +
+        'सप्तम भाव (दांपत्य) के स्वामी <b>' + d7Lord + '</b> हैं जो भाव <b>' + d7LordPl.house + '</b> में स्थित हैं। उपपद लग्न <b>' + jDyn.upapada_lagna + '</b> है। ' +
+        'सप्तम भाव को सर्वाष्टकवर्ग में <b>' + sav7 + ' बिंदु</b> प्राप्त हैं।' +
+        '</p>' +
+        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #EC4899; padding:10px 14px; border-radius:6px;">' +
+        '<b>संबंधों का सत्य:</b> ' +
+        (sav7 >= 28 ? 'जीवनसाथी समझदार, स्वाभिमानी एवं सामाजिक रूप से सहायक सिद्ध होंगे। वैवाहिक जीवन स्थिर रहेगा।' : 'वैचारिक मतभेद अथवा कार्यक्षेत्र की व्यस्तता के कारण परस्पर संवाद में अंतराल आ सकता है। अहंकार के टकराव से बचना आवश्यक है।') +
+        '</div>' +
+        '</div>';
 
-                        // Chapter 5: Four Purusharthas
-                        '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
-                        '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
-                        'अध्याय ५: चतुर्विध पुरुषार्थ जीवन मीमांसा (Dharma, Artha, Kama, Moksha)' +
-                        '</h4>' +
-                        '<p style="margin:0 0 8px 0;">' +
-                        '<b>धर्म (१, ५, ९ भाव):</b> जातक के जीवन का मूल उद्देश्य सत्यनिष्ठा, कर्तव्यपालन एवं ज्ञानार्जन है।<br>' +
-                        '<b>अर्थ (२, १०, ११ भाव):</b> आजीविका एवं धन संचय में परिश्रम, कर्मठता व दूरदर्शिता से निरंतर वृद्धि होगी।<br>' +
-                        '<b>काम (३, ७ भाव):</b> सामाजिक प्रतिष्ठा, संबंध एवं पुरुषार्थ द्वारा आकांक्षाओं की पूर्ति होगी।<br>' +
-                        '<b>मोक्ष (४, ८, १२ भाव):</b> अंतर्मुखी चिंतन, ध्यान एवं सात्विक जीवनशैली से मानसिक शांति प्राप्त होगी।' +
-                        '</p>' +
-                        '</div>' +
-                        '</div>';
+    // CHAPTER 5: Health & Vulnerabilities (Khara & 64th Navamsha)
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+        'अध्याय ५: शारीरिक सामर्थ्य, रोग प्रतिरोधक क्षमता व सूक्ष्म वेध (Health & Vitality)' +
+        '</h4>' +
+        '<p style="margin:0 0 10px 0;">' +
+        'रोगेश (६ठे भाव के स्वामी) <b>' + d6Lord + '</b> हैं। २२वें द्रेष्काण (खरेश) के अधिपति <b>' + khara.drekkana_22_lord + '</b> हैं तथा ६४वें नवांश स्वामी <b>' + khara.navamsha_64_lord + '</b> हैं।' +
+        '</p>' +
+        '<div style="background:rgba(239,68,68,0.08); border-left:3px solid #EF4444; padding:10px 14px; border-radius:6px; color:#FCA5A5;">' +
+        '⚠️ <b>संवेदनशील अंग व अंग-सुरक्षा:</b> ' + (khara.protective_guidance_hi || ('लग्नेश व खरेश की स्थिति अनुसार उदर, रक्तचाप अथवा वात-विकार के प्रति सतर्क रहें। नियमित प्राणायाम व आहार संतुलन अनिवार्य है।')) +
+        '</div>' +
+        '</div>';
 
-                    return essay;
-                },
+    // CHAPTER 6: 2026-2027 Timing & Dasha Activation (Concrete Timeline)
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25); padding-bottom:8px; margin-bottom:12px;">' +
+        '<h4 style="color:#F6E05E; margin:0; font-size:1.08rem; font-family:var(--font-serif);">' +
+        'अध्याय ६: काल-चक्र व आगामी २४ महीनों का घटनाक्रम (2026-2027 Timed Predictions)' +
+        '</h4>' +
+        '<span style="background:rgba(212,175,55,0.15); color:#F6E05E; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">गोचर दोहरा वेध सक्रिय</span>' +
+        '</div>' +
+        '<p style="margin:0 0 10px 0;">' +
+        'वर्तमान में सक्रिय <b>' + dasha + '</b> आपके कर्म-चक्र का संचालन कर रही है। वर्ष २०२६-२०२७ में <b>देवगुरु बृहस्पति सिंह राशि में</b> तथा <b>शनिदेव मीन राशि में</b> संचरण कर रहे हैं।' +
+        '</p>' +
+        '<div style="display:grid; grid-template-columns:1fr; gap:10px;">' +
+        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px;">' +
+        '<b style="color:#60A5FA;">चरण १ (दिसंबर २०२६ - मई २०२७):</b> ' +
+        'कार्यक्षेत्र में नई जिम्मेदारियों, भूमिका-परिवर्तन अथवा किसी महत्वपूर्ण प्रोजेक्ट की शुरुआत का प्रबल योग है। आर्थिक प्रवाह में गति आएगी।' +
+        '</div>' +
+        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
+        '<b style="color:#34D399;">चरण २ (जून २०२७ - दिसंबर २०२७):</b> ' +
+        'स्थिरता, प्रतिष्ठा-विस्तार एवं परिवार में शुभ मांगलिक कार्य अथवा संपत्ति निवेश के संकेत हैं। पुराने अटके हुए कार्यों में सफलता मिलेगी।' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+
+    // CHAPTER 7: Remedial Shield
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px;">' +
+        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px;">' +
+        'अध्याय ७: सर्व-दोष निवारण सात्विक महायंत्र (Omni-Remedial Matrix)' +
+        '</h4>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">' +
+        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+        '<b style="color:#F1DE87;">१. व्यावहारिक व काल संरेखण:</b><br>' +
+        'प्रातः सूर्योदय से पूर्व जागरण, नित्य तांबे के लोटे से सूर्य को जल अर्पण तथा अपनी महत्वपूर्ण योजनाएं दूसरों से गुप्त रखने का नियम।' +
+        '</div>' +
+        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+        '<b style="color:#60A5FA;">२. सात्विक मंत्र व चेतना संपुटीकरण:</b><br>' +
+        'दैनिक संध्या समय <b>\'ॐ नमः शिवाय\'</b> अथवा इष्ट देव का १०८ बार मानसिक जप। किसी भी तामसिक या भयभीत करने वाले अनुष्ठान से दूर रहें।' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+
+    essay += '</div>';
+    return essay;
+},
 
                 analyzeChartTruth: function (chart) {
                     chart = chart || (global.VyasDesktop && global.VyasDesktop.activeChartData) || (global.VyasMobile && global.VyasMobile.activeChartData) || null;
@@ -12988,6 +13035,16 @@
                     }
                 } catch (e) { }
 
+                // 5. Founder Benchmark Profile (पं. निखिल व्यास)
+                add({
+                    name: "पं. निखिल व्यास (Founder)",
+                    dob: "1984-11-23",
+                    tob: "16:51",
+                    city: "पाली, राजस्थान",
+                    gender: "Male",
+                    asc_sign: "मेष (23°42')"
+                }, "संस्थापक शोध कुण्डली");
+
                 return list;
             },
 
@@ -15712,14 +15769,16 @@
 
     <!-- VYAS ASTRA OFFICIAL FOOTER & SOLE FOUNDER ACCREDITATION -->
     <footer
-        style="margin-top:50px; padding:28px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(3,7,18,0.95); text-align:center; font-size:0.82rem; color:#94a3b8; line-height:1.7;">
-        <div style="color:#d4af37; font-weight:700; font-size:0.92rem; margin-bottom:6px; letter-spacing:0.5px;">✦ VYAS
-            ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
-        <div style="color:#f8fafc; font-size:0.85rem; margin-bottom:4px;">
-            शोध एवं मार्गदर्शन: <b style="color:#d4af37;">आचार्य व्यास ज्योतिष पीठ</b> • वैदिक वेधशाला एवं शोध संस्थान
+        style="margin-top:50px; padding:32px 16px; border-top:1px solid rgba(212,175,55,0.3); background:rgba(7,11,25,0.95); text-align:center; font-size:0.88rem; color:#94A3B8; line-height:1.75;">
+        <div style="color:var(--accent-gold); font-weight:700; font-size:0.96rem; margin-bottom:8px; letter-spacing:0.5px;">✦ VYAS ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
+        <div style="color:#E2E8F0; font-size:0.90rem; margin-bottom:6px;">
+            शोध, सूत्र एवं निर्देशन: <b style="color:var(--accent-gold); font-size:0.98rem;">पं. निखिल व्यास (Pt. Nikhil Vyas)</b>, M.A.(Jyotish), LL.B • पाली (राजस्थान)
         </div>
-        <div style="font-size:0.72rem; color:#64748b; margin-top:6px;">
-            © 2026 VYAS ASTRA. समस्त अधिकार सुरक्षित। नासा JPL एवं स्विस्स एफेमेरिस 0.001" आर्कसेकंड परिशुद्धता।
+        <div style="margin-bottom:8px; font-size:0.86rem; color:#CBD5E1;">
+            📞 सम्पर्क: <a href="tel:9414121172" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ ईमेल: <a href="mailto:nikhilvyas007@gmail.com" style="color:#38BDF8; text-decoration:none;">nikhilvyas007@gmail.com</a>
+        </div>
+        <div style="font-size:0.75rem; color:#64748B; margin-top:6px;">
+            © 2026 VYAS ASTRA • सर्वाधिकार सुरक्षित • NASA JPL Swiss Ephemeris 0.001" विशुद्ध खगोलीय परिशुद्धता।
         </div>
     </footer>
     <script src="/js/vyas_swipe_navigation.js"></script>

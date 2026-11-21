@@ -6835,31 +6835,18 @@ var VyasMobile = {
         },
 
         loadProfile() {
-            var hasStored = false;
-            try {
-                var saved = localStorage.getItem('vyas_active_profile');
-                if (saved) {
-                    var data = JSON.parse(saved);
-                    // Discard Guest sample or corrupted Kanya lagna
-                    // Auto-purge any stale cached founder profile with 1984-11-23 or Nikhil
-                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
-                        var pn = (data.profile.name || '').toLowerCase();
-                        var pd = (data.profile.dob || '');
-                        if (pn.indexOf('nikhil') !== -1 || pn.indexOf('निखिल') !== -1 || pd === '1992-05-15' || pd === '1984-11-23') {
-                            localStorage.removeItem('vyas_active_profile');
-                            data = null;
-                        }
-                    }
-                    if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
-                        this.activeChartData = data;
-                        this.activeChart = data;
-                        hasStored = true;
-                    }
-                }
-            } catch(e) {}
-
-            if (!hasStored) {
-                // USER INVARIANT: Clean blank slate by default
+            var chart = (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function') ? 
+                        window.VyasAstronomicalEngine.getActiveKundli() : null;
+            if (!chart) {
+                try {
+                    var saved = localStorage.getItem('vyas_active_profile');
+                    if (saved) chart = JSON.parse(saved);
+                } catch(e) {}
+            }
+            if (chart && chart.profile && chart.profile.name && chart.profile.name !== 'अतिथि जातक (Guest)') {
+                this.activeChartData = chart;
+                this.activeChart = chart;
+            } else {
                 this.activeChartData = null;
                 this.activeChart = null;
             }
@@ -10563,6 +10550,20 @@ renderChart(chartKey) {
             </div>
         </div>
     </div>
+
+    <!-- VYAS ASTRA MOBILE FOOTER & FOUNDER ACCREDITATION -->
+    <footer style="margin-top:30px; margin-bottom:80px; padding:24px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(7,11,25,0.95); text-align:center; font-size:0.84rem; color:#94A3B8; line-height:1.7;">
+        <div style="color:var(--primary); font-weight:700; font-size:0.90rem; margin-bottom:6px;">✦ VYAS ASTRA • वैदिक खगोलीय संस्थान ✦</div>
+        <div style="color:#E2E8F0; font-size:0.86rem; margin-bottom:6px;">
+            शोध एवं निर्देशन: <b style="color:var(--primary);">पं. निखिल व्यास (Pt. Nikhil Vyas)</b>, M.A.(Jyotish), LL.B • पाली (राजस्थान)
+        </div>
+        <div style="margin-bottom:6px; font-size:0.82rem; color:#CBD5E1;">
+            📞 <a href="tel:9414121172" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ <a href="mailto:nikhilvyas007@gmail.com" style="color:#38BDF8; text-decoration:none;">nikhilvyas007@gmail.com</a>
+        </div>
+        <div style="font-size:0.72rem; color:#64748B;">
+            © 2026 VYAS ASTRA • Swiss Ephemeris 0.001" परिशुद्धता
+        </div>
+    </footer>
 
     <script src="/js/vyas_swipe_navigation.js"></script>
 </body>

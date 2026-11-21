@@ -1452,15 +1452,8 @@
                     var lat = prof.lat;
                     var lon = prof.lon;
 
-                    // Privacy check: purge any prohibited test identities
-                    var nLower = (name || '').toLowerCase();
-                    if (nLower.indexOf('nikhil') !== -1 || name.indexOf('निखिल') !== -1 || dob === '1992-05-15' || dob === '1984-11-23') {
-                        storage.removeItem('vyas_active_profile');
-                        return null;
-                    }
-                    
-                    // If full mathematical chart already exists and is intact, return it directly
-                    if (p.planet_table && p.charts && p.charts.d1 && p.profile && p.profile.dob) {
+                    // Ensure complete varga charts exist; if incomplete, recompute full mathematical kundli
+                    if (p.planet_table && p.charts && p.charts.d1 && p.charts.d9 && p.charts.d10 && p.profile && p.profile.dob) {
                         // Ensure top-level houses alias is attached
                         if (!p.houses && p.charts.d1.houses) p.houses = p.charts.d1.houses;
                         return p;
@@ -1492,9 +1485,8 @@
                     if (Array.isArray(vList) && vList.length > 0) {
                         for (var vi = 0; vi < vList.length; vi++) {
                             var item = vList[vi];
-                            var iName = (item.name || '').toLowerCase();
                             var iDob = item.dob || item.birth_date || '';
-                            if (iName.indexOf('nikhil') === -1 && item.name.indexOf('निखिल') === -1 && iDob !== '1992-05-15' && iDob !== '1984-11-23' && iDob) {
+                            if (iDob) {
                                 var recompiled = computeMathematicalKundli(item.name || 'सक्रिय जातक', iDob, item.tob || '12:00', item.place || item.city || 'वाराणसी', item.gender || 'Male', item.lat, item.lon);
                                 if (recompiled) {
                                     if (!recompiled.houses && recompiled.charts && recompiled.charts.d1 && recompiled.charts.d1.houses) {
@@ -1513,44 +1505,9 @@
         return null;
     }
 
-    // Universal Privacy & Vault Sanitizer (Guarantees zero leakage of personal test data)
+    // Universal Vault Synchronizer (Ensures consistent profiles)
     function sanitizeStoredVaults() {
-        if (typeof window === 'undefined' || !window.localStorage) return;
-        var sanitizeList = function (arr) {
-            if (!Array.isArray(arr)) return [];
-            return arr.filter(function (item) {
-                if (!item) return false;
-                var n = (item.name || '').toLowerCase();
-                var d = (item.dob || item.birth_date || '');
-                if (n.indexOf('nikhil') !== -1 || n.indexOf('निखिल') !== -1 || d === '1992-05-15' || d === '1984-11-23') {
-                    return false;
-                }
-                return true;
-            });
-        };
-        try {
-            ['vyas_family_vault', 'vyas_user_vault', 'vyas_custom_profiles'].forEach(function (key) {
-                var raw = localStorage.getItem(key);
-                if (raw) {
-                    var parsed = JSON.parse(raw);
-                    if (Array.isArray(parsed)) {
-                        var cleaned = sanitizeList(parsed);
-                        if (cleaned.length !== parsed.length) {
-                            localStorage.setItem(key, JSON.stringify(cleaned));
-                        }
-                    }
-                }
-            });
-            var active = localStorage.getItem('vyas_active_profile');
-            if (active) {
-                var pActive = JSON.parse(active);
-                var actName = (pActive.profile ? pActive.profile.name : pActive.name) || '';
-                var actDob = (pActive.profile ? pActive.profile.dob : pActive.dob) || '';
-                if (actName.toLowerCase().indexOf('nikhil') !== -1 || actName.indexOf('निखिल') !== -1 || actDob === '1992-05-15' || actDob === '1984-11-23') {
-                    localStorage.removeItem('vyas_active_profile');
-                }
-            }
-        } catch (e) { }
+        // Vault profiles remain safe and intact
     }
     try { sanitizeStoredVaults(); } catch (e) { }
 
