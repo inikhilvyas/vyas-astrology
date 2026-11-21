@@ -2139,7 +2139,11 @@
         },
 
         formatReading: function (query, chart) {
-            var q = (query || '').toLowerCase();
+            // Defensive argument swap & sanitization guard
+            if (typeof query === 'object' && typeof chart === 'string') {
+                var _t = query; query = chart; chart = _t;
+            }
+            var q = (typeof query === 'string' ? query : '').toLowerCase();
 
             if (!chart || !chart.planet_table) {
                 return '<div class="shastra-verdict-box" style="background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:16px; border-radius:8px; margin-bottom:12px;">' +

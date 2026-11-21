@@ -8687,32 +8687,51 @@
 
             async askSage(query, activeChart) {
                 var q = (query || "").toLowerCase();
-                // RESOLVE ACTIVE CHART FROM MEMORY OR LOCALSTORAGE VAULT
-                activeChart = activeChart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || (function(){
+                // RESOLVE ACTIVE CHART FROM SSOT ASTRONOMICAL ENGINE OR LOCALSTORAGE
+                activeChart = activeChart || (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function' ? window.VyasAstronomicalEngine.getActiveKundli() : null) || (window.VyasDesktop && window.VyasDesktop.activeChartData) || (function(){
                     try {
                         var p = localStorage.getItem('vyas_active_profile');
-                        return p ? JSON.parse(p) : null;
+                        if (p) {
+                            var parsed = JSON.parse(p);
+                            if (parsed && typeof window.computeMathematicalKundli === 'function') {
+                                var pr = parsed.profile || parsed;
+                                if (pr.dob) {
+                                    return window.computeMathematicalKundli(pr.name || 'सक्रिय जातक', pr.dob, pr.tob || '12:00', pr.city || 'वाराणसी', pr.gender || 'Male', pr.lat, pr.lon);
+                                }
+                            }
+                            return parsed;
+                        }
+                        return null;
                     } catch(e) { return null; }
                 })() || (typeof SAMPLE_BUNDLE !== 'undefined' ? SAMPLE_BUNDLE : null);
 
                 // DIRECT DAIVAGYA ENGINE INTERCEPTOR (Zero Hallucination / Zero Latency Gate)
                 // If query is an astrological inquiry on an active chart, formatReading produces the
                 // authentic, mathematically verified, non-hallucinated prediction instantly.
-                var isPanchangOrAxiom = /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q) &&
-                                        !/(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|करियर|विवाह|धन|स्वास्थ्य)/i.test(q);
+                var isExplicitNatalOrUserQuery = /(मेरी|मेरा|मुझे|मेरे|my|kundli|kundali|कुण्डली|कुंडली|जन्म|पत्रिका|करियर|नौकरी|विवाह|शादी|धन|स्वास्थ्य|रोग|संतान|राजनीति|शासन|पद|दशा|महादशा|अंतर्दशा|योग|भाव|लग्न|अष्टकवर्ग|रश्मि|कालचक्र)/i.test(q);
+                var isPanchangOrAxiom = !isExplicitNatalOrUserQuery && /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया)/i.test(q);
 
-                if (!isPanchangOrAxiom && activeChart && activeChart.planet_table && window.VyasDaivagyaCore && typeof VyasDaivagyaCore.formatReading === 'function') {
-                    try {
-                        var verifiedReading = VyasDaivagyaCore.formatReading(query, activeChart);
-                        if (verifiedReading) {
-                            if (window.VyasAIEngine && window.VyasAIEngine.chatHistory) {
-                                window.VyasAIEngine.chatHistory.push({ role: "user", content: query });
-                                window.VyasAIEngine.chatHistory.push({ role: "assistant", content: verifiedReading });
-                            }
-                            return verifiedReading;
+                if (!isPanchangOrAxiom && activeChart && window.VyasDaivagyaCore && typeof VyasDaivagyaCore.formatReading === 'function') {
+                    // Ensure activeChart has planet_table; if missing, compute it
+                    if (!activeChart.planet_table && typeof window.computeMathematicalKundli === 'function') {
+                        var pr = activeChart.profile || activeChart;
+                        if (pr && pr.dob) {
+                            activeChart = window.computeMathematicalKundli(pr.name || 'सक्रिय जातक', pr.dob, pr.tob || '12:00', pr.city || 'वाराणसी', pr.gender || 'Male', pr.lat, pr.lon);
                         }
-                    } catch(e) {
-                        console.warn("Direct formatReading error:", e);
+                    }
+                    if (activeChart && activeChart.planet_table) {
+                        try {
+                            var verifiedReading = VyasDaivagyaCore.formatReading(query, activeChart);
+                            if (verifiedReading) {
+                                if (window.VyasAIEngine && window.VyasAIEngine.chatHistory) {
+                                    window.VyasAIEngine.chatHistory.push({ role: "user", content: query });
+                                    window.VyasAIEngine.chatHistory.push({ role: "assistant", content: verifiedReading });
+                                }
+                                return verifiedReading;
+                            }
+                        } catch(e) {
+                            console.warn("Direct formatReading error:", e);
+                        }
                     }
                 }
                 var isYogaOrNatalQuery = /(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|dosha|dasha|yoga|lagna|bhava|kundali|panchamahapurusha|neechabhanga|kaalsarpa|mangaladosha)/i.test(q);
@@ -8747,7 +8766,7 @@
                     } catch (e) { }
                     return this.lookupDirectAstrologicalTruth(query) || "खगोलीय वेध अनुसार आज का पंचांग व काल निर्णय उपलब्ध है।";
                 }
-                var isPoliticalOrThirdPersonQuery = /(चुनाव|राजनीति|नेता|विधायक|सांसद|मंत्री|इलेक्शन|सरकार|शासन|party|election|politics|bjp|congress|aap|trump|modi|pm|cm|minister|war|युद्ध|देश|भारत|अमेरिका)/i.test(q);
+                var isPoliticalOrThirdPersonQuery = !isExplicitNatalOrUserQuery && /(चुनाव|राजनीति|नेता|विधायक|सांसद|मंत्री|इलेक्शन|सरकार|शासन|party|election|politics|bjp|congress|aap|trump|modi|pm|cm|minister|war|युद्ध|देश|भारत|अमेरिका)/i.test(q);
                 var isPrashnaMode = !activeChart || !activeChart.profile || !activeChart.planet_table || activeChart.isPrashna || isPoliticalOrThirdPersonQuery;
                 var systemPrompt = "";
 
@@ -10718,7 +10737,9 @@
 
 
             generateLivePdfReport: function () {
-                var chart = this.activeChartData; // Strict Privacy: No fallback to founder bundle
+                var chart = (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function')
+                    ? window.VyasAstronomicalEngine.getActiveKundli()
+                    : (this.activeChartData || null);
                 var prof = (chart && chart.profile) ? chart.profile : { name: "अतिथि जातक", dob: "2000-01-01", tob: "12:00 PM", city: "नई दिल्ली", asc_sign: "मेष" };
                 var planets = (chart && chart.planet_table) ? chart.planet_table : [];
                 var dasha = (chart && chart.active_dasha) ? chart.active_dasha : { md: "शुक्र", ad: "शनि", pd: "मंगल", sd: "चन्द्र", pr: "बुध", end_year: "2027" };
@@ -15297,7 +15318,7 @@
             restoreFloatingAIChat();
         }
 
-        async function sendFloatingAI() {
+        async async function sendFloatingAI() {
             var i = document.getElementById('aiFloatInput'), q = (i.value || '').trim();
             if (!q) return;
             i.value = '';
@@ -15324,7 +15345,9 @@
 
             // 3. Query VyasAIEngine with activeChart
             try {
-                var chart = (window.VyasDesktop && window.VyasDesktop.activeChartData) ? window.VyasDesktop.activeChartData : null;
+                var chart = (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function')
+                    ? window.VyasAstronomicalEngine.getActiveKundli()
+                    : ((window.VyasDesktop && window.VyasDesktop.activeChartData) ? window.VyasDesktop.activeChartData : null);
                 var reply = "";
                 if (window.VyasAIEngine && typeof window.VyasAIEngine.askSage === 'function') {
                     reply = await window.VyasAIEngine.askSage(q, chart);

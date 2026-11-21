@@ -567,10 +567,10 @@
             };
 
             // Varsha Lagna Sign
-            var lagnaSignNum = 1;
-            if (housesData && housesData[1]) {
+            var lagnaSignNum = customLagnaSignNum || (housesData && housesData.lagna_sign_num) || 1;
+            if (!customLagnaSignNum && housesData && housesData[1]) {
                 var d1Val = housesData[1][0];
-                lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? d1Val.sign : d1Val) || 1;
+                lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? (d1Val.sign || d1Val.s) : d1Val) || 1;
             }
 
             var munthaSign = parseInt(munthaSignNum) || 1;
@@ -624,7 +624,7 @@
          * 6. PANCHANG TATKALIK AKASHA CHART
          * Real-time celestial North Indian chart cast for current city and timestamp.
          */
-        renderTatkalikPanchangChart: function(housesData, currentCityName, istTimeStr, size, isLight) {
+        renderTatkalikPanchangChart: function(housesData, currentCityName, istTimeStr, size, isLight, customLagnaSignNum) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;

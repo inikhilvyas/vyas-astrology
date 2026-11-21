@@ -326,7 +326,10 @@
                 if (chartWrap && window.VyasChartRenderers) {
                     var now = new Date();
                     var timeStr = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
-                    chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(livePrashnaChart.houses, 'प्रश्न वेधशाला', timeStr, 440, false);
+                    var lProf = livePrashnaChart.profile || {};
+                    var lSign = lProf.asc_sign || 'मेष';
+                    var lSignNum = SIGN_NUMS[lSign] || 1;
+                    chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(livePrashnaChart.houses, 'प्रश्न वेधशाला', timeStr, 440, false, lSignNum);
                 }
 
                 // Synchronize Lagna badge & dynamic initial analysis
