@@ -1727,6 +1727,73 @@
                 blocks.push(VyasDashaEngine.analyze(analysis, query));
             }
 
+            // ═══════════════════════════════════════════════════════════════
+            // MULTI-SYSTEM CROSS-VERIFICATION INJECTION (Parashara + Jaimini + Nadi + KP + Ashtakavarga + Goodh)
+            // ═══════════════════════════════════════════════════════════════
+            // 1. Jaimini Dimension (Chara Karakas, AK/AmK, Karakamsha, AL/UL)
+            try {
+                var jaiminiKarakas = VyasJaiminiEngine.computeKarakas(chart.planet_table);
+                var jaiminiReading = VyasJaiminiEngine.predict(jaiminiKarakas, route);
+                blocks.push('');
+                blocks.push('**🔮 JAIMINI CHARA KARAKAS & CHARA DASHA ANALYSIS:**');
+                blocks.push(jaiminiReading.replace(/<[^>]+>/g, '').trim());
+            } catch(e) {}
+
+            // 2. Nadi Dimension (BNN Trines, Directional Conjunctions & Karmic Axis)
+            try {
+                var nadiReading = VyasNadiEngine.predict(chart.planet_table, route);
+                blocks.push('');
+                blocks.push('**🌀 BHRIGU NANDI NADI (TRINES & KARMIC AXIS):**');
+                blocks.push(nadiReading.replace(/<[^>]+>/g, '').trim());
+            } catch(e) {}
+
+            // 3. KP System (Placidus Cuspal Sub-Lord 1-249 & Event Promise Confirmation)
+            try {
+                var kpReading = VyasKPEngine.predict(chart.planet_table, route);
+                blocks.push('');
+                blocks.push('**🎯 KP CUSPAL SUB-LORD (EVENT PROMISE & CUSPAL PERMISSION):**');
+                blocks.push(kpReading.replace(/<[^>]+>/g, '').trim());
+            } catch(e) {}
+
+            // 4. Ashtakavarga (SAV 337 Bindus & Prastarashtakavarga Strength)
+            try {
+                var houseSAV = VyasAshtakavargaEngine.computeSAV(chart.planet_table, analysis.lagna);
+                var avReading = VyasAshtakavargaEngine.predict(houseSAV, route);
+                blocks.push('');
+                blocks.push('**📊 ASHTAKAVARGA & PRASTARASHTAKAVARGA TRANSIT STRENGTH:**');
+                blocks.push(avReading.replace(/<[^>]+>/g, '').trim());
+            } catch(e) {}
+
+            // 5. Acharya Vyas v10 Goodh Diagnostics (Microscopic Vulnerability & Secret Revelation)
+            try {
+                var goodhDiag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
+                if (goodhDiag) {
+                    blocks.push('');
+                    blocks.push('**🔍 ACHARYA VYAS v10 GOODH DIAGNOSTICS (MICROSCOPIC VERIFICATION):**');
+                    if (goodhDiag.jaimini_dynamics && goodhDiag.jaimini_dynamics.deep_observation_hi) {
+                        blocks.push('• कारकांश/आरूढ़ वेध: ' + goodhDiag.jaimini_dynamics.deep_observation_hi);
+                    }
+                    if (goodhDiag.gandanta_placements && goodhDiag.gandanta_placements.length > 0) {
+                        goodhDiag.gandanta_placements.forEach(function(gh) {
+                            blocks.push('• गण्डान्त सन्धि वेध: ' + gh.planet + ' (' + gh.insight_hi + ')');
+                        });
+                    } else {
+                        blocks.push('• गण्डान्त सन्धि: कोई ग्रह जल-अग्नि सन्धि पर नहीं (चेतना संतुलित)');
+                    }
+                    if (goodhDiag.dagdha_rashis_for_tithi && goodhDiag.dagdha_rashis_for_tithi.length > 0) {
+                        blocks.push('• तिथि दग्ध (शून्य) राशियां: ' + goodhDiag.dagdha_rashis_for_tithi.join(' • '));
+                    }
+                    if (goodhDiag.khara_and_64th_navamsha) {
+                        var kh = goodhDiag.khara_and_64th_navamsha;
+                        blocks.push('• २२वां द्रेष्काण (खरेश: ' + kh.drekkana_22_lord + ') व ६४वां नवांश स्वामी (' + kh.navamsha_64_lord + '): ' + kh.protective_guidance_hi);
+                    }
+                    if (goodhDiag.transit_tara_analysis) {
+                        var harshT = goodhDiag.transit_tara_analysis.filter(function(t) { return t.is_sensitive_tara; });
+                        if (harshT.length > 0) blocks.push('• नवतारा वेध: ' + harshT[0].guidance_hi);
+                    }
+                }
+            } catch(e) {}
+
             // Inject Classical Sutras from 22,000+ Bank
             var sBank = (typeof window !== 'undefined' ? window.VyasSutrasBank : (typeof global !== 'undefined' ? global.VyasSutrasBank : null));
             if (sBank && typeof sBank.matchChart === 'function') {
