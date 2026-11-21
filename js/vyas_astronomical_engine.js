@@ -1436,9 +1436,11 @@
 
     // Universal Active Kundli Resolver (Guarantees STRICT Single-Source-of-Truth across all portals)
     function getActiveKundli() {
-        if (typeof window === 'undefined' || !window.localStorage) return null;
+        if (typeof window === 'undefined' && typeof localStorage === 'undefined') return null;
+        var storage = (typeof window !== 'undefined' && window.localStorage) ? window.localStorage : (typeof localStorage !== 'undefined' ? localStorage : null);
+        if (!storage) return null;
         try {
-            var raw = localStorage.getItem('vyas_active_profile');
+            var raw = storage.getItem('vyas_active_profile');
             if (raw) {
                 var p = JSON.parse(raw);
                 if (p) {
@@ -1453,7 +1455,7 @@
                     // Privacy check: purge any prohibited test identities
                     var nLower = (name || '').toLowerCase();
                     if (nLower.indexOf('nikhil') !== -1 || name.indexOf('निखिल') !== -1 || dob === '1992-05-15' || dob === '1984-11-23') {
-                        localStorage.removeItem('vyas_active_profile');
+                        storage.removeItem('vyas_active_profile');
                         return null;
                     }
                     
@@ -1471,7 +1473,7 @@
                             if (!recomputed.houses && recomputed.charts && recomputed.charts.d1 && recomputed.charts.d1.houses) {
                                 recomputed.houses = recomputed.charts.d1.houses;
                             }
-                            localStorage.setItem('vyas_active_profile', JSON.stringify(recomputed));
+                            storage.setItem('vyas_active_profile', JSON.stringify(recomputed));
                             return recomputed;
                         }
                     }
@@ -1480,7 +1482,34 @@
         } catch (e) {
             console.warn('getActiveKundli error:', e);
         }
-        // STRICT: If no active profile is set, return null. NEVER silently load another person's chart from vault!
+        // If vyas_active_profile is not set, check if user has a saved profile in vyas_family_vault or vyas_custom_profiles
+        try {
+            var vKeys = ['vyas_family_vault', 'vyas_custom_profiles', 'vyas_user_vault'];
+            for (var vk = 0; vk < vKeys.length; vk++) {
+                var vRaw = storage.getItem(vKeys[vk]);
+                if (vRaw) {
+                    var vList = JSON.parse(vRaw);
+                    if (Array.isArray(vList) && vList.length > 0) {
+                        for (var vi = 0; vi < vList.length; vi++) {
+                            var item = vList[vi];
+                            var iName = (item.name || '').toLowerCase();
+                            var iDob = item.dob || item.birth_date || '';
+                            if (iName.indexOf('nikhil') === -1 && item.name.indexOf('निखिल') === -1 && iDob !== '1992-05-15' && iDob !== '1984-11-23' && iDob) {
+                                var recompiled = computeMathematicalKundli(item.name || 'सक्रिय जातक', iDob, item.tob || '12:00', item.place || item.city || 'वाराणसी', item.gender || 'Male', item.lat, item.lon);
+                                if (recompiled) {
+                                    if (!recompiled.houses && recompiled.charts && recompiled.charts.d1 && recompiled.charts.d1.houses) {
+                                        recompiled.houses = recompiled.charts.d1.houses;
+                                    }
+                                    storage.setItem('vyas_active_profile', JSON.stringify(recompiled));
+                                    return recompiled;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(e) { }
+
         return null;
     }
 

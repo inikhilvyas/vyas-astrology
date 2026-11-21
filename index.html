@@ -13225,6 +13225,30 @@
                     this.activeChartData = newChart;
                     try { localStorage.setItem('vyas_active_profile', JSON.stringify(newChart)); } catch (e) { }
 
+                    // Automatically save to Vault (vyas_family_vault & vyas_user_vault) so it appears immediately in /saved-kundli/
+                    try {
+                        var fam = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
+                        var fExists = fam.some(function (x) { return x.name === name && x.dob === dob; });
+                        var moonR = (newChart.planet_table && newChart.planet_table.find(function(p){ return p.p && p.p.indexOf('चन्द्र') !== -1; })) || {};
+                        var newVaultItem = {
+                            name: name,
+                            dob: dob,
+                            tob: tob,
+                            place: city,
+                            city: city,
+                            gender: gender,
+                            lagna: newChart.profile.asc_sign,
+                            moon_sign: moonR.r || '-',
+                            nakshatra: moonR.n || '-',
+                            tag: 'मुख्य जातक'
+                        };
+                        if (!fExists) {
+                            fam.unshift(newVaultItem);
+                            localStorage.setItem('vyas_family_vault', JSON.stringify(fam));
+                        }
+                        localStorage.setItem('vyas_user_vault', JSON.stringify(fam));
+                    } catch (e) { }
+
                     // Save to User Vault (persists for authenticated user)
                     if (typeof this.saveToUserVault === 'function') {
                         this.saveToUserVault(newChart);
@@ -14328,6 +14352,7 @@
                     },
                     charts: builtCharts,
                     planet_table: pTable,
+                    houses: builtCharts.d1.houses, // Top-level alias
                     active_dasha: activeDasha,
                     ashtakavarga: {
                         sav: sav,

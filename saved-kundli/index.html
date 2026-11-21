@@ -306,6 +306,8 @@
 
         function loadVaultData() {
             vaultProfiles = [];
+            
+            // 1. Read vyas_family_vault
             try {
                 var p1 = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
                 if (Array.isArray(p1)) {
@@ -314,6 +316,8 @@
                     vaultProfiles = vaultProfiles.concat(c1);
                 }
             } catch (e) { }
+
+            // 2. Read vyas_user_vault
             try {
                 var p2 = JSON.parse(localStorage.getItem('vyas_user_vault') || '[]');
                 if (Array.isArray(p2)) {
@@ -326,7 +330,22 @@
                 }
             } catch (e) { }
 
-            // Clean active profile if it had stale test data
+            // 3. Read vyas_custom_profiles (Profiles created via Home Form)
+            try {
+                var p3 = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
+                if (Array.isArray(p3)) {
+                    var c3 = sanitizeVaultList(p3);
+                    c3.forEach(function (x) {
+                        var exists = vaultProfiles.some(function (v) { return v.name === x.name && v.dob === x.dob; });
+                        if (!exists) {
+                            if (!x.tag) x.tag = 'जातक';
+                            vaultProfiles.push(x);
+                        }
+                    });
+                }
+            } catch (e) { }
+
+            // 4. Read vyas_active_profile (The currently active calculated Kundli!)
             try {
                 var act = localStorage.getItem('vyas_active_profile');
                 if (act) {
@@ -335,9 +354,37 @@
                     var adob = (parsedAct.profile ? parsedAct.profile.dob : parsedAct.dob) || '';
                     if (aname.toLowerCase().indexOf('nikhil') !== -1 || aname.indexOf('निखिल') !== -1 || adob === '1992-05-15' || adob === '1984-11-23') {
                         localStorage.removeItem('vyas_active_profile');
+                    } else if (adob) {
+                        var atob = (parsedAct.profile ? parsedAct.profile.tob : parsedAct.tob) || '12:00';
+                        var aplace = (parsedAct.profile ? (parsedAct.profile.city || parsedAct.profile.place) : (parsedAct.city || parsedAct.place)) || 'भारत';
+                        var alagna = (parsedAct.profile ? parsedAct.profile.asc_sign : parsedAct.lagna) || 'मेष';
+                        var mFind = parsedAct.planet_table ? parsedAct.planet_table.find(function(p){ return p.p && p.p.indexOf('चन्द्र') !== -1; }) : null;
+                        var amoon = (mFind && mFind.r) ? mFind.r : '-';
+                        var anak = (mFind && mFind.n) ? mFind.n : '-';
+
+                        var existsInVault = vaultProfiles.some(function (v) { return (v.name === aname && v.dob === adob); });
+                        if (!existsInVault) {
+                            var actObj = {
+                                name: aname,
+                                dob: adob,
+                                tob: atob,
+                                place: aplace,
+                                city: aplace,
+                                lagna: alagna,
+                                moon_sign: amoon,
+                                nakshatra: anak,
+                                tag: 'सक्रिय जातक'
+                            };
+                            vaultProfiles.unshift(actObj);
+                        }
                     }
                 }
             } catch (e) { }
+
+            // Auto-persist unified list into vyas_family_vault so it stays safe forever
+            if (vaultProfiles.length > 0) {
+                try { localStorage.setItem('vyas_family_vault', JSON.stringify(vaultProfiles)); } catch (e) { }
+            }
 
             renderProfiles(vaultProfiles);
         }
