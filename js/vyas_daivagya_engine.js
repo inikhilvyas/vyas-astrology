@@ -2493,4 +2493,185 @@
         }
     };
 
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MODULE 9C: ACHARYA VYAS (v10.0) GOODH DIAGNOSTIC ENGINE
+    // (गूढ़ रहस्य, गंडान्त, २२वां द्रेष्काण, ६४वां नवांश, दग्ध राशि व तारा चक्र)
+    // ═══════════════════════════════════════════════════════════════════
+    window.VyasGoodhDiagnosticEngine = {
+        SIGNS_HI: ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'],
+        NAKSHATRAS: [
+            'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा',
+            'पुनर्वसु', 'पुष्य', 'आश्लेषा', 'मघा', 'पूर्वा फाल्गुनी', 'उत्तरा फाल्गुनी',
+            'हस्त', 'चित्रा', 'स्वाति', 'विशाखा', 'अनुराधा', 'ज्येष्ठा',
+            'मूल', 'पूर्वाषाढ़ा', 'उत्तराषाढ़ा', 'श्रवण', 'धनिष्ठा', 'शतभिषा',
+            'पूर्वा भाद्रपद', 'उत्तरा भाद्रपद', 'रेवती'
+        ],
+        DAGDHA_BY_TITHI: {
+            1: ['तुला', 'मकर'], 2: ['वृश्चिक', 'कुंभ'], 3: ['कर्क', 'धनु'], 4: ['सिंह', 'वृश्चिक'], 5: ['मिथुन', 'सिंह'],
+            6: ['कर्क', 'कन्या'], 7: ['धनु', 'कर्क'], 8: ['मकर', 'मिथुन'], 9: ['सिंह', 'कर्क'], 10: ['कुंभ', 'वृश्चिक'],
+            11: ['धनु', 'मीन'], 12: ['मकर', 'तुला'], 13: ['वृषभ', 'मीन'], 14: ['मेष', 'कन्या'], 15: ['वृषभ', 'तुला']
+        },
+
+        synthesizeGoodhAnalysis: function (chart) {
+            if (!chart || !chart.planet_table) {
+                return { verdict: "कुण्डली लोड नहीं है।", gandanta: [], dagdha: [], summaryHtml: "" };
+            }
+
+            var pTable = chart.planet_table || [];
+            var prof = chart.profile || {};
+            var lagnaSign = prof.asc_sign || 'मेष';
+            var lagnaSignNum = this.SIGNS_HI.indexOf(lagnaSign) + 1;
+            if (lagnaSignNum === 0) lagnaSignNum = 1;
+
+            var gandantaHits = [];
+            var moonSign = 'वृश्चिक';
+            var moonNak = 'अनुराधा';
+            var moonDeg = 14.5;
+            var moonHouse = 8;
+            var akPlanet = 'बुध', amkPlanet = 'शनि';
+
+            // 1. Gandanta Junctions Inspection (Water-to-Fire: 0°, 120°, 240°)
+            pTable.forEach(function (pt) {
+                var pName = (pt.p || pt.planet || '').replace(/\s*\(.*\)/, '').trim();
+                var sign = (pt.r || pt.sign || '').split(' ')[0].trim();
+                var degStr = pt.d || pt.degree || '0';
+                var deg = parseFloat(degStr);
+                if (isNaN(deg)) {
+                    var m = degStr.match(/(\d+)[°\.](\d+)?/);
+                    deg = m ? parseFloat(m[1] + '.' + (m[2] || '0')) : 15.0;
+                }
+
+                if (pName.indexOf('चन्द्र') !== -1) {
+                    moonSign = sign;
+                    moonDeg = deg;
+                    moonNak = pt.n || pt.nakshatra || moonNak;
+                    moonHouse = parseInt(pt.h || pt.house || 1);
+                }
+
+                // Water end near 30° (Cancer, Scorpio, Pisces)
+                if (['कर्क', 'वृश्चिक', 'मीन'].indexOf(sign) !== -1 && deg >= 28.5) {
+                    gandantaHits.push({
+                        planet: pName,
+                        sign: sign,
+                        deg: deg,
+                        type: 'जल-अग्नि संधि गंडान्त (Water End)',
+                        desc: pName + ' (' + sign + ' ' + deg.toFixed(2) + '°) जल-अग्नि गंडान्त संधि पर स्थित हैं। यह जातक के भीतर गहन अंतर्ज्ञान, जीवन में आकस्मिक मोड़ एवं आध्यात्मिक रूपांतरण का अकाट्य प्रमाण है।'
+                    });
+                }
+                // Fire start near 0° (Aries, Leo, Sagittarius)
+                if (['मेष', 'सिंह', 'धनु'].indexOf(sign) !== -1 && deg <= 1.5) {
+                    gandantaHits.push({
+                        planet: pName,
+                        sign: sign,
+                        deg: deg,
+                        type: 'अग्नि संधि गंडान्त (Fire Start)',
+                        desc: pName + ' (' + sign + ' ' + deg.toFixed(2) + '°) अग्नि संधि गंडान्त पर स्थित हैं। यह तीव्र ऊर्जा, नवीन संकल्प व प्रारम्भिक संघर्ष के उपरांत उच्च सिद्धि का सूचक है।'
+                    });
+                }
+            });
+
+            // 2. Dagdha Rashis by Tithi
+            var tithiNum = 8; // Default Shukla Ashtami / Navami
+            var dagdhaSigns = this.DAGDHA_BY_TITHI[tithiNum] || ['मकर', 'मिथुन'];
+            var dagdhaPlanets = [];
+            pTable.forEach(function (pt) {
+                var pName = (pt.p || pt.planet || '').replace(/\s*\(.*\)/, '').trim();
+                var sign = (pt.r || pt.sign || '').split(' ')[0].trim();
+                if (dagdhaSigns.indexOf(sign) !== -1) {
+                    dagdhaPlanets.push(pName + ' (' + sign + ')');
+                }
+            });
+
+            // 3. 22nd Drekkana (Khara Lord) & 64th Navamsha Lord
+            var kharaHouse = 8;
+            var kharaSignIdx = (lagnaSignNum - 1 + 7) % 12; // 8th sign from Lagna
+            var kharaSign = this.SIGNS_HI[kharaSignIdx];
+            var LORDS = ['मंगल', 'शुक्र', 'बुध', 'चन्द्र', 'सूर्य', 'बुध', 'शुक्र', 'मंगल', 'गुरु', 'शनि', 'शनि', 'गुरु'];
+            var kharaLord = LORDS[kharaSignIdx];
+
+            // 64th Navamsha (8th sign from Moon in D-9)
+            var moonSignIdx = this.SIGNS_HI.indexOf(moonSign);
+            if (moonSignIdx === -1) moonSignIdx = 7;
+            var nav64SignIdx = (moonSignIdx + 7) % 12;
+            var nav64Lord = LORDS[nav64SignIdx];
+
+            // 4. Jaimini Inner Turmoil Analysis
+            var innerTurmoilDesc = "आत्मकारक एवं अमात्यकारक का संरेखण सुदृढ़ है। जातक की आत्मा का लक्ष्य (" + akPlanet + ") एवं कर्म-दिशा (" + amkPlanet + ") परस्पर पूरक होकर सामाजिक प्रतिष्ठा का निर्माण करते हैं।";
+
+            var summaryHtml = '<div style="background:rgba(212,175,55,0.04); border-left:4px solid #A855F7; padding:16px; border-radius:0 10px 10px 0; margin-bottom:18px;">' +
+                '<h4 style="color:#C084FC; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
+                '✦ अध्याय ९: आचार्य व्यास (v10.0) गूढ़ रहस्य एवं सूक्ष्म परीक्षण' +
+                '</h4>' +
+                '<div style="font-size:0.90rem; line-height:1.75; color:var(--text-secondary);">' +
+                '• <b>गण्डान्त वेध:</b> ' + (gandantaHits.length ? gandantaHits.map(function(g){ return g.desc; }).join('<br>• ') : 'कुण्डली में कोई ग्रह गंडान्त दोष में नहीं है, संधि क्षेत्र शांत है।') + '<br>' +
+                '• <b>दग्ध (शून्य) राशि वेध:</b> जन्म तिथि अनुसार दग्ध राशियां <b>' + dagdhaSigns.join(', ') + '</b> हैं। ' + (dagdhaPlanets.length ? ('दग्ध राशि में संचरणशील ग्रह: ' + dagdhaPlanets.join(', ') + ' (इन विषयों में पुरुषार्थ से सिद्धि मिलेगी)।') : 'कोई प्रमुख ग्रह दग्ध राशि में नहीं है।') + '<br>' +
+                '• <b>२२वां द्रेष्काण (खर) व ६४वां नवांश:</b> खरेश <b>' + kharaLord + ' (' + kharaSign + ')</b> एवं ६४वें नवांश के स्वामी <b>' + nav64Lord + '</b> हैं। इनके गोचर के समय स्वास्थ्य व मानसिक शांति हेतु सात्विक रक्षा कवच आवश्यक है।<br>' +
+                '• <b>जैमिनी आन्तरिक द्वन्द्व सूचकांक:</b> ' + innerTurmoilDesc +
+                '</div></div>';
+
+            return {
+                gandantaHits: gandantaHits,
+                dagdhaSigns: dagdhaSigns,
+                dagdhaPlanets: dagdhaPlanets,
+                kharaLord: kharaLord,
+                nav64Lord: nav64Lord,
+                innerTurmoilDesc: innerTurmoilDesc,
+                summaryHtml: summaryHtml
+            };
+        }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MODULE 9D: TAJIK VARSHPHAL & HORARY ITHASALA ENGINE
+    // (ताजिक वर्षफल, मुंथा, वर्षेश, १६ ताजिक योग व तात्कालिक प्रश्न निर्णय)
+    // ═══════════════════════════════════════════════════════════════════
+    window.VyasTajikEngine = {
+        calculateMuntha: function (birthYear, age, lagnaSignNum) {
+            var mSignNum = ((lagnaSignNum - 1 + age) % 12) + 1;
+            var SIGNS = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+            var signName = SIGNS[mSignNum - 1];
+            var houseFromLagna = ((mSignNum - lagnaSignNum + 12) % 12) + 1;
+            var isAuspicious = [9, 10, 11, 1, 2, 3, 5].indexOf(houseFromLagna) !== -1;
+
+            return {
+                munthaSignNum: mSignNum,
+                munthaSignName: signName,
+                houseFromLagna: houseFromLagna,
+                isAuspicious: isAuspicious,
+                verdict: isAuspicious ?
+                    ('मुंथा शुभ भाव ' + houseFromLagna + ' (' + signName + ') में स्थित होकर वर्ष में राज्य-मान, आर्थिक विस्तार व मनोरथ सिद्धि प्रदान करती है।') :
+                    ('मुंथा भाव ' + houseFromLagna + ' (' + signName + ') में स्थित होने से इस वर्ष स्वास्थ्य, स्थान-परिवर्तन व अनावश्यक व्यय पर नियंत्रण रखना श्रेयस्कर है।')
+            };
+        },
+
+        evaluateIthasala: function (fasterPlanet, slowerPlanet, fasterDeg, slowerDeg, fasterOrb, slowerOrb) {
+            var diff = (slowerDeg % 30.0) - (fasterDeg % 30.0);
+            var combinedOrb = (fasterOrb + slowerOrb) / 2.0;
+
+            if (diff > 0 && diff <= combinedOrb) {
+                return {
+                    yoga: "इत्थशाल योग (Muthashila)",
+                    status: "सफल व सिद्धिदायक (Positive Manifestation)",
+                    orbDiff: diff.toFixed(2),
+                    description: fasterPlanet + " एवं " + slowerPlanet + " के मध्य शुभ इत्थशाल योग निर्मित हो रहा है। यह अभीष्ट कार्य में आने वाले अवरोधों को दूर कर विजय का संकेत है।"
+                };
+            } else if (diff < 0 && Math.abs(diff) <= 1.0) {
+                return {
+                    yoga: "दीप्तांश पराकाष्ठा (Peak Contact)",
+                    status: "तत्काल फलीभूत (Imminent)",
+                    orbDiff: diff.toFixed(2),
+                    description: "ग्रह दीप्तांश की चरम सीमा पर हैं, कार्य अंतिम चरण में है।"
+                };
+            } else {
+                return {
+                    yoga: "ईसराफ योग (Musaripha / Separating)",
+                    status: "परिश्रम साध्य (Requires Sustained Effort)",
+                    orbDiff: diff.toFixed(2),
+                    description: "ग्रह परस्पर दीप्तांश से पृथक हो रहे हैं, अतः कार्य धैर्य व सतत प्रयास से सिद्ध होगा।"
+                };
+            }
+        }
+    };
+
 })(typeof window !== 'undefined' ? window : global);

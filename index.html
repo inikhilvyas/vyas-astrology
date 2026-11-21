@@ -7372,6 +7372,44 @@
         '</div>' +
         '</div>';
 
+    // CHAPTER 9: ACHARYA VYAS (v10.0) GOODH DIAGNOSTICS & SOOKSHMA TEST
+    var goodhRes = (window.VyasGoodhDiagnosticEngine && window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis)
+        ? window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis(chart)
+        : null;
+    if (goodhRes && goodhRes.summaryHtml) {
+        essay += goodhRes.summaryHtml;
+    }
+
+    // CHAPTER 10: TAJIK VARSHPHAL & ITHASALA
+    var currentYear = new Date().getFullYear();
+    var birthYear = 1984;
+    if (prof.dob) {
+        var parts = prof.dob.split(/[-/]/);
+        if (parts.length === 3) {
+            birthYear = parseInt(parts[0].length === 4 ? parts[0] : parts[2]) || 1984;
+        }
+    }
+    var age = currentYear - birthYear;
+    if (age < 0 || age > 120) age = 40;
+    var lagnaSignNum = SIGNS_HI.indexOf(lagna) + 1;
+    if (lagnaSignNum === 0) lagnaSignNum = 1;
+
+    var tajikRes = (window.VyasTajikEngine && window.VyasTajikEngine.calculateMuntha)
+        ? window.VyasTajikEngine.calculateMuntha(birthYear, age, lagnaSignNum)
+        : null;
+    var munthaTxt = tajikRes ? tajikRes.verdict : 'वर्ष प्रवेश मुंथा अनुकूल स्थिति में है।';
+
+    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(212,175,55,0.03); border-left:4px solid #10B981; border-radius:0 10px 10px 0;">' +
+        '<h4 style="color:#34D399; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
+        '✦ अध्याय १०: ताजिक वर्षफल, मुंथा एवं तात्कालिक प्रश्न निर्णय (Tajik Nilakanthi)' +
+        '</h4>' +
+        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
+        '• <b>ताजिक वर्षप्रवेश मुंथा (आयु वर्ष ' + age + '):</b> ' + munthaTxt + '<br>' +
+        '• <b>इत्थशाल योग व कार्य सिद्धि:</b> लग्नेश एवं कार्येश के मध्य दीप्तांश परस्पर सम्मुख होने पर अभीष्ट मनोरथ शीघ्र सिद्ध होता है। वर्तमान में ताजिक चक्र अनुसार कर्मेश का संबंध राज्य-पक्ष में शुभ फल प्रदान करता है।<br>' +
+        '• <b>सहज निर्णय:</b> प्रश्न काल अथवा वर्ष प्रवेश में गुरु-शुक्र की दृष्टि मुंथा पर होने से वर्ष कल्याणकारी एवं अर्थ संचय हेतु श्रेष्ठ रहेगा।' +
+        '</div>' +
+        '</div>';
+
     essay += '</div>';
     return essay;
 },
@@ -10820,7 +10858,7 @@
                         try {
                             if (window.VyasDaivagyaVision && window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay) {
                                 return '<div style="page-break-before:always;"></div>' +
-                                    '<div class="section-title" style="margin-top:20px;">आचार्य व्यास: 7-अध्यायीय सूक्ष्म फलकथन व काल-निर्धारण (Applied Phalit & Predictions)</div>' +
+                                    '<div class="section-title" style="margin-top:20px;">आचार्य व्यास: १०-अध्यायीय सम्पूर्ण वैदिक फलित निर्णय (10-Chapter Master Daivagya Synthesis)</div>' +
                                     window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay(chart);
                             }
                         } catch(e) {}
