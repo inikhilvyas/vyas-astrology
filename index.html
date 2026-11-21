@@ -7340,6 +7340,28 @@
         '</div>' +
         '</div>';
 
+    // CHAPTER 8: PRACHEEN DAIVAGYA SOOKSHMA GANITA & GOODH PHALIT
+    var ancient = (window.VyasAncientSecretPredictiveEngine && window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis)
+        ? window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis(chart)
+        : null;
+
+    var rashmiTxt = ancient ? (ancient.rashmiBala.total + ' रश्मियां • ' + ancient.rashmiBala.status + '। ' + ancient.rashmiBala.description) : 'रश्मि-बल संतुलित है।';
+    var dagdhaTxt = ancient ? ancient.dagdhaAnalysis.verdict : 'दग्ध राशि दोष शून्य है।';
+    var kcdTxt = ancient ? (ancient.kalachakraDasha.gati + ' • देह राशि: ' + ancient.kalachakraDasha.dehaRashi + ', जीव राशि: ' + ancient.kalachakraDasha.jeevaRashi + '। ' + ancient.kalachakraDasha.fruit) : 'कालचक्र चक्र गति शुभ है।';
+    var kotaTxt = ancient ? ('कोट स्वामी: ' + ancient.kotaChakra.kotaSwami + ', कोट पाल: ' + ancient.kotaChakra.kotaPala + '। ' + ancient.kotaChakra.verdict) : 'दुर्ग सुरक्षित है।';
+
+    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(255,255,255,0.02); border-left:4px solid #A855F7; border-radius:0 10px 10px 0;">' +
+        '<h4 style="color:#C084FC; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
+        '✦ अध्याय ८: प्राचीन दैवज्ञ गुप्त गणित — कालचक्र, रश्मि-बल, दग्ध राशि एवं कोट चक्र वेध' +
+        '</h4>' +
+        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
+        '• <b>रश्मि-बल गणित (प्रश्नमार्ग अध्याय ७८-८० • कुल ४९ रश्मि):</b> ' + rashmiTxt + '<br>' +
+        '• <b>कालचक्र दशा व देह-जीव वेध (BPHS अध्याय ४६ व १७२-१७५):</b> ' + kcdTxt + '<br>' +
+        '• <b>दग्ध एवं शून्य राशि परीक्षण:</b> ' + dagdhaTxt + '<br>' +
+        '• <b>कोट चक्र दुर्ग रक्षा वेध (The Fort of Destiny):</b> ' + kotaTxt +
+        '</div>' +
+        '</div>';
+
     essay += '</div>';
     return essay;
 },
