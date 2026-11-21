@@ -7134,6 +7134,96 @@
                         '</div>' +
                         '</div>' +
 
+                        // Special Chapter: Acharya Vyas v10 Goodh Diagnostics (गूढ़ रहस्य एवं सूक्ष्म परीक्षण)
+                        (function() {
+                            var diag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
+                            if (!diag) return '';
+
+                            var jDyn = diag.jaimini_dynamics || {};
+                            var gHits = diag.gandanta_placements || [];
+                            var dagdha = diag.dagdha_rashis_for_tithi || [];
+                            var dagdhaPl = diag.planets_in_dagdha_rashis || [];
+                            var khara = diag.khara_and_64th_navamsha || {};
+                            var tReport = diag.transit_tara_analysis || [];
+
+                            var gHtml = '';
+                            if (gHits.length > 0) {
+                                gHits.forEach(function(gh) {
+                                    gHtml += '<div style="margin-top:6px; padding:6px 10px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:4px; font-size:0.82rem;">' +
+                                        '⚠️ <b>' + gh.planet + ':</b> ' + gh.insight_hi +
+                                        '</div>';
+                                });
+                            } else {
+                                gHtml = '<div style="color:var(--emerald); font-size:0.82rem; margin-top:3px;">✅ कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना संतुलित है।</div>';
+                            }
+
+                            var dHtml = '';
+                            if (dagdhaPl.length > 0) {
+                                dagdhaPl.forEach(function(dp) {
+                                    dHtml += '<div style="margin-top:4px; padding:6px 10px; background:rgba(245,158,11,0.1); border-left:3px solid #f59e0b; border-radius:4px; font-size:0.82rem;">' +
+                                        dp.warning_hi +
+                                        '</div>';
+                                });
+                            } else {
+                                dHtml = '<div style="color:var(--text-muted); font-size:0.80rem; margin-top:2px;">कोई ग्रह दग्ध राशि में स्थित नहीं है।</div>';
+                            }
+
+                            var harshTaras = tReport.filter(function(tr){ return tr.is_sensitive_tara; });
+                            var taraHtml = '';
+                            if (harshTaras.length > 0) {
+                                harshTaras.forEach(function(ht) {
+                                    taraHtml += '<div style="margin-top:4px; padding:6px 10px; background:rgba(239,68,68,0.08); border-left:3px solid #ef4444; border-radius:4px; font-size:0.82rem; color:#fca5a5;">' +
+                                        ht.guidance_hi +
+                                        '</div>';
+                                });
+                            } else {
+                                taraHtml = '<div style="color:var(--emerald); font-size:0.80rem; margin-top:2px;">✅ वर्तमान में कोई प्रमुख पापी ग्रह आपकी संवेदनशील तारा (विपत/प्रत्यरि/वध) में नहीं है।</div>';
+                            }
+
+                            return '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(239,68,68,0.05)); border:1.5px solid var(--border-gold); border-radius:10px; padding:16px; margin-bottom:14px;">' +
+                                '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
+                                '<h4 style="color:#d4af37; margin:0; font-size:1rem; display:flex; align-items:center; gap:8px;">' +
+                                '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>' +
+                                'आचार्य व्यास (v10.0) गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Deep Diagnostic Matrix)' +
+                                '</h4>' +
+                                '<span style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:12px; border:1px solid #10b981;">प्रामाणिक पराशरीय व जैमिनी वेध</span>' +
+                                '</div>' +
+                                '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-bottom:12px;">' +
+                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                                '<b style="color:var(--gold-light); font-size:0.88rem;">१. कारकांश, स्वांश व आरूढ़ लग्न गतिशीलता:</b><br>' +
+                                '<span style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6;">' +
+                                '• आत्मकारक (AK): <b>' + jDyn.ak + '</b> ➔ कारकांश: <b>' + jDyn.karakansha + '</b><br>' +
+                                '• अमात्यकारक (AmK): <b>' + jDyn.amk + '</b> (कर्म व पद-प्रतिष्ठा)<br>' +
+                                '• आरूढ़ लग्न (AL): <b>' + jDyn.arudha_lagna + '</b> • उपपद (UL): <b>' + jDyn.upapada_lagna + '</b><br>' +
+                                '<div style="margin-top:6px; color:#fcedaa; font-size:0.82rem;">' + jDyn.deep_observation_hi + '</div>' +
+                                '</span>' +
+                                '</div>' +
+                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                                '<b style="color:#ef4444; font-size:0.88rem;">२. गण्डान्त एवं अभुक्त मूल सूक्ष्म वेध:</b>' +
+                                gHtml +
+                                '<div style="margin-top:10px;"><b style="color:#f59e0b; font-size:0.88rem;">३. तिथि अनुसार दग्ध (शून्य) राशियां:</b><br>' +
+                                '<span style="font-size:0.80rem; color:var(--text-secondary);">दग्ध राशियां: <b>' + (dagdha.join(' • ') || 'शून्य') + '</b></span>' +
+                                dHtml +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
+                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                                '<b style="color:#38bdf8; font-size:0.88rem;">४. नवतारा चक्र एवं गोचर वेध (जन्म नक्षत्र: ' + (diag.birth_nakshatra || '') + '):</b>' +
+                                taraHtml +
+                                '</div>' +
+                                '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                                '<b style="color:var(--gold); font-size:0.88rem;">५. २२वां द्रेष्काण (खरेश) व ६४वां नवांश स्वामी:</b><br>' +
+                                '<span style="font-size:0.82rem; color:var(--text-secondary); line-height:1.6;">' +
+                                '• २२वां द्रेष्काण स्वामी: <b>' + (khara.drekkana_22_lord || '') + '</b> (' + (khara.drekkana_22_sign || '') + ')<br>' +
+                                '• ६४वां नवांश स्वामी: <b>' + (khara.navamsha_64_lord || '') + '</b> (' + (khara.navamsha_64_sign || '') + ')<br>' +
+                                '<div style="margin-top:4px; color:#fcedaa; font-size:0.80rem;">' + (khara.protective_guidance_hi || '') + '</div>' +
+                                '</span>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+                        })() +
+
                         // Chapter 1: Lagna & Core Constitution
                         '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">' +
                         '<h4 style="color:var(--accent-gold); margin:0 0 8px 0; font-size:0.96rem; border-bottom:1px solid rgba(212,175,55,0.15); padding-bottom:6px;">' +
@@ -12082,7 +12172,35 @@
                         kalsarpReason = "राहु-केतु अक्ष गणना पूर्ण।";
                     }
 
-                    doshaBox.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">' +
+                    // Acharya Vyas v10 Goodh Diagnostics Card
+                    var goodhDiagSnippet = '';
+                    var gd = (this.activeChartData && this.activeChartData.goodh_diagnostics) ? this.activeChartData.goodh_diagnostics : ((typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function') ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(this.activeChartData) : null);
+                    if (gd) {
+                        var gHitsCount = (gd.gandanta_placements || []).length;
+                        var dRashis = (gd.dagdha_rashis_for_tithi || []).join(' • ');
+                        var jd = gd.jaimini_dynamics || {};
+                        var kh = gd.khara_and_64th_navamsha || {};
+                        goodhDiagSnippet = '<div style="grid-column:1 / -1; padding:12px 14px; background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(239,68,68,0.04)); border:1.5px solid var(--border-gold); border-radius:8px; font-size:0.82rem; line-height:1.6; margin-bottom:8px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:4px;">' +
+                            '<b style="color:var(--accent-gold); font-size:0.88rem;">🔍 आचार्य व्यास (v10.0) गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Deep Diagnostic Matrix)</b>' +
+                            '<span style="font-size:0.72rem; color:' + (jd.inner_turmoil_flag ? '#f59e0b' : '#10b981') + '; font-weight:700; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:10px;">' + (jd.inner_turmoil_flag ? '६/८ आन्तरिक द्वन्द्व वेध' : 'आत्म-सामंजस्य') + '</span>' +
+                            '</div>' +
+                            '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
+                            '<div>' +
+                            '• <b>कारकांश:</b> <b>' + jd.karakansha + '</b> (AK: ' + jd.ak + ')<br>' +
+                            '• <b>आरूढ़ (AL):</b> <b>' + jd.arudha_lagna + '</b> • <b>उपपद (UL):</b> <b>' + jd.upapada_lagna + '</b><br>' +
+                            '• <b>तिथि दग्ध (शून्य) राशियां:</b> <b style="color:#f59e0b;">' + (dRashis || 'शून्य') + '</b>' +
+                            '</div>' +
+                            '<div>' +
+                            '• <b>जल-अग्नि गण्डान्त:</b> ' + (gHitsCount > 0 ? ('<span style="color:#ef4444; font-weight:700;">' + gHitsCount + ' ग्रह गण्डान्त सन्धि पर</span>') : '<span style="color:#10b981; font-weight:700;">निर्दोष (संतुलित)</span>') + '<br>' +
+                            '• <b>२२वां द्रेष्काण (खरेश):</b> <b>' + (kh.drekkana_22_lord || '') + '</b> (' + (kh.drekkana_22_sign || '') + ')<br>' +
+                            '• <b>६४वां नवांश स्वामी:</b> <b>' + (kh.navamsha_64_lord || '') + '</b> (' + (kh.navamsha_64_sign || '') + ')' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+
+                    doshaBox.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">' + goodhDiagSnippet + 
                         '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
                         '<b style="color:var(--primary-navy);">मांगलिक दोष विश्लेषण:</b><br>' +
                         '<span style="color:' + manglikColor + '; font-weight:800;">' + manglikTitle + '</span><br>' +
@@ -14339,7 +14457,7 @@
                     });
                 }
 
-                return {
+                var finalBundle = {
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                         lat: lat, lon: lon, tz: tz,
@@ -14378,6 +14496,10 @@
                         bhavas: bhavasPreds
                     }
                 };
+                if (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function') {
+                    finalBundle.goodh_diagnostics = window.VyasAstronomicalEngine.computeGoodhDiagnostics(finalBundle);
+                }
+                return finalBundle;
             },
 
 

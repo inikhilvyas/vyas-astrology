@@ -641,9 +641,13 @@
 
         function renderPanchang() {
             var city = citiesDB[selectedCityKey] || citiesDB["ayodhya"];
-            document.getElementById('selectedCityBadge').textContent = "स्थान: " + city.name + " (" + city.lat.toFixed(2) + "°, " + city.lon.toFixed(2) + "°)";
+            var cityBadge = document.getElementById('selectedCityBadge');
+            if (cityBadge) cityBadge.textContent = "स्थान: " + city.name + " (" + city.lat.toFixed(2) + "°, " + city.lon.toFixed(2) + "°)";
 
-            var d = selectedDate || new Date();
+            var now = new Date();
+            var curMin = now.getHours() * 60 + now.getMinutes();
+
+            var d = selectedDate || now;
             var dayOfWeek = d.getDay();
             var dayNames = ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
             var dayLords = ["सूर्य देव", "चन्द्र देव", "मंगल देव", "बुध देव", "बृहस्पति देव", "शुक्र देव", "शनि देव"];
@@ -784,8 +788,6 @@
             var daySlotLen = dayDurationMin / 8.0;
             var nightSlotLen = nightDurationMin / 8.0;
 
-            var now = new Date();
-            var curMin = now.getHours() * 60 + now.getMinutes();
             var isDayNow = (curMin >= sunriseMin && curMin < sunsetMin);
 
             document.getElementById('dayChogStatusBadge').textContent = isDayNow ? "● सक्रिय पहर" : "";
@@ -824,37 +826,47 @@
             document.getElementById('nightChogGrid').innerHTML = renderChogSlots(nightList, sunsetMin, nightSlotLen, true);
 
             // Compute Live Tatkalik Sky Chart via VyasAstronomicalEngine
-            if (window.VyasAstronomicalEngine && window.VyasChartRenderers) {
-                var sky = (pData && pData.chart) ? pData.chart : window.VyasAstronomicalEngine.computeCurrentPrashna(city.name, city.lat, city.lon);
-                var lagnaSign = (sky.profile && sky.profile.asc_sign) ? sky.profile.asc_sign : "वृश्चिक";
-                document.getElementById('gocharLagnaBadge').textContent = "लग्न: " + lagnaSign;
+            try {
+                if (window.VyasAstronomicalEngine && window.VyasChartRenderers) {
+                    var sky = window.VyasAstronomicalEngine.computeCurrentPrashna(city.name, city.lat, city.lon);
+                    var lagnaSign = (sky && sky.profile && sky.profile.asc_sign) ? sky.profile.asc_sign : "वृश्चिक";
+                    var lagnaBadge = document.getElementById('gocharLagnaBadge');
+                    if (lagnaBadge) lagnaBadge.textContent = "लग्न: " + lagnaSign;
 
-                var timeStr = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
-                var chartWrap = document.getElementById('panchangChartWrap');
-                var housesToRender = (sky.charts && sky.charts.d1 && sky.charts.d1.houses) ? sky.charts.d1.houses : (sky.houses || {});
-                chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(housesToRender, city.name, timeStr, 400, false);
+                    var timeStr = now.toLocaleTimeString('en-US', { hour12: false }) + ' IST';
+                    var chartWrap = document.getElementById('panchangChartWrap');
+                    if (chartWrap) {
+                        var housesToRender = (sky && sky.charts && sky.charts.d1 && sky.charts.d1.houses) ? sky.charts.d1.houses : ((sky && sky.houses) ? sky.houses : {});
+                        chartWrap.innerHTML = VyasChartRenderers.renderTatkalikPanchangChart(housesToRender, city.name, timeStr, 400, false);
+                    }
 
-                // Planet Mini Table
-                var tableBody = document.getElementById('panchangPlanetTableBody');
-                var pTable = sky.planet_table || [];
-                var tHtml = '';
-                var sunSign = pData ? pData.sunSign : 'वृश्चिक';
-                var moonSign = pData ? pData.moonSign : 'मीन';
+                    // Planet Mini Table
+                    var tableBody = document.getElementById('panchangPlanetTableBody');
+                    if (tableBody) {
+                        var pTable = (sky && sky.planet_table) ? sky.planet_table : [];
+                        var tHtml = '';
+                        var sunSign = pData ? pData.sunSign : 'वृश्चिक';
+                        var moonSign = pData ? pData.moonSign : 'मीन';
 
-                for (var pi = 0; pi < pTable.length; pi++) {
-                    var p = pTable[pi];
-                    if (p.p.indexOf('सूर्य') !== -1) sunSign = p.r;
-                    if (p.p.indexOf('चन्द्र') !== -1) moonSign = p.r;
-                    tHtml += '<tr>' +
-                        '<td><b style="color:var(--gold);">' + p.p + '</b></td>' +
-                        '<td>' + p.r + '</td>' +
-                        '<td style="font-family:var(--font-mono);">' + p.d + '</td>' +
-                        '<td>' + p.n + '</td>' +
-                        '<td>भाव ' + p.h + '</td>' +
-                        '</tr>';
+                        for (var pi = 0; pi < pTable.length; pi++) {
+                            var p = pTable[pi];
+                            if (p.p.indexOf('सूर्य') !== -1) sunSign = p.r;
+                            if (p.p.indexOf('चन्द्र') !== -1) moonSign = p.r;
+                            tHtml += '<tr>' +
+                                '<td><b style="color:var(--gold);">' + p.p + '</b></td>' +
+                                '<td>' + p.r + '</td>' +
+                                '<td style="font-family:var(--font-mono);">' + p.d + '</td>' +
+                                '<td>' + p.n + '</td>' +
+                                '<td>भाव ' + p.h + '</td>' +
+                                '</tr>';
+                        }
+                        tableBody.innerHTML = tHtml;
+                        var topSignsEl = document.getElementById('topSigns');
+                        if (topSignsEl) topSignsEl.textContent = sunSign + " • " + moonSign;
+                    }
                 }
-                tableBody.innerHTML = tHtml;
-                document.getElementById('topSigns').textContent = sunSign + " • " + moonSign;
+            } catch (err) {
+                console.error("Live Sky Gochar chart error:", err);
             }
         }
     </script>
