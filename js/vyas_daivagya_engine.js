@@ -181,10 +181,18 @@
             // Dasha
             var dasha = { chain: 'अज्ञात', maha: 'अज्ञात', antar: 'अज्ञात' };
             if (chart.active_dasha) {
-                dasha.chain = chart.active_dasha.chain || chart.active_dasha;
-                var parts = dasha.chain.split(/[➔→\->/]/);
-                dasha.maha = (parts[0] || '').trim();
-                dasha.antar = (parts[1] || '').trim();
+                if (typeof chart.active_dasha === 'string') {
+                    dasha.chain = chart.active_dasha;
+                } else if (typeof chart.active_dasha === 'object') {
+                    dasha.maha = chart.active_dasha.md || chart.active_dasha.maha || 'अज्ञात';
+                    dasha.antar = chart.active_dasha.ad || chart.active_dasha.antar || 'अज्ञात';
+                    dasha.chain = chart.active_dasha.chain || (dasha.maha + ' ➔ ' + dasha.antar);
+                }
+                if (typeof dasha.chain === 'string') {
+                    var parts = dasha.chain.split(/[➔→\->/]/);
+                    if (!dasha.maha || dasha.maha === 'अज्ञात') dasha.maha = (parts[0] || '').trim();
+                    if (!dasha.antar || dasha.antar === 'अज्ञात') dasha.antar = (parts[1] || '').trim();
+                }
             }
 
             return {
@@ -1803,6 +1811,38 @@
             var nadiReading = VyasNadiEngine.predict(chart.planet_table, route);
             var houseSAV = VyasAshtakavargaEngine.computeSAV(chart.planet_table, lagna);
             var avReading = VyasAshtakavargaEngine.predict(houseSAV, route);
+
+            // Compute or retrieve Acharya Vyas v10 Goodh Diagnostics
+            var goodhDiag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
+            var goodhPillarHtml = '';
+            if (goodhDiag) {
+                var gItems = [];
+                if (goodhDiag.jaimini_dynamics && goodhDiag.jaimini_dynamics.deep_observation_hi) {
+                    gItems.push("• <b>कारकांश व आरूढ़ लग्न गतिशीलता:</b> " + goodhDiag.jaimini_dynamics.deep_observation_hi);
+                }
+                if (goodhDiag.gandanta_placements && goodhDiag.gandanta_placements.length > 0) {
+                    goodhDiag.gandanta_placements.forEach(function(gh) {
+                        gItems.push("• <b>गण्डान्त सन्धि वेध:</b> " + gh.insight_hi);
+                    });
+                }
+                if (goodhDiag.dagdha_rashis_for_tithi && goodhDiag.dagdha_rashis_for_tithi.length > 0) {
+                    var dStr = goodhDiag.dagdha_rashis_for_tithi.join(' • ');
+                    var warnStr = (goodhDiag.planets_in_dagdha_rashis && goodhDiag.planets_in_dagdha_rashis.length > 0) ?
+                        (" (उपस्थित ग्रह: " + goodhDiag.planets_in_dagdha_rashis.map(function(dp){ return dp.planet; }).join(', ') + ")") : "";
+                    gItems.push("• <b>जन्म तिथि अनुसार दग्ध (शून्य) राशियां:</b> <b>" + dStr + "</b>" + warnStr);
+                }
+                if (goodhDiag.transit_tara_analysis && goodhDiag.transit_tara_analysis.length > 0) {
+                    var harshT = goodhDiag.transit_tara_analysis.filter(function(t) { return t.is_sensitive_tara; });
+                    if (harshT.length > 0) {
+                        gItems.push("• <b>नवतारा गोचर संवेदनशीलता:</b> " + harshT[0].guidance_hi);
+                    }
+                }
+                if (goodhDiag.khara_and_64th_navamsha) {
+                    var kh = goodhDiag.khara_and_64th_navamsha;
+                    gItems.push("• <b>२२वां द्रेष्काण (खरेश: " + kh.drekkana_22_lord + ") व ६४वां नवांश स्वामी (" + kh.navamsha_64_lord + "):</b> " + kh.protective_guidance_hi);
+                }
+                goodhPillarHtml = gItems.join('<br>');
+            }
             var kpReading = VyasKPEngine.predict(chart.planet_table, route);
 
             // Match classical sutras from in-memory 22,000+ VyasSutrasBank
@@ -1867,16 +1907,24 @@
                     avReading +
                     "</div>" +
 
-                    // Pillar 6: Classical Sutras Evidence
+                    // Pillar 6: Acharya Vyas v10 Goodh Diagnostics
+                    (goodhPillarHtml ? (
+                        "<div style='margin-bottom:12px; padding:10px 14px; background:rgba(255,255,255,0.02); border-left:3px solid #f43f5e; border-radius:4px;'>" +
+                        "<b style='color:#fb7185;'>🔍 ६. गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Acharya Vyas v10 Deep Diagnostics):</b><br>" +
+                        goodhPillarHtml +
+                        "</div>"
+                    ) : "") +
+
+                    // Pillar 7: Classical Sutras Evidence
                     (combinedSutras.length > 0 ? self._renderSutrasHtml(combinedSutras, 4) : "") +
 
-                    // Pillar 7: Dasha & Remedial Wisdom
+                    // Pillar 8: Dasha & Remedial Wisdom
                     "<div style='margin-top:12px; padding:10px 14px; background:rgba(212,175,55,0.04); border-left:3px solid var(--accent-gold); border-radius:4px;'>" +
-                    "<b style='color:var(--accent-gold);'>🌿 ७. दशा चक्र व अचूक सात्विक दैवज्ञ मार्गदर्शन:</b><br>" +
+                    "<b style='color:var(--accent-gold);'>🌿 ८. दशा चक्र व अचूक सात्विक दैवज्ञ मार्गदर्शन:</b><br>" +
                     "वर्तमान में सक्रिय <b>" + dashaChain + "</b> आपके कर्म व भाग्य चक्र को संचालित कर रही है।<br>" +
                     (p4StepHtml || "नित्य प्रातः भगवान सूर्य को अर्घ्य दें एवं संध्या समय 'ॐ नमः शिवाय' का मानसिक जप करें।") +
                     "</div><br>" +
-                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 5-आयामीय दैवज्ञ वेध (Parashara + Jaimini + Nadi + KP + Ashtakavarga + 22k Sutras)।</small>";
+                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र 6-आयामीय दैवज्ञ वेध (Parashara + Jaimini + Nadi + KP + Ashtakavarga + Goodh Diagnostics) (Parashara + Jaimini + Nadi + KP + Ashtakavarga + 22k Sutras)।</small>";
             }
 
             // ─────────────────────────────────────────────────────────────
