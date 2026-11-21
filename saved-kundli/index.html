@@ -406,6 +406,21 @@
                 var nak = p.nakshatra || '-';
                 var tag = p.tag || 'परिवार';
 
+                // Auto-compute Moon sign & Nakshatra if missing ('-')
+                if ((moon === '-' || nak === '-') && dob !== '-' && window.VyasAstronomicalEngine && typeof window.computeMathematicalKundli === 'function') {
+                    try {
+                        var cRes = window.computeMathematicalKundli(name, dob, (tob !== '-' ? tob : '12:00'), place);
+                        if (cRes && cRes.profile) {
+                            lagna = cRes.profile.asc_sign || lagna;
+                            moon = cRes.profile.moon_sign || moon;
+                            nak = cRes.profile.nakshatra || nak;
+                            p.lagna = lagna;
+                            p.moon_sign = moon;
+                            p.nakshatra = nak;
+                        }
+                    } catch(e) {}
+                }
+
                 html += '<div class="profile-card">' +
                     '<div>' +
                     '<div class="p-head"><div class="p-name">' + name + '</div><span class="p-tag">' + tag + '</span></div>' +
@@ -483,7 +498,7 @@
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(vaultProfiles, null, 2));
             var dl = document.createElement('a');
             dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "vyas_kundli_vault_backup.json");
+            dl.setAttribute("download", "vyas_kundli_vault_backup.vyas");
             dl.click();
         }
 
@@ -504,7 +519,7 @@
                         alert('✓ ' + imported.length + ' कुंडलियां सफलतापूर्वक वॉल्ट में आयात हो गई हैं।');
                     }
                 } catch (err) {
-                    alert('अमान्य JSON फ़ाइल।');
+                    alert('अमान्य बैकअप फ़ाइल। कृपया सही व्यास वॉल्ट बैकअप फ़ाइल चुनें।');
                 }
             };
             reader.readAsText(file);

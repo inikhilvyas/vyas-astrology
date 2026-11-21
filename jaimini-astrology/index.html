@@ -351,6 +351,17 @@
     <script src="/js/vyas_swipe_navigation.js"></script>
 
     <script>
+        function syncTopNavProfile() {
+            try {
+                var p = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ?
+                    window.VyasAstronomicalEngine.getActiveKundli() : null;
+                var pName = (p && p.profile && p.profile.name) ? p.profile.name : "अतिथि जातक";
+                var el = document.getElementById('activeProfileName');
+                if (el) el.textContent = pName;
+            } catch(e) {}
+        }
+        document.addEventListener('DOMContentLoaded', syncTopNavProfile);
+        
         var activeChart = null;
         var currentJaiminiMode = 'karakamsha'; // 'karakamsha' (D-1) or 'svamsha' (D-9)
 

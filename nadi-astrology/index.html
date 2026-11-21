@@ -369,7 +369,9 @@
 
             var nameEl = document.getElementById('unifiedProfileName');
             var metaEl = document.getElementById('unifiedProfileMeta');
+            var headerEl = document.getElementById('activeProfileName');
             if (nameEl) nameEl.textContent = "सक्रिय जातक: " + pName;
+            if (headerEl) headerEl.textContent = pName;
             if (metaEl) metaEl.textContent = "जन्म: " + dob + " (" + tob + ") • " + city + " • लग्न: " + lagna + " (जीव-कर्म नाड़ी वेध)";
 
             var activeList = chart.planet_table || [];
@@ -431,12 +433,12 @@
                 bankHtml += '</div>';
             }
 
-            // 4. In-depth Nadi Combinations Phalit
+            // 4. In-depth Nadi Combinations Phalit (Zero Duplication & Domain-Separated)
             var phalitWrap = document.getElementById('nadiPhalitWrap');
             if (phalitWrap && window.VyasNadiEngine) {
-                var nadiPred = VyasNadiEngine.predict(activeList, 'general');
-                var careerNadi = VyasNadiEngine.predict(activeList, 'career');
-                var relNadi = VyasNadiEngine.predict(activeList, 'marriage');
+                var jeevaKarmaPred = VyasNadiEngine.predict(activeList, 'general');
+                var careerPred = VyasNadiEngine.predict(activeList, 'career');
+                var marriagePred = VyasNadiEngine.predict(activeList, 'marriage');
 
                 phalitWrap.innerHTML = '<div class="phalit-item" style="border-left:3px solid #ea580c;">' +
                     '<b>✦ पूर्व दिशा (धर्म त्रिकोण • मेष-सिंह-धनु):</b><br>' +
@@ -455,8 +457,16 @@
                     'जल तत्त्व में ' + (northP.length ? northP.join(', ') : 'शांत स्थिति') + ' स्थित होने से जातक का अंतर्ज्ञान, आध्यात्मिक साधना एवं आंतरिक शांति सुनिश्चित होती है।' +
                     '</div>' +
                     '<div class="phalit-item" style="border-left:3px solid #fbbf24;">' +
-                    '<b>✦ जीव-कर्म एवं महालक्ष्मी नाड़ी योग निर्णय:</b><br>' +
-                    nadiPred + '<br>' + careerNadi + '<br>' + relNadi +
+                    '<b>✦ १. जीव-कर्म मूल संरेखण (Life Purpose & Soul Direction):</b><br>' +
+                    jeevaKarmaPred +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #38bdf8;">' +
+                    '<b>✦ २. आजीविका, अधिकार व कर्म सिद्धि (Career & Karma Trines):</b><br>' +
+                    careerPred +
+                    '</div>' +
+                    '<div class="phalit-item" style="border-left:3px solid #f43f5e;">' +
+                    '<b>✦ ३. दांपत्य, कलत्र व समृद्धि वेध (Marriage & Fortune):</b><br>' +
+                    marriagePred +
                     '</div>' +
                     bankHtml +
                     '<div class="sutra-quote">' +

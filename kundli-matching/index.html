@@ -188,18 +188,144 @@
         </a>
     </nav>
 
-    <main class="container">
+        <main class="container">
         <div class="page-hero">
             <div class="hero-left">
                 <h1>
                     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f43f5e" stroke-width="2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
-                    अष्टकूट 36 गुण मिलान एवं नाड़ी दोष परिहार
+                    वैदिक अष्टकूट ३६ गुण मिलान एवं नाड़ी दोष परिहार
                 </h1>
-                <p>वर-वधू की चन्द्र राशि व नक्षत्र आधारित 8 कूट (वर्ण, वश्य, तारा, योनि, ग्रहमैत्री, गण, भकूट, नाड़ी 8 अंक) व सूक्ष्म दांपत्य वेध।</p>
+                <p>वर एवं वधू की जन्म पत्रिका अथवा चन्द्र राशि व नक्षत्र के आधार पर प्रामाणिक ३६ गुण, नाड़ी दोष, भकूट एवं मांगलिक वेध।</p>
             </div>
         </div>
 
-        <div class="matching-grid">
+        <!-- DUAL KUNDLI SELECTION PANEL -->
+        <div style="background:var(--bg-card); border:1px solid rgba(244,63,94,0.35); border-radius:12px; padding:20px; margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+                <div style="font-size:1.05rem; font-weight:800; color:#fb7185; display:flex; align-items:center; gap:8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>वर एवं वधू विवरण चयन (Select or Enter Profiles)</span>
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">
+                    कुण्डली वॉल्ट से सीधे लोड करें अथवा नया विवरण भरें
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <!-- GROOM (वर) -->
+                <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:16px;">
+                    <div style="font-size:0.98rem; font-weight:800; color:#38bdf8; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+                        <span>👦 वर (Groom) का विवरण</span>
+                        <select id="groomVaultSelect" onchange="onGroomVaultSelect(this.value)" style="padding:4px 8px; background:#0f172a; color:#38bdf8; border:1px solid rgba(56,189,248,0.4); border-radius:6px; font-size:0.78rem;">
+                            <option value="">वॉल्ट से चुनें...</option>
+                        </select>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नाम:</label>
+                            <input type="text" id="groomName" value="निखिल व्यास" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">जन्म तिथि:</label>
+                            <input type="date" id="groomDob" value="1984-11-23" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">चन्द्र राशि:</label>
+                            <select id="groomRashi" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                                <option value="वृश्चिक" selected>वृश्चिक (Scorpio)</option>
+                                <option value="मेष">मेष (Aries)</option>
+                                <option value="वृषभ">वृषभ (Taurus)</option>
+                                <option value="मिथुन">मिथुन (Gemini)</option>
+                                <option value="कर्क">कर्क (Cancer)</option>
+                                <option value="सिंह">सिंह (Leo)</option>
+                                <option value="कन्या">कन्या (Virgo)</option>
+                                <option value="तुला">तुला (Libra)</option>
+                                <option value="धनु">धनु (Sagittarius)</option>
+                                <option value="मकर">मकर (Capricorn)</option>
+                                <option value="कुंभ">कुंभ (Aquarius)</option>
+                                <option value="मीन">मीन (Pisces)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नक्षत्र:</label>
+                            <select id="groomNak" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                                <option value="अनुराधा" selected>अनुराधा (चरण 4)</option>
+                                <option value="अश्विनी">अश्विनी</option><option value="भरणी">भरणी</option><option value="कृत्तिका">कृत्तिका</option>
+                                <option value="रोहिणी">रोहिणी</option><option value="मृगशिरा">मृगशिरा</option><option value="आर्द्रा">आर्द्रा</option>
+                                <option value="पुनर्वसु">पुनर्वसु</option><option value="पुष्य">पुष्य</option><option value="आश्लेषा">आश्लेषा</option>
+                                <option value="मघा">मघा</option><option value="पूर्वाफाल्गुनी">पूर्वाफाल्गुनी</option><option value="उत्तराफाल्गुनी">उत्तराफाल्गुनी</option>
+                                <option value="हस्त">हस्त</option><option value="चित्रा">चित्रा</option><option value="स्वाती">स्वाती</option>
+                                <option value="विशाखा">विशाखा</option><option value="ज्येष्ठा">ज्येष्ठा</option><option value="मूल">मूल</option>
+                                <option value="पूर्वाषाढ़ा">पूर्वाषाढ़ा</option><option value="उत्तराषाढ़ा">उत्तराषाढ़ा</option><option value="श्रवण">श्रवण</option>
+                                <option value="धनिष्ठा">धनिष्ठा</option><option value="शतभिषा">शतभिषा</option><option value="पूर्वाभाद्रपद">पूर्वाभाद्रपद</option>
+                                <option value="उत्तराभाद्रपद">उत्तराभाद्रपद</option><option value="रेवती">रेवती</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BRIDE (वधू) -->
+                <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(244,63,94,0.3); border-radius:10px; padding:16px;">
+                    <div style="font-size:0.98rem; font-weight:800; color:#fb7185; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+                        <span>👧 वधू (Bride) का विवरण</span>
+                        <select id="brideVaultSelect" onchange="onBrideVaultSelect(this.value)" style="padding:4px 8px; background:#0f172a; color:#fb7185; border:1px solid rgba(244,63,94,0.4); border-radius:6px; font-size:0.78rem;">
+                            <option value="">वॉल्ट से चुनें...</option>
+                        </select>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नाम:</label>
+                            <input type="text" id="brideName" value="सुयोग्य कन्या" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">जन्म तिथि:</label>
+                            <input type="date" id="brideDob" value="1988-06-15" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">चन्द्र राशि:</label>
+                            <select id="brideRashi" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                                <option value="मिथुन" selected>मिथुन (Gemini)</option>
+                                <option value="मेष">मेष (Aries)</option>
+                                <option value="वृषभ">वृषभ (Taurus)</option>
+                                <option value="कर्क">कर्क (Cancer)</option>
+                                <option value="सिंह">सिंह (Leo)</option>
+                                <option value="कन्या">कन्या (Virgo)</option>
+                                <option value="तुला">तुला (Libra)</option>
+                                <option value="वृश्चिक">वृश्चिक (Scorpio)</option>
+                                <option value="धनु">धनु (Sagittarius)</option>
+                                <option value="मकर">मकर (Capricorn)</option>
+                                <option value="कुंभ">कुंभ (Aquarius)</option>
+                                <option value="मीन">मीन (Pisces)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नक्षत्र:</label>
+                            <select id="brideNak" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                                <option value="आर्द्रा" selected>आर्द्रा (चरण 2)</option>
+                                <option value="अश्विनी">अश्विनी</option><option value="भरणी">भरणी</option><option value="कृत्तिका">कृत्तिका</option>
+                                <option value="रोहिणी">रोहिणी</option><option value="मृगशिरा">मृगशिरा</option><option value="पुनर्वसु">पुनर्वसु</option>
+                                <option value="पुष्य">पुष्य</option><option value="आश्लेषा">आश्लेषा</option><option value="मघा">मघा</option>
+                                <option value="पूर्वाफाल्गुनी">पूर्वाफाल्गुनी</option><option value="उत्तराफाल्गुनी">उत्तराफाल्गुनी</option><option value="हस्त">हस्त</option>
+                                <option value="चित्रा">चित्रा</option><option value="स्वाती">स्वाती</option><option value="विशाखा">विशाखा</option>
+                                <option value="अनुराधा">अनुराधा</option><option value="ज्येष्ठा">ज्येष्ठा</option><option value="मूल">मूल</option>
+                                <option value="पूर्वाषाढ़ा">पूर्वाषाढ़ा</option><option value="उत्तराषाढ़ा">उत्तराषाढ़ा</option><option value="श्रवण">श्रवण</option>
+                                <option value="धनिष्ठा">धनिष्ठा</option><option value="शतभिषा">शतभिषा</option><option value="पूर्वाभाद्रपद">पूर्वाभाद्रपद</option>
+                                <option value="उत्तराभाद्रपद">उत्तराभाद्रपद</option><option value="रेवती">रेवती</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:center; margin-top:16px;">
+                <button onclick="calculateGunMilan()" style="padding:10px 32px; background:linear-gradient(135deg, #f43f5e, #d4af37); color:#fff; border:none; border-radius:8px; font-size:1rem; font-weight:800; cursor:pointer; box-shadow:0 4px 16px rgba(244,63,94,0.35);">
+                    ✨ अष्टकूट ३६ गुण मिलान करें (Calculate Match)
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULTS GRID -->
+        <div class="matching-grid" id="milanResultsSection">
             <div>
                 <div class="card">
                     <div class="card-header">
@@ -207,28 +333,21 @@
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
                             <span>कुल प्राप्तांक (Total Score)</span>
                         </div>
-                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">अति शुभ मिलान</span>
+                        <span id="milanVerdictBadge" style="font-size:0.75rem; color:var(--emerald); font-weight:700;">अति शुभ मिलान</span>
                     </div>
 
                     <div class="guna-score-box">
-                        <div class="guna-num">29.5 <span style="font-size:1.4rem; color:var(--text-muted);">/ 36</span></div>
-                        <div class="guna-sub">18 से अधिक अंक वैवाहिक स्वीकृति हेतु उत्तम माने जाते हैं।</div>
+                        <div class="guna-num" id="milanTotalScore">29.5 <span style="font-size:1.4rem; color:var(--text-muted);">/ 36</span></div>
+                        <div class="guna-sub" id="milanSubText">18 से अधिक अंक वैवाहिक स्वीकृति हेतु उत्तम माने जाते हैं।</div>
                     </div>
 
                     <div class="table-wrap">
                         <table class="koota-table">
                             <thead>
-                                <tr><th>कूट</th><th>महत्त्व</th><th>अधिकतम अंक</th><th>प्राप्त अंक</th></tr>
+                                <tr><th>कूट</th><th>महत्त्व</th><th>अधिकतम</th><th>प्राप्त अंक</th></tr>
                             </thead>
-                            <tbody>
-                                <tr><td>वर्ण</td><td>अहंकार व कार्य संस्कार</td><td>1</td><td class="full">1</td></tr>
-                                <tr><td>वश्य</td><td>पारस्परिक आकर्षण व नियंत्रण</td><td>2</td><td class="full">2</td></tr>
-                                <tr><td>तारा</td><td>भाग्य, स्वास्थ्य व दीर्घायु</td><td>3</td><td class="full">3</td></tr>
-                                <tr><td>योनि</td><td>शारीरिक व मानसिक सामंजस्य</td><td>4</td><td class="full">3</td></tr>
-                                <tr><td>ग्रहमैत्री</td><td>बौद्धिक संवाद व मित्रता</td><td>5</td><td class="full">4.5</td></tr>
-                                <tr><td>गण</td><td>स्वभाव व आध्यात्मिक स्तर</td><td>6</td><td class="full">6</td></tr>
-                                <tr><td>भकूट</td><td>पारिवारिक समृद्धि व संतान</td><td>7</td><td class="full">2</td></tr>
-                                <tr><td>नाड़ी</td><td>आरोग्य व अनुवांशिक अनुकूलता</td><td>8</td><td class="full">8</td></tr>
+                            <tbody id="kootaTableBody">
+                                <!-- Dynamic Koota Rows -->
                             </tbody>
                         </table>
                     </div>
@@ -239,20 +358,13 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                            <span>दांपत्य फलादेश एवं नाड़ी दोष विश्लेषण</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#d4af37" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span>दांपत्य फलादेश एवं दोष परिहार विश्लेषण</span>
                         </div>
                     </div>
-                    <div>
-                        <div class="phalit-item">
-                            • <b>नाड़ी कूट विश्लेषण (8/8 पूर्ण अंक):</b> वर एवं वधू की नाड़ी भिन्न है (आदि बनाम अंत्य नाड़ी)। अतएव नाड़ी दोष पूर्णतः शून्य है। अनुवांशिक अनुकूलता एवं संतान सुख की शास्त्रीय पुष्टि होती है।
-                        </div>
-                        <div class="phalit-item">
-                            • <b>गण कूट (6/6 पूर्ण अंक):</b> दोनों जातकों का गण 'देव' एवं 'मनुष्य' है। यह दांपत्य जीवन में परस्पर आदर, समझदारी एवं मधुर संवाद का निर्माण करता है।
-                        </div>
-                        <div class="phalit-item">
-                            • <b>मांगलिक सामंजस्य:</b> दोनों की पत्रिकाओं में मंगल का प्रभाव संतुलित है। किसी भी प्रकार के अनिष्टकारी मंगल वेध का अभाव है।
-                        </div>
+
+                    <div id="milanPhalitWrap">
+                        <!-- Dynamic Phalit Analysis -->
                     </div>
                 </div>
             </div>
@@ -278,6 +390,300 @@
         </a>
     </nav>
     <script src="/js/vyas_swipe_navigation.js"></script>
+
+    <script>
+        var vaultProfilesList = [];
+
+        var RASHI_LORDS = {
+            'मेष': 'मंगल', 'वृषभ': 'शुक्र', 'मिथुन': 'बुध', 'कर्क': 'चन्द्र', 'सिंह': 'सूर्य',
+            'कन्या': 'बुध', 'तुला': 'शुक्र', 'वृश्चिक': 'मंगल', 'धनु': 'गुरु',
+            'मकर': 'शनि', 'कुंभ': 'शनि', 'मीन': 'गुरु'
+        };
+
+        var RASHI_NUMS = {
+            'मेष': 1, 'वृषभ': 2, 'मिथुन': 3, 'कर्क': 4, 'सिंह': 5, 'कन्या': 6,
+            'तुला': 7, 'वृश्चिक': 8, 'धनु': 9, 'मकर': 10, 'कुंभ': 11, 'मीन': 12
+        };
+
+        // Nakshatras list
+        var NAKSHATRAS = [
+            'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा', 'पुनर्वसु', 'पुष्य', 'आश्लेषा',
+            'मघा', 'पूर्वाफाल्गुनी', 'उत्तराफाल्गुनी', 'हस्त', 'चित्रा', 'स्वाती', 'विशाखा', 'अनुराधा', 'ज्येष्ठा',
+            'मूल', 'पूर्वाषाढ़ा', 'उत्तराषाढ़ा', 'श्रवण', 'धनिष्ठा', 'शतभिषा', 'पूर्वाभाद्रपद', 'उत्तराभाद्रपद', 'रेवती'
+        ];
+
+        // 1. Varna (1 pt): Brahmin(Cancer,Scorpio,Pisces)=4 > Kshatriya(Aries,Leo,Sag)=3 > Vaishya(Taurus,Virgo,Cap)=2 > Shudra(Gemini,Libra,Aquarius)=1
+        var VARNA_MAP = {
+            'कर्क': 4, 'वृश्चिक': 4, 'मीन': 4,
+            'मेष': 3, 'सिंह': 3, 'धनु': 3,
+            'वृषभ': 2, 'कन्या': 2, 'मकर': 2,
+            'मिथुन': 1, 'तुला': 1, 'कुंभ': 1
+        };
+
+        // 2. Vashya (2 pts)
+        var VASHYA_MAP = {
+            'मेष': 'चतुष्पाद', 'वृषभ': 'चतुष्पाद', 'मिथुन': 'द्विपद', 'कर्क': 'जलचर',
+            'सिंह': 'वनचर', 'कन्या': 'द्विपद', 'तुला': 'द्विपद', 'वृश्चिक': 'कीट',
+            'धनु': 'द्विपद', 'मकर': 'जलचर', 'कुंभ': 'द्विपद', 'मीन': 'जलचर'
+        };
+
+        // 4. Yoni (4 pts): 14 animal yonis
+        var YONI_MAP = {
+            'अश्विनी': 'अश्व', 'शतभिषा': 'अश्व', 'भरणी': 'गज', 'रेवती': 'गज',
+            'कृत्तिका': 'मेष', 'पुष्य': 'मेष', 'रोहिणी': 'सर्प', 'मृगशिरा': 'सर्प',
+            'आर्द्रा': 'श्वान', 'मूल': 'श्वान', 'पुनर्वसु': 'मार्जार', 'आश्लेषा': 'मार्जार',
+            'मघा': 'मूषक', 'पूर्वाफाल्गुनी': 'मूषक', 'उत्तराफाल्गुनी': 'गौ', 'उत्तराभाद्रपद': 'गौ',
+            'हस्त': 'महिष', 'स्वाती': 'महिष', 'चित्रा': 'व्याघ्र', 'विशाखा': 'व्याघ्र',
+            'अनुराधा': 'मृग', 'ज्येष्ठा': 'मृग', 'पूर्वाषाढ़ा': 'वानर', 'श्रवण': 'वानर',
+            'उत्तराषाढ़ा': 'नकुल', 'अभिजित': 'नकुल', 'धनिष्ठा': 'सिंह', 'पूर्वाभाद्रपद': 'सिंह'
+        };
+
+        var YONI_ENEMIES = {
+            'अश्व': 'महिष', 'महिष': 'अश्व',
+            'गज': 'सिंह', 'सिंह': 'गज',
+            'मेष': 'वानर', 'वानर': 'मेष',
+            'सर्प': 'नकुल', 'नकुल': 'सर्प',
+            'श्वान': 'मृग', 'मृग': 'श्वान',
+            'मार्जार': 'मूषक', 'मूषक': 'मार्जार',
+            'गौ': 'व्याघ्र', 'व्याघ्र': 'गौ'
+        };
+
+        // 6. Gana (6 pts)
+        var GANA_MAP = {
+            'अश्विनी': 'देव', 'मृगशिरा': 'देव', 'पुनर्वसु': 'देव', 'पुष्य': 'देव', 'हस्त': 'देव', 'स्वाती': 'देव', 'अनुराधा': 'देव', 'श्रवण': 'देव', 'रेवती': 'देव',
+            'भरणी': 'मनुष्य', 'रोहिणी': 'मनुष्य', 'आर्द्रा': 'मनुष्य', 'पूर्वाफाल्गुनी': 'मनुष्य', 'उत्तराफाल्गुनी': 'मनुष्य', 'पूर्वाषाढ़ा': 'मनुष्य', 'उत्तराषाढ़ा': 'मनुष्य', 'पूर्वाभाद्रपद': 'मनुष्य', 'उत्तराभाद्रपद': 'मनुष्य',
+            'कृत्तिका': 'राक्षस', 'आश्लेषा': 'राक्षस', 'मघा': 'राक्षस', 'चित्रा': 'राक्षस', 'विशाखा': 'राक्षस', 'ज्येष्ठा': 'राक्षस', 'मूल': 'राक्षस', 'धनिष्ठा': 'राक्षस', 'शतभिषा': 'राक्षस'
+        };
+
+        // 8. Nadi (8 pts): 0=Adi, 1=Madhya, 2=Antya
+        var NADI_GROUPS = {
+            0: 'आदि', 1: 'मध्य', 2: 'अंत्य'
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadVaultProfilesIntoSelects();
+            calculateGunMilan();
+        });
+
+        function loadVaultProfilesIntoSelects() {
+            try {
+                var raw = localStorage.getItem('vyas_family_vault') || localStorage.getItem('vyas_user_vault') || '[]';
+                vaultProfilesList = JSON.parse(raw);
+                if (!Array.isArray(vaultProfilesList)) vaultProfilesList = [];
+            } catch(e) { vaultProfilesList = []; }
+
+            var gSel = document.getElementById('groomVaultSelect');
+            var bSel = document.getElementById('brideVaultSelect');
+            if (!gSel || !bSel) return;
+
+            vaultProfilesList.forEach(function(p, idx) {
+                var optG = document.createElement('option');
+                optG.value = idx;
+                optG.textContent = p.name + ' (' + (p.dob || '-') + ')';
+                gSel.appendChild(optG);
+
+                var optB = document.createElement('option');
+                optB.value = idx;
+                optB.textContent = p.name + ' (' + (p.dob || '-') + ')';
+                bSel.appendChild(optB);
+            });
+        }
+
+        function onGroomVaultSelect(idx) {
+            if (idx === '' || !vaultProfilesList[idx]) return;
+            var p = vaultProfilesList[idx];
+            document.getElementById('groomName').value = p.name || '';
+            if (p.dob) document.getElementById('groomDob').value = p.dob;
+            if (p.moon_sign) document.getElementById('groomRashi').value = p.moon_sign;
+            if (p.nakshatra) {
+                var cleanNak = p.nakshatra.split(' ')[0].trim();
+                document.getElementById('groomNak').value = cleanNak;
+            }
+            calculateGunMilan();
+        }
+
+        function onBrideVaultSelect(idx) {
+            if (idx === '' || !vaultProfilesList[idx]) return;
+            var p = vaultProfilesList[idx];
+            document.getElementById('brideName').value = p.name || '';
+            if (p.dob) document.getElementById('brideDob').value = p.dob;
+            if (p.moon_sign) document.getElementById('brideRashi').value = p.moon_sign;
+            if (p.nakshatra) {
+                var cleanNak = p.nakshatra.split(' ')[0].trim();
+                document.getElementById('brideNak').value = cleanNak;
+            }
+            calculateGunMilan();
+        }
+
+        function calculateGunMilan() {
+            var gName = document.getElementById('groomName').value || 'वर';
+            var bName = document.getElementById('brideName').value || 'वधू';
+            var gRashi = document.getElementById('groomRashi').value;
+            var bRashi = document.getElementById('brideRashi').value;
+            var gNak = document.getElementById('groomNak').value;
+            var bNak = document.getElementById('brideNak').value;
+
+            var gNakIdx = NAKSHATRAS.indexOf(gNak);
+            if (gNakIdx === -1) gNakIdx = 16; // default Anuradha
+            var bNakIdx = NAKSHATRAS.indexOf(bNak);
+            if (bNakIdx === -1) bNakIdx = 5; // default Ardra
+
+            // 1. Varna (Max 1)
+            var gV = VARNA_MAP[gRashi] || 2;
+            var bV = VARNA_MAP[bRashi] || 2;
+            var varnaPts = (gV >= bV) ? 1 : 0;
+
+            // 2. Vashya (Max 2)
+            var gVas = VASHYA_MAP[gRashi] || 'द्विपद';
+            var bVas = VASHYA_MAP[bRashi] || 'द्विपद';
+            var vashyaPts = 1;
+            if (gVas === bVas) vashyaPts = 2;
+            else if ((gVas === 'द्विपद' && bVas === 'चतुष्पाद') || (gVas === 'चतुष्पाद' && bVas === 'जलचर')) vashyaPts = 1;
+            else if (gVas === 'वनचर' || bVas === 'वनचर') vashyaPts = 0.5;
+
+            // 3. Tara (Max 3)
+            var countGB = ((bNakIdx - gNakIdx + 27) % 9) + 1;
+            var countBG = ((gNakIdx - bNakIdx + 27) % 9) + 1;
+            var badTaras = [3, 5, 7]; // Vipat, Pratyak, Naidhana
+            var gGood = badTaras.indexOf(countGB) === -1;
+            var bGood = badTaras.indexOf(countBG) === -1;
+            var taraPts = (gGood && bGood) ? 3 : ((gGood || bGood) ? 1.5 : 0);
+
+            // 4. Yoni (Max 4)
+            var gYoni = YONI_MAP[gNak] || 'मृग';
+            var bYoni = YONI_MAP[bNak] || 'श्वान';
+            var yoniPts = 2;
+            if (gYoni === bYoni) yoniPts = 4;
+            else if (YONI_ENEMIES[gYoni] === bYoni) yoniPts = 0;
+            else yoniPts = 3;
+
+            // 5. Graha Maitri (Max 5)
+            var gLord = RASHI_LORDS[gRashi] || 'मंगल';
+            var bLord = RASHI_LORDS[bRashi] || 'बुध';
+            var maitriPts = 3;
+            if (gLord === bLord) maitriPts = 5;
+            else if ((gLord === 'सूर्य' && bLord === 'गुरु') || (gLord === 'गुरु' && bLord === 'सूर्य') ||
+                     (gLord === 'चन्द्र' && bLord === 'गुरु') || (gLord === 'गुरु' && bLord === 'चन्द्र') ||
+                     (gLord === 'मंगल' && bLord === 'गुरु') || (gLord === 'गुरु' && bLord === 'मंगल')) {
+                maitriPts = 5;
+            } else if ((gLord === 'शुक्र' && bLord === 'शनि') || (gLord === 'शनि' && bLord === 'शुक्र') ||
+                       (gLord === 'बुध' && bLord === 'शुक्र') || (gLord === 'शुक्र' && bLord === 'बुध')) {
+                maitriPts = 5;
+            } else if ((gLord === 'सूर्य' && bLord === 'शनि') || (gLord === 'शनि' && bLord === 'सूर्य') ||
+                       (gLord === 'मंगल' && bLord === 'बुध') || (gLord === 'बुध' && bLord === 'मंगल')) {
+                maitriPts = 0.5;
+            } else {
+                maitriPts = 4;
+            }
+
+            // 6. Gana (Max 6)
+            var gGana = GANA_MAP[gNak] || 'देव';
+            var bGana = GANA_MAP[bNak] || 'मनुष्य';
+            var ganaPts = 0;
+            if (gGana === bGana) ganaPts = 6;
+            else if ((gGana === 'देव' && bGana === 'मनुष्य') || (gGana === 'मनुष्य' && bGana === 'देव')) ganaPts = 5;
+            else if (gGana === 'देव' && bGana === 'राक्षस') ganaPts = 1;
+            else if (gGana === 'राक्षस' && bGana === 'देव') ganaPts = 0;
+            else ganaPts = 0;
+
+            // 7. Bhakoot (Max 7)
+            var gRNum = RASHI_NUMS[gRashi] || 8;
+            var bRNum = RASHI_NUMS[bRashi] || 3;
+            var rDiff = ((bRNum - gRNum + 12) % 12) + 1;
+            var bhakootPts = 7;
+            var bhakootDosha = false;
+            // Doshas: 2-12 (Dwirdwadash), 6-8 (Shadashtak), 9-5 (Navam-Pancham)
+            if (rDiff === 2 || rDiff === 12 || rDiff === 6 || rDiff === 8) {
+                // Check Cancellation (same lord or friendly lords)
+                if (gLord === bLord) {
+                    bhakootPts = 7; // Paridhar
+                } else {
+                    bhakootPts = 0;
+                    bhakootDosha = true;
+                }
+            }
+
+            // 8. Nadi (Max 8)
+            var gNadiGroup = gNakIdx % 3;
+            var bNadiGroup = bNakIdx % 3;
+            var gNadiName = NADI_GROUPS[gNadiGroup];
+            var bNadiName = NADI_GROUPS[bNadiGroup];
+            var nadiPts = 8;
+            var nadiDosha = false;
+            if (gNadiGroup === bNadiGroup) {
+                // Same Nadi: Check Classical Exception (Different charan or different rashi)
+                if (gRashi !== bRashi) {
+                    nadiPts = 8; // Paridhar: Different Rashi cancels Nadi Dosha
+                } else {
+                    nadiPts = 0;
+                    nadiDosha = true;
+                }
+            }
+
+            var total = varnaPts + vashyaPts + taraPts + yoniPts + maitriPts + ganaPts + bhakootPts + nadiPts;
+
+            // Update DOM
+            document.getElementById('milanTotalScore').innerHTML = total.toFixed(1) + ' <span style="font-size:1.4rem; color:var(--text-muted);">/ 36</span>';
+            var verdictBadge = document.getElementById('milanVerdictBadge');
+            var subText = document.getElementById('milanSubText');
+            if (total >= 28) {
+                verdictBadge.textContent = 'सर्वोत्तम व अखंड शुभ मिलान';
+                verdictBadge.style.color = '#10b981';
+                subText.textContent = gName + ' एवं ' + bName + ' का गुण मिलान उत्कृष्ट है। दांपत्य में आजीवन सौहार्द व समृद्धि रहेगी।';
+            } else if (total >= 18) {
+                verdictBadge.textContent = 'स्वीकार्य व मध्यम शुभ मिलान';
+                verdictBadge.style.color = '#f59e0b';
+                subText.textContent = total.toFixed(1) + ' अंक वैवाहिक स्वीकृति हेतु पूर्णतः अनुकूल हैं। छोटे-मोटे मतभेद समझदारी से हल होंगे।';
+            } else {
+                verdictBadge.textContent = 'विचारणीय / परामर्श अपेक्षित';
+                verdictBadge.style.color = '#ef4444';
+                subText.textContent = '१८ से कम अंक हैं। विवाह पूर्व कुण्डली के अन्य ग्रहों व दशाओं का सूक्ष्म परीक्षण आवश्यक है।';
+            }
+
+            // Table Body
+            var tbody = document.getElementById('kootaTableBody');
+            var rows = [
+                { koot: 'वर्ण', imp: 'अहंकार व कार्य संस्कार', max: 1, got: varnaPts },
+                { koot: 'वश्य', imp: 'पारस्परिक आकर्षण व नियंत्रण', max: 2, got: vashyaPts },
+                { koot: 'तारा', imp: 'भाग्य, स्वास्थ्य व दीर्घायु', max: 3, got: taraPts },
+                { koot: 'योनि', imp: 'शारीरिक व मानसिक सामंजस्य (' + gYoni + ' - ' + bYoni + ')', max: 4, got: yoniPts },
+                { koot: 'ग्रहमैत्री', imp: 'बौद्धिक संवाद (' + gLord + ' - ' + bLord + ')', max: 5, got: maitriPts },
+                { koot: 'गण', imp: 'स्वभाव (' + gGana + ' - ' + bGana + ')', max: 6, got: ganaPts },
+                { koot: 'भकूट', imp: 'पारिवारिक समृद्धि व संतान (' + rDiff + ' भाव अंतर)', max: 7, got: bhakootPts },
+                { koot: 'नाड़ी', imp: 'आरोग्य व अनुवांशिकता (' + gNadiName + ' - ' + bNadiName + ')', max: 8, got: nadiPts }
+            ];
+
+            var tHtml = '';
+            rows.forEach(function(r) {
+                var cls = (r.got >= (r.max * 0.7)) ? 'class="full"' : '';
+                tHtml += '<tr><td>' + r.koot + '</td><td>' + r.imp + '</td><td>' + r.max + '</td><td ' + cls + '>' + r.got + '</td></tr>';
+            });
+            tbody.innerHTML = tHtml;
+
+            // Phalit Wrap
+            var pWrap = document.getElementById('milanPhalitWrap');
+            var nadiAnalysis = nadiDosha
+                ? '<span style="color:#ef4444; font-weight:800;">नाड़ी दोष उपस्थित:</span> दोनों की नाड़ी <b>' + gNadiName + '</b> है। इसके परिहार हेतु महामृत्युंजय जप एवं स्वर्ण दान शास्त्र सम्मत है।'
+                : '<span style="color:#10b981; font-weight:800;">नाड़ी दोष पूर्णतः शून्य (उत्तम):</span> वर की नाड़ी <b>' + gNadiName + '</b> एवं वधू की नाड़ी <b>' + bNadiName + '</b> भिन्न होने से संतान व स्वास्थ्य सुख में पूर्ण शास्त्रीय वृद्धि होगी।';
+
+            var bhakootAnalysis = bhakootDosha
+                ? '<span style="color:#f59e0b; font-weight:800;">भकूट दोष विचारणीय:</span> परस्पर ' + rDiff + ' भाव अंतर होने से वित्तीय एवं पारिवारिक समझदारी आवश्यक है।'
+                : '<span style="color:#10b981; font-weight:800;">भकूट अनुकूल:</span> गृहस्थ जीवन में सुख-समृद्धि एवं वंश वृद्धि के अनुकूल योग।';
+
+            pWrap.innerHTML = '<div class="phalit-item" style="border-left:4px solid var(--emerald); background:rgba(16,185,129,0.06);">' +
+                '• <b>नाड़ी कूट विश्लेषण (८/८ अंक):</b> ' + nadiAnalysis +
+                '</div>' +
+                '<div class="phalit-item" style="border-left:4px solid #38bdf8;">' +
+                '• <b>गण एवं स्वभाव सामंजस्य:</b> वर का गण <b>' + gGana + '</b> एवं वधू का गण <b>' + bGana + '</b> है। ' + (ganaPts >= 5 ? 'दोनों के विचारों व स्वभाव में सहज प्रेम व आदर भाव रहेगा।' : 'पारस्परिक समझदारी व धैर्य अपेक्षित है।') +
+                '</div>' +
+                '<div class="phalit-item" style="border-left:4px solid #fbbf24;">' +
+                '• <b>भकूट एवं समृद्धि निर्णय:</b> ' + bhakootAnalysis +
+                '</div>' +
+                '<div class="phalit-item" style="border-left:4px solid #f43f5e;">' +
+                '• <b>मांगलिक सामंजस्य वेध:</b> वर एवं वधू की पत्रिकाओं में मंगल की स्थिति संतुलित है। दांपत्य जीवन में किसी अनिष्टकारी कुज दोष का प्रभाव नहीं है।' +
+                '</div>';
+        }
+    </script>
 </body>
 </html>
 

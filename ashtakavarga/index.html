@@ -408,6 +408,17 @@
     <script src="/js/vyas_swipe_navigation.js"></script>
 
     <script>
+        function syncTopNavProfile() {
+            try {
+                var p = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ?
+                    window.VyasAstronomicalEngine.getActiveKundli() : null;
+                var pName = (p && p.profile && p.profile.name) ? p.profile.name : "अतिथि जातक";
+                var el = document.getElementById('activeProfileName');
+                if (el) el.textContent = pName;
+            } catch(e) {}
+        }
+        document.addEventListener('DOMContentLoaded', syncTopNavProfile);
+        
         var activeChart = null;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -507,53 +518,106 @@
             if (elExp) elExp.textContent = h12;
             if (elKarma) elKarma.textContent = h10;
 
-            // 3. Render Deep Classical Phalit
+            // 3. Render Deep Classical & Exhaustive 12-House Ashtakavarga Phalit
             var phalitWrap = document.getElementById('ashtakPhalitWrap');
             if (phalitWrap) {
-                var wealthVerdict = (h11 > h12) 
-                    ? '<span style="color:var(--emerald); font-weight:700;">अखंड धन संचय योग</span> (आय भाव ' + h11 + ' > व्यय भाव ' + h12 + ')'
-                    : '<span style="color:var(--gold); font-weight:700;">व्यय संयम अपेक्षित</span> (आय ' + h11 + ' एवं व्यय ' + h12 + ')';
-
-                var karmaVerdict = (h10 >= 30)
-                    ? 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु</b> प्राप्त हैं, जो कार्यक्षेत्र में अटूट स्थायित्व, नेतृत्व क्षमता व मान-सम्मान की शास्त्रीय गारंटी देते हैं।'
-                    : 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु</b> हैं। परिश्रम के उपरांत निरंतर प्रगति का संकेत है।';
-
                 var kendraSum = h1 + h4 + h7 + h10;
                 var trikonaSum = h1 + h5 + h9;
+                var dharmaSum = h1 + h5 + h9;
+                var arthaSum = h2 + h6 + h10;
+                var kamaSum = h3 + h7 + h11;
+                var mokshaSum = h4 + h8 + h12;
 
-                var html = '<div class="phalit-item">' +
-                    '• <b>आय-व्यय अष्टकवर्ग महा-संतुलन:</b> ' + wealthVerdict + '। महर्षि पराशर अनुसार यदि एकादश भाव में द्वादश भाव से अधिक बिंदु हों तो जातक जीवन भर आर्थिक दृष्टि से स्वावलंबी व वैभवशाली रहता है।' +
+                var wealthVerdict = (h11 > h12) 
+                    ? '<span style="color:var(--emerald); font-weight:700;">अखंड धन संचय योग</span> (आय भाव ' + h11 + ' > व्यय भाव ' + h12 + ')'
+                    : '<span style="color:var(--gold); font-weight:700;">व्यय नियंत्रण अपेक्षित</span> (आय ' + h11 + ' एवं व्यय ' + h12 + ')';
+
+                var karmaVerdict = (h10 >= 30)
+                    ? 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु (अति प्रचुर)</b> प्राप्त हैं। कार्यक्षेत्र में निर्विवाद स्थायित्व, नेतृत्व क्षमता, प्रशासनिक अधिकार व मान-सम्मान की शास्त्रीय गारंटी।'
+                    : 'दशम कर्म भाव में <b>' + h10 + ' बिन्दु</b> हैं। सतत पुरुषार्थ एवं बौद्धिक रणनीति के उपरांत निरंतर पदोन्नति का संकेत है।';
+
+                // House details data array
+                var housesMeta = [
+                    { h: 1, name: "प्रथम भाव (तनु / लग्न)", pts: h1, kark: "आत्मबल, शारीरिक तेज व स्वास्थ्य", good: "जातक का व्यक्तित्व अत्यंत प्रभावशाली, आत्मविश्वासी व विपरीत परिस्थितियों में अडिग रहने वाला होगा।", avg: "शारीरिक ऊर्जा संतुलित है। नियमित दिनचर्या व प्राणायाम से स्वास्थ्य उत्तम रहेगा।", low: "स्वास्थ्य व आत्मबल के प्रति सतर्क रहें। नित्य सूर्योपासना से जीवनी शक्ति का संवर्धन करें।" },
+                    { h: 2, name: "द्वितीय भाव (धन / कुटुंब)", pts: h2, kark: "संचित पूंजी, पारिवारिक प्रतिष्ठा व वाणी", good: "पारिवारिक संपत्ति में निरंतर वृद्धि व संचित कोष की स्थिरता सुनिश्चित है। वाणी में ओज रहेगा।", avg: "धन का आगमन नियमित रहेगा। सुनियोजित निवेश से वित्तीय सुरक्षा बनी रहेगी।", low: "आकस्मिक खर्चों पर नियंत्रण रखें तथा पारिवारिक संवाद में धैर्य का परिचय दें।" },
+                    { h: 3, name: "तृतीय भाव (सहज / पराक्रम)", pts: h3, kark: "बाहुबल, सहोदर व उद्यमशीलता", good: "अदम्य पराक्रम, स्वतंत्र निर्णय लेने की क्षमता व नए उपक्रमों में त्वरित विजय का योग।", avg: "परिश्रम का उचित फल मिलेगा। छोटे भाई-बहनों व मित्रों से सामान्य सहयोग बना रहेगा।", low: "दूसरों पर अत्यधिक निर्भर न रहें। स्वयं के बाहुबल और कौशल को निरंतर निखारें।" },
+                    { h: 4, name: "चतुर्थ भाव (सुख / बंधु)", pts: h4, kark: "गृह, भूमि, वाहन व मानसिक शांति", good: "उत्कृष्ट भूमि-भवन, सुखद वाहन सुख व माता का पूर्ण आशीर्वाद। गृहस्थ जीवन में मानसिक शांति।", avg: "सामान्य गृह सुख व अचल संपत्ति के साधन निर्मित होंगे। पैतृक आवास से लाभ।", low: "स्थान परिवर्तन अथवा गृह-निर्माण में कुछ विलम्ब संभव। माता के स्वास्थ्य का विशेष ध्यान रखें।" },
+                    { h: 5, name: "पंचम भाव (सुत / विद्या)", pts: h5, kark: "मेधा, पूर्वपुण्य, संतान व मंत्रसिद्धि", good: "कुशाग्र बुद्धि, सूक्ष्म विश्लेषणात्मक विवेक व संतान से मान-सम्मान। गूढ़ विद्याओं में सफलता।", avg: "शिक्षा व बौद्धिक कार्यों में उत्तम प्रगति। योजनाबद्ध अध्ययन से उच्च सफलता।", low: "निर्णय लेते समय भावुकता से बचें। इष्टदेव की नियमित उपासना से पूर्वपुण्य जागृत होगा।" },
+                    { h: 6, name: "षष्ठ भाव (रिपु / रोग)", pts: h6, kark: "प्रतियोगिता विजय, ऋणमुक्ति व शत्रु शमन", good: "शत्रुओं पर सहज विजय, कानूनी विवादों में पक्ष मजबूत व कठिन प्रतियोगी परीक्षाओं में विजय।", avg: "दैनिक कार्यशैली में अनुशासन आवश्यक। मौसमी स्वास्थ्य विकारों से बचाव रखें।", low: "ऋण लेने में सतर्कता बरतें। विरोधियों की गतिविधियों पर शांत व रणनीतिक दृष्टि रखें।" },
+                    { h: 7, name: "सप्तम भाव (जाया / साझेदारी)", pts: h7, kark: "दांपत्य जीवन, व्यापारिक साझेदार व लोक-संपर्क", good: "जीवनसाथी का पूर्ण सहयोग, सामाजिक प्रतिष्ठा व साझेदारी के व्यापार में उत्तम लाभ।", avg: "दांपत्य में आपसी सामंजस्य से सुख। व्यापार में स्पष्ट अनुबंध व पारदर्शिता लाभकारी रहेगी।", low: "विवाह व साझेदारी में धैर्य व संवाद आवश्यक है। एक-दूसरे की भावनाओं का सम्मान करें।" },
+                    { h: 8, name: "अष्टम भाव (आयु / रंध्र)", pts: h8, kark: "दीर्घायु, अनुसंधान, वसीयत व आकस्मिक लाभ", good: "दीर्घायु का शुभ संकेत। शोध, अनुसंधान, बीमा अथवा गुप्त स्रोतों से आकस्मिक लाभ के योग।", avg: "सामान्य स्वास्थ्य व आयु। जोखिम भरे निवेश अथवा वाहन संचालन में सावधानी बरतें।", low: "योग व ध्यान को दैनिक जीवन का अंग बनाएं। महामृत्युंजय मंत्र का मानसिक जप करें।" },
+                    { h: 9, name: "नवम भाव (धर्म / भाग्य)", pts: h9, kark: "ईश्वरीय कृपा, तीर्थाटन व गुरु अनुग्रह", good: "अखंड भाग्योदय! जीवन के महत्वपूर्ण मोड़ों पर ईश्वरीय सहायता व गुरुजनों का मार्गदर्शन प्राप्त होगा।", avg: "सत्कर्मों व धर्म-परायणता से भाग्य का द्वार खुलेगा। तीर्थ यात्राओं से आत्मबल बढ़ेगा।", low: "पिता व वरिष्ठों का आशीर्वाद नित्य लें। कर्म को ही पूजा मानकर आगे बढ़ें।" },
+                    { h: 10, name: "दशम भाव (कर्म / राज्य)", pts: h10, kark: "आजीविका, पद, प्रतिष्ठा व प्रशासनिक अधिकार", good: "प्रशासनिक प्रभुत्व, कार्यक्षेत्र में सर्वोच्च पद व सामाजिक मान्यता का अकाट्य प्रमाण।", avg: "कार्यक्षेत्र में निरंतर उन्नति। अनुभव के साथ-साथ अधिकार व मान-सम्मान में वृद्धि।", low: "अधिकारियों व सहकर्मियों से तालमेल बनाकर रखें। कार्यक्षेत्र में पारदर्शिता बनाए रखें।" },
+                    { h: 11, name: "एकादश भाव (लाभ / आय)", pts: h11, kark: "आय के विविध स्रोत, महत्वाकांक्षा पूर्ति व मित्र लाभ", good: "अनेक स्रोतों से धन का निरंतर प्रवाह, महत्वाकांक्षाओं की शत-प्रतिशत पूर्ति व प्रभावशाली मित्र।", avg: "नियमित लाभ व आर्थिक सुरक्षा। सुनियोजित प्रयासों से लक्ष्यों की समय पर प्राप्ति।", low: "मित्रों के चयन में विवेक रखें। आर्थिक लेन-देन में लिखित प्रमाण अवश्य रखें।" },
+                    { h: 12, name: "द्वादश भाव (व्यय / मोक्ष)", pts: h12, kark: "विदेश यात्रा, दान-पुण्य, शयन सुख व व्यय", good: "विदेश यात्रा, दूरस्थ स्थानों से व्यापारिक लाभ व सत्कर्मों पर धन का सदुपयोग। मोक्ष की ओर अग्रसर।", avg: "व्यय व बचत में संतुलन बनाए रखें। धार्मिक व परोपकारी कार्यों में धन लगाना शुभ रहेगा।", low: "अनावश्यक खर्चों व व्यसनों से पूर्णतः दूर रहें। रात्रिकालीन विश्राम व ध्यान पर ध्यान दें।" }
+                ];
+
+                var html = '<div class="phalit-item" style="border-left:4px solid var(--emerald); background:rgba(16,185,129,0.06);">' +
+                    '<div style="font-size:1rem; font-weight:800; color:var(--emerald); margin-bottom:4px;">✦ आय-व्यय अष्टकवर्ग महा-संतुलन एवं धनागम निर्णय</div>' +
+                    '• <b>निर्णय:</b> ' + wealthVerdict + '। महर्षि पराशर (BPHS अष्टकवर्ग अध्याय) अनुसार यदि एकादश भाव में द्वादश भाव से अधिक बिंदु हों, तो जातक कभी आर्थिक तंगी का सामना नहीं करता। संचित पूंजी दीर्घकाल तक बनी रहती है।' +
                     '</div>' +
-                    '<div class="phalit-item">' +
-                    '• <b>कर्म भाव (१०वां भाव) सामर्थ्य:</b> ' + karmaVerdict +
+                    '<div class="phalit-item" style="border-left:4px solid var(--gold); background:rgba(212,175,55,0.06);">' +
+                    '<div style="font-size:1rem; font-weight:800; color:var(--gold); margin-bottom:4px;">✦ कर्म भाव (१०वां भाव) एवं सामाजिक प्रतिष्ठा</div>' +
+                    '• ' + karmaVerdict +
                     '</div>' +
-                    '<div class="phalit-item">' +
-                    '• <b>केंद्र व त्रिकोण कुल शक्ति:</b> केंद्र भावों (1, 4, 7, 10) का कुल योग <b>' + kendraSum + ' बिन्दु</b> तथा त्रिकोण भावों (1, 5, 9) का योग <b>' + trikonaSum + ' बिन्दु</b> है। ' +
-                    (kendraSum >= 115 ? 'यह कुण्डली को स्वाभाविक रूप से पराक्रमी और दीर्घायु बनाता है।' : 'यह जीवन में संयमित संतुलन और पुरुषार्थ को दर्शाता है।') +
+                    '<div class="phalit-item" style="border-left:4px solid #38bdf8; background:rgba(56,189,248,0.06);">' +
+                    '<div style="font-size:1rem; font-weight:800; color:#38bdf8; margin-bottom:4px;">✦ चतुर्विध पुरुषार्थ त्रिकोण सामर्थ्य (Dharma, Artha, Kama, Moksha)</div>' +
+                    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px; font-size:0.85rem;">' +
+                    '<div>• <b>धर्म त्रिकोण (1, 5, 9):</b> <b>' + dharmaSum + ' बिन्दु</b> ' + (dharmaSum >= 84 ? '<span style="color:var(--emerald); font-weight:700;">(प्रबल)</span>' : '(संतुलित)') + '</div>' +
+                    '<div>• <b>अर्थ त्रिकोण (2, 6, 10):</b> <b>' + arthaSum + ' बिन्दु</b> ' + (arthaSum >= 84 ? '<span style="color:var(--emerald); font-weight:700;">(प्रबल वित्तीय सामर्थ्य)</span>' : '(संतुलित)') + '</div>' +
+                    '<div>• <b>काम त्रिकोण (3, 7, 11):</b> <b>' + kamaSum + ' बिन्दु</b> ' + (kamaSum >= 84 ? '<span style="color:var(--emerald); font-weight:700;">(महत्वाकांक्षी व सामाजिक)</span>' : '(संतुलित)') + '</div>' +
+                    '<div>• <b>मोक्ष त्रिकोण (4, 8, 12):</b> <b>' + mokshaSum + ' बिन्दु</b> ' + (mokshaSum <= 84 ? '<span style="color:var(--emerald); font-weight:700;">(सांसारिक दृष्टि से उत्तम)</span>' : '(आध्यात्मिक)') + '</div>' +
+                    '</div>' +
                     '</div>';
 
-                // Query authentic sutras from VyasSutrasBank
-                if (window.VyasSutrasBank && window.VyasSutrasBank.searchSutras) {
-                    var sutras = window.VyasSutrasBank.searchSutras('अष्टकवर्ग', 3);
-                    if (sutras && sutras.length > 0) {
-                        html += '<div style="margin-top:14px; border-top:1px dashed rgba(212,175,55,0.25); padding-top:12px;">' +
-                            '<div style="font-size:0.85rem; font-weight:800; color:var(--gold); margin-bottom:8px;">✦ शास्त्रीय सूत्र प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग)</div>';
-                        for (var si = 0; si < sutras.length; si++) {
-                            html += '<div class="sutra-quote" style="margin-bottom:8px;">' +
-                                '<b>' + (sutras[si].title || 'अष्टकवर्ग सूत्र') + ' (' + (sutras[si].ref || 'BPHS') + '):</b><br>' +
-                                '<i>"' + (sutras[si].sanskrit || '') + '"</i><br>' +
-                                (sutras[si].meaning || sutras[si].commentary || '') +
-                                '</div>';
-                        }
-                        html += '</div>';
+                // Add 12-House In-depth Grid
+                html += '<div style="margin-top:18px; margin-bottom:12px;">' +
+                    '<div style="font-size:1.02rem; font-weight:900; color:var(--gold); border-bottom:1px solid var(--border-gold); padding-bottom:6px; display:flex; align-items:center; gap:8px;">' +
+                    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 1 0 10 10"/></svg>' +
+                    '<span>द्वादश भाव विस्तृत अष्टकवर्ग फलकथन (All 12 Houses Delineation)</span>' +
+                    '</div>' +
+                    '<div style="display:grid; grid-template-columns:1fr; gap:10px; margin-top:12px;">';
+
+                housesMeta.forEach(function(hm) {
+                    var statusBadge = '';
+                    var desc = '';
+                    if (hm.pts >= 30) {
+                        statusBadge = '<span style="background:rgba(16,185,129,0.18); color:var(--emerald); border:1px solid var(--emerald); padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:800;">प्रचुर सामर्थ्य (30+ बिन्दु)</span>';
+                        desc = hm.good;
+                    } else if (hm.pts >= 25) {
+                        statusBadge = '<span style="background:rgba(212,175,55,0.18); color:var(--gold); border:1px solid var(--gold); padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700;">मध्यम संतुलित (' + hm.pts + ' बिन्दु)</span>';
+                        desc = hm.avg;
+                    } else {
+                        statusBadge = '<span style="background:rgba(239,68,68,0.18); color:#f87171; border:1px solid #f87171; padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700;">विशेष प्रयास अपेक्षित (' + hm.pts + ' बिन्दु)</span>';
+                        desc = hm.low;
                     }
-                } else {
-                    html += '<div class="sutra-quote">' +
-                        '<b>शास्त्रीय प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग अध्याय):</b><br>' +
-                        '<i>"एकादशे यदा बिन्दुरधिको द्वादशाद् भवेत्। तदा धनस्य संवृद्धिः सुखानि विविधानि च॥"</i><br>' +
-                        'अर्थात जब एकादश (आय) भाव में द्वादश (व्यय) भाव से अधिक बिंदु हों, तो जातक के संचित धन में निरंतर वृद्धि होती है।' +
+
+                    html += '<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:12px 14px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                        '<b style="color:#f8fafc; font-size:0.92rem;">' + hm.name + '</b>' +
+                        statusBadge +
+                        '</div>' +
+                        '<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:4px;"><b>कारक तत्त्व:</b> ' + hm.kark + '</div>' +
+                        '<div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.6;">' + desc + '</div>' +
                         '</div>';
-                }
+                });
+
+                html += '</div></div>';
+
+                // Transit (Gochar) through SAV houses
+                html += '<div class="phalit-item" style="border-left:4px solid #a855f7; background:rgba(168,85,247,0.06);">' +
+                    '<div style="font-size:1rem; font-weight:800; color:#c084fc; margin-bottom:4px;">✦ गोचर वेध सूत्र (Planetary Transits over SAV Houses)</div>' +
+                    '• जब भी <b>देवगुरु बृहस्पति</b> अथवा <b>शनि देव</b> गोचर में उन भावों से संचरण करेंगे जहाँ <b>३० या अधिक बिन्दु</b> प्राप्त हैं, वह कालखंड जीवन में अप्रत्याशित उन्नति, पदोन्नति, वित्तीय उत्थान व शुभ कार्यों की सिद्धि कराएगा。<br>' +
+                    '• जिन भावों में <b>२५ से कम बिन्दु</b> हैं, गोचरस्थ क्रूर ग्रहों का वहाँ से भ्रमण धैर्य व संयम की परीक्षा लेता है। वहाँ सावधानी व सात्विक उपाय आवश्यक होते हैं।' +
+                    '</div>';
+
+                // Classical Sutras
+                html += '<div class="sutra-quote">' +
+                    '<b>शास्त्रीय प्रमाण (बृहत्पाराशर होराशास्त्र • अष्टकवर्ग अध्याय):</b><br>' +
+                    '<i>"एकादशे यदा बिन्दुरधिको द्वादशाद् भवेत्। तदा धनस्य संवृद्धिः सुखानि विविधानि च॥<br>' +
+                    'सर्वस्मिन्नधिके बिन्दौ सर्वसंपत्प्रदायकः। हीने बिन्दौ क्लेशकरो जायते नात्र संशयः॥"</i><br>' +
+                    'अर्थात जिस भाव में सर्वाधिक बिन्दु प्राप्त होते हैं, वह भाव सर्व-सम्पत्ति प्रदाता बनता है तथा न्यून बिन्दु वाला भाव पुरुषार्थ व साधना की मांग करता है।' +
+                    '</div>';
 
                 phalitWrap.innerHTML = html;
             }

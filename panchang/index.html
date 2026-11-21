@@ -390,30 +390,87 @@
                     </div>
                 </div>
 
-                <!-- Shubh & Ashubh Muhurtas -->
+                <!-- Shubh & Ashubh Muhurtas (Comprehensive Vedic Muhurtas) -->
                 <div class="card" style="margin-top:16px;">
                     <div class="card-header">
                         <div class="card-title">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#d4af37" stroke-width="2"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
-                            <span>शुभ एवं वर्जित मुहूर्त</span>
+                            <span>शुभ एवं वर्जित मुहूर्त कालखंड (Muhurta Times)</span>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;">अभिजीत • अमृत • राहुकाल</span>
+                    </div>
+                    <div class="panchang-items" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));">
+                        <div class="panchang-item" style="border-left:3px solid var(--emerald);">
+                            <div class="item-lbl">अभिजीत मुहूर्त (अति शुभ)</div>
+                            <div class="item-val" style="color:var(--emerald);" id="mAbhijit">11:45 AM - 12:28 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #10b981;">
+                            <div class="item-lbl">अमृत काल (शुभ)</div>
+                            <div class="item-val" style="color:#10b981;" id="mAmrit">08:15 AM - 09:48 AM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #38bdf8;">
+                            <div class="item-lbl">ब्रह्म मुहूर्त (साधना)</div>
+                            <div class="item-val" style="color:#38bdf8;" id="mBrahma">04:58 AM - 05:46 AM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #a855f7;">
+                            <div class="item-lbl">विजय मुहूर्त</div>
+                            <div class="item-val" style="color:#c084fc;" id="mVijay">01:52 PM - 02:35 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #fbbf24;">
+                            <div class="item-lbl">गोधूलि मुहूर्त</div>
+                            <div class="item-val" style="color:#fbbf24;" id="mGodhuli">05:25 PM - 05:51 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #6366f1;">
+                            <div class="item-lbl">निशिता मुहूर्त (मध्यरात्रि)</div>
+                            <div class="item-val" style="color:#818cf8;" id="mNishita">11:42 PM - 12:34 AM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid var(--ruby);">
+                            <div class="item-lbl">राहुकाल (त्याज्य/अशुभ)</div>
+                            <div class="item-val" style="color:var(--ruby);" id="mRahu">10:45 AM - 12:05 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #f59e0b;">
+                            <div class="item-lbl">यमगण्ड काल (त्याज्य)</div>
+                            <div class="item-val" style="color:#f59e0b;" id="mYamaganda">02:45 PM - 04:05 PM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #ef4444;">
+                            <div class="item-lbl">गुलिक काल</div>
+                            <div class="item-val" style="color:#f87171;" id="mGulika">07:55 AM - 09:15 AM</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #fb7185;">
+                            <div class="item-lbl">दुर्मुहूर्त काल</div>
+                            <div class="item-val" style="color:#fb7185;" id="mDurmuhurta">08:42 AM - 09:25 AM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disha Shool, Chandrabala & Panchak Observatory -->
+                <div class="card" style="margin-top:16px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                            <span>दिशा शूल, चन्द्रबल, ताराबल एवं पंचक वेध</span>
                         </div>
                     </div>
                     <div class="panchang-items">
-                        <div class="panchang-item" style="border-left:3px solid var(--emerald);">
-                            <div class="item-lbl">अभिजीत मुहूर्त</div>
-                            <div class="item-val" style="color:var(--emerald);" id="mAbhijit">11:45 AM - 12:28 PM</div>
-                        </div>
-                        <div class="panchang-item" style="border-left:3px solid var(--ruby);">
-                            <div class="item-lbl">राहुकाल (त्याज्य)</div>
-                            <div class="item-val" style="color:var(--ruby);" id="mRahu">10:45 AM - 12:05 PM</div>
+                        <div class="panchang-item" style="border-left:3px solid #ef4444;">
+                            <div class="item-lbl">यात्रा दिशा शूल</div>
+                            <div class="item-val" style="color:#f87171;" id="pDishaShool">पश्चिम दिशा</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;" id="pDishaParihar">परिहार: जौ या राई खाकर प्रस्थान करें</div>
                         </div>
                         <div class="panchang-item" style="border-left:3px solid #38bdf8;">
-                            <div class="item-lbl">ब्रह्म मुहूर्त</div>
-                            <div class="item-val" style="color:#38bdf8;" id="mBrahma">04:58 AM - 05:46 AM</div>
+                            <div class="item-lbl">चन्द्रोदय एवं चन्द्रास्त</div>
+                            <div class="item-val" style="color:#38bdf8;" id="pMoonTimes">चन्द्रोदय: 02:45 PM • चन्द्रास्त: 03:12 AM</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;" id="pMoonSignText">चन्द्र राशि: मीन राशि</div>
                         </div>
-                        <div class="panchang-item" style="border-left:3px solid #f59e0b;">
-                            <div class="item-lbl">यमगण्ड काल</div>
-                            <div class="item-val" style="color:#f59e0b;" id="mYamaganda">02:45 PM - 04:05 PM</div>
+                        <div class="panchang-item" style="border-left:3px solid #10b981;">
+                            <div class="item-lbl">दैनिक चन्द्रबल (अनुकूल राशियाँ)</div>
+                            <div class="item-val" style="color:var(--emerald); font-size:0.82rem;" id="pChandrabala">वृषभ, मिथुन, कन्या, तुला, मकर, कुंभ</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;">इन राशियों के लिए दिन अत्यंत लाभकारी रहेगा</div>
+                        </div>
+                        <div class="panchang-item" style="border-left:3px solid #fbbf24;">
+                            <div class="item-lbl">पंचक विचार</div>
+                            <div class="item-val" style="color:#fbbf24;" id="pPanchakStatus">पंचक सक्रिय (राज पंचक)</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;" id="pPanchakDetail">रेवती/उत्तराभाद्रपद नक्षत्र में चन्द्र संचरण</div>
                         </div>
                     </div>
                 </div>
@@ -758,6 +815,84 @@
             var rStart = sunriseMin + (rahuPeriods[dayOfWeek] * rPart);
             document.getElementById('mRahu').textContent = fmtMin(rStart) + " - " + fmtMin(rStart + rPart);
             document.getElementById('mBrahma').textContent = fmtMin(sunriseMin - 96) + " - " + fmtMin(sunriseMin - 48);
+
+            // Extended Vedic Muhurtas
+            var yamagandaPeriods = [4, 3, 2, 1, 0, 6, 5];
+            var yStart = sunriseMin + (yamagandaPeriods[dayOfWeek] * rPart);
+            var yEl = document.getElementById('mYamaganda');
+            if (yEl) yEl.textContent = fmtMin(yStart) + " - " + fmtMin(yStart + rPart);
+
+            var gulikaPeriods = [6, 5, 4, 3, 2, 1, 0];
+            var gStart = sunriseMin + (gulikaPeriods[dayOfWeek] * rPart);
+            var gEl = document.getElementById('mGulika');
+            if (gEl) gEl.textContent = fmtMin(gStart) + " - " + fmtMin(gStart + rPart);
+
+            var vEl = document.getElementById('mVijay');
+            if (vEl) vEl.textContent = fmtMin(solarNoonMinutes + 75) + " - " + fmtMin(solarNoonMinutes + 120);
+
+            var gdEl = document.getElementById('mGodhuli');
+            if (gdEl) gdEl.textContent = fmtMin(sunsetMin - 20) + " - " + fmtMin(sunsetMin + 15);
+
+            var amEl = document.getElementById('mAmrit');
+            if (amEl) amEl.textContent = fmtMin(sunriseMin + 120) + " - " + fmtMin(sunriseMin + 210);
+
+            var nishEl = document.getElementById('mNishita');
+            if (nishEl) nishEl.textContent = "11:42 PM - 12:35 AM";
+
+            var dmEl = document.getElementById('mDurmuhurta');
+            if (dmEl) dmEl.textContent = fmtMin(sunriseMin + 96) + " - " + fmtMin(sunriseMin + 144);
+
+            // Disha Shool & Parihar
+            var dishaMap = [
+                { dir: "पश्चिम दिशा", parihar: "परिहार: पान अथवा घी खाकर प्रस्थान करें" },
+                { dir: "पूर्व दिशा", parihar: "परिहार: दर्पण देखकर अथवा दूध पीकर प्रस्थान करें" },
+                { dir: "उत्तर दिशा", parihar: "परिहार: गुड़ खाकर प्रस्थान करें" },
+                { dir: "उत्तर दिशा", parihar: "परिहार: तिल अथवा धनिया खाकर प्रस्थान करें" },
+                { dir: "दक्षिण दिशा", parihar: "परिहार: दही अथवा जीरा खाकर प्रस्थान करें" },
+                { dir: "पश्चिम दिशा", parihar: "परिहार: जौ अथवा राई खाकर प्रस्थान करें" },
+                { dir: "पूर्व दिशा", parihar: "परिहार: अदरक अथवा उड़द खाकर प्रस्थान करें" }
+            ];
+            var dShool = dishaMap[dayOfWeek];
+            var dsEl = document.getElementById('pDishaShool');
+            var dpEl = document.getElementById('pDishaParihar');
+            if (dsEl) dsEl.textContent = dShool.dir;
+            if (dpEl) dpEl.textContent = dShool.parihar;
+
+            // Moonrise & Moonset calculation approximation based on Tithi
+            var tithiNum = (pData && pData.tithiIdx !== undefined) ? pData.tithiIdx : 11;
+            var moonriseMin = (sunriseMin + (tithiNum * 48)) % 1440;
+            var moonsetMin = (moonriseMin + 720) % 1440;
+            var mSignText = pData ? pData.moonSign : 'मीन';
+            var mtEl = document.getElementById('pMoonTimes');
+            var msEl = document.getElementById('pMoonSignText');
+            if (mtEl) mtEl.textContent = "चन्द्रोदय: " + fmtMin(moonriseMin) + " • चन्द्रास्त: " + fmtMin(moonsetMin);
+            if (msEl) msEl.textContent = "चन्द्र राशि: " + mSignText + " राशि";
+
+            // Chandrabala: Houses 1, 3, 6, 7, 10, 11 from Moon sign
+            var allSigns = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+            var mSignIdx = allSigns.indexOf(mSignText);
+            if (mSignIdx === -1) mSignIdx = 11;
+            var goodOffsets = [0, 2, 5, 6, 9, 10];
+            var cbSigns = goodOffsets.map(function(off) { return allSigns[(mSignIdx + off) % 12]; });
+            var cbEl = document.getElementById('pChandrabala');
+            if (cbEl) cbEl.textContent = cbSigns.join(', ');
+
+            // Panchak check: Moon in Dhanishta (2nd half), Shatabhisha, Purvabhadrapada, Uttarabhadrapada, Revati
+            var panchakNaks = ['धनिष्ठा', 'शतभिषा', 'पूर्वाभाद्रपद', 'उत्तराभाद्रपद', 'रेवती'];
+            var curNak = pData ? pData.nakshatra : 'उत्तराभाद्रपद';
+            var isPanchak = panchakNaks.indexOf(curNak) !== -1;
+            var pStatEl = document.getElementById('pPanchakStatus');
+            var pDetEl = document.getElementById('pPanchakDetail');
+            if (pStatEl && pDetEl) {
+                if (isPanchak) {
+                    var panchakTypes = ["रोग पंचक", "राज पंचक", "अग्नि पंचक", "चोर पंचक", "मृत्यु पंचक", "चोर पंचक", "मृत्यु पंचक"];
+                    pStatEl.innerHTML = "<span style='color:#fbbf24; font-weight:800;'>पंचक सक्रिय (" + panchakTypes[dayOfWeek] + ")</span>";
+                    pDetEl.textContent = curNak + " नक्षत्र में चन्द्र संचरण • लकड़ी संग्रह, दक्षिण यात्रा व गृह-निर्माण में सतर्कता";
+                } else {
+                    pStatEl.innerHTML = "<span style='color:var(--emerald); font-weight:800;'>पंचक रहित (शुभ दिन)</span>";
+                    pDetEl.textContent = "आज के दिन पंचक का कोई प्रभाव नहीं है। सभी कार्य निर्बाध रूप से संपन्न किए जा सकते हैं।";
+                }
+            }
 
             var yamaPeriods = [4, 3, 2, 1, 0, 6, 5];
             var yStart = sunriseMin + (yamaPeriods[dayOfWeek] * rPart);

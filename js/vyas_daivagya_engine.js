@@ -1553,14 +1553,21 @@
                 return el1 && el2 && el1 === el2;
             }
 
-            // BNN Jeeva-Karma Alignment
-            if (inTrine(guru, shani)) {
-                lines.push("• <b>धर्म-कर्म नाड़ी योग (जीवकारक गुरु + कर्मकारक शनि त्रिकोण 1-5-9):</b> जातक कर्तव्यनिष्ठ, समाज में उच्च उत्तरदायित्व वाला एवं स्थायी कार्यक्षेत्र में अचल प्रतिष्ठा प्राप्त करने वाला होगा।");
-            } else if (guru && shani) {
-                lines.push("• <b>नाड़ी कर्म रेखा:</b> कर्मकारक शनि देव (" + shani.sign + ") व जीवकारक गुरु देव (" + guru.sign + ") का संरेखण जातक को कार्यक्षेत्र में स्वतंत्र निर्णय लेने की क्षमता प्रदान करता है।");
+            // BNN Jeeva-Karma Alignment (Only in general/life purpose to avoid duplication)
+            if (domain === 'general') {
+                if (inTrine(guru, shani)) {
+                    lines.push("• <b>धर्म-कर्म नाड़ी योग (जीवकारक गुरु + कर्मकारक शनि त्रिकोण 1-5-9):</b> जातक कर्तव्यनिष्ठ, समाज में उच्च उत्तरदायित्व वाला एवं स्थायी कार्यक्षेत्र में अचल प्रतिष्ठा प्राप्त करने वाला होगा।");
+                } else if (guru && shani) {
+                    lines.push("• <b>नाड़ी कर्म रेखा:</b> कर्मकारक शनि देव (" + shani.sign + ") व जीवकारक गुरु देव (" + guru.sign + ") का संरेखण जातक को कार्यक्षेत्र में स्वतंत्र निर्णय लेने की क्षमता प्रदान करता है।");
+                }
             }
 
-            if (domain === 'career' || domain === 'wealth' || domain === 'general') {
+            if (domain === 'career' || domain === 'wealth') {
+                if (inTrine(guru, shani)) {
+                    lines.push("• <b>आजीविका कर्म योग:</b> कर्मकारक शनि व गुरु की दृष्टि/त्रिकोण से कार्यक्षेत्र में उच्च पद, नीति-निर्धारण व स्वायत्त अधिकार की प्राप्ति होगी।");
+                } else if (shani) {
+                    lines.push("• <b>कर्मकारक शनि संरेखण:</b> शनि देव (" + shani.sign + ") कर्म के अधिपति होकर जीवन में अनुशासन, धैर्य एवं सतत पुरुषार्थ से स्थायी सफलता प्रदान करेंगे।");
+                }
                 if (inTrine(budh, guru)) {
                     lines.push("• <b>सरस्वती नाड़ी योग (बुध + गुरु त्रिकोण):</b> वाणिज्य, विश्लेषण, परामर्श, वित्तीय प्रबंधन अथवा तकनीकी ज्ञान में जातक की मेधा उत्कृष्ट रहेगी।");
                 }
@@ -1569,15 +1576,23 @@
                 }
             }
 
-            if (domain === 'marriage' || domain === 'general') {
+            if (domain === 'marriage') {
                 if (inTrine(ven, guru)) {
                     lines.push("• <b>भृगु-जीव महालक्ष्मी नाड़ी योग (गुरु + शुक्र त्रिकोण):</b> दांपत्य में सम्मान, सांस्कृतिक सामंजस्य व जीवनसाथी के आगमन के उपरांत भाग्योदय।");
                 } else if (inTrine(ven, mangal)) {
                     lines.push("• <b>शुक्र-मंगल नाड़ी संबंध:</b> दांपत्य में आकर्षण व पराक्रम का संचय, संपत्ति निर्माण के योग।");
+                } else if (ven) {
+                    lines.push("• <b>कलत्रकारक शुक्र स्थिति:</b> शुक्र देव (" + ven.sign + ") दांपत्य व भौतिक सुखों के प्रतिनिधि होकर पारस्परिक सामंजस्य बनाए रखेंगे।");
                 }
             }
 
-            return lines.length ? lines.join('<br>') : "• नाड़ी ग्रहों का संरेखण सामान्य है।";
+            // Deduplicate any identical lines before return
+            var uniqueLines = [];
+            lines.forEach(function(l) {
+                if (uniqueLines.indexOf(l) === -1) uniqueLines.push(l);
+            });
+
+            return uniqueLines.length ? uniqueLines.join('<br>') : "• नाड़ी ग्रहों का संरेखण संतुलित व सामान्य है।";
         }
     };
 
