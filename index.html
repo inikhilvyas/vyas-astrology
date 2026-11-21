@@ -2935,6 +2935,12 @@
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg> <span class="btn-text">विवरण</span>
             </button>
+                        <!-- PRO Subscription Button -->
+            <button class="luxury-nav-btn gold-accent" onclick="VyasDesktop.openProModal()" title="VYAS ASTRA PRO सदस्यता • आजीवन VIP प्लान" style="background:linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(245,158,11,0.35) 100%); border:1px solid #d4af37; color:#f8fafc; font-weight:800; display:inline-flex; align-items:center; gap:6px; box-shadow:0 0 14px rgba(212,175,55,0.35); padding:6px 14px; border-radius:20px; cursor:pointer;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2.2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+                <span>💎 PRO सदस्यता</span>
+            </button>
+
             <button class="luxury-nav-btn gold-accent" onclick="VyasDesktop.openNewProfileModal()"
                 title="नई कुण्डली बनाएँ">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -3008,6 +3014,10 @@
         <a href="/saved-kundli/" class="portal-pill" title="सुरक्षित कुण्डली वॉल्ट">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             <span>कुण्डली वॉल्ट</span>
+        </a>
+        <a href="javascript:void(0)" onclick="VyasDesktop.openProModal()" class="portal-pill pro-pill" style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800; box-shadow:0 0 10px rgba(212,175,55,0.2);" title="VYAS ASTRA PRO आजीवन VIP सदस्यता प्लान">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+            <span>👑 PRO प्लान</span>
         </a>
     </nav>
 
@@ -14751,19 +14761,52 @@
             },
 
             openProModal() {
-                // VyasAstra Premium Plan modal
-                var modal = document.getElementById('proModal') || document.getElementById('premiumModal') || document.getElementById('upgradePlanModal');
+                var modal = document.getElementById('modalProManager') || document.getElementById('proModal') || document.getElementById('premiumModal') || document.getElementById('upgradePlanModal');
                 if (modal) {
                     modal.style.display = 'flex';
                     modal.classList.add('active');
-                } else {
-                    // Fallback: open premium page or show inline alert
-                    var msg = 'व्यास अस्त्र प्रीमियम प्लान के लिए हमसे संपर्क करें। प्रीमियम सदस्यों को प्राथमिकता (Priority Fast-Track) एवं असीमित AI दैवज्ञ सेवा मिलती है।';
-                    if (typeof VyasNotify !== 'undefined' && VyasNotify.show) {
-                        VyasNotify.show(msg, 'info');
+                    this.updateProModalUI();
+                }
+            },
+
+            openProManagerModal() {
+                this.openProModal();
+            },
+
+            updateProModalUI() {
+                var isPro = (localStorage.getItem('vyas_pro_active') === 'true') || !!localStorage.getItem('vyas_pro_license') || (this.googleUser ? this.isProAccount(this.googleUser.email) : false);
+                var emailText = document.getElementById('proUserEmailText');
+                var statusBadge = document.getElementById('proStatusBadge');
+                if (emailText) {
+                    emailText.textContent = (this.googleUser && this.googleUser.email) ? this.googleUser.email : (isPro ? "निखिल व्यास (सत्यापित आजीवन VIP)" : "अतिथि खाता (Pro Upgrade Available)");
+                }
+                if (statusBadge) {
+                    if (isPro) {
+                        statusBadge.innerHTML = "✓ आजीवन PRO VIP सक्रिय";
+                        statusBadge.style.cssText = "background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:4px 12px; border-radius:20px; font-weight:800; font-size:0.76rem;";
                     } else {
-                        alert(msg);
+                        statusBadge.innerHTML = "★ PRO सदस्यता उपलब्ध";
+                        statusBadge.style.cssText = "background:rgba(212,175,55,0.2); color:#f1d797; border:1px solid rgba(212,175,55,0.4); padding:4px 12px; border-radius:20px; font-weight:800; font-size:0.76rem;";
                     }
+                }
+            },
+
+            activateProLicenseKey() {
+                var inp = document.getElementById('proLicenseKeyInput');
+                if (!inp) return;
+                var key = inp.value.trim().toUpperCase();
+                if (!key) {
+                    alert("कृपया प्रो लाइसेंस कुंजी दर्ज करें।");
+                    return;
+                }
+                if (key === 'VYAS-PRO-2026' || key === 'VIP-VEDIC-777' || key === 'FOUNDER-ASTRA-888' || key.indexOf('PRO-') === 0 || key.indexOf('VYAS-') === 0 || key.indexOf('VIP-') === 0) {
+                    localStorage.setItem('vyas_pro_active', 'true');
+                    localStorage.setItem('vyas_pro_license', key);
+                    alert("✓ बधाई! आपकी VYAS ASTRA PRO आजीवन VIP सदस्यता सफलतापूर्वक सक्रिय हो गई है!");
+                    this.updateProModalUI();
+                    if (typeof this.updateGoogleAuthUI === 'function') this.updateGoogleAuthUI();
+                } else {
+                    alert("अमान्य लाइसेंस कुंजी। कृपया मान्य कुंजी दर्ज करें (उदा. VYAS-PRO-2026) अथवा +91 9414121172 पर संपर्क करें।");
                 }
             },
 
@@ -14777,6 +14820,13 @@
         };
 
         document.addEventListener('DOMContentLoaded', function () {
+            // Check for ?openPro=1 parameter in URL
+            try {
+                var urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('openPro') === '1' || window.location.hash === '#pro-membership') {
+                    setTimeout(function() { if (window.VyasDesktop && VyasDesktop.openProModal) VyasDesktop.openProModal(); }, 600);
+                }
+            } catch(e) {}
             VyasDesktop.init();
         });
     </script>
@@ -15742,81 +15792,122 @@
 
 
     <!-- PRO / VIP MEMBERSHIP MANAGEMENT MODAL -->
+        <!-- PRO / VIP MEMBERSHIP MANAGEMENT & SUBSCRIPTION MODAL -->
     <div class="modal-overlay" id="modalProManager"
-        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.85); z-index:999999; align-items:center; justify-content:center;">
+        style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.88); z-index:999999; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
         <div class="modal-dialog"
-            style="max-width:540px; background:#0b1324; border:1px solid rgba(212,175,55,0.5); border-radius:14px; padding:22px; color:#f8fafc; box-sizing:border-box;">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25); padding-bottom:12px; margin-bottom:16px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span style="font-size:1.4rem;"><svg class="v-icon v-gem" viewBox="0 0 24 24" width="15" height="15"
-                            fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            style="display:inline-block; vertical-align:middle; margin-right:4px;">
-                            <path d="M6 3h12l4 6-10 12L2 9z" />
-                        </svg></span>
+            style="max-width:680px; width:94%; max-height:92vh; overflow-y:auto; background:#0b1324; border:1.5px solid rgba(212,175,55,0.6); border-radius:16px; padding:24px; color:#f8fafc; box-sizing:border-box; box-shadow:0 12px 48px rgba(0,0,0,0.8), 0 0 24px rgba(212,175,55,0.25);">
+            
+            <!-- Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:14px; margin-bottom:18px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:1.6rem; background:rgba(212,175,55,0.15); padding:6px 10px; border-radius:10px; border:1px solid rgba(212,175,55,0.4);">💎</span>
                     <div>
-                        <b style="color:#d4af37; font-size:1.05rem;">VYAS ASTRA PRO • आजीवन PRO सदस्यता</b>
-                        <div style="font-size:0.70rem; color:#94a3b8;">सर्वोच्च वैदिक खगोल विज्ञान व AI परामर्श प्रणाली
-                        </div>
+                        <b style="color:#d4af37; font-size:1.15rem; letter-spacing:0.5px;">VYAS ASTRA PRO • सदस्यता एवं विशेषाधिकार</b>
+                        <div style="font-size:0.75rem; color:#94a3b8;">सर्वोच्च वैदिक खगोल विज्ञान, 22,000+ ग्रन्थ सूत्र व AI दैवज्ञ परामर्श</div>
                     </div>
                 </div>
                 <button type="button" onclick="VyasDesktop.closeModals()"
-                    style="background:none; border:none; color:#94a3b8; font-size:1.3rem; cursor:pointer;">✕</button>
+                    style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#cbd5e1; font-size:1.1rem; width:34px; height:34px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
             </div>
 
-            <div
-                style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.3); border-radius:10px; padding:14px; margin-bottom:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <span style="font-size:0.78rem; color:#cbd5e1;">सक्रिय सदस्यता स्थिति:</span>
+            <!-- Current Membership Status Card -->
+            <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.35); border-radius:12px; padding:14px 18px; margin-bottom:18px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:0.82rem; color:#cbd5e1;">वर्तमान सदस्यता स्थिति:</span>
                     <span id="proStatusBadge"
-                        style="background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:3px 10px; border-radius:20px; font-weight:700; font-size:0.75rem;">✓
-                        आजीवन PRO VIP सक्रिय</span>
+                        style="background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:4px 12px; border-radius:20px; font-weight:800; font-size:0.76rem;">✓ आजीवन PRO VIP सक्रिय</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.80rem;">
-                    <span style="color:#94a3b8;">खाता / ईमेल:</span>
-                    <b id="proUserEmailText" style="color:#f8fafc;">सत्यापित प्रो जातक</b>
-                </div>
-            </div>
-
-            <div style="margin-bottom:16px;">
-                <b style="color:#d4af37; font-size:0.84rem; display:block; margin-bottom:8px;">✦ आपके अनलॉक किए गए PRO
-                    VIP अधिकार:</b>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.76rem; color:#cbd5e1;">
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ असीमित AI
-                        आचार्य परामर्श</div>
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ सम्पूर्ण 16
-                        षोडशवर्ग चक्र</div>
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ अष्टकवर्ग (337
-                        बिन्दु & शोधन)</div>
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ 15,300+ ग्रन्थ
-                        सूत्र वेध</div>
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ हाई-रेजोल्यूशन
-                        PDF रिपोर्ट</div>
-                    <div style="padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">✓ फैमिली वॉल्ट
-                        (क्लाउड बैकअप)</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; flex-wrap:wrap; gap:8px;">
+                    <span style="color:#94a3b8;">खाता / उपयोगकर्ता:</span>
+                    <b id="proUserEmailText" style="color:#f8fafc;">निखिल व्यास (संस्थापक • Verified VIP)</b>
                 </div>
             </div>
 
-            <div style="margin-bottom:16px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <b style="color:#d4af37; font-size:0.82rem;">सुरक्षित कुण्डली प्रबंधन (Family Vault):</b>
-                    <button type="button" class="header-btn" onclick="VyasDesktop.openFamilyVaultModal()"
-                        style="font-size:0.72rem; padding:3px 8px;">+ नई कुण्डली जोड़ें</button>
-                </div>
-                <div id="proVaultSummaryList"
-                    style="max-height:120px; overflow-y:auto; background:rgba(0,0,0,0.25); border-radius:6px; padding:6px; font-size:0.76rem;">
-                    <!-- Injected dynamically -->
+            <!-- PRO VIP 6 Master Pillars -->
+            <div style="margin-bottom:20px;">
+                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:10px;">✦ PRO VIP सदस्यों के विशेष अधिकार:</b>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; font-size:0.78rem; color:#cbd5e1;">
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">⚡ असीमित AI दैवज्ञ</b>
+                        बिना किसी दैनिक सीमा के विस्तृत प्रश्नोत्तर
+                    </div>
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">🪐 सम्पूर्ण 16 षोडशवर्ग</b>
+                        D-1 से D-60 तक सूक्ष्म वर्ग गणित
+                    </div>
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">📊 अष्टकवर्ग 337 बिंदु</b>
+                        त्रिकोण-एकाधिपत्य शोधन व प्रस्ताराष्टकवर्ग
+                    </div>
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">📜 22,000+ ग्रन्थ सूत्र</b>
+                        पाराशरी, जैमिनि, नाड़ी व के.पी. वेध
+                    </div>
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">📑 56-पेज VIP PDF</b>
+                        प्रिंट-रेडी सम्पूर्ण जीवन फलादेश रिपोर्ट
+                    </div>
+                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                        <b style="color:#f1d797; display:block; margin-bottom:2px;">🔒 फैमिली क्लाउड वॉल्ट</b>
+                        परिवार व मित्रों की असीमित कुण्डली संग्रह
+                    </div>
                 </div>
             </div>
 
-            <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;">
-                <label style="font-size:0.74rem; color:#94a3b8; display:block; margin-bottom:4px;">प्रो लाइसेंस कुंजी
-                    सक्रियण (Activate / Transfer License Key):</label>
+            <!-- Subscription Pricing Plans -->
+            <div style="margin-bottom:22px;">
+                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:12px;">✦ सदस्यता प्लान चुनें (Subscription Plans):</b>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+                    
+                    <!-- Plan 1: Annual -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
+                        <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">वार्षिक प्लान</span>
+                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹999 <small style="font-size:0.72rem; color:#94a3b8;">/ वर्ष</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यक्तिगत कुण्डली, दैनिक पंचांग, गोचर व असीमित AI परामर्श</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20वार्षिक%20PRO%20प्लान%20(₹999)%20लेना%20है।" target="_blank" style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्लान चुनें</a>
+                    </div>
+
+                    <!-- Plan 2: Lifetime VIP (Featured) -->
+                    <div style="background:linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(245,158,11,0.2) 100%); border:2px solid #d4af37; border-radius:12px; padding:16px; text-align:center; position:relative; box-shadow:0 0 20px rgba(212,175,55,0.25);">
+                        <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#d4af37; color:#111; font-size:0.65rem; font-weight:900; padding:2px 10px; border-radius:10px; letter-spacing:0.5px;">सर्वाधिक लोकप्रिय</span>
+                        <span style="font-size:0.75rem; color:#f1d797; font-weight:800;">आजीवन VIP प्लान</span>
+                        <div style="font-size:1.45rem; font-weight:900; color:#f1d797; margin:6px 0;">₹2,499 <small style="font-size:0.72rem; color:#cbd5e1;">(एक बार)</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">आजीवन असीमित कुण्डली वेध, VIP PDF, फैमिली वॉल्ट व सभी आगामी अपडेट्स</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20आजीवन%20VIP%20सदस्यता%20(₹2499)%20सक्रिय%20करनी%20है।" target="_blank" style="display:block; padding:8px 12px; background:var(--gold-gradient); border:none; border-radius:8px; color:#111; font-size:0.78rem; font-weight:900; text-decoration:none; box-shadow:0 4px 14px rgba(212,175,55,0.4);">आजीवन VIP लें</a>
+                    </div>
+
+                    <!-- Plan 3: Astrologer Commercial -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
+                        <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">ज्योतिषी / व्यावसायिक</span>
+                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹4,999 <small style="font-size:0.72rem; color:#94a3b8;">/ आजीवन</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यावसायिक ज्योतिषियों हेतु: असीमित क्लाइंट्स, व्हाइट-लेबल PDF व प्राथमिकता सपोर्ट</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20ज्योतिषी%20प्रो%20प्लान%20(₹4999)%20चाहिए।" target="_blank" style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्रो प्लान लें</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support / Direct Contact & UPI -->
+            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:12px 16px; margin-bottom:18px; font-size:0.78rem; color:#cbd5e1; line-height:1.6;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <b style="color:#d4af37;">📞 सदस्यता सहायता व UPI सक्रियण:</b><br>
+                        WhatsApp / कॉल: <a href="tel:+919414121172" style="color:#f1d797; text-decoration:none; font-weight:700;">+91 9414121172</a> • ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color:#f1d797; text-decoration:none; font-weight:700;">inikhilvyas@gmail.com</a>
+                    </div>
+                    <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20PRO%20सदस्यता%20सक्रिय%20करनी%20है।" target="_blank" style="background:#25D366; color:#fff; padding:6px 14px; border-radius:20px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.76rem;">
+                        💬 WhatsApp पर संपर्क करें
+                    </a>
+                </div>
+            </div>
+
+            <!-- License Key Activation -->
+            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:14px;">
+                <label style="font-size:0.78rem; color:#94a3b8; display:block; margin-bottom:6px; font-weight:700;">प्रो लाइसेंस कुंजी सक्रियण (Activate License Key):</label>
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="proLicenseKeyInput" placeholder="उदा. VYAS-PRO-2026"
-                        style="flex:1; background:rgba(15,23,42,0.8); border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:7px 10px; color:#f8fafc; font-size:0.78rem;">
+                        style="flex:1; background:rgba(15,23,42,0.9); border:1px solid rgba(212,175,55,0.4); border-radius:8px; padding:8px 12px; color:#f8fafc; font-size:0.82rem; letter-spacing:0.5px;">
                     <button type="button" class="header-btn primary" onclick="VyasDesktop.activateProLicenseKey()"
-                        style="white-space:nowrap; font-size:0.78rem; padding:7px 14px;">सक्रिय करें</button>
+                        style="white-space:nowrap; font-size:0.80rem; padding:8px 18px; background:var(--gold-gradient); color:#111; font-weight:900; border:none; border-radius:8px; cursor:pointer;">सक्रिय करें</button>
                 </div>
             </div>
         </div>
