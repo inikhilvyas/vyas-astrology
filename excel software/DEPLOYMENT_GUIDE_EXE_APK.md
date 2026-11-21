@@ -1,7 +1,7 @@
 # VYAS - Vedic Yield Astrology System
 ## कमर्शियल सॉफ़्टवेयर डिप्लॉयमेंट गाइड (.EXE एवं .APK निर्माण)
 
-**निर्माता:** पं. निखिल व्यास, MA (ज्योतिष)  
+**निर्माता:** निखिल व्यास, MA (ज्योतिष)  
 **मोबाइल:** +91 9414121172  
 **ईमेल:** inikhilvyas@gmail.com  
 **लाइसेंस:** Commercial Enterprise License

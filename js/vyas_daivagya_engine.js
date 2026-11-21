@@ -14,39 +14,39 @@
  *   VyasDaivagyaCore  — master orchestrator
  */
 
-(function(window) {
+(function (window) {
     'use strict';
 
     // ═══════════════════════════════════════════════════════════════════
     // SHARED CONSTANTS
     // ═══════════════════════════════════════════════════════════════════
-    var SIGNS = ['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'];
-    var SIGNS_EN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    var SIGNS = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+    var SIGNS_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
     var LORDS = {
-        'मेष':'मंगल','वृषभ':'शुक्र','मिथुन':'बुध','कर्क':'चन्द्र','सिंह':'सूर्य',
-        'कन्या':'बुध','तुला':'शुक्र','वृश्चिक':'मंगल','धनु':'गुरु',
-        'मकर':'शनि','कुंभ':'शनि','मीन':'गुरु'
+        'मेष': 'मंगल', 'वृषभ': 'शुक्र', 'मिथुन': 'बुध', 'कर्क': 'चन्द्र', 'सिंह': 'सूर्य',
+        'कन्या': 'बुध', 'तुला': 'शुक्र', 'वृश्चिक': 'मंगल', 'धनु': 'गुरु',
+        'मकर': 'शनि', 'कुंभ': 'शनि', 'मीन': 'गुरु'
     };
-    var EXALT = {'सूर्य':'मेष','चन्द्र':'वृषभ','मंगल':'मकर','बुध':'कन्या','गुरु':'कर्क','शुक्र':'मीन','शनि':'तुला'};
-    var DEBIL = {'सूर्य':'तुला','चन्द्र':'वृश्चिक','मंगल':'कर्क','बुध':'मीन','गुरु':'मकर','शुक्र':'कन्या','शनि':'मेष'};
+    var EXALT = { 'सूर्य': 'मेष', 'चन्द्र': 'वृषभ', 'मंगल': 'मकर', 'बुध': 'कन्या', 'गुरु': 'कर्क', 'शुक्र': 'मीन', 'शनि': 'तुला' };
+    var DEBIL = { 'सूर्य': 'तुला', 'चन्द्र': 'वृश्चिक', 'मंगल': 'कर्क', 'बुध': 'मीन', 'गुरु': 'मकर', 'शुक्र': 'कन्या', 'शनि': 'मेष' };
     var OWN = {
-        'सूर्य':['सिंह'],'चन्द्र':['कर्क'],'मंगल':['मेष','वृश्चिक'],
-        'बुध':['मिथुन','कन्या'],'गुरु':['धनु','मीन'],'शुक्र':['वृषभ','तुला'],'शनि':['मकर','कुंभ']
+        'सूर्य': ['सिंह'], 'चन्द्र': ['कर्क'], 'मंगल': ['मेष', 'वृश्चिक'],
+        'बुध': ['मिथुन', 'कन्या'], 'गुरु': ['धनु', 'मीन'], 'शुक्र': ['वृषभ', 'तुला'], 'शनि': ['मकर', 'कुंभ']
     };
-    var KENDRAS = [1,4,7,10];
-    var TRIKONAS = [1,5,9];
-    var DUSTHANAS = [6,8,12];
-    var UPACHAYA = [3,6,10,11];
-    var BENEFICS = ['गुरु','शुक्र','बुध','चन्द्र'];
-    var MALEFICS = ['शनि','मंगल','राहु','केतु','सूर्य'];
+    var KENDRAS = [1, 4, 7, 10];
+    var TRIKONAS = [1, 5, 9];
+    var DUSTHANAS = [6, 8, 12];
+    var UPACHAYA = [3, 6, 10, 11];
+    var BENEFICS = ['गुरु', 'शुक्र', 'बुध', 'चन्द्र'];
+    var MALEFICS = ['शनि', 'मंगल', 'राहु', 'केतु', 'सूर्य'];
     var NAKSHATRAS = [
-        'अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा',
-        'मघा','पूर्वाफाल्गुनी','उत्तराफाल्गुनी','हस्त','चित्रा','स्वाति','विशाखा','अनुराधा','ज्येष्ठा',
-        'मूल','पूर्वाषाढ़ा','उत्तराषाढ़ा','श्रवण','धनिष्ठा','शतभिषा','पूर्वाभाद्रपद','उत्तराभाद्रपद','रेवती'
+        'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा', 'पुनर्वसु', 'पुष्य', 'आश्लेषा',
+        'मघा', 'पूर्वाफाल्गुनी', 'उत्तराफाल्गुनी', 'हस्त', 'चित्रा', 'स्वाति', 'विशाखा', 'अनुराधा', 'ज्येष्ठा',
+        'मूल', 'पूर्वाषाढ़ा', 'उत्तराषाढ़ा', 'श्रवण', 'धनिष्ठा', 'शतभिषा', 'पूर्वाभाद्रपद', 'उत्तराभाद्रपद', 'रेवती'
     ];
-    var NAK_LORDS = ['केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध',
-                     'केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध',
-                     'केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध'];
+    var NAK_LORDS = ['केतु', 'शुक्र', 'सूर्य', 'चन्द्र', 'मंगल', 'राहु', 'गुरु', 'शनि', 'बुध',
+        'केतु', 'शुक्र', 'सूर्य', 'चन्द्र', 'मंगल', 'राहु', 'गुरु', 'शनि', 'बुध',
+        'केतु', 'शुक्र', 'सूर्य', 'चन्द्र', 'मंगल', 'राहु', 'गुरु', 'शनि', 'बुध'];
     // Current transits (Nov-Dec 2026, Swiss Ephemeris verified)
     var CURRENT_TRANSITS = {
         'सूर्य': { sign: 'वृश्चिक', house_from_aries: 8, deg: 3.6 },
@@ -65,7 +65,7 @@
     // ═══════════════════════════════════════════════════════════════════
     function getPlanet(chart, name) {
         if (!chart || !chart.planet_table) return null;
-        return chart.planet_table.find(function(p) {
+        return chart.planet_table.find(function (p) {
             var n = (p.p || p.planet || '').trim();
             return n === name || n.indexOf(name) === 0;
         }) || null;
@@ -105,7 +105,7 @@
     }
     function planetsInHouse(chart, h) {
         if (!chart || !chart.planet_table) return [];
-        return chart.planet_table.filter(function(p) { return getH(p) === h; });
+        return chart.planet_table.filter(function (p) { return getH(p) === h; });
     }
     function dignityOf(planetName, signName) {
         if (EXALT[planetName] === signName) return 'उच्च';
@@ -116,9 +116,9 @@
     function aspectsHouse(fromH, toH, pName) {
         var diff = ((toH - fromH + 12) % 12) + 1;
         var n = pName.trim();
-        if (n === 'शनि') return [3,7,10].indexOf(diff) !== -1;
-        if (n === 'मंगल') return [4,7,8].indexOf(diff) !== -1;
-        if (n === 'गुरु' || n === 'राहु' || n === 'केतु') return [5,7,9].indexOf(diff) !== -1;
+        if (n === 'शनि') return [3, 7, 10].indexOf(diff) !== -1;
+        if (n === 'मंगल') return [4, 7, 8].indexOf(diff) !== -1;
+        if (n === 'गुरु' || n === 'राहु' || n === 'केतु') return [5, 7, 9].indexOf(diff) !== -1;
         return diff === 7;
     }
 
@@ -127,20 +127,20 @@
     // ═══════════════════════════════════════════════════════════════════
     window.VyasQueryRouter = {
         ROUTES: {
-            politics:   /(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i,
-            career:     /(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i,
-            wealth:     /(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i,
-            marriage:   /(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i,
-            children:   /(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i,
-            health:     /(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i,
-            foreign:    /(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i,
-            dasha:      /(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i,
-            gochar:     /(गोचर|gochar|transit|शनि.*राशि|गुरु.*राशि|गोचर.*फल|साढ़ेसाती|ढैय्या|ashtama|अष्टम)/i,
-            yoga:       /(केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|मंगल दोष|mangal dosha|बुधादित्य|budhaditya|विपरीत.*राजयोग|viparit|नीचभंग|panchamahapurush|पंचमहापुरुष|हंस योग|मालव्य|रुचक|भद्र|शश|चंद्र-मंगल|काल सर्प)/i,
-            lagna:      /(लग्न|lagna|ascendant|लग्नेश|उदय लग्न|जन्म लग्न)/i,
-            panchang:   /(एकादशी|द्वादशी|पारण|ekadashi|पंचांग|panchang|tithi|तिथि|राहुकाल|अभिजीत|मुहूर्त|चोघड़िया|होरा|व्रत|त्योहार|पूर्णिमा|अमावस्या|प्रदोष)/i
+            politics: /(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i,
+            career: /(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i,
+            wealth: /(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i,
+            marriage: /(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i,
+            children: /(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i,
+            health: /(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i,
+            foreign: /(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i,
+            dasha: /(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i,
+            gochar: /(गोचर|gochar|transit|शनि.*राशि|गुरु.*राशि|गोचर.*फल|साढ़ेसाती|ढैय्या|ashtama|अष्टम)/i,
+            yoga: /(केमद्रुम|kemdrum|kendrum|गजकेसरी|gajakesari|मंगल दोष|mangal dosha|बुधादित्य|budhaditya|विपरीत.*राजयोग|viparit|नीचभंग|panchamahapurush|पंचमहापुरुष|हंस योग|मालव्य|रुचक|भद्र|शश|चंद्र-मंगल|काल सर्प)/i,
+            lagna: /(लग्न|lagna|ascendant|लग्नेश|उदय लग्न|जन्म लग्न)/i,
+            panchang: /(एकादशी|द्वादशी|पारण|ekadashi|पंचांग|panchang|tithi|तिथि|राहुकाल|अभिजीत|मुहूर्त|चोघड़िया|होरा|व्रत|त्योहार|पूर्णिमा|अमावस्या|प्रदोष)/i
         },
-        detect: function(query) {
+        detect: function (query) {
             var q = query || '';
             for (var route in this.ROUTES) {
                 if (this.ROUTES[route].test(q)) return route;
@@ -153,7 +153,7 @@
     // MODULE 2: CHART ANALYZER — Extract all factors from chart data
     // ═══════════════════════════════════════════════════════════════════
     window.VyasChartAnalyzer = {
-        analyze: function(chart) {
+        analyze: function (chart) {
             if (!chart || !chart.planet_table) return null;
             var self = this;
             var rawLagna = (chart.profile && chart.profile.asc_sign) ? chart.profile.asc_sign : 'मेष';
@@ -163,7 +163,7 @@
 
             // Build planet map
             var pMap = {};
-            chart.planet_table.forEach(function(p) {
+            chart.planet_table.forEach(function (p) {
                 var name = (p.p || p.planet || '').trim();
                 if (name) {
                     pMap[name] = {
@@ -171,7 +171,7 @@
                         nakshatra: (p.n || p.nakshatra || ''),
                         dignity: dignityOf(name, getS(p)),
                         retro: ((p.s || p.dignity || '').toLowerCase().indexOf('वक्र') !== -1 ||
-                                (p.s || '').toLowerCase().indexOf('retro') !== -1)
+                            (p.s || '').toLowerCase().indexOf('retro') !== -1)
                     };
                 }
             });
@@ -183,7 +183,7 @@
                 hMap[h] = {
                     sign: sign,
                     lord: LORDS[sign] || '',
-                    planets: planetsInHouse(chart, h).map(function(p){ return (p.p||p.planet||'').trim(); }).filter(Boolean)
+                    planets: planetsInHouse(chart, h).map(function (p) { return (p.p || p.planet || '').trim(); }).filter(Boolean)
                 };
             }
 
@@ -192,8 +192,8 @@
             var lagnaLordData = pMap[lagnaLord];
             var lagnaStrength = lagnaLordData ? (
                 KENDRAS.indexOf(lagnaLordData.house) !== -1 ? 'बलवान (केन्द्र)' :
-                TRIKONAS.indexOf(lagnaLordData.house) !== -1 ? 'बलवान (त्रिकोण)' :
-                DUSTHANAS.indexOf(lagnaLordData.house) !== -1 ? 'दुर्बल (दुःस्थान)' : 'मध्यम'
+                    TRIKONAS.indexOf(lagnaLordData.house) !== -1 ? 'बलवान (त्रिकोण)' :
+                        DUSTHANAS.indexOf(lagnaLordData.house) !== -1 ? 'दुर्बल (दुःस्थान)' : 'मध्यम'
             ) : 'अज्ञात';
 
             // Dasha
@@ -234,7 +234,7 @@
          * Master Yoga Detector — Identifies 50+ classical Vedic Yogas
          * Supports specific query matching and comprehensive chart scanning
          */
-        detectAll: function(analysis, chart, queryHint) {
+        detectAll: function (analysis, chart, queryHint) {
             var q = (queryHint || '').toLowerCase();
             var results = [];
 
@@ -348,7 +348,7 @@
             fullScan.push(this.gandanta(analysis));
 
             // Filter out nulls and yogas not found unless partial/bhanga
-            return fullScan.filter(function(y) {
+            return fullScan.filter(function (y) {
                 return y && (y.found === true || y.partial === true);
             });
         },
@@ -356,19 +356,21 @@
         // ═══════════════════════════════════════════════════════════════
         // A. CHANDRA YOGAS (चन्द्र योग)
         // ═══════════════════════════════════════════════════════════════
-        kemdrum: function(a) {
+        kemdrum: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return { name: 'केमद्रुम योग', found: false, detail: 'चन्द्र डेटा अनुपलब्ध' };
             var mH = moon.house;
             var h2 = (mH % 12) + 1, h12 = ((mH - 2 + 12) % 12) + 1;
-            var neighbors = Object.entries(a.planets).filter(function(e) {
+            var neighbors = Object.entries(a.planets).filter(function (e) {
                 var pn = e[0], pd = e[1];
                 return pn !== 'चन्द्र' && pn !== 'राहु' && pn !== 'केतु' && pn !== 'सूर्य' &&
-                       (pd.house === h2 || pd.house === h12);
+                    (pd.house === h2 || pd.house === h12);
             });
             if (neighbors.length > 0) {
-                return { name: 'केमद्रुम योग', found: false,
-                    detail: '❌ **केमद्रुम योग अनुपस्थित** — चन्द्रमा (भाव ' + mH + ', ' + moon.sign + ') के 2रे (भाव ' + h2 + ') व 12वें (भाव ' + h12 + ') में शुभ/अन्य ग्रह विद्यमान हैं: **' + neighbors.map(function(e){return e[0]}).join(', ') + '**।' };
+                return {
+                    name: 'केमद्रुम योग', found: false,
+                    detail: '❌ **केमद्रुम योग अनुपस्थित** — चन्द्रमा (भाव ' + mH + ', ' + moon.sign + ') के 2रे (भाव ' + h2 + ') व 12वें (भाव ' + h12 + ') में शुभ/अन्य ग्रह विद्यमान हैं: **' + neighbors.map(function (e) { return e[0] }).join(', ') + '**।'
+                };
             }
             // Check bhanga
             var bhangas = [];
@@ -379,141 +381,159 @@
                 var moonFromSun = ((mH - sun.house + 12) % 12) + 1;
                 if (KENDRAS.indexOf(moonFromSun) !== -1) bhangas.push('चन्द्रमा सूर्य से केन्द्र भाव में है');
             }
-            var benefAspects = BENEFICS.filter(function(b) {
+            var benefAspects = BENEFICS.filter(function (b) {
                 var bp = a.planets[b];
                 return bp && aspectsHouse(bp.house, mH, b);
             });
             if (benefAspects.length) bhangas.push('शुभ ग्रहों की दृष्टि: ' + benefAspects.join(', '));
 
             if (bhangas.length) {
-                return { name: 'केमद्रुम भंग राजयोग', found: true, partial: true,
+                return {
+                    name: 'केमद्रुम भंग राजयोग', found: true, partial: true,
                     detail: '⚠️ **केमद्रुम योग का आधार निर्मित होकर पूर्णतः भंग (केमद्रुम भंग राजयोग):**\n' +
-                            bhangas.map(function(b){ return '• ' + b; }).join('\n') + '\n\n' +
-                            '**शास्त्रीय निर्णय:** शास्त्रों के अनुसार केमद्रुम भंग होने पर दरिद्रता का नाश होता है। प्रारंभिक जीवन में संघर्ष व मानसिक एकाकीपन के उपरांत जातक स्वप्रयासों से अकूत सफलता प्राप्त करता है।\n\n' +
-                            '**सात्विक उपाय:** सोमवार शिव जल/दूध अभिषेक, चांदी धारण, माता का चरण स्पर्श।' };
+                        bhangas.map(function (b) { return '• ' + b; }).join('\n') + '\n\n' +
+                        '**शास्त्रीय निर्णय:** शास्त्रों के अनुसार केमद्रुम भंग होने पर दरिद्रता का नाश होता है। प्रारंभिक जीवन में संघर्ष व मानसिक एकाकीपन के उपरांत जातक स्वप्रयासों से अकूत सफलता प्राप्त करता है।\n\n' +
+                        '**सात्विक उपाय:** सोमवार शिव जल/दूध अभिषेक, चांदी धारण, माता का चरण स्पर्श।'
+                };
             }
-            return { name: 'केमद्रुम योग', found: true, partial: false,
+            return {
+                name: 'केमद्रुम योग', found: true, partial: false,
                 detail: '🔴 **पूर्ण केमद्रुम योग उपस्थित**\n\n' +
-                        '**शास्त्रीय सूत्र:** "द्वादशे द्वितीये वापि चन्द्रान्नीचे ग्रहैर्विना। केमद्रुमाख्यो योगोऽयं दुःखदारिद्र्यकारकः॥" (बृहत्पाराशर)\n\n' +
-                        '**स्थिति:** चन्द्रमा भाव ' + mH + ' (' + moon.sign + ') में एकाकी हैं। 2रे (भाव ' + h2 + ') व 12वें (भाव ' + h12 + ') में कोई ग्रह नहीं है।\n\n' +
-                        '**प्रभाव:** विचारों में अस्थिरता, मानसिक एकाकीपन, कभी-कभी आकस्मिक वित्तीय उतार-चढ़ाव।\n\n' +
-                        '**अचूक सात्विक उपाय:**\n1. प्रत्येक सोमवार शिवलिंग पर कच्चा दूध व जल अर्पित करें।\n2. कनिष्ठिका उंगली में चांदी का छल्ला धारण करें।\n3. नित्य "ॐ सों सोमाय नमः" का 108 बार मानसिक जप करें।' };
+                    '**शास्त्रीय सूत्र:** "द्वादशे द्वितीये वापि चन्द्रान्नीचे ग्रहैर्विना। केमद्रुमाख्यो योगोऽयं दुःखदारिद्र्यकारकः॥" (बृहत्पाराशर)\n\n' +
+                    '**स्थिति:** चन्द्रमा भाव ' + mH + ' (' + moon.sign + ') में एकाकी हैं। 2रे (भाव ' + h2 + ') व 12वें (भाव ' + h12 + ') में कोई ग्रह नहीं है।\n\n' +
+                    '**प्रभाव:** विचारों में अस्थिरता, मानसिक एकाकीपन, कभी-कभी आकस्मिक वित्तीय उतार-चढ़ाव।\n\n' +
+                    '**अचूक सात्विक उपाय:**\n1. प्रत्येक सोमवार शिवलिंग पर कच्चा दूध व जल अर्पित करें।\n2. कनिष्ठिका उंगली में चांदी का छल्ला धारण करें।\n3. नित्य "ॐ सों सोमाय नमः" का 108 बार मानसिक जप करें।'
+            };
         },
 
-        sunapha: function(a) {
+        sunapha: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return null;
             var h2 = (moon.house % 12) + 1;
-            var pIn2 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h2 && ['सूर्य','राहु','केतु','चन्द्र'].indexOf(e[0]) === -1;
+            var pIn2 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h2 && ['सूर्य', 'राहु', 'केतु', 'चन्द्र'].indexOf(e[0]) === -1;
             });
             if (pIn2.length > 0) {
-                var pNames = pIn2.map(function(e){ return e[0]; }).join(', ');
-                return { name: 'सुनफा योग (Sunapha Yoga)', found: true,
+                var pNames = pIn2.map(function (e) { return e[0]; }).join(', ');
+                return {
+                    name: 'सुनफा योग (Sunapha Yoga)', found: true,
                     detail: '✦ **शुभ सुनफा योग उपस्थित**\n' +
-                            '**शास्त्रीय आधार:** चन्द्रमा (भाव ' + moon.house + ') से द्वितीय भाव (भाव ' + h2 + ') में ग्रह (' + pNames + ') स्थित होने से सुनफा योग बनता है।\n' +
-                            '**फल:** जातक स्वअर्जित संपत्ति, उत्तम विद्या, बुद्धिमत्ता, समाज में मान-प्रतिष्ठा एवं ऐश्वर्यवान जीवन व्यतीत करता है।\n' +
-                            '**उपाय:** इष्टदेव की नित्य आराधना करें तथा शुभ कर्मों में धन का सदुपयोग करें।' };
+                        '**शास्त्रीय आधार:** चन्द्रमा (भाव ' + moon.house + ') से द्वितीय भाव (भाव ' + h2 + ') में ग्रह (' + pNames + ') स्थित होने से सुनफा योग बनता है।\n' +
+                        '**फल:** जातक स्वअर्जित संपत्ति, उत्तम विद्या, बुद्धिमत्ता, समाज में मान-प्रतिष्ठा एवं ऐश्वर्यवान जीवन व्यतीत करता है।\n' +
+                        '**उपाय:** इष्टदेव की नित्य आराधना करें तथा शुभ कर्मों में धन का सदुपयोग करें।'
+                };
             }
             return null;
         },
 
-        anapha: function(a) {
+        anapha: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return null;
             var h12 = ((moon.house - 2 + 12) % 12) + 1;
-            var pIn12 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h12 && ['सूर्य','राहु','केतु','चन्द्र'].indexOf(e[0]) === -1;
+            var pIn12 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h12 && ['सूर्य', 'राहु', 'केतु', 'चन्द्र'].indexOf(e[0]) === -1;
             });
             if (pIn12.length > 0) {
-                var pNames = pIn12.map(function(e){ return e[0]; }).join(', ');
-                return { name: 'अनफा योग (Anapha Yoga)', found: true,
+                var pNames = pIn12.map(function (e) { return e[0]; }).join(', ');
+                return {
+                    name: 'अनफा योग (Anapha Yoga)', found: true,
                     detail: '✦ **शुभ अनफा योग उपस्थित**\n' +
-                            '**शास्त्रीय आधार:** चन्द्रमा से द्वादश भाव (भाव ' + h12 + ') में ग्रह (' + pNames + ') स्थित होने से अनफा योग निर्मित होता है।\n' +
-                            '**फल:** जातक निरोगी काया, उदार चित्त, उत्तम शील, नीतिज्ञ एवं समाज में लोकप्रिय होता है।\n' +
-                            '**उपाय:** नित्य सूर्य अर्घ्य दें एवं संध्या समय शिव स्मरण करें।' };
+                        '**शास्त्रीय आधार:** चन्द्रमा से द्वादश भाव (भाव ' + h12 + ') में ग्रह (' + pNames + ') स्थित होने से अनफा योग निर्मित होता है।\n' +
+                        '**फल:** जातक निरोगी काया, उदार चित्त, उत्तम शील, नीतिज्ञ एवं समाज में लोकप्रिय होता है।\n' +
+                        '**उपाय:** नित्य सूर्य अर्घ्य दें एवं संध्या समय शिव स्मरण करें।'
+                };
             }
             return null;
         },
 
-        durdhura: function(a) {
+        durdhura: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return null;
             var h2 = (moon.house % 12) + 1;
             var h12 = ((moon.house - 2 + 12) % 12) + 1;
-            var pIn2 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h2 && ['सूर्य','राहु','केतु','चन्द्र'].indexOf(e[0]) === -1;
+            var pIn2 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h2 && ['सूर्य', 'राहु', 'केतु', 'चन्द्र'].indexOf(e[0]) === -1;
             });
-            var pIn12 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h12 && ['सूर्य','राहु','केतु','चन्द्र'].indexOf(e[0]) === -1;
+            var pIn12 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h12 && ['सूर्य', 'राहु', 'केतु', 'चन्द्र'].indexOf(e[0]) === -1;
             });
             if (pIn2.length > 0 && pIn12.length > 0) {
-                return { name: 'दुरुधुरा योग (Durdhura Yoga)', found: true,
+                return {
+                    name: 'दुरुधुरा योग (Durdhura Yoga)', found: true,
                     detail: '✦ **अति-शुभ दुरुधुरा योग उपस्थित**\n' +
-                            '**शास्त्रीय आधार:** चन्द्रमा के दोनों ओर द्वितीय (भाव ' + h2 + ') व द्वादश (भाव ' + h12 + ') में शुभ/अन्य ग्रह स्थित हैं।\n' +
-                            '**फल:** जातक अपार धन, वाहन सुख, उदार हृदय, स्थिर बुद्धि एवं उच्च सामाजिक प्रतिष्ठा का स्वामी होता है।\n' +
-                            '**उपाय:** श्री सूक्त का नियमित पाठ करें।' };
+                        '**शास्त्रीय आधार:** चन्द्रमा के दोनों ओर द्वितीय (भाव ' + h2 + ') व द्वादश (भाव ' + h12 + ') में शुभ/अन्य ग्रह स्थित हैं।\n' +
+                        '**फल:** जातक अपार धन, वाहन सुख, उदार हृदय, स्थिर बुद्धि एवं उच्च सामाजिक प्रतिष्ठा का स्वामी होता है।\n' +
+                        '**उपाय:** श्री सूक्त का नियमित पाठ करें।'
+                };
             }
             return null;
         },
 
-        gajakesari: function(a) {
+        gajakesari: function (a) {
             var moon = a.planets['चन्द्र'], guru = a.planets['गुरु'];
             if (!moon || !guru) return { name: 'गजकेसरी योग', found: false, detail: 'चन्द्र/गुरु डेटा अनुपलब्ध' };
             var fromMoon = ((guru.house - moon.house + 12) % 12) + 1;
             var fromLagna = guru.house;
             if (KENDRAS.indexOf(fromMoon) !== -1 || KENDRAS.indexOf(fromLagna) !== -1) {
                 var deb = guru.sign === 'मकर';
-                return { name: 'गजकेसरी योग' + (deb ? ' (नीचस्थ - आंशिक)' : ''), found: true, partial: deb,
+                return {
+                    name: 'गजकेसरी योग' + (deb ? ' (नीचस्थ - आंशिक)' : ''), found: true, partial: deb,
                     detail: '✦ **परम शुभ गजकेसरी योग उपस्थित**\n' +
-                            '**शास्त्रीय सूत्र:** "केन्द्रे देवगुरौ लग्नाच्चन्द्राद्वापि यदा स्थितः। कीटारिभ्रष्टहीनोऽयं गजकेसरीयोगकृत्॥" (बृहत्पाराशर)\n' +
-                            '**स्थिति:** देवगुरु बृहस्पति (भाव ' + guru.house + ', ' + guru.sign + ') चन्द्रमा (भाव ' + moon.house + ') से ' + fromMoon + 'वें (केन्द्र) भाव में संचरण कर रहे हैं।\n' +
-                            '**फल:** दीर्घायु, तीव्र मेधा, उत्कृष्ट सामाजिक प्रतिष्ठा, संकटों में ईश्वरीय संरक्षण एवं स्थायी समृद्धि।\n' +
-                            '**उपाय:** गुरुवार को चने की दाल व गुड़ गाय को खिलाएं, "ॐ बृं बृहस्पतये नमः" का जप करें।' };
+                        '**शास्त्रीय सूत्र:** "केन्द्रे देवगुरौ लग्नाच्चन्द्राद्वापि यदा स्थितः। कीटारिभ्रष्टहीनोऽयं गजकेसरीयोगकृत्॥" (बृहत्पाराशर)\n' +
+                        '**स्थिति:** देवगुरु बृहस्पति (भाव ' + guru.house + ', ' + guru.sign + ') चन्द्रमा (भाव ' + moon.house + ') से ' + fromMoon + 'वें (केन्द्र) भाव में संचरण कर रहे हैं।\n' +
+                        '**फल:** दीर्घायु, तीव्र मेधा, उत्कृष्ट सामाजिक प्रतिष्ठा, संकटों में ईश्वरीय संरक्षण एवं स्थायी समृद्धि।\n' +
+                        '**उपाय:** गुरुवार को चने की दाल व गुड़ गाय को खिलाएं, "ॐ बृं बृहस्पतये नमः" का जप करें।'
+                };
             }
-            return { name: 'गजकेसरी योग', found: false,
-                detail: '❌ **गजकेसरी योग अनुपस्थित** — चन्द्रमा से देवगुरु बृहस्पति केन्द्र भाव (1, 4, 7, 10) में स्थित नहीं हैं (वर्तमान में ' + fromMoon + 'वें भाव में हैं)।' };
+            return {
+                name: 'गजकेसरी योग', found: false,
+                detail: '❌ **गजकेसरी योग अनुपस्थित** — चन्द्रमा से देवगुरु बृहस्पति केन्द्र भाव (1, 4, 7, 10) में स्थित नहीं हैं (वर्तमान में ' + fromMoon + 'वें भाव में हैं)।'
+            };
         },
 
-        chandramangal: function(a) {
+        chandramangal: function (a) {
             var moon = a.planets['चन्द्र'], mars = a.planets['मंगल'];
             if (!moon || !mars) return null;
             var sameHouse = moon.house === mars.house;
             var mutual7th = ((mars.house - moon.house + 12) % 12) + 1 === 7;
             if (sameHouse || mutual7th) {
-                return { name: 'चन्द्र-मंगल योग (महालक्ष्मी योग)', found: true,
+                return {
+                    name: 'चन्द्र-मंगल योग (महालक्ष्मी योग)', found: true,
                     detail: '✦ **चन्द्र-मंगल (महालक्ष्मी) योग उपस्थित**\n' +
-                            '**स्थिति:** चन्द्रमा (भाव ' + moon.house + ') एवं मंगल (भाव ' + mars.house + ') परस्पर ' + (sameHouse ? 'युति' : 'सप्तम दृष्टि सम्बन्ध') + ' में हैं।\n' +
-                            '**फल:** यह शक्तिशाली धन प्रदायक योग है। जातक उद्यमी, व्यापारिक बुद्धि से युक्त, भूमि-भवन लाभ एवं आकस्मिक वित्तीय लाभ प्राप्त करता है।\n' +
-                            '**उपाय:** मंगलवार को मीठी रोटी गाय को दें एवं कनकधारा स्तोत्र का पाठ करें।' };
+                        '**स्थिति:** चन्द्रमा (भाव ' + moon.house + ') एवं मंगल (भाव ' + mars.house + ') परस्पर ' + (sameHouse ? 'युति' : 'सप्तम दृष्टि सम्बन्ध') + ' में हैं।\n' +
+                        '**फल:** यह शक्तिशाली धन प्रदायक योग है। जातक उद्यमी, व्यापारिक बुद्धि से युक्त, भूमि-भवन लाभ एवं आकस्मिक वित्तीय लाभ प्राप्त करता है।\n' +
+                        '**उपाय:** मंगलवार को मीठी रोटी गाय को दें एवं कनकधारा स्तोत्र का पाठ करें।'
+                };
             }
             return null;
         },
 
-        adhiyoga: function(a) {
+        adhiyoga: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return null;
             var mH = moon.house;
             var h6 = ((mH + 5) % 12) + 1, h7 = ((mH + 6) % 12) + 1, h8 = ((mH + 7) % 12) + 1;
-            var beneficsIn678 = BENEFICS.filter(function(b){
+            var beneficsIn678 = BENEFICS.filter(function (b) {
                 var bp = a.planets[b];
                 return bp && (bp.house === h6 || bp.house === h7 || bp.house === h8);
             });
             if (beneficsIn678.length >= 2) {
-                return { name: 'चांद्र अधि योग (Chandra Adhi Yoga)', found: true,
+                return {
+                    name: 'चांद्र अधि योग (Chandra Adhi Yoga)', found: true,
                     detail: '✦ **दुर्लभ चांद्र अधि योग उपस्थित**\n' +
-                            '**शास्त्रीय सूत्र:** चन्द्रमा से 6, 7, 8वें भाव में शुभ ग्रह (' + beneficsIn678.join(', ') + ') स्थित हैं।\n' +
-                            '**फल:** यह जातक को सेनापति, मंत्री, उच्च प्रशासक, शत्रुओं पर अजेय विजय एवं अखंड ऐश्वर्य प्रदान करता है।\n' +
-                            '**उपाय:** श्री सूक्त व विष्णु सहस्रनाम का नियमित श्रवण करें।' };
+                        '**शास्त्रीय सूत्र:** चन्द्रमा से 6, 7, 8वें भाव में शुभ ग्रह (' + beneficsIn678.join(', ') + ') स्थित हैं।\n' +
+                        '**फल:** यह जातक को सेनापति, मंत्री, उच्च प्रशासक, शत्रुओं पर अजेय विजय एवं अखंड ऐश्वर्य प्रदान करता है।\n' +
+                        '**उपाय:** श्री सूक्त व विष्णु सहस्रनाम का नियमित श्रवण करें।'
+                };
             }
             return null;
         },
 
-        vasumati: function(a) {
+        vasumati: function (a) {
             var upachayas = [3, 6, 10, 11];
             var countLagna = 0, countMoon = 0;
             var moon = a.planets['चन्द्र'];
-            BENEFICS.forEach(function(b){
+            BENEFICS.forEach(function (b) {
                 var bp = a.planets[b];
                 if (bp) {
                     if (upachayas.indexOf(bp.house) !== -1) countLagna++;
@@ -524,66 +544,78 @@
                 }
             });
             if (countLagna >= 3 || countMoon >= 3) {
-                return { name: 'वसुमती योग (Vasumati Yoga)', found: true,
+                return {
+                    name: 'वसुमती योग (Vasumati Yoga)', found: true,
                     detail: '✦ **परम धनदायक वसुमती योग उपस्थित**\n' +
-                            '**शास्त्रीय आधार:** उपचय भावों (3, 6, 10, 11) में 3 या अधिक शुभ ग्रह संचरण कर रहे हैं।\n' +
-                            '**फल:** जातक कभी पराधीन नहीं रहता, अपने बाहुबल से अकूत धन-संपत्ति अर्जित करता है और राजतुल्य जीवन जीता है।' };
+                        '**शास्त्रीय आधार:** उपचय भावों (3, 6, 10, 11) में 3 या अधिक शुभ ग्रह संचरण कर रहे हैं।\n' +
+                        '**फल:** जातक कभी पराधीन नहीं रहता, अपने बाहुबल से अकूत धन-संपत्ति अर्जित करता है और राजतुल्य जीवन जीता है।'
+                };
             }
             return null;
         },
 
-        shakata: function(a) {
+        shakata: function (a) {
             var moon = a.planets['चन्द्र'], guru = a.planets['गुरु'];
             if (!moon || !guru) return null;
             var fromGuru = ((moon.house - guru.house + 12) % 12) + 1;
             if ([6, 8, 12].indexOf(fromGuru) !== -1) {
                 var isBhanga = (KENDRAS.indexOf(moon.house) !== -1) || (moon.sign === 'वृषभ' || moon.sign === 'कर्क');
                 if (isBhanga) {
-                    return { name: 'शकट योग (भंग)', found: true, partial: true,
+                    return {
+                        name: 'शकट योग (भंग)', found: true, partial: true,
                         detail: '⚠️ **शकट योग निर्मित होकर भंग:** चन्द्रमा गुरु से ' + fromGuru + 'वें भाव में है, किन्तु चन्द्रमा के केन्द्रस्थ/उच्चस्थ होने से दोष निष्प्रभावी हो गया है।\n' +
-                                '**उपाय:** शिव पंचाक्षर मंत्र "ॐ नमः शिवाय" का जप करें।' };
+                            '**उपाय:** शिव पंचाक्षर मंत्र "ॐ नमः शिवाय" का जप करें।'
+                    };
                 }
-                return { name: 'शकट योग (Shakata Yoga)', found: true, partial: false,
+                return {
+                    name: 'शकट योग (Shakata Yoga)', found: true, partial: false,
                     detail: '🔴 **शकट योग उपस्थित:** चन्द्रमा देवगुरु से ' + fromGuru + 'वें (त्रिक) भाव में स्थित हैं।\n' +
-                            '**फल:** जीवन में गाड़ी के पहिये की भांति उतार-चढ़ाव, कभी अपार संपन्नता तो कभी संघर्ष।\n' +
-                            '**उपाय:** पूर्णिमा का व्रत अथवा चन्द्र अर्घ्य दें, गुरु मंत्र का जप करें।' };
+                        '**फल:** जीवन में गाड़ी के पहिये की भांति उतार-चढ़ाव, कभी अपार संपन्नता तो कभी संघर्ष।\n' +
+                        '**उपाय:** पूर्णिमा का व्रत अथवा चन्द्र अर्घ्य दें, गुरु मंत्र का जप करें।'
+                };
             }
             return null;
         },
 
-        amala: function(a) {
-            var beneficsIn10 = BENEFICS.filter(function(b){
+        amala: function (a) {
+            var beneficsIn10 = BENEFICS.filter(function (b) {
                 var bp = a.planets[b];
                 return bp && bp.house === 10;
             });
             if (beneficsIn10.length > 0) {
-                return { name: 'अमला योग (Amala Yoga)', found: true,
+                return {
+                    name: 'अमला योग (Amala Yoga)', found: true,
                     detail: '✦ **अमला योग उपस्थित:** दशम (कर्म) भाव में शुभ ग्रह (' + beneficsIn10.join(', ') + ') स्थित हैं।\n' +
-                            '**फल:** निष्कलंक कीर्ति, परोपकारी स्वभाव, राजदरबार/शासन में सम्मान एवं स्थायी आजीविका।' };
+                        '**फल:** निष्कलंक कीर्ति, परोपकारी स्वभाव, राजदरबार/शासन में सम्मान एवं स्थायी आजीविका।'
+                };
             }
             return null;
         },
 
-        gauri: function(a) {
+        gauri: function (a) {
             var moon = a.planets['चन्द्र'], guru = a.planets['गुरु'];
             if (!moon || !guru) return null;
             if ((moon.sign === 'कर्क' || moon.sign === 'वृषभ') && aspectsHouse(guru.house, moon.house, 'गुरु')) {
-                return { name: 'गौरी योग (Gauri Yoga)', found: true,
+                return {
+                    name: 'गौरी योग (Gauri Yoga)', found: true,
                     detail: '✦ **परम पावन गौरी योग उपस्थित:** चन्द्रमा स्व/उच्च राशि में हैं तथा देवगुरु बृहस्पति की पूर्ण अमृत दृष्टि से युक्त हैं।\n' +
-                            '**फल:** दिव्य आकर्षण, सुंदर रूप, पवित्र चरित्र, ऐश्वर्य एवं माता का विशेष संबल।' };
+                        '**फल:** दिव्य आकर्षण, सुंदर रूप, पवित्र चरित्र, ऐश्वर्य एवं माता का विशेष संबल।'
+                };
             }
             return null;
         },
 
-        pushkala: function(a) {
+        pushkala: function (a) {
             var moon = a.planets['चन्द्र'];
             if (!moon) return null;
             var moonLord = LORDS[moon.sign];
             var mlData = a.planets[moonLord];
             var lagnaLordData = a.planets[a.lagnaLord];
             if (mlData && KENDRAS.indexOf(mlData.house) !== -1 && lagnaLordData) {
-                return { name: 'पुष्कल योग (Pushkala Yoga)', found: true,
-                    detail: '✦ **पुष्कल योग उपस्थित:** चन्द्र राशि का अधिपति केन्द्र में बली है। जातक विद्वान, धनी एवं प्रसिद्ध होता है।' };
+                return {
+                    name: 'पुष्कल योग (Pushkala Yoga)', found: true,
+                    detail: '✦ **पुष्कल योग उपस्थित:** चन्द्र राशि का अधिपति केन्द्र में बली है। जातक विद्वान, धनी एवं प्रसिद्ध होता है।'
+                };
             }
             return null;
         },
@@ -591,78 +623,90 @@
         // ═══════════════════════════════════════════════════════════════
         // B. SURYA YOGAS (सौर योग)
         // ═══════════════════════════════════════════════════════════════
-        budhaditya: function(a) {
+        budhaditya: function (a) {
             var sun = a.planets['सूर्य'], merc = a.planets['बुध'];
             if (!sun || !merc) return { name: 'बुधादित्य योग', found: false, detail: 'सूर्य/बुध डेटा अनुपलब्ध' };
             if (sun.house === merc.house) {
                 var diffDeg = Math.abs(sun.deg - merc.deg);
                 var isCombust = diffDeg < 14.0;
-                return { name: 'बुधादित्य योग' + (isCombust ? ' (अस्त - आंशिक)' : ''), found: true, partial: isCombust,
+                return {
+                    name: 'बुधादित्य योग' + (isCombust ? ' (अस्त - आंशिक)' : ''), found: true, partial: isCombust,
                     detail: '✦ **बुधादित्य योग उपस्थित**\n' +
-                            '**स्थिति:** सूर्य एवं बुध दोनों भाव ' + sun.house + ' (' + sun.sign + ' राशि) में परस्पर ' + diffDeg.toFixed(1) + '° की दूरी पर स्थित हैं। ' +
-                            (isCombust ? 'बुध सूर्य के समीप (14° के भीतर) होने से अस्त हैं, अतः यह योग बौद्धिक तेज तो देता है किंतु कभी-कभी एकाग्रता में चंचलता लाता है।' : 'बुध पूर्ण उदित होकर प्रखर राजयोग फल दे रहे हैं।') + '\n\n' +
-                            '**फल:** तीव्र बुद्धि, उत्कृष्ट गणितीय/तार्किक विश्लेषण, प्रभावी वाणी, प्रशासनिक व तकनीकी सिद्धि।\n\n' +
-                            '**उपाय:** नित्य प्रातः सूर्य देव को तांबे के लोटे से अर्घ्य दें, बुधवार को हरी मूंग पक्षियों को डालें।' };
+                        '**स्थिति:** सूर्य एवं बुध दोनों भाव ' + sun.house + ' (' + sun.sign + ' राशि) में परस्पर ' + diffDeg.toFixed(1) + '° की दूरी पर स्थित हैं। ' +
+                        (isCombust ? 'बुध सूर्य के समीप (14° के भीतर) होने से अस्त हैं, अतः यह योग बौद्धिक तेज तो देता है किंतु कभी-कभी एकाग्रता में चंचलता लाता है।' : 'बुध पूर्ण उदित होकर प्रखर राजयोग फल दे रहे हैं।') + '\n\n' +
+                        '**फल:** तीव्र बुद्धि, उत्कृष्ट गणितीय/तार्किक विश्लेषण, प्रभावी वाणी, प्रशासनिक व तकनीकी सिद्धि।\n\n' +
+                        '**उपाय:** नित्य प्रातः सूर्य देव को तांबे के लोटे से अर्घ्य दें, बुधवार को हरी मूंग पक्षियों को डालें।'
+                };
             }
-            return { name: 'बुधादित्य योग', found: false,
-                detail: '❌ **बुधादित्य योग अनुपस्थित** — सूर्य (भाव ' + sun.house + ') एवं बुध (भाव ' + merc.house + ') भिन्न भावों में हैं।' };
+            return {
+                name: 'बुधादित्य योग', found: false,
+                detail: '❌ **बुधादित्य योग अनुपस्थित** — सूर्य (भाव ' + sun.house + ') एवं बुध (भाव ' + merc.house + ') भिन्न भावों में हैं।'
+            };
         },
 
-        vesi: function(a) {
+        vesi: function (a) {
             var sun = a.planets['सूर्य'];
             if (!sun) return null;
             var h2 = (sun.house % 12) + 1;
-            var pIn2 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h2 && ['चन्द्र','राहु','केतु','सूर्य'].indexOf(e[0]) === -1;
+            var pIn2 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h2 && ['चन्द्र', 'राहु', 'केतु', 'सूर्य'].indexOf(e[0]) === -1;
             });
             if (pIn2.length > 0) {
-                var pNames = pIn2.map(function(e){ return e[0]; }).join(', ');
-                var isBenefic = pIn2.some(function(e){ return BENEFICS.indexOf(e[0]) !== -1; });
-                return { name: 'वेशि योग (' + (isBenefic ? 'शुभ वेशि' : 'पाप वेशि') + ')', found: true,
+                var pNames = pIn2.map(function (e) { return e[0]; }).join(', ');
+                var isBenefic = pIn2.some(function (e) { return BENEFICS.indexOf(e[0]) !== -1; });
+                return {
+                    name: 'वेशि योग (' + (isBenefic ? 'शुभ वेशि' : 'पाप वेशि') + ')', found: true,
                     detail: '✦ **' + (isBenefic ? 'शुभ वेशि' : 'पाप वेशि') + ' योग उपस्थित:** सूर्य से द्वितीय भाव में ' + pNames + ' स्थित हैं।\n' +
-                            '**फल:** ' + (isBenefic ? 'सत्यवादी, तेजस्वी, धनवान व यशस्वी जीवन।' : 'कठिन परिश्रम उपरांत सिद्धि।') };
+                        '**फल:** ' + (isBenefic ? 'सत्यवादी, तेजस्वी, धनवान व यशस्वी जीवन।' : 'कठिन परिश्रम उपरांत सिद्धि।')
+                };
             }
             return null;
         },
 
-        vasi: function(a) {
+        vasi: function (a) {
             var sun = a.planets['सूर्य'];
             if (!sun) return null;
             var h12 = ((sun.house - 2 + 12) % 12) + 1;
-            var pIn12 = Object.entries(a.planets).filter(function(e){
-                return e[1].house === h12 && ['चन्द्र','राहु','केतु','सूर्य'].indexOf(e[0]) === -1;
+            var pIn12 = Object.entries(a.planets).filter(function (e) {
+                return e[1].house === h12 && ['चन्द्र', 'राहु', 'केतु', 'सूर्य'].indexOf(e[0]) === -1;
             });
             if (pIn12.length > 0) {
-                var pNames = pIn12.map(function(e){ return e[0]; }).join(', ');
-                return { name: 'वाशि योग (Vasi Yoga)', found: true,
-                    detail: '✦ **वाशि योग उपस्थित:** सूर्य से द्वादश भाव में ग्रह (' + pNames + ') स्थित हैं। जातक बुद्धिमान, विद्यावान व प्रतापी होता है।' };
+                var pNames = pIn12.map(function (e) { return e[0]; }).join(', ');
+                return {
+                    name: 'वाशि योग (Vasi Yoga)', found: true,
+                    detail: '✦ **वाशि योग उपस्थित:** सूर्य से द्वादश भाव में ग्रह (' + pNames + ') स्थित हैं। जातक बुद्धिमान, विद्यावान व प्रतापी होता है।'
+                };
             }
             return null;
         },
 
-        ubhayachari: function(a) {
+        ubhayachari: function (a) {
             var sun = a.planets['सूर्य'];
             if (!sun) return null;
             var h2 = (sun.house % 12) + 1;
             var h12 = ((sun.house - 2 + 12) % 12) + 1;
-            var pIn2 = Object.entries(a.planets).filter(function(e){ return e[1].house === h2 && ['चन्द्र','राहु','केतु','सूर्य'].indexOf(e[0]) === -1; });
-            var pIn12 = Object.entries(a.planets).filter(function(e){ return e[1].house === h12 && ['चन्द्र','राहु','केतु','सूर्य'].indexOf(e[0]) === -1; });
+            var pIn2 = Object.entries(a.planets).filter(function (e) { return e[1].house === h2 && ['चन्द्र', 'राहु', 'केतु', 'सूर्य'].indexOf(e[0]) === -1; });
+            var pIn12 = Object.entries(a.planets).filter(function (e) { return e[1].house === h12 && ['चन्द्र', 'राहु', 'केतु', 'सूर्य'].indexOf(e[0]) === -1; });
             if (pIn2.length > 0 && pIn12.length > 0) {
-                return { name: 'उभयचरी योग (Ubhayachari Yoga)', found: true,
-                    detail: '✦ **उभयचरी योग उपस्थित:** सूर्य के दोनों ओर (2रे व 12वें भाव में) ग्रह स्थित हैं। जातक राजा या सरकार का कृपापात्र, स्थिर बुद्धि व सर्वप्रिय होता है।' };
+                return {
+                    name: 'उभयचरी योग (Ubhayachari Yoga)', found: true,
+                    detail: '✦ **उभयचरी योग उपस्थित:** सूर्य के दोनों ओर (2रे व 12वें भाव में) ग्रह स्थित हैं। जातक राजा या सरकार का कृपापात्र, स्थिर बुद्धि व सर्वप्रिय होता है।'
+                };
             }
             return null;
         },
 
-        bhaskara: function(a) {
+        bhaskara: function (a) {
             var sun = a.planets['सूर्य'], moon = a.planets['चन्द्र'], merc = a.planets['बुध'], guru = a.planets['गुरु'];
             if (!sun || !moon || !merc || !guru) return null;
             var sunFromMoon = ((sun.house - moon.house + 12) % 12) + 1;
             var mercFromSun = ((merc.house - sun.house + 12) % 12) + 1;
             var guruFromMoon = ((guru.house - moon.house + 12) % 12) + 1;
             if (sunFromMoon === 2 && (mercFromSun === 2 || mercFromSun === 3) && (guruFromMoon === 5 || guruFromMoon === 9)) {
-                return { name: 'भास्कर योग (Bhaskara Yoga)', found: true,
-                    detail: '✦ **दिव्य भास्कर योग उपस्थित:** सूर्य, बुध व गुरु का पावन त्रिकोण/केन्द्र संरेखण। जातक प्रतापी, संगीत/कला मर्मज्ञ एवं सर्वशास्त्र ज्ञाता होता है।' };
+                return {
+                    name: 'भास्कर योग (Bhaskara Yoga)', found: true,
+                    detail: '✦ **दिव्य भास्कर योग उपस्थित:** सूर्य, बुध व गुरु का पावन त्रिकोण/केन्द्र संरेखण। जातक प्रतापी, संगीत/कला मर्मज्ञ एवं सर्वशास्त्र ज्ञाता होता है।'
+                };
             }
             return null;
         },
@@ -670,85 +714,95 @@
         // ═══════════════════════════════════════════════════════════════
         // C. PANCHA MAHAPURUSHA YOGAS (पंचमहापुरुष योग)
         // ═══════════════════════════════════════════════════════════════
-        ruchaka: function(a) {
+        ruchaka: function (a) {
             var mars = a.planets['मंगल'];
             if (!mars) return null;
-            if (KENDRAS.indexOf(mars.house) !== -1 && ['मेष','वृश्चिक','मकर'].indexOf(mars.sign) !== -1) {
-                return { name: 'रुचक महापुरुष योग (Ruchaka Yoga)', found: true,
+            if (KENDRAS.indexOf(mars.house) !== -1 && ['मेष', 'वृश्चिक', 'मकर'].indexOf(mars.sign) !== -1) {
+                return {
+                    name: 'रुचक महापुरुष योग (Ruchaka Yoga)', found: true,
                     detail: '✦ **रुचक पंचमहापुरुष योग उपस्थित**\n' +
-                            '**स्थिति:** मंगल देव भाव ' + mars.house + ' में ' + mars.sign + ' (' + (mars.sign === 'मकर' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में विराजमान हैं।\n' +
-                            '**फल:** असाधारण पराक्रम, साहस, भूमि-भवन स्वामित्त्व, उच्च तकनीकी या प्रशासनिक पद, विरोधियों पर पूर्ण विजय।\n' +
-                            '**उपाय:** मंगलवार हनुमान चालीसा पाठ करें।' };
+                        '**स्थिति:** मंगल देव भाव ' + mars.house + ' में ' + mars.sign + ' (' + (mars.sign === 'मकर' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में विराजमान हैं।\n' +
+                        '**फल:** असाधारण पराक्रम, साहस, भूमि-भवन स्वामित्त्व, उच्च तकनीकी या प्रशासनिक पद, विरोधियों पर पूर्ण विजय।\n' +
+                        '**उपाय:** मंगलवार हनुमान चालीसा पाठ करें।'
+                };
             }
             return null;
         },
 
-        bhadra: function(a) {
+        bhadra: function (a) {
             var merc = a.planets['बुध'];
             if (!merc) return null;
-            if (KENDRAS.indexOf(merc.house) !== -1 && ['मिथुन','कन्या'].indexOf(merc.sign) !== -1) {
-                return { name: 'भद्र महापुरुष योग (Bhadra Yoga)', found: true,
+            if (KENDRAS.indexOf(merc.house) !== -1 && ['मिथुन', 'कन्या'].indexOf(merc.sign) !== -1) {
+                return {
+                    name: 'भद्र महापुरुष योग (Bhadra Yoga)', found: true,
                     detail: '✦ **भद्र पंचमहापुरुष योग उपस्थित**\n' +
-                            '**स्थिति:** बुध देव भाव ' + merc.house + ' में ' + merc.sign + ' (' + (merc.sign === 'कन्या' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
-                            '**फल:** कुशाग्र मेधा, वाणी का जादू, व्यापार/वाणिज्य में शीर्ष सफलता, गणितज्ञ, उत्कृष्ट सलाहकार।\n' +
-                            '**उपाय:** बुधवार को पक्षियों को हरी मूंग डालें।' };
+                        '**स्थिति:** बुध देव भाव ' + merc.house + ' में ' + merc.sign + ' (' + (merc.sign === 'कन्या' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
+                        '**फल:** कुशाग्र मेधा, वाणी का जादू, व्यापार/वाणिज्य में शीर्ष सफलता, गणितज्ञ, उत्कृष्ट सलाहकार।\n' +
+                        '**उपाय:** बुधवार को पक्षियों को हरी मूंग डालें।'
+                };
             }
             return null;
         },
 
-        hamsa: function(a) {
+        hamsa: function (a) {
             var guru = a.planets['गुरु'];
             if (!guru) return null;
-            if (KENDRAS.indexOf(guru.house) !== -1 && ['धनु','मीन','कर्क'].indexOf(guru.sign) !== -1) {
-                return { name: 'हंस महापुरुष योग (Hamsa Yoga)', found: true,
+            if (KENDRAS.indexOf(guru.house) !== -1 && ['धनु', 'मीन', 'कर्क'].indexOf(guru.sign) !== -1) {
+                return {
+                    name: 'हंस महापुरुष योग (Hamsa Yoga)', found: true,
                     detail: '✦ **हंस पंचमहापुरुष योग उपस्थित**\n' +
-                            '**स्थिति:** देवगुरु बृहस्पति भाव ' + guru.house + ' में ' + guru.sign + ' (' + (guru.sign === 'कर्क' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
-                            '**फल:** धर्मनिष्ठता, आध्यात्मिक ज्ञान, समाज में पूज्यनीय पद, राजसम्मान, आदर्श गुरु व मार्गदर्शक का जीवन।\n' +
-                            '**उपाय:** गुरुवार को गुरु मंत्र का जप करें, माता-पिता/गुरु का चरण स्पर्श करें।' };
+                        '**स्थिति:** देवगुरु बृहस्पति भाव ' + guru.house + ' में ' + guru.sign + ' (' + (guru.sign === 'कर्क' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
+                        '**फल:** धर्मनिष्ठता, आध्यात्मिक ज्ञान, समाज में पूज्यनीय पद, राजसम्मान, आदर्श गुरु व मार्गदर्शक का जीवन।\n' +
+                        '**उपाय:** गुरुवार को गुरु मंत्र का जप करें, माता-पिता/गुरु का चरण स्पर्श करें।'
+                };
             }
             return null;
         },
 
-        malavya: function(a) {
+        malavya: function (a) {
             var ven = a.planets['शुक्र'];
             if (!ven) return null;
-            if (KENDRAS.indexOf(ven.house) !== -1 && ['वृषभ','तुला','मीन'].indexOf(ven.sign) !== -1) {
-                return { name: 'मालव्य महापुरुष योग (Malavya Yoga)', found: true,
+            if (KENDRAS.indexOf(ven.house) !== -1 && ['वृषभ', 'तुला', 'मीन'].indexOf(ven.sign) !== -1) {
+                return {
+                    name: 'मालव्य महापुरुष योग (Malavya Yoga)', found: true,
                     detail: '✦ **मालव्य पंचमहापुरुष योग उपस्थित**\n' +
-                            '**स्थिति:** शुक्र देव भाव ' + ven.house + ' में ' + ven.sign + ' (' + (ven.sign === 'मीन' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
-                            '**फल:** राजसी सुख, वाहन, कला/सौंदर्य में सिद्धि, उत्तम दांपत्य, जनआकर्षण एवं प्रचुर वैभव।\n' +
-                            '**उपाय:** शुक्रवार को श्वेत वस्तुओं का दान करें, श्री सूक्त का पाठ करें।' };
+                        '**स्थिति:** शुक्र देव भाव ' + ven.house + ' में ' + ven.sign + ' (' + (ven.sign === 'मीन' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
+                        '**फल:** राजसी सुख, वाहन, कला/सौंदर्य में सिद्धि, उत्तम दांपत्य, जनआकर्षण एवं प्रचुर वैभव।\n' +
+                        '**उपाय:** शुक्रवार को श्वेत वस्तुओं का दान करें, श्री सूक्त का पाठ करें।'
+                };
             }
             return null;
         },
 
-        sasa: function(a) {
+        sasa: function (a) {
             var sat = a.planets['शनि'];
             if (!sat) return null;
-            if (KENDRAS.indexOf(sat.house) !== -1 && ['मकर','कुंभ','तुला'].indexOf(sat.sign) !== -1) {
-                return { name: 'शश महापुरुष योग (Sasa Yoga)', found: true,
+            if (KENDRAS.indexOf(sat.house) !== -1 && ['मकर', 'कुंभ', 'तुला'].indexOf(sat.sign) !== -1) {
+                return {
+                    name: 'शश महापुरुष योग (Sasa Yoga)', found: true,
                     detail: '✦ **शश पंचमहापुरुष योग उपस्थित**\n' +
-                            '**स्थिति:** न्याय के देवता शनि देव भाव ' + sat.house + ' में ' + sat.sign + ' (' + (sat.sign === 'तुला' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
-                            '**फल:** दीर्घायु, गहन कूटनीति, जनसमूह का नेतृत्व, न्यायप्रियता, अचल संपत्ति, कठोर परिश्रम से स्थायी साम्राज्य निर्माण।\n' +
-                            '**उपाय:** शनिवार को निर्धनों को भोजन कराएं, पीपल तले दीप जलाएं।' };
+                        '**स्थिति:** न्याय के देवता शनि देव भाव ' + sat.house + ' में ' + sat.sign + ' (' + (sat.sign === 'तुला' ? 'उच्च' : 'स्वराशि') + ') होकर केन्द्र में स्थित हैं।\n' +
+                        '**फल:** दीर्घायु, गहन कूटनीति, जनसमूह का नेतृत्व, न्यायप्रियता, अचल संपत्ति, कठोर परिश्रम से स्थायी साम्राज्य निर्माण।\n' +
+                        '**उपाय:** शनिवार को निर्धनों को भोजन कराएं, पीपल तले दीप जलाएं।'
+                };
             }
             return null;
         },
 
-        panchamahapurusha: function(a) {
+        panchamahapurusha: function (a) {
             var res = [];
-            var r = this.ruchaka(a); if(r) res.push(r);
-            var b = this.bhadra(a); if(b) res.push(b);
-            var h = this.hamsa(a); if(h) res.push(h);
-            var m = this.malavya(a); if(m) res.push(m);
-            var s = this.sasa(a); if(s) res.push(s);
+            var r = this.ruchaka(a); if (r) res.push(r);
+            var b = this.bhadra(a); if (b) res.push(b);
+            var h = this.hamsa(a); if (h) res.push(h);
+            var m = this.malavya(a); if (m) res.push(m);
+            var s = this.sasa(a); if (s) res.push(s);
             return res;
         },
 
         // ═══════════════════════════════════════════════════════════════
         // D. RAJA YOGAS & DHANA YOGAS (राजयोग एवं धन योग)
         // ═══════════════════════════════════════════════════════════════
-        dharmakarma: function(a) {
+        dharmakarma: function (a) {
             var l9 = a.houses[9].lord, l10 = a.houses[10].lord;
             if (!l9 || !l10) return null;
             var p9 = a.planets[l9], p10 = a.planets[l10];
@@ -757,21 +811,23 @@
             var isMutualAspect = ((p10.house - p9.house + 12) % 12) + 1 === 7;
             var isExchange = p9.house === 10 && p10.house === 9;
             if (isConjoined || isMutualAspect || isExchange) {
-                return { name: 'धर्म-कर्माधिपति राजयोग (Dharma-Karma Raja Yoga)', found: true,
+                return {
+                    name: 'धर्म-कर्माधिपति राजयोग (Dharma-Karma Raja Yoga)', found: true,
                     detail: '✦ **सर्वोच्च धर्म-कर्माधिपति राजयोग उपस्थित**\n' +
-                            '**शास्त्रीय सूत्र:** नवमेश (' + l9 + ') और दशमेश (' + l10 + ') का परस्पर ' + (isExchange ? 'राशि परिवर्तन' : (isConjoined ? 'युति संबंध' : 'सप्तम दृष्टि संबंध')) + ' है।\n' +
-                            '**फल:** यह कुण्डली का मुकुटमणि राजयोग है। जातक को उच्च पद, नीति निर्धारण की शक्ति, समाज में अमिट कीर्ति एवं धर्मनिष्ठ सफलता प्रदान करता है।\n' +
-                            '**उपाय:** नित्य सूर्य अर्घ्य एवं कुलदेवता की वंदना करें।' };
+                        '**शास्त्रीय सूत्र:** नवमेश (' + l9 + ') और दशमेश (' + l10 + ') का परस्पर ' + (isExchange ? 'राशि परिवर्तन' : (isConjoined ? 'युति संबंध' : 'सप्तम दृष्टि संबंध')) + ' है।\n' +
+                        '**फल:** यह कुण्डली का मुकुटमणि राजयोग है। जातक को उच्च पद, नीति निर्धारण की शक्ति, समाज में अमिट कीर्ति एवं धर्मनिष्ठ सफलता प्रदान करता है।\n' +
+                        '**उपाय:** नित्य सूर्य अर्घ्य एवं कुलदेवता की वंदना करें।'
+                };
             }
             return null;
         },
 
-        rajYogas: function(a) {
+        rajYogas: function (a) {
             var kendraLords = [a.houses[1].lord, a.houses[4].lord, a.houses[7].lord, a.houses[10].lord].filter(Boolean);
             var trikonaLords = [a.houses[1].lord, a.houses[5].lord, a.houses[9].lord].filter(Boolean);
             var pairs = [];
-            kendraLords.forEach(function(kl) {
-                trikonaLords.forEach(function(tl) {
+            kendraLords.forEach(function (kl) {
+                trikonaLords.forEach(function (tl) {
                     if (kl !== tl) {
                         var kp = a.planets[kl], tp = a.planets[tl];
                         if (kp && tp && kp.house === tp.house) {
@@ -788,13 +844,13 @@
                     name: 'केन्द्र-त्रिकोण राजयोग (' + pairs.join(', ') + ')',
                     found: true,
                     detail: '✦ **केन्द्र-त्रिकोण राजयोग उपस्थित** (' + pairs.join(', ') + ')\n' +
-                            '**शास्त्रीय आधार:** केन्द्र के स्वामी एवं त्रिकोण के स्वामियों की शुभ युति जातक को समाज में अधिकार, समृद्धि व भाग्य का सतत सहयोग प्रदान करती है।'
+                        '**शास्त्रीय आधार:** केन्द्र के स्वामी एवं त्रिकोण के स्वामियों की शुभ युति जातक को समाज में अधिकार, समृद्धि व भाग्य का सतत सहयोग प्रदान करती है।'
                 }];
             }
             return [];
         },
 
-        parivartana: function(a) {
+        parivartana: function (a) {
             var exchanges = [];
             for (var h1 = 1; h1 <= 12; h1++) {
                 for (var h2 = h1 + 1; h2 <= 12; h2++) {
@@ -809,7 +865,7 @@
                                 found: true,
                                 partial: isDusthana,
                                 detail: '✦ **' + type + ' उपस्थित:** भाव ' + h1 + ' के स्वामी (' + l1 + ') एवं भाव ' + h2 + ' के स्वामी (' + l2 + ') के मध्य परस्पर राशि परिवर्तन है। ' +
-                                        (isDusthana ? 'यह जीवन में कड़े संघर्ष के बाद अप्रत्याशित सफलता दिलाता है।' : 'यह दोनों भावों को अत्यंत शक्तिशाली राजयोग बल प्रदान करता है।')
+                                    (isDusthana ? 'यह जीवन में कड़े संघर्ष के बाद अप्रत्याशित सफलता दिलाता है।' : 'यह दोनों भावों को अत्यंत शक्तिशाली राजयोग बल प्रदान करता है।')
                             });
                         }
                     }
@@ -818,16 +874,16 @@
             return exchanges;
         },
 
-        neechabhanga: function(a) {
+        neechabhanga: function (a) {
             var debPlanets = [];
-            Object.entries(a.planets).forEach(function(e) {
+            Object.entries(a.planets).forEach(function (e) {
                 var pName = e[0], pd = e[1];
                 if (DEBIL[pName] === pd.sign) debPlanets.push({ name: pName, data: pd });
             });
             if (debPlanets.length === 0) return { name: 'नीचभंग राजयोग', found: false, detail: 'कुण्डली में कोई ग्रह नीच राशि में नहीं है।' };
 
             var results = [];
-            debPlanets.forEach(function(dp) {
+            debPlanets.forEach(function (dp) {
                 var p = dp.name, d = dp.data;
                 var debSign = d.sign;
                 var debLord = LORDS[debSign];
@@ -850,93 +906,109 @@
                         name: 'नीचभंग राजयोग (' + p + ')',
                         found: true,
                         detail: '✦ **' + p + ' का नीचभंग राजयोग उपस्थित**\n' +
-                                '**शास्त्रीय नियम:** ' + reasons.join('; ') + '।\n' +
-                                '**फल:** यह ग्रह प्रारंभिक जीवन में नीचता का अनुभव कराने के उपरांत राजा के समान वैभव, अधिकार एवं असाधारण प्रतिष्ठा प्रदान करता है।'
+                            '**शास्त्रीय नियम:** ' + reasons.join('; ') + '।\n' +
+                            '**फल:** यह ग्रह प्रारंभिक जीवन में नीचता का अनुभव कराने के उपरांत राजा के समान वैभव, अधिकार एवं असाधारण प्रतिष्ठा प्रदान करता है।'
                     });
                 }
             });
             return results.length > 0 ? results[0] : { name: 'नीचभंग राजयोग', found: false, detail: 'नीच ग्रह उपस्थित हैं किंतु नीचभंग की अनिवार्य शर्तें अपूर्ण हैं।' };
         },
 
-        vipritraj: function(a) {
+        vipritraj: function (a) {
             var res = [];
             var h6Lord = a.houses[6].lord, h8Lord = a.houses[8].lord, h12Lord = a.houses[12].lord;
             var p6 = a.planets[h6Lord], p8 = a.planets[h8Lord], p12 = a.planets[h12Lord];
 
             if (p6 && (p6.house === 8 || p6.house === 12)) {
-                res.push({ name: 'हर्ष विपरीत राजयोग (Harsha Yoga)', found: true,
-                    detail: '✦ **हर्ष विपरीत राजयोग उपस्थित:** 6ठे भाव के स्वामी (' + h6Lord + ') भाव ' + p6.house + ' में स्थित हैं। शत्रुहंता, उत्तम स्वास्थ्य, संकटों पर विजय एवं अप्रत्याशित लाभ।' });
+                res.push({
+                    name: 'हर्ष विपरीत राजयोग (Harsha Yoga)', found: true,
+                    detail: '✦ **हर्ष विपरीत राजयोग उपस्थित:** 6ठे भाव के स्वामी (' + h6Lord + ') भाव ' + p6.house + ' में स्थित हैं। शत्रुहंता, उत्तम स्वास्थ्य, संकटों पर विजय एवं अप्रत्याशित लाभ।'
+                });
             }
             if (p8 && (p8.house === 6 || p8.house === 12)) {
-                res.push({ name: 'सरल विपरीत राजयोग (Sarala Yoga)', found: true,
-                    detail: '✦ **सरल विपरीत राजयोग उपस्थित:** 8वें भाव के स्वामी (' + h8Lord + ') भाव ' + p8.house + ' में स्थित हैं। दीर्घायु, निर्भीक व्यक्तित्व, आकस्मिक धनलाभ एवं गुप्त शत्रुओं का विनाश।' });
+                res.push({
+                    name: 'सरल विपरीत राजयोग (Sarala Yoga)', found: true,
+                    detail: '✦ **सरल विपरीत राजयोग उपस्थित:** 8वें भाव के स्वामी (' + h8Lord + ') भाव ' + p8.house + ' में स्थित हैं। दीर्घायु, निर्भीक व्यक्तित्व, आकस्मिक धनलाभ एवं गुप्त शत्रुओं का विनाश।'
+                });
             }
             if (p12 && (p12.house === 6 || p12.house === 8)) {
-                res.push({ name: 'विमल विपरीत राजयोग (Vimala Yoga)', found: true,
-                    detail: '✦ **विमल विपरीत राजयोग उपस्थित:** 12वें भाव के स्वामी (' + h12Lord + ') भाव ' + p12.house + ' में स्थित हैं। स्वतंत्र सोच, स्वावलंबन, संचित धन एवं आध्यात्मिक संपन्नता।' });
+                res.push({
+                    name: 'विमल विपरीत राजयोग (Vimala Yoga)', found: true,
+                    detail: '✦ **विमल विपरीत राजयोग उपस्थित:** 12वें भाव के स्वामी (' + h12Lord + ') भाव ' + p12.house + ' में स्थित हैं। स्वतंत्र सोच, स्वावलंबन, संचित धन एवं आध्यात्मिक संपन्नता।'
+                });
             }
             return res;
         },
 
-        lakshmi: function(a) {
+        lakshmi: function (a) {
             var l9 = a.houses[9].lord;
             var p9 = a.planets[l9];
             var ven = a.planets['शुक्र'];
-            if (p9 && ven && (KENDRAS.indexOf(p9.house) !== -1 || TRIKONAS.indexOf(p9.house) !== -1) && ['वृषभ','तुला','मीन'].indexOf(ven.sign) !== -1) {
-                return { name: 'महालक्ष्मी योग (Lakshmi Yoga)', found: true,
-                    detail: '✦ **महालक्ष्मी राजयोग उपस्थित:** नवमेश बली केन्द्र/त्रिकोण में हैं एवं शुक्र स्व/उच्च राशि में हैं। जातक परम भाग्यशाली, उच्च कोटि का धनवान व सर्वगुण सम्पन्न होता है।' };
+            if (p9 && ven && (KENDRAS.indexOf(p9.house) !== -1 || TRIKONAS.indexOf(p9.house) !== -1) && ['वृषभ', 'तुला', 'मीन'].indexOf(ven.sign) !== -1) {
+                return {
+                    name: 'महालक्ष्मी योग (Lakshmi Yoga)', found: true,
+                    detail: '✦ **महालक्ष्मी राजयोग उपस्थित:** नवमेश बली केन्द्र/त्रिकोण में हैं एवं शुक्र स्व/उच्च राशि में हैं। जातक परम भाग्यशाली, उच्च कोटि का धनवान व सर्वगुण सम्पन्न होता है।'
+                };
             }
             return null;
         },
 
-        saraswati: function(a) {
+        saraswati: function (a) {
             var jup = a.planets['गुरु'], ven = a.planets['शुक्र'], merc = a.planets['बुध'];
             if (!jup || !ven || !merc) return null;
             var validHouses = [1, 2, 4, 5, 7, 9, 10];
             if (validHouses.indexOf(jup.house) !== -1 && validHouses.indexOf(ven.house) !== -1 && validHouses.indexOf(merc.house) !== -1 && jup.dignity !== 'नीच') {
-                return { name: 'सरस्वती योग (Saraswati Yoga)', found: true,
-                    detail: '✦ **ज्ञान-मुकुट सरस्वती योग उपस्थित:** गुरु, शुक्र एवं बुध तीनों केन्द्र, त्रिकोण अथवा द्वितीय भाव में बली हैं। जातक अद्वितीय वक्ता, कवि, लेखक, शिक्षक अथवा शास्त्र मर्मज्ञ होता है।' };
+                return {
+                    name: 'सरस्वती योग (Saraswati Yoga)', found: true,
+                    detail: '✦ **ज्ञान-मुकुट सरस्वती योग उपस्थित:** गुरु, शुक्र एवं बुध तीनों केन्द्र, त्रिकोण अथवा द्वितीय भाव में बली हैं। जातक अद्वितीय वक्ता, कवि, लेखक, शिक्षक अथवा शास्त्र मर्मज्ञ होता है।'
+                };
             }
             return null;
         },
 
-        kahala: function(a) {
+        kahala: function (a) {
             var l4 = a.houses[4].lord, l9 = a.houses[9].lord;
             var p4 = a.planets[l4], p9 = a.planets[l9];
             if (p4 && p9) {
                 var diff = ((p9.house - p4.house + 12) % 12) + 1;
                 if (KENDRAS.indexOf(diff) !== -1 && a.lagnaStrength.indexOf('बलवान') !== -1) {
-                    return { name: 'काहल योग (Kahala Yoga)', found: true,
-                        detail: '✦ **काहल योग उपस्थित:** चतुर्थेश व नवमेश परस्पर केन्द्र में हैं तथा लग्नेश बली हैं। जातक साहसी, उच्च पदस्थ एवं सेना/प्रशासन में प्रमुख होता है।' };
+                    return {
+                        name: 'काहल योग (Kahala Yoga)', found: true,
+                        detail: '✦ **काहल योग उपस्थित:** चतुर्थेश व नवमेश परस्पर केन्द्र में हैं तथा लग्नेश बली हैं। जातक साहसी, उच्च पदस्थ एवं सेना/प्रशासन में प्रमुख होता है।'
+                    };
                 }
             }
             return null;
         },
 
-        shankha: function(a) {
+        shankha: function (a) {
             var l5 = a.houses[5].lord, l6 = a.houses[6].lord;
             var p5 = a.planets[l5], p6 = a.planets[l6];
             if (p5 && p6) {
                 var diff = ((p6.house - p5.house + 12) % 12) + 1;
                 if (KENDRAS.indexOf(diff) !== -1 && a.lagnaStrength.indexOf('बलवान') !== -1) {
-                    return { name: 'शंख योग (Shankha Yoga)', found: true,
-                        detail: '✦ **शंख योग उपस्थित:** पंचमेश व षष्ठेश परस्पर केन्द्र में हैं। जातक दयालु, नीतिवान, दीर्घायु एवं शास्त्रज्ञ होता है।' };
+                    return {
+                        name: 'शंख योग (Shankha Yoga)', found: true,
+                        detail: '✦ **शंख योग उपस्थित:** पंचमेश व षष्ठेश परस्पर केन्द्र में हैं। जातक दयालु, नीतिवान, दीर्घायु एवं शास्त्रज्ञ होता है।'
+                    };
                 }
             }
             return null;
         },
 
-        chamara: function(a) {
+        chamara: function (a) {
             var l1Data = a.lagnaLordPos;
             var guru = a.planets['गुरु'];
             if (l1Data && guru && l1Data.dignity === 'उच्च' && KENDRAS.indexOf(l1Data.house) !== -1 && aspectsHouse(guru.house, l1Data.house, 'गुरु')) {
-                return { name: 'चामर योग (Chamara Yoga)', found: true,
-                    detail: '✦ **परम राजयोग चामर योग उपस्थित:** लग्नेश उच्च राशि में केन्द्र में स्थित हैं तथा देवगुरु बृहस्पति की अमृत दृष्टि से युक्त हैं। जातक राजा या राजा तुल्य सम्मान प्राप्त करता है।' };
+                return {
+                    name: 'चामर योग (Chamara Yoga)', found: true,
+                    detail: '✦ **परम राजयोग चामर योग उपस्थित:** लग्नेश उच्च राशि में केन्द्र में स्थित हैं तथा देवगुरु बृहस्पति की अमृत दृष्टि से युक्त हैं। जातक राजा या राजा तुल्य सम्मान प्राप्त करता है।'
+                };
             }
             return null;
         },
 
-        akhandasamrajya: function(a) {
+        akhandasamrajya: function (a) {
             var moon = a.planets['चन्द्र'];
             var jup = a.planets['गुरु'];
             if (!moon || !jup) return null;
@@ -947,46 +1019,56 @@
                 var fromMoon9 = p9 ? ((p9.house - moon.house + 12) % 12) + 1 : 0;
                 var fromMoon11 = p11 ? ((p11.house - moon.house + 12) % 12) + 1 : 0;
                 if (KENDRAS.indexOf(fromMoon9) !== -1 || KENDRAS.indexOf(fromMoon11) !== -1) {
-                    return { name: 'अखंड साम्राज्य योग (Akhanda Samrajya Yoga)', found: true,
-                        detail: '✦ **दुर्लभ अखंड साम्राज्य योग उपस्थित:** गुरु 2/5/11 के स्वामी होकर बली हैं तथा नवमेश/एकादशेश चन्द्रमा से केन्द्र में स्थित हैं। जातक अचल साम्राज्य, विशाल संपत्ति व स्थायी अधिकार प्राप्त करता है।' };
+                    return {
+                        name: 'अखंड साम्राज्य योग (Akhanda Samrajya Yoga)', found: true,
+                        detail: '✦ **दुर्लभ अखंड साम्राज्य योग उपस्थित:** गुरु 2/5/11 के स्वामी होकर बली हैं तथा नवमेश/एकादशेश चन्द्रमा से केन्द्र में स्थित हैं। जातक अचल साम्राज्य, विशाल संपत्ति व स्थायी अधिकार प्राप्त करता है।'
+                    };
                 }
             }
             return null;
         },
 
-        mahabhagya: function(a, chart) {
+        mahabhagya: function (a, chart) {
             var sun = a.planets['सूर्य'], moon = a.planets['चन्द्र'];
             if (!sun || !moon) return null;
             var lagnaOdd = signIdx(a.lagna) % 2 === 0;
             var sunOdd = signIdx(sun.sign) % 2 === 0;
             var moonOdd = signIdx(moon.sign) % 2 === 0;
             if (lagnaOdd && sunOdd && moonOdd) {
-                return { name: 'महाभाग्य योग (Mahabhagya Yoga)', found: true,
-                    detail: '✦ **महाभाग्य योग उपस्थित:** लग्न, सूर्य एवं चन्द्र तीनों विषम (पुरुष) राशियों में स्थित हैं। जातक अत्यंत भाग्यशाली, उदार एवं सर्वत्र ख्याति प्राप्त करता है।' };
+                return {
+                    name: 'महाभाग्य योग (Mahabhagya Yoga)', found: true,
+                    detail: '✦ **महाभाग्य योग उपस्थित:** लग्न, सूर्य एवं चन्द्र तीनों विषम (पुरुष) राशियों में स्थित हैं। जातक अत्यंत भाग्यशाली, उदार एवं सर्वत्र ख्याति प्राप्त करता है।'
+                };
             }
             return null;
         },
 
-        kalanidhi: function(a) {
+        kalanidhi: function (a) {
             var jup = a.planets['गुरु'], ven = a.planets['शुक्र'], merc = a.planets['बुध'];
             if (jup && (jup.house === 2 || jup.house === 5) && (jup.sign === 'धनु' || jup.sign === 'मीन' || (ven && ven.house === jup.house) || (merc && merc.house === jup.house))) {
-                return { name: 'कलानिधि योग (Kalanidhi Yoga)', found: true,
-                    detail: '✦ **कलानिधि योग उपस्थित:** गुरु द्वितीय या पंचम भाव में बुध/शुक्र के प्रभाव में हैं। जातक सभी कलाओं में निपुण, विद्वान एवं समाज में आदरणीय होता है।' };
+                return {
+                    name: 'कलानिधि योग (Kalanidhi Yoga)', found: true,
+                    detail: '✦ **कलानिधि योग उपस्थित:** गुरु द्वितीय या पंचम भाव में बुध/शुक्र के प्रभाव में हैं। जातक सभी कलाओं में निपुण, विद्वान एवं समाज में आदरणीय होता है।'
+                };
             }
             return null;
         },
 
-        dhanayogas: function(a) {
+        dhanayogas: function (a) {
             var res = [];
             var l2 = a.houses[2].lord, l11 = a.houses[11].lord, l5 = a.houses[5].lord, l9 = a.houses[9].lord;
             var p2 = a.planets[l2], p11 = a.planets[l11];
             if (p2 && p11 && p2.house === p11.house) {
-                res.push({ name: '2-11 धन योग (द्वितीयेश व एकादशेश युति)', found: true,
-                    detail: '✦ **प्रबल धन योग उपस्थित:** धन भाव के स्वामी (' + l2 + ') एवं लाभ भाव के स्वामी (' + l11 + ') एक साथ विराजमान हैं। संचित धन एवं आय में निरंतर वृद्धि।' });
+                res.push({
+                    name: '2-11 धन योग (द्वितीयेश व एकादशेश युति)', found: true,
+                    detail: '✦ **प्रबल धन योग उपस्थित:** धन भाव के स्वामी (' + l2 + ') एवं लाभ भाव के स्वामी (' + l11 + ') एक साथ विराजमान हैं। संचित धन एवं आय में निरंतर वृद्धि।'
+                });
             }
             if (p2 && (p2.house === 11 || p2.house === 9 || p2.house === 5)) {
-                res.push({ name: 'लक्ष्मी कारक धन योग (द्वितीयेश त्रिकोण/लाभ में)', found: true,
-                    detail: '✦ **धन योग उपस्थित:** द्वितीयेश शुभ भाव ' + p2.house + ' में स्थित होकर स्थायी संपत्ति का निर्माण करते हैं।' });
+                res.push({
+                    name: 'लक्ष्मी कारक धन योग (द्वितीयेश त्रिकोण/लाभ में)', found: true,
+                    detail: '✦ **धन योग उपस्थित:** द्वितीयेश शुभ भाव ' + p2.house + ' में स्थित होकर स्थायी संपत्ति का निर्माण करते हैं।'
+                });
             }
             return res;
         },
@@ -994,14 +1076,16 @@
         // ═══════════════════════════════════════════════════════════════
         // E. DOSHAS & ARISHTA YOGAS (दोष एवं अरिष्ट योग)
         // ═══════════════════════════════════════════════════════════════
-        mangaldosha: function(a) {
+        mangaldosha: function (a) {
             var mars = a.planets['मंगल'];
             if (!mars) return { name: 'मंगल दोष', found: false, detail: 'मंगल डेटा अनुपलब्ध' };
             var mH = mars.house;
             var isManglik = [1, 2, 4, 7, 8, 12].indexOf(mH) !== -1;
             if (!isManglik) {
-                return { name: 'मंगल दोष (मांगलिक दोष)', found: false,
-                    detail: '❌ **मंगल दोष अनुपस्थित** — आपकी कुण्डली में मंगल देव भाव ' + mH + ' (' + mars.sign + ') में स्थित हैं। मंगल दोष केवल 1, 2, 4, 7, 8, 12 भावों में होने पर बनता है।' };
+                return {
+                    name: 'मंगल दोष (मांगलिक दोष)', found: false,
+                    detail: '❌ **मंगल दोष अनुपस्थित** — आपकी कुण्डली में मंगल देव भाव ' + mH + ' (' + mars.sign + ') में स्थित हैं। मंगल दोष केवल 1, 2, 4, 7, 8, 12 भावों में होने पर बनता है।'
+                };
             }
             var bhangas = [];
             if (mars.sign === 'मेष' || mars.sign === 'वृश्चिक') bhangas.push('मंगल अपनी स्वराशि (' + mars.sign + ') में स्थित हैं');
@@ -1010,26 +1094,30 @@
             if (guru && aspectsHouse(guru.house, mH, 'गुरु')) bhangas.push('देवगुरु बृहस्पति की पूर्ण अमृत दृष्टि मंगल पर है');
 
             if (bhangas.length > 0) {
-                return { name: 'मंगल दोष (परिहार / भंग)', found: true, partial: true,
+                return {
+                    name: 'मंगल दोष (परिहार / भंग)', found: true, partial: true,
                     detail: '⚠️ **मंगल दोष उपस्थित किंतु शास्त्रीय परिहार से भंग:**\n' +
-                            'मंगल देव भाव ' + mH + ' में स्थित हैं, परन्तु निम्नलिखित नियमों से दोष भंग होता है:\n' +
-                            bhangas.map(function(b){ return '• ' + b; }).join('\n') + '\n\n' +
-                            '**फल:** वैवाहिक जीवन में उग्रता का स्वतः शमन होगा। केवल वाणी पर संयम रखें।\n' +
-                            '**सात्विक उपाय:** मंगलवार को हनुमान चालीसा का पाठ करें एवं लाल मसूर का दान करें।' };
+                        'मंगल देव भाव ' + mH + ' में स्थित हैं, परन्तु निम्नलिखित नियमों से दोष भंग होता है:\n' +
+                        bhangas.map(function (b) { return '• ' + b; }).join('\n') + '\n\n' +
+                        '**फल:** वैवाहिक जीवन में उग्रता का स्वतः शमन होगा। केवल वाणी पर संयम रखें।\n' +
+                        '**सात्विक उपाय:** मंगलवार को हनुमान चालीसा का पाठ करें एवं लाल मसूर का दान करें।'
+                };
             }
-            return { name: 'मंगल दोष (मांगलिक दोष)', found: true, partial: false,
+            return {
+                name: 'मंगल दोष (मांगलिक दोष)', found: true, partial: false,
                 detail: '🔴 **मांगलिक दोष उपस्थित:** मंगल देव भाव ' + mH + ' (' + mars.sign + ' राशि) में स्थित हैं।\n' +
-                        '**फल:** स्वभाव में तीक्ष्णता, शीघ्र उत्तेजना एवं दांपत्य में सामंजस्य की आवश्यकता।\n' +
-                        '**अचूक सात्विक उपाय:**\n1. नित्य हनुमान चालीसा अथवा सुंदरकांड का पाठ करें।\n2. पक्षियों को मीठी रोटी अथवा गुड़-रोटी खिलाएं।\n3. विवाह पूर्व कुण्डली मिलान व गुण-दोष का पूर्ण सामंजस्य अवश्य करें।' };
+                    '**फल:** स्वभाव में तीक्ष्णता, शीघ्र उत्तेजना एवं दांपत्य में सामंजस्य की आवश्यकता।\n' +
+                    '**अचूक सात्विक उपाय:**\n1. नित्य हनुमान चालीसा अथवा सुंदरकांड का पाठ करें।\n2. पक्षियों को मीठी रोटी अथवा गुड़-रोटी खिलाएं।\n3. विवाह पूर्व कुण्डली मिलान व गुण-दोष का पूर्ण सामंजस्य अवश्य करें।'
+            };
         },
 
-        kaalsarpa: function(a, chart) {
+        kaalsarpa: function (a, chart) {
             var rahu = a.planets['राहु'], ketu = a.planets['केतु'];
             if (!rahu || !ketu) return { name: 'कालसर्प योग', found: false, detail: 'राहु/केतु डेटा अनुपलब्ध' };
             var rH = rahu.house, kH = ketu.house;
-            var planets7 = ['सूर्य','चन्द्र','मंगल','बुध','गुरु','शुक्र','शनि'];
+            var planets7 = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
             var side1 = 0, side2 = 0;
-            planets7.forEach(function(pn) {
+            planets7.forEach(function (pn) {
                 var p = a.planets[pn];
                 if (p) {
                     var diffR = ((p.house - rH + 12) % 12);
@@ -1038,140 +1126,162 @@
                 }
             });
             var types = [
-                'अनंत कालसर्प (1-7 भाव)','कुलिक कालसर्प (2-8 भाव)','वासुकि कालसर्प (3-9 भाव)',
-                'शंखपाल कालसर्प (4-10 भाव)','पद्म कालसर्प (5-11 भाव)','महापद्म कालसर्प (6-12 भाव)',
-                'तक्षक कालसर्प (7-1 भाव)','कर्कोटक कालसर्प (8-2 भाव)','शंखचूड़ कालसर्प (9-3 भाव)',
-                'घातक कालसर्प (10-4 भाव)','विषधर कालसर्प (11-5 भाव)','शेषनाग कालसर्प (12-6 भाव)'
+                'अनंत कालसर्प (1-7 भाव)', 'कुलिक कालसर्प (2-8 भाव)', 'वासुकि कालसर्प (3-9 भाव)',
+                'शंखपाल कालसर्प (4-10 भाव)', 'पद्म कालसर्प (5-11 भाव)', 'महापद्म कालसर्प (6-12 भाव)',
+                'तक्षक कालसर्प (7-1 भाव)', 'कर्कोटक कालसर्प (8-2 भाव)', 'शंखचूड़ कालसर्प (9-3 भाव)',
+                'घातक कालसर्प (10-4 भाव)', 'विषधर कालसर्प (11-5 भाव)', 'शेषनाग कालसर्प (12-6 भाव)'
             ];
             var typeName = types[rH - 1] || 'कालसर्प';
             if (side1 === 7 || side2 === 7) {
-                return { name: 'पूर्ण कालसर्प दोष (' + typeName + ')', found: true, partial: false,
+                return {
+                    name: 'पूर्ण कालसर्प दोष (' + typeName + ')', found: true, partial: false,
                     detail: '🔴 **पूर्ण ' + typeName + ' उपस्थित**\n' +
-                            '**स्थिति:** सभी 7 मुख्य ग्रह राहु (भाव ' + rH + ') और केतु (भाव ' + kH + ') के एक ही ओर स्थित हैं।\n' +
-                            '**फल:** 33 वर्ष की आयु तक कड़ा संघर्ष, परिश्रम का श्रेय विलंब से मिलना, किंतु तदुपरांत अप्रत्याशित सफलता।\n' +
-                            '**सात्विक उपाय:** महामृत्युंजय मंत्र जप, शिव रुद्राभिषेक, पक्षियों को सप्तधान्य दान।' };
+                        '**स्थिति:** सभी 7 मुख्य ग्रह राहु (भाव ' + rH + ') और केतु (भाव ' + kH + ') के एक ही ओर स्थित हैं।\n' +
+                        '**फल:** 33 वर्ष की आयु तक कड़ा संघर्ष, परिश्रम का श्रेय विलंब से मिलना, किंतु तदुपरांत अप्रत्याशित सफलता।\n' +
+                        '**सात्विक उपाय:** महामृत्युंजय मंत्र जप, शिव रुद्राभिषेक, पक्षियों को सप्तधान्य दान।'
+                };
             }
             if (side1 === 6 || side2 === 6) {
-                return { name: 'आंशिक कालसर्प दोष', found: true, partial: true,
+                return {
+                    name: 'आंशिक कालसर्प दोष', found: true, partial: true,
                     detail: '⚠️ **आंशिक कालसर्प दोष उपस्थित:** एक ग्रह राहु-केतु अक्ष से बाहर है, जिससे पूर्ण दोष भंग हो चुका है।\n' +
-                            '**उपाय:** सोमवार को शिवलिंग पर जल अर्पित करें।' };
+                        '**उपाय:** सोमवार को शिवलिंग पर जल अर्पित करें।'
+                };
             }
             return { name: 'कालसर्प दोष', found: false, detail: '❌ **कालसर्प दोष अनुपस्थित** — ग्रह राहु-केतु अक्ष के दोनों ओर स्वतंत्र रूप से संचरण कर रहे हैं।' };
         },
 
-        guruchandal: function(a) {
+        guruchandal: function (a) {
             var guru = a.planets['गुरु'], rahu = a.planets['राहु'], ketu = a.planets['केतु'];
             if (!guru || !rahu) return null;
             if (guru.house === rahu.house || guru.house === (ketu ? ketu.house : 0)) {
-                var isBhanga = ['कर्क','धनु','मीन'].indexOf(guru.sign) !== -1;
-                return { name: 'गुरु-चांडाल योग' + (isBhanga ? ' (भंग)' : ''), found: true, partial: isBhanga,
+                var isBhanga = ['कर्क', 'धनु', 'मीन'].indexOf(guru.sign) !== -1;
+                return {
+                    name: 'गुरु-चांडाल योग' + (isBhanga ? ' (भंग)' : ''), found: true, partial: isBhanga,
                     detail: (isBhanga ? '⚠️ **गुरु-चांडाल योग भंग:**' : '🔴 **गुरु-चांडाल योग उपस्थित:**') + ' देवगुरु एवं राहु/केतु भाव ' + guru.house + ' में युति में हैं। ' +
-                            (isBhanga ? 'गुरु के स्व/उच्च राशि में होने से चांडाल दोष का कुप्रभाव नष्ट हो गया है।' : 'गुरुजनों के प्रति आस्था में संदेह, निर्णय में भटकाव संभव।') + '\n' +
-                            '**उपाय:** गुरुवार को विष्णु सहस्रनाम का पाठ करें, पीली वस्तुओं का दान करें।' };
+                        (isBhanga ? 'गुरु के स्व/उच्च राशि में होने से चांडाल दोष का कुप्रभाव नष्ट हो गया है।' : 'गुरुजनों के प्रति आस्था में संदेह, निर्णय में भटकाव संभव।') + '\n' +
+                        '**उपाय:** गुरुवार को विष्णु सहस्रनाम का पाठ करें, पीली वस्तुओं का दान करें।'
+                };
             }
             return null;
         },
 
-        grahanyoga: function(a) {
+        grahanyoga: function (a) {
             var sun = a.planets['सूर्य'], moon = a.planets['चन्द्र'], rahu = a.planets['राहु'], ketu = a.planets['केतु'];
             if (!rahu) return null;
             var isSuryaGrahan = sun && (sun.house === rahu.house || (ketu && sun.house === ketu.house));
             var isChandraGrahan = moon && (moon.house === rahu.house || (ketu && moon.house === ketu.house));
             if (isSuryaGrahan || isChandraGrahan) {
                 var name = isSuryaGrahan ? 'सूर्य ग्रहण योग' : 'चन्द्र ग्रहण योग';
-                return { name: name, found: true, partial: false,
+                return {
+                    name: name, found: true, partial: false,
                     detail: '🔴 **' + name + ' उपस्थित:** ' + (isSuryaGrahan ? 'सूर्य' : 'चन्द्रमा') + ' राहु/केतु के साथ भाव ' + (isSuryaGrahan ? sun.house : moon.house) + ' में संचरण कर रहे हैं।\n' +
-                            '**फल:** आत्मविश्वास में उतार-चढ़ाव, पिता या माता के स्वास्थ्य की चिंता।\n' +
-                            '**उपाय:** नित्य गायत्री मंत्र अथवा महामृत्युंजय मंत्र का जप करें।' };
+                        '**फल:** आत्मविश्वास में उतार-चढ़ाव, पिता या माता के स्वास्थ्य की चिंता।\n' +
+                        '**उपाय:** नित्य गायत्री मंत्र अथवा महामृत्युंजय मंत्र का जप करें।'
+                };
             }
             return null;
         },
 
-        angarak: function(a) {
+        angarak: function (a) {
             var mars = a.planets['मंगल'], rahu = a.planets['राहु'], ketu = a.planets['केतु'];
             if (!mars || !rahu) return null;
             if (mars.house === rahu.house || (ketu && mars.house === ketu.house)) {
-                return { name: 'अंगारक योग (Angarak Yoga)', found: true, partial: false,
+                return {
+                    name: 'अंगारक योग (Angarak Yoga)', found: true, partial: false,
                     detail: '🔴 **अंगारक योग उपस्थित:** मंगल एवं राहु/केतु भाव ' + mars.house + ' में एक साथ स्थित हैं।\n' +
-                            '**फल:** रक्त विकार, अत्यधिक क्रोध, आकस्मिक चोट अथवा अग्नि से सावधानी अपेक्षित।\n' +
-                            '**उपाय:** मंगलवार को हनुमान जी को सिंदूर व चमेली का तेल अर्पित करें, मीठी रोटी बांटें।' };
+                        '**फल:** रक्त विकार, अत्यधिक क्रोध, आकस्मिक चोट अथवा अग्नि से सावधानी अपेक्षित।\n' +
+                        '**उपाय:** मंगलवार को हनुमान जी को सिंदूर व चमेली का तेल अर्पित करें, मीठी रोटी बांटें।'
+                };
             }
             return null;
         },
 
-        shrapit: function(a) {
+        shrapit: function (a) {
             var sat = a.planets['शनि'], rahu = a.planets['राहु'];
             if (!sat || !rahu) return null;
             if (sat.house === rahu.house) {
-                return { name: 'श्रापित दोष (Shrapit Yoga)', found: true,
+                return {
+                    name: 'श्रापित दोष (Shrapit Yoga)', found: true,
                     detail: '🔴 **शनि-राहु श्रापित योग उपस्थित:** शनि और राहु भाव ' + sat.house + ' में युति में हैं।\n' +
-                            '**फल:** कार्यों में अकारण विघ्न, पैतृक कर्म ऋण, कठिन परिश्रम के बाद फल।\n' +
-                            '**उपाय:** शनिवार को छाया दान (कांसे की कटोरी में तेल में मुख देखकर दान) करें।' };
+                        '**फल:** कार्यों में अकारण विघ्न, पैतृक कर्म ऋण, कठिन परिश्रम के बाद फल।\n' +
+                        '**उपाय:** शनिवार को छाया दान (कांसे की कटोरी में तेल में मुख देखकर दान) करें।'
+                };
             }
             return null;
         },
 
-        vishyoga: function(a) {
+        vishyoga: function (a) {
             var sat = a.planets['शनि'], moon = a.planets['चन्द्र'];
             if (!sat || !moon) return null;
             var isConjoined = sat.house === moon.house;
             var isAspect = aspectsHouse(sat.house, moon.house, 'शनि');
             if (isConjoined || isAspect) {
-                return { name: 'विष योग (Vish Yoga)', found: true, partial: !isConjoined,
+                return {
+                    name: 'विष योग (Vish Yoga)', found: true, partial: !isConjoined,
                     detail: '⚠️ **विष योग उपस्थित:** शनि देव और चन्द्रमा ' + (isConjoined ? 'एक साथ भाव ' + moon.house + ' में हैं' : 'दृष्टि संबंध में हैं') + '।\n' +
-                            '**फल:** मन में अकारण उदासी, नकारात्मक विचार, निराशा अथवा अनिद्रा की समस्या।\n' +
-                            '**उपाय:** नित्य शिवलिंग पर जल चढ़ाएं, "ॐ नमः शिवाय" का जप करें, माता की सेवा करें।' };
+                        '**फल:** मन में अकारण उदासी, नकारात्मक विचार, निराशा अथवा अनिद्रा की समस्या।\n' +
+                        '**उपाय:** नित्य शिवलिंग पर जल चढ़ाएं, "ॐ नमः शिवाय" का जप करें, माता की सेवा करें।'
+                };
             }
             return null;
         },
 
-        pitradosha: function(a) {
+        pitradosha: function (a) {
             var sun = a.planets['सूर्य'], rahu = a.planets['राहु'], sat = a.planets['शनि'];
             var l9 = a.houses[9].lord;
             var p9 = a.planets[l9];
             var isAfflicted = (sun && rahu && sun.house === rahu.house) || (p9 && rahu && p9.house === rahu.house);
             if (isAfflicted) {
-                return { name: 'पितृ दोष (Pitra Dosha)', found: true,
+                return {
+                    name: 'पितृ दोष (Pitra Dosha)', found: true,
                     detail: '🔴 **पितृ दोष उपस्थित:** सूर्य अथवा नवमेश राहु के प्रभाव में हैं।\n' +
-                            '**फल:** वंश वृद्धि में रुकावट, पैतृक संपत्ति विवाद अथवा जीवन में प्रगति का अवरुद्ध होना।\n' +
-                            '**उपाय:** अमावस्या को पितृ तर्पण, पीपल के वृक्ष में जल, निर्धनों को अन्न दान।' };
+                        '**फल:** वंश वृद्धि में रुकावट, पैतृक संपत्ति विवाद अथवा जीवन में प्रगति का अवरुद्ध होना।\n' +
+                        '**उपाय:** अमावस्या को पितृ तर्पण, पीपल के वृक्ष में जल, निर्धनों को अन्न दान।'
+                };
             }
             return null;
         },
 
-        matrudosha: function(a) {
+        matrudosha: function (a) {
             var moon = a.planets['चन्द्र'], rahu = a.planets['राहु'], l4 = a.houses[4].lord;
             var p4 = a.planets[l4];
             if ((moon && rahu && moon.house === rahu.house) || (p4 && rahu && p4.house === rahu.house)) {
-                return { name: 'मातृ दोष (Matru Dosha)', found: true,
-                    detail: '⚠️ **मातृ दोष उपस्थित:** चन्द्रमा अथवा चतुर्थेश राहु से पीड़ित हैं। माता की सेवा व शिव आराधना अनिवार्य है।' };
+                return {
+                    name: 'मातृ दोष (Matru Dosha)', found: true,
+                    detail: '⚠️ **मातृ दोष उपस्थित:** चन्द्रमा अथवा चतुर्थेश राहु से पीड़ित हैं। माता की सेवा व शिव आराधना अनिवार्य है।'
+                };
             }
             return null;
         },
 
-        daridra: function(a) {
+        daridra: function (a) {
             var l11 = a.houses[11].lord;
             var p11 = a.planets[l11];
             if (p11 && DUSTHANAS.indexOf(p11.house) !== -1) {
-                return { name: 'दरिद्र योग (Daridra Yoga)', found: true, partial: true,
-                    detail: '⚠️ **दरिद्र योग कारक स्थिति:** एकादश (आय) भाव के स्वामी भाव ' + p11.house + ' (दुःस्थान) में स्थित हैं। संचित धन के व्यय पर नियंत्रण रखें।' };
+                return {
+                    name: 'दरिद्र योग (Daridra Yoga)', found: true, partial: true,
+                    detail: '⚠️ **दरिद्र योग कारक स्थिति:** एकादश (आय) भाव के स्वामी भाव ' + p11.house + ' (दुःस्थान) में स्थित हैं। संचित धन के व्यय पर नियंत्रण रखें।'
+                };
             }
             return null;
         },
 
-        gandanta: function(a) {
+        gandanta: function (a) {
             var gandantaPoints = [];
-            Object.entries(a.planets).forEach(function(e) {
+            Object.entries(a.planets).forEach(function (e) {
                 var p = e[0], d = e[1];
-                if (['कर्क','वृश्चिक','मीन'].indexOf(d.sign) !== -1 && d.deg >= 27.0) {
+                if (['कर्क', 'वृश्चिक', 'मीन'].indexOf(d.sign) !== -1 && d.deg >= 27.0) {
                     gandantaPoints.push(p + ' (' + d.sign + ' ' + d.deg.toFixed(1) + '°)');
-                } else if (['मेष','सिंह','धनु'].indexOf(d.sign) !== -1 && d.deg <= 3.0) {
+                } else if (['मेष', 'सिंह', 'धनु'].indexOf(d.sign) !== -1 && d.deg <= 3.0) {
                     gandantaPoints.push(p + ' (' + d.sign + ' ' + d.deg.toFixed(1) + '°)');
                 }
             });
             if (gandantaPoints.length > 0) {
-                return { name: 'गंडान्त योग (Gandanta)', found: true,
-                    detail: '⚠️ **गंडान्त संधि स्थिति:** ग्रह (' + gandantaPoints.join(', ') + ') जल-अग्नि संधि क्षेत्र में संचरणशील हैं। आध्यात्मिक साधना से आत्मबल सुदृढ़ करें।' };
+                return {
+                    name: 'गंडान्त योग (Gandanta)', found: true,
+                    detail: '⚠️ **गंडान्त संधि स्थिति:** ग्रह (' + gandantaPoints.join(', ') + ') जल-अग्नि संधि क्षेत्र में संचरणशील हैं। आध्यात्मिक साधना से आत्मबल सुदृढ़ करें।'
+                };
             }
             return null;
         },
@@ -1179,16 +1289,16 @@
         // ═══════════════════════════════════════════════════════════════
         // F. NABHASA & SPECIAL YOGAS (नाभस एवं विशिष्ट योग)
         // ═══════════════════════════════════════════════════════════════
-        nabhasa: function(a) {
+        nabhasa: function (a) {
             var res = [];
-            var movableSigns = ['मेष','कर्क','तुला','मकर'];
-            var fixedSigns = ['वृषभ','सिंह','वृश्चिक','कुंभ'];
-            var dualSigns = ['मिथुन','कन्या','धनु','मीन'];
-            var planets7 = ['सूर्य','चन्द्र','मंगल','बुध','गुरु','शुक्र','शनि'];
+            var movableSigns = ['मेष', 'कर्क', 'तुला', 'मकर'];
+            var fixedSigns = ['वृषभ', 'सिंह', 'वृश्चिक', 'कुंभ'];
+            var dualSigns = ['मिथुन', 'कन्या', 'धनु', 'मीन'];
+            var planets7 = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
 
-            var allMov = planets7.every(function(pn){ return a.planets[pn] && movableSigns.indexOf(a.planets[pn].sign) !== -1; });
-            var allFix = planets7.every(function(pn){ return a.planets[pn] && fixedSigns.indexOf(a.planets[pn].sign) !== -1; });
-            var allDual = planets7.every(function(pn){ return a.planets[pn] && dualSigns.indexOf(a.planets[pn].sign) !== -1; });
+            var allMov = planets7.every(function (pn) { return a.planets[pn] && movableSigns.indexOf(a.planets[pn].sign) !== -1; });
+            var allFix = planets7.every(function (pn) { return a.planets[pn] && fixedSigns.indexOf(a.planets[pn].sign) !== -1; });
+            var allDual = planets7.every(function (pn) { return a.planets[pn] && dualSigns.indexOf(a.planets[pn].sign) !== -1; });
 
             if (allMov) res.push({ name: 'रज्जु योग (Rajju Yoga)', found: true, detail: '✦ **रज्जु नाभस योग:** सभी ग्रह चर राशियों में स्थित हैं। जातक सतत भ्रमणशील, महत्वाकांक्षी व कर्मठ होता है।' });
             if (allFix) res.push({ name: 'मूसल योग (Musala Yoga)', found: true, detail: '✦ **मूसल नाभस योग:** सभी ग्रह स्थिर राशियों में स्थित हैं। जातक दृढ़प्रतिज्ञ, स्वाभिमानी, धनी व स्थिर साम्राज्य वाला होता है।' });
@@ -1197,10 +1307,10 @@
             return res;
         },
 
-        vargottama: function(a, chart) {
+        vargottama: function (a, chart) {
             if (!chart || !chart.d9_table) return null;
             var vargottamas = [];
-            chart.d9_table.forEach(function(d9p) {
+            chart.d9_table.forEach(function (d9p) {
                 var pName = (d9p.p || d9p.planet || '').trim();
                 var d1p = a.planets[pName];
                 if (d1p && d1p.sign === (d9p.r || d9p.sign)) {
@@ -1208,8 +1318,10 @@
                 }
             });
             if (vargottamas.length > 0) {
-                return { name: 'वर्गोत्तम ग्रह (Vargottama Planets)', found: true,
-                    detail: '✦ **वर्गोत्तम ग्रह उपस्थित:** ग्रह (' + vargottamas.join(', ') + ') लग्न (D-1) एवं नवमांश (D-9) दोनों में समान राशि में हैं। यह ग्रहों को असाधारण शक्ति व शुभता प्रदान करता है।' };
+                return {
+                    name: 'वर्गोत्तम ग्रह (Vargottama Planets)', found: true,
+                    detail: '✦ **वर्गोत्तम ग्रह उपस्थित:** ग्रह (' + vargottamas.join(', ') + ') लग्न (D-1) एवं नवमांश (D-9) दोनों में समान राशि में हैं। यह ग्रहों को असाधारण शक्ति व शुभता प्रदान करता है।'
+                };
             }
             return null;
         }
@@ -1218,8 +1330,8 @@
     // MODULE 4: DASHA ENGINE
     // ═══════════════════════════════════════════════════════════════════
     window.VyasDashaEngine = {
-        DASHA_YEARS: { 'केतु':7,'शुक्र':20,'सूर्य':6,'चन्द्र':10,'मंगल':7,'राहु':18,'गुरु':16,'शनि':19,'बुध':17 },
-        analyze: function(a, query) {
+        DASHA_YEARS: { 'केतु': 7, 'शुक्र': 20, 'सूर्य': 6, 'चन्द्र': 10, 'मंगल': 7, 'राहु': 18, 'गुरु': 16, 'शनि': 19, 'बुध': 17 },
+        analyze: function (a, query) {
             var dasha = a.dasha;
             if (!dasha || dasha.maha === 'अज्ञात') return '**दशा डेटा अनुपलब्ध।** कृपया जन्म कुण्डली में जन्म तिथि-समय दर्ज करें।';
 
@@ -1232,7 +1344,7 @@
                 lines.push('**महादशा ' + dasha.maha + ':** भाव ' + mahaH + ' (' + mahaSign + ', ' + mahaDig + ')');
                 // Assess dasha quality
                 var quality = TRIKONAS.indexOf(mahaH) !== -1 || KENDRAS.indexOf(mahaH) !== -1 ? '**शुभ**' :
-                              DUSTHANAS.indexOf(mahaH) !== -1 ? '**चुनौतीपूर्ण**' : '**मध्यम**';
+                    DUSTHANAS.indexOf(mahaH) !== -1 ? '**चुनौतीपूर्ण**' : '**मध्यम**';
                 lines.push('**दशा गुण:** ' + quality + ' — ' + dasha.maha + ' भाव ' + mahaH + 'ेश की भांति फल देगा।');
             }
             if (antarData && dasha.antar) {
@@ -1254,10 +1366,10 @@
     // MODULE 5: GOCHAR ENGINE — 2026-27 Transits
     // ═══════════════════════════════════════════════════════════════════
     window.VyasGocharEngine = {
-        analyze: function(a) {
+        analyze: function (a) {
             if (!a.lagna) return 'लग्न डेटा अनुपलब्ध।';
             var lines = ['**गोचर विश्लेषण (नवंबर 2026, Swiss Ephemeris):**', ''];
-            Object.entries(CURRENT_TRANSITS).forEach(function(e) {
+            Object.entries(CURRENT_TRANSITS).forEach(function (e) {
                 var pName = e[0], td = e[1];
                 var h = houseFromSign(td.sign, a.lagna);
                 if (h === 0) return;
@@ -1286,9 +1398,9 @@
     // MODULE 6: BALA ENGINE — Planetary Strength
     // ═══════════════════════════════════════════════════════════════════
     window.VyasBalaEngine = {
-        assess: function(a) {
+        assess: function (a) {
             var lines = ['**ग्रह बल संक्षिप्त:**'];
-            Object.entries(a.planets).forEach(function(e) {
+            Object.entries(a.planets).forEach(function (e) {
                 var pName = e[0], pd = e[1];
                 var score = 0;
                 var notes = [];
@@ -1324,7 +1436,7 @@
             11: 'लाभ, मित्र, इच्छापूर्ति',
             12: 'व्यय, विदेश, मोक्ष, अस्पताल'
         },
-        analyzeHouse: function(a, houseNum) {
+        analyzeHouse: function (a, houseNum) {
             var house = a.houses[houseNum];
             if (!house) return 'भाव डेटा अनुपलब्ध';
             var lordData = a.planets[house.lord];
@@ -1335,8 +1447,8 @@
             if (lordData) {
                 lines.push('**भावेश स्थिति:** भाव ' + lordData.house + ' (' + lordData.sign + ', ' + lordData.dignity + (lordData.retro ? ', वक्री' : '') + ')');
                 var lordQuality = KENDRAS.indexOf(lordData.house) !== -1 ? 'केन्द्रस्थ — उत्तम' :
-                                  TRIKONAS.indexOf(lordData.house) !== -1 ? 'त्रिकोण — शुभ' :
-                                  DUSTHANAS.indexOf(lordData.house) !== -1 ? 'दुःस्थान — चुनौती' : 'सामान्य';
+                    TRIKONAS.indexOf(lordData.house) !== -1 ? 'त्रिकोण — शुभ' :
+                        DUSTHANAS.indexOf(lordData.house) !== -1 ? 'दुःस्थान — चुनौती' : 'सामान्य';
                 lines.push('**भावेश बल:** ' + lordQuality);
             }
             if (house.planets.length) lines.push('**स्थित ग्रह:** ' + house.planets.join(', '));
@@ -1350,11 +1462,11 @@
     // MODULE 8: JAIMINI ASTROLOGY ENGINE (चर कारक, कारकांश व आरूढ़ फलित)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasJaiminiEngine = {
-        computeKarakas: function(planetTable) {
+        computeKarakas: function (planetTable) {
             if (!planetTable || !planetTable.length) return null;
             var planets7 = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि'];
             var list = [];
-            planetTable.forEach(function(p) {
+            planetTable.forEach(function (p) {
                 var name = (p.p || p.planet || '').replace(/\s*\(.*\)/, '').trim();
                 if (planets7.indexOf(name) !== -1) {
                     var degStr = (p.d || p.degree || '0').toString();
@@ -1363,7 +1475,7 @@
                     list.push({ name: name, deg: degVal, sign: p.r || p.sign, house: p.h || p.house });
                 }
             });
-            list.sort(function(a, b) { return b.deg - a.deg; });
+            list.sort(function (a, b) { return b.deg - a.deg; });
             var karakaDefs = [
                 { k: 'AK', hi: 'आत्मकारक (Atmakaraka)', desc: 'आत्मा, आत्मबल व आंतरिक प्रकृति' },
                 { k: 'AmK', hi: 'अमात्यकारक (Amatyakaraka)', desc: 'करियर, आजीविका, अधिकार व सामाजिक पद' },
@@ -1387,7 +1499,7 @@
             return res;
         },
 
-        predict: function(karakasOrChart, domain) {
+        predict: function (karakasOrChart, domain) {
             domain = domain || 'general';
             var karakas = karakasOrChart;
             if (karakasOrChart && karakasOrChart.planet_table) {
@@ -1421,13 +1533,13 @@
             'मिथुन': 'वायु', 'तुला': 'वायु', 'कुंभ': 'वायु',
             'कर्क': 'जल', 'वृश्चिक': 'जल', 'मीन': 'जल'
         },
-        predict: function(planetTableOrChart, domain) {
+        predict: function (planetTableOrChart, domain) {
             domain = domain || 'general';
             var self = this;
             var planetTable = Array.isArray(planetTableOrChart) ? planetTableOrChart :
                 (planetTableOrChart && planetTableOrChart.planet_table ? planetTableOrChart.planet_table : []);
             var pMap = {};
-            planetTable.forEach(function(p) {
+            planetTable.forEach(function (p) {
                 var name = (p.p || p.planet || '').replace(/\s*\(.*\)/, '').trim();
                 pMap[name] = { sign: p.r || p.sign, house: p.h || p.house };
             });
@@ -1588,7 +1700,7 @@
             };
         },
 
-        computeSAV: function(planetTableOrChart, lagnaSign) {
+        computeSAV: function (planetTableOrChart, lagnaSign) {
             var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
             var savArray = null;
             var lSign = lagnaSign;
@@ -1618,7 +1730,7 @@
             return houseSAV;
         },
 
-        predict: function(houseSAVOrChart, domain) {
+        predict: function (houseSAVOrChart, domain) {
             domain = domain || 'general';
             var houseSAV = houseSAVOrChart;
             if (houseSAVOrChart && (houseSAVOrChart.lagna || houseSAVOrChart.planet_table || houseSAVOrChart.ashtakavarga)) {
@@ -1651,7 +1763,7 @@
     // MODULE 11: KP SYSTEM ENGINE (कृष्णमूर्ति पद्धति कस्पल सब-लॉर्ड & 4-Step)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasKPEngine = {
-        predict: function(planetTableOrChart, domain) {
+        predict: function (planetTableOrChart, domain) {
             domain = domain || 'general';
             var cusps = (planetTableOrChart && planetTableOrChart.kp && planetTableOrChart.kp.cusps) ? planetTableOrChart.kp.cusps : null;
             var lines = [];
@@ -1687,7 +1799,7 @@
     // MASTER ORCHESTRATOR — VyasDaivagyaCore (Multi-Disciplinary Synthesis)
     // ═══════════════════════════════════════════════════════════════════
     window.VyasDaivagyaCore = {
-        computeContext: function(query, chart) {
+        computeContext: function (query, chart) {
             if (!chart || !chart.planet_table) return '';
             var route = VyasQueryRouter.detect(query);
             var analysis = VyasChartAnalyzer.analyze(chart);
@@ -1708,7 +1820,7 @@
             if (route === 'yoga' || /योग|yoga/i.test(query)) {
                 var yogas = VyasYogaEngine.detectAll(analysis, chart, query);
                 blocks.push('**🔮 YOGA ANALYSIS (Mathematically Verified):**');
-                yogas.forEach(function(y) { if(y) blocks.push(y.detail || ''); });
+                yogas.forEach(function (y) { if (y) blocks.push(y.detail || ''); });
             }
             if (route === 'dasha') {
                 blocks.push(VyasDashaEngine.analyze(analysis, query));
@@ -1739,7 +1851,7 @@
             }
 
             // Always append dasha context for natal queries
-            if (['yoga','career','marriage','wealth','health','children','lagna','general','d9','d10'].indexOf(route) !== -1) {
+            if (['yoga', 'career', 'marriage', 'wealth', 'health', 'children', 'lagna', 'general', 'd9', 'd10'].indexOf(route) !== -1) {
                 blocks.push('');
                 blocks.push('**दशा संदर्भ:**');
                 blocks.push(VyasDashaEngine.analyze(analysis, query));
@@ -1755,7 +1867,7 @@
                 blocks.push('');
                 blocks.push('**🔮 JAIMINI CHARA KARAKAS & CHARA DASHA ANALYSIS:**');
                 blocks.push(jaiminiReading.replace(/<[^>]+>/g, '').trim());
-            } catch(e) {}
+            } catch (e) { }
 
             // 2. Nadi Dimension (BNN Trines, Directional Conjunctions & Karmic Axis)
             try {
@@ -1763,7 +1875,7 @@
                 blocks.push('');
                 blocks.push('**🌀 BHRIGU NANDI NADI (TRINES & KARMIC AXIS):**');
                 blocks.push(nadiReading.replace(/<[^>]+>/g, '').trim());
-            } catch(e) {}
+            } catch (e) { }
 
             // 3. KP System (Placidus Cuspal Sub-Lord 1-249 & Event Promise Confirmation)
             try {
@@ -1771,7 +1883,7 @@
                 blocks.push('');
                 blocks.push('**🎯 KP CUSPAL SUB-LORD (EVENT PROMISE & CUSPAL PERMISSION):**');
                 blocks.push(kpReading.replace(/<[^>]+>/g, '').trim());
-            } catch(e) {}
+            } catch (e) { }
 
             // 4. Ashtakavarga (SAV 337 Bindus & Prastarashtakavarga Strength)
             try {
@@ -1780,7 +1892,7 @@
                 blocks.push('');
                 blocks.push('**📊 ASHTAKAVARGA & PRASTARASHTAKAVARGA TRANSIT STRENGTH:**');
                 blocks.push(avReading.replace(/<[^>]+>/g, '').trim());
-            } catch(e) {}
+            } catch (e) { }
 
             // 5. Acharya Vyas v10 Goodh Diagnostics (Microscopic Vulnerability & Secret Revelation)
             try {
@@ -1792,7 +1904,7 @@
                         blocks.push('• कारकांश/आरूढ़ वेध: ' + goodhDiag.jaimini_dynamics.deep_observation_hi);
                     }
                     if (goodhDiag.gandanta_placements && goodhDiag.gandanta_placements.length > 0) {
-                        goodhDiag.gandanta_placements.forEach(function(gh) {
+                        goodhDiag.gandanta_placements.forEach(function (gh) {
                             blocks.push('• गण्डान्त सन्धि वेध: ' + gh.planet + ' (' + gh.insight_hi + ')');
                         });
                     } else {
@@ -1806,11 +1918,11 @@
                         blocks.push('• २२वां द्रेष्काण (खरेश: ' + kh.drekkana_22_lord + ') व ६४वां नवांश स्वामी (' + kh.navamsha_64_lord + '): ' + kh.protective_guidance_hi);
                     }
                     if (goodhDiag.transit_tara_analysis) {
-                        var harshT = goodhDiag.transit_tara_analysis.filter(function(t) { return t.is_sensitive_tara; });
+                        var harshT = goodhDiag.transit_tara_analysis.filter(function (t) { return t.is_sensitive_tara; });
                         if (harshT.length > 0) blocks.push('• नवतारा वेध: ' + harshT[0].guidance_hi);
                     }
                 }
-            } catch(e) {}
+            } catch (e) { }
 
             // Inject Classical Sutras from 22,000+ Bank
             var sBank = (typeof window !== 'undefined' ? window.VyasSutrasBank : (typeof global !== 'undefined' ? global.VyasSutrasBank : null));
@@ -1819,7 +1931,7 @@
                 if (matched && matched.length > 0) {
                     blocks.push('');
                     blocks.push('**📜 CLASSICAL SUTRAS CITATIONS (From 22,000+ Shastra Bank):**');
-                    matched.slice(0, 6).forEach(function(s) {
+                    matched.slice(0, 6).forEach(function (s) {
                         blocks.push('• [' + s.src + '] ' + s.cond + ' => ' + s.pred);
                     });
                 }
@@ -1833,373 +1945,373 @@
             return blocks.join('\n');
         },
 
-        _renderSutrasHtml: function(sutras, maxCount) {
+        _renderSutrasHtml: function (sutras, maxCount) {
             if (!sutras || !sutras.length) return '';
             maxCount = maxCount || 4;
             var list = sutras.slice(0, maxCount);
             var h = "<div class='vyas-sutras-vault-card' style='margin-top:14px; margin-bottom:14px; padding:12px; background:rgba(212,175,55,0.05); border:1px solid rgba(212,175,55,0.25); border-radius:8px;'>" +
-                    "<div style='color:#d4af37; font-weight:700; font-size:0.86rem; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;'>" +
-                    "<span>📜 <b>शास्त्रीय प्रमाण (22,000+ सूत्र महा-वेध बैंक से प्रत्यक्ष वेध):</b></span>" +
-                    "<span style='font-size:0.75rem; background:rgba(212,175,55,0.15); color:#fbbf24; padding:2px 8px; border-radius:4px;'>प्रामाणिक श्लोक</span>" +
-                    "</div>";
-            list.forEach(function(s) {
+                "<div style='color:#d4af37; font-weight:700; font-size:0.86rem; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;'>" +
+                "<span>📜 <b>शास्त्रीय प्रमाण (22,000+ सूत्र महा-वेध बैंक से प्रत्यक्ष वेध):</b></span>" +
+                "<span style='font-size:0.75rem; background:rgba(212,175,55,0.15); color:#fbbf24; padding:2px 8px; border-radius:4px;'>प्रामाणिक श्लोक</span>" +
+                "</div>";
+            list.forEach(function (s) {
                 h += "<div style='margin-bottom:8px; font-size:0.83rem; line-height:1.45; border-bottom:1px dashed rgba(255,255,255,0.08); padding-bottom:6px;'>" +
-                     "<b style='color:#60a5fa;'>[" + (s.src || "बृहत्पाराशर होराशास्त्र") + "]</b> " +
-                     "<span style='color:#f8fafc;'>स्थिति: <i>" + s.cond + "</i></span><br>" +
-                     "<span style='color:#94a3b8;'>➔ <b>शास्त्रीय फल:</b> " + s.pred + "</span>" +
-                     "</div>";
+                    "<b style='color:#60a5fa;'>[" + (s.src || "बृहत्पाराशर होराशास्त्र") + "]</b> " +
+                    "<span style='color:#f8fafc;'>स्थिति: <i>" + s.cond + "</i></span><br>" +
+                    "<span style='color:#94a3b8;'>➔ <b>शास्त्रीय फल:</b> " + s.pred + "</span>" +
+                    "</div>";
             });
             h += "<small style='color:#64748b; font-size:0.74rem;'>वेध आधार: महर्षि पराशर (BPHS), महर्षि भृगु, कल्याण वर्मा (सारावली), पृथुयशस (होरासार) व आधुनिक शोध।</small>" +
-                 "</div>";
+                "</div>";
             return h;
         },
 
-    formatReading: function(query, chart) {
-        var q = (query || '').toLowerCase();
-        
-        if (!chart || !chart.planet_table) {
-            return '<div class="shastra-verdict-box" style="background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:16px; border-radius:8px; margin-bottom:12px;">' +
-                '<b style="color:var(--accent-gold); font-size:1.05rem;">✦ कुण्डली लोड नहीं है</b><br>' +
-                '<p style="margin:8px 0 0 0; color:var(--text-secondary); line-height:1.7;">सटीक व गणितीय व्यक्तिगत फलादेश प्राप्त करने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा अपनी कुण्डली लोड करें।</p>' +
-                '</div>';
-        }
+        formatReading: function (query, chart) {
+            var q = (query || '').toLowerCase();
 
-        var prof = chart.profile || {};
-        var name = prof.name || 'जातक';
-        var lagna = (prof.asc_sign || 'मेष').split(' ')[0].replace(/[\(\)]/g, '').trim();
-        var dashaChain = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain :
-                         ((chart.active_dasha && chart.active_dasha.md) ? (chart.active_dasha.md + ' ➔ ' + chart.active_dasha.ad) : 'विंशोत्तरी दशा सक्रिय');
-
-        // 12 Signs & Lords
-        var SIGNS_HI = ['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुंभ','मीन'];
-        var LORDS = ['मंगल','शुक्र','बुध','चन्द्र','सूर्य','बुध','शुक्र','मंगल','गुरु','शनि','शनि','गुरु'];
-        var lagnaIdx = SIGNS_HI.indexOf(lagna);
-        if (lagnaIdx === -1) lagnaIdx = 0;
-        var lagnaLord = LORDS[lagnaIdx];
-
-        // Build Planet Map defensively
-        var pTable = chart.planet_table || [];
-        var pMap = {};
-        for (var i = 0; i < pTable.length; i++) {
-            var pl = pTable[i];
-            var pName = (pl.p || pl.planet || '').replace(/\s*\(.*\)/, '').trim();
-            pMap[pName] = {
-                name: pName,
-                house: parseInt(pl.h || pl.house || 1),
-                sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
-                degree: pl.d || pl.degree || '0°0\'',
-                nakshatra: pl.n || pl.nakshatra || '',
-                dignity: pl.dignity || pl.s || ''
-            };
-        }
-
-        var sun = pMap['सूर्य'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var moon = pMap['चन्द्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var mars = pMap['मंगल'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var merc = pMap['बुध'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var jup = pMap['गुरु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var ven = pMap['शुक्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var sat = pMap['शनि'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var rahu = pMap['राहु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
-        var ketu = pMap['केतु'] || { house: 7, sign: lagna, degree: '10°', dignity: 'सम' };
-
-        // House Signs & Lords
-        var h1Sign = lagna, h1Lord = lagnaLord;
-        var h2Sign = SIGNS_HI[(lagnaIdx + 1) % 12], h2Lord = LORDS[(lagnaIdx + 1) % 12];
-        var h3Sign = SIGNS_HI[(lagnaIdx + 2) % 12], h3Lord = LORDS[(lagnaIdx + 2) % 12];
-        var h4Sign = SIGNS_HI[(lagnaIdx + 3) % 12], h4Lord = LORDS[(lagnaIdx + 3) % 12];
-        var h5Sign = SIGNS_HI[(lagnaIdx + 4) % 12], h5Lord = LORDS[(lagnaIdx + 4) % 12];
-        var h6Sign = SIGNS_HI[(lagnaIdx + 5) % 12], h6Lord = LORDS[(lagnaIdx + 5) % 12];
-        var h7Sign = SIGNS_HI[(lagnaIdx + 6) % 12], h7Lord = LORDS[(lagnaIdx + 6) % 12];
-        var h8Sign = SIGNS_HI[(lagnaIdx + 7) % 12], h8Lord = LORDS[(lagnaIdx + 7) % 12];
-        var h9Sign = SIGNS_HI[(lagnaIdx + 8) % 12], h9Lord = LORDS[(lagnaIdx + 8) % 12];
-        var h10Sign = SIGNS_HI[(lagnaIdx + 9) % 12], h10Lord = LORDS[(lagnaIdx + 9) % 12];
-        var h11Sign = SIGNS_HI[(lagnaIdx + 10) % 12], h11Lord = LORDS[(lagnaIdx + 10) % 12];
-        var h12Sign = SIGNS_HI[(lagnaIdx + 11) % 12], h12Lord = LORDS[(lagnaIdx + 11) % 12];
-
-        // Jaimini Karakas
-        var jK = (chart.jaimini && chart.jaimini.karakas) ? chart.jaimini.karakas : [];
-        var akObj = jK.find ? jK.find(function(k){ return k.abbr === 'AK'; }) : null;
-        var amkObj = jK.find ? jK.find(function(k){ return k.abbr === 'AmK'; }) : null;
-        var dkObj = jK.find ? jK.find(function(k){ return k.abbr === 'DK'; }) : null;
-        var pkObj = jK.find ? jK.find(function(k){ return k.abbr === 'PK'; }) : null;
-        var ak = akObj ? akObj.planet : 'सूर्य';
-        var amk = amkObj ? amkObj.planet : 'शनि';
-        var dk = dkObj ? dkObj.planet : 'शुक्र';
-        var pk = pkObj ? pkObj.planet : 'गुरु';
-
-        // SAV points
-        var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
-        var sav10 = sav[(lagnaIdx + 9) % 12] || 31;
-        var sav11 = sav[(lagnaIdx + 10) % 12] || 33;
-        var sav2 = sav[(lagnaIdx + 1) % 12] || 29;
-        var sav7 = sav[(lagnaIdx + 6) % 12] || 28;
-        var sav5 = sav[(lagnaIdx + 4) % 12] || 30;
-        var sav6 = sav[(lagnaIdx + 5) % 12] || 27;
-        var sav9 = sav[(lagnaIdx + 8) % 12] || 32;
-        var sav12 = sav[(lagnaIdx + 11) % 12] || 26;
-
-        // Goodh Diagnostics
-        var goodh = chart.goodh_diagnostics || null;
-        var khara = (goodh && goodh.khara_and_64th_navamsha) ? goodh.khara_and_64th_navamsha : null;
-
-        // Card Builder Function
-        function buildCardResponse(badge, title, verdict, shastraItems, fruit, timing, remedies) {
-            var h = '';
-            // 1. Header Banner
-            h += '<div style="background:rgba(212,175,55,0.08); border-left:4px solid var(--accent-gold); padding:14px 16px; border-radius:8px; margin-bottom:14px;">';
-            h += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">';
-            h += '<span style="color:var(--accent-gold); font-weight:700; font-size:0.92rem;">✦ ' + title + '</span>';
-            h += '<span style="background:rgba(212,175,55,0.18); color:var(--accent-gold); font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:12px;">' + badge + '</span>';
-            h += '</div>';
-            h += '<div style="font-size:0.80rem; color:var(--text-muted); line-height:1.6;">';
-            h += 'जातक: <b style="color:var(--text-primary);">' + name + '</b> • लग्न: <b style="color:var(--text-primary);">' + lagna + ' (' + lagnaLord + ')</b> • सक्रिय दशा: <b style="color:var(--text-primary);">' + dashaChain + '</b>';
-            h += '</div></div>';
-
-            // 2. Direct Verdict Card
-            h += '<div style="background:var(--bg-card); border:1px solid var(--border-card); border-radius:10px; padding:16px; margin-bottom:14px;">';
-            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
-            h += '<span style="font-size:1.15rem;">🎯</span>';
-            h += '<b style="color:var(--accent-gold); font-size:0.95rem;">सीधा शास्त्रीय निर्णय (The Clear Direct Verdict)</b>';
-            h += '</div>';
-            h += '<p style="margin:0; font-size:0.90rem; line-height:1.75; color:var(--text-primary);">' + verdict + '</p>';
-            h += '</div>';
-
-            // 3. Application to Native\'s Chart Card
-            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
-            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
-            h += '<span style="font-size:1.15rem;">🔍</span>';
-            h += '<b style="color:#60a5fa; font-size:0.95rem;">आपकी कुण्डली पर नियमों का वास्तविक घटित होना (Application to Your Chart)</b>';
-            h += '</div>';
-            h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
-            for (var si = 0; si < shastraItems.length; si++) {
-                h += '<li style="margin-bottom:8px;">' + shastraItems[si] + '</li>';
+            if (!chart || !chart.planet_table) {
+                return '<div class="shastra-verdict-box" style="background:rgba(212,175,55,0.06); border-left:3px solid var(--accent-gold); padding:16px; border-radius:8px; margin-bottom:12px;">' +
+                    '<b style="color:var(--accent-gold); font-size:1.05rem;">✦ कुण्डली लोड नहीं है</b><br>' +
+                    '<p style="margin:8px 0 0 0; color:var(--text-secondary); line-height:1.7;">सटीक व गणितीय व्यक्तिगत फलादेश प्राप्त करने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा अपनी कुण्डली लोड करें।</p>' +
+                    '</div>';
             }
-            h += '</ul></div>';
 
-            // 4. Exact Fruit & Manifestation Card
-            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
-            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
-            h += '<span style="font-size:1.15rem;">⚡</span>';
-            h += '<b style="color:#34d399; font-size:0.95rem;">फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest?)</b>';
-            h += '</div>';
-            h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + fruit + '</p>';
-            h += '</div>';
+            var prof = chart.profile || {};
+            var name = prof.name || 'जातक';
+            var lagna = (prof.asc_sign || 'मेष').split(' ')[0].replace(/[\(\)]/g, '').trim();
+            var dashaChain = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain :
+                ((chart.active_dasha && chart.active_dasha.md) ? (chart.active_dasha.md + ' ➔ ' + chart.active_dasha.ad) : 'विंशोत्तरी दशा सक्रिय');
 
-            // 5. Timeline & Dasha Triggers Card
-            h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
-            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
-            h += '<span style="font-size:1.15rem;">⏱️</span>';
-            h += '<b style="color:#fbbf24; font-size:0.95rem;">काल-खंड: यह फल कब फलीभूत होगा? (Exact Timeline & Dasha Triggers: Months & Years)</b>';
-            h += '</div>';
-            h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + timing + '</p>';
-            h += '</div>';
+            // 12 Signs & Lords
+            var SIGNS_HI = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+            var LORDS = ['मंगल', 'शुक्र', 'बुध', 'चन्द्र', 'सूर्य', 'बुध', 'शुक्र', 'मंगल', 'गुरु', 'शनि', 'शनि', 'गुरु'];
+            var lagnaIdx = SIGNS_HI.indexOf(lagna);
+            if (lagnaIdx === -1) lagnaIdx = 0;
+            var lagnaLord = LORDS[lagnaIdx];
 
-            // 6. Practical Remedies Card
-            h += '<div style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:16px;">';
-            h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
-            h += '<span style="font-size:1.15rem;">🛡️</span>';
-            h += '<b style="color:var(--accent-gold); font-size:0.95rem;">दैवज्ञ व्यावहारिक मार्गदर्शन व अचूक सात्विक उपाय (Practical Satvik Remedies)</b>';
-            h += '</div>';
-            h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
-            for (var ri = 0; ri < remedies.length; ri++) {
-                h += '<li style="margin-bottom:6px;">' + remedies[ri] + '</li>';
+            // Build Planet Map defensively
+            var pTable = chart.planet_table || [];
+            var pMap = {};
+            for (var i = 0; i < pTable.length; i++) {
+                var pl = pTable[i];
+                var pName = (pl.p || pl.planet || '').replace(/\s*\(.*\)/, '').trim();
+                pMap[pName] = {
+                    name: pName,
+                    house: parseInt(pl.h || pl.house || 1),
+                    sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
+                    degree: pl.d || pl.degree || '0°0\'',
+                    nakshatra: pl.n || pl.nakshatra || '',
+                    dignity: pl.dignity || pl.s || ''
+                };
             }
-            h += '</ul></div>';
 
-            return h;
-        }
+            var sun = pMap['सूर्य'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var moon = pMap['चन्द्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var mars = pMap['मंगल'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var merc = pMap['बुध'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var jup = pMap['गुरु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var ven = pMap['शुक्र'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var sat = pMap['शनि'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var rahu = pMap['राहु'] || { house: 1, sign: lagna, degree: '10°', dignity: 'सम' };
+            var ketu = pMap['केतु'] || { house: 7, sign: lagna, degree: '10°', dignity: 'सम' };
 
-        // =========================================================================
-        // DOMAIN 1: POLITICS & GOVERNANCE
-        // =========================================================================
-        if (/(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i.test(q)) {
-            var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
-            var has7thShasha = (sat.house === 7 && sat.sign === 'तुला');
-            var has10thRuchaka = (mars.house === 10 && mars.sign === 'मकर');
+            // House Signs & Lords
+            var h1Sign = lagna, h1Lord = lagnaLord;
+            var h2Sign = SIGNS_HI[(lagnaIdx + 1) % 12], h2Lord = LORDS[(lagnaIdx + 1) % 12];
+            var h3Sign = SIGNS_HI[(lagnaIdx + 2) % 12], h3Lord = LORDS[(lagnaIdx + 2) % 12];
+            var h4Sign = SIGNS_HI[(lagnaIdx + 3) % 12], h4Lord = LORDS[(lagnaIdx + 3) % 12];
+            var h5Sign = SIGNS_HI[(lagnaIdx + 4) % 12], h5Lord = LORDS[(lagnaIdx + 4) % 12];
+            var h6Sign = SIGNS_HI[(lagnaIdx + 5) % 12], h6Lord = LORDS[(lagnaIdx + 5) % 12];
+            var h7Sign = SIGNS_HI[(lagnaIdx + 6) % 12], h7Lord = LORDS[(lagnaIdx + 6) % 12];
+            var h8Sign = SIGNS_HI[(lagnaIdx + 7) % 12], h8Lord = LORDS[(lagnaIdx + 7) % 12];
+            var h9Sign = SIGNS_HI[(lagnaIdx + 8) % 12], h9Lord = LORDS[(lagnaIdx + 8) % 12];
+            var h10Sign = SIGNS_HI[(lagnaIdx + 9) % 12], h10Lord = LORDS[(lagnaIdx + 9) % 12];
+            var h11Sign = SIGNS_HI[(lagnaIdx + 10) % 12], h11Lord = LORDS[(lagnaIdx + 10) % 12];
+            var h12Sign = SIGNS_HI[(lagnaIdx + 11) % 12], h12Lord = LORDS[(lagnaIdx + 11) % 12];
 
-            var verdict = 'आपकी कुण्डली में शासन, प्रशासन एवं नीति-निर्धारण में उच्च पद का <b>प्रबल योग (८५% सुनिश्चित सामर्थ्य)</b> विद्यमान है। प्रत्यक्ष सड़क/चुनावी हो-हल्ले की तुलना में <b>संगठनात्मक सत्ता, सलाहकार मंडल, सरकारी आयोग/बोर्ड या संवैधानिक/प्रशासनिक पद</b> में स्थायी अधिकार व मान-सम्मान प्राप्त होगा।';
+            // Jaimini Karakas
+            var jK = (chart.jaimini && chart.jaimini.karakas) ? chart.jaimini.karakas : [];
+            var akObj = jK.find ? jK.find(function (k) { return k.abbr === 'AK'; }) : null;
+            var amkObj = jK.find ? jK.find(function (k) { return k.abbr === 'AmK'; }) : null;
+            var dkObj = jK.find ? jK.find(function (k) { return k.abbr === 'DK'; }) : null;
+            var pkObj = jK.find ? jK.find(function (k) { return k.abbr === 'PK'; }) : null;
+            var ak = akObj ? akObj.planet : 'सूर्य';
+            var amk = amkObj ? amkObj.planet : 'शनि';
+            var dk = dkObj ? dkObj.planet : 'शुक्र';
+            var pk = pkObj ? pkObj.planet : 'गुरु';
+
+            // SAV points
+            var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
+            var sav10 = sav[(lagnaIdx + 9) % 12] || 31;
+            var sav11 = sav[(lagnaIdx + 10) % 12] || 33;
+            var sav2 = sav[(lagnaIdx + 1) % 12] || 29;
+            var sav7 = sav[(lagnaIdx + 6) % 12] || 28;
+            var sav5 = sav[(lagnaIdx + 4) % 12] || 30;
+            var sav6 = sav[(lagnaIdx + 5) % 12] || 27;
+            var sav9 = sav[(lagnaIdx + 8) % 12] || 32;
+            var sav12 = sav[(lagnaIdx + 11) % 12] || 26;
+
+            // Goodh Diagnostics
+            var goodh = chart.goodh_diagnostics || null;
+            var khara = (goodh && goodh.khara_and_64th_navamsha) ? goodh.khara_and_64th_navamsha : null;
+
+            // Card Builder Function
+            function buildCardResponse(badge, title, verdict, shastraItems, fruit, timing, remedies) {
+                var h = '';
+                // 1. Header Banner
+                h += '<div style="background:rgba(212,175,55,0.08); border-left:4px solid var(--accent-gold); padding:14px 16px; border-radius:8px; margin-bottom:14px;">';
+                h += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">';
+                h += '<span style="color:var(--accent-gold); font-weight:700; font-size:0.92rem;">✦ ' + title + '</span>';
+                h += '<span style="background:rgba(212,175,55,0.18); color:var(--accent-gold); font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:12px;">' + badge + '</span>';
+                h += '</div>';
+                h += '<div style="font-size:0.80rem; color:var(--text-muted); line-height:1.6;">';
+                h += 'जातक: <b style="color:var(--text-primary);">' + name + '</b> • लग्न: <b style="color:var(--text-primary);">' + lagna + ' (' + lagnaLord + ')</b> • सक्रिय दशा: <b style="color:var(--text-primary);">' + dashaChain + '</b>';
+                h += '</div></div>';
+
+                // 2. Direct Verdict Card
+                h += '<div style="background:var(--bg-card); border:1px solid var(--border-card); border-radius:10px; padding:16px; margin-bottom:14px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                h += '<span style="font-size:1.15rem;">🎯</span>';
+                h += '<b style="color:var(--accent-gold); font-size:0.95rem;">सीधा शास्त्रीय निर्णय (The Clear Direct Verdict)</b>';
+                h += '</div>';
+                h += '<p style="margin:0; font-size:0.90rem; line-height:1.75; color:var(--text-primary);">' + verdict + '</p>';
+                h += '</div>';
+
+                // 3. Application to Native\'s Chart Card
+                h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                h += '<span style="font-size:1.15rem;">🔍</span>';
+                h += '<b style="color:#60a5fa; font-size:0.95rem;">आपकी कुण्डली पर नियमों का वास्तविक घटित होना (Application to Your Chart)</b>';
+                h += '</div>';
+                h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
+                for (var si = 0; si < shastraItems.length; si++) {
+                    h += '<li style="margin-bottom:8px;">' + shastraItems[si] + '</li>';
+                }
+                h += '</ul></div>';
+
+                // 4. Exact Fruit & Manifestation Card
+                h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                h += '<span style="font-size:1.15rem;">⚡</span>';
+                h += '<b style="color:#34d399; font-size:0.95rem;">फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest?)</b>';
+                h += '</div>';
+                h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + fruit + '</p>';
+                h += '</div>';
+
+                // 5. Timeline & Dasha Triggers Card
+                h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                h += '<span style="font-size:1.15rem;">⏱️</span>';
+                h += '<b style="color:#fbbf24; font-size:0.95rem;">काल-खंड: यह फल कब फलीभूत होगा? (Exact Timeline & Dasha Triggers: Months & Years)</b>';
+                h += '</div>';
+                h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + timing + '</p>';
+                h += '</div>';
+
+                // 6. Practical Remedies Card
+                h += '<div style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:16px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                h += '<span style="font-size:1.15rem;">🛡️</span>';
+                h += '<b style="color:var(--accent-gold); font-size:0.95rem;">दैवज्ञ व्यावहारिक मार्गदर्शन व अचूक सात्विक उपाय (Practical Satvik Remedies)</b>';
+                h += '</div>';
+                h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
+                for (var ri = 0; ri < remedies.length; ri++) {
+                    h += '<li style="margin-bottom:6px;">' + remedies[ri] + '</li>';
+                }
+                h += '</ul></div>';
+
+                return h;
+            }
+
+            // =========================================================================
+            // DOMAIN 1: POLITICS & GOVERNANCE
+            // =========================================================================
+            if (/(राजनीति|शासन|सत्ता|सरकार|राजयोग|मंत्री|एमएलए|सांसद|विधायक|चुनाव|पद.*प्राप्ति|प्रशासन|आईएएस|ips|ias|politics|governance|election|political)/i.test(q)) {
+                var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
+                var has7thShasha = (sat.house === 7 && sat.sign === 'तुला');
+                var has10thRuchaka = (mars.house === 10 && mars.sign === 'मकर');
+
+                var verdict = 'आपकी कुण्डली में शासन, प्रशासन एवं नीति-निर्धारण में उच्च पद का <b>प्रबल योग (८५% सुनिश्चित सामर्थ्य)</b> विद्यमान है। प्रत्यक्ष सड़क/चुनावी हो-हल्ले की तुलना में <b>संगठनात्मक सत्ता, सलाहकार मंडल, सरकारी आयोग/बोर्ड या संवैधानिक/प्रशासनिक पद</b> में स्थायी अधिकार व मान-सम्मान प्राप्त होगा।';
+                var items = [
+                    '<b>दशम भाव (सिंहासन व शासन):</b> दशमेश <b>' + h10Lord + '</b> देव भाव ' + p10Lord.house + ' (' + p10Lord.sign + ' राशि) में स्थित हैं। ' + (has7thShasha ? 'सप्तम भाव में उच्च के शनि देव <b>शश महापुरुष योग</b> बनाकर दशम भाव व जनता के समर्थन पर पूर्ण प्रभुत्व स्थापित करते हैं।' : 'दशमेश की स्थिति कार्यक्षेत्र में स्वतंत्र नेतृत्व की क्षमता देती है।'),
+                    (has10thRuchaka ? '<b>रुचक महापुरुष योग (दशम भाव):</b> दशम भाव में <b>मंगल देव</b> मकर राशि में <b>परमोच्च</b> होकर <b>सर्वोच्च दिग्बली</b> हैं। यह शासन-प्रशासन में निर्भीक निर्णय, प्रशासनिक दबदबा और सत्ता से सीधा लाभ सिद्ध करता है।' : '<b>मंगल की दृष्टि/स्थिति:</b> कार्यक्षेत्र में ऊर्जा व अधिकार का सतत संचार करती है।'),
+                    '<b>सूर्य व बुध (अष्टम भाव व गंडान्त):</b> पंचमेश (मंत्रणा व बुद्धि) सूर्य एवं बुध अष्टम भाव में स्थित हैं, तथा ' + (merc.degree ? 'बुध (' + merc.degree + ') गंडान्त संधि में हैं।' : 'सूर्य-बुध की स्थिति गूढ़ बुद्धि देती है।') + ' यही कारण है कि प्रत्यक्ष चुनावी राजनीति में आरंभ में गुप्त विरोध व षड्यंत्र का सामना करना पड़ता है, परन्तु नीति व रणनीति के क्षेत्र में आप अजेय रहते हैं।',
+                    '<b>जैमिनी अमात्यकारक (AmK - ' + amk + '):</b> जैमिनी सूत्रानुसार आजीविका व पद के नियंत्रक <b>' + amk + '</b> देव हैं। इनकी सबल स्थिति सिद्ध करती है कि पद आपको आपकी योग्यता, विधिक/बौद्धिक गहराई और सांगठनिक निष्ठा से प्राप्त होगा।',
+                    '<b>अष्टकवर्ग सामर्थ्य:</b> दशम भाव को <b>' + sav10 + ' शुभ बिंदु</b> प्राप्त हैं। २८ से अधिक बिंदु होने से विरोधियों के समस्त अवरोध स्वतः समाप्त होंगे और आपका कद निरंतर बढ़ेगा।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको शासन या राजनीतिक संगठन में शीर्ष नीति-निर्माण, विधिक/कानूनी परामर्श, अथवा उच्च आयोग में अध्यक्ष/सदस्य का दायित्व प्राप्त होगा। यदि आप प्रत्यक्ष चुनाव लड़ते हैं तो पहले प्रयास में भितरघात संभव है, अतः संगठन व प्रशासन के माध्यम से पद ग्रहण करना सर्वथा सुरक्षित व स्थायी रहेगा।';
+                var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान में सक्रिय <b>' + dashaChain + '</b> के अंतर्गत वर्ष <b>२०२६ के उत्तरार्ध (अगस्त २०२६ से मार्च २०२७)</b> में जब देवगुरु बृहस्पति का गोचर अनुकूल होगा, तब शासन या संगठन में महत्वपूर्ण पद/दायित्व की आधिकारिक प्राप्ति का काल-चक्र सक्रिय है।';
+                var remedies = [
+                    'प्रातःकाल तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम व लाल पुष्प युक्त जल अर्पित करें तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ करें।',
+                    'शनिवार को वृद्ध अथवा असहाय जनों को तिल का दान करें।',
+                    'किसी भी राजनीतिक निर्णय अथवा दस्तावेज पर हस्ताक्षर करने से पूर्व अपने इष्ट देव का स्मरण अवश्य करें।'
+                ];
+                return buildCardResponse('शासन व पद प्राप्ति', 'राजनीति, शासन व अधिकार पद प्राप्ति वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 2: CAREER & PROFESSION
+            // =========================================================================
+            if (/(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i.test(q)) {
+                var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
+                var verdict = 'आपके करियर में <b>स्वायत्तता, बौद्धिक अधिकार व दीर्घकालिक स्थिरता का प्रबल योग</b> है। किसी के पूर्ण अधीन रहकर साधारण नौकरी करने के बजाय आप स्वतंत्र सलाहकार, उच्च प्रबंधन, नीति-निर्धारण, कानून/न्याय अथवा स्वतंत्र व्यवसाय में शिखर पर पहुंचेंगे।';
+                var items = [
+                    '<b>दशम भाव (कर्म भाव):</b> दशम भाव में ' + h10Sign + ' राशि है और दशमेश <b>' + h10Lord + '</b> भाव ' + p10Lord.house + ' में स्थित हैं। यह कार्यक्षेत्र में सतत विस्तार और उत्तरदायित्व का प्रमाण है।',
+                    '<b>कर्मकारक शनि व जीवकारक गुरु:</b> शनि (भाव ' + sat.house + ', ' + sat.sign + ') एवं गुरु (भाव ' + jup.house + ', ' + jup.sign + ') का संरेखण यह सुनिश्चित करता है कि ३६वें वर्ष के उपरांत आपके करियर में कोई स्थायी रुकावट नहीं आ सकती।',
+                    '<b>षष्ठ व दशम का संबंध:</b> सेवा भाव (षष्ठ) के स्वामी ' + h6Lord + ' की स्थिति इंगित करती है कि आपको प्रतिस्पर्धा में विजय मिलेगी, पर आपकी वास्तविक संतुष्टि स्वतंत्र निर्णय लेने में ही है।',
+                    '<b>अमात्यकारक (AmK - ' + amk + '):</b> आजीविका में अधिकार व प्रतिष्ठा ' + amk + ' देव की कृपा से प्राप्त होगी।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको कार्यक्षेत्र में उच्च पद, टीम नेतृत्व और नीतिगत स्वायत्तता मिलेगी। अष्टकवर्ग में दशम भाव को <b>' + sav10 + ' बिंदु</b> प्राप्त हैं, जो यह दर्शाते हैं कि आपकी कार्यक्षमता पर कोई प्रश्नचिह्न नहीं लगा सकता।';
+                var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> आगामी <b>१४ से १८ महीने (२०२६-२०२७)</b> आपके करियर के लिए गेम-चेंजर सिद्ध होंगे। पदोन्नति अथवा नए बड़े प्रोजेक्ट की शुरुआत <b>अक्टूबर २०२६ से फरवरी २०२७</b> के मध्य सुनिश्चित है।';
+                var remedies = [
+                    'कार्यस्थल पर उत्तर-पूर्व (ईशान) कोण को सदैव स्वच्छ व प्रकाशयुक्त रखें।',
+                    'प्रतिदिन प्रातः <i>"ॐ नमो भगवते वासुदेवाय"</i> का शांत मन से जप करें।',
+                    'शनिवार को काले कुत्ते या कौवे को रोटी खिलाएं।'
+                ];
+                return buildCardResponse('करियर व पदोन्नति', 'आजीविका, करियर एवं कर्मक्षेत्र बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 3: WEALTH & FINANCE
+            // =========================================================================
+            if (/(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i.test(q)) {
+                var verdict = 'आपकी पत्रिका में <b>सतत धन आगमन एवं अचल संपत्ति निर्माण का श्रेष्ठ योग</b> है। जीवन में कभी भी धन की ऐसी कमी नहीं होगी जिससे आवश्यक कार्य रुकें। संचित धन (२रा भाव) और लाभ (११वां भाव) का समन्वय आपको मध्यम आयु के बाद विपुल संपन्नता देगा।';
+                var items = [
+                    '<b>द्वितीय भाव (कोष संचय):</b> द्वितीय भाव में ' + h2Sign + ' राशि है जिसके स्वामी <b>' + h2Lord + '</b> हैं। कोष भाव में ' + (rahu.house === 2 ? 'राहु की उपस्थिति अपरिमित व अचानक धन लाभ के अवसर देती है।' : 'शुभ ग्रहों का प्रभाव स्थिरता देता है।'),
+                    '<b>एकादश भाव (लाभ भाव):</b> लाभेश <b>' + h11Lord + '</b> की स्थिति बताती है कि आपके आय के स्रोत एक से अधिक रहेंगे। अष्टकवर्ग में ११वें भाव को <b>' + sav11 + ' बिंदु</b> मिले हैं, जो १२वें भाव के व्यय से अधिक हैं।',
+                    '<b>धनकारक गुरु:</b> देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ होकर धन की दैवीय सुरक्षा कर रहे हैं।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको भूमि, भवन, पैतृक लाभ एवं बौद्धिक संपदा से प्रचुर धन मिलेगा। शेयर बाजार में सट्टा लगाने से बचें, परन्तु दीर्घकालिक संपत्ति व स्थिर निवेश में आपको शत-प्रतिशत लाभ होगा।';
+                var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान विंशोत्तरी दशा में <b>दिसम्बर २०२६ से जून २०२७</b> का समय बड़े आर्थिक लाभ और संपत्ति क्रय हेतु सर्वाधिक उपयुक्त है।';
+                var remedies = [
+                    'शुक्रवार को श्री सूक्त का पाठ करें अथवा <i>"ॐ श्रीं ह्रीं श्रीं कमले कमलालये प्रसीद प्रसीद"</i> का जप करें।',
+                    'तिजोरी अथवा धन रखने के स्थान पर लाल या पीला रेशमी वस्त्र बिछाकर रखें।',
+                    'किसी भी शुक्रवार को कन्याओं को खीर अथवा सफेद मिठाई का प्रसाद दें।'
+                ];
+                return buildCardResponse('धन व समृद्धि', 'धन-संपदा, कोष संचय एवं आर्थिक सामर्थ्य वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 4: MARRIAGE & RELATIONSHIP
+            // =========================================================================
+            if (/(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i.test(q)) {
+                var verdict = 'आपकी पत्रिका में <b>सुयोग्य, स्वाभिमानी एवं कर्मठ जीवनसाथी का योग</b> है। विचारों में स्वतंत्रता के कारण कभी-कभी वैचारिक मतभेद उभर सकते हैं, परन्तु विवाह की आधारशिला अटूट व दीर्घकालिक है।';
+                var items = [
+                    '<b>सप्तम भाव (दांपत्य भाव):</b> सप्तमेश <b>' + h7Lord + '</b> भाव ' + (pMap[h7Lord] ? pMap[h7Lord].house : 7) + ' में स्थित हैं। ' + (sat.house === 7 ? 'सप्तम भाव में उच्च के शनि देव जीवनसाथी को गंभीर, परिपक्व एवं कर्तव्यनिष्ठ बनाते हैं।' : 'सप्तम भाव पर शुभ दृष्टियों का संरेखण है।'),
+                    '<b>दाराकारक (DK - ' + dk + '):</b> जैमिनी सूत्रानुसार जीवनसाथी के कारक <b>' + dk + '</b> देव हैं, जो यह दर्शाते हैं कि जीवनसाथी का स्वभाव सुरुचिपूर्ण व बौद्धिक होगा।',
+                    '<b>अष्टकवर्ग सामर्थ्य:</b> सप्तम भाव को <b>' + sav7 + ' बिंदु</b> प्राप्त हैं, जो वैवाहिक संबंधों को स्थिरता प्रदान करते हैं।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जीवनसाथी के आने के बाद आपके भाग्य और सामाजिक प्रतिष्ठा में तीव्र वृद्धि होगी। जीवनसाथी आपको परिवार और करियर दोनों में सुदृढ़ संबल प्रदान करेगा।';
+                var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> अविवाहित जातकों के लिए विवाह हेतु <b>अगस्त २०२६ से अप्रैल २०२७</b> का समय देवगुरु बृहस्पति के गोचर द्वारा पूर्णतः स्वीकृत व मंगलमय है।';
+                var remedies = [
+                    'नित्य संध्या समय घर के मंदिर में गाय के घी का दीपक प्रज्वलित करें।',
+                    'गौरी-शंकर रुद्राक्ष धारण करना अथवा शिव-पार्वती की संयुक्त पूजा दांपत्य को परम सुखमय बनाती है।',
+                    'पूर्णिमा के दिन चंद्रदेव को कच्चे दूध व जल का अर्घ्य दें।'
+                ];
+                return buildCardResponse('दांपत्य व विवाह', 'दांपत्य जीवन, विवाह एवं सम्बन्ध समन्वय वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 5: CHILDREN & FAMILY
+            // =========================================================================
+            if (/(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i.test(q)) {
+                var verdict = 'आपकी पत्रिका में <b>गुणवान, मेधावी एवं कुल का नाम रोशन करने वाली संतान का श्रेष्ठ योग</b> है। पंचम भाव और संतान कारक गुरु का संबंध संतान सुख को सुनिश्चित करता है।';
+                var items = [
+                    '<b>पंचम भाव (संतान व विद्या भाव):</b> पंचम भाव में ' + h5Sign + ' राशि है और पंचमेश <b>' + h5Lord + '</b> की स्थिति संतान के उच्च बौद्धिक स्तर को प्रमाणित करती है।',
+                    '<b>पुत्रकारक (PK - ' + pk + ') व गुरु:</b> संतान के नैसर्गिक कारक देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ हैं, जो संतान के दीर्घायु व संस्कारी होने का अकाट्य प्रमाण है।',
+                    '<b>अष्टकवर्ग सामर्थ्य:</b> पंचम भाव को <b>' + sav5 + ' बिंदु</b> प्राप्त हैं जो संतान सुख में आने वाली बाधाओं को दूर करते हैं।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> संतान शिक्षा, विज्ञान, विधिक अथवा प्रशासनिक क्षेत्र में उत्कृष्ट सफलता प्राप्त करेगी। बुढ़ापे में संतान से पूरा मान-सम्मान व सेवा प्राप्त होगी।';
+                var timing = '<b>काल-खंड:</b> संतान प्राप्ति अथवा संतान के करियर में बड़ी उपलब्धि के लिए <b>नवम्बर २०२६ से मई २०२७</b> का काल-चक्र अत्यंत शुभ है।';
+                var remedies = [
+                    'गुरुवार को भगवान विष्णु को पीले चने की दाल व गुड़ अर्पित करें।',
+                    'नित्य <i>"संतान गोपाल मंत्र"</i> अथवा गायत्री मंत्र का एक माला जप करें।',
+                    'पीपल के वृक्ष को जल दें, परन्तु रविवार को स्पर्श न करें।'
+                ];
+                return buildCardResponse('संतान सुख', 'संतान भाव, विद्या एवं वंश वृद्धि वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 6: HEALTH & VITALITY
+            // =========================================================================
+            if (/(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i.test(q)) {
+                var verdict = 'आपकी शारीरिक संरचना में <b>रोग प्रतिरोधक क्षमता सबल है, परन्तु वात-पित्त असंतुलन व मानसिक व्यग्रता</b> पर नियंत्रण रखना अनिवार्य है। नियमित दिनचर्या से आप दीर्घायु व निरोगी जीवन व्यतीत करेंगे।';
+                var items = [
+                    '<b>लग्न एवं लग्नेश:</b> लग्नेश <b>' + lagnaLord + '</b> भाव ' + (pMap[lagnaLord] ? pMap[lagnaLord].house : 1) + ' में स्थित होकर जीवन शक्ति (Vitality) को बल दे रहे हैं।',
+                    '<b>षष्ठ भाव (रोग भाव):</b> षष्ठेश <b>' + h6Lord + '</b> की स्थिति बताती है कि संक्रामक या मौसमी विकार शीघ्र ठीक होंगे, लेकिन पाचन तंत्र व रक्त संचार का ध्यान रखना आवश्यक है।',
+                    '<b>२२वां द्रेष्काण व ६४वां नवांश:</b> ' + (khara ? '२२वें द्रेष्काण स्वामी (' + khara.drekkana_22_lord + ') की दृष्टि के कारण अधिक कार्यभार से उत्पन्न मानसिक थकान से बचाव रखें।' : 'स्वास्थ्य की दृष्टि से आत्मबल सुदृढ़ रखें।')
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> कोई गंभीर या असाध्य व्याधि का योग नहीं है। समय-समय पर उत्पन्न होने वाले तनाव व मौसमी विकार योग, प्राणायाम व खानपान में संयम से तुरंत नियंत्रित हो जाएंगे।';
+                var timing = '<b>काल-खंड (संवेदनशील समय):</b> राहु व शनि के गोचर संक्रमण के दौरान <b>नवम्बर २०२६ व जनवरी २०२७</b> में विशेष रूप से खानपान व यात्रा में सावधानी रखें।';
+                var remedies = [
+                    'प्रातःकाल तांबे के पात्र में रखा जल पिएं और १० मिनट प्राणायाम करें।',
+                    'नित्य ११ बार <i>\"महामृत्युंजय मंत्र\"</i> का जप संपूर्ण आरोग्य का अभेद्य कवच है।',
+                    'माह में एक बार मंगलवार को गरीबों को मीठा भोजन कराएं।'
+                ];
+                return buildCardResponse('आरोग्य व स्वास्थ्य', 'स्वास्थ्य, आरोग्य एवं जीवन शक्ति बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 7: FOREIGN TRAVEL & SETTLEMENT
+            // =========================================================================
+            if (/(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i.test(q)) {
+                var verdict = 'आपकी पत्रिका में <b>विदेशी संपर्कों, सुदूर यात्राओं एवं बाहरी स्रोतों से लाभ का स्पष्ट योग</b> है। स्थायी रूप से विदेश बसने की अपेक्षा विदेशी व्यापार, बहुराष्ट्रीय कंपनियों से अनुबंध या सुदूर प्रांतों में यात्राएं आपके लिए अधिक लाभदायक रहेंगी।';
+                var items = [
+                    '<b>द्वादश भाव (विदेश भाव):</b> द्वादश भाव में ' + h12Sign + ' राशि है जिसके अधिपति <b>' + h12Lord + '</b> हैं।',
+                    '<b>नवम भाव (दीर्घ यात्राएं):</b> नवमेश <b>' + h9Lord + '</b> एवं गुरु की शुभ स्थिति धर्म-यात्राओं, उच्च अध्ययन अथवा विदेशी सम्मेलनों में सफलता दिलाती है।',
+                    '<b>अष्टकवर्ग १२वां भाव:</b> १२वें भाव में <b>' + sav12 + ' बिंदु</b> हैं, जो अनावश्यक व्यय को रोककर यात्राओं को लाभकारी बनाते हैं।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> वीजा, पासपोर्ट अथवा विदेशी क्लाइंट्स से जुड़े मामलों में सफलता प्राप्त होगी। सुदूर स्थानों से धन लाभ का स्थायी स्रोत बनेगा।';
+                var timing = '<b>काल-खंड:</b> विदेश गमन अथवा विदेशी कार्यों हेतु <b>सितम्बर २०२६ से फरवरी २०२७</b> का समय सर्वाधिक अनुकूल है।';
+                var remedies = [
+                    'यात्रा पर जाने से पूर्व भगवान गणेश को दूर्वा अर्पित करें।',
+                    'पक्षियों को नित्य दाना-पानी डालें।',
+                    'चांदी का एक चौकोर टुकड़ा अपने पर्स में रखें।'
+                ];
+                return buildCardResponse('विदेश व यात्रा', 'विदेश यात्रा, सुदूर संपर्क एवं विदेशी लाभ वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 8: DASHA & TIMING
+            // =========================================================================
+            if (/(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i.test(q)) {
+                var verdict = 'वर्तमान काल-खंड आपके जीवन में <b>कर्मिक पुनर्गठन एवं नए स्वर्णिम अवसर का संधिकाल</b> है। वर्तमान में सक्रिय <b>' + dashaChain + '</b> आपके ज्ञान, कर्म और आत्मसम्मान को नई ऊंचाई देने के लिए तत्पर है।';
+                var items = [
+                    '<b>सक्रिय विंशोत्तरी दशा:</b> <b>' + dashaChain + '</b> का प्रभाव मन, कार्यक्षेत्र और आर्थिक निर्णयों पर पूर्ण रूप से केंद्रित है।',
+                    '<b>दशानाथ की कुण्डली में स्थिति:</b> महादशा नाथ व अंतर्दशा नाथ जिन भावों के स्वामी हैं, उन क्षेत्रों में पिछले कर्मों का फल पककर सामने आ रहा है।',
+                    '<b>गोचर का दोहरा संरेखण:</b> शनि देव और गुरु देव का गोचर वर्तमान में आपकी पत्रिका के प्रमुख कर्म व भाग्य केंद्रों को जागृत कर रहा है।'
+                ];
+                var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जो कार्य पिछले कई महीनों से अवरुद्ध थे, उनमें गति आएगी। आगामी महीनों में महत्वपूर्ण व्यक्ति से भेंट और नए अधिकार क्षेत्र की प्राप्ति होगी।';
+                var timing = '<b>काल-खंड (परिवर्तन की सटीक तिथि):</b> <b>अक्टूबर २०२६ से अप्रैल २०२७</b> का चरण जीवन के सबसे फलदायी चरणों में से एक होगा जिसमें आपकी प्रतिष्ठा और निर्णय-क्षमता दोनों का विस्तार होगा।';
+                var remedies = [
+                    'सक्रिय दशानाथ ग्रह के वैदिक मंत्र का नित्य १ माला जप करें।',
+                    'प्रतिदिन सूर्योदय के समय गायत्री मंत्र का १०८ बार जप करें।',
+                    'गुरुवार को गाय को भीगी हुई चने की दाल व गुड़ खिलाएं।'
+                ];
+                return buildCardResponse('दशा व काल-चक्र', 'विंशोत्तरी दशा चक्र एवं समय-वेध', verdict, items, fruit, timing, remedies);
+            }
+
+            // =========================================================================
+            // DOMAIN 9: DEFAULT / YOGA / GENERAL READING
+            // =========================================================================
+            var verdict = 'आपकी पत्रिका <b>असाधारण आत्मबल, बौद्धिक पराक्रम एवं सांगठनिक योग्यता</b> से युक्त है। जीवन में जितने संघर्ष आएंगे, आपका उत्थान उतना ही भव्य और निर्विवाद होगा।';
             var items = [
-                '<b>दशम भाव (सिंहासन व शासन):</b> दशमेश <b>' + h10Lord + '</b> देव भाव ' + p10Lord.house + ' (' + p10Lord.sign + ' राशि) में स्थित हैं। ' + (has7thShasha ? 'सप्तम भाव में उच्च के शनि देव <b>शश महापुरुष योग</b> बनाकर दशम भाव व जनता के समर्थन पर पूर्ण प्रभुत्व स्थापित करते हैं।' : 'दशमेश की स्थिति कार्यक्षेत्र में स्वतंत्र नेतृत्व की क्षमता देती है।'),
-                (has10thRuchaka ? '<b>रुचक महापुरुष योग (दशम भाव):</b> दशम भाव में <b>मंगल देव</b> मकर राशि में <b>परमोच्च</b> होकर <b>सर्वोच्च दिग्बली</b> हैं। यह शासन-प्रशासन में निर्भीक निर्णय, प्रशासनिक दबदबा और सत्ता से सीधा लाभ सिद्ध करता है।' : '<b>मंगल की दृष्टि/स्थिति:</b> कार्यक्षेत्र में ऊर्जा व अधिकार का सतत संचार करती है।'),
-                '<b>सूर्य व बुध (अष्टम भाव व गंडान्त):</b> पंचमेश (मंत्रणा व बुद्धि) सूर्य एवं बुध अष्टम भाव में स्थित हैं, तथा ' + (merc.degree ? 'बुध (' + merc.degree + ') गंडान्त संधि में हैं।' : 'सूर्य-बुध की स्थिति गूढ़ बुद्धि देती है।') + ' यही कारण है कि प्रत्यक्ष चुनावी राजनीति में आरंभ में गुप्त विरोध व षड्यंत्र का सामना करना पड़ता है, परन्तु नीति व रणनीति के क्षेत्र में आप अजेय रहते हैं।',
-                '<b>जैमिनी अमात्यकारक (AmK - ' + amk + '):</b> जैमिनी सूत्रानुसार आजीविका व पद के नियंत्रक <b>' + amk + '</b> देव हैं। इनकी सबल स्थिति सिद्ध करती है कि पद आपको आपकी योग्यता, विधिक/बौद्धिक गहराई और सांगठनिक निष्ठा से प्राप्त होगा।',
-                '<b>अष्टकवर्ग सामर्थ्य:</b> दशम भाव को <b>' + sav10 + ' शुभ बिंदु</b> प्राप्त हैं। २८ से अधिक बिंदु होने से विरोधियों के समस्त अवरोध स्वतः समाप्त होंगे और आपका कद निरंतर बढ़ेगा।'
+                '<b>जन्म लग्न:</b> <b>' + lagna + ' लग्न</b> (लग्नेश: <b>' + lagnaLord + '</b>)। लग्न का स्वभाव निर्भीक, स्पष्टवादी और नेतृत्वकारी है।',
+                '<b>सूर्य व चन्द्र स्थिति:</b> सूर्य (भाव ' + sun.house + ', ' + sun.sign + ') एवं चन्द्र (भाव ' + moon.house + ', ' + moon.sign + ') का संतुलन जीवन के बाह्य व आंतरिक द्वन्द्वों को स्थिरता देता है।',
+                '<b>अमात्यकारक व कर्म:</b> कर्मक्षेत्र में पद व प्रतिष्ठा <b>' + amk + '</b> देव की कृपा से अर्जित होगी।',
+                '<b>अष्टकवर्ग कुल बिंदु:</b> कुण्डली के कुल बिंदु ३३७ संतुलित व जीवन के उत्तरार्ध को परम वैभवशाली बनाने वाले हैं।'
             ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको शासन या राजनीतिक संगठन में शीर्ष नीति-निर्माण, विधिक/कानूनी परामर्श, अथवा उच्च आयोग में अध्यक्ष/सदस्य का दायित्व प्राप्त होगा। यदि आप प्रत्यक्ष चुनाव लड़ते हैं तो पहले प्रयास में भितरघात संभव है, अतः संगठन व प्रशासन के माध्यम से पद ग्रहण करना सर्वथा सुरक्षित व स्थायी रहेगा।';
-            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान में सक्रिय <b>' + dashaChain + '</b> के अंतर्गत वर्ष <b>२०२६ के उत्तरार्ध (अगस्त २०२६ से मार्च २०२७)</b> में जब देवगुरु बृहस्पति का गोचर अनुकूल होगा, तब शासन या संगठन में महत्वपूर्ण पद/दायित्व की आधिकारिक प्राप्ति का काल-चक्र सक्रिय है।';
+            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपके द्वारा किए गए प्रयासों का परिणाम कभी व्यर्थ नहीं जाएगा। समाज में मान-सम्मान, स्वतंत्र पहचान और पारिवारिक प्रतिष्ठा निरंतर बढ़ेगी।';
+            var timing = '<b>काल-खंड (आगामी समय):</b> आगामी <b>१२ से २४ महीने</b> आत्मिक और भौतिक दोनों दृष्टिकोणों से अनुकूल व प्रगतिशील रहेंगे।';
             var remedies = [
-                'प्रातःकाल तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम व लाल पुष्प युक्त जल अर्पित करें तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ करें।',
-                'शनिवार को वृद्ध अथवा असहाय जनों को तिल का दान करें।',
-                'किसी भी राजनीतिक निर्णय अथवा दस्तावेज पर हस्ताक्षर करने से पूर्व अपने इष्ट देव का स्मरण अवश्य करें।'
+                'नित्य प्रातः भगवान सूर्य को अर्घ्य दें और संध्या समय <i>"ॐ नमः शिवाय"</i> का मानसिक जप करें।',
+                'अपने माता-पिता व गुरुजनों का नित्य आशीर्वाद लें।',
+                'सत्य व न्याय के मार्ग पर अडिग रहें, यही आपका सर्वोत्तम कवच है।'
             ];
-            return buildCardResponse('शासन व पद प्राप्ति', 'राजनीति, शासन व अधिकार पद प्राप्ति वेध', verdict, items, fruit, timing, remedies);
-        }
+            return buildCardResponse('कुण्डली मीमांसा', 'समग्र वैदिक कुण्डली मीमांसा एवं फलादेश', verdict, items, fruit, timing, remedies);
+        },
 
-        // =========================================================================
-        // DOMAIN 2: CAREER & PROFESSION
-        // =========================================================================
-        if (/(करियर|career|नौकरी|job|व्यापार|business|पदोन्नति|promotion|आजीविका|वृत्ति|पेशा|ट्रांसफर|transfer)/i.test(q)) {
-            var p10Lord = pMap[h10Lord] || { house: 10, sign: h10Sign, dignity: 'सम' };
-            var verdict = 'आपके करियर में <b>स्वायत्तता, बौद्धिक अधिकार व दीर्घकालिक स्थिरता का प्रबल योग</b> है। किसी के पूर्ण अधीन रहकर साधारण नौकरी करने के बजाय आप स्वतंत्र सलाहकार, उच्च प्रबंधन, नीति-निर्धारण, कानून/न्याय अथवा स्वतंत्र व्यवसाय में शिखर पर पहुंचेंगे।';
-            var items = [
-                '<b>दशम भाव (कर्म भाव):</b> दशम भाव में ' + h10Sign + ' राशि है और दशमेश <b>' + h10Lord + '</b> भाव ' + p10Lord.house + ' में स्थित हैं। यह कार्यक्षेत्र में सतत विस्तार और उत्तरदायित्व का प्रमाण है।',
-                '<b>कर्मकारक शनि व जीवकारक गुरु:</b> शनि (भाव ' + sat.house + ', ' + sat.sign + ') एवं गुरु (भाव ' + jup.house + ', ' + jup.sign + ') का संरेखण यह सुनिश्चित करता है कि ३६वें वर्ष के उपरांत आपके करियर में कोई स्थायी रुकावट नहीं आ सकती।',
-                '<b>षष्ठ व दशम का संबंध:</b> सेवा भाव (षष्ठ) के स्वामी ' + h6Lord + ' की स्थिति इंगित करती है कि आपको प्रतिस्पर्धा में विजय मिलेगी, पर आपकी वास्तविक संतुष्टि स्वतंत्र निर्णय लेने में ही है।',
-                '<b>अमात्यकारक (AmK - ' + amk + '):</b> आजीविका में अधिकार व प्रतिष्ठा ' + amk + ' देव की कृपा से प्राप्त होगी।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको कार्यक्षेत्र में उच्च पद, टीम नेतृत्व और नीतिगत स्वायत्तता मिलेगी। अष्टकवर्ग में दशम भाव को <b>' + sav10 + ' बिंदु</b> प्राप्त हैं, जो यह दर्शाते हैं कि आपकी कार्यक्षमता पर कोई प्रश्नचिह्न नहीं लगा सकता।';
-            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> आगामी <b>१४ से १८ महीने (२०२६-२०२७)</b> आपके करियर के लिए गेम-चेंजर सिद्ध होंगे। पदोन्नति अथवा नए बड़े प्रोजेक्ट की शुरुआत <b>अक्टूबर २०२६ से फरवरी २०२७</b> के मध्य सुनिश्चित है।';
-            var remedies = [
-                'कार्यस्थल पर उत्तर-पूर्व (ईशान) कोण को सदैव स्वच्छ व प्रकाशयुक्त रखें।',
-                'प्रतिदिन प्रातः <i>"ॐ नमो भगवते वासुदेवाय"</i> का शांत मन से जप करें।',
-                'शनिवार को काले कुत्ते या कौवे को रोटी खिलाएं।'
-            ];
-            return buildCardResponse('करियर व पदोन्नति', 'आजीविका, करियर एवं कर्मक्षेत्र बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 3: WEALTH & FINANCE
-        // =========================================================================
-        if (/(धन|wealth|money|पैसा|समृद्धि|संपत्ति|आर्थिक|financial|investment|निवेश|कर्ज|लोन|ऋण|लाभ|income)/i.test(q)) {
-            var verdict = 'आपकी पत्रिका में <b>सतत धन आगमन एवं अचल संपत्ति निर्माण का श्रेष्ठ योग</b> है। जीवन में कभी भी धन की ऐसी कमी नहीं होगी जिससे आवश्यक कार्य रुकें। संचित धन (२रा भाव) और लाभ (११वां भाव) का समन्वय आपको मध्यम आयु के बाद विपुल संपन्नता देगा।';
-            var items = [
-                '<b>द्वितीय भाव (कोष संचय):</b> द्वितीय भाव में ' + h2Sign + ' राशि है जिसके स्वामी <b>' + h2Lord + '</b> हैं। कोष भाव में ' + (rahu.house === 2 ? 'राहु की उपस्थिति अपरिमित व अचानक धन लाभ के अवसर देती है।' : 'शुभ ग्रहों का प्रभाव स्थिरता देता है।'),
-                '<b>एकादश भाव (लाभ भाव):</b> लाभेश <b>' + h11Lord + '</b> की स्थिति बताती है कि आपके आय के स्रोत एक से अधिक रहेंगे। अष्टकवर्ग में ११वें भाव को <b>' + sav11 + ' बिंदु</b> मिले हैं, जो १२वें भाव के व्यय से अधिक हैं।',
-                '<b>धनकारक गुरु:</b> देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ होकर धन की दैवीय सुरक्षा कर रहे हैं।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपको भूमि, भवन, पैतृक लाभ एवं बौद्धिक संपदा से प्रचुर धन मिलेगा। शेयर बाजार में सट्टा लगाने से बचें, परन्तु दीर्घकालिक संपत्ति व स्थिर निवेश में आपको शत-प्रतिशत लाभ होगा।';
-            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> वर्तमान विंशोत्तरी दशा में <b>दिसम्बर २०२६ से जून २०२७</b> का समय बड़े आर्थिक लाभ और संपत्ति क्रय हेतु सर्वाधिक उपयुक्त है।';
-            var remedies = [
-                'शुक्रवार को श्री सूक्त का पाठ करें अथवा <i>"ॐ श्रीं ह्रीं श्रीं कमले कमलालये प्रसीद प्रसीद"</i> का जप करें।',
-                'तिजोरी अथवा धन रखने के स्थान पर लाल या पीला रेशमी वस्त्र बिछाकर रखें।',
-                'किसी भी शुक्रवार को कन्याओं को खीर अथवा सफेद मिठाई का प्रसाद दें।'
-            ];
-            return buildCardResponse('धन व समृद्धि', 'धन-संपदा, कोष संचय एवं आर्थिक सामर्थ्य वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 4: MARRIAGE & RELATIONSHIP
-        // =========================================================================
-        if (/(विवाह|marriage|शादी|पति|पत्नी|दांपत्य|सप्तम|7.*भाव|spouse|partner|मांगलिक|तलाक|रिश्ता)/i.test(q)) {
-            var verdict = 'आपकी पत्रिका में <b>सुयोग्य, स्वाभिमानी एवं कर्मठ जीवनसाथी का योग</b> है। विचारों में स्वतंत्रता के कारण कभी-कभी वैचारिक मतभेद उभर सकते हैं, परन्तु विवाह की आधारशिला अटूट व दीर्घकालिक है।';
-            var items = [
-                '<b>सप्तम भाव (दांपत्य भाव):</b> सप्तमेश <b>' + h7Lord + '</b> भाव ' + (pMap[h7Lord] ? pMap[h7Lord].house : 7) + ' में स्थित हैं। ' + (sat.house === 7 ? 'सप्तम भाव में उच्च के शनि देव जीवनसाथी को गंभीर, परिपक्व एवं कर्तव्यनिष्ठ बनाते हैं।' : 'सप्तम भाव पर शुभ दृष्टियों का संरेखण है।'),
-                '<b>दाराकारक (DK - ' + dk + '):</b> जैमिनी सूत्रानुसार जीवनसाथी के कारक <b>' + dk + '</b> देव हैं, जो यह दर्शाते हैं कि जीवनसाथी का स्वभाव सुरुचिपूर्ण व बौद्धिक होगा।',
-                '<b>अष्टकवर्ग सामर्थ्य:</b> सप्तम भाव को <b>' + sav7 + ' बिंदु</b> प्राप्त हैं, जो वैवाहिक संबंधों को स्थिरता प्रदान करते हैं।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जीवनसाथी के आने के बाद आपके भाग्य और सामाजिक प्रतिष्ठा में तीव्र वृद्धि होगी। जीवनसाथी आपको परिवार और करियर दोनों में सुदृढ़ संबल प्रदान करेगा।';
-            var timing = '<b>काल-खंड (कब फलीभूत होगा):</b> अविवाहित जातकों के लिए विवाह हेतु <b>अगस्त २०२६ से अप्रैल २०२७</b> का समय देवगुरु बृहस्पति के गोचर द्वारा पूर्णतः स्वीकृत व मंगलमय है।';
-            var remedies = [
-                'नित्य संध्या समय घर के मंदिर में गाय के घी का दीपक प्रज्वलित करें।',
-                'गौरी-शंकर रुद्राक्ष धारण करना अथवा शिव-पार्वती की संयुक्त पूजा दांपत्य को परम सुखमय बनाती है।',
-                'पूर्णिमा के दिन चंद्रदेव को कच्चे दूध व जल का अर्घ्य दें।'
-            ];
-            return buildCardResponse('दांपत्य व विवाह', 'दांपत्य जीवन, विवाह एवं सम्बन्ध समन्वय वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 5: CHILDREN & FAMILY
-        // =========================================================================
-        if (/(संतान|children|पुत्र|पुत्री|सन्तान|पंचम भाव|5.*भाव|गर्भ|बच्चा|family)/i.test(q)) {
-            var verdict = 'आपकी पत्रिका में <b>गुणवान, मेधावी एवं कुल का नाम रोशन करने वाली संतान का श्रेष्ठ योग</b> है। पंचम भाव और संतान कारक गुरु का संबंध संतान सुख को सुनिश्चित करता है।';
-            var items = [
-                '<b>पंचम भाव (संतान व विद्या भाव):</b> पंचम भाव में ' + h5Sign + ' राशि है और पंचमेश <b>' + h5Lord + '</b> की स्थिति संतान के उच्च बौद्धिक स्तर को प्रमाणित करती है।',
-                '<b>पुत्रकारक (PK - ' + pk + ') व गुरु:</b> संतान के नैसर्गिक कारक देवगुरु बृहस्पति भाव ' + jup.house + ' में स्वराशि/शुभ हैं, जो संतान के दीर्घायु व संस्कारी होने का अकाट्य प्रमाण है।',
-                '<b>अष्टकवर्ग सामर्थ्य:</b> पंचम भाव को <b>' + sav5 + ' बिंदु</b> प्राप्त हैं जो संतान सुख में आने वाली बाधाओं को दूर करते हैं।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> संतान शिक्षा, विज्ञान, विधिक अथवा प्रशासनिक क्षेत्र में उत्कृष्ट सफलता प्राप्त करेगी। बुढ़ापे में संतान से पूरा मान-सम्मान व सेवा प्राप्त होगी।';
-            var timing = '<b>काल-खंड:</b> संतान प्राप्ति अथवा संतान के करियर में बड़ी उपलब्धि के लिए <b>नवम्बर २०२६ से मई २०२७</b> का काल-चक्र अत्यंत शुभ है।';
-            var remedies = [
-                'गुरुवार को भगवान विष्णु को पीले चने की दाल व गुड़ अर्पित करें।',
-                'नित्य <i>"संतान गोपाल मंत्र"</i> अथवा गायत्री मंत्र का एक माला जप करें।',
-                'पीपल के वृक्ष को जल दें, परन्तु रविवार को स्पर्श न करें।'
-            ];
-            return buildCardResponse('संतान सुख', 'संतान भाव, विद्या एवं वंश वृद्धि वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 6: HEALTH & VITALITY
-        // =========================================================================
-        if (/(स्वास्थ्य|health|रोग|बीमारी|आयु|longevity|शष्ठ|अष्टम|व्याधि|कष्ट|चिकित्सा|तनाव)/i.test(q)) {
-            var verdict = 'आपकी शारीरिक संरचना में <b>रोग प्रतिरोधक क्षमता सबल है, परन्तु वात-पित्त असंतुलन व मानसिक व्यग्रता</b> पर नियंत्रण रखना अनिवार्य है। नियमित दिनचर्या से आप दीर्घायु व निरोगी जीवन व्यतीत करेंगे।';
-            var items = [
-                '<b>लग्न एवं लग्नेश:</b> लग्नेश <b>' + lagnaLord + '</b> भाव ' + (pMap[lagnaLord] ? pMap[lagnaLord].house : 1) + ' में स्थित होकर जीवन शक्ति (Vitality) को बल दे रहे हैं।',
-                '<b>षष्ठ भाव (रोग भाव):</b> षष्ठेश <b>' + h6Lord + '</b> की स्थिति बताती है कि संक्रामक या मौसमी विकार शीघ्र ठीक होंगे, लेकिन पाचन तंत्र व रक्त संचार का ध्यान रखना आवश्यक है।',
-                '<b>२२वां द्रेष्काण व ६४वां नवांश:</b> ' + (khara ? '२२वें द्रेष्काण स्वामी (' + khara.drekkana_22_lord + ') की दृष्टि के कारण अधिक कार्यभार से उत्पन्न मानसिक थकान से बचाव रखें।' : 'स्वास्थ्य की दृष्टि से आत्मबल सुदृढ़ रखें।')
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> कोई गंभीर या असाध्य व्याधि का योग नहीं है। समय-समय पर उत्पन्न होने वाले तनाव व मौसमी विकार योग, प्राणायाम व खानपान में संयम से तुरंत नियंत्रित हो जाएंगे।';
-            var timing = '<b>काल-खंड (संवेदनशील समय):</b> राहु व शनि के गोचर संक्रमण के दौरान <b>नवम्बर २०२६ व जनवरी २०२७</b> में विशेष रूप से खानपान व यात्रा में सावधानी रखें।';
-            var remedies = [
-                'प्रातःकाल तांबे के पात्र में रखा जल पिएं और १० मिनट प्राणायाम करें।',
-                'नित्य ११ बार <i>\"महामृत्युंजय मंत्र\"</i> का जप संपूर्ण आरोग्य का अभेद्य कवच है।',
-                'माह में एक बार मंगलवार को गरीबों को मीठा भोजन कराएं।'
-            ];
-            return buildCardResponse('आरोग्य व स्वास्थ्य', 'स्वास्थ्य, आरोग्य एवं जीवन शक्ति बहु-आयामीय वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 7: FOREIGN TRAVEL & SETTLEMENT
-        // =========================================================================
-        if (/(विदेश|foreign|विदेश.*यात्रा|पीआर|pr|visa|वीजा|विदेश.*बसना|travel)/i.test(q)) {
-            var verdict = 'आपकी पत्रिका में <b>विदेशी संपर्कों, सुदूर यात्राओं एवं बाहरी स्रोतों से लाभ का स्पष्ट योग</b> है। स्थायी रूप से विदेश बसने की अपेक्षा विदेशी व्यापार, बहुराष्ट्रीय कंपनियों से अनुबंध या सुदूर प्रांतों में यात्राएं आपके लिए अधिक लाभदायक रहेंगी।';
-            var items = [
-                '<b>द्वादश भाव (विदेश भाव):</b> द्वादश भाव में ' + h12Sign + ' राशि है जिसके अधिपति <b>' + h12Lord + '</b> हैं।',
-                '<b>नवम भाव (दीर्घ यात्राएं):</b> नवमेश <b>' + h9Lord + '</b> एवं गुरु की शुभ स्थिति धर्म-यात्राओं, उच्च अध्ययन अथवा विदेशी सम्मेलनों में सफलता दिलाती है।',
-                '<b>अष्टकवर्ग १२वां भाव:</b> १२वें भाव में <b>' + sav12 + ' बिंदु</b> हैं, जो अनावश्यक व्यय को रोककर यात्राओं को लाभकारी बनाते हैं।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> वीजा, पासपोर्ट अथवा विदेशी क्लाइंट्स से जुड़े मामलों में सफलता प्राप्त होगी। सुदूर स्थानों से धन लाभ का स्थायी स्रोत बनेगा।';
-            var timing = '<b>काल-खंड:</b> विदेश गमन अथवा विदेशी कार्यों हेतु <b>सितम्बर २०२६ से फरवरी २०२७</b> का समय सर्वाधिक अनुकूल है।';
-            var remedies = [
-                'यात्रा पर जाने से पूर्व भगवान गणेश को दूर्वा अर्पित करें।',
-                'पक्षियों को नित्य दाना-पानी डालें।',
-                'चांदी का एक चौकोर टुकड़ा अपने पर्स में रखें।'
-            ];
-            return buildCardResponse('विदेश व यात्रा', 'विदेश यात्रा, सुदूर संपर्क एवं विदेशी लाभ वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 8: DASHA & TIMING
-        // =========================================================================
-        if (/(दशा|mahadasha|antardasha|महादशा|अंतर्दशा|प्रत्यंतर|सूक्ष्म|विंशोत्तरी|दशाफल|दशा.*कब|कब.*दशा|वर्तमान.*समय|समय.*कब.*बदलेगा)/i.test(q)) {
-            var verdict = 'वर्तमान काल-खंड आपके जीवन में <b>कर्मिक पुनर्गठन एवं नए स्वर्णिम अवसर का संधिकाल</b> है। वर्तमान में सक्रिय <b>' + dashaChain + '</b> आपके ज्ञान, कर्म और आत्मसम्मान को नई ऊंचाई देने के लिए तत्पर है।';
-            var items = [
-                '<b>सक्रिय विंशोत्तरी दशा:</b> <b>' + dashaChain + '</b> का प्रभाव मन, कार्यक्षेत्र और आर्थिक निर्णयों पर पूर्ण रूप से केंद्रित है।',
-                '<b>दशानाथ की कुण्डली में स्थिति:</b> महादशा नाथ व अंतर्दशा नाथ जिन भावों के स्वामी हैं, उन क्षेत्रों में पिछले कर्मों का फल पककर सामने आ रहा है।',
-                '<b>गोचर का दोहरा संरेखण:</b> शनि देव और गुरु देव का गोचर वर्तमान में आपकी पत्रिका के प्रमुख कर्म व भाग्य केंद्रों को जागृत कर रहा है।'
-            ];
-            var fruit = '<b>फल क्या व कैसा मिलेगा:</b> जो कार्य पिछले कई महीनों से अवरुद्ध थे, उनमें गति आएगी। आगामी महीनों में महत्वपूर्ण व्यक्ति से भेंट और नए अधिकार क्षेत्र की प्राप्ति होगी।';
-            var timing = '<b>काल-खंड (परिवर्तन की सटीक तिथि):</b> <b>अक्टूबर २०२६ से अप्रैल २०२७</b> का चरण जीवन के सबसे फलदायी चरणों में से एक होगा जिसमें आपकी प्रतिष्ठा और निर्णय-क्षमता दोनों का विस्तार होगा।';
-            var remedies = [
-                'सक्रिय दशानाथ ग्रह के वैदिक मंत्र का नित्य १ माला जप करें।',
-                'प्रतिदिन सूर्योदय के समय गायत्री मंत्र का १०८ बार जप करें।',
-                'गुरुवार को गाय को भीगी हुई चने की दाल व गुड़ खिलाएं।'
-            ];
-            return buildCardResponse('दशा व काल-चक्र', 'विंशोत्तरी दशा चक्र एवं समय-वेध', verdict, items, fruit, timing, remedies);
-        }
-
-        // =========================================================================
-        // DOMAIN 9: DEFAULT / YOGA / GENERAL READING
-        // =========================================================================
-        var verdict = 'आपकी पत्रिका <b>असाधारण आत्मबल, बौद्धिक पराक्रम एवं सांगठनिक योग्यता</b> से युक्त है। जीवन में जितने संघर्ष आएंगे, आपका उत्थान उतना ही भव्य और निर्विवाद होगा।';
-        var items = [
-            '<b>जन्म लग्न:</b> <b>' + lagna + ' लग्न</b> (लग्नेश: <b>' + lagnaLord + '</b>)। लग्न का स्वभाव निर्भीक, स्पष्टवादी और नेतृत्वकारी है।',
-            '<b>सूर्य व चन्द्र स्थिति:</b> सूर्य (भाव ' + sun.house + ', ' + sun.sign + ') एवं चन्द्र (भाव ' + moon.house + ', ' + moon.sign + ') का संतुलन जीवन के बाह्य व आंतरिक द्वन्द्वों को स्थिरता देता है।',
-            '<b>अमात्यकारक व कर्म:</b> कर्मक्षेत्र में पद व प्रतिष्ठा <b>' + amk + '</b> देव की कृपा से अर्जित होगी।',
-            '<b>अष्टकवर्ग कुल बिंदु:</b> कुण्डली के कुल बिंदु ३३७ संतुलित व जीवन के उत्तरार्ध को परम वैभवशाली बनाने वाले हैं।'
-        ];
-        var fruit = '<b>फल क्या व कैसा मिलेगा:</b> आपके द्वारा किए गए प्रयासों का परिणाम कभी व्यर्थ नहीं जाएगा। समाज में मान-सम्मान, स्वतंत्र पहचान और पारिवारिक प्रतिष्ठा निरंतर बढ़ेगी।';
-        var timing = '<b>काल-खंड (आगामी समय):</b> आगामी <b>१२ से २४ महीने</b> आत्मिक और भौतिक दोनों दृष्टिकोणों से अनुकूल व प्रगतिशील रहेंगे।';
-        var remedies = [
-            'नित्य प्रातः भगवान सूर्य को अर्घ्य दें और संध्या समय <i>"ॐ नमः शिवाय"</i> का मानसिक जप करें।',
-            'अपने माता-पिता व गुरुजनों का नित्य आशीर्वाद लें।',
-            'सत्य व न्याय के मार्ग पर अडिग रहें, यही आपका सर्वोत्तम कवच है।'
-        ];
-        return buildCardResponse('कुण्डली मीमांसा', 'समग्र वैदिक कुण्डली मीमांसा एवं फलादेश', verdict, items, fruit, timing, remedies);
-    },
-
-        _houseAnalysis: function(analysis, houses) {
-            return houses.map(function(h) {
+        _houseAnalysis: function (analysis, houses) {
+            return houses.map(function (h) {
                 return VyasHouseEngine.analyzeHouse(analysis, h);
             }).join('\n\n');
         }

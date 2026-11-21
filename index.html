@@ -10763,6 +10763,16 @@
                     '<div class="section-title">खगोलीय स्पष्ट ग्रह स्थिति एवं नक्षत्र तालिका</div>' +
                     '<table><thead><tr><th>ग्रह</th><th>राशि</th><th>स्पष्ट अंश</th><th>नक्षत्र</th><th>भाव</th><th>अवस्था</th></tr></thead>' +
                     '<tbody>' + pRows + '</tbody></table>' +
+                    (function() {
+                        try {
+                            if (window.VyasDaivagyaVision && window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay) {
+                                return '<div style="page-break-before:always;"></div>' +
+                                    '<div class="section-title" style="margin-top:20px;">आचार्य व्यास: 7-अध्यायीय सूक्ष्म फलकथन व काल-निर्धारण (Applied Phalit & Predictions)</div>' +
+                                    window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay(chart);
+                            }
+                        } catch(e) {}
+                        return '';
+                    })() +
                     '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:11px; color:#64748b; text-align:center;">' +
                     'प्रमाणित दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
                     '</div></body></html>';
