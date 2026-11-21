@@ -415,14 +415,24 @@
             document.getElementById('mVarshesha').textContent = varshesha + ' देव';
             document.getElementById('mYoga').textContent = 'इत्थशाल योग (Muthashila)';
 
-            var houses = chart.houses || {
-                1: [rashiNames[varshaLagnaSign], { p: varshesha + ' 12°' }],
-                4: [{ p: 'सूर्य 14°20\'' }],
-                7: [{ p: 'मंगल 28°10\'' }],
-                9: [{ p: 'शुक्र 27°02\'' }],
-                10: [{ p: 'चन्द्र 03°15\'' }],
-                11: [{ p: 'गुरु 05°30\'' }]
-            };
+            // Dynamically construct Varshphal chart from the active native's actual planetary positions
+            var houses = {};
+            for (var h = 1; h <= 12; h++) {
+                var rNum = ((varshaLagnaSign - 1 + h - 1) % 12) + 1;
+                houses[h] = [rashiNames[rNum]];
+            }
+
+            // Map native's planets into Varshphal houses relative to Varsha Lagna
+            var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
+            var pList = chart.planet_table || [];
+            pList.forEach(function (pl) {
+                var pSignNum = sMap[pl.r] || 1;
+                var hRel = ((pSignNum - varshaLagnaSign + 12) % 12) + 1;
+                var pShort = (pl.p || '').replace(/\s*\(.*\)/, '').trim();
+                var degShort = (pl.d || '').split('\'')[0] + '°';
+                if (!houses[hRel]) houses[hRel] = [rashiNames[pSignNum]];
+                houses[hRel].push({ p: pShort + ' ' + degShort });
+            });
 
             var chartWrap = document.getElementById('varshChartWrap');
             if (chartWrap && window.VyasChartRenderers) {

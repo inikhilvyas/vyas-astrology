@@ -347,30 +347,13 @@
         });
 
         function initNadiPage() {
-            var profileData = null;
-            try {
-                var stored = localStorage.getItem('vyas_active_profile');
-                if (stored) profileData = JSON.parse(stored);
-            } catch (e) { }
+            activeChart = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.getActiveKundli) ?
+                window.VyasAstronomicalEngine.getActiveKundli() : null;
 
-            if (profileData && profileData.dob) {
-                if (profileData.planet_table && profileData.planet_table.length > 0) {
-                    activeChart = profileData;
-                } else if (typeof window.computeMathematicalKundli === 'function') {
-                    try {
-                        activeChart = window.computeMathematicalKundli(
-                            profileData.name || 'सक्रिय जातक',
-                            profileData.dob,
-                            profileData.tob || '12:00',
-                            profileData.place || profileData.city || '',
-                            profileData.gender || 'Male'
-                        );
-                        localStorage.setItem('vyas_active_profile', JSON.stringify(activeChart));
-                    } catch (e) { console.warn(e); }
-                }
+            if (!activeChart) {
+                showEmptyKundliNotice();
+                return;
             }
-
-            if (!activeChart) { showEmptyKundliNotice(); return; }
 
             renderNadiView(activeChart);
         }

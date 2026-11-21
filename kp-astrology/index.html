@@ -264,15 +264,7 @@
                         <!-- Rendered by VyasChartRenderers.renderKPChalitChart -->
                     </div>
 
-                    <!-- Horary 1-249 Seed -->
-                    <div class="horary-box">
-                        <div>
-                            <div style="font-size:0.82rem; font-weight:700; color:var(--sky);">KP 1-249 होरारी प्रश्न बीज:</div>
-                            <div style="font-size:0.72rem; color:var(--text-muted);">तात्कालिक प्रश्न हेतु 1 से 249 के बीच संख्या चुनें</div>
-                        </div>
-                        <input type="number" min="1" max="249" value="108" class="horary-input" id="kpHorarySeed">
-                        <button onclick="castHorary()" class="portal-pill" style="cursor:pointer; background:rgba(56,189,248,0.2); border-color:var(--sky);">वेध करें</button>
-                    </div>
+
                 </div>
 
                 <!-- 12 Cuspal Table -->
@@ -428,8 +420,12 @@
             var tbody = document.getElementById('kpCuspTableBody');
             var cHtml = '';
             for (var h = 1; h <= 12; h++) {
-                var c = cusps[h] || { deg: '-', sign: '-', star: '-', subLord: '-' };
-                cHtml += '<tr><td><b>भाव ' + h + '</b></td><td>' + (c.deg || '-') + '</td><td>' + (c.sign || '-') + '</td><td>' + (c.star || '-') + '</td><td class="sublord" style="color:var(--sky); font-weight:700;">' + (c.subLord || '-') + '</td></tr>';
+                var c = cusps[h] || {};
+                var cDeg = c.deg || '-';
+                var cSign = c.sign || c.rl || '-';
+                var cStar = c.star || c.nl || '-';
+                var cSub = c.subLord || c.sl || '-';
+                cHtml += '<tr><td><b>भाव ' + h + '</b></td><td>' + cDeg + '</td><td>' + cSign + '</td><td>' + cStar + '</td><td class="sublord" style="color:var(--sky); font-weight:700;">' + cSub + '</td></tr>';
             }
             if (tbody) tbody.innerHTML = cHtml;
 

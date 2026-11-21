@@ -719,6 +719,47 @@
                     if (adhKakshya) adhKakshya.textContent = (pVerdict.bindu === 1 ? '1 बिन्दु (शुभ सिद्धि)' : '0 बिन्दु (रिक्ता)');
                 }
             }
+
+            // Acharya Vyas v10: Navatara Chakra & Sensitive Transit Alert
+            if (chart.goodh_diagnostics && chart.goodh_diagnostics.transit_tara_analysis) {
+                var diag = chart.goodh_diagnostics;
+                var tReport = diag.transit_tara_analysis;
+                var bNak = diag.birth_nakshatra || "स्वाति";
+
+                var tHtml = '';
+                tReport.forEach(function(tr) {
+                    var isHarsh = tr.is_sensitive_tara;
+                    tHtml += '<div style="background:rgba(255,255,255,0.03); border:1px solid ' + (isHarsh ? '#ef4444' : 'var(--border-subtle)') + '; border-radius:8px; padding:12px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                        '<b style="color:' + (isHarsh ? '#ef4444' : 'var(--gold-light)') + '; font-size:0.92rem;">' + tr.transit_planet + '</b>' +
+                        '<span style="font-size:0.75rem; padding:2px 8px; border-radius:12px; background:' + (isHarsh ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)') + '; color:' + (isHarsh ? '#ef4444' : '#10b981') + '; font-weight:700;">' + tr.tara_label + '</span>' +
+                        '</div>' +
+                        '<div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">गोचर नक्षत्र: <b>' + tr.transit_nakshatra + '</b> (' + tr.current_sign + ')</div>' +
+                        '<div style="font-size:0.82rem; color:' + (isHarsh ? '#fca5a5' : 'var(--text-secondary)') + '; line-height:1.5;">' + tr.guidance_hi + '</div>' +
+                        '</div>';
+                });
+
+                var navataraCard = document.createElement('div');
+                navataraCard.style.marginTop = '24px';
+                navataraCard.innerHTML = '<div style="background:var(--bg-card); border:1.5px solid var(--border-gold); border-radius:12px; padding:22px;">' +
+                    '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">' +
+                    '<h2 style="font-size:1.2rem; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:8px;">' +
+                    '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>' +
+                    'नवतारा चक्र एवं गोचर संवेदनशीलता वेध (Navatara Transit Alert)' +
+                    '</h2>' +
+                    '<span style="font-size:0.8rem; padding:4px 10px; border-radius:20px; background:rgba(212,175,55,0.18); border:1px solid var(--gold); color:var(--gold-light); font-weight:700;">जन्म नक्षत्र: ' + bNak + '</span>' +
+                    '</div>' +
+                    '<p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:16px; line-height:1.6;">' +
+                    'वैदिक ज्योतिष में महादशा के फल प्रत्यक्ष गोचर में <b>नवतारा चक्र</b> (विपत, प्रत्यरि, वध तारा) द्वारा नियंत्रित होते हैं। जब कोई प्रमुख पापी ग्रह संवेदनशील तारा में संचरण करता है तो संबंधित कार्यों में विशेष सावधानी आवश्यक होती है।' +
+                    '</p>' +
+                    '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">' +
+                    tHtml +
+                    '</div>' +
+                    '</div>';
+
+                var cont = document.querySelector('.container');
+                if (cont) cont.appendChild(navataraCard);
+            }
         }
     </script>
 </body>

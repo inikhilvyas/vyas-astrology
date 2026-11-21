@@ -693,13 +693,25 @@
             // High-Precision Vedic Panchanga Calculation via VyasAstronomicalEngine
             var pData = null;
             if (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computePanchang === 'function') {
-                pData = window.VyasAstronomicalEngine.computePanchang(d, city.lat, city.lon);
+                // Calculate canonical Udaya-vyapini Tithi at Sunrise
+                var udayaTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), Math.floor(sunriseMin / 60), Math.floor(sunriseMin % 60));
+                pData = window.VyasAstronomicalEngine.computePanchang(udayaTime, city.lat, city.lon);
             }
 
+            // Canonical Sunrise Tithi & Transition
             var tithiText = pData ? pData.tithi : "शुक्ल एकादशी";
             var nakText = pData ? (pData.nakshatra + " (चरण " + pData.pada + ")") : "उत्तराभाद्रपद (चरण 3)";
             var yogaText = pData ? (pData.yoga + " योग") : "वज्र योग";
             var karanText = pData ? pData.karana : "विष्टि (भद्रा)";
+
+            // Dagdha Rashis for this Tithi
+            var dagdhaMap = {
+                1: "तुला • मकर", 2: "वृश्चिक • कुंभ", 3: "सिंह • मकर", 4: "कन्या • धनु", 5: "मिथुन • कन्या",
+                6: "कर्क • तुला", 7: "धनु • कर्क", 8: "मकर • मिथुन", 9: "कर्क • सिंह", 10: "कुंभ • वृश्चिक",
+                11: "धनु • मीन", 12: "मकर • तुला", 13: "वृषभ • मीन", 14: "मेष • तुला", 15: "वृषभ • तुला"
+            };
+            var tNum = (pData && pData.tithiIdx !== undefined) ? ((pData.tithiIdx % 15) + 1) : 11;
+            var dagdhaText = dagdhaMap[tNum] || "धनु • मीन";
 
             // Add Bhadra details if Karana is Vishti
             if (karanText.indexOf('विष्टि') !== -1 || (pData && pData.karanaNum >= 0 && (pData.karanaNum - 1) % 7 === 6)) {
@@ -726,7 +738,7 @@
             document.getElementById('pDay').textContent = dayNames[dayOfWeek];
             document.getElementById('pDayLord').textContent = "स्वामी: " + dayLords[dayOfWeek];
             document.getElementById('pYoga').textContent = yogaText;
-            document.getElementById('pKaran').textContent = karanText;
+            document.getElementById('pKaran').textContent = karanText + " • दग्ध राशियां: " + dagdhaText;
 
             // Shubh & Ashubh Muhurtas
             var isWed = (dayOfWeek === 3);

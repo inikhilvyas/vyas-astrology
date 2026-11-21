@@ -424,7 +424,7 @@
 
                     pTable.push({
                         p: PLANET_NAMES_HI[pn] + " (" + pn + ")",
-                        r: SIGNS_HI[sIdx],
+                        r: SIGNS_HI_DIAG[sIdx],
                         d: dms,
                         n: NAKSHATRAS[nakIdx].name + " (" + pada + ")",
                         h: String(hNum),
@@ -451,7 +451,7 @@
                     var v = {};
 
                     function addV(k, num, s, d, deity) {
-                        v[k] = { key: k, num: num, sign_index: s, sign_name: SIGNS_HI[s], sign_en: SIGNS_EN[s], deg: d, deity: deity || "" };
+                        v[k] = { key: k, num: num, sign_index: s, sign_name: SIGNS_HI_DIAG[s], sign_en: SIGNS_EN[s], deg: d, deity: deity || "" };
                     }
 
                     // D1 Rashi (30°)
@@ -596,7 +596,7 @@
 
                         pDetails.push({
                             planet: PLANET_NAMES_HI[pn],
-                            sign: SIGNS_HI[pv.sign_index],
+                            sign: SIGNS_HI_DIAG[pv.sign_index],
                             house: hNum,
                             degree: dStr + '"',
                             deity: pv.deity || ""
@@ -607,7 +607,7 @@
                     var specialYogas = [];
                     if (vk === "D9") {
                         if (ascVargas.D1.sign_index === ascVargas.D9.sign_index) {
-                            specialYogas.push("✦ लग्न वर्गोत्तम (Lagna Vargottama — " + SIGNS_HI[aSign] + " लग्न)");
+                            specialYogas.push("✦ लग्न वर्गोत्तम (Lagna Vargottama — " + SIGNS_HI_DIAG[aSign] + " लग्न)");
                         }
                         var PUSHKAR_BHAGAS = [21, 14, 18, 8, 19, 9, 24, 11, 23, 14, 19, 9];
                         for (var pi = 0; pi < order.length; pi++) {
@@ -621,7 +621,7 @@
 
                             // 1. Planet Vargottama (D1 Rashi == D9 Rashi)
                             if (pD1.sign_index === pD9.sign_index) {
-                                specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " वर्गोत्तम (" + SIGNS_HI[pD1.sign_index] + " राशि D1 व D9 समान)");
+                                specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " वर्गोत्तम (" + SIGNS_HI_DIAG[pD1.sign_index] + " राशि D1 व D9 समान)");
                             }
 
                             // 2. Pushkar Navamsha (24 Auspicious Nourishing Navamshas in Zodiac)
@@ -647,7 +647,7 @@
                     var cObj = {
                         key: vk,
                         title: VARGA_TITLES[vk],
-                        ascSign: SIGNS_HI[aSign] + " लग्न (" + Math.floor(ascV.deg) + "°" + Math.floor((ascV.deg * 60) % 60) + "')",
+                        ascSign: SIGNS_HI_DIAG[aSign] + " लग्न (" + Math.floor(ascV.deg) + "°" + Math.floor((ascV.deg * 60) % 60) + "')",
                         houses: vHouses,
                         planetDetails: pDetails,
                         specialYogas: specialYogas
@@ -658,7 +658,7 @@
                     shodashaData[vk] = cObj;
                     shodashaData[cKeyLower] = cObj;
                 }
-                builtCharts.chalit = { title: "भाव चलित चक्र", ascSign: SIGNS_HI[ascSignIdx] + " लग्न", houses: d1Houses };
+                builtCharts.chalit = { title: "भाव चलित चक्र", ascSign: SIGNS_HI_DIAG[ascSignIdx] + " लग्न", houses: d1Houses };
                 if (typeof window !== 'undefined') window.SHODASHAVARGA_DATA = shodashaData;
 
                 // =========================================================================
@@ -899,7 +899,7 @@
                         accumDeg += dur;
                     }
                     var sslIdx = (SUB_ORDER.indexOf(sl) + 1) % 9;
-                    return { rl: rl, nl: nl, sl: sl, ssl: SUB_ORDER[sslIdx], sign: SIGNS_HI[sIdx] };
+                    return { rl: rl, nl: nl, sl: sl, ssl: SUB_ORDER[sslIdx], sign: SIGNS_HI_DIAG[sIdx] };
                 }
 
                 var kpCusps = [];
@@ -962,7 +962,7 @@
                         abbr: KARAKA_NAMES[idx].abbr,
                         karaka: KARAKA_NAMES[idx].name,
                         planet: item.name,
-                        sign: SIGNS_HI[item.signIdx],
+                        sign: SIGNS_HI_DIAG[item.signIdx],
                         deg: dms,
                         signification: KARAKA_NAMES[idx].role
                     };
@@ -1033,7 +1033,7 @@
                 var bhavasPreds = [];
                 for (var h = 1; h <= 12; h++) {
                     var hSignIdx = (ascSignIdx + h - 1) % 12;
-                    var hSignName = SIGNS_HI[hSignIdx];
+                    var hSignName = SIGNS_HI_DIAG[hSignIdx];
                     var hLordName = LORDS_BY_SIGN[hSignIdx];
                     var occPlanets = [];
                     for (var i = 0; i < order.length; i++) {
@@ -1058,7 +1058,7 @@
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                         lat: lat, lon: lon, tz: tz,
-                        asc_sign: SIGNS_HI[ascSignIdx], asc_dms: ascDms,
+                        asc_sign: SIGNS_HI_DIAG[ascSignIdx], asc_dms: ascDms,
                         ayanamsa_deg: ayanamsa,
                         ayanamsa_dms: toDMS(ayanamsa),
                         ephemeris: "Swiss Ephemeris 0.001\" (NASA JPL DE431/441)",
@@ -1067,6 +1067,7 @@
                     },
                     charts: builtCharts,
                     planet_table: pTable,
+                    houses: builtCharts.d1.houses, // Universal top-level alias for all renderers
                     active_dasha: activeDasha,
                     ashtakavarga: {
                         sav: sav,
@@ -1083,14 +1084,19 @@
                     jaimini: {
                         karakas: jaiminiKarakas,
                         atmakaraka: ak.name,
-                        karakamsha: SIGNS_HI[klNavSign]
+                        karakamsha: SIGNS_HI_DIAG[klNavSign]
                     },
                     nadi: {
                         combinations: nadiCombinations
                     },
                     predictions: {
                         bhavas: bhavasPreds
-                    }
+                    },
+                    goodh_diagnostics: computeGoodhDiagnostics({
+                        profile: { asc_sign: SIGNS_HI_DIAG[ascSignIdx] },
+                        planet_table: pTable,
+                        jaimini: { atmakaraka: ak.name, karakamsha: SIGNS_HI_DIAG[klNavSign], karakas: jaiminiKarakas }
+                    })
                 };
     }
 
@@ -1219,7 +1225,216 @@
         };
     }
 
-    // Universal Active Kundli Resolver (Guarantees user kundli across all portals, zero leak, zero Prashna fallback)
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ACHARYA VYAS (v10.0) - DEEP DIAGNOSTIC & SECRET-REVELATION ENGINE
+    // (गूढ़ रहस्य एवं सूक्ष्म परीक्षण • Parashari + Jaimini + Navatara)
+    // ═══════════════════════════════════════════════════════════════════
+    var SIGNS_HI_DIAG = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+    var NAKSHATRAS_27_DIAG = [
+        'अश्विनी', 'भरणी', 'कृत्तिका', 'रोहिणी', 'मृगशिरा', 'आर्द्रा', 'पुनर्वसु', 'पुष्य', 'आश्लेषा',
+        'मघा', 'पूर्वाफाल्गुनी', 'उत्तराफाल्गुनी', 'हस्त', 'चित्रा', 'स्वाति', 'विशाखा', 'अनुराधा', 'ज्येष्ठा',
+        'मूल', 'पूर्वाषाढ़ा', 'उत्तराषाढ़ा', 'श्रवण', 'धनिष्ठा', 'शतभिषा', 'पूर्वाभाद्रपद', 'उत्तराभाद्रपद', 'रेवती'
+    ];
+    var DAGDHA_BY_TITHI = {
+        1: [6, 9], 2: [7, 10], 3: [4, 9], 4: [5, 8], 5: [2, 5],
+        6: [3, 6], 7: [8, 3], 8: [9, 2], 9: [3, 4], 10: [10, 7],
+        11: [8, 11], 12: [9, 6], 13: [1, 11], 14: [0, 6], 15: [1, 6]
+    };
+
+    var TARA_NAMES = {
+        1: "जन्म (Janma - मूल स्वभाव/प्रारब्ध)",
+        2: "सम्पत (Sampat - समृद्धि/वैभव)",
+        3: "विपत (Vipat - बाधा/संघर्ष)",
+        4: "क्षेम (Kshema - कल्याण/सुरक्षा)",
+        5: "प्रत्यरि (Pratyari - विरोध/शत्रुता)",
+        6: "साधक (Sadhaka - सिद्धि/साधना)",
+        7: "वध (Vadha - तीव्र परीक्षा/कष्ट)",
+        8: "मैत्र (Maitra - मित्रता/सहयोग)",
+        9: "अतिमैत्र (Atimaitra - परम कल्याण)"
+    };
+
+    var CURRENT_GOCHAR_PLANETS = {
+        "शनि (गोचर)": { lon: 335.2, sign: "मीन", nak: "उत्तराभाद्रपद" },
+        "गुरु (गोचर)": { lon: 65.4, sign: "मिथुन", nak: "मृगशिरा" },
+        "राहु (गोचर)": { lon: 322.8, sign: "कुंभ", nak: "पूर्वाभाद्रपद" },
+        "केतु (गोचर)": { lon: 142.8, sign: "सिंह", nak: "पूर्वाफाल्गुनी" },
+        "मंगल (गोचर)": { lon: 104.5, sign: "कर्क", nak: "पुष्य" }
+    };
+
+    function computeGoodhDiagnostics(kundli) {
+        if (!kundli || !kundli.planet_table) return null;
+
+        var pTable = kundli.planet_table;
+        var pLonMap = {};
+        var moonLon = 0;
+        var sunLon = 0;
+        var ascSignIdx = 0;
+        var sMap = { 'मेष':0, 'वृषभ':1, 'मिथुन':2, 'कर्क':3, 'सिंह':4, 'कन्या':5, 'तुला':6, 'वृश्चिक':7, 'धनु':8, 'मकर':9, 'कुंभ':10, 'मीन':11 };
+
+        if (kundli.profile && kundli.profile.asc_sign) {
+            ascSignIdx = sMap[kundli.profile.asc_sign] !== undefined ? sMap[kundli.profile.asc_sign] : 0;
+        }
+
+        pTable.forEach(function (pl) {
+            var pName = (pl.p || '').replace(/\s*\(.*\)/, '').trim();
+            var sIdx = sMap[pl.r] !== undefined ? sMap[pl.r] : 0;
+            var parts = (pl.d || '0°0\'').split(/[°\']/);
+            var deg = parseFloat(parts[0]) || 0;
+            var min = parseFloat(parts[1]) || 0;
+            var totalLon = (sIdx * 30.0) + deg + (min / 60.0);
+            pLonMap[pName] = totalLon;
+            if (pName === 'चन्द्र') moonLon = totalLon;
+            if (pName === 'सूर्य') sunLon = totalLon;
+        });
+
+        // 1. Gandanta & Gandmool Precision Check (Water-to-Fire Junctions)
+        var gandantaHits = [];
+        for (var pName in pLonMap) {
+            var lon = pLonMap[pName];
+            var lonN = (lon % 360.0 + 360.0) % 360.0;
+            var sIdx = Math.floor(lonN / 30.0);
+            var degInS = lonN % 30.0;
+            var isWaterEnd = ([3, 7, 11].indexOf(sIdx) !== -1 && degInS >= 28.6667);
+            var isFireStart = ([0, 4, 8].indexOf(sIdx) !== -1 && degInS <= 1.3333);
+
+            if (isWaterEnd || isFireStart) {
+                gandantaHits.push({
+                    planet: pName,
+                    sign: SIGNS_HI_DIAG[sIdx],
+                    deg_in_sign: parseFloat(degInS.toFixed(2)),
+                    junction_type: isWaterEnd ? "जल-अग्नि संधि समाप्ति (Water End / गण्डान्त)" : "अग्नि संधि आरम्भ (Fire Start / गण्डान्त)",
+                    insight_hi: pName + " (" + SIGNS_HI_DIAG[sIdx] + " " + degInS.toFixed(2) + "°) जल-अग्नि गण्डान्त सन्धि पर स्थित है; यह तीव्र आंतरिक रूपांतरण, असाधारण सूक्ष्म अंतर्दृष्टि तथा संधि-जनित मानसिक/शारीरिक परीक्षण का स्पष्ट सूचक है।"
+                });
+            }
+        }
+
+        // 2. Dagdha / Shunya Rashi Check by Tithi
+        var diffElong = (moonLon - sunLon + 360.0) % 360.0;
+        var tithiIdx = Math.floor(diffElong / 12.0) % 30; // 0..29
+        var tithiNum = (tithiIdx % 15) + 1; // 1..15
+        var dagdhaSignIndices = DAGDHA_BY_TITHI[tithiNum] || [];
+        var dagdhaSignsHi = dagdhaSignIndices.map(function(idx) { return SIGNS_HI_DIAG[idx]; });
+
+        var planetsInDagdha = [];
+        pTable.forEach(function (pl) {
+            var pName = (pl.p || '').replace(/\s*\(.*\)/, '').trim();
+            var sIdx = sMap[pl.r];
+            if (dagdhaSignIndices.indexOf(sIdx) !== -1) {
+                planetsInDagdha.push({
+                    planet: pName,
+                    sign: SIGNS_HI_DIAG[sIdx],
+                    house: pl.h,
+                    warning_hi: pName + " (" + SIGNS_HI_DIAG[sIdx] + ", भाव " + pl.h + ") जन्म तिथि अनुसार 'दग्ध/शून्य राशि' में स्थित है; इस भाव के फल में विलम्ब अथवा विशेष साधना उपरांत ही सिद्धि प्राप्त होती है।"
+                });
+            }
+        });
+
+        // 3. Navatara Chakra (9-Tara Classification from Natal Moon)
+        var nakSpan = 360.0 / 27.0;
+        var birthNakIdx = Math.floor((moonLon % 360.0) / nakSpan);
+        var harshTaras = [3, 5, 7];
+
+        var transitTaraReport = [];
+        for (var tpName in CURRENT_GOCHAR_PLANETS) {
+            var gp = CURRENT_GOCHAR_PLANETS[tpName];
+            var tNakIdx = Math.floor((gp.lon % 360.0) / nakSpan);
+            var dist = ((tNakIdx - birthNakIdx + 27) % 27) + 1;
+            var taraNum = ((dist - 1) % 9) + 1;
+            transitTaraReport.push({
+                transit_planet: tpName,
+                transit_nakshatra: NAKSHATRAS_27_DIAG[tNakIdx],
+                current_sign: gp.sign,
+                tara_number: taraNum,
+                tara_label: TARA_NAMES[taraNum],
+                is_sensitive_tara: harshTaras.indexOf(taraNum) !== -1,
+                guidance_hi: harshTaras.indexOf(taraNum) !== -1 ?
+                    ("⚠️ " + tpName + " का संचरण वर्तमान में आपकी जन्म-नक्षत्र से '" + TARA_NAMES[taraNum] + "' में है। इस अवधि में जोखिमपूर्ण निर्णयों, अनावश्यक विवाद एवं जल्दबाजी से बचें।") :
+                    ("✅ " + tpName + " का संचरण अनुकूल '" + TARA_NAMES[taraNum] + "' में है, जो स्थिरता एवं प्रगति का द्योतक है।")
+            });
+        }
+
+        // 4. Jaimini Karaka & Inner Turmoil Dynamics (AK, AmK, Karakamsha, Swamsha, AL, UL)
+        var akName = (kundli.jaimini && kundli.jaimini.atmakaraka) ? kundli.jaimini.atmakaraka : "चन्द्र";
+        var amkName = "सूर्य";
+        if (kundli.jaimini && Array.isArray(kundli.jaimini.karakas)) {
+            var amkObj = kundli.jaimini.karakas.find(function(k) { return k.abbr === 'AmK'; });
+            if (amkObj) amkName = amkObj.planet;
+        }
+
+        var klSignName = (kundli.jaimini && kundli.jaimini.karakamsha) ? kundli.jaimini.karakamsha : "मीन";
+        var klSignIdx = sMap[klSignName] !== undefined ? sMap[klSignName] : 11;
+        var swamsaSignIdx = (pLonMap[akName] !== undefined) ? Math.floor(pLonMap[akName] / 30.0) % 12 : 3;
+
+        // Compute Arudha Lagna (AL) with Jaimini Exceptions
+        var LORDS_BY_SIGN = [2, 5, 3, 1, 0, 3, 5, 2, 4, 6, 6, 4]; // Mars, Ven, Mer, Moon, Sun, Mer, Ven, Mars, Jup, Sat, Sat, Jup
+        var PLANET_ORDER_IDX = { 0:'सूर्य', 1:'चन्द्र', 2:'मंगल', 3:'बुध', 4:'गुरु', 5:'शुक्र', 6:'शनि' };
+
+        var lagnaLordName = PLANET_ORDER_IDX[LORDS_BY_SIGN[ascSignIdx]] || 'गुरु';
+        var lagnaLordSignIdx = (pLonMap[lagnaLordName] !== undefined) ? Math.floor(pLonMap[lagnaLordName] / 30.0) % 12 : ascSignIdx;
+        var diffL = (lagnaLordSignIdx - ascSignIdx + 12) % 12;
+        var alSignIdx = (lagnaLordSignIdx + diffL) % 12;
+        if (alSignIdx === ascSignIdx) alSignIdx = (ascSignIdx + 9) % 12;
+        else if (alSignIdx === (ascSignIdx + 6) % 12) alSignIdx = (ascSignIdx + 3) % 12;
+
+        // Compute Upapada Lagna (UL) with Jaimini Exceptions
+        var h12SignIdx = (ascSignIdx + 11) % 12;
+        var h12LordName = PLANET_ORDER_IDX[LORDS_BY_SIGN[h12SignIdx]] || 'शनि';
+        var h12LordSignIdx = (pLonMap[h12LordName] !== undefined) ? Math.floor(pLonMap[h12LordName] / 30.0) % 12 : h12SignIdx;
+        var diff12 = (h12LordSignIdx - h12SignIdx + 12) % 12;
+        var ulSignIdx = (h12LordSignIdx + diff12) % 12;
+        if (ulSignIdx === h12SignIdx) ulSignIdx = (h12SignIdx + 9) % 12;
+        else if (ulSignIdx === (h12SignIdx + 6) % 12) ulSignIdx = (h12SignIdx + 3) % 12;
+
+        var diffAkSwamsa = ((klSignIdx - swamsaSignIdx + 12) % 12) + 1;
+        var diffAkAl = ((klSignIdx - alSignIdx + 12) % 12) + 1;
+        var diffUlAl = ((ulSignIdx - alSignIdx + 12) % 12) + 1;
+
+        var is68Swamsa = (diffAkSwamsa === 6 || diffAkSwamsa === 8);
+        var is68Al = (diffAkAl === 6 || diffAkAl === 8);
+        var innerTurmoilFlag = is68Swamsa || is68Al;
+
+        var deepObsHi = "आत्मकारक (" + akName + ") से कारकांश " + SIGNS_HI_DIAG[klSignIdx] + " तथा अमात्यकारक (" + amkName + ") कर्म-प्रारब्ध तय करते हैं। " +
+            (innerTurmoilFlag ?
+                "कारकांश और स्वांश/आरूढ़ लग्न के बीच ६/८ (षडाष्टक) संबंध होने से बाहरी सफलता व सामाजिक प्रतिष्ठा के भीतर भी एक सतत आंतरिक द्वन्द्व, वैराग्य अथवा गहरे आध्यात्मिक अर्थ की खोज बनी रहती है।" :
+                "कारकांश और कर्म-आरूढ़ के बीच परस्पर शुभ संबंध है, जिससे आंतरिक संकल्प और बाह्य कर्म में सुदृढ़ सामंजस्य बना रहता है।");
+
+        // 5. 22nd Drekkana (Khara) & 64th Navamsha Sensitivity
+        var kharaSignIdx = (ascSignIdx + 7) % 12; // 8th house sign
+        var kharaLordName = PLANET_ORDER_IDX[LORDS_BY_SIGN[kharaSignIdx]] || 'शनि';
+        var nav64SignIdx = (Math.floor(moonLon / (30.0 / 9.0)) + 7) % 12; // 8th navamsha from Moon
+        var nav64LordName = PLANET_ORDER_IDX[LORDS_BY_SIGN[nav64SignIdx]] || 'मंगल';
+
+        return {
+            birth_nakshatra: NAKSHATRAS_27_DIAG[birthNakIdx],
+            gandanta_placements: gandantaHits,
+            dagdha_rashis_for_tithi: dagdhaSignsHi,
+            planets_in_dagdha_rashis: planetsInDagdha,
+            transit_tara_analysis: transitTaraReport,
+            jaimini_dynamics: {
+                ak: akName,
+                amk: amkName,
+                karakansha: SIGNS_HI_DIAG[klSignIdx],
+                swamsa: SIGNS_HI_DIAG[swamsaSignIdx],
+                arudha_lagna: SIGNS_HI_DIAG[alSignIdx],
+                upapada_lagna: SIGNS_HI_DIAG[ulSignIdx],
+                house_from_swamsa_to_karakansha: diffAkSwamsa,
+                house_from_al_to_karakansha: diffAkAl,
+                house_from_al_to_ul: diffUlAl,
+                inner_turmoil_flag: innerTurmoilFlag,
+                deep_observation_hi: deepObsHi
+            },
+            khara_and_64th_navamsha: {
+                drekkana_22_sign: SIGNS_HI_DIAG[kharaSignIdx],
+                drekkana_22_lord: kharaLordName,
+                navamsha_64_sign: SIGNS_HI_DIAG[nav64SignIdx],
+                navamsha_64_lord: nav64LordName,
+                protective_guidance_hi: "२२वें द्रेष्काण स्वामी (" + kharaLordName + ") एवं ६४वें नवांश स्वामी (" + nav64LordName + ") की दशा/अंतर्दशा अथवा संवेदनशील गोचर में नित्य 'महामृत्युंजय मंत्र' का जप परम रक्षा कवच सिद्ध होता है।"
+            }
+        };
+    }
+
+    // Universal Active Kundli Resolver (Guarantees STRICT Single-Source-of-Truth across all portals)
     function getActiveKundli() {
         if (typeof window === 'undefined' || !window.localStorage) return null;
         try {
@@ -1239,36 +1454,25 @@
                     var nLower = (name || '').toLowerCase();
                     if (nLower.indexOf('nikhil') !== -1 || name.indexOf('निखिल') !== -1 || dob === '1992-05-15' || dob === '1984-11-23') {
                         localStorage.removeItem('vyas_active_profile');
-                    } else if (p.planet_table && p.charts && p.profile && p.profile.dob) {
+                        return null;
+                    }
+                    
+                    // If full mathematical chart already exists and is intact, return it directly
+                    if (p.planet_table && p.charts && p.charts.d1 && p.profile && p.profile.dob) {
+                        // Ensure top-level houses alias is attached
+                        if (!p.houses && p.charts.d1.houses) p.houses = p.charts.d1.houses;
                         return p;
-                    } else if (dob) {
-                        var recomputed = computeMathematicalKundli(name, dob, tob, city, 'Male', lat, lon);
+                    } 
+                    
+                    // If raw birth details exist, compute full mathematical kundli
+                    if (dob) {
+                        var recomputed = computeMathematicalKundli(name, dob, tob, city, prof.gender || 'Male', lat, lon);
                         if (recomputed) {
+                            if (!recomputed.houses && recomputed.charts && recomputed.charts.d1 && recomputed.charts.d1.houses) {
+                                recomputed.houses = recomputed.charts.d1.houses;
+                            }
                             localStorage.setItem('vyas_active_profile', JSON.stringify(recomputed));
                             return recomputed;
-                        }
-                    }
-                }
-            }
-
-            // Check vaults if active profile is empty
-            var vaultKeys = ['vyas_family_vault', 'vyas_user_vault', 'vyas_custom_profiles'];
-            for (var vk = 0; vk < vaultKeys.length; vk++) {
-                var vRaw = localStorage.getItem(vaultKeys[vk]);
-                if (vRaw) {
-                    var vList = JSON.parse(vRaw);
-                    if (Array.isArray(vList) && vList.length > 0) {
-                        for (var i = 0; i < vList.length; i++) {
-                            var item = vList[i];
-                            var iName = (item.name || '').toLowerCase();
-                            var iDob = item.dob || item.birth_date || '';
-                            if (iName.indexOf('nikhil') === -1 && item.name.indexOf('निखिल') === -1 && iDob !== '1992-05-15' && iDob !== '1984-11-23' && iDob) {
-                                var vChart = computeMathematicalKundli(item.name || 'जातक', iDob, item.tob || '12:00', item.city || item.place || 'वाराणसी', 'Male', item.lat, item.lon);
-                                if (vChart) {
-                                    localStorage.setItem('vyas_active_profile', JSON.stringify(vChart));
-                                    return vChart;
-                                }
-                            }
                         }
                     }
                 }
@@ -1276,6 +1480,7 @@
         } catch (e) {
             console.warn('getActiveKundli error:', e);
         }
+        // STRICT: If no active profile is set, return null. NEVER silently load another person's chart from vault!
         return null;
     }
 
@@ -1326,6 +1531,7 @@
     global.VyasAstronomicalEngine = {
         computeKundli: computeMathematicalKundli,
         computeCurrentPrashna: computeCurrentPrashna,
+        computeGoodhDiagnostics: computeGoodhDiagnostics,
         getActiveKundli: getActiveKundli,
         computePanchang: computeAstronomicalPanchang
     };

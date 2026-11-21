@@ -417,8 +417,12 @@
             if (klSignNum < 1 || klSignNum > 12) klSignNum = 9;
 
             var karakas = {};
-            if (activeChart.planet_table && window.VyasJaiminiEngine) {
-                karakas = VyasJaiminiEngine.computeKarakas(activeChart.planet_table) || {};
+            if (activeChart.jaimini && activeChart.jaimini.karakas) {
+                if (Array.isArray(activeChart.jaimini.karakas)) {
+                    activeChart.jaimini.karakas.forEach(function(k) { karakas[k.abbr] = k; });
+                } else {
+                    karakas = activeChart.jaimini.karakas;
+                }
             }
 
             var chartWrap = document.getElementById('jaiminiChartWrap');
@@ -459,8 +463,12 @@
             if (metaEl) metaEl.textContent = "जन्म: " + dob + " (" + tob + ") • " + city + " • लग्न: " + lagna + " (AK: " + akName + " ➔ कारकांश: " + klSign + ")";
 
             var karakas = {};
-            if (chart.planet_table && window.VyasJaiminiEngine) {
-                karakas = VyasJaiminiEngine.computeKarakas(chart.planet_table) || {};
+            if (chart.jaimini && chart.jaimini.karakas) {
+                if (Array.isArray(chart.jaimini.karakas)) {
+                    chart.jaimini.karakas.forEach(function(k) { karakas[k.abbr] = k; });
+                } else {
+                    karakas = chart.jaimini.karakas;
+                }
             }
 
             renderJaiminiChartOnly();
@@ -551,6 +559,76 @@
                     '</div>' +
                     bankHtml +
                     '<div class="sutra-quote"><b>महर्षि जैमिनी सूत्र (अध्याय १, पाद २):</b><br><i>"अमात्ये शुभे दृष्टे राजपूज्यः। कारकांशे केतौ मोक्षः॥ तत्र प्रभुविष्णुश्च। उच्चे वैकुण्ठम्॥"</i><br>अमात्यकारक पर शुभ दृष्टि होने से व्यक्ति समाज व शासन में प्रतिष्ठित होता है। कारकांश से 12वें भाव में केतु मोक्ष प्रदाता है एवं शुभ ग्रहों के योग से उत्तम लोकों की प्राप्ति होती है।</div>';
+
+                // Render Acharya Vyas v10 Deep Diagnostic Matrix
+                if (chart.goodh_diagnostics) {
+                    var diag = chart.goodh_diagnostics;
+                    var jDyn = diag.jaimini_dynamics || {};
+                    var gHits = diag.gandanta_placements || [];
+                    var dagdha = diag.dagdha_rashis_for_tithi || [];
+                    var dagdhaPl = diag.planets_in_dagdha_rashis || [];
+                    var khara = diag.khara_and_64th_navamsha || {};
+
+                    var gHtml = '';
+                    if (gHits.length > 0) {
+                        gHits.forEach(function(gh) {
+                            gHtml += '<div style="margin-top:6px; padding:8px 12px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:4px; font-size:0.85rem;">' +
+                                '⚠️ <b>' + gh.planet + ':</b> ' + gh.insight_hi +
+                                '</div>';
+                        });
+                    } else {
+                        gHtml = '<div style="color:var(--emerald); font-size:0.85rem; margin-top:4px;">✅ जन्म कुण्डली में कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना एवं जीवन ऊर्जा संतुलित है।</div>';
+                    }
+
+                    var dHtml = '';
+                    if (dagdhaPl.length > 0) {
+                        dagdhaPl.forEach(function(dp) {
+                            dHtml += '<div style="margin-top:6px; padding:8px 12px; background:rgba(245,158,11,0.1); border-left:3px solid #f59e0b; border-radius:4px; font-size:0.85rem;">' +
+                                dp.warning_hi +
+                                '</div>';
+                        });
+                    } else {
+                        dHtml = '<div style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">कोई प्रत्यक्ष ग्रह दग्ध राशि में स्थित नहीं है।</div>';
+                    }
+
+                    var diagCard = '<div class="card" style="margin-top:24px; border:1.5px solid var(--border-gold); background:rgba(12,19,36,0.95);">' +
+                        '<div class="card-header">' +
+                        '<div class="card-title" style="color:var(--gold); font-size:1.1rem; font-weight:800;">' +
+                        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>' +
+                        'गूढ़ रहस्य एवं सूक्ष्म परीक्षण (Deep Diagnostic Matrix • v10.0)' +
+                        '</div>' +
+                        '<span style="font-size:0.75rem; color:#10b981; font-weight:700;">प्रामाणिक जैमिनी + पराशरी वेध</span>' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:16px;">' +
+                        '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">' +
+                        '<b style="color:var(--gold-light); font-size:0.92rem;">१. कारकांश, स्वांश एवं आरूढ़ लग्न गतिशीलता:</b><br>' +
+                        '<span style="font-size:0.84rem; color:var(--text-secondary); line-height:1.7;">' +
+                        '• <b>आत्मकारक (AK):</b> ' + jDyn.ak + ' ➔ <b>कारकांश:</b> ' + jDyn.karakansha + '<br>' +
+                        '• <b>अमात्यकारक (AmK):</b> ' + jDyn.amk + ' (कर्म व पद प्रतिष्ठा कारक)<br>' +
+                        '• <b>आरूढ़ लग्न (AL):</b> ' + jDyn.arudha_lagna + ' • <b>उपपद लग्न (UL):</b> ' + jDyn.upapada_lagna + '<br>' +
+                        '• <b>स्वांश से कारकांश दूरी:</b> भाव ' + jDyn.house_from_swamsa_to_karakansha + ' | <b>AL से कारकांश:</b> भाव ' + jDyn.house_from_al_to_karakansha + '<br>' +
+                        '<div style="margin-top:6px; color:#fcedaa; font-size:0.82rem;">' + jDyn.deep_observation_hi + '</div>' +
+                        '</span>' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:8px; padding:14px;">' +
+                        '<b style="color:#ef4444; font-size:0.92rem;">२. गण्डान्त एवं गण्डमूल सूक्ष्म परीक्षण:</b><br>' +
+                        gHtml +
+                        '<div style="margin-top:12px;"><b style="color:#f59e0b; font-size:0.92rem;">३. तिथि अनुसार दग्ध (शून्य) राशियां:</b><br>' +
+                        '<span style="font-size:0.82rem; color:var(--text-secondary);">दग्ध राशियां: <b>' + (dagdha.join(' • ') || 'शून्य') + '</b></span>' +
+                        dHtml +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); border-radius:8px; padding:12px 16px; font-size:0.85rem; color:var(--text-secondary); line-height:1.7;">' +
+                        '<b style="color:var(--gold);">४. २२वां द्रेष्काण (खरेश) एवं ६४वां नवांश स्वामी वेध:</b><br>' +
+                        '• <b>२२वां द्रेष्काण (८वां भाव D-3):</b> ' + (khara.drekkana_22_sign || '-') + ' (स्वामी: <b>' + (khara.drekkana_22_lord || '-') + '</b>)<br>' +
+                        '• <b>६४वां नवांश (चन्द्र से ८वां D-9):</b> ' + (khara.navamsha_64_sign || '-') + ' (स्वामी: <b>' + (khara.navamsha_64_lord || '-') + '</b>)<br>' +
+                        '<div style="margin-top:4px; color:#fcedaa;">' + (khara.protective_guidance_hi || '') + '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    phalitWrap.innerHTML += diagCard;
+                }
             }
         }
 

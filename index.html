@@ -10744,37 +10744,30 @@
                 var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : '';
 
                 try {
-                    // Case 1: Authenticated Google User Vault
-                    if (this.googleUser && this.googleUser.email) {
-                        var fromVault = this.loadFromUserVault();
-                        if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)') {
-                            if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
-                                if (fromVault.profile.dob) {
-                                    fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
-                                }
-                                try { localStorage.setItem('vyas_user_vault_' + this.googleUser.email.trim().toLowerCase(), JSON.stringify(fromVault)); } catch (e) { }
+                    // Priority 1: Check existing vyas_active_profile FIRST (Single Source of Truth)
+                    var stored = localStorage.getItem('vyas_active_profile');
+                    if (stored) {
+                        var data = JSON.parse(stored);
+                        if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)' && data.profile.dob) {
+                            if (data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
+                                data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
                             }
-                            this.activeChartData = fromVault;
-                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch (e) { }
+                            this.activeChartData = data;
+                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(data)); } catch (e) { }
                             hasStored = true;
                         }
                     }
 
-                    // Case 2: Check vyas_active_profile if not loaded from vault
-                    if (!hasStored) {
-                        var stored = localStorage.getItem('vyas_active_profile');
-                        if (stored) {
-                            var data = JSON.parse(stored);
-                            if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)') {
-                                if (data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
-                                    if (data.profile.dob) {
-                                        data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
-                                    }
-                                }
-                                this.activeChartData = data;
-                                try { localStorage.setItem('vyas_active_profile', JSON.stringify(data)); } catch (e) { }
-                                hasStored = true;
+                    // Priority 2: Authenticated Google User Vault (only if no active profile exists)
+                    if (!hasStored && this.googleUser && this.googleUser.email) {
+                        var fromVault = this.loadFromUserVault();
+                        if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)' && fromVault.profile.dob) {
+                            if (fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
+                                fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
                             }
+                            this.activeChartData = fromVault;
+                            try { localStorage.setItem('vyas_active_profile', JSON.stringify(fromVault)); } catch (e) { }
+                            hasStored = true;
                         }
                     }
 
