@@ -15,3 +15,4 @@ def fix_file(filepath):
 
 fix_file('js/vyas_daivagya_engine.js')
 fix_file('android_app/app/src/main/assets/js/vyas_daivagya_engine.js')
+

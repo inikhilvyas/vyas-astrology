@@ -25,3 +25,4 @@ plugins = [
 for p in plugins:
     shutil.copy2('skills/vyas-jyotisha/SKILL.md', p)
     print('Synced to', p)
+
