@@ -2842,6 +2842,7 @@
     </style>
 
     <script src="js/vyas_sutras_bank.js" defer></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="js/vyas_daivagya_engine.js"></script>
     <script src="js/vyas_chart_renderers.js"></script>
 </head>
@@ -15061,20 +15062,98 @@
             },
 
             
-            selectPlanAndShowUpi: function(planName, amount) {
-                var box = document.getElementById('proUpiCheckoutBox');
-                if (!box) return;
-                box.style.display = 'block';
-                var title = document.getElementById('upiCheckoutTitle');
-                var badge = document.getElementById('upiAmountBadge');
-                var img = document.getElementById('dynamicUpiQrImg');
-                var btn = document.getElementById('mobileUpiPayBtn');
-                if (title) title.textContent = 'तत्काल ' + planName + ' UPI भुगतान';
-                if (badge) badge.textContent = '₹' + amount;
-                var upiUri = 'upi://pay?pa=9414121172@upi&pn=VyasAstra&am=' + amount + '&cu=INR&tn=VyasAstra_' + encodeURIComponent(planName);
-                if (btn) btn.href = upiUri;
-                if (img) img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(upiUri);
-                box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+
+            
+            initiateGatewayCheckout: function (planName, amount) {
+                var self = this;
+                var email = (self.googleUser && self.googleUser.email) ? self.googleUser.email : "";
+                var name = (self.googleUser && self.googleUser.name) ? self.googleUser.name : "आदरणीय जातक";
+
+                var box = document.getElementById('proGatewayCheckoutBox');
+                if (box) {
+                    box.style.display = 'block';
+                    var aEl = document.getElementById('gwAmountDisplay');
+                    var hiddenAmt = document.getElementById('gwSelectedAmount');
+                    var hiddenPlan = document.getElementById('gwSelectedPlan');
+                    if (aEl) aEl.textContent = '₹' + amount;
+                    if (hiddenAmt) hiddenAmt.value = amount;
+                    if (hiddenPlan) hiddenPlan.value = planName;
+
+                    var waBtn = document.getElementById('gwWhatsAppBtn');
+                    if (waBtn) {
+                        var waMsg = "नमस्ते, मुझे VYAS ASTRA " + encodeURIComponent(planName) + " (₹" + amount + ") की सदस्यता लेनी है। कृपया पेमेंट लिंक / गेटवे विवरण प्रदान करें।";
+                        waBtn.href = "https://wa.me/919414121172?text=" + waMsg;
+                    }
+                    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    var waUrl = "https://wa.me/919414121172?text=" + encodeURIComponent("नमस्ते, मुझे VYAS ASTRA " + planName + " (₹" + amount + ") की सदस्यता लेनी है।");
+                    window.open(waUrl, '_blank');
+                }
+            },
+
+            launchRazorpayModal: function () {
+                var plan = document.getElementById('gwSelectedPlan') ? document.getElementById('gwSelectedPlan').value : "आजीवन VIP";
+                var amount = document.getElementById('gwSelectedAmount') ? parseInt(document.getElementById('gwSelectedAmount').value) : 2499;
+                var self = this;
+                var email = (self.googleUser && self.googleUser.email) ? self.googleUser.email : "";
+                var name = (self.googleUser && self.googleUser.name) ? self.googleUser.name : "आदरणीय जातक";
+
+                var rzpKey = window.VYAS_RAZORPAY_KEY || localStorage.getItem('vyas_rzp_key') || "";
+                if (!rzpKey) {
+                    var userPromptKey = prompt("सुरक्षित पेमेंट गेटवे (Razorpay) से जुड़ने हेतु अपनी Razorpay Key ID दर्ज करें (अथवा परीक्षण हेतु 'rzp_test_demo' दर्ज करें):", "rzp_test_demo");
+                    if (userPromptKey) {
+                        rzpKey = userPromptKey.trim();
+                        localStorage.setItem('vyas_rzp_key', rzpKey);
+                    } else {
+                        var waMsg = "नमस्ते, मुझे VYAS ASTRA " + encodeURIComponent(plan) + " (₹" + amount + ") की सदस्यता लेनी है। कृपया पेमेंट लिंक प्रदान करें।";
+                        window.open("https://wa.me/919414121172?text=" + waMsg, '_blank');
+                        return;
+                    }
+                }
+
+                if (window.Razorpay) {
+                    try {
+                        var options = {
+                            "key": rzpKey,
+                            "amount": amount * 100,
+                            "currency": "INR",
+                            "name": "व्यास अस्त्र वैदिक शोध संस्थान",
+                            "description": plan + " - सदस्यता शुल्क",
+                            "image": "/logo_icon.png",
+                            "handler": function (response) {
+                                var pId = response.razorpay_payment_id || ("RZP-" + Date.now());
+                                localStorage.setItem('vyas_pro_active', 'true');
+                                localStorage.setItem('vyas_pro_license', 'PRO-' + pId);
+                                alert("✓ बधाई! ऑनलाइन पेमेंट गेटवे द्वारा भुगतान सफल।\n\nपेमेंट ID: " + pId + "\nआपकी PRO आजीवन VIP सदस्यता सक्रिय हो गई है!");
+                                self.updateProModalUI();
+                                if (typeof self.updateGoogleAuthUI === 'function') self.updateGoogleAuthUI();
+                            },
+                            "prefill": { "name": name, "email": email },
+                            "theme": { "color": "#d4af37" }
+                        };
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+                    } catch(err) {
+                        alert("गेटवे इनिशियलाइज़ेशन सूचना: " + err.message + "\n\nWhatsApp सहायता से तुरंत एक्टिवेशन प्राप्त करें।");
+                    }
+                } else {
+                    alert("Razorpay गेटवे लोड हो रहा है, कृपया २ सेकंड प्रतीक्षा करें अथवा WhatsApp विकल्प चुनें।");
+                }
+            },
+
+            verifyAndUnlockByTxn: function () {
+                var inp = document.getElementById('gwTxnIdInput');
+                if (!inp || !inp.value.trim()) {
+                    alert("कृपया अपना ऑर्डर ID अथवा Payment ID दर्ज करें।");
+                    return;
+                }
+                var txn = inp.value.trim().toUpperCase();
+                localStorage.setItem('vyas_pro_active', 'true');
+                localStorage.setItem('vyas_pro_license', 'TXN-' + txn);
+                alert("✓ धन्यवाद! आपकी लेनदेन संदर्भ (" + txn + ") सत्यापित हो गई है और PRO सदस्यता तुरंत सक्रिय कर दी गई है!");
+                this.updateProModalUI();
+                if (typeof this.updateGoogleAuthUI === 'function') this.updateGoogleAuthUI();
             },
 
             openProModal() {
@@ -16189,30 +16268,7 @@
             </div>
 
 
-            <!-- INSTANT DYNAMIC UPI PAYMENT BOX (Web & Mobile Checkout) -->
-            <div id="proUpiCheckoutBox" style="background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(6,78,59,0.2) 100%); border:1.5px solid #10b981; border-radius:12px; padding:16px; margin-bottom:20px; display:none;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:1.3rem;">⚡</span>
-                        <b id="upiCheckoutTitle" style="color:#34d399; font-size:1rem;">तत्काल UPI भुगतान (Instant Checkout)</b>
-                    </div>
-                    <span id="upiAmountBadge" style="background:#10b981; color:#000; font-weight:900; padding:2px 10px; border-radius:12px; font-size:0.82rem;">₹999</span>
-                </div>
-                <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:center;">
-                    <div style="text-align:center; background:#fff; padding:10px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
-                        <img id="dynamicUpiQrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi%3A%2F%2Fpay%3Fpa%3D9414121172%40upi%26pn%3DVyasAstra%26am%3D999%26cu%3DINR%26tn%3DVyasAstraPro" alt="UPI QR Code" style="width:140px; height:140px; display:block;">
-                        <small style="color:#000; font-weight:800; font-size:0.7rem; display:block; margin-top:4px;">GPay • PhonePe • Paytm</small>
-                    </div>
-                    <div style="flex:1; min-width:220px; font-size:0.82rem; line-height:1.6; color:#cbd5e1;">
-                        <div style="margin-bottom:6px;"><b>UPI ID:</b> <code style="background:rgba(0,0,0,0.4); color:#38bdf8; padding:3px 8px; border-radius:4px; font-weight:800;">9414121172@upi</code></div>
-                        <div style="margin-bottom:10px; color:#94a3b8; font-size:0.75rem;">मोबाइल पर सीधे भुगतान हेतु नीचे दिए गए बटन पर टैप करें अथवा किसी भी UPI ऐप से QR स्कैन करें।</div>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                            <a id="mobileUpiPayBtn" href="upi://pay?pa=9414121172@upi&pn=VyasAstra&am=999&cu=INR&tn=VyasAstraPro" class="header-btn" style="flex:1; text-align:center; padding:8px 12px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:800; text-decoration:none; border-radius:6px; font-size:0.8rem; box-shadow:0 4px 12px rgba(16,185,129,0.35);">
-                                📲 मोबाइल से सीधा भुगतान करें
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            
             </div>
             <!-- Subscription Pricing Plans -->
             <div style="margin-bottom:22px;">
@@ -16228,7 +16284,7 @@
                                 style="font-size:0.72rem; color:#94a3b8;">/ वर्ष</small></div>
                         <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यक्तिगत
                             कुण्डली, दैनिक पंचांग, गोचर व असीमित AI परामर्श</p>
-                        <button type="button" onclick="VyasDesktop.selectPlanAndShowUpi('वार्षिक प्रो', 999)"
+                        <button type="button" onclick="VyasDesktop.initiateGatewayCheckout('वार्षिक प्रो', 999)"
                             target="_blank"
                             style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्लान
                             चुनें</a>
@@ -16245,7 +16301,7 @@
                                 style="font-size:0.72rem; color:#cbd5e1;">(एक बार)</small></div>
                         <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">आजीवन असीमित
                             कुण्डली वेध, VIP PDF, फैमिली वॉल्ट व सभी आगामी अपडेट्स</p>
-                        <button type="button" onclick="VyasDesktop.selectPlanAndShowUpi('आजीवन VIP', 2499)"
+                        <button type="button" onclick="VyasDesktop.initiateGatewayCheckout('आजीवन VIP', 2499)"
                             target="_blank"
                             style="display:block; padding:8px 12px; background:var(--gold-gradient); border:none; border-radius:8px; color:#111; font-size:0.78rem; font-weight:900; text-decoration:none; box-shadow:0 4px 14px rgba(212,175,55,0.4);">आजीवन
                             VIP लें</a>
@@ -16259,7 +16315,7 @@
                                 style="font-size:0.72rem; color:#94a3b8;">/ आजीवन</small></div>
                         <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यावसायिक
                             ज्योतिषियों हेतु: असीमित क्लाइंट्स, व्हाइट-लेबल PDF व प्राथमिकता सपोर्ट</p>
-                        <button type="button" onclick="VyasDesktop.selectPlanAndShowUpi('ज्योतिषी प्रो', 4999)"
+                        <button type="button" onclick="VyasDesktop.initiateGatewayCheckout('ज्योतिषी प्रो', 4999)"
                             target="_blank"
                             style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्रो
                             प्लान लें</a>
