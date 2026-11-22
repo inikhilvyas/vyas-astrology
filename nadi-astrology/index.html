@@ -440,44 +440,97 @@
             // 4. In-depth Nadi Combinations Phalit (Zero Duplication & Domain-Separated)
             var phalitWrap = document.getElementById('nadiPhalitWrap');
             if (phalitWrap && window.VyasNadiEngine) {
+                var jeevaData = VyasNadiEngine.analyzeJeevaKaraka ? VyasNadiEngine.analyzeJeevaKaraka(activeList) : null;
+                var prof = chart.profile || {};
+                var cycleData = VyasNadiEngine.calculateNadiCycles ? VyasNadiEngine.calculateNadiCycles(prof.dob, 2026) : null;
+
                 var jeevaKarmaPred = VyasNadiEngine.predict(activeList, 'general');
                 var careerPred = VyasNadiEngine.predict(activeList, 'career');
                 var marriagePred = VyasNadiEngine.predict(activeList, 'marriage');
 
-                phalitWrap.innerHTML = '<div class="phalit-item" style="border-left:3px solid #ea580c;">' +
-                    '<b>✦ पूर्व दिशा (धर्म त्रिकोण • मेष-सिंह-धनु):</b><br>' +
-                    'पूर्व दिशा में ' + (eastP.length ? eastP.join(', ') : 'शांत स्थिति') + ' होने से यह जातक की आत्म-चेतना, मान-सम्मान व पैतृक संस्कारों को संचालित करती है।' +
+                var html = '';
+
+                // SECTION 1: Guru as Jeeva Karaka (Native Himself/Herself)
+                html += '<div class="phalit-item" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.06);">' +
+                    '<div style="font-size:1.05rem; font-weight:800; color:#fbbf24; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">' +
+                    '<span>✦ १. देवगुरु बृहस्पति (जीवकारक - जातक स्वयं) नाड़ी महा-वेध</span>' +
+                    '<span style="font-size:0.78rem; background:rgba(245,158,11,0.2); padding:2px 10px; border-radius:12px; color:#fde68a;">' + (jeevaData ? (jeevaData.sign + ' राशि • ' + jeevaData.element + ' तत्त्व') : 'जीव विश्लेषण') + '</span>' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #10b981;">' +
-                    '<b>✦ दक्षिण दिशा (अर्थ त्रिकोण • वृषभ-कन्या-मकर):</b><br>' +
-                    'कर्म व वित्त दिशा में ' + (southP.length ? southP.join(', ') : 'शांत स्थिति') + ' का संरेखण है। BNN अनुसार यह आजीविका, संचित धन एवं भौतिक उपलब्धियों की मुख्य दिशा है।' +
+                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
+                    (jeevaData ? jeevaData.narrative : jeevaKarmaPred) +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #38bdf8;">' +
-                    '<b>✦ पश्चिम दिशा (काम त्रिकोण • मिथुन-तुला-कुंभ):</b><br>' +
-                    'वायु तत्त्व में ' + (westP.length ? westP.join(', ') : 'शांत स्थिति') + ' होने से जातक की बौद्धिक साझेदारी, मित्र मंडल एवं व्यापारिक यात्राओं का विस्तार प्रकट होता है।' +
-                    '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #818cf8;">' +
-                    '<b>✦ उत्तर दिशा (मोक्ष त्रिकोण • कर्क-वृश्चिक-मीन):</b><br>' +
-                    'जल तत्त्व में ' + (northP.length ? northP.join(', ') : 'शांत स्थिति') + ' स्थित होने से जातक का अंतर्ज्ञान, आध्यात्मिक साधना एवं आंतरिक शांति सुनिश्चित होती है।' +
-                    '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #fbbf24;">' +
-                    '<b>✦ १. जीव-कर्म मूल संरेखण (Life Purpose & Soul Direction):</b><br>' +
-                    jeevaKarmaPred +
-                    '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #38bdf8;">' +
-                    '<b>✦ २. आजीविका, अधिकार व कर्म सिद्धि (Career & Karma Trines):</b><br>' +
-                    careerPred +
-                    '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #f43f5e;">' +
-                    '<b>✦ ३. दांपत्य, कलत्र व समृद्धि वेध (Marriage & Fortune):</b><br>' +
-                    marriagePred +
-                    '</div>' +
-                    bankHtml +
-                    '<div class="sutra-quote">' +
-                    '<b>भृगु नन्दी नाड़ी मूल सिद्धांत (महर्षि भृगु उपदेश):</b><br>' +
-                    '<i>"जीवो गुरुः कर्म शनिः कलत्रं शुक्र उच्यते। त्रिकोणे संगता ये च तेषां योगः प्रवर्तते॥"</i><br>' +
-                    'देवगुरु बृहस्पति जीव हैं, शनि कर्म हैं, शुक्र कलत्र (भोग/धन) हैं। जो ग्रह 1-5-9 त्रिकोण में परस्पर संरेखित होते हैं, उनका संयुक्त योग जीवन की मुख्य दिशा, प्रारब्ध एवं भाग्य के द्वार खोलता है।' +
                     '</div>';
+
+                // SECTION 2: BNN 12-Year Age Progression Cycles (चक्रानुक्रम आयु फलादेश)
+                if (cycleData) {
+                    html += '<div class="phalit-item" style="border-left:4px solid var(--emerald); background:rgba(16,185,129,0.06);">' +
+                        '<div style="font-size:1.05rem; font-weight:800; color:var(--emerald); margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
+                        '<span>✦ २. भृगु नाड़ी जीवन-चक्र प्रगति (BNN 12-Year Jupiter Cycles)</span>' +
+                        '<span style="font-size:0.8rem; background:rgba(16,185,129,0.2); padding:3px 10px; border-radius:12px; color:#6ee7b7; font-weight:800;">वर्तमान सक्रिय: ' + cycleData.activeCycle.ageRange + '</span>' +
+                        '</div>' +
+                        '<div style="font-size:0.86rem; line-height:1.7; color:var(--text-secondary); margin-bottom:10px;">' +
+                        'भृगु नन्दी नाड़ी अनुसार देवगुरु बृहस्पति प्रत्येक १२ वर्ष में राशि चक्र का एक पूर्ण परिभ्रमण करते हैं। जातक की वर्तमान आयु <b>' + cycleData.currentAge + ' वर्ष</b> है, अतः जातक वर्तमान में <b>' + cycleData.activeCycle.ageRange + '</b> के प्रभाव में जीवन-अनुभव प्राप्त कर रहा है:' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:8px; font-size:0.84rem;">';
+
+                    cycleData.allCycles.forEach(function (cyc) {
+                        var isActive = (cyc.cycle === cycleData.activeCycleIdx);
+                        var borderCls = isActive ? 'border:1.5px solid var(--emerald); background:rgba(16,185,129,0.12);' : 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);';
+                        var badge = isActive ? ' <span style="background:var(--emerald); color:#000; font-size:0.72rem; padding:1px 6px; border-radius:10px; font-weight:900;">सक्रिय कालखंड (Current)</span>' : '';
+                        html += '<div style="' + borderCls + ' padding:10px 12px; border-radius:8px;">' +
+                            '<b style="color:' + (isActive ? 'var(--emerald)' : '#fbbf24') + ';">' + cyc.ageRange + ' • ' + cyc.theme + '</b>' + badge + '<br>' +
+                            '<span style="color:var(--text-secondary); line-height:1.55; display:inline-block; margin-top:3px;">' + cyc.desc + '</span>' +
+                            '</div>';
+                    });
+
+                    html += '</div></div>';
+                }
+
+                // SECTION 3: Saturn as Karma Karaka (कर्म, आजीविका व संघर्ष)
+                html += '<div class="phalit-item" style="border-left:4px solid #38bdf8; background:rgba(56,189,248,0.06);">' +
+                    '<div style="font-size:1.05rem; font-weight:800; color:#38bdf8; margin-bottom:6px;">' +
+                    '✦ ३. कर्मकारक शनि देव (आजीविका, पद, प्रतिष्ठा व कर्म सिद्धि)' +
+                    '</div>' +
+                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
+                    careerPred + '<br>' +
+                    '• <b>नाड़ी कर्म रहस्य:</b> भृगु नन्दी नाड़ी अनुसार शनि जिस तत्त्व में बैठते हैं, जातक का कर्म क्षेत्र उसी तत्त्व की प्रकृति से बंधा होता है। शनि-गुरु का संबंध जातक को समाज में नीति-निर्माता, सलाहकार अथवा स्थायी नेतृत्व प्रदान करता है।' +
+                    '</div>' +
+                    '</div>';
+
+                // SECTION 4: Venus as Kalatra & Dhana Karaka (दांपत्य, विवाह व भौतिक समृद्धि)
+                html += '<div class="phalit-item" style="border-left:4px solid #f43f5e; background:rgba(244,63,94,0.06);">' +
+                    '<div style="font-size:1.05rem; font-weight:800; color:#fb7185; margin-bottom:6px;">' +
+                    '✦ ४. कलत्र एवं धन कारक शुक्र देव (विवाह, जीवनसाथी व लक्ष्मी सिद्धि)' +
+                    '</div>' +
+                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
+                    marriagePred + '<br>' +
+                    '• <b>महालक्ष्मी वेध:</b> भृगु-जीव संबंध जातक को जीवनसाथी के आगमन के उपरांत अचल संपत्ति, उत्तम वाहन व पारिवारिक प्रतिष्ठा में गुणात्मक वृद्धि प्रदान करता है।' +
+                    '</div>' +
+                    '</div>';
+
+                // SECTION 5: Directional Element Trines (पूर्व, दक्षिण, पश्चिम, उत्तर)
+                html += '<div class="phalit-item" style="border-left:4px solid #c084fc; background:rgba(192,132,252,0.06);">' +
+                    '<div style="font-size:1.02rem; font-weight:800; color:#c084fc; margin-bottom:6px;">' +
+                    '✦ ५. चतुर्दिशा तत्त्व त्रिकोण फलादेश (4 Elemental Directions)' +
+                    '</div>' +
+                    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.84rem; line-height:1.6; margin-top:6px;">' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पूर्व (अग्नि • धर्म):</b> ' + (eastP.length ? eastP.join(', ') : 'शांत') + ' — आत्म-तेज, प्रतिष्ठा व संस्कार।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>दक्षिण (पृथ्वी • अर्थ):</b> ' + (southP.length ? southP.join(', ') : 'शांत') + ' — वित्तीय स्थायित्व, अचल संपत्ति व भौतिक सिद्धि।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पश्चिम (वायु • काम):</b> ' + (westP.length ? westP.join(', ') : 'शांत') + ' — बौद्धिक अनुबंध, लोक-संपर्क व व्यापारिक साझेदारी।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>उत्तर (जल • मोक्ष):</b> ' + (northP.length ? northP.join(', ') : 'शांत') + ' — अंतर्ज्ञान, आध्यात्मिक शांति व पराविद्या।</div>' +
+                    '</div>' +
+                    '</div>';
+
+                // SECTION 6: Classical Sutras & Shastric Citation
+                html += bankHtml;
+                html += '<div class="sutra-quote">' +
+                    '<b>भृगु नन्दी नाड़ी मूल सिद्धांत (महर्षि भृगु उपदेश):</b><br>' +
+                    '<i>"जीवो गुरुः कर्म शनिः कलत्रं शुक्र उच्यते। त्रिकोणे संगता ये च तेषां योगः प्रवर्तते॥<br>' +
+                    'यत्र यत्र गतो जीवस्तत्तद्भावफलं वदेत्। शनिना संयुतो जीवो धर्मकर्मधुरंधरः॥"</i><br>' +
+                    '<b>भावार्थ:</b> देवगुरु बृहस्पति स्वयं जातक (जीव) हैं, शनि कर्म हैं तथा शुक्र कलत्र व धन हैं। 1-5-9 त्रिकोण अथवा 2-12 अक्ष में बैठे ग्रह जातक के जीवन-पथ की रूपरेखा निर्धारित करते हैं।' +
+                    '</div>';
+
+                phalitWrap.innerHTML = html;
             }
         }
 

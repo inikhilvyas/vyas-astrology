@@ -1533,6 +1533,147 @@
             'मिथुन': 'वायु', 'तुला': 'वायु', 'कुंभ': 'वायु',
             'कर्क': 'जल', 'वृश्चिक': 'जल', 'मीन': 'जल'
         },
+        SIGNS: ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"],
+
+        // Detailed Jeeva Karaka (Guru = Native) Analysis
+        analyzeJeevaKaraka: function (planetTable) {
+            var self = this;
+            var pMap = {};
+            (planetTable || []).forEach(function (p) {
+                var name = (p.p || p.planet || '').replace(/\s*\(.*\)/, '').trim();
+                var sign = p.r || p.sign || '';
+                pMap[name] = { sign: sign, deg: p.d || p.degree || '' };
+            });
+
+            var guru = pMap['गुरु'];
+            if (!guru || !guru.sign) return { title: "देवगुरु बृहस्पति (जीवकारक)", details: "जीवकारक गुरु देव संतुलित स्थिति में हैं।" };
+
+            var gSign = guru.sign;
+            var gElem = self.ELEMENTS[gSign] || 'अग्नि';
+            var gSignIdx = self.SIGNS.indexOf(gSign);
+
+            // Find planets in Same Sign (युति - Conjunction)
+            var conjPlanets = [];
+            var trinePlanets = [];
+            var secondPlanets = [];
+            var twelfthPlanets = [];
+            var seventhPlanets = [];
+
+            var sign2 = self.SIGNS[(gSignIdx + 1) % 12];
+            var sign12 = self.SIGNS[(gSignIdx + 11) % 12];
+            var sign7 = self.SIGNS[(gSignIdx + 6) % 12];
+
+            Object.keys(pMap).forEach(function (pName) {
+                if (pName === 'गुरु') return;
+                var pSign = pMap[pName].sign;
+                if (pSign === gSign) conjPlanets.push(pName);
+                else if (self.ELEMENTS[pSign] === gElem) trinePlanets.push(pName + ' (' + pSign + ')');
+                else if (pSign === sign2) secondPlanets.push(pName);
+                else if (pSign === sign12) twelfthPlanets.push(pName);
+                else if (pSign === sign7) seventhPlanets.push(pName);
+            });
+
+            var lines = [];
+            lines.push("• <b>जीवकारक स्थिति:</b> देवगुरु बृहस्पति <b>" + gSign + " राशि (" + gElem + " तत्त्व)</b> में स्थित हैं। BNN सिद्धांत अनुसार जातक का मूल स्वभाव, जीवन-उद्देश्य एवं चेतना " + gElem + " तत्त्व के गुणों से संचालित है।");
+
+            // Specific Conjunctions with Guru
+            if (conjPlanets.length > 0) {
+                conjPlanets.forEach(function (cp) {
+                    if (cp === 'सूर्य') lines.push("• <b>जीव-आत्मा राजयोग (गुरु + सूर्य युति):</b> जातक कुलीन, उच्च स्वाभिमानी, प्रशासनिक अथवा शासकीय संपर्कों से लाभान्वित तथा समाज में सम्मानित होगा। पिता का प्रभाव जीवन पर गहरा रहेगा।");
+                    else if (cp === 'चन्द्र') lines.push("• <b>जीव-मानस गौरव योग (गुरु + चन्द्र युति):</b> चंचल किंतु कल्पनाशील बुद्धि, कला-संस्कृति में रुचि, जल/तरल व्यापार से लाभ व दूरस्थ यात्राओं के अवसर। माता का आशीर्वाद संबल बनेगा।");
+                    else if (cp === 'मंगल') lines.push("• <b>जीव-शक्ति नाड़ी योग (गुरु + मंगल युति):</b> अदम्य पराक्रम, तकनीकी/भूमि/प्रशासनिक क्षमता, त्वरित निर्णय व स्वतंत्र नेतृत्व। क्रोध नियंत्रण से स्थायी कीर्ति मिलेगी।");
+                    else if (cp === 'बुध') lines.push("• <b>सरस्वती नाड़ी योग (गुरु + बुध युति):</b> असाधारण वाक्-चातुर्य, बहु-कौशल, वाणिज्यिक बुद्धि, लेखन, परामर्श, ज्योतिष व वित्तीय प्रबंधन में शीर्ष सफलता।");
+                    else if (cp === 'शुक्र') lines.push("• <b>भृगु-जीव महालक्ष्मी योग (गुरु + शुक्र युति):</b> ऐश्वर्यपूर्ण जीवनशैली, उत्तम वाहन, कलात्मक अभिरुचि, सद्गुणी जीवनसाथी एवं सहज धन आगमन का सर्वोच्च योग।");
+                    else if (cp === 'शनि') lines.push("• <b>धर्म-कर्माधिपति नाड़ी योग (गुरु + शनि युति):</b> कर्तव्यनिष्ठ, गंभीर व दार्शनिक स्वभाव, समाज में उच्च उत्तरदायित्व, दीर्घकालिक स्थिरता व वृद्धिशील प्रतिष्ठा।");
+                    else if (cp === 'राहु') lines.push("• <b>गुरु-राहु माया/विदेशी योग:</b> आधुनिक तकनीक, विदेशी भाषा/स्रोतों से भाग्योदय, लीक से हटकर सोचने की क्षमता एवं असाधारण महत्वाकांक्षा।");
+                    else if (cp === 'केतु') lines.push("• <b>जीव-मुक्ति नाड़ी योग (गुरु + केतु युति):</b> सूक्ष्म अंतर्ज्ञान, आध्यात्मिक साधना, पराविद्या, ज्योतिष व न्याय के प्रति गहरी निष्ठा। भौतिकता से परे आत्म-शांति।");
+                });
+            } else {
+                lines.push("• <b>विशुद्ध जीव स्थिति:</b> गुरु देव पर प्रत्यक्ष पापी युति का अभाव जातक को स्वतंत्र विचार, नैतिक निष्ठा एवं सात्विक बुद्धि प्रदान करता है।");
+            }
+
+            // Directional Trines (1-5-9)
+            if (trinePlanets.length > 0) {
+                lines.push("• <b>दिशा त्रिकोण (1-5-9) संरेखण:</b> गुरु के तत्त्व त्रिकोण में <b>" + trinePlanets.join(', ') + "</b> का संचरण जातक के पूर्वपुण्य एवं नैसर्गिक प्रतिभा को जागृत करता है।");
+            }
+
+            // 2nd & 12th Axis
+            if (secondPlanets.length > 0) {
+                lines.push("• <b>द्वितीय भाव (अग्रगामी दिशा • " + sign2 + "):</b> गुरु के सम्मुख <b>" + secondPlanets.join(', ') + "</b> की स्थिति जातक को उस दिशा में आगे बढ़ने तथा धन संचय में सहायक बनाती है।");
+            }
+            if (twelfthPlanets.length > 0) {
+                lines.push("• <b>द्वादश भाव (पृष्ठभूमि संस्कार • " + sign12 + "):</b> गुरु के पृष्ठ भाग में <b>" + twelfthPlanets.join(', ') + "</b> की स्थिति पूर्वजन्म के संचित प्रारब्ध एवं आकस्मिक व्यय को दर्शाती है।");
+            }
+
+            return {
+                sign: gSign,
+                element: gElem,
+                conj: conjPlanets,
+                trines: trinePlanets,
+                narrative: lines.join('<br>')
+            };
+        },
+
+        // 12-Year Jupiter Age Progression Cycles
+        calculateNadiCycles: function (dobString, targetYear) {
+            var birthYear = 1990;
+            if (dobString) {
+                var y = parseInt(String(dobString).split('-')[0]);
+                if (!isNaN(y)) birthYear = y;
+            }
+            targetYear = parseInt(targetYear) || new Date().getFullYear();
+            var currentAge = Math.max(1, targetYear - birthYear);
+
+            var cycles = [
+                {
+                    cycle: 1,
+                    ageRange: "आयु १ से १२ वर्ष (प्रथम गुरु चक्र)",
+                    theme: "बाल्यकाल, शारीरिक स्वास्थ्य, प्राथमिक विद्या व पारिवारिक संस्कार",
+                    desc: "प्रथम गुरु भ्रमण जातक के शारीरिक स्वास्थ्य, माता-पिता के संरक्षण, प्राथमिक शिक्षा एवं पारिवारिक परिवेश का निर्माण करता है।"
+                },
+                {
+                    cycle: 2,
+                    ageRange: "आयु १३ से २४ वर्ष (द्वितीय गुरु चक्र)",
+                    theme: "किशोरावस्था, उच्च विद्या, प्रथम कर्म-दिशा व युवा संघर्ष",
+                    desc: "द्वितीय गुरु भ्रमण में जातक उच्च शिक्षा प्राप्त करता है, करियर की प्रथम दिशा चुनता है और व्यक्तिगत स्वावलंबन का अनुभव करता है।"
+                },
+                {
+                    cycle: 3,
+                    ageRange: "आयु २५ से ३६ वर्ष (तृतीय गुरु चक्र)",
+                    theme: "आजीविका की स्थापना, विवाह संस्कार, प्रथम संतान व गृह निर्माण",
+                    desc: "तृतीय चक्र में आजीविका स्थायी रूप लेती है। विवाह संस्कार, दांपत्य जीवन का आरंभ, संतान उत्पत्ति एवं प्रथम अचल संपत्ति का सृजन होता है।"
+                },
+                {
+                    cycle: 4,
+                    ageRange: "आयु ३७ से ४८ वर्ष (चतुर्थ गुरु चक्र)",
+                    theme: "कार्यक्षेत्र में नेतृत्व, सामाजिक प्रतिष्ठा, अधिकार-वृद्धि व वित्तीय विस्तार",
+                    desc: "चतुर्थ चक्र जीवन का सर्वोच्च उत्पादक काल है। पदोन्नति, प्रशासनिक दायित्व, सामाजिक प्रभाव में वृद्धि व आर्थिक संचय का चरमोत्कर्ष।"
+                },
+                {
+                    cycle: 5,
+                    ageRange: "आयु ४९ से ६० वर्ष (पंचम गुरु चक्र)",
+                    theme: "वरिष्ठ नेतृत्व, संचित कोष, प्रतिष्ठा का संरक्षण व संतानों का दायित्व",
+                    desc: "पंचम चक्र में जातक परामर्शदाता, नीति-निर्माता की भूमिका निभाता है। संतानों के विवाह व उच्च शिक्षा के दायित्व पूर्ण होते हैं।"
+                },
+                {
+                    cycle: 6,
+                    ageRange: "आयु ६१ से ७२ वर्ष (षष्ठ गुरु चक्र)",
+                    theme: "आत्म-बोध, आध्यात्मिक संन्यास, ज्ञान दान व मोक्ष साधना",
+                    desc: "षष्ठ चक्र में जातक का ध्यान सांसारिक दायित्वों से परे आत्म-चिंतन, धर्म, तीर्थ यात्रा, ज्ञान दान एवं शाश्वत शांति की ओर अग्रसर होता है।"
+                }
+            ];
+
+            var activeCycleIdx = Math.min(5, Math.floor((currentAge - 1) / 12));
+            var activeCycle = cycles[activeCycleIdx];
+
+            return {
+                currentAge: currentAge,
+                activeCycleIdx: activeCycleIdx + 1,
+                activeCycle: activeCycle,
+                allCycles: cycles
+            };
+        },
+
         predict: function (planetTableOrChart, domain) {
             domain = domain || 'general';
             var self = this;
@@ -1553,12 +1694,15 @@
                 return el1 && el2 && el1 === el2;
             }
 
-            // BNN Jeeva-Karma Alignment (Only in general/life purpose to avoid duplication)
+            // BNN Jeeva-Karma Alignment
             if (domain === 'general') {
                 if (inTrine(guru, shani)) {
                     lines.push("• <b>धर्म-कर्म नाड़ी योग (जीवकारक गुरु + कर्मकारक शनि त्रिकोण 1-5-9):</b> जातक कर्तव्यनिष्ठ, समाज में उच्च उत्तरदायित्व वाला एवं स्थायी कार्यक्षेत्र में अचल प्रतिष्ठा प्राप्त करने वाला होगा।");
                 } else if (guru && shani) {
                     lines.push("• <b>नाड़ी कर्म रेखा:</b> कर्मकारक शनि देव (" + shani.sign + ") व जीवकारक गुरु देव (" + guru.sign + ") का संरेखण जातक को कार्यक्षेत्र में स्वतंत्र निर्णय लेने की क्षमता प्रदान करता है।");
+                }
+                if (inTrine(guru, sun)) {
+                    lines.push("• <b>आत्म-गौरव नाड़ी योग (गुरु + सूर्य त्रिकोण):</b> प्रशासनिक संपर्कों से लाभ, उच्च कुल संस्कार व राजकीय मान-सम्मान की प्राप्ति।");
                 }
             }
 
@@ -1573,6 +1717,9 @@
                 }
                 if (inTrine(shani, rahu)) {
                     lines.push("• <b>नाड़ी तकनीकी/विदेशी योग (शनि + राहु):</b> आधुनिक तकनीक, आईटी, डिजिटल व्यापार अथवा विदेशी स्रोतों से आकस्मिक भाग्योदय का संकेत।");
+                }
+                if (inTrine(shani, mangal)) {
+                    lines.push("• <b>उद्योग-भूमि योग (शनि + मंगल त्रिकोण):</b> तकनीकी, निर्माण, रियल एस्टेट अथवा मशीनरी प्रबंधन में विशेष सफलता के योग।");
                 }
             }
 

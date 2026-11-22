@@ -750,15 +750,64 @@
                     dBadge.style.color = dRes.kakshyaBindu === 1 ? "var(--emerald)" : "var(--ruby)";
                 }
                 if (dWrap) {
-                    dWrap.innerHTML = '<div style="margin-bottom:8px;">' +
-                        '• <b>सक्रिय विंशोत्तरी दशा सम्बंध:</b> महादशाधिपति <b>' + dRes.mdPlanet + '</b> एवं अन्तर्दशाधिपति <b>' + dRes.adPlanet + '</b> (' + dRes.targetSign + ' राशि)' +
+                    // Define the 8 classical Kakshyas (3°45' each) in exact order
+                    var kakshyaMeta = [
+                        { lord: "शनि", range: "0° 00' - 3° 45'", domain: "कर्म, अनुशासन, धीरज, वैराग्य व दीर्घकालिक दायित्व", shubha: "कार्यक्षेत्र में स्थायित्व, अचल संपत्ति का लाभ, संगठन में वरिष्ठता व गंभीर योजनाओं की सिद्धि।", ashubha: "अनावश्यक विलम्ब, कार्यभार की अधिकता, वरिष्ठों से मतभेद व मानसिक तनाव।" },
+                        { lord: "गुरु", range: "3° 45' - 7° 30'", domain: "ज्ञान, विवेक, धन संचय, संतान, सम्मान व विस्तार", shubha: "आकस्मिक धन लाभ, संतान सुख, राजकीय सम्मान, गुरु कृपा व आध्यात्मिक उन्नति।", ashubha: "धन व्यय में असंतुलन, सलाहकारों से भ्रांति व धार्मिक कार्यों में अवरोध।" },
+                        { lord: "मंगल", range: "7° 30' - 11° 15'", domain: "शौर्य, पराक्रम, भूमि, भवन, त्वरित निर्णय व बंधु", shubha: "भूमि क्रय-विक्रय से लाभ, साहसिक निर्णयों में विजय, तकनीकी कार्यों में सफलता व प्रतिष्ठा।", ashubha: "क्रोध, विवाद, रक्तचाप विकार अथवा भाइयों से मतभेद से बचने का समय।" },
+                        { lord: "सूर्य", range: "11° 15' - 15° 00'", domain: "आत्मबल, राज्यकृपा, प्रशासनिक प्रभाव व पिता", shubha: "उच्चाधिकारियों से सहयोग, सरकारी कार्य सिद्धि, समाज में नेतृत्व व आत्म-तेज में वृद्धि।", ashubha: "अहंकार टकराव, सरकारी कार्यों में रुकावट व नेत्र/पित्त विकार की संभावना।" },
+                        { lord: "शुक्र", range: "15° 00' - 18° 45'", domain: "वाहन, कलत्र, भौतिक वैभव, कला व विलासिता", shubha: "दांपत्य सुख, नवीन वाहन/वस्त्र क्रय, कलात्मक ख्याति, स्त्री वर्ग से सहयोग व वित्तीय प्रचुरता।", ashubha: "विलासिता पर अत्यधिक व्यय, दांपत्य में गलतफहमियां व वित्तीय लापरवाही से बचें।" },
+                        { lord: "बुध", range: "18° 45' - 22° 30'", domain: "व्यापार, मेधा, संचार, अनुबंध व बंधु-सुख", shubha: "व्यापारिक अनुबंधों में सफलता, तार्किक विवेक, नवीन बौद्धिक साझेदारी व संचार से लाभ।", ashubha: "कागजी कार्यवाही में त्रुटि, संचार अंतराल व अनियोजित यात्राओं से थकान।" },
+                        { lord: "चन्द्र", range: "22° 30' - 26° 15'", domain: "मानसिक शांति, द्रव्य, जन-समर्थन व यात्रा", shubha: "चित्त की प्रसन्नता, जन-संपर्क का विस्तार, माता का आशीर्वाद व तरल धन का सुगम आगमन।", ashubha: "मानसिक अशांति, अनिद्रा, निर्णय में असमंजस व कफ विकारों से सतर्कता।" },
+                        { lord: "लग्न", range: "26° 15' - 30° 00'", domain: "शारीरिक आरोग्य, यश, प्रतिष्ठा व आत्म-उदय", shubha: "आरोग्य लाभ, समाज में नवीन पहचान, संकल्प सिद्धि व सर्वांगीण भाग्योदय।", ashubha: "शारीरिक आलस्य, स्वास्थ्य में शिथिलता व आत्मविश्वास की कमी का अनुभव।" }
+                    ];
+
+                    var kHtml = '<div style="margin-bottom:12px;">' +
+                        '<div style="font-size:0.95rem; font-weight:700; color:var(--gold); margin-bottom:4px;">✦ सक्रिय विंशोत्तरी दशा व प्रस्ताराष्टकवर्ग वेध:</div>' +
+                        'महादशाधिपति <b>' + dRes.mdPlanet + '</b> एवं अन्तर्दशाधिपति <b>' + dRes.adPlanet + '</b> (' + dRes.targetSign + ' राशि) • निर्णय: <span style="font-weight:800; color:' + (dRes.kakshyaBindu === 1 ? 'var(--emerald)' : 'var(--ruby)') + ';">' + dRes.verdict + '</span> (भिन्नाष्टकवर्ग अंक: ' + dRes.bavPoints + '/8)' +
                         '</div>' +
-                        '<div style="margin-bottom:8px;">' +
-                        '• <b>प्रस्ताराष्टकवर्ग निर्णय:</b> <span style="font-weight:700; color:' + (dRes.kakshyaBindu === 1 ? 'var(--emerald)' : 'var(--ruby)') + ';">' + dRes.verdict + '</span> (भिन्नाष्टकवर्ग अंक: ' + dRes.bavPoints + '/8)' +
-                        '</div>' +
-                        '<div style="background:rgba(212,175,55,0.06); border-left:3px solid ' + (dRes.kakshyaBindu === 1 ? 'var(--emerald)' : 'var(--gold)') + '; padding:10px 14px; border-radius:4px; font-size:0.84rem; line-height:1.6;">' +
+                        '<div style="background:rgba(212,175,55,0.06); border-left:4px solid ' + (dRes.kakshyaBindu === 1 ? 'var(--emerald)' : 'var(--gold)') + '; padding:12px 14px; border-radius:6px; font-size:0.86rem; line-height:1.7; margin-bottom:14px;">' +
                         dRes.detail +
                         '</div>';
+
+                    // Detailed 8-Kakshya Breakdown Table
+                    kHtml += '<div style="margin-top:14px;">' +
+                        '<div style="font-size:0.95rem; font-weight:800; color:var(--emerald); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">' +
+                        '<span>✦ प्रस्ताराष्टकवर्ग ८ कक्षा विभाजन एवं सूक्ष्म फलादेश (' + dRes.targetSign + ' राशि):</span>' +
+                        '<span style="font-size:0.75rem; color:var(--text-muted);">१ कक्षा = ३° ४५\' (कुल ८ कक्षाएं = ३०°)</span>' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:8px;">';
+
+                    kakshyaMeta.forEach(function (km, kidx) {
+                        // Determine if kakshya has 1 bindu or 0 bindu based on BAV score
+                        var hasPt = (kidx < dRes.bavPoints);
+                        var badge = hasPt
+                            ? '<span style="background:rgba(16,185,129,0.2); color:var(--emerald); font-weight:800; padding:2px 8px; border-radius:10px; font-size:0.75rem;">१ शुभ बिन्दु (रेखा)</span>'
+                            : '<span style="background:rgba(239,68,68,0.2); color:var(--ruby); font-weight:800; padding:2px 8px; border-radius:10px; font-size:0.75rem;">० बिन्दु (रिक्ता)</span>';
+                        var borderCls = hasPt ? 'border-left:3px solid var(--emerald); background:rgba(16,185,129,0.04);' : 'border-left:3px solid var(--ruby); background:rgba(239,68,68,0.04);';
+
+                        kHtml += '<div style="' + borderCls + ' padding:10px 12px; border-radius:6px; border-top:1px solid rgba(255,255,255,0.04); border-right:1px solid rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.04);">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">' +
+                            '<b>कक्षा ' + (kidx + 1) + ': ' + km.lord + ' कक्षा (' + km.range + ')</b>' +
+                            badge +
+                            '</div>' +
+                            '<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:3px;"><b>कारक विषय:</b> ' + km.domain + '</div>' +
+                            '<div style="font-size:0.84rem; line-height:1.6; color:var(--text-secondary);">' +
+                            (hasPt ? ('• <b>शुभ फल:</b> ' + km.shubha) : ('• <b>सावधानी:</b> ' + km.ashubha)) +
+                            '</div>' +
+                            '</div>';
+                    });
+
+                    kHtml += '</div></div>';
+
+                    // Classical Prastara Shloka & Timing Rules
+                    kHtml += '<div class="sutra-quote" style="margin-top:14px;">' +
+                        '<b>महर्षि पराशर प्रस्ताराष्टकवर्ग गुप्त सूत्र (BPHS):</b><br>' +
+                        '<i>"कक्षायां यत्र बिन्दुः स्यात्तत्र गच्छति खेचरे। शुभं ददाति तत्काले शून्यकक्षा विपत्करा॥"</i><br>' +
+                        '<b>भावार्थ:</b> जब भी गोचरस्थ ग्रह उस ३°४५\' की कक्षा में संचरण करता है जहाँ १ शुभ बिन्दु प्राप्त हो, वह कालखंड अभीष्ट सिद्धि व सुख प्रदान करता है; शून्य कक्षा में ग्रह के भ्रमण के समय संयम व सात्विक आचरण रखना श्रेयस्कर होता है।' +
+                        '</div>';
+
+                    dWrap.innerHTML = kHtml;
                 }
             }
 

@@ -519,7 +519,7 @@
          * 5. TAJIKA VARSHPHAL CHART (Solar Return Chart + Muntha Badge)
          * Solar return chart with Muntha badge [🚩 मुंथा] and Varshesha badge.
          */
-        renderVarshphalChart: function(housesData, munthaSignNum, varsheshaPlanet, varshAge, size, isLight) {
+        renderVarshphalChart: function(housesData, munthaSignNum, varsheshaPlanet, varshAge, size, isLight, customLagnaSignNum) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;
@@ -567,10 +567,21 @@
             };
 
             // Varsha Lagna Sign
-            var lagnaSignNum = customLagnaSignNum || (housesData && housesData.lagna_sign_num) || 1;
-            if (!customLagnaSignNum && housesData && housesData[1]) {
+            var lagnaSignNum = 1;
+            if (typeof customLagnaSignNum !== 'undefined' && customLagnaSignNum) {
+                lagnaSignNum = parseInt(customLagnaSignNum) || 1;
+            } else if (housesData && housesData.lagna_sign_num) {
+                lagnaSignNum = parseInt(housesData.lagna_sign_num) || 1;
+            } else if (housesData && housesData[1]) {
                 var d1Val = housesData[1][0];
-                lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? (d1Val.sign || d1Val.s) : d1Val) || 1;
+                if (typeof d1Val === 'object' && d1Val !== null) {
+                    lagnaSignNum = parseInt(d1Val.sign || d1Val.s) || 1;
+                } else if (typeof d1Val === 'number') {
+                    lagnaSignNum = d1Val;
+                } else if (typeof d1Val === 'string') {
+                    var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
+                    lagnaSignNum = sMap[d1Val] || parseInt(d1Val) || 1;
+                }
             }
 
             var munthaSign = parseInt(munthaSignNum) || 1;
