@@ -369,11 +369,28 @@
             var bar = document.getElementById('activeProfileBar');
             if (bar) {
                 bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
-                    '<div><span style="color:#ef4444; font-weight:700;">⚠️ कोई जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.8rem; color:#94a3b8;">' + 'वर्षफल' + ' विश्लेषण देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा वॉल्ट से लोड करें।</span></div>' +
+                    '<div><span style="color:#fbbf24; font-weight:800;">⚠️ कोई सक्रिय जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.82rem; color:#94a3b8;">ताजिक वर्षफल, मुंथा एवं वर्षेश चक्र देखने हेतु कृपया जन्म कुण्डली चुनें अथवा वॉल्ट से लोड करें।</span></div>' +
                     '<div style="display:flex; gap:8px;">' +
-                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none;">+ नई कुण्डली बनाएं</a>' +
-                    '<a href="/saved-kundli/" class="action-btn" style="text-decoration:none;">📂 वॉल्ट से लोड करें</a>' +
+                    '<a href="/#kundli-calc" class="action-btn" style="text-decoration:none; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; font-weight:700; padding:8px 14px; border-radius:6px;">+ नई कुण्डली बनाएं</a>' +
+                    '<a href="/saved-kundli/" class="action-btn" style="text-decoration:none; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fde68a; font-weight:700; padding:8px 14px; border-radius:6px;">📂 वॉल्ट से लोड करें</a>' +
                     '</div></div>';
+            }
+            var cWrap = document.getElementById('varshChartWrap');
+            if (cWrap) {
+                cWrap.innerHTML = '<div style="text-align:center; padding:50px 20px; color:var(--text-secondary);">' +
+                    '<div style="width:60px; height:60px; margin:0 auto 16px; border-radius:50%; background:rgba(245,158,11,0.12); border:1px solid #f59e0b; display:flex; align-items:center; justify-content:center;">' +
+                    '<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="12 2 22 12 12 22 2 12"/></svg>' +
+                    '</div>' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#fbbf24; margin-bottom:8px;">वर्ष प्रवेश चक्र (Solar Return Chart) प्रतीक्षारत</div>' +
+                    '<div style="font-size:0.86rem; color:var(--text-muted); max-width:340px; margin:0 auto 16px; line-height:1.6;">कुण्डली लोड होने के उपरांत इस वर्ष का सटीक वर्ष प्रवेश चक्र, मुंथा स्थिति एवं वर्षेश यहाँ प्रदर्शित होंगे।</div>' +
+                    '<a href="/saved-kundli/" style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:rgba(245,158,11,0.18); border:1px solid #f59e0b; border-radius:8px; color:#fde68a; font-size:0.85rem; font-weight:700; text-decoration:none;">📂 वॉल्ट से जातक चुनें</a>' +
+                    '</div>';
+            }
+            var pWrap = document.getElementById('varshPhalitWrap');
+            if (pWrap) {
+                pWrap.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted); font-size:0.9rem; line-height:1.7;">' +
+                    '✦ कृपया ऊपर दिए गए विकल्प से कुण्डली चुनें। कुण्डली लोड होते ही <b>मुंथा फल, वर्षेश पंचवर्गीय बल, ताजिक सहम एवं १२-मासिक सौर वर्षफल घटनाक्रम</b> स्वतः सक्रिय हो जाएगा।' +
+                    '</div>';
             }
         }
 
