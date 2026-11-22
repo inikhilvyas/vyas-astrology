@@ -544,6 +544,22 @@
                     var deityName = D60_DEITIES[d60_deity_idx] + " (#" + (d60_deity_idx + 1) + ")";
                     addV("D60", 60, d60_sign, (deg * 60.0) % 30.0, deityName);
 
+                    // D150 Nadiamsha (12' arc = 0.2° per division, 150 divisions per sign)
+                    var d150_part = Math.min(149, Math.floor(deg / 0.2));
+                    var nadiIdx = d150_part;
+                    if (pSign % 3 === 0) { // Chara (Movable: Aries, Cancer, Libra, Cap)
+                        nadiIdx = d150_part;
+                    } else if (pSign % 3 === 1) { // Sthira (Fixed: Taurus, Leo, Scorpio, Aqu)
+                        nadiIdx = 149 - d150_part;
+                    } else { // Dvisvabhava (Dual: Gemini, Virgo, Sag, Pisces)
+                        nadiIdx = (75 + d150_part) % 150;
+                    }
+                    var bhaga = (deg % 0.2 < 0.1) ? "पूर्व भाग" : "उत्तर भाग";
+                    var nadiName = "नाड्यांश #" + (nadiIdx + 1) + " (" + bhaga + ")";
+                    var d150_sign = (pSign + d150_part) % 12;
+                    addV("D150", 150, d150_sign, (deg * 150.0) % 30.0, nadiName);
+
+
                     return v;
                 }
 
@@ -570,13 +586,14 @@
                     D30: "D-30 त्रिंशांश चक्र (अरिष्ट, व्याधि व प्रारब्ध कष्ट)",
                     D40: "D-40 खवेदांश चक्र (शुभ-अशुभ फल व कुल प्रारब्ध)",
                     D45: "D-45 अक्षवेदांश चक्र (चारित्रिक शुचिता व सूक्ष्म चेतना)",
-                    D60: "D-60 षष्ट्यंश चक्र (पूर्व जन्म प्रारब्ध व सम्पूर्ण फल निर्णय)"
+                    D60: "D-60 षष्ट्यंश चक्र (पूर्व जन्म प्रारब्ध व सम्पूर्ण फल निर्णय)",
+                    D150: "D-150 नाड्यांश चक्र (सूक्ष्म प्रारब्ध, १२' कला अंश व जीवन-रहस्य)"
                 };
 
                 var builtCharts = {};
                 var shodashaData = {};
 
-                var vKeys = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60"];
+                var vKeys = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60", "D150"];
                 for (var vkIdx = 0; vkIdx < vKeys.length; vkIdx++) {
                     var vk = vKeys[vkIdx];
                     var ascV = ascVargas[vk];
