@@ -7174,15 +7174,82 @@
         '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(15,23,42,0.92)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:18px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">' +
         '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
         '<div>' +
-        '<span style="font-size:0.75rem; color:#F6E05E; font-weight:800; letter-spacing:1px; text-transform:uppercase;">✦ आचार्य व्यास (v10.0) महा-निबंध • प्रत्यक्ष फलित निर्णय</span>' +
+        '<span style="font-size:0.75rem; color:#F6E05E; font-weight:800; letter-spacing:1px; text-transform:uppercase;">✦ आचार्य व्यास (v12.0) महा-निबंध • गुरुकुल दैवज्ञ तर्क एवं प्रत्यक्ष फलित निर्णय</span>' +
         '<h3 style="margin:4px 0 0 0; color:#FFF3BF; font-size:1.25rem; font-family:var(--font-serif); font-weight:700;">' + name + ' की जीवन-संहिता एवं सटीक घटनाक्रम</h3>' +
         '</div>' +
+        '<div style="display:flex; gap:6px; align-items:center;">' +
         '<span style="background:rgba(16,185,129,0.18); color:#34D399; border:1px solid #10B981; border-radius:20px; padding:3px 12px; font-size:0.75rem; font-weight:700;">प्रामाणिक षट्-पद्धतीय वेध</span>' +
-        '</div>' +
+        '<span style="background:rgba(96,165,250,0.18); color:#60a5fa; border:1px solid #3b82f6; border-radius:20px; padding:3px 10px; font-size:0.72rem; font-weight:700;">v12.0 गुरुकुल दैवज्ञ</span>' +
+        '</div></div>' +
         '<div style="font-size:0.82rem; color:#94A3B8; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">' +
         'लग्न: <b style="color:#F1DE87;">' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • सक्रिय दशा: <b style="color:#60A5FA;">' + dasha + '</b>' +
         '</div>' +
         '</div>';
+
+    // SPECIAL CHAPTER 0A: Classified Astro-Data Bank (v12.0 Protocol Phase 1)
+    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
+        '<h4 style="color:#F6E05E; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+        '📊 कुण्डली का वर्गीकृत डेटाबेस (Classified Astro-Data Bank — v12.0)' +
+        '</h4>' +
+        '<span style="font-size:0.72rem; color:#94A3B8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px;">नासा JPL 0.001″ सूक्ष्म गणित</span>' +
+        '</div>' +
+        '<div style="overflow-x:auto;">' +
+        '<table style="width:100%; font-size:0.78rem; border-collapse:collapse; color:#cbd5e1; min-width:480px;">' +
+        '<tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-weight:700; text-align:left;">' +
+        '<th style="padding:5px 8px;">ग्रह</th><th style="padding:5px 8px;">भाव व राशि</th><th style="padding:5px 8px;">अंश (Degree)</th><th style="padding:5px 8px;">नक्षत्र (चरण)</th><th style="padding:5px 8px;">अवस्था</th><th style="padding:5px 8px;">SAV अंक</th>' +
+        '</tr>';
+
+    var keyPlanetsList = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'राहु', 'केतु'];
+    for (var kpi = 0; kpi < keyPlanetsList.length; kpi++) {
+        var pkName = keyPlanetsList[kpi];
+        var pData = pMap[pkName];
+        if (!pData) continue;
+        var pH = pData.house || 1;
+        var pSavScore = sav[pH] || 28;
+        essay += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
+            '<td style="padding:4px 8px; font-weight:700; color:#f8fafc;">' + pkName + '</td>' +
+            '<td style="padding:4px 8px;">भाव ' + pH + ' (' + (pData.sign || '-') + ')</td>' +
+            '<td style="padding:4px 8px; font-family:monospace; color:#cbd5e1;">' + (pData.degree || '-') + '</td>' +
+            '<td style="padding:4px 8px; color:#e2e8f0;">' + (pData.nakshatra || '-') + '</td>' +
+            '<td style="padding:4px 8px;"><span style="background:rgba(212,175,55,0.12); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.70rem;">' + (pData.dignity || 'सम') + '</span></td>' +
+            '<td style="padding:4px 8px; font-weight:700; color:' + (pSavScore >= 28 ? '#4ade80' : '#f87171') + ';">' + pSavScore + ' बिंदु</td>' +
+            '</tr>';
+    }
+    essay += '</table></div>' +
+        '<div style="font-size:0.75rem; color:#64748b; margin-top:8px;">' +
+        '✦ सर्वाष्टकवर्ग: कुल <b>३३७ बिंदु</b> • चर कारक: AK (<b>' + jDyn.ak + '</b>), AmK (<b>' + jDyn.amk + '</b>) • २२वां द्रेष्काण स्वामी: <b>' + khara.drekkana_22_lord + '</b>' +
+        '</div></div>';
+
+    // SPECIAL CHAPTER 0B: Gurukul Pedagogical Tarka & Varga Calculus
+    essay += '<div style="background:rgba(30,41,59,0.55); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
+        '<h4 style="color:#F1DE87; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+        '📜 गुरुकुल तर्क एवं बहु-वर्गीय परीक्षण (Gurukul Tarka & Varga Calculus)' +
+        '</h4>' +
+        '<span style="font-size:0.72rem; color:#fde047; background:rgba(212,175,55,0.15); padding:2px 8px; border-radius:4px;">पोर्टफोलियो प्रधानता एवं कर्म-मूल</span>' +
+        '</div>' +
+        '<div style="font-size:0.83rem; color:#94A3B8; margin-bottom:10px; line-height:1.6; font-style:italic;">' +
+        '"लग्न संभावित प्रतिज्ञा (Promise) दर्शाता है, भाव चलित स्थूल स्थिति स्पष्ट करता है, नवमांश (D-9) व दशमांश (D-10) फल की गुणवत्ता तय करते हैं, और षष्ट्यंश (D-60) संचित प्रारब्ध की सीमा तय करता है।"' +
+        '</div>' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">' +
+        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #60a5fa;">' +
+        '<b style="color:#60a5fa; font-size:0.82rem;">१. प्रतिज्ञा (The Promise - D-1/चलित):</b>' +
+        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">लग्न भाव व भावेश स्थूल संसार में अवसर व शारीरिक सामर्थ्य की नीव रखते हैं।</p>' +
+        '</div>' +
+        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #34d399;">' +
+        '<b style="color:#34d399; font-size:0.82rem;">२. फल व पोर्टफोलियो प्रधानता (D-9/D-10):</b>' +
+        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">D-1 का उच्च ग्रह यदि वर्ग (D-10) में कमजोर हो, तो फल सीमित रहेगा। दोनों वर्गों का संरेखण अनिवार्य है।</p>' +
+        '</div>' +
+        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #f87171;">' +
+        '<b style="color:#f87171; font-size:0.82rem;">३. कर्म-मूल (D-60 & Negative Root):</b>' +
+        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">षष्ट्यंश के देव/राक्षस स्वभाव अनुसार प्रारब्ध की सीमा तय होती है। D-1 से ६/८/१२वें स्थान पर स्थित ग्रह संघर्ष देते हैं।</p>' +
+        '</div>' +
+        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #fbbf24;">' +
+        '<b style="color:#fbbf24; font-size:0.82rem;">४. कृष्णमूर्ति कस्पल सब-लॉर्ड (KP CSL):</b>' +
+        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">४-चरणीय उप-स्वामी संबंधित भाव के फल को हरी झंडी प्रदान करता है, जिससे घटना का समय अकाट्य बनता है।</p>' +
+        '</div>' +
+        '</div></div>';
 
     // SPECIAL CHAPTER: Goodh Diagnostics Matrix
     if (diag) {
@@ -7333,19 +7400,32 @@
         '</div>' +
         '</div>';
 
-    // CHAPTER 7: Remedial Shield
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px;">' +
-        'अध्याय ७: सर्व-दोष निवारण सात्विक महायंत्र (Omni-Remedial Matrix)' +
+    // CHAPTER 7: Remedial Shield (Vardhana vs Shaman Matrix)
+    essay += '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.06), rgba(15,23,42,0.92)); border:1.5px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px;">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
+        '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif);">' +
+        'अध्याय ७: सर्व-दोष निवारण सात्विक महायंत्र (Omni-Remedial Matrix — Vardhana vs. Shaman)' +
         '</h4>' +
-        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">' +
-        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-        '<b style="color:#F1DE87;">१. व्यावहारिक व काल संरेखण:</b><br>' +
-        'प्रातः सूर्योदय से पूर्व जागरण, नित्य तांबे के लोटे से सूर्य को जल अर्पण तथा अपनी महत्वपूर्ण योजनाएं दूसरों से गुप्त रखने का नियम।' +
+        '<span style="background:rgba(212,175,55,0.15); color:#FDE047; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">ऊर्जा वर्धन बनाम ऊर्जा शमन</span>' +
         '</div>' +
-        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-        '<b style="color:#60A5FA;">२. सात्विक मंत्र व चेतना संपुटीकरण:</b><br>' +
-        'दैनिक संध्या समय <b>\'ॐ नमः शिवाय\'</b> अथवा इष्ट देव का १०८ बार मानसिक जप। किसी भी तामसिक या भयभीत करने वाले अनुष्ठान से दूर रहें।' +
+        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
+        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:12px 14px;">' +
+        '<b style="color:#34D399; font-size:0.90rem;">🌟 १. ऊर्जा वर्धन (Vardhana — Amplification):</b><br>' +
+        '<span style="font-size:0.78rem; color:#94A3B8;">लग्नेश, भाग्येश एवं योगकारक शक्तियों का संवर्धन:</span>' +
+        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
+        '<li>प्रातः सूर्योदय पूर्व जागरण, तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम-युक्त अर्घ्य तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ।</li>' +
+        '<li>लग्नेश <b>' + lagnaLord + '</b> देव के बीज मंत्र का नित्य शांत मन से १०८ बार जप कर आत्मबल सुदृढ़ करें।</li>' +
+        '<li>ईशान कोण (उत्तर-पूर्व) को सदा स्वच्छ व प्रकाशवान रखें, यह जीवन में सात्विक ऊर्जा का विस्तार करता है।</li>' +
+        '</ul>' +
+        '</div>' +
+        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(248,113,113,0.3); border-radius:8px; padding:12px 14px;">' +
+        '<b style="color:#F87171; font-size:0.90rem;">🛡️ २. ऊर्जा शमन (Shaman — Pacification):</b><br>' +
+        '<span style="font-size:0.78rem; color:#94A3B8;">त्रिक भाव (६/८/१२), खरेश व राहु-केतु जनित विघ्नों का शांतिकरण:</span>' +
+        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
+        '<li>पक्षियों को नित्य प्रातः सात प्रकार का अनाज (सतनाजा) व जल डालें। यह राहु-केतु के आकस्मिक आघातों को शांत करता है।</li>' +
+        '<li>शनिवार की संध्या असहाय अथवा वृद्ध जनों को तिल/भोजन का दान करें तथा काले कुत्ते या कौवे को रोटी दें।</li>' +
+        '<li>२२वें द्रेष्काण स्वामी (<b>' + khara.drekkana_22_lord + '</b>) के अनिष्ट वेग से रक्षा हेतु नित्य ११ बार <i>महामृत्युंजय मंत्र</i> का जप करें।</li>' +
+        '</ul>' +
         '</div>' +
         '</div>' +
         '</div>';
@@ -8988,26 +9068,25 @@
                         "5. केवल और केवल जातक की कुण्डली के दिए गए वास्तविक 'दृष्टि चक्र' में उल्लिखित दृष्टियों के आधार पर ही फलकथन करें। किसी अन्य कुण्डली या पूर्व डेटा को कदापि न जोड़ें।",
                         "═════════════════════════════════════════════════════════════════",
                         "",
-                        "दैवज्ञ दृष्टि एवं फलकथन मर्यादा (Astrological Reasoning Directives):",
-                        "1. केवल यांत्रिक रूप से अलग-अलग ग्रहों के फल न गिनाएं, अपितु एक सिद्ध ज्योतिषी की भांति कुण्डली का संश्लिष्ट दर्शन करें:",
-                        "   (क) लग्न एवं लग्नेश का बल, आत्मबल एवं शारीरिक सामर्थ्य।",
-                        "   (ख) चन्द्रमा (मन व भावना) एवं सूर्य (आत्मकारक व प्रतिष्ठा)।",
-                        "   (ग) सक्रिय विंशोत्तरी दशा-अन्तर्दशा का स्वामित्व, शुभाशुभत्व एवं फल पकने की घड़ी।",
-                        "   (घ) गोचर मिलान (The Trigger): देवगुरु बृहस्पति एवं शनि का गोचर तथा दोहरा दृष्टि-वेध (Double Transit 2026-2027)।",
-                        "   (ङ) बहु-पद्धतीय शास्त्रीय प्रमाणन: पराशरी + कृष्णमूर्ति (KP CSL) + जैमिनी (AK/AmK) + भृगु नंदी नाड़ी।",
+                        "🏛️ आचार्य व्यास (v12.0) गुरुकुल दैवज्ञ तर्क एवं अनिवार्य फलकथन मर्यादा:",
+                        "1. बहु-वर्गीय परीक्षण एवं पोर्टफोलियो प्रधानता नियम (Portfolio Primacy Rule):",
+                        "   - लग्न (D-1) का उच्च या बली ग्रह केवल तभी स्थायी फल देगा जब वह संबंधित वर्ग (D-9/D-10) में भी बली हो।",
+                        "   - यदि दशमेश D-1 में उच्च हो पर दशमांश (D-10) में नीच/त्रिक हो तो फल विलंबित व कड़े संघर्ष के बाद ही मिलेगा।",
+                        "   - नेगेटिव रूट टेस्ट (Negative Root Test): ग्रह यदि लग्न से उच्च वर्गों में ६/८/१२वें स्थान पर हो तो वह संचित प्रारब्ध का आंतरिक संघर्ष देता है।",
                         "",
-                        "2. अनिवार्य मनोवैज्ञानिक व व्यावहारिक आदत विश्लेषण (Vedic Cognitive & Behavioral Diagnosis):",
-                        "   जातक के ग्रहों (विशेषकर चन्द्रमा, लग्न, मंगल, शनि, गुरु, राहु/केतु) से उनके अवचेतन स्वभाव, सूक्ष्म आदतों और मनोवैज्ञानिक कमजोरियों का विश्लेषण करें और इस प्रकार सम्बोधित करें:",
-                        "   • 'क्या आपके साथ ऐसा होता है या क्या आपकी यह आदत है कि...' (जैसे अत्यधिक परफेक्शन की जिद, ओवरथिंकिंग, संशय, काम दूसरों को न सौंपना, या अधिक विश्लेषण के कारण निर्णय में विलम्ब)?",
-                        "   • 'इसके कारण आपके जीवन/कार्य में यह बाधा आती है...' (जैसे बर्नआउट, टीम से तनाव, अवसर में देरी)?",
-                        "   • 'इस आदत को इस प्रकार सुधारें...' (व्यावहारिक मनोवैज्ञानिक अभ्यास, 80/20 प्रत्यायोजन, 70% एक्शन नियम, सात्विक जीवनशैली उपाय)?",
+                        "2. अनिवार्य ५-स्तरीय उत्तर संरचना (Mandatory 5-Tier Gurukul Architecture):",
+                        "   प्रत्येक उत्तर को स्पष्ट रूप से इन ५ स्तरों में प्रस्तुत करें:",
+                        "   🎯 १. सीधा शास्त्रीय निर्णय (The Clear Direct Verdict) — २-३ वाक्यों का सटीक निष्कर्ष।",
+                        "   🔍 २. आपकी कुण्डली पर शास्त्रीय नियमों का वास्तविक घटित होना (Application to Chart) — भाव, भावेश व कारकों का संरेखण।",
+                        "   📜 ३. गुरुकुल तर्क एवं वर्गीय मीमांसा (The Promise, The Fruit, The Root & KP CSL Script)।",
+                        "   ⚡ ४. फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest)",
+                        "   ⏱️ ५. काल-खंड: यह फल कब फलीभूत होगा? (Timeline via Vimshottari & Double Transit Guru-Shani 2026-2027)।",
                         "",
-                        "3. प्रामाणिक 4-स्तरीय सिद्ध उपाय विधान (Vashistha Remedial Shield):",
-                        "   - स्तर 1 (काल संरेखण): घड़ी 11 मिनट आगे रखने का काल-विज्ञान, ब्रह्ममुहूर्त जागरण।",
-                        "   - स्तर 2 (गंध व अर्घ्य विज्ञान): नाभि पर चन्दन इत्र, कानों के पीछे गुलाब इत्र, सूर्य अर्घ्य।",
-                        "   - स्तर 4 (मंत्र संपुटीकरण): 'ॐ नमः शिवाय' संपुटित महामंत्र जप।",
+                        "3. सर्व-दोष निवारण महायंत्र: ऊर्जा वर्धन बनाम ऊर्जा शमन (Vardhana vs. Shaman):",
+                        "   - 🌟 ऊर्जा वर्धन (Vardhana): केवल लग्नेश, भाग्येश, पंचमेश व योगकारक के लिए (रत्न/बीज मंत्र/सूर्य अर्घ्य)।",
+                        "   - 🛡️ ऊर्जा शमन (Shaman): केवल त्रिक भाव (६/८/१२), खरेश व राहु-केतु के लिए (सप्तधान्य/काले कुत्ते को रोटी/तिल दान/महामृत्युंजय)।",
                         "",
-                        "4. भाषा अत्यंत आदरपूर्ण, विद्वतापूर्ण, शास्त्रीय एवं निर्भीक हो। सत्य का दर्पण दिखाएं किंतु जातक को आशा एवं आध्यात्मिक संबल दें।",
+                        "4. भाषा अत्यंत आदरपूर्ण, विद्वतापूर्ण, शास्त्रीय एवं निर्भीक हो (Zero Sycophancy)। सत्य का दर्पण दिखाएं किंतु जातक को आशा एवं आध्यात्मिक संबल दें।",
                         "\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
                         "🔮 PRE-COMPUTED DAIVAGYA ENGINE ANALYSIS (Zero-Hallucination Block):",
                         daivagyaContext || "चार्ट डेटा उपलब्ध है।",
@@ -10857,7 +10936,7 @@
                     '<button onclick="window.print()" style="padding:10px 20px; background:#1e3a8a; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ अभी प्रिंट / PDF सेव करें (Print to PDF)</button>' +
                     '</div>' +
                     '<div class="doc-header">' +
-                    '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ ✦</div>' +
+                    '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ (v12.0 गुरुकुल दैवज्ञ संस्करण) ✦</div>' +
                     '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Standard</div>' +
                     '<div class="doc-founder">शोध पीठ निदेशक: <b>निखिल व्यास</b>, M.A. (Jyotish), LL.B • संपर्क: inikhilvyas@gmail.com</div>' +
                     '</div>' +
