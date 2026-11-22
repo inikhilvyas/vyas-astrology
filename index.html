@@ -2786,28 +2786,59 @@
                 scroll-behavior: auto !important;
             }
         }
+
         /* Universal Swipeable Gold Pill Bar */
         .vyas-portal-pill-strip {
-            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
-            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
-            scrollbar-width: none; position: sticky; top: 62px; z-index: 90;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75);
+            border-bottom: 1px solid var(--border-subtle);
+            scrollbar-width: none;
+            position: sticky;
+            top: 62px;
+            z-index: 90;
             backdrop-filter: blur(12px);
         }
-        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+
+        .vyas-portal-pill-strip::-webkit-scrollbar {
+            display: none;
+        }
+
         .portal-pill {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 7px 14px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
             transition: all 0.2s ease;
         }
-        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+
+        .portal-pill:hover {
+            background: rgba(212, 175, 55, 0.12);
+            color: var(--gold-light);
+            border-color: var(--border-gold);
+        }
+
         .portal-pill.active {
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.12));
-            color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+            color: var(--gold-light);
+            border-color: var(--gold);
+            font-weight: 700;
         }
-        .portal-pill svg { stroke: currentColor; flex-shrink: 0; }
+
+        .portal-pill svg {
+            stroke: currentColor;
+            flex-shrink: 0;
+        }
     </style>
 
     <script src="js/vyas_sutras_bank.js" defer></script>
@@ -2935,9 +2966,13 @@
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg> <span class="btn-text">विवरण</span>
             </button>
-                        <!-- PRO Subscription Button -->
-            <button class="luxury-nav-btn gold-accent" onclick="VyasDesktop.openProModal()" title="VYAS ASTRA PRO सदस्यता • आजीवन VIP प्लान" style="background:linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(245,158,11,0.35) 100%); border:1px solid #d4af37; color:#f8fafc; font-weight:800; display:inline-flex; align-items:center; gap:6px; box-shadow:0 0 14px rgba(212,175,55,0.35); padding:6px 14px; border-radius:20px; cursor:pointer;">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2.2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+            <!-- PRO Subscription Button -->
+            <button class="luxury-nav-btn gold-accent" onclick="VyasDesktop.openProModal()"
+                title="VYAS ASTRA PRO सदस्यता • आजीवन VIP प्लान"
+                style="background:linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(245,158,11,0.35) 100%); border:1px solid #d4af37; color:#f8fafc; font-weight:800; display:inline-flex; align-items:center; gap:6px; box-shadow:0 0 14px rgba(212,175,55,0.35); padding:6px 14px; border-radius:20px; cursor:pointer;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2.2">
+                    <path d="M6 3h12l4 6-10 12L2 9z" />
+                </svg>
                 <span>💎 PRO सदस्यता</span>
             </button>
 
@@ -2972,51 +3007,95 @@
     <!-- UNIVERSAL MULTI-DISCIPLINARY GOLD PILL NAVIGATION STRIP -->
     <nav class="vyas-portal-pill-strip" aria-label="मुख्य विधा नेविगेशन">
         <a href="/" class="portal-pill active" title="लग्न कुण्डली एवं 16 वर्ग चक्र">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
             <span>कुण्डली</span>
         </a>
         <a href="/panchang/" class="portal-pill" title="दैनिक पंचांग व तात्कालिक आकाश चक्र">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
             <span>पंचांग</span>
         </a>
         <a href="/dasha/" class="portal-pill" title="5-स्तरीय विंशोत्तरी, चर व KP दशा">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </svg>
             <span>दशा चक्र</span>
         </a>
         <a href="/kp-astrology/" class="portal-pill" title="KP भाव चलित चक्र व कस्पल सब-लॉर्ड">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <circle cx="12" cy="12" r="2" />
+            </svg>
             <span>KP पद्धति</span>
         </a>
         <a href="/jaimini-astrology/" class="portal-pill" title="जैमिनी कारकांश व स्वंश चक्र">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
+            </svg>
             <span>जैमिनी</span>
         </a>
         <a href="/nadi-astrology/" class="portal-pill" title="भृगु नन्दी नाड़ी 4-दिशा चक्र">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+            </svg>
             <span>BNN नाड़ी</span>
         </a>
         <a href="/ashtakavarga/" class="portal-pill" title="अष्टकवर्ग 337 बिंदु चक्र व BAV">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg>
             <span>अष्टकवर्ग</span>
         </a>
         <a href="/varshphal/" class="portal-pill" title="ताजिक वर्षफल व मुंथा चक्र">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <ellipse cx="12" cy="12" rx="10" ry="4" />
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="19" cy="12" r="1.5" />
+            </svg>
             <span>वर्षफल</span>
         </a>
         <a href="/prashna-kundli/" class="portal-pill" title="तात्कालिक प्रश्न मार्ग वेध">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="5 3 19 3 12 12 19 21 5 21 12 12" />
+            </svg>
             <span>प्रश्न कुण्डली</span>
         </a>
         <a href="/kundli-matching/" class="portal-pill" title="36 गुण मिलान व नाड़ी दोष परिहार">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="9" cy="12" r="6" />
+                <circle cx="15" cy="12" r="6" />
+            </svg>
             <span>गुण मिलान</span>
         </a>
         <a href="/saved-kundli/" class="portal-pill" title="सुरक्षित कुण्डली वॉल्ट">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
             <span>कुण्डली वॉल्ट</span>
         </a>
-        <a href="javascript:void(0)" onclick="VyasDesktop.openProModal()" class="portal-pill pro-pill" style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800; box-shadow:0 0 10px rgba(212,175,55,0.2);" title="VYAS ASTRA PRO आजीवन VIP सदस्यता प्लान">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+        <a href="javascript:void(0)" onclick="VyasDesktop.openProModal()" class="portal-pill pro-pill"
+            style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800; box-shadow:0 0 10px rgba(212,175,55,0.2);"
+            title="VYAS ASTRA PRO आजीवन VIP सदस्यता प्लान">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2">
+                <path d="M6 3h12l4 6-10 12L2 9z" />
+            </svg>
             <span>👑 PRO प्लान</span>
         </a>
     </nav>
@@ -3103,7 +3182,8 @@
         <div class="cockpit-col">
             <!-- Scrollable Tab Bar -->
             <nav class="tab-scroll-nav">
-                <button class="tab-nav-btn active" onclick="VyasDesktop.switchTab('daily', this)">दैनिक व्यक्तिगत राशिफल</button>
+                <button class="tab-nav-btn active" onclick="VyasDesktop.switchTab('daily', this)">दैनिक व्यक्तिगत
+                    राशिफल</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('dasha', this)">विंशोत्तरी दशा
                     (5-स्तर)</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('predictions', this)">विस्तृत
@@ -3144,7 +3224,11 @@
                             </div>
                             <button id="btnEnablePushAlerts" onclick="VyasPushEngine.subscribeUser()"
                                 style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:5px 14px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.78rem; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.3);">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                                </svg>
                                 दैनिक पंचांग व पर्व सूचनाएं चालू करें</button>
                         </div>
                         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:12px;">
@@ -3188,13 +3272,19 @@
                             </div>
 
                             <!-- Dedicated Prastarashtakavarga Daily Transit Card -->
-                            <div style="background:var(--bg-card); border:1px solid var(--border-gold); padding:10px 12px; border-radius:8px; grid-column:1 / -1; margin-bottom:4px;">
+                            <div
+                                style="background:var(--bg-card); border:1px solid var(--border-gold); padding:10px 12px; border-radius:8px; grid-column:1 / -1; margin-bottom:4px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span style="font-size:0.75rem; color:var(--primary-navy); font-weight:800;">✦ प्रस्ताराष्टकवर्ग गोचर वेध (Prastarashtakavarga Kakshya Transit)</span>
-                                    <span id="vKakshyaBadge" style="font-size:0.72rem; padding:2px 8px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.18); color:#10b981;">1 शुभ बिन्दु</span>
+                                    <span style="font-size:0.75rem; color:var(--primary-navy); font-weight:800;">✦
+                                        प्रस्ताराष्टकवर्ग गोचर वेध (Prastarashtakavarga Kakshya Transit)</span>
+                                    <span id="vKakshyaBadge"
+                                        style="font-size:0.72rem; padding:2px 8px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.18); color:#10b981;">1
+                                        शुभ बिन्दु</span>
                                 </div>
-                                <div style="font-size:0.74rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;" id="vKakshyaDesc">
-                                    चन्द्रमा आज <b>देवगुरु बृहस्पति की कक्षा (03°45' - 07°30')</b> में गोचर कर रहे हैं। प्रस्ताराष्टकवर्ग में 1 शुभ बिन्दु प्राप्त होने से आज का दिन अनुकूल व फलदायी है।
+                                <div style="font-size:0.74rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;"
+                                    id="vKakshyaDesc">
+                                    चन्द्रमा आज <b>देवगुरु बृहस्पति की कक्षा (03°45' - 07°30')</b> में गोचर कर रहे हैं।
+                                    प्रस्ताराष्टकवर्ग में 1 शुभ बिन्दु प्राप्त होने से आज का दिन अनुकूल व फलदायी है।
                                 </div>
                             </div>
                         </div>
@@ -3248,19 +3338,32 @@
                     </div>
 
                     <!-- Gateway to Dedicated Panchang Page -->
-                    <div style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(12,19,36,0.85)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 24px; margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+                    <div
+                        style="background:linear-gradient(135deg, rgba(212,175,55,0.08), rgba(12,19,36,0.85)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 24px; margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
                         <div style="display:flex; align-items:center; gap:14px;">
-                            <div style="width:44px; height:44px; border-radius:10px; background:rgba(212,175,55,0.15); border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center;">
-                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <div
+                                style="width:44px; height:44px; border-radius:10px; background:rgba(212,175,55,0.15); border:1px solid var(--border-gold); display:flex; align-items:center; justify-content:center;">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#d4af37"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
                             </div>
                             <div>
-                                <b style="color:#d4af37; font-size:1.05rem; display:block;">दैनिक वैदिक पंचांग, चौघड़िया एवं शुभ मुहूर्त वेधशाला</b>
-                                <p style="color:#94a3b8; font-size:0.84rem; margin-top:3px;">तिथि, वार, नक्षत्र, योग, करण, अभिजित मुहूर्त, राहुकाल, 120+ नगर वेधशालाएं एवं 16 पहर दिन-रात्रि चौघड़िया।</p>
+                                <b style="color:#d4af37; font-size:1.05rem; display:block;">दैनिक वैदिक पंचांग, चौघड़िया
+                                    एवं शुभ मुहूर्त वेधशाला</b>
+                                <p style="color:#94a3b8; font-size:0.84rem; margin-top:3px;">तिथि, वार, नक्षत्र, योग,
+                                    करण, अभिजित मुहूर्त, राहुकाल, 120+ नगर वेधशालाएं एवं 16 पहर दिन-रात्रि चौघड़िया।</p>
                             </div>
                         </div>
-                        <a href="/panchang/" class="p-btn primary" style="text-decoration:none; padding:10px 22px; font-weight:700; font-size:0.9rem; background:linear-gradient(135deg,#d4af37,#aa820a); color:#050811; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
+                        <a href="/panchang/" class="p-btn primary"
+                            style="text-decoration:none; padding:10px 22px; font-weight:700; font-size:0.9rem; background:linear-gradient(135deg,#d4af37,#aa820a); color:#050811; border-radius:8px; display:inline-flex; align-items:center; gap:8px;">
                             <span>पूर्ण पंचांग खोलें</span>
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -3270,11 +3373,16 @@
                     <div class="content-card">
                         <div class="card-heading">
                             <span>✦ तात्कालिक सक्रिय दशा चक्र (Current Running Dasha)</span>
-                            <span style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:10px;">सटीक काल-निर्णय</span>
+                            <span
+                                style="font-size:0.72rem; color:#10b981; font-weight:700; background:rgba(16,185,129,0.12); padding:2px 8px; border-radius:10px;">सटीक
+                                काल-निर्णय</span>
                         </div>
-                        <div style="background:var(--bg-card); border:1.5px solid var(--border-gold); padding:16px; border-radius:10px; margin-bottom:16px;">
-                            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">वर्तमान सक्रिय दशा कालखंड:</div>
-                            <div style="font-size:1.15rem; font-weight:900; color:var(--accent-gold); margin:6px 0;" id="activeDashaChainVal">
+                        <div
+                            style="background:var(--bg-card); border:1.5px solid var(--border-gold); padding:16px; border-radius:10px; margin-bottom:16px;">
+                            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">वर्तमान सक्रिय दशा
+                                कालखंड:</div>
+                            <div style="font-size:1.15rem; font-weight:900; color:var(--accent-gold); margin:6px 0;"
+                                id="activeDashaChainVal">
                                 महादशा: शुक्र ➔ अन्तर्दशा: शनि ➔ प्रत्यन्तर्दशा: मंगल (वर्तमान सक्रिय)
                             </div>
                             <div style="font-size:0.82rem; color:#10b981; margin-top:4px;" id="activeDashaEndVal">
@@ -3282,14 +3390,22 @@
                             </div>
                         </div>
 
-                        <div style="background:rgba(212,175,55,0.06); border:1px solid var(--border-gold); border-radius:10px; padding:16px; text-align:center;">
-                            <h3 style="color:var(--accent-gold); font-size:1.05rem; margin-bottom:6px;">पूर्ण 5-स्तरीय दशा चक्र, जैमिनी चर दशा एवं KP कस्पल दशा</h3>
-                            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
-                                महादशा, अन्तर्दशा, प्रत्यन्तर्दशा, सूक्ष्म एवं प्राण दशा का 100% विस्तृत वृक्ष, प्रस्ताराष्टकवर्ग कक्षा निर्णय तथा गहन फलादेश देखने हेतु समर्पित दशा पोर्टल पर जाएं:
+                        <div
+                            style="background:rgba(212,175,55,0.06); border:1px solid var(--border-gold); border-radius:10px; padding:16px; text-align:center;">
+                            <h3 style="color:var(--accent-gold); font-size:1.05rem; margin-bottom:6px;">पूर्ण 5-स्तरीय
+                                दशा चक्र, जैमिनी चर दशा एवं KP कस्पल दशा</h3>
+                            <p
+                                style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+                                महादशा, अन्तर्दशा, प्रत्यन्तर्दशा, सूक्ष्म एवं प्राण दशा का 100% विस्तृत वृक्ष,
+                                प्रस्ताराष्टकवर्ग कक्षा निर्णय तथा गहन फलादेश देखने हेतु समर्पित दशा पोर्टल पर जाएं:
                             </p>
-                            <a href="/dasha/" class="header-btn primary" style="display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; font-size:0.92rem; font-weight:700; text-decoration:none; border-radius:8px; width:auto;">
+                            <a href="/dasha/" class="header-btn primary"
+                                style="display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 24px; font-size:0.92rem; font-weight:700; text-decoration:none; border-radius:8px; width:auto;">
                                 <span>सम्पूर्ण दशा चक्र व गहन फलकथन देखें</span>
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                    stroke-width="2.2">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -4291,31 +4407,36 @@
                         style="background:linear-gradient(135deg, rgba(181,138,69,0.08), rgba(27,46,75,0.03)); border:1.5px solid var(--border-gold);">
                         <div class="card-heading">
                             <span style="font-size:1.05rem; color:var(--primary-navy);">✦ VIP Pro महा-दस्तावेज़
-                                (56-पृष्ठ सम्पूर्ण पब्लिकेशन ग्रंथ)</span>
+                                (सम्पूर्ण पब्लिकेशन शोध ग्रंथ • बड़े फॉन्ट व विस्तृत पृष्ठ)</span>
                             <span
-                                style="font-size:0.75rem; background:#10b981; color:#fff; padding:3px 10px; border-radius:12px; font-weight:800;">55
-                                पृष्ठ PDF सत्यापित (2.0 MB)</span>
+                                style="font-size:0.75rem; background:#10b981; color:#fff; padding:3px 10px; border-radius:12px; font-weight:800;">v12.0
+                                गुरुकुल संस्करण (NASA JPL 0.001″)</span>
                         </div>
-                        <p style="font-size:0.80rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
-                            यह कोई 1-पेज ब्राउज़र प्रिंट नहीं है। यह 16 वर्ग चक्रों, 7 ज्योतिष पद्धतियों (पराशरी,
+                        <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.7;">
+                            यह कोई 1-पेज का साधारण प्रिंट नहीं है। यह 16 वर्ग चक्रों (D-1 से D-60), 7 ज्योतिष पद्धतियों (पराशरी,
                             जैमिनी, केपी, नाड़ी, लाल किताब, ताजिक, अष्टकवर्ग), 120 वर्षीय 5-स्तरीय दशा विश्लेषण, साढ़े
-                            साती एवं जीवन के समस्त आयामों पर आधारित **55-पृष्ठों का संपूर्ण आधिकारिक शोध ग्रंथ** है।
+                            साती, एवं आचार्य व्यास (v12.0) वर्गीकृत डेटाबेस व ऊर्जा वर्धन/शमन पर आधारित **सम्पूर्ण आधिकारिक शोध ग्रंथ (विस्तृत पृष्ठ व बड़े स्पष्ट फॉन्ट)** है।
                         </p>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                            <a href="/vyas_vip_pro_report.pdf" download="vyas_vip_pro_report.pdf"
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+                            <button onclick="VyasDesktop.generateLivePdfReport()"
                                 class="header-btn primary"
-                                style="justify-content:center; padding:12px; font-size:0.86rem; text-decoration:none;">
+                                style="justify-content:center; padding:14px 18px; font-size:0.92rem; font-weight:800; cursor:pointer; background:linear-gradient(135deg, #1e3a8a, #0f172a); border:1px solid #3b82f6; box-shadow:0 4px 14px rgba(30,58,138,0.3);">
+                                🖨️ जातक की लाइव महा-पत्रिका PDF तैयार करें (Print/Save PDF)
+                            </button>
+                            <a href="/vyas_vip_pro_report.pdf" download="vyas_vip_pro_report.pdf"
+                                class="header-btn"
+                                style="justify-content:center; padding:14px 18px; font-size:0.88rem; text-decoration:none; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:var(--text-primary);">
                                 📥 सम्पूर्ण VIP Pro PDF डाउनलोड करें (2MB)
                             </a>
                             <a href="/dossier_56_pages.html" target="_blank" class="header-btn"
-                                style="justify-content:center; padding:12px; font-size:0.86rem; text-decoration:none;">
-                                <svg class="v-icon v-book" viewBox="0 0 24 24" width="15" height="15" fill="none"
+                                style="justify-content:center; padding:14px 18px; font-size:0.88rem; text-decoration:none; border:1px solid var(--border-card);">
+                                <svg class="v-icon v-book" viewBox="0 0 24 24" width="16" height="16" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round"
                                     style="display:inline-block; vertical-align:middle; margin-right:4px;">
                                     <path
                                         d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
-                                </svg>ऑनलाइन महा-ग्रंथ पढ़ें (56 पृष्ठ)
+                                </svg>ऑनलाइन महा-ग्रंथ पढ़ें
                             </a>
                         </div>
                     </div>
@@ -7093,406 +7214,406 @@
                 // VYAS 34.0 CONSOLIDATED PHALIT ESSAY GENERATOR (संश्लेषित समग्र फलादेश निबंध)
                 // =========================================================================
                 synthesizeConsolidatedPhalitEssay: function (chart) {
-    chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
-    if (!chart || !chart.profile || !chart.profile.name) {
-        return '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.95rem;">' +
-            '<b style="color:var(--accent-gold); font-size:1.1rem;">✦ कुण्डली लोड नहीं है</b>' +
-            '<p style="margin-top:6px;">व्यास अस्त्र सटीक जीवन फलादेश देखने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा प्रोफाइल चुनें।</p>' +
-            '</div>';
-    }
+                    chart = chart || (window.VyasDesktop && window.VyasDesktop.activeChartData) || null;
+                    if (!chart || !chart.profile || !chart.profile.name) {
+                        return '<div style="padding:28px 16px; text-align:center; color:var(--text-muted); font-size:0.95rem;">' +
+                            '<b style="color:var(--accent-gold); font-size:1.1rem;">✦ कुण्डली लोड नहीं है</b>' +
+                            '<p style="margin-top:6px;">व्यास अस्त्र सटीक जीवन फलादेश देखने हेतु कृपया ऊपर <b>"+ नई कुण्डली"</b> बनाएं अथवा प्रोफाइल चुनें।</p>' +
+                            '</div>';
+                    }
 
-    var prof = chart.profile;
-    var name = prof.name || "जातक";
-    var lagna = (prof.asc_sign || "मेष").split(' ')[0].replace(/[\(\)]/g, '').trim();
-    var dob = prof.dob || "";
-    var tob = prof.tob || "";
-    var city = prof.city || "";
-    var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी दशा सक्रिय";
+                    var prof = chart.profile;
+                    var name = prof.name || "जातक";
+                    var lagna = (prof.asc_sign || "मेष").split(' ')[0].replace(/[\(\)]/g, '').trim();
+                    var dob = prof.dob || "";
+                    var tob = prof.tob || "";
+                    var city = prof.city || "";
+                    var dasha = (chart.active_dasha && chart.active_dasha.chain) ? chart.active_dasha.chain : "विंशोत्तरी दशा सक्रिय";
 
-    // 1. Build Planet Map
-    var pTable = chart.planet_table || [];
-    var pMap = {};
-    for (var i = 0; i < pTable.length; i++) {
-        var pl = pTable[i];
-        var pName = (pl.p || pl.planet || '').replace(/\\s*\\(.*\\)/, '').trim();
-        pMap[pName] = {
-            name: pName,
-            house: parseInt(pl.h || pl.house || 1),
-            sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
-            degree: pl.d || pl.degree || "0°0'",
-            nakshatra: pl.n || pl.nakshatra || "",
-            dignity: pl.dignity || pl.s || ""
-        };
-    }
+                    // 1. Build Planet Map
+                    var pTable = chart.planet_table || [];
+                    var pMap = {};
+                    for (var i = 0; i < pTable.length; i++) {
+                        var pl = pTable[i];
+                        var pName = (pl.p || pl.planet || '').replace(/\\s*\\(.*\\)/, '').trim();
+                        pMap[pName] = {
+                            name: pName,
+                            house: parseInt(pl.h || pl.house || 1),
+                            sign: (pl.r || pl.sign || '').split(' ')[0].trim(),
+                            degree: pl.d || pl.degree || "0°0'",
+                            nakshatra: pl.n || pl.nakshatra || "",
+                            dignity: pl.dignity || pl.s || ""
+                        };
+                    }
 
-    // 2. House Lord Sign Map (Lagna to 12 Houses)
-    var SIGNS_HI = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
-    var LORDS = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
-    var lagnaIdx = SIGNS_HI.indexOf(lagna);
-    if (lagnaIdx === -1) lagnaIdx = 0;
+                    // 2. House Lord Sign Map (Lagna to 12 Houses)
+                    var SIGNS_HI = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+                    var LORDS = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
+                    var lagnaIdx = SIGNS_HI.indexOf(lagna);
+                    if (lagnaIdx === -1) lagnaIdx = 0;
 
-    function getHouseSign(h) {
-        return SIGNS_HI[(lagnaIdx + h - 1) % 12];
-    }
-    function getHouseLord(h) {
-        return LORDS[(lagnaIdx + h - 1) % 12];
-    }
+                    function getHouseSign(h) {
+                        return SIGNS_HI[(lagnaIdx + h - 1) % 12];
+                    }
+                    function getHouseLord(h) {
+                        return LORDS[(lagnaIdx + h - 1) % 12];
+                    }
 
-    var lagnaLord = getHouseLord(1);
-    var d10Lord = getHouseLord(10);
-    var d2Lord = getHouseLord(2);
-    var d11Lord = getHouseLord(11);
-    var d7Lord = getHouseLord(7);
-    var d6Lord = getHouseLord(6);
-    var d8Lord = getHouseLord(8);
+                    var lagnaLord = getHouseLord(1);
+                    var d10Lord = getHouseLord(10);
+                    var d2Lord = getHouseLord(2);
+                    var d11Lord = getHouseLord(11);
+                    var d7Lord = getHouseLord(7);
+                    var d6Lord = getHouseLord(6);
+                    var d8Lord = getHouseLord(8);
 
-    var lagnaLordPl = pMap[lagnaLord] || { house: 1, sign: lagna, dignity: '' };
-    var d10LordPl = pMap[d10Lord] || { house: 10, sign: getHouseSign(10), dignity: '' };
-    var d2LordPl = pMap[d2Lord] || { house: 2, sign: getHouseSign(2), dignity: '' };
-    var d11LordPl = pMap[d11Lord] || { house: 11, sign: getHouseSign(11), dignity: '' };
-    var d7LordPl = pMap[d7Lord] || { house: 7, sign: getHouseSign(7), dignity: '' };
-    var d6LordPl = pMap[d6Lord] || { house: 6, sign: getHouseSign(6), dignity: '' };
+                    var lagnaLordPl = pMap[lagnaLord] || { house: 1, sign: lagna, dignity: '' };
+                    var d10LordPl = pMap[d10Lord] || { house: 10, sign: getHouseSign(10), dignity: '' };
+                    var d2LordPl = pMap[d2Lord] || { house: 2, sign: getHouseSign(2), dignity: '' };
+                    var d11LordPl = pMap[d11Lord] || { house: 11, sign: getHouseSign(11), dignity: '' };
+                    var d7LordPl = pMap[d7Lord] || { house: 7, sign: getHouseSign(7), dignity: '' };
+                    var d6LordPl = pMap[d6Lord] || { house: 6, sign: getHouseSign(6), dignity: '' };
 
-    // Ashtakavarga SAV Points
-    var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
-    var sav10 = sav[10] || 28;
-    var sav11 = sav[11] || 31;
-    var sav2 = sav[2] || 29;
-    var sav7 = sav[7] || 27;
-    var sav6 = sav[6] || 26;
+                    // Ashtakavarga SAV Points
+                    var sav = (chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
+                    var sav10 = sav[10] || 28;
+                    var sav11 = sav[11] || 31;
+                    var sav2 = sav[2] || 29;
+                    var sav7 = sav[7] || 27;
+                    var sav6 = sav[6] || 26;
 
-    // Jaimini & Goodh Diagnostics
-    var diag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
-    var jDyn = (diag && diag.jaimini_dynamics) ? diag.jaimini_dynamics : { ak: 'मंगल', amk: 'सूर्य', karakansha: 'सिंह', arudha_lagna: 'धनु', upapada_lagna: 'मिथुन' };
-    var khara = (diag && diag.khara_and_64th_navamsha) ? diag.khara_and_64th_navamsha : { drekkana_22_lord: d8Lord, navamsha_64_lord: d8Lord };
-    var dagdha = (diag && diag.dagdha_rashis_for_tithi) ? diag.dagdha_rashis_for_tithi : [];
-    var gHits = (diag && diag.gandanta_placements) ? diag.gandanta_placements : [];
+                    // Jaimini & Goodh Diagnostics
+                    var diag = chart.goodh_diagnostics || (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function' ? window.VyasAstronomicalEngine.computeGoodhDiagnostics(chart) : null);
+                    var jDyn = (diag && diag.jaimini_dynamics) ? diag.jaimini_dynamics : { ak: 'मंगल', amk: 'सूर्य', karakansha: 'सिंह', arudha_lagna: 'धनु', upapada_lagna: 'मिथुन' };
+                    var khara = (diag && diag.khara_and_64th_navamsha) ? diag.khara_and_64th_navamsha : { drekkana_22_lord: d8Lord, navamsha_64_lord: d8Lord };
+                    var dagdha = (diag && diag.dagdha_rashis_for_tithi) ? diag.dagdha_rashis_for_tithi : [];
+                    var gHits = (diag && diag.gandanta_placements) ? diag.gandanta_placements : [];
 
-    // Header & Thesis Container
-    var essay = '<div class="vyas34-thesis" style="line-height:1.8; color:#E2E8F0; font-family:var(--font-hindi); font-size:0.95rem;">' +
-        // Hero Card
-        '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(15,23,42,0.92)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:18px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
-        '<div>' +
-        '<span style="font-size:0.75rem; color:#F6E05E; font-weight:800; letter-spacing:1px; text-transform:uppercase;">✦ आचार्य व्यास (v12.0) महा-निबंध • गुरुकुल दैवज्ञ तर्क एवं प्रत्यक्ष फलित निर्णय</span>' +
-        '<h3 style="margin:4px 0 0 0; color:#FFF3BF; font-size:1.25rem; font-family:var(--font-serif); font-weight:700;">' + name + ' की जीवन-संहिता एवं सटीक घटनाक्रम</h3>' +
-        '</div>' +
-        '<div style="display:flex; gap:6px; align-items:center;">' +
-        '<span style="background:rgba(16,185,129,0.18); color:#34D399; border:1px solid #10B981; border-radius:20px; padding:3px 12px; font-size:0.75rem; font-weight:700;">प्रामाणिक षट्-पद्धतीय वेध</span>' +
-        '<span style="background:rgba(96,165,250,0.18); color:#60a5fa; border:1px solid #3b82f6; border-radius:20px; padding:3px 10px; font-size:0.72rem; font-weight:700;">v12.0 गुरुकुल दैवज्ञ</span>' +
-        '</div></div>' +
-        '<div style="font-size:0.82rem; color:#94A3B8; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">' +
-        'लग्न: <b style="color:#F1DE87;">' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • सक्रिय दशा: <b style="color:#60A5FA;">' + dasha + '</b>' +
-        '</div>' +
-        '</div>';
+                    // Header & Thesis Container
+                    var essay = '<div class="vyas34-thesis" style="line-height:1.8; color:#E2E8F0; font-family:var(--font-hindi); font-size:0.95rem;">' +
+                        // Hero Card
+                        '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(15,23,42,0.92)); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:18px; box-shadow:0 8px 30px rgba(0,0,0,0.5);">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
+                        '<div>' +
+                        '<span style="font-size:0.75rem; color:#F6E05E; font-weight:800; letter-spacing:1px; text-transform:uppercase;">✦ आचार्य व्यास (v12.0) महा-निबंध • गुरुकुल दैवज्ञ तर्क एवं प्रत्यक्ष फलित निर्णय</span>' +
+                        '<h3 style="margin:4px 0 0 0; color:#FFF3BF; font-size:1.25rem; font-family:var(--font-serif); font-weight:700;">' + name + ' की जीवन-संहिता एवं सटीक घटनाक्रम</h3>' +
+                        '</div>' +
+                        '<div style="display:flex; gap:6px; align-items:center;">' +
+                        '<span style="background:rgba(16,185,129,0.18); color:#34D399; border:1px solid #10B981; border-radius:20px; padding:3px 12px; font-size:0.75rem; font-weight:700;">प्रामाणिक षट्-पद्धतीय वेध</span>' +
+                        '<span style="background:rgba(96,165,250,0.18); color:#60a5fa; border:1px solid #3b82f6; border-radius:20px; padding:3px 10px; font-size:0.72rem; font-weight:700;">v12.0 गुरुकुल दैवज्ञ</span>' +
+                        '</div></div>' +
+                        '<div style="font-size:0.82rem; color:#94A3B8; margin-top:8px; border-top:1px solid rgba(255,255,255,0.08); padding-top:8px;">' +
+                        'लग्न: <b style="color:#F1DE87;">' + lagna + '</b> • जन्म: ' + dob + ' (' + tob + ') • स्थान: ' + city + ' • सक्रिय दशा: <b style="color:#60A5FA;">' + dasha + '</b>' +
+                        '</div>' +
+                        '</div>';
 
-    // SPECIAL CHAPTER 0A: Classified Astro-Data Bank (v12.0 Protocol Phase 1)
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
-        '<h4 style="color:#F6E05E; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
-        '📊 कुण्डली का वर्गीकृत डेटाबेस (Classified Astro-Data Bank — v12.0)' +
-        '</h4>' +
-        '<span style="font-size:0.72rem; color:#94A3B8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px;">नासा JPL 0.001″ सूक्ष्म गणित</span>' +
-        '</div>' +
-        '<div style="overflow-x:auto;">' +
-        '<table style="width:100%; font-size:0.78rem; border-collapse:collapse; color:#cbd5e1; min-width:480px;">' +
-        '<tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-weight:700; text-align:left;">' +
-        '<th style="padding:5px 8px;">ग्रह</th><th style="padding:5px 8px;">भाव व राशि</th><th style="padding:5px 8px;">अंश (Degree)</th><th style="padding:5px 8px;">नक्षत्र (चरण)</th><th style="padding:5px 8px;">अवस्था</th><th style="padding:5px 8px;">SAV अंक</th>' +
-        '</tr>';
+                    // SPECIAL CHAPTER 0A: Classified Astro-Data Bank (v12.0 Protocol Phase 1)
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
+                        '<h4 style="color:#F6E05E; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+                        '📊 कुण्डली का वर्गीकृत डेटाबेस (Classified Astro-Data Bank — v12.0)' +
+                        '</h4>' +
+                        '<span style="font-size:0.72rem; color:#94A3B8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px;">नासा JPL 0.001″ सूक्ष्म गणित</span>' +
+                        '</div>' +
+                        '<div style="overflow-x:auto;">' +
+                        '<table style="width:100%; font-size:0.78rem; border-collapse:collapse; color:#cbd5e1; min-width:480px;">' +
+                        '<tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-weight:700; text-align:left;">' +
+                        '<th style="padding:5px 8px;">ग्रह</th><th style="padding:5px 8px;">भाव व राशि</th><th style="padding:5px 8px;">अंश (Degree)</th><th style="padding:5px 8px;">नक्षत्र (चरण)</th><th style="padding:5px 8px;">अवस्था</th><th style="padding:5px 8px;">SAV अंक</th>' +
+                        '</tr>';
 
-    var keyPlanetsList = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'राहु', 'केतु'];
-    for (var kpi = 0; kpi < keyPlanetsList.length; kpi++) {
-        var pkName = keyPlanetsList[kpi];
-        var pData = pMap[pkName];
-        if (!pData) continue;
-        var pH = pData.house || 1;
-        var pSavScore = sav[pH] || 28;
-        essay += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
-            '<td style="padding:4px 8px; font-weight:700; color:#f8fafc;">' + pkName + '</td>' +
-            '<td style="padding:4px 8px;">भाव ' + pH + ' (' + (pData.sign || '-') + ')</td>' +
-            '<td style="padding:4px 8px; font-family:monospace; color:#cbd5e1;">' + (pData.degree || '-') + '</td>' +
-            '<td style="padding:4px 8px; color:#e2e8f0;">' + (pData.nakshatra || '-') + '</td>' +
-            '<td style="padding:4px 8px;"><span style="background:rgba(212,175,55,0.12); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.70rem;">' + (pData.dignity || 'सम') + '</span></td>' +
-            '<td style="padding:4px 8px; font-weight:700; color:' + (pSavScore >= 28 ? '#4ade80' : '#f87171') + ';">' + pSavScore + ' बिंदु</td>' +
-            '</tr>';
-    }
-    essay += '</table></div>' +
-        '<div style="font-size:0.75rem; color:#64748b; margin-top:8px;">' +
-        '✦ सर्वाष्टकवर्ग: कुल <b>३३७ बिंदु</b> • चर कारक: AK (<b>' + jDyn.ak + '</b>), AmK (<b>' + jDyn.amk + '</b>) • २२वां द्रेष्काण स्वामी: <b>' + khara.drekkana_22_lord + '</b>' +
-        '</div></div>';
+                    var keyPlanetsList = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'राहु', 'केतु'];
+                    for (var kpi = 0; kpi < keyPlanetsList.length; kpi++) {
+                        var pkName = keyPlanetsList[kpi];
+                        var pData = pMap[pkName];
+                        if (!pData) continue;
+                        var pH = pData.house || 1;
+                        var pSavScore = sav[pH] || 28;
+                        essay += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
+                            '<td style="padding:4px 8px; font-weight:700; color:#f8fafc;">' + pkName + '</td>' +
+                            '<td style="padding:4px 8px;">भाव ' + pH + ' (' + (pData.sign || '-') + ')</td>' +
+                            '<td style="padding:4px 8px; font-family:monospace; color:#cbd5e1;">' + (pData.degree || '-') + '</td>' +
+                            '<td style="padding:4px 8px; color:#e2e8f0;">' + (pData.nakshatra || '-') + '</td>' +
+                            '<td style="padding:4px 8px;"><span style="background:rgba(212,175,55,0.12); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.70rem;">' + (pData.dignity || 'सम') + '</span></td>' +
+                            '<td style="padding:4px 8px; font-weight:700; color:' + (pSavScore >= 28 ? '#4ade80' : '#f87171') + ';">' + pSavScore + ' बिंदु</td>' +
+                            '</tr>';
+                    }
+                    essay += '</table></div>' +
+                        '<div style="font-size:0.75rem; color:#64748b; margin-top:8px;">' +
+                        '✦ सर्वाष्टकवर्ग: कुल <b>३३७ बिंदु</b> • चर कारक: AK (<b>' + jDyn.ak + '</b>), AmK (<b>' + jDyn.amk + '</b>) • २२वां द्रेष्काण स्वामी: <b>' + khara.drekkana_22_lord + '</b>' +
+                        '</div></div>';
 
-    // SPECIAL CHAPTER 0B: Gurukul Pedagogical Tarka & Varga Calculus
-    essay += '<div style="background:rgba(30,41,59,0.55); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
-        '<h4 style="color:#F1DE87; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
-        '📜 गुरुकुल तर्क एवं बहु-वर्गीय परीक्षण (Gurukul Tarka & Varga Calculus)' +
-        '</h4>' +
-        '<span style="font-size:0.72rem; color:#fde047; background:rgba(212,175,55,0.15); padding:2px 8px; border-radius:4px;">पोर्टफोलियो प्रधानता एवं कर्म-मूल</span>' +
-        '</div>' +
-        '<div style="font-size:0.83rem; color:#94A3B8; margin-bottom:10px; line-height:1.6; font-style:italic;">' +
-        '"लग्न संभावित प्रतिज्ञा (Promise) दर्शाता है, भाव चलित स्थूल स्थिति स्पष्ट करता है, नवमांश (D-9) व दशमांश (D-10) फल की गुणवत्ता तय करते हैं, और षष्ट्यंश (D-60) संचित प्रारब्ध की सीमा तय करता है।"' +
-        '</div>' +
-        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">' +
-        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #60a5fa;">' +
-        '<b style="color:#60a5fa; font-size:0.82rem;">१. प्रतिज्ञा (The Promise - D-1/चलित):</b>' +
-        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">लग्न भाव व भावेश स्थूल संसार में अवसर व शारीरिक सामर्थ्य की नीव रखते हैं।</p>' +
-        '</div>' +
-        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #34d399;">' +
-        '<b style="color:#34d399; font-size:0.82rem;">२. फल व पोर्टफोलियो प्रधानता (D-9/D-10):</b>' +
-        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">D-1 का उच्च ग्रह यदि वर्ग (D-10) में कमजोर हो, तो फल सीमित रहेगा। दोनों वर्गों का संरेखण अनिवार्य है।</p>' +
-        '</div>' +
-        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #f87171;">' +
-        '<b style="color:#f87171; font-size:0.82rem;">३. कर्म-मूल (D-60 & Negative Root):</b>' +
-        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">षष्ट्यंश के देव/राक्षस स्वभाव अनुसार प्रारब्ध की सीमा तय होती है। D-1 से ६/८/१२वें स्थान पर स्थित ग्रह संघर्ष देते हैं।</p>' +
-        '</div>' +
-        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #fbbf24;">' +
-        '<b style="color:#fbbf24; font-size:0.82rem;">४. कृष्णमूर्ति कस्पल सब-लॉर्ड (KP CSL):</b>' +
-        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">४-चरणीय उप-स्वामी संबंधित भाव के फल को हरी झंडी प्रदान करता है, जिससे घटना का समय अकाट्य बनता है।</p>' +
-        '</div>' +
-        '</div></div>';
+                    // SPECIAL CHAPTER 0B: Gurukul Pedagogical Tarka & Varga Calculus
+                    essay += '<div style="background:rgba(30,41,59,0.55); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:16px 18px; margin-bottom:16px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:10px;">' +
+                        '<h4 style="color:#F1DE87; margin:0; font-size:1.02rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+                        '📜 गुरुकुल तर्क एवं बहु-वर्गीय परीक्षण (Gurukul Tarka & Varga Calculus)' +
+                        '</h4>' +
+                        '<span style="font-size:0.72rem; color:#fde047; background:rgba(212,175,55,0.15); padding:2px 8px; border-radius:4px;">पोर्टफोलियो प्रधानता एवं कर्म-मूल</span>' +
+                        '</div>' +
+                        '<div style="font-size:0.83rem; color:#94A3B8; margin-bottom:10px; line-height:1.6; font-style:italic;">' +
+                        '"लग्न संभावित प्रतिज्ञा (Promise) दर्शाता है, भाव चलित स्थूल स्थिति स्पष्ट करता है, नवमांश (D-9) व दशमांश (D-10) फल की गुणवत्ता तय करते हैं, और षष्ट्यंश (D-60) संचित प्रारब्ध की सीमा तय करता है।"' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">' +
+                        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #60a5fa;">' +
+                        '<b style="color:#60a5fa; font-size:0.82rem;">१. प्रतिज्ञा (The Promise - D-1/चलित):</b>' +
+                        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">लग्न भाव व भावेश स्थूल संसार में अवसर व शारीरिक सामर्थ्य की नीव रखते हैं।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #34d399;">' +
+                        '<b style="color:#34d399; font-size:0.82rem;">२. फल व पोर्टफोलियो प्रधानता (D-9/D-10):</b>' +
+                        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">D-1 का उच्च ग्रह यदि वर्ग (D-10) में कमजोर हो, तो फल सीमित रहेगा। दोनों वर्गों का संरेखण अनिवार्य है।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #f87171;">' +
+                        '<b style="color:#f87171; font-size:0.82rem;">३. कर्म-मूल (D-60 & Negative Root):</b>' +
+                        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">षष्ट्यंश के देव/राक्षस स्वभाव अनुसार प्रारब्ध की सीमा तय होती है। D-1 से ६/८/१२वें स्थान पर स्थित ग्रह संघर्ष देते हैं।</p>' +
+                        '</div>' +
+                        '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #fbbf24;">' +
+                        '<b style="color:#fbbf24; font-size:0.82rem;">४. कृष्णमूर्ति कस्पल सब-लॉर्ड (KP CSL):</b>' +
+                        '<p style="margin:4px 0 0 0; font-size:0.79rem; color:#cbd5e1; line-height:1.5;">४-चरणीय उप-स्वामी संबंधित भाव के फल को हरी झंडी प्रदान करता है, जिससे घटना का समय अकाट्य बनता है।</p>' +
+                        '</div>' +
+                        '</div></div>';
 
-    // SPECIAL CHAPTER: Goodh Diagnostics Matrix
-    if (diag) {
-        var gHtml = (gHits.length > 0) ?
-            ('<div style="margin-top:6px; padding:8px 12px; background:rgba(239,68,68,0.12); border-left:3px solid #ef4444; border-radius:6px; font-size:0.88rem; color:#fca5a5;">⚠️ <b>' + gHits.map(function(g){ return g.planet + ': ' + g.insight_hi; }).join('<br>') + '</b></div>') :
-            ('<div style="color:#34D399; font-size:0.86rem; margin-top:4px;">✅ कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना संतुलित व स्थिर है।</div>');
+                    // SPECIAL CHAPTER: Goodh Diagnostics Matrix
+                    if (diag) {
+                        var gHtml = (gHits.length > 0) ?
+                            ('<div style="margin-top:6px; padding:8px 12px; background:rgba(239,68,68,0.12); border-left:3px solid #ef4444; border-radius:6px; font-size:0.88rem; color:#fca5a5;">⚠️ <b>' + gHits.map(function (g) { return g.planet + ': ' + g.insight_hi; }).join('<br>') + '</b></div>') :
+                            ('<div style="color:#34D399; font-size:0.86rem; margin-top:4px;">✅ कोई ग्रह जल-अग्नि गण्डान्त सन्धि पर नहीं है। चेतना संतुलित व स्थिर है।</div>');
 
-        var dHtml = (dagdha.length > 0) ?
-            ('<span style="color:#F59E0B; font-weight:700;">' + dagdha.join(' • ') + '</span>') :
-            ('<span style="color:#94A3B8;">शून्य</span>');
+                        var dHtml = (dagdha.length > 0) ?
+                            ('<span style="color:#F59E0B; font-weight:700;">' + dagdha.join(' • ') + '</span>') :
+                            ('<span style="color:#94A3B8;">शून्य</span>');
 
-        essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-            '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
-            '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
-            '🔍 सूक्ष्म परीक्षण एवं अदृश्य वेध (Deep Diagnostic Matrix)' +
-            '</h4>' +
-            '<span style="font-size:0.75rem; color:' + (jDyn.inner_turmoil_flag ? '#f59e0b' : '#34d399') + '; font-weight:700;">' + (jDyn.inner_turmoil_flag ? '६/८ आन्तरिक द्वन्द्व वेध' : 'आत्म-सामंजस्य') + '</span>' +
-            '</div>' +
-            '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
-            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-            '<b style="color:#F1DE87;">१. कारकांश व आरूढ़ लग्न (Jaimini Dynamics):</b><br>' +
-            '• आत्मकारक (AK): <b>' + jDyn.ak + '</b> ➔ कारकांश: <b>' + jDyn.karakansha + '</b><br>' +
-            '• अमात्यकारक (AmK): <b>' + jDyn.amk + '</b> (कर्म व पद-प्रतिष्ठा)<br>' +
-            '• आरूढ़ लग्न (AL): <b>' + jDyn.arudha_lagna + '</b> • उपपद (UL): <b>' + jDyn.upapada_lagna + '</b><br>' +
-            '<div style="margin-top:6px; color:#FDE68A; font-size:0.86rem;">' + (jDyn.deep_observation_hi || '') + '</div>' +
-            '</div>' +
-            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-            '<b style="color:#F87171;">२. गण्डान्त एवं तिथि दग्ध राशियां:</b>' +
-            gHtml +
-            '<div style="margin-top:8px;">• जन्म तिथि अनुसार दग्ध (शून्य) राशियां: ' + dHtml + '<br>' +
-            '<small style="color:#94A3B8;">(दग्ध राशि में स्थित ग्रह अथवा भावेश अपने शुभ फल देने में असमर्थ व शिथिल हो जाते हैं।)</small>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
-    }
+                        essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
+                            '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif); display:flex; align-items:center; gap:8px;">' +
+                            '🔍 सूक्ष्म परीक्षण एवं अदृश्य वेध (Deep Diagnostic Matrix)' +
+                            '</h4>' +
+                            '<span style="font-size:0.75rem; color:' + (jDyn.inner_turmoil_flag ? '#f59e0b' : '#34d399') + '; font-weight:700;">' + (jDyn.inner_turmoil_flag ? '६/८ आन्तरिक द्वन्द्व वेध' : 'आत्म-सामंजस्य') + '</span>' +
+                            '</div>' +
+                            '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
+                            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                            '<b style="color:#F1DE87;">१. कारकांश व आरूढ़ लग्न (Jaimini Dynamics):</b><br>' +
+                            '• आत्मकारक (AK): <b>' + jDyn.ak + '</b> ➔ कारकांश: <b>' + jDyn.karakansha + '</b><br>' +
+                            '• अमात्यकारक (AmK): <b>' + jDyn.amk + '</b> (कर्म व पद-प्रतिष्ठा)<br>' +
+                            '• आरूढ़ लग्न (AL): <b>' + jDyn.arudha_lagna + '</b> • उपपद (UL): <b>' + jDyn.upapada_lagna + '</b><br>' +
+                            '<div style="margin-top:6px; color:#FDE68A; font-size:0.86rem;">' + (jDyn.deep_observation_hi || '') + '</div>' +
+                            '</div>' +
+                            '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                            '<b style="color:#F87171;">२. गण्डान्त एवं तिथि दग्ध राशियां:</b>' +
+                            gHtml +
+                            '<div style="margin-top:8px;">• जन्म तिथि अनुसार दग्ध (शून्य) राशियां: ' + dHtml + '<br>' +
+                            '<small style="color:#94A3B8;">(दग्ध राशि में स्थित ग्रह अथवा भावेश अपने शुभ फल देने में असमर्थ व शिथिल हो जाते हैं।)</small>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }
 
-    // CHAPTER 1: Lagna & Personality
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
-        'अध्याय १: लग्न संरचना, मूल संविधान एवं व्यक्तित्व का सत्य' +
-        '</h4>' +
-        '<p style="margin:0 0 10px 0; color:#E2E8F0;">' +
-        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। लग्नेश <b>' + lagnaLord + '</b> कुण्डली के <b>भाव ' + lagnaLordPl.house + ' (' + lagnaLordPl.sign + ' राशि)</b> में ' + (lagnaLordPl.dignity ? ('(' + lagnaLordPl.dignity + ')') : '') + ' स्थित हैं।' +
-        '</p>' +
-        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px; margin-bottom:8px;">' +
-        '<b>प्रत्यक्ष स्वभाव व आचरण:</b> ' +
-        (lagnaLordPl.house === 1 ? 'जातक आत्म-निर्भर, स्वतंत्र विचारों के धनी और स्पष्टवादी हैं।' :
-         lagnaLordPl.house === 2 ? 'जातक का पूरा ध्यान परिवार, संचित पूंजी और वाणी के सदुपयोग पर केंद्रित रहता है।' :
-         lagnaLordPl.house === 3 ? 'जातक पराक्रमी, साहसी और अपने बाहुबल व संपर्कों से स्वयं का मार्ग बनाने वाले हैं।' :
-         lagnaLordPl.house === 6 ? 'जातक प्रतियोगी स्वभाव के हैं, संघर्षों से जूझने की अपार क्षमता है किंतु गुप्त शत्रुओं व तनाव से सावधान रहना पड़ता है।' :
-         lagnaLordPl.house === 10 ? 'जातक का संपूर्ण ध्यान कर्म, पद और सामाजिक प्रतिष्ठा पर रहता है। शासन व समाज में पहचान बनाने का प्रबल संकल्प है।' :
-         lagnaLordPl.house === 11 ? 'जातक अत्यंत लाभोन्मुखी, विशाल नेटवर्क और मित्रों के सहयोग से बड़ी योजनाएं सफल करने में सक्षम हैं।' :
-         'जातक का आत्मबल परिस्थिति अनुसार निर्णय लेने में सक्षम है।') +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 1: Lagna & Personality
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+                        'अध्याय १: लग्न संरचना, मूल संविधान एवं व्यक्तित्व का सत्य' +
+                        '</h4>' +
+                        '<p style="margin:0 0 10px 0; color:#E2E8F0;">' +
+                        'जातक का जन्म <b>' + lagna + ' लग्न</b> में हुआ है। लग्नेश <b>' + lagnaLord + '</b> कुण्डली के <b>भाव ' + lagnaLordPl.house + ' (' + lagnaLordPl.sign + ' राशि)</b> में ' + (lagnaLordPl.dignity ? ('(' + lagnaLordPl.dignity + ')') : '') + ' स्थित हैं।' +
+                        '</p>' +
+                        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px; margin-bottom:8px;">' +
+                        '<b>प्रत्यक्ष स्वभाव व आचरण:</b> ' +
+                        (lagnaLordPl.house === 1 ? 'जातक आत्म-निर्भर, स्वतंत्र विचारों के धनी और स्पष्टवादी हैं।' :
+                            lagnaLordPl.house === 2 ? 'जातक का पूरा ध्यान परिवार, संचित पूंजी और वाणी के सदुपयोग पर केंद्रित रहता है।' :
+                                lagnaLordPl.house === 3 ? 'जातक पराक्रमी, साहसी और अपने बाहुबल व संपर्कों से स्वयं का मार्ग बनाने वाले हैं।' :
+                                    lagnaLordPl.house === 6 ? 'जातक प्रतियोगी स्वभाव के हैं, संघर्षों से जूझने की अपार क्षमता है किंतु गुप्त शत्रुओं व तनाव से सावधान रहना पड़ता है।' :
+                                        lagnaLordPl.house === 10 ? 'जातक का संपूर्ण ध्यान कर्म, पद और सामाजिक प्रतिष्ठा पर रहता है। शासन व समाज में पहचान बनाने का प्रबल संकल्प है।' :
+                                            lagnaLordPl.house === 11 ? 'जातक अत्यंत लाभोन्मुखी, विशाल नेटवर्क और मित्रों के सहयोग से बड़ी योजनाएं सफल करने में सक्षम हैं।' :
+                                                'जातक का आत्मबल परिस्थिति अनुसार निर्णय लेने में सक्षम है।') +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 2: Career, Profession & Status (The Big Meat)
-    var careerType = (d10LordPl.house === 10 || d10LordPl.house === 1) ? 'उच्च प्रशासनिक पद, नेतृत्व अथवा स्वतंत्र व्यापार' :
-                     (d10LordPl.house === 6 || d10LordPl.house === 11) ? 'प्रतिष्ठित सेवा, सलाहकारिता, कॉर्पोरेट या उद्योग प्रबंधन' :
-                     (d10LordPl.house === 9 || d10LordPl.house === 5) ? 'ज्ञान, परामर्श, शिक्षा, शोध अथवा विदेशी संबंध' :
-                     'व्यावसायिक प्रतिष्ठा एवं श्रम-आधारित उन्नति';
+                    // CHAPTER 2: Career, Profession & Status (The Big Meat)
+                    var careerType = (d10LordPl.house === 10 || d10LordPl.house === 1) ? 'उच्च प्रशासनिक पद, नेतृत्व अथवा स्वतंत्र व्यापार' :
+                        (d10LordPl.house === 6 || d10LordPl.house === 11) ? 'प्रतिष्ठित सेवा, सलाहकारिता, कॉर्पोरेट या उद्योग प्रबंधन' :
+                            (d10LordPl.house === 9 || d10LordPl.house === 5) ? 'ज्ञान, परामर्श, शिक्षा, शोध अथवा विदेशी संबंध' :
+                                'व्यावसायिक प्रतिष्ठा एवं श्रम-आधारित उन्नति';
 
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
-        'अध्याय २: कार्यक्षेत्र, पद-प्रतिष्ठा एवं आजीविका का सटीक निर्णय (Career & Status)' +
-        '</h4>' +
-        '<p style="margin:0 0 10px 0;">' +
-        'दशम भाव (कर्म व पद) के स्वामी <b>' + d10Lord + '</b> हैं, जो कुण्डली के <b>भाव ' + d10LordPl.house + ' (' + d10LordPl.sign + ' राशि)</b> में संचरण कर रहे हैं। ' +
-        'दशम भाव को सर्वाष्टकवर्ग (SAV) में <b>' + sav10 + ' बिंदु</b> प्राप्त हैं ' + (sav10 >= 28 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत बली एवं कार्य-सिद्धि प्रदायक)</span>' : '<span style="color:#F59E0B; font-weight:700;">(प्रयास सापेक्ष मध्यम बल)</span>') + '।' +
-        '</p>' +
-        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:10px;">' +
-        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-        '<b style="color:#60A5FA;">🎯 KP 4-चरण सब-लॉर्ड एवं कार्य सिद्धि:</b><br>' +
-        '• कार्यक्षेत्र स्वरूप: <b>' + careerType + '</b><br>' +
-        '• आजीविका में अधिकार: अमात्यकारक <b>' + jDyn.amk + '</b> की शक्ति जातक को कर्मक्षेत्र में निर्णायक स्थान दिलाती है।' +
-        '</div>' +
-        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
-        '<b style="color:#F59E0B;">⚡ पदोन्नति व बदलाव की स्थिति:</b><br>' +
-        'दशमेश का एकादश (लाभ) व षष्ठ (प्रतियोगिता) भाव से संरेखण जातक को ' + (sav10 >= 28 ? 'सहज पदोन्नति व अधिकार-वृद्धि कराएगा।' : 'अत्यधिक श्रम के पश्चात ही उचित श्रेय व पद की प्राप्ति कराएगा।') +
-        '</div>' +
-        '</div>' +
-        '</div>';
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+                        'अध्याय २: कार्यक्षेत्र, पद-प्रतिष्ठा एवं आजीविका का सटीक निर्णय (Career & Status)' +
+                        '</h4>' +
+                        '<p style="margin:0 0 10px 0;">' +
+                        'दशम भाव (कर्म व पद) के स्वामी <b>' + d10Lord + '</b> हैं, जो कुण्डली के <b>भाव ' + d10LordPl.house + ' (' + d10LordPl.sign + ' राशि)</b> में संचरण कर रहे हैं। ' +
+                        'दशम भाव को सर्वाष्टकवर्ग (SAV) में <b>' + sav10 + ' बिंदु</b> प्राप्त हैं ' + (sav10 >= 28 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत बली एवं कार्य-सिद्धि प्रदायक)</span>' : '<span style="color:#F59E0B; font-weight:700;">(प्रयास सापेक्ष मध्यम बल)</span>') + '।' +
+                        '</p>' +
+                        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin-bottom:10px;">' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                        '<b style="color:#60A5FA;">🎯 KP 4-चरण सब-लॉर्ड एवं कार्य सिद्धि:</b><br>' +
+                        '• कार्यक्षेत्र स्वरूप: <b>' + careerType + '</b><br>' +
+                        '• आजीविका में अधिकार: अमात्यकारक <b>' + jDyn.amk + '</b> की शक्ति जातक को कर्मक्षेत्र में निर्णायक स्थान दिलाती है।' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:8px; padding:12px;">' +
+                        '<b style="color:#F59E0B;">⚡ पदोन्नति व बदलाव की स्थिति:</b><br>' +
+                        'दशमेश का एकादश (लाभ) व षष्ठ (प्रतियोगिता) भाव से संरेखण जातक को ' + (sav10 >= 28 ? 'सहज पदोन्नति व अधिकार-वृद्धि कराएगा।' : 'अत्यधिक श्रम के पश्चात ही उचित श्रेय व पद की प्राप्ति कराएगा।') +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 3: Wealth & Finance
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
-        'अध्याय ३: धन-संपदा, कोष संचय एवं आर्थिक प्रवाह (Wealth & Liquid Cash)' +
-        '</h4>' +
-        '<p style="margin:0 0 10px 0;">' +
-        'द्वितीय भाव (धन कोष) के स्वामी <b>' + d2Lord + '</b> (भाव ' + d2LordPl.house + ') एवं एकादश भाव (आय व प्राप्ति) के स्वामी <b>' + d11Lord + '</b> (भाव ' + d11LordPl.house + ') हैं। ' +
-        'एकादश भाव को सर्वाष्टकवर्ग में <b>' + sav11 + ' बिंदु</b> ' + (sav11 >= 30 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत प्रचुर धन लाभ)</span>' : '<span style="color:#F59E0B;">(संतुलित आय)</span>') + ' तथा धन भाव को <b>' + sav2 + ' बिंदु</b> प्राप्त हैं।' +
-        '</p>' +
-        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
-        '<b>आर्थिक वास्तविकता:</b> ' +
-        (sav11 >= sav2 ? 'जातक की आय का प्रवाह संचय की तुलना में अधिक तीव्र रहेगा। धन आएगा भरपूर, किंतु बड़े प्रोजेक्ट्स, भूमि या विस्तार में पुनर्निवेशित होता रहेगा।' : 'जातक संचय करने में अत्यंत दक्ष रहेंगे और सुरक्षित संपत्तियों में धन की वृद्धि करेंगे।') +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 3: Wealth & Finance
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+                        'अध्याय ३: धन-संपदा, कोष संचय एवं आर्थिक प्रवाह (Wealth & Liquid Cash)' +
+                        '</h4>' +
+                        '<p style="margin:0 0 10px 0;">' +
+                        'द्वितीय भाव (धन कोष) के स्वामी <b>' + d2Lord + '</b> (भाव ' + d2LordPl.house + ') एवं एकादश भाव (आय व प्राप्ति) के स्वामी <b>' + d11Lord + '</b> (भाव ' + d11LordPl.house + ') हैं। ' +
+                        'एकादश भाव को सर्वाष्टकवर्ग में <b>' + sav11 + ' बिंदु</b> ' + (sav11 >= 30 ? '<span style="color:#34D399; font-weight:700;">(अत्यंत प्रचुर धन लाभ)</span>' : '<span style="color:#F59E0B;">(संतुलित आय)</span>') + ' तथा धन भाव को <b>' + sav2 + ' बिंदु</b> प्राप्त हैं।' +
+                        '</p>' +
+                        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
+                        '<b>आर्थिक वास्तविकता:</b> ' +
+                        (sav11 >= sav2 ? 'जातक की आय का प्रवाह संचय की तुलना में अधिक तीव्र रहेगा। धन आएगा भरपूर, किंतु बड़े प्रोजेक्ट्स, भूमि या विस्तार में पुनर्निवेशित होता रहेगा।' : 'जातक संचय करने में अत्यंत दक्ष रहेंगे और सुरक्षित संपत्तियों में धन की वृद्धि करेंगे।') +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 4: Marriage & Relationships
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
-        'अध्याय ४: दांपत्य, विवाह एवं पारिवारिक संबंध (Marriage & Relationships)' +
-        '</h4>' +
-        '<p style="margin:0 0 10px 0;">' +
-        'सप्तम भाव (दांपत्य) के स्वामी <b>' + d7Lord + '</b> हैं जो भाव <b>' + d7LordPl.house + '</b> में स्थित हैं। उपपद लग्न <b>' + jDyn.upapada_lagna + '</b> है। ' +
-        'सप्तम भाव को सर्वाष्टकवर्ग में <b>' + sav7 + ' बिंदु</b> प्राप्त हैं।' +
-        '</p>' +
-        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #EC4899; padding:10px 14px; border-radius:6px;">' +
-        '<b>संबंधों का सत्य:</b> ' +
-        (sav7 >= 28 ? 'जीवनसाथी समझदार, स्वाभिमानी एवं सामाजिक रूप से सहायक सिद्ध होंगे। वैवाहिक जीवन स्थिर रहेगा।' : 'वैचारिक मतभेद अथवा कार्यक्षेत्र की व्यस्तता के कारण परस्पर संवाद में अंतराल आ सकता है। अहंकार के टकराव से बचना आवश्यक है।') +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 4: Marriage & Relationships
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+                        'अध्याय ४: दांपत्य, विवाह एवं पारिवारिक संबंध (Marriage & Relationships)' +
+                        '</h4>' +
+                        '<p style="margin:0 0 10px 0;">' +
+                        'सप्तम भाव (दांपत्य) के स्वामी <b>' + d7Lord + '</b> हैं जो भाव <b>' + d7LordPl.house + '</b> में स्थित हैं। उपपद लग्न <b>' + jDyn.upapada_lagna + '</b> है। ' +
+                        'सप्तम भाव को सर्वाष्टकवर्ग में <b>' + sav7 + ' बिंदु</b> प्राप्त हैं।' +
+                        '</p>' +
+                        '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #EC4899; padding:10px 14px; border-radius:6px;">' +
+                        '<b>संबंधों का सत्य:</b> ' +
+                        (sav7 >= 28 ? 'जीवनसाथी समझदार, स्वाभिमानी एवं सामाजिक रूप से सहायक सिद्ध होंगे। वैवाहिक जीवन स्थिर रहेगा।' : 'वैचारिक मतभेद अथवा कार्यक्षेत्र की व्यस्तता के कारण परस्पर संवाद में अंतराल आ सकता है। अहंकार के टकराव से बचना आवश्यक है।') +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 5: Health & Vulnerabilities (Khara & 64th Navamsha)
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
-        'अध्याय ५: शारीरिक सामर्थ्य, रोग प्रतिरोधक क्षमता व सूक्ष्म वेध (Health & Vitality)' +
-        '</h4>' +
-        '<p style="margin:0 0 10px 0;">' +
-        'रोगेश (६ठे भाव के स्वामी) <b>' + d6Lord + '</b> हैं। २२वें द्रेष्काण (खरेश) के अधिपति <b>' + khara.drekkana_22_lord + '</b> हैं तथा ६४वें नवांश स्वामी <b>' + khara.navamsha_64_lord + '</b> हैं।' +
-        '</p>' +
-        '<div style="background:rgba(239,68,68,0.08); border-left:3px solid #EF4444; padding:10px 14px; border-radius:6px; color:#FCA5A5;">' +
-        '⚠️ <b>संवेदनशील अंग व अंग-सुरक्षा:</b> ' + (khara.protective_guidance_hi || ('लग्नेश व खरेश की स्थिति अनुसार उदर, रक्तचाप अथवा वात-विकार के प्रति सतर्क रहें। नियमित प्राणायाम व आहार संतुलन अनिवार्य है।')) +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 5: Health & Vulnerabilities (Khara & 64th Navamsha)
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1px solid var(--border-subtle); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<h4 style="color:#F6E05E; margin:0 0 10px 0; font-size:1.05rem; font-family:var(--font-serif); border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px;">' +
+                        'अध्याय ५: शारीरिक सामर्थ्य, रोग प्रतिरोधक क्षमता व सूक्ष्म वेध (Health & Vitality)' +
+                        '</h4>' +
+                        '<p style="margin:0 0 10px 0;">' +
+                        'रोगेश (६ठे भाव के स्वामी) <b>' + d6Lord + '</b> हैं। २२वें द्रेष्काण (खरेश) के अधिपति <b>' + khara.drekkana_22_lord + '</b> हैं तथा ६४वें नवांश स्वामी <b>' + khara.navamsha_64_lord + '</b> हैं।' +
+                        '</p>' +
+                        '<div style="background:rgba(239,68,68,0.08); border-left:3px solid #EF4444; padding:10px 14px; border-radius:6px; color:#FCA5A5;">' +
+                        '⚠️ <b>संवेदनशील अंग व अंग-सुरक्षा:</b> ' + (khara.protective_guidance_hi || ('लग्नेश व खरेश की स्थिति अनुसार उदर, रक्तचाप अथवा वात-विकार के प्रति सतर्क रहें। नियमित प्राणायाम व आहार संतुलन अनिवार्य है।')) +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 6: 2026-2027 Timing & Dasha Activation (Concrete Timeline)
-    essay += '<div style="background:rgba(15,23,42,0.85); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25); padding-bottom:8px; margin-bottom:12px;">' +
-        '<h4 style="color:#F6E05E; margin:0; font-size:1.08rem; font-family:var(--font-serif);">' +
-        'अध्याय ६: काल-चक्र व आगामी २४ महीनों का घटनाक्रम (2026-2027 Timed Predictions)' +
-        '</h4>' +
-        '<span style="background:rgba(212,175,55,0.15); color:#F6E05E; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">गोचर दोहरा वेध सक्रिय</span>' +
-        '</div>' +
-        '<p style="margin:0 0 10px 0;">' +
-        'वर्तमान में सक्रिय <b>' + dasha + '</b> आपके कर्म-चक्र का संचालन कर रही है। वर्ष २०२६-२०२७ में <b>देवगुरु बृहस्पति सिंह राशि में</b> तथा <b>शनिदेव मीन राशि में</b> संचरण कर रहे हैं।' +
-        '</p>' +
-        '<div style="display:grid; grid-template-columns:1fr; gap:10px;">' +
-        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px;">' +
-        '<b style="color:#60A5FA;">चरण १ (दिसंबर २०२६ - मई २०२७):</b> ' +
-        'कार्यक्षेत्र में नई जिम्मेदारियों, भूमिका-परिवर्तन अथवा किसी महत्वपूर्ण प्रोजेक्ट की शुरुआत का प्रबल योग है। आर्थिक प्रवाह में गति आएगी।' +
-        '</div>' +
-        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
-        '<b style="color:#34D399;">चरण २ (जून २०२७ - दिसंबर २०२७):</b> ' +
-        'स्थिरता, प्रतिष्ठा-विस्तार एवं परिवार में शुभ मांगलिक कार्य अथवा संपत्ति निवेश के संकेत हैं। पुराने अटके हुए कार्यों में सफलता मिलेगी।' +
-        '</div>' +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 6: 2026-2027 Timing & Dasha Activation (Concrete Timeline)
+                    essay += '<div style="background:rgba(15,23,42,0.85); border:1.5px solid var(--border-gold); border-radius:12px; padding:18px 20px; margin-bottom:16px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.25); padding-bottom:8px; margin-bottom:12px;">' +
+                        '<h4 style="color:#F6E05E; margin:0; font-size:1.08rem; font-family:var(--font-serif);">' +
+                        'अध्याय ६: काल-चक्र व आगामी २४ महीनों का घटनाक्रम (2026-2027 Timed Predictions)' +
+                        '</h4>' +
+                        '<span style="background:rgba(212,175,55,0.15); color:#F6E05E; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">गोचर दोहरा वेध सक्रिय</span>' +
+                        '</div>' +
+                        '<p style="margin:0 0 10px 0;">' +
+                        'वर्तमान में सक्रिय <b>' + dasha + '</b> आपके कर्म-चक्र का संचालन कर रही है। वर्ष २०२६-२०२७ में <b>देवगुरु बृहस्पति सिंह राशि में</b> तथा <b>शनिदेव मीन राशि में</b> संचरण कर रहे हैं।' +
+                        '</p>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:10px;">' +
+                        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #3B82F6; padding:10px 14px; border-radius:6px;">' +
+                        '<b style="color:#60A5FA;">चरण १ (दिसंबर २०२६ - मई २०२७):</b> ' +
+                        'कार्यक्षेत्र में नई जिम्मेदारियों, भूमिका-परिवर्तन अथवा किसी महत्वपूर्ण प्रोजेक्ट की शुरुआत का प्रबल योग है। आर्थिक प्रवाह में गति आएगी।' +
+                        '</div>' +
+                        '<div style="background:rgba(255,255,255,0.03); border-left:3px solid #10B981; padding:10px 14px; border-radius:6px;">' +
+                        '<b style="color:#34D399;">चरण २ (जून २०२७ - दिसंबर २०२७):</b> ' +
+                        'स्थिरता, प्रतिष्ठा-विस्तार एवं परिवार में शुभ मांगलिक कार्य अथवा संपत्ति निवेश के संकेत हैं। पुराने अटके हुए कार्यों में सफलता मिलेगी।' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 7: Remedial Shield (Vardhana vs Shaman Matrix)
-    essay += '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.06), rgba(15,23,42,0.92)); border:1.5px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
-        '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif);">' +
-        'अध्याय ७: सर्व-दोष निवारण सात्विक महायंत्र (Omni-Remedial Matrix — Vardhana vs. Shaman)' +
-        '</h4>' +
-        '<span style="background:rgba(212,175,55,0.15); color:#FDE047; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">ऊर्जा वर्धन बनाम ऊर्जा शमन</span>' +
-        '</div>' +
-        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
-        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:12px 14px;">' +
-        '<b style="color:#34D399; font-size:0.90rem;">🌟 १. ऊर्जा वर्धन (Vardhana — Amplification):</b><br>' +
-        '<span style="font-size:0.78rem; color:#94A3B8;">लग्नेश, भाग्येश एवं योगकारक शक्तियों का संवर्धन:</span>' +
-        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
-        '<li>प्रातः सूर्योदय पूर्व जागरण, तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम-युक्त अर्घ्य तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ।</li>' +
-        '<li>लग्नेश <b>' + lagnaLord + '</b> देव के बीज मंत्र का नित्य शांत मन से १०८ बार जप कर आत्मबल सुदृढ़ करें।</li>' +
-        '<li>ईशान कोण (उत्तर-पूर्व) को सदा स्वच्छ व प्रकाशवान रखें, यह जीवन में सात्विक ऊर्जा का विस्तार करता है।</li>' +
-        '</ul>' +
-        '</div>' +
-        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(248,113,113,0.3); border-radius:8px; padding:12px 14px;">' +
-        '<b style="color:#F87171; font-size:0.90rem;">🛡️ २. ऊर्जा शमन (Shaman — Pacification):</b><br>' +
-        '<span style="font-size:0.78rem; color:#94A3B8;">त्रिक भाव (६/८/१२), खरेश व राहु-केतु जनित विघ्नों का शांतिकरण:</span>' +
-        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
-        '<li>पक्षियों को नित्य प्रातः सात प्रकार का अनाज (सतनाजा) व जल डालें। यह राहु-केतु के आकस्मिक आघातों को शांत करता है।</li>' +
-        '<li>शनिवार की संध्या असहाय अथवा वृद्ध जनों को तिल/भोजन का दान करें तथा काले कुत्ते या कौवे को रोटी दें।</li>' +
-        '<li>२२वें द्रेष्काण स्वामी (<b>' + khara.drekkana_22_lord + '</b>) के अनिष्ट वेग से रक्षा हेतु नित्य ११ बार <i>महामृत्युंजय मंत्र</i> का जप करें।</li>' +
-        '</ul>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
+                    // CHAPTER 7: Remedial Shield (Vardhana vs Shaman Matrix)
+                    essay += '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.06), rgba(15,23,42,0.92)); border:1.5px solid rgba(212,175,55,0.3); border-radius:12px; padding:18px 20px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:8px; margin-bottom:12px;">' +
+                        '<h4 style="color:#F6E05E; margin:0; font-size:1.05rem; font-family:var(--font-serif);">' +
+                        'अध्याय ७: सर्व-दोष निवारण सात्विक महायंत्र (Omni-Remedial Matrix — Vardhana vs. Shaman)' +
+                        '</h4>' +
+                        '<span style="background:rgba(212,175,55,0.15); color:#FDE047; padding:2px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">ऊर्जा वर्धन बनाम ऊर्जा शमन</span>' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">' +
+                        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:12px 14px;">' +
+                        '<b style="color:#34D399; font-size:0.90rem;">🌟 १. ऊर्जा वर्धन (Vardhana — Amplification):</b><br>' +
+                        '<span style="font-size:0.78rem; color:#94A3B8;">लग्नेश, भाग्येश एवं योगकारक शक्तियों का संवर्धन:</span>' +
+                        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
+                        '<li>प्रातः सूर्योदय पूर्व जागरण, तांबे के पात्र से भगवान सूर्यनारायण को कुंकुम-युक्त अर्घ्य तथा नित्य <i>आदित्य हृदय स्तोत्र</i> का १ पाठ।</li>' +
+                        '<li>लग्नेश <b>' + lagnaLord + '</b> देव के बीज मंत्र का नित्य शांत मन से १०८ बार जप कर आत्मबल सुदृढ़ करें।</li>' +
+                        '<li>ईशान कोण (उत्तर-पूर्व) को सदा स्वच्छ व प्रकाशवान रखें, यह जीवन में सात्विक ऊर्जा का विस्तार करता है।</li>' +
+                        '</ul>' +
+                        '</div>' +
+                        '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(248,113,113,0.3); border-radius:8px; padding:12px 14px;">' +
+                        '<b style="color:#F87171; font-size:0.90rem;">🛡️ २. ऊर्जा शमन (Shaman — Pacification):</b><br>' +
+                        '<span style="font-size:0.78rem; color:#94A3B8;">त्रिक भाव (६/८/१२), खरेश व राहु-केतु जनित विघ्नों का शांतिकरण:</span>' +
+                        '<ul style="margin:6px 0 0 0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:#E2E8F0;">' +
+                        '<li>पक्षियों को नित्य प्रातः सात प्रकार का अनाज (सतनाजा) व जल डालें। यह राहु-केतु के आकस्मिक आघातों को शांत करता है।</li>' +
+                        '<li>शनिवार की संध्या असहाय अथवा वृद्ध जनों को तिल/भोजन का दान करें तथा काले कुत्ते या कौवे को रोटी दें।</li>' +
+                        '<li>२२वें द्रेष्काण स्वामी (<b>' + khara.drekkana_22_lord + '</b>) के अनिष्ट वेग से रक्षा हेतु नित्य ११ बार <i>महामृत्युंजय मंत्र</i> का जप करें।</li>' +
+                        '</ul>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 8: PRACHEEN DAIVAGYA SOOKSHMA GANITA & GOODH PHALIT
-    var ancient = (window.VyasAncientSecretPredictiveEngine && window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis)
-        ? window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis(chart)
-        : null;
+                    // CHAPTER 8: PRACHEEN DAIVAGYA SOOKSHMA GANITA & GOODH PHALIT
+                    var ancient = (window.VyasAncientSecretPredictiveEngine && window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis)
+                        ? window.VyasAncientSecretPredictiveEngine.synthesizeAncientAnalysis(chart)
+                        : null;
 
-    var rashmiTxt = ancient ? (ancient.rashmiBala.total + ' रश्मियां • ' + ancient.rashmiBala.status + '। ' + ancient.rashmiBala.description) : 'रश्मि-बल संतुलित है।';
-    var dagdhaTxt = ancient ? ancient.dagdhaAnalysis.verdict : 'दग्ध राशि दोष शून्य है।';
-    var kcdTxt = ancient ? (ancient.kalachakraDasha.gati + ' • देह राशि: ' + ancient.kalachakraDasha.dehaRashi + ', जीव राशि: ' + ancient.kalachakraDasha.jeevaRashi + '। ' + ancient.kalachakraDasha.fruit) : 'कालचक्र चक्र गति शुभ है।';
-    var kotaTxt = ancient ? ('कोट स्वामी: ' + ancient.kotaChakra.kotaSwami + ', कोट पाल: ' + ancient.kotaChakra.kotaPala + '। ' + ancient.kotaChakra.verdict) : 'दुर्ग सुरक्षित है।';
+                    var rashmiTxt = ancient ? (ancient.rashmiBala.total + ' रश्मियां • ' + ancient.rashmiBala.status + '। ' + ancient.rashmiBala.description) : 'रश्मि-बल संतुलित है।';
+                    var dagdhaTxt = ancient ? ancient.dagdhaAnalysis.verdict : 'दग्ध राशि दोष शून्य है।';
+                    var kcdTxt = ancient ? (ancient.kalachakraDasha.gati + ' • देह राशि: ' + ancient.kalachakraDasha.dehaRashi + ', जीव राशि: ' + ancient.kalachakraDasha.jeevaRashi + '। ' + ancient.kalachakraDasha.fruit) : 'कालचक्र चक्र गति शुभ है।';
+                    var kotaTxt = ancient ? ('कोट स्वामी: ' + ancient.kotaChakra.kotaSwami + ', कोट पाल: ' + ancient.kotaChakra.kotaPala + '। ' + ancient.kotaChakra.verdict) : 'दुर्ग सुरक्षित है।';
 
-    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(255,255,255,0.02); border-left:4px solid #A855F7; border-radius:0 10px 10px 0;">' +
-        '<h4 style="color:#C084FC; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
-        '✦ अध्याय ८: प्राचीन दैवज्ञ गुप्त गणित — कालचक्र, रश्मि-बल, दग्ध राशि एवं कोट चक्र वेध' +
-        '</h4>' +
-        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
-        '• <b>रश्मि-बल गणित (प्रश्नमार्ग अध्याय ७८-८० • कुल ४९ रश्मि):</b> ' + rashmiTxt + '<br>' +
-        '• <b>कालचक्र दशा व देह-जीव वेध (BPHS अध्याय ४६ व १७२-१७५):</b> ' + kcdTxt + '<br>' +
-        '• <b>दग्ध एवं शून्य राशि परीक्षण:</b> ' + dagdhaTxt + '<br>' +
-        '• <b>कोट चक्र दुर्ग रक्षा वेध (The Fort of Destiny):</b> ' + kotaTxt +
-        '</div>' +
-        '</div>';
+                    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(255,255,255,0.02); border-left:4px solid #A855F7; border-radius:0 10px 10px 0;">' +
+                        '<h4 style="color:#C084FC; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
+                        '✦ अध्याय ८: प्राचीन दैवज्ञ गुप्त गणित — कालचक्र, रश्मि-बल, दग्ध राशि एवं कोट चक्र वेध' +
+                        '</h4>' +
+                        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
+                        '• <b>रश्मि-बल गणित (प्रश्नमार्ग अध्याय ७८-८० • कुल ४९ रश्मि):</b> ' + rashmiTxt + '<br>' +
+                        '• <b>कालचक्र दशा व देह-जीव वेध (BPHS अध्याय ४६ व १७२-१७५):</b> ' + kcdTxt + '<br>' +
+                        '• <b>दग्ध एवं शून्य राशि परीक्षण:</b> ' + dagdhaTxt + '<br>' +
+                        '• <b>कोट चक्र दुर्ग रक्षा वेध (The Fort of Destiny):</b> ' + kotaTxt +
+                        '</div>' +
+                        '</div>';
 
-    // CHAPTER 9: ACHARYA VYAS (v10.0) GOODH DIAGNOSTICS & SOOKSHMA TEST
-    var goodhRes = (window.VyasGoodhDiagnosticEngine && window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis)
-        ? window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis(chart)
-        : null;
-    if (goodhRes && goodhRes.summaryHtml) {
-        essay += goodhRes.summaryHtml;
-    }
+                    // CHAPTER 9: ACHARYA VYAS (v10.0) GOODH DIAGNOSTICS & SOOKSHMA TEST
+                    var goodhRes = (window.VyasGoodhDiagnosticEngine && window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis)
+                        ? window.VyasGoodhDiagnosticEngine.synthesizeGoodhAnalysis(chart)
+                        : null;
+                    if (goodhRes && goodhRes.summaryHtml) {
+                        essay += goodhRes.summaryHtml;
+                    }
 
-    // CHAPTER 10: TAJIK VARSHPHAL & ITHASALA
-    var currentYear = new Date().getFullYear();
-    var birthYear = 1984;
-    if (prof.dob) {
-        var parts = prof.dob.split(/[-/]/);
-        if (parts.length === 3) {
-            birthYear = parseInt(parts[0].length === 4 ? parts[0] : parts[2]) || 1984;
-        }
-    }
-    var age = currentYear - birthYear;
-    if (age < 0 || age > 120) age = 40;
-    var lagnaSignNum = SIGNS_HI.indexOf(lagna) + 1;
-    if (lagnaSignNum === 0) lagnaSignNum = 1;
+                    // CHAPTER 10: TAJIK VARSHPHAL & ITHASALA
+                    var currentYear = new Date().getFullYear();
+                    var birthYear = 1984;
+                    if (prof.dob) {
+                        var parts = prof.dob.split(/[-/]/);
+                        if (parts.length === 3) {
+                            birthYear = parseInt(parts[0].length === 4 ? parts[0] : parts[2]) || 1984;
+                        }
+                    }
+                    var age = currentYear - birthYear;
+                    if (age < 0 || age > 120) age = 40;
+                    var lagnaSignNum = SIGNS_HI.indexOf(lagna) + 1;
+                    if (lagnaSignNum === 0) lagnaSignNum = 1;
 
-    var tajikRes = (window.VyasTajikEngine && window.VyasTajikEngine.calculateMuntha)
-        ? window.VyasTajikEngine.calculateMuntha(birthYear, age, lagnaSignNum)
-        : null;
-    var munthaTxt = tajikRes ? tajikRes.verdict : 'वर्ष प्रवेश मुंथा अनुकूल स्थिति में है।';
+                    var tajikRes = (window.VyasTajikEngine && window.VyasTajikEngine.calculateMuntha)
+                        ? window.VyasTajikEngine.calculateMuntha(birthYear, age, lagnaSignNum)
+                        : null;
+                    var munthaTxt = tajikRes ? tajikRes.verdict : 'वर्ष प्रवेश मुंथा अनुकूल स्थिति में है।';
 
-    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(212,175,55,0.03); border-left:4px solid #10B981; border-radius:0 10px 10px 0;">' +
-        '<h4 style="color:#34D399; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
-        '✦ अध्याय १०: ताजिक वर्षफल, मुंथा एवं तात्कालिक प्रश्न निर्णय (Tajik Nilakanthi)' +
-        '</h4>' +
-        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
-        '• <b>ताजिक वर्षप्रवेश मुंथा (आयु वर्ष ' + age + '):</b> ' + munthaTxt + '<br>' +
-        '• <b>इत्थशाल योग व कार्य सिद्धि:</b> लग्नेश एवं कार्येश के मध्य दीप्तांश परस्पर सम्मुख होने पर अभीष्ट मनोरथ शीघ्र सिद्ध होता है। वर्तमान में ताजिक चक्र अनुसार कर्मेश का संबंध राज्य-पक्ष में शुभ फल प्रदान करता है।<br>' +
-        '• <b>सहज निर्णय:</b> प्रश्न काल अथवा वर्ष प्रवेश में गुरु-शुक्र की दृष्टि मुंथा पर होने से वर्ष कल्याणकारी एवं अर्थ संचय हेतु श्रेष्ठ रहेगा।' +
-        '</div>' +
-        '</div>';
+                    essay += '<div style="margin-bottom:20px; padding:16px; background:rgba(212,175,55,0.03); border-left:4px solid #10B981; border-radius:0 10px 10px 0;">' +
+                        '<h4 style="color:#34D399; margin:0 0 10px 0; font-size:1.02rem; font-weight:800; display:flex; align-items:center; gap:8px;">' +
+                        '✦ अध्याय १०: ताजिक वर्षफल, मुंथा एवं तात्कालिक प्रश्न निर्णय (Tajik Nilakanthi)' +
+                        '</h4>' +
+                        '<div style="font-size:0.92rem; line-height:1.75; color:var(--text-secondary);">' +
+                        '• <b>ताजिक वर्षप्रवेश मुंथा (आयु वर्ष ' + age + '):</b> ' + munthaTxt + '<br>' +
+                        '• <b>इत्थशाल योग व कार्य सिद्धि:</b> लग्नेश एवं कार्येश के मध्य दीप्तांश परस्पर सम्मुख होने पर अभीष्ट मनोरथ शीघ्र सिद्ध होता है। वर्तमान में ताजिक चक्र अनुसार कर्मेश का संबंध राज्य-पक्ष में शुभ फल प्रदान करता है।<br>' +
+                        '• <b>सहज निर्णय:</b> प्रश्न काल अथवा वर्ष प्रवेश में गुरु-शुक्र की दृष्टि मुंथा पर होने से वर्ष कल्याणकारी एवं अर्थ संचय हेतु श्रेष्ठ रहेगा।' +
+                        '</div>' +
+                        '</div>';
 
-    essay += '</div>';
-    return essay;
-},
+                    essay += '</div>';
+                    return essay;
+                },
 
                 analyzeChartTruth: function (chart) {
                     chart = chart || (global.VyasDesktop && global.VyasDesktop.activeChartData) || (global.VyasMobile && global.VyasMobile.activeChartData) || null;
@@ -8110,29 +8231,29 @@
 
                 if (!d10) {
                     return "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br><br>" +
-                           "आपकी D-10 (दशमांश) कुण्डली की गणना वर्तमान में उपलब्ध नहीं है। कृपया ऊपर '+ नई कुण्डली' अथवा 'विवरण' से जन्म विवरण पुनः दर्ज करें।";
+                        "आपकी D-10 (दशमांश) कुण्डली की गणना वर्तमान में उपलब्ध नहीं है। कृपया ऊपर '+ नई कुण्डली' अथवा 'विवरण' से जन्म विवरण पुनः दर्ज करें।";
                 }
 
                 var ascSign = d10.ascSign || "वृश्चिक लग्न";
                 var pd = d10.planetDetails || [];
                 var housesMap = {};
                 for (var h = 1; h <= 12; h++) housesMap[h] = [];
-                pd.forEach(function(p) {
+                pd.forEach(function (p) {
                     if (!housesMap[p.house]) housesMap[p.house] = [];
                     housesMap[p.house].push(p);
                 });
 
                 var pIn10 = housesMap[10] || [];
-                var pIn10Str = pIn10.length > 0 ? pIn10.map(function(x) { return "<b>" + x.planet + "</b> (" + x.sign + " राशि)"; }).join(', ') : "कोई प्रत्यक्ष ग्रह नहीं (शुभ दृष्टि संरेखित)";
+                var pIn10Str = pIn10.length > 0 ? pIn10.map(function (x) { return "<b>" + x.planet + "</b> (" + x.sign + " राशि)"; }).join(', ') : "कोई प्रत्यक्ष ग्रह नहीं (शुभ दृष्टि संरेखित)";
 
-                var surya = pd.find(function(x) { return x.planet && (x.planet.indexOf('सूर्य') !== -1 || x.planet.indexOf('Sun') !== -1); });
-                var mangal = pd.find(function(x) { return x.planet && (x.planet.indexOf('मंगल') !== -1 || x.planet.indexOf('Mars') !== -1); });
-                var shukra = pd.find(function(x) { return x.planet && (x.planet.indexOf('शुक्र') !== -1 || x.planet.indexOf('Venus') !== -1); });
-                var shani = pd.find(function(x) { return x.planet && (x.planet.indexOf('शनि') !== -1 || x.planet.indexOf('Saturn') !== -1); });
-                var guru = pd.find(function(x) { return x.planet && (x.planet.indexOf('गुरु') !== -1 || x.planet.indexOf('Jupiter') !== -1); });
-                var chandra = pd.find(function(x) { return x.planet && (x.planet.indexOf('चन्द्र') !== -1 || x.planet.indexOf('Moon') !== -1); });
-                var rahu = pd.find(function(x) { return x.planet && (x.planet.indexOf('राहु') !== -1 || x.planet.indexOf('Rahu') !== -1); });
-                var ketu = pd.find(function(x) { return x.planet && (x.planet.indexOf('केतु') !== -1 || x.planet.indexOf('Ketu') !== -1); });
+                var surya = pd.find(function (x) { return x.planet && (x.planet.indexOf('सूर्य') !== -1 || x.planet.indexOf('Sun') !== -1); });
+                var mangal = pd.find(function (x) { return x.planet && (x.planet.indexOf('मंगल') !== -1 || x.planet.indexOf('Mars') !== -1); });
+                var shukra = pd.find(function (x) { return x.planet && (x.planet.indexOf('शुक्र') !== -1 || x.planet.indexOf('Venus') !== -1); });
+                var shani = pd.find(function (x) { return x.planet && (x.planet.indexOf('शनि') !== -1 || x.planet.indexOf('Saturn') !== -1); });
+                var guru = pd.find(function (x) { return x.planet && (x.planet.indexOf('गुरु') !== -1 || x.planet.indexOf('Jupiter') !== -1); });
+                var chandra = pd.find(function (x) { return x.planet && (x.planet.indexOf('चन्द्र') !== -1 || x.planet.indexOf('Moon') !== -1); });
+                var rahu = pd.find(function (x) { return x.planet && (x.planet.indexOf('राहु') !== -1 || x.planet.indexOf('Rahu') !== -1); });
+                var ketu = pd.find(function (x) { return x.planet && (x.planet.indexOf('केतु') !== -1 || x.planet.indexOf('Ketu') !== -1); });
 
                 var html = "<b>ॐ नमः शिवाय।</b><br><br>" +
                     "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br>" +
@@ -8140,33 +8261,33 @@
                     "आपकी जन्मकालीन गणितीय <b>D-10 दशमांश कुण्डली (" + ascSign + ")</b> का सूक्ष्म शास्त्रीय विश्लेषण प्रस्तुत है:<br><br>";
 
                 html += "✦ <b>१. दशमांश लग्न एवं कर्म-पीठिका (D-10 Ascendant & Foundations):</b><br>" +
-                        "• <b>दशमांश लग्न:</b> <span style='color:var(--accent-gold); font-weight:700;'>" + ascSign + "</span><br>";
+                    "• <b>दशमांश लग्न:</b> <span style='color:var(--accent-gold); font-weight:700;'>" + ascSign + "</span><br>";
                 if (chandra && chandra.house === 1) {
                     html += "• <b>लग्नस्थ चन्द्रमा:</b> दशमांश लग्न में चन्द्रदेव स्थित होकर जातक की व्यावसायिक दृष्टि को गहन, संवेदनशील एवं जनमानस को गहराई से समझने वाला बनाते हैं।<br>";
                 }
                 html += "<br>";
 
                 html += "✦ <b>२. दशम भाव (कर्म, प्रतिष्ठा व शासन) एवं दशमेश वेध:</b><br>" +
-                        "• <b>दशम भाव (10th House of D-10):</b> " + (d10.houses && d10.houses[10] ? d10.houses[10][0] : 'सिंह') + " राशि (स्वामी: भगवान सूर्यदेव)<br>" +
-                        "• <b>दशम भावस्थ ग्रह:</b> " + pIn10Str + "<br>";
+                    "• <b>दशम भाव (10th House of D-10):</b> " + (d10.houses && d10.houses[10] ? d10.houses[10][0] : 'सिंह') + " राशि (स्वामी: भगवान सूर्यदेव)<br>" +
+                    "• <b>दशम भावस्थ ग्रह:</b> " + pIn10Str + "<br>";
                 if (surya) {
                     html += "• <b>दशमेश सूर्यदेव की स्थिति:</b> दशमेश भगवान सूर्यदेव भाव " + surya.house + " (" + surya.sign + " राशि) में स्थित हैं। " +
-                            (surya.house === 11 ? "<span style='color:#10b981; font-weight:700;'>दशमेश का एकादश (लाभ) भाव में होना 'कर्म-लाभ अखंड राजयोग' निर्मित करता है!</span> यह स्वतंत्र उद्यमिता, नीतिगत निर्णय और शीर्ष सम्मान से अकूत लाभ दिलाता है।" : "") + "<br>";
+                        (surya.house === 11 ? "<span style='color:#10b981; font-weight:700;'>दशमेश का एकादश (लाभ) भाव में होना 'कर्म-लाभ अखंड राजयोग' निर्मित करता है!</span> यह स्वतंत्र उद्यमिता, नीतिगत निर्णय और शीर्ष सम्मान से अकूत लाभ दिलाता है।" : "") + "<br>";
                 }
                 html += "<br>";
 
                 html += "✦ <b>३. दशमांश चक्र के विशिष्ट ग्रह योग (D-10 Professional Yogas):</b><br>";
                 if (mangal) {
                     html += "• <b>मंगलदेव (भाव " + mangal.house + ", " + mangal.sign + " राशि):</b> " +
-                            (mangal.sign === 'मकर' ? "<span style='color:var(--accent-gold); font-weight:700;'>मकर राशि में परम उच्च के होकर तृतीय (पराक्रम) भाव में स्थित हैं!</span> यह अद्वितीय तकनीकी बल, उद्यमशीलता, कोडिंग/आर्किटेक्चर एवं विपरीत परिस्थितियों में विजय का अचूक प्रमाण है।" : "साहस व कर्मठता का कारक।") + "<br>";
+                        (mangal.sign === 'मकर' ? "<span style='color:var(--accent-gold); font-weight:700;'>मकर राशि में परम उच्च के होकर तृतीय (पराक्रम) भाव में स्थित हैं!</span> यह अद्वितीय तकनीकी बल, उद्यमशीलता, कोडिंग/आर्किटेक्चर एवं विपरीत परिस्थितियों में विजय का अचूक प्रमाण है।" : "साहस व कर्मठता का कारक।") + "<br>";
                 }
                 if (shukra) {
                     html += "• <b>शुक्रदेव (भाव " + shukra.house + ", " + shukra.sign + " राशि):</b> " +
-                            (shukra.sign === 'वृषभ' ? "<span style='color:#10b981; font-weight:700;'>स्वराशि वृषभ में सप्तम (केंद्र) भाव में स्थित हैं!</span> दशमांश में स्वक्षेत्री शुक्र पार्टनरशिप, स्वतंत्र क्लाइंट नेटवर्क, भव्य उत्पाद निर्माण एवं जन-आकर्षण में असाधारण सफलता देते हैं।" : "") + "<br>";
+                        (shukra.sign === 'वृषभ' ? "<span style='color:#10b981; font-weight:700;'>स्वराशि वृषभ में सप्तम (केंद्र) भाव में स्थित हैं!</span> दशमांश में स्वक्षेत्री शुक्र पार्टनरशिप, स्वतंत्र क्लाइंट नेटवर्क, भव्य उत्पाद निर्माण एवं जन-आकर्षण में असाधारण सफलता देते हैं।" : "") + "<br>";
                 }
                 if (guru) {
                     html += "• <b>देवगुरु बृहस्पति (भाव " + guru.house + ", " + guru.sign + " राशि):</b> " +
-                            (guru.house === 8 ? "अष्टम भाव (गूढ़ विद्या व शोध) में बैठकर ज्योतिष, डेटा, अनुसंधान व पराविद्या के क्षेत्र में असाधारण अंतर्दृष्टि प्रदान करते हैं।" : "") + "<br>";
+                        (guru.house === 8 ? "अष्टम भाव (गूढ़ विद्या व शोध) में बैठकर ज्योतिष, डेटा, अनुसंधान व पराविद्या के क्षेत्र में असाधारण अंतर्दृष्टि प्रदान करते हैं।" : "") + "<br>";
                 }
                 if (ketu && ketu.house === 10) {
                     html += "• <b>केतुदेव दशम भाव में:</b> दशमस्थ केतु को शास्त्रों में 'ध्वजा योग' का संबल माना जाता है — यह जातक को किसी पारंपरिक दासत्व/नौकरी के बजाय अपने स्वतंत्र मार्ग, शोध व अद्वितीय प्लेटफॉर्म पर ध्वज फहराने की प्रेरणा देता है。<br>";
@@ -8174,10 +8295,10 @@
                 html += "<br>";
 
                 html += "✦ <b>४. दशमांश अनुसार आजीविका व कार्यक्षेत्र की दिशा (Career Mastery):</b><br>" +
-                        "1. <b>स्वतंत्र सॉफ्टवेयर, AI एवं वैदिक प्लेटफॉर्म:</b> उच्च मंगल + स्वक्षेत्री शुक्र + अष्टमस्थ गुरु का त्रिकोण संबंध ज्ञान-आधारित आधुनिक तकनीकी प्रणालियों में नेतृत्व सुनिश्चित करता है。<br>" +
-                        "2. <b>स्वायत्त सत्ता (Sovereign Leadership):</b> किसी के अधीन कार्य करने की बजाय अपना स्वतंत्र संगठन, कंसल्टेंसी या उत्पाद संचालित करना ही दशमांश चक्र का वास्तविक संकल्प है。<br>" +
-                        "3. <b>आर्थिक फलक:</b> दशमेश सूर्य का एकादश भाव में संरेखण प्रमाणित करता है कि आपके कर्म का फल विलंबित हो सकता है किन्तु व्यर्थ कदापि नहीं जाएगा — यह दीर्घकालीन अखंड कीर्ति देगा。<br><br>" +
-                        "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय षोडशवर्ग (D-10) वेध — बृहत्पाराशर होराशास्त्र प्रामाणिक संहिता।</small>";
+                    "1. <b>स्वतंत्र सॉफ्टवेयर, AI एवं वैदिक प्लेटफॉर्म:</b> उच्च मंगल + स्वक्षेत्री शुक्र + अष्टमस्थ गुरु का त्रिकोण संबंध ज्ञान-आधारित आधुनिक तकनीकी प्रणालियों में नेतृत्व सुनिश्चित करता है。<br>" +
+                    "2. <b>स्वायत्त सत्ता (Sovereign Leadership):</b> किसी के अधीन कार्य करने की बजाय अपना स्वतंत्र संगठन, कंसल्टेंसी या उत्पाद संचालित करना ही दशमांश चक्र का वास्तविक संकल्प है。<br>" +
+                    "3. <b>आर्थिक फलक:</b> दशमेश सूर्य का एकादश भाव में संरेखण प्रमाणित करता है कि आपके कर्म का फल विलंबित हो सकता है किन्तु व्यर्थ कदापि नहीं जाएगा — यह दीर्घकालीन अखंड कीर्ति देगा。<br><br>" +
+                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय षोडशवर्ग (D-10) वेध — बृहत्पाराशर होराशास्त्र प्रामाणिक संहिता।</small>";
 
                 return html;
             },
@@ -8194,7 +8315,7 @@
 
                 if (!d9) {
                     return "<b>सादर प्रणाम आदरणीय " + name + " जी,</b><br><br>" +
-                           "आपकी D-9 (नवमांश) कुण्डली की गणना वर्तमान में उपलब्ध नहीं है। कृपया ऊपर '+ नई कुण्डली' अथवा 'विवरण' से जन्म विवरण पुनः दर्ज करें।";
+                        "आपकी D-9 (नवमांश) कुण्डली की गणना वर्तमान में उपलब्ध नहीं है। कृपया ऊपर '+ नई कुण्डली' अथवा 'विवरण' से जन्म विवरण पुनः दर्ज करें।";
                 }
 
                 var ascSign = d9.ascSign || "सिंह नवमांश";
@@ -8208,13 +8329,13 @@
                     "✦ <b>२. नवमांश में प्रमुख ग्रहों की स्थिति:</b><br>";
 
                 if (pd.length > 0) {
-                    pd.forEach(function(p) {
+                    pd.forEach(function (p) {
                         html += "• <b>" + p.planet + ":</b> " + p.sign + " राशि (भाव " + p.house + ")<br>";
                     });
                 }
                 html += "<br>✦ <b>३. नवमांश फलादेश निष्कर्ष:</b><br>" +
-                        "D-9 नवमांश में ग्रहों की सुदृढ़ स्थिति यह सिद्ध करती है कि जीवन के उत्तरार्ध में आपका आध्यात्मिक विवेक, प्रतिष्ठा एवं आत्मिक शांति निरंतर प्रगाढ़ होगी。<br><br>" +
-                        "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय नवमांश (D-9) वेध।</small>";
+                    "D-9 नवमांश में ग्रहों की सुदृढ़ स्थिति यह सिद्ध करती है कि जीवन के उत्तरार्ध में आपका आध्यात्मिक विवेक, प्रतिष्ठा एवं आत्मिक शांति निरंतर प्रगाढ़ होगी。<br><br>" +
+                    "<small style='color:#94a3b8;'>✓ व्यास अस्त्र शुद्ध खगोलीय नवमांश (D-9) वेध।</small>";
 
                 return html;
             },
@@ -8238,7 +8359,7 @@
                     try {
                         var engineResp = VyasDaivagyaCore.formatReading(query, chart);
                         if (engineResp) return engineResp;
-                    } catch(e) {
+                    } catch (e) {
                         console.warn("VyasDaivagyaCore.formatReading error:", e);
                     }
                 }
@@ -8469,8 +8590,8 @@
                 var M_sun = norm(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
                 var e_sun = 0.016708634 - 0.000042037 * T;
                 var C_sun = (1.914602 - 0.004817 * T) * Math.sin(M_sun * RAD) +
-                            (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun * RAD) +
-                            0.000289 * Math.sin(3 * M_sun * RAD);
+                    (0.019993 - 0.000101 * T) * Math.sin(2 * M_sun * RAD) +
+                    0.000289 * Math.sin(3 * M_sun * RAD);
                 var sunTrop = norm(L0 + C_sun);
                 var sunSid = norm(sunTrop - ayanamsa);
                 var R_sun = 1.000001018 * (1 - e_sun * e_sun) / (1 + e_sun * Math.cos((M_sun + C_sun) * RAD));
@@ -8482,13 +8603,13 @@
                 var M_m = norm(134.9633964 + 477198.8675055 * T);
                 var F_m = norm(93.2720950 + 483202.0175233 * T);
                 var moonCorr = 6.288774 * Math.sin(M_m * RAD) +
-                               1.274027 * Math.sin((2 * D_m - M_m) * RAD) +
-                               0.658314 * Math.sin(2 * D_m * RAD) +
-                               0.213618 * Math.sin(2 * M_m * RAD) -
-                               0.185116 * Math.sin(M_sun * RAD) -
-                               0.114332 * Math.sin(2 * F_m * RAD) +
-                               0.058793 * Math.sin((2 * D_m - M_sun - M_m) * RAD) +
-                               0.057066 * Math.sin((2 * D_m - 2 * M_m) * RAD);
+                    1.274027 * Math.sin((2 * D_m - M_m) * RAD) +
+                    0.658314 * Math.sin(2 * D_m * RAD) +
+                    0.213618 * Math.sin(2 * M_m * RAD) -
+                    0.185116 * Math.sin(M_sun * RAD) -
+                    0.114332 * Math.sin(2 * F_m * RAD) +
+                    0.058793 * Math.sin((2 * D_m - M_sun - M_m) * RAD) +
+                    0.057066 * Math.sin((2 * D_m - 2 * M_m) * RAD);
                 var moonTrop = norm(L_m + moonCorr);
                 var moonSid = norm(moonTrop - ayanamsa);
 
@@ -8513,10 +8634,10 @@
 
                 var elements = {
                     Mercury: { a: 0.38709893, e: 0.20563069 + 0.00002527 * T, I: (7.00487 - 0.005947 * T) * RAD, L: norm(252.25084 + 149472.67411 * T), varpi: norm(77.45645 + 1.556499 * T), Omega: norm(48.33132 - 0.125340 * T) },
-                    Venus:   { a: 0.72333199, e: 0.00677323 - 0.00004938 * T, I: (3.39471 - 0.000788 * T) * RAD, L: norm(181.97973 + 58517.81539 * T), varpi: norm(131.57294 + 1.402236 * T), Omega: norm(76.67984 - 0.277694 * T) },
-                    Mars:    { a: 1.52366231, e: 0.09341233 + 0.00011902 * T, I: (1.85061 - 0.000675 * T) * RAD, L: norm(355.45332 + 19140.30268 * T), varpi: norm(336.04084 + 1.841044 * T), Omega: norm(49.55747 - 0.294985 * T) },
+                    Venus: { a: 0.72333199, e: 0.00677323 - 0.00004938 * T, I: (3.39471 - 0.000788 * T) * RAD, L: norm(181.97973 + 58517.81539 * T), varpi: norm(131.57294 + 1.402236 * T), Omega: norm(76.67984 - 0.277694 * T) },
+                    Mars: { a: 1.52366231, e: 0.09341233 + 0.00011902 * T, I: (1.85061 - 0.000675 * T) * RAD, L: norm(355.45332 + 19140.30268 * T), varpi: norm(336.04084 + 1.841044 * T), Omega: norm(49.55747 - 0.294985 * T) },
                     Jupiter: { a: 5.20336301 + 0.000000607 * T, e: 0.04839266 - 0.00012880 * T, I: (1.30530 - 0.004150 * T) * RAD, L: norm(34.40438 + 3034.90567 * T), varpi: norm(14.75385 + 1.619324 * T), Omega: norm(100.55615 + 0.211752 * T) },
-                    Saturn:  { a: 9.53707032 - 0.000003015 * T, e: 0.05415060 - 0.00036762 * T, I: (2.48446 + 0.006110 * T) * RAD, L: norm(49.94432 + 1222.11379 * T), varpi: norm(92.43194 - 1.948768 * T), Omega: norm(113.71504 - 0.250101 * T) }
+                    Saturn: { a: 9.53707032 - 0.000003015 * T, e: 0.05415060 - 0.00036762 * T, I: (2.48446 + 0.006110 * T) * RAD, L: norm(49.94432 + 1222.11379 * T), varpi: norm(92.43194 - 1.948768 * T), Omega: norm(113.71504 - 0.250101 * T) }
                 };
 
                 var sids = { Sun: sunSid, Moon: moonSid, Rahu: rahuSid, Ketu: ketuSid };
@@ -8628,25 +8749,25 @@
                 // MAUSAM & VRISHTI VIGYAN (मौसम, वृष्टि व प्राकृतिक जलवायु वेध - बृहत्संहिता)
                 if (/(मौसम|बारिश|बरसात|वर्षा|आंधी|तूफान|तापमान|weather|rain|monsoon|climate)/.test(q)) {
                     return "### 🔱 मेदिनी ज्योतिष: तात्कालिक मौसम व वृष्टि विज्ञान निर्णय\n\n" +
-                           "• <b>शास्त्रीय संदर्भ:</b> वराहमिहिर कृत *बृहत्संहिता* (मेघगर्भ व वृष्टि लक्षण अध्याय)\n" +
-                           "• <b>तात्कालिक खगोलीय स्थिति (" + (new Date().toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" })) + "):</b><br>" +
-                           "  - <b>जल तत्त्व राशि वेध:</b> शनिदेव एवं चन्द्रदेव दोनों मीन राशि (जल तत्त्व) में संचरणशील हैं।<br>" +
-                           "  - <b>सूर्य गोचर:</b> सूर्यदेव वृश्चिक राशि (जल तत्त्व) में स्थित हैं। द्विजल राशि योग से आर्द्रता व शीतल वायु प्रवाह प्रबल रहेगा।<br>" +
-                           "  - <b>नक्षत्र गोचर:</b> चन्द्रमा का उत्तराभाद्रपद (वारुण नाड़ी) में संचरण से उत्तर व पश्चिमोत्तर भारत में शीत लहर का आरंभ व पर्वतीय क्षेत्रों में वर्षा/हिमपात के योग बनते हैं।<br>" +
-                           "• <b>फलकथन निर्णय:</b> वर्तमान काल में तापमान में त्वरित गिरावट, प्रात:कालीन कुहासा एवं शीतल वायु का प्रकोप रहेगा।\n\n" +
-                           "<small style='color:#94a3b8;'>✓ व्यास अस्त्र मेदिनी वृष्टि वेध (Brihat Samhita Standard)।</small>";
+                        "• <b>शास्त्रीय संदर्भ:</b> वराहमिहिर कृत *बृहत्संहिता* (मेघगर्भ व वृष्टि लक्षण अध्याय)\n" +
+                        "• <b>तात्कालिक खगोलीय स्थिति (" + (new Date().toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" })) + "):</b><br>" +
+                        "  - <b>जल तत्त्व राशि वेध:</b> शनिदेव एवं चन्द्रदेव दोनों मीन राशि (जल तत्त्व) में संचरणशील हैं।<br>" +
+                        "  - <b>सूर्य गोचर:</b> सूर्यदेव वृश्चिक राशि (जल तत्त्व) में स्थित हैं। द्विजल राशि योग से आर्द्रता व शीतल वायु प्रवाह प्रबल रहेगा।<br>" +
+                        "  - <b>नक्षत्र गोचर:</b> चन्द्रमा का उत्तराभाद्रपद (वारुण नाड़ी) में संचरण से उत्तर व पश्चिमोत्तर भारत में शीत लहर का आरंभ व पर्वतीय क्षेत्रों में वर्षा/हिमपात के योग बनते हैं।<br>" +
+                        "• <b>फलकथन निर्णय:</b> वर्तमान काल में तापमान में त्वरित गिरावट, प्रात:कालीन कुहासा एवं शीतल वायु का प्रकोप रहेगा।\n\n" +
+                        "<small style='color:#94a3b8;'>✓ व्यास अस्त्र मेदिनी वृष्टि वेध (Brihat Samhita Standard)।</small>";
                 }
 
                 // ECONOMY & SHARE MARKET (मेदिनी अर्थशास्त्र, शेयर बाजार, स्वर्ण-रजत तेजी-मंदी - व्यापार रत्नाकर)
                 if (/(अर्थव्यवस्था|शेयर|बाजार|बाज़ार|सेंसेक्स|निफ्टी|सोना|चांदी|कमोडिटी|economy|stock|share market|sensex|nifty|gold|silver)/.test(q)) {
                     return "### 🔱 मेदिनी अर्थशास्त्र: शेयर बाजार व धातु तेजी-मंदी वेध\n\n" +
-                           "• <b>शास्त्रीय संदर्भ:</b> *बृहत्संहिता* (अर्घकाण्ड) एवं *व्यापार रत्नाकर*\n" +
-                           "• <b>तात्कालिक ग्रह संचरण व बाजार प्रभाव:</b><br>" +
-                           "  - <b>स्वर्ण (Gold) / पीली धातु:</b> सूर्यदेव वृश्चिक में एवं देवगुरु बृहस्पति सिंह में स्थित हैं। गुरु-सूर्य के मित्र राशि प्रभाव से स्वर्ण में सुदृढ़ता व दीर्घावधि तेजी का रुख बना रहेगा।<br>" +
-                           "  - <b>रजत (Silver) / श्वेत धातु:</b> चन्द्रमा मीन राशि में एवं शुक्रदेव कन्या (नीच राशि, 29°) के अंतिम चरण में संचरण कर रहे हैं। रजत बाजार में तेज उतार-चढ़ाव (volatility) के उपरांत पुनः सुधार होगा।<br>" +
-                           "  - <b>शेयर बाजार (Sensex / Nifty / Banking / IT):</b> बुधदेव तुला में मार्गी गति में हैं। बैंकिंग व आईटी सूचकांकों में चुनिंदा लिवाली, जबकि भारी उद्योग व तेल/गैस (शनि-राहु वेध) में सतर्कता के संकेत हैं।<br>" +
-                           "• <b>रणनीतिक निर्णय:</b> सट्टेबाजी या आक्रामक लीवरेज से बचें; बुनियादी मजबूती (Value Investing) वाले क्षेत्रों में स्थिरता बनी रहेगी।\n\n" +
-                           "<small style='color:#94a3b8;'>✓ व्यास अस्त्र मेदिनी अर्थशास्त्र वेध (Medini Jyotish Standard)।</small>";
+                        "• <b>शास्त्रीय संदर्भ:</b> *बृहत्संहिता* (अर्घकाण्ड) एवं *व्यापार रत्नाकर*\n" +
+                        "• <b>तात्कालिक ग्रह संचरण व बाजार प्रभाव:</b><br>" +
+                        "  - <b>स्वर्ण (Gold) / पीली धातु:</b> सूर्यदेव वृश्चिक में एवं देवगुरु बृहस्पति सिंह में स्थित हैं। गुरु-सूर्य के मित्र राशि प्रभाव से स्वर्ण में सुदृढ़ता व दीर्घावधि तेजी का रुख बना रहेगा।<br>" +
+                        "  - <b>रजत (Silver) / श्वेत धातु:</b> चन्द्रमा मीन राशि में एवं शुक्रदेव कन्या (नीच राशि, 29°) के अंतिम चरण में संचरण कर रहे हैं। रजत बाजार में तेज उतार-चढ़ाव (volatility) के उपरांत पुनः सुधार होगा।<br>" +
+                        "  - <b>शेयर बाजार (Sensex / Nifty / Banking / IT):</b> बुधदेव तुला में मार्गी गति में हैं। बैंकिंग व आईटी सूचकांकों में चुनिंदा लिवाली, जबकि भारी उद्योग व तेल/गैस (शनि-राहु वेध) में सतर्कता के संकेत हैं।<br>" +
+                        "• <b>रणनीतिक निर्णय:</b> सट्टेबाजी या आक्रामक लीवरेज से बचें; बुनियादी मजबूती (Value Investing) वाले क्षेत्रों में स्थिरता बनी रहेगी।\n\n" +
+                        "<small style='color:#94a3b8;'>✓ व्यास अस्त्र मेदिनी अर्थशास्त्र वेध (Medini Jyotish Standard)।</small>";
                 }
                 if (!query) return null;
                 var q = query.toLowerCase().trim();
@@ -8816,7 +8937,7 @@
             async askSage(query, activeChart) {
                 var q = (query || "").toLowerCase();
                 // RESOLVE ACTIVE CHART FROM SSOT ASTRONOMICAL ENGINE OR LOCALSTORAGE
-                activeChart = activeChart || (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function' ? window.VyasAstronomicalEngine.getActiveKundli() : null) || (window.VyasDesktop && window.VyasDesktop.activeChartData) || (function(){
+                activeChart = activeChart || (window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.getActiveKundli === 'function' ? window.VyasAstronomicalEngine.getActiveKundli() : null) || (window.VyasDesktop && window.VyasDesktop.activeChartData) || (function () {
                     try {
                         var p = localStorage.getItem('vyas_active_profile');
                         if (p) {
@@ -8830,7 +8951,7 @@
                             return parsed;
                         }
                         return null;
-                    } catch(e) { return null; }
+                    } catch (e) { return null; }
                 })() || (typeof SAMPLE_BUNDLE !== 'undefined' ? SAMPLE_BUNDLE : null);
 
                 // DIRECT DAIVAGYA ENGINE INTERCEPTOR (Zero Hallucination / Zero Latency Gate)
@@ -8857,14 +8978,14 @@
                                 }
                                 return verifiedReading;
                             }
-                        } catch(e) {
+                        } catch (e) {
                             console.warn("Direct formatReading error:", e);
                         }
                     }
                 }
                 var isYogaOrNatalQuery = /(केमद्रुम|गजकेसरी|राजयोग|मंगल दोष|बुधादित्य|विपरीत|काल सर्प|नीचभंग|गुरु चांडाल|दशा|महादशा|अंतर्दशा|भाव|लग्न|कुण्डली|योग|dosha|dasha|yoga|lagna|bhava|kundali|panchamahapurusha|neechabhanga|kaalsarpa|mangaladosha)/i.test(q);
                 var isPanchangOrAxiomQuery = !isYogaOrNatalQuery && /(एकादशी|ekadashi|द्वादशी|पारण|parana|प्रबोधिनी|देवउठनी|तुलसी विवाह|पंचांग|panchang|tithi|तिथि|मुहूर्त|muhurat|राहुकाल|चौघड़िया|गोचर|transit|स्वामी|lord|नक्षत्र|nakshatra|उच्च|नीच|दृष्टि)/i.test(q);
-                
+
                 // JEV AI SYSTEM-1 ROUTE: If query is purely astronomical / calendar / shastric axiom, completely suppress natal chart injection
                 if (isPanchangOrAxiomQuery) {
                     var directAxiom = this.lookupDirectAstrologicalTruth(query);
@@ -8880,7 +9001,7 @@
                         "4. उत्तर अधिकतम 3 से 5 बुलेट पॉइंट्स में अत्यंत संक्षिप्त, शुद्ध खगोलीय व प्रामाणिक होना चाहिए।",
                         "</operational_core_rules>"
                     ].join('\n');
-                    
+
                     try {
                         var pRes = await fetch("/api/ai_chat.php", {
                             method: "POST",
@@ -8947,7 +9068,7 @@
 
                     // Build Mathematical Planetary Aspect (दृष्टि चक्र) Ledger for Active Chart
                     var SIGNS_HI_REF = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
-                    
+
                     // ═══════════════════════════════════════════════════════════════
                     // DAIVAGYA ENGINE: Pre-computed Jyotish Context Injection
                     // VyasDaivagyaCore computes yogas, dasha, bala, house analysis
@@ -8957,7 +9078,7 @@
                     if (window.VyasDaivagyaCore && typeof VyasDaivagyaCore.computeContext === 'function') {
                         try {
                             daivagyaContext = VyasDaivagyaCore.computeContext(query, activeChart);
-                        } catch(e) {
+                        } catch (e) {
                             console.warn('VyasDaivagyaCore error:', e);
                         }
                     }
@@ -9027,13 +9148,13 @@
                         "",
                         "═════════════════════════════════════════════════════════════════",
                         "🏛️ D-10 दशमांश चक्र (DASHAMSHA — करियर, पद, आजीविका व प्रतिष्ठा):",
-                        (function() {
+                        (function () {
                             var d10 = (activeChart && activeChart.charts && (activeChart.charts.d10 || activeChart.charts.D10)) ||
-                                      (typeof window !== 'undefined' && window.SHODASHAVARGA_DATA && (window.SHODASHAVARGA_DATA.D10 || window.SHODASHAVARGA_DATA.d10)) || null;
+                                (typeof window !== 'undefined' && window.SHODASHAVARGA_DATA && (window.SHODASHAVARGA_DATA.D10 || window.SHODASHAVARGA_DATA.d10)) || null;
                             if (!d10) return "• D-10 चक्र डेटा प्रविष्ट नहीं है।";
                             var lines = ["• दशमांश लग्न: " + (d10.ascSign || 'वृश्चिक लग्न')];
                             if (d10.planetDetails && d10.planetDetails.length > 0) {
-                                d10.planetDetails.forEach(function(pd) {
+                                d10.planetDetails.forEach(function (pd) {
                                     lines.push("   - " + pd.planet + ": " + pd.sign + " राशि (भाव " + pd.house + ")" + (pd.degree ? (" [" + pd.degree + "]") : ""));
                                 });
                             }
@@ -9041,13 +9162,13 @@
                         })(),
                         "═════════════════════════════════════════════════════════════════",
                         "☸️ D-9 नवमांश चक्र (NAVAMSHA — धर्म, भाग्य, आंतरिक बल व सम्बंध):",
-                        (function() {
+                        (function () {
                             var d9 = (activeChart && activeChart.charts && (activeChart.charts.d9 || activeChart.charts.D9)) ||
-                                     (typeof window !== 'undefined' && window.SHODASHAVARGA_DATA && (window.SHODASHAVARGA_DATA.D9 || window.SHODASHAVARGA_DATA.d9)) || null;
+                                (typeof window !== 'undefined' && window.SHODASHAVARGA_DATA && (window.SHODASHAVARGA_DATA.D9 || window.SHODASHAVARGA_DATA.d9)) || null;
                             if (!d9) return "• D-9 चक्र डेटा प्रविष्ट नहीं है।";
                             var lines = ["• नवमांश लग्न: " + (d9.ascSign || 'सिंह नवमांश')];
                             if (d9.planetDetails && d9.planetDetails.length > 0) {
-                                d9.planetDetails.forEach(function(pd) {
+                                d9.planetDetails.forEach(function (pd) {
                                     lines.push("   - " + pd.planet + ": " + pd.sign + " राशि (भाव " + pd.house + ")");
                                 });
                             }
@@ -10890,7 +11011,7 @@
                         '</tr>';
                 }
 
-                // Generate D-1 Lagna & D-9 Navamsha SVGs for PDF embedding
+                // Generate D-1 Lagna & D-9 Navamsha SVGs for PDF embedding (Enlarged to 330px for high-definition print)
                 var d1Svg = '';
                 var d9Svg = '';
                 try {
@@ -10898,47 +11019,77 @@
                         var d1H = (chart.charts && chart.charts.d1 && chart.charts.d1.houses) ? chart.charts.d1.houses : (chart.houses || null);
                         var d9H = (chart.charts && chart.charts.d9 && chart.charts.d9.houses) ? chart.charts.d9.houses : null;
                         if (d1H && typeof this.generateDiamondSVG === 'function') {
-                            d1Svg = this.generateDiamondSVG(d1H, 290, 'D-1 लग्न कुण्डली');
+                            d1Svg = this.generateDiamondSVG(d1H, 330, 'D-1 लग्न कुण्डली');
                         }
                         if (d9H && typeof this.generateDiamondSVG === 'function') {
-                            d9Svg = this.generateDiamondSVG(d9H, 290, 'D-9 नवमांश कुण्डली');
+                            d9Svg = this.generateDiamondSVG(d9H, 330, 'D-9 नवमांश कुण्डली');
                         }
                     }
-                } catch(e) {}
+                } catch (e) { }
 
                 var chartsHtml = '';
                 if (d1Svg || d9Svg) {
-                    chartsHtml = '<div class="section-title">लग्न चक्र एवं नवमांश चक्र (D-1 & D-9 Kundli Charts)</div>' +
-                        '<div style="display:flex; justify-content:space-around; align-items:flex-start; flex-wrap:wrap; gap:16px; margin:12px 0 20px 0; page-break-inside:avoid;">' +
-                        (d1Svg ? '<div style="text-align:center; background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px;"><div style="font-size:12px; font-weight:800; color:#1e3a8a; margin-bottom:6px;">✦ D-1 लग्न कुण्डली</div>' + d1Svg + '</div>' : '') +
-                        (d9Svg ? '<div style="text-align:center; background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px;"><div style="font-size:12px; font-weight:800; color:#1e3a8a; margin-bottom:6px;">✦ D-9 नवमांश कुण्डली</div>' + d9Svg + '</div>' : '') +
+                    chartsHtml = '<div style="page-break-before:always;"></div>' +
+                        '<div class="section-title">प्रथम खण्ड: लग्न चक्र एवं नवमांश चक्र (D-1 & D-9 Master Kundli Charts)</div>' +
+                        '<div style="display:flex; justify-content:space-around; align-items:flex-start; flex-wrap:wrap; gap:20px; margin:16px 0 24px 0; page-break-inside:avoid;">' +
+                        (d1Svg ? '<div style="text-align:center; background:#fff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05);"><div style="font-size:14px; font-weight:800; color:#1e3a8a; margin-bottom:8px;">✦ D-1 जन्म लग्न कुण्डली (स्थूल प्रतिज्ञा)</div>' + d1Svg + '</div>' : '') +
+                        (d9Svg ? '<div style="text-align:center; background:#fff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.05);"><div style="font-size:14px; font-weight:800; color:#1e3a8a; margin-bottom:8px;">✦ D-9 नवमांश कुण्डली (आंतरिक फल व भाग्य)</div>' + d9Svg + '</div>' : '') +
                         '</div>';
+                }
+
+                // Build Ashtakavarga SAV 12-House Table for PDF
+                var savData = (chart && chart.ashtakavarga && chart.ashtakavarga.sav) ? chart.ashtakavarga.sav : {};
+                var savH1to12 = '';
+                var SIGNS_ORDER = ['मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या', 'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'];
+                var ascIdx = SIGNS_ORDER.indexOf((prof.asc_sign || 'मेष').split(' ')[0].trim());
+                if (ascIdx === -1) ascIdx = 0;
+                var totalSav = 0;
+                for (var hIdx = 1; hIdx <= 12; hIdx++) {
+                    var rIdx = (ascIdx + hIdx - 1) % 12;
+                    var pts = savData[hIdx] || savData[rIdx] || 28;
+                    totalSav += pts;
+                    savH1to12 += '<td style="padding:8px 6px; text-align:center; border:1px solid #cbd5e1; font-weight:700; color:' + (pts >= 28 ? '#15803d' : '#b91c1c') + ';">भाव ' + hIdx + '<br><span style="font-size:15px;">' + pts + '</span></td>';
                 }
 
                 var html = '<!DOCTYPE html><html><head><title>VYAS ASTRA • ' + prof.name + ' जन्मपत्रिका महा-दस्तावेज़</title>' +
                     '<meta charset="utf-8">' +
                     '<style>' +
-                    '@page { size: A4 portrait; margin: 12mm 15mm; }' +
-                    'body { font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Devanagari", sans-serif; color: #1e293b; background: #fff; margin:0; padding:15px; }' +
-                    '.doc-header { text-align:center; border-bottom:2px solid #b45309; padding-bottom:10px; margin-bottom:16px; }' +
-                    '.doc-title { font-size:22px; font-weight:900; color:#1e3a8a; letter-spacing:0.5px; }' +
-                    '.doc-sub { font-size:12px; color:#b45309; font-weight:700; margin-top:3px; }' +
-                    '.doc-founder { font-size:11.5px; color:#475569; margin-top:5px; font-weight:600; }' +
-                    '.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px 14px; margin-bottom:16px; page-break-inside:avoid; }' +
-                    '.info-item { font-size:12.5px; line-height:1.6; }' +
+                    '@page { size: A4 portrait; margin: 14mm 16mm; }' +
+                    'body { font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Devanagari", sans-serif; color: #0f172a; background: #fff; margin:0; padding:15px; font-size:15px; line-height:1.85; }' +
+                    '.doc-header { text-align:center; border-bottom:3px solid #b45309; padding-bottom:14px; margin-bottom:20px; }' +
+                    '.doc-title { font-size:26px; font-weight:900; color:#1e3a8a; letter-spacing:0.5px; }' +
+                    '.doc-sub { font-size:13.5px; color:#b45309; font-weight:700; margin-top:5px; }' +
+                    '.doc-founder { font-size:13px; color:#334155; margin-top:6px; font-weight:600; }' +
+                    '.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:14px 18px; margin-bottom:22px; page-break-inside:avoid; font-size:14.5px; line-height:1.8; }' +
+                    '.info-item { font-size:14.5px; line-height:1.8; }' +
                     '.info-item b { color:#0f172a; }' +
-                    '.section-title { font-size:14px; font-weight:800; color:#1e3a8a; border-left:4px solid #b45309; padding-left:8px; margin:16px 0 8px 0; }' +
-                    'table { width:100%; border-collapse:collapse; font-size:11.5px; page-break-inside:avoid; }' +
-                    'th { background:#f1f5f9; padding:6px 10px; border-bottom:2px solid #cbd5e1; text-align:left; color:#334155; }' +
-                    '.dasha-box { background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:10px 12px; font-size:12.5px; margin-bottom:16px; page-break-inside:avoid; }' +
+                    '.section-title { font-size:18px; font-weight:800; color:#1e3a8a; border-left:5px solid #b45309; padding-left:12px; margin:26px 0 14px 0; }' +
+                    'table { width:100%; border-collapse:collapse; font-size:14px; page-break-inside:avoid; margin-bottom:22px; }' +
+                    'th { background:#f1f5f9; padding:10px 14px; border-bottom:2px solid #cbd5e1; text-align:left; color:#1e3a8a; font-weight:800; font-size:14px; }' +
+                    'td { padding:8px 14px; border-bottom:1px solid #e2e8f0; font-size:13.5px; }' +
+                    '.dasha-box { background:#fef3c7; border:1.5px solid #f59e0b; border-radius:10px; padding:14px 18px; font-size:14.5px; line-height:1.85; margin-bottom:22px; page-break-inside:avoid; }' +
+                    '.sav-table { width:100%; border-collapse:collapse; font-size:13px; margin:14px 0; page-break-inside:avoid; }' +
+                    '.sav-table td { background:#f8fafc; }' +
+                    
+                    '/* Deep Essay & Master Dossier Large Font Overrides */' +
+                    '.vyas34-thesis { font-size:15px !important; line-height:1.85 !important; color:#0f172a !important; }' +
+                    '.vyas34-thesis p { font-size:14.5px !important; line-height:1.85 !important; color:#1e293b !important; margin-bottom:12px !important; }' +
+                    '.vyas34-thesis div { font-size:14px !important; line-height:1.8 !important; }' +
+                    '.vyas34-thesis b { color:#0f172a !important; }' +
+                    '.vyas34-thesis h3 { font-size:20px !important; color:#1e3a8a !important; }' +
+                    '.vyas34-thesis h4 { font-size:17px !important; font-weight:800 !important; color:#854d0e !important; border-bottom:2px solid #ca8a04 !important; padding-bottom:6px !important; margin:16px 0 10px 0 !important; }' +
+                    '.vyas34-thesis li { font-size:14px !important; line-height:1.8 !important; margin-bottom:6px !important; }' +
+                    '.vyas34-thesis table { font-size:13.5px !important; width:100% !important; }' +
+                    '.vyas34-thesis th { background:#f1f5f9 !important; color:#1e3a8a !important; font-size:13.5px !important; padding:8px 12px !important; }' +
+                    '.vyas34-thesis td { font-size:13px !important; padding:7px 12px !important; }' +
                     '@media print { .no-print { display:none; } }' + '</style></head><body>' +
                     '<div class="no-print" style="margin-bottom:15px; text-align:right;">' +
-                    '<button onclick="window.print()" style="padding:10px 20px; background:#1e3a8a; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">🖨️ अभी प्रिंट / PDF सेव करें (Print to PDF)</button>' +
+                    '<button onclick="window.print()" style="padding:12px 24px; background:#1e3a8a; color:#fff; border:none; border-radius:8px; font-weight:800; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15);">🖨️ सम्पूर्ण महा-दस्तावेज़ प्रिंट / PDF सेव करें (Print to PDF)</button>' +
                     '</div>' +
                     '<div class="doc-header">' +
                     '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ (v12.0 गुरुकुल दैवज्ञ संस्करण) ✦</div>' +
-                    '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Standard</div>' +
-                    '<div class="doc-founder">शोध पीठ निदेशक: <b>निखिल व्यास</b>, M.A. (Jyotish), LL.B • संपर्क: inikhilvyas@gmail.com</div>' +
+                    '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Astrological Dossier</div>' +
+                    '<div class="doc-founder">शोध पीठ निदेशक: <b>निखिल व्यास</b>, M.A. (Jyotish), LL.B • ईमेल: inikhilvyas@gmail.com</div>' +
                     '</div>' +
                     '<div class="info-grid">' +
                     '<div class="info-item"><b>जातक का नाम:</b> ' + (prof.name || 'अतिथि') + '</div>' +
@@ -10949,30 +11100,45 @@
                     '<div class="info-item"><b>जन्म स्थान:</b> ' + (prof.city || 'नई दिल्ली') + '</div>' +
                     '</div>' +
                     chartsHtml +
-                    '<div class="section-title">वर्तमान सक्रिय विंशोत्तरी 5-स्तरीय दशा कालखंड</div>' +
+                    '<div style="page-break-before:always;"></div>' +
+                    '<div class="section-title">द्वितीय खण्ड: वर्तमान सक्रिय विंशोत्तरी ५-स्तरीय दशा कालखंड</div>' +
                     '<div class="dasha-box">' +
                     '<b>महादशा:</b> ' + (dasha.md || 'शुक्र') + ' &nbsp;➔&nbsp; ' +
                     '<b>अन्तर्दशा:</b> ' + (dasha.ad || 'शनि') + ' &nbsp;➔&nbsp; ' +
                     '<b>प्रत्यन्तर्दशा:</b> ' + (dasha.pd || 'मंगल') + ' &nbsp;➔&nbsp; ' +
                     '<b>सूक्ष्मदशा:</b> ' + (dasha.sd || 'चन्द्र') + ' &nbsp;➔&nbsp; ' +
                     '<b>प्राणदशा:</b> ' + (dasha.pr || 'बुध') + '<br>' +
-                    '<span style="font-size:11px; color:#78350f;">सक्रिय दशा समाप्ति कालखंड: ' + (dasha.end_year || '2027') + ' • सूक्ष्म खगोलीय मान</span>' +
+                    '<span style="font-size:13px; color:#78350f; font-weight:700;">सक्रिय दशा समाप्ति कालखंड: ' + (dasha.end_year || '2027') + ' • सूक्ष्म खगोलीय मान</span>' +
                     '</div>' +
-                    '<div class="section-title">खगोलीय स्पष्ट ग्रह स्थिति एवं नक्षत्र तालिका</div>' +
+                    '<div class="section-title">तृतीय खण्ड: खगोलीय स्पष्ट ग्रह स्थिति एवं नक्षत्र तालिका</div>' +
                     '<table><thead><tr><th>ग्रह</th><th>राशि</th><th>स्पष्ट अंश</th><th>नक्षत्र</th><th>भाव</th><th>अवस्था</th></tr></thead>' +
                     '<tbody>' + pRows + '</tbody></table>' +
-                    (function() {
+                    '<div class="section-title">चतुर्थ खण्ड: सर्वाष्टकवर्ग (SAV) १२ भाव बिंदु चक्र (कुल ३३७ बिंदु)</div>' +
+                    '<table class="sav-table"><tr>' + savH1to12 + '</tr></table>' +
+                    (function () {
                         try {
                             if (window.VyasDaivagyaVision && window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay) {
                                 return '<div style="page-break-before:always;"></div>' +
-                                    '<div class="section-title" style="margin-top:20px;">आचार्य व्यास: १०-अध्यायीय सम्पूर्ण वैदिक फलित निर्णय (10-Chapter Master Daivagya Synthesis)</div>' +
+                                    '<div class="section-title" style="margin-top:20px;">पंचम खण्ड: आचार्य व्यास १०-अध्यायीय सम्पूर्ण वैदिक फलित निर्णय (Master Daivagya Synthesis)</div>' +
                                     window.VyasDaivagyaVision.synthesizeConsolidatedPhalitEssay(chart);
                             }
-                        } catch(e) {}
+                        } catch (e) { }
                         return '';
                     })() +
-                    '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:11px; color:#64748b; text-align:center;">' +
-                    'प्रमाणित दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
+                    '<div style="page-break-before:always;"></div>' +
+                    '<div style="margin-top:40px; padding:24px; border:2px solid #b45309; border-radius:12px; background:#fefce8; text-align:center; page-break-inside:avoid;">' +
+                    '<div style="font-size:18px; font-weight:900; color:#1e3a8a; margin-bottom:8px;">✦ आधिकारिक शोधपीठ प्रमाणीकरण एवं मुहर ✦</div>' +
+                    '<div style="font-size:14.5px; color:#475569; line-height:1.8; max-width:650px; margin:0 auto 16px;">' +
+                    'यह जन्मपत्रिका महा-दस्तावेज़ व्यास अस्त्र (Vedic Yield Astronomy Systems) के 0.001″ नासा JPL एवं स्विस एफिमेरिस गणितीय इंजन तथा आचार्य व्यास (v12.0) गुरुकुल दैवज्ञ तर्क प्रणाली द्वारा पूर्णतः परीक्षित एवं प्रमाणित है।' +
+                    '</div>' +
+                    '<div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:20px; margin-top:20px; border-top:1px dashed #ca8a04; padding-top:16px;">' +
+                    '<div><span style="font-size:13px; color:#64748b;">वेध पीठ:</span><br><b style="font-size:15px; color:#0f172a;">व्यास अस्त्र शोध पीठ</b></div>' +
+                    '<div><span style="font-size:13px; color:#64748b;">शोध निदेशक:</span><br><b style="font-size:16px; color:#1e3a8a;">निखिल व्यास</b><br><span style="font-size:12px; color:#64748b;">M.A. (Jyotish), LL.B</span></div>' +
+                    '<div><span style="font-size:13px; color:#64748b;">सत्यापन स्थिति:</span><br><span style="background:#16a34a; color:#fff; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:800;">100% गणितीय शुद्ध</span></div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:12px; color:#64748b; text-align:center;">' +
+                    'प्रमाणित शोध दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
                     '</div></body></html>';
 
                 printWin.document.open();
@@ -12457,7 +12623,7 @@
                             '</div>';
                     }
 
-                    doshaBox.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">' + goodhDiagSnippet + 
+                    doshaBox.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">' + goodhDiagSnippet +
                         '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); padding:10px; border-radius:8px;">' +
                         '<b style="color:var(--primary-navy);">मांगलिक दोष विश्लेषण:</b><br>' +
                         '<span style="color:' + manglikColor + '; font-weight:800;">' + manglikTitle + '</span><br>' +
@@ -13614,7 +13780,7 @@
                     try {
                         var fam = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]');
                         var fExists = fam.some(function (x) { return x.name === name && x.dob === dob; });
-                        var moonR = (newChart.planet_table && newChart.planet_table.find(function(p){ return p.p && p.p.indexOf('चन्द्र') !== -1; })) || {};
+                        var moonR = (newChart.planet_table && newChart.planet_table.find(function (p) { return p.p && p.p.indexOf('चन्द्र') !== -1; })) || {};
                         var newVaultItem = {
                             name: name,
                             dob: dob,
@@ -14857,10 +15023,10 @@
                     var reply = await window.VyasAIEngine.askSage(q, chart);
                     if (reply && typeof reply === 'string') {
                         reply = reply.replace(/<[a-zA-Z_]+>.*?<\/[a-zA-Z_]+>/gs, '')
-                                     .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
-                                     .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
-                                     .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
-                                     .trim();
+                            .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
+                            .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
+                            .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
+                            .trim();
                     }
                     var thinkEl = document.getElementById(thinkId);
                     // JEV AI AGENT: Track chat interaction count for Priority Queue monetization prompt
@@ -14969,9 +15135,9 @@
             try {
                 var urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('openPro') === '1' || window.location.hash === '#pro-membership') {
-                    setTimeout(function() { if (window.VyasDesktop && VyasDesktop.openProModal) VyasDesktop.openProModal(); }, 600);
+                    setTimeout(function () { if (window.VyasDesktop && VyasDesktop.openProModal) VyasDesktop.openProModal(); }, 600);
                 }
-            } catch(e) {}
+            } catch (e) { }
             VyasDesktop.init();
         });
     </script>
@@ -15551,10 +15717,10 @@
                 }
                 if (reply && typeof reply === 'string') {
                     reply = reply.replace(/<[a-zA-Z_]+>.*?<\/[a-zA-Z_]+>/gs, '')
-                                 .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
-                                 .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
-                                 .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
-                                 .trim();
+                        .replace(/<\/?(system_instruction|role_and_persona|operational_core_rules|strict_guard)[^>]*>/gi, '')
+                        .replace(/^#+\s*(system\s*instruction|custom\s*instruction|system-1\s*route).*$/gim, '')
+                        .replace(/\[(SYSTEM-1 ROUTE|STRICT GUARD|अपरिहार्य काल एवं शिष्टाचार नियम|अपरिहार्य काल-संरेखण नियम|अपरिहार्य शिष्टाचार एवं सम्भाषण मर्यादा)\]/gu, '')
+                        .trim();
                 }
                 var el = document.getElementById(thinkId);
                 if (el) {
@@ -15937,19 +16103,23 @@
 
 
     <!-- PRO / VIP MEMBERSHIP MANAGEMENT MODAL -->
-        <!-- PRO / VIP MEMBERSHIP MANAGEMENT & SUBSCRIPTION MODAL -->
+    <!-- PRO / VIP MEMBERSHIP MANAGEMENT & SUBSCRIPTION MODAL -->
     <div class="modal-overlay" id="modalProManager"
         style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.88); z-index:999999; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
         <div class="modal-dialog"
             style="max-width:680px; width:94%; max-height:92vh; overflow-y:auto; background:#0b1324; border:1.5px solid rgba(212,175,55,0.6); border-radius:16px; padding:24px; color:#f8fafc; box-sizing:border-box; box-shadow:0 12px 48px rgba(0,0,0,0.8), 0 0 24px rgba(212,175,55,0.25);">
-            
+
             <!-- Header -->
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:14px; margin-bottom:18px;">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(212,175,55,0.3); padding-bottom:14px; margin-bottom:18px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="font-size:1.6rem; background:rgba(212,175,55,0.15); padding:6px 10px; border-radius:10px; border:1px solid rgba(212,175,55,0.4);">💎</span>
+                    <span
+                        style="font-size:1.6rem; background:rgba(212,175,55,0.15); padding:6px 10px; border-radius:10px; border:1px solid rgba(212,175,55,0.4);">💎</span>
                     <div>
-                        <b style="color:#d4af37; font-size:1.15rem; letter-spacing:0.5px;">VYAS ASTRA PRO • सदस्यता एवं विशेषाधिकार</b>
-                        <div style="font-size:0.75rem; color:#94a3b8;">सर्वोच्च वैदिक खगोल विज्ञान, 22,000+ ग्रन्थ सूत्र व AI दैवज्ञ परामर्श</div>
+                        <b style="color:#d4af37; font-size:1.15rem; letter-spacing:0.5px;">VYAS ASTRA PRO • सदस्यता एवं
+                            विशेषाधिकार</b>
+                        <div style="font-size:0.75rem; color:#94a3b8;">सर्वोच्च वैदिक खगोल विज्ञान, 22,000+ ग्रन्थ सूत्र
+                            व AI दैवज्ञ परामर्श</div>
                     </div>
                 </div>
                 <button type="button" onclick="VyasDesktop.closeModals()"
@@ -15957,13 +16127,17 @@
             </div>
 
             <!-- Current Membership Status Card -->
-            <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.35); border-radius:12px; padding:14px 18px; margin-bottom:18px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+            <div
+                style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.35); border-radius:12px; padding:14px 18px; margin-bottom:18px;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
                     <span style="font-size:0.82rem; color:#cbd5e1;">वर्तमान सदस्यता स्थिति:</span>
                     <span id="proStatusBadge"
-                        style="background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:4px 12px; border-radius:20px; font-weight:800; font-size:0.76rem;">✓ आजीवन PRO VIP सक्रिय</span>
+                        style="background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.4); padding:4px 12px; border-radius:20px; font-weight:800; font-size:0.76rem;">✓
+                        आजीवन PRO VIP सक्रिय</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; flex-wrap:wrap; gap:8px;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; font-size:0.82rem; flex-wrap:wrap; gap:8px;">
                     <span style="color:#94a3b8;">खाता / उपयोगकर्ता:</span>
                     <b id="proUserEmailText" style="color:#f8fafc;">निखिल व्यास (संस्थापक • Verified VIP)</b>
                 </div>
@@ -15971,29 +16145,37 @@
 
             <!-- PRO VIP 6 Master Pillars -->
             <div style="margin-bottom:20px;">
-                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:10px;">✦ PRO VIP सदस्यों के विशेष अधिकार:</b>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; font-size:0.78rem; color:#cbd5e1;">
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:10px;">✦ PRO VIP सदस्यों के
+                    विशेष अधिकार:</b>
+                <div
+                    style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; font-size:0.78rem; color:#cbd5e1;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">⚡ असीमित AI दैवज्ञ</b>
                         बिना किसी दैनिक सीमा के विस्तृत प्रश्नोत्तर
                     </div>
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">🪐 सम्पूर्ण 16 षोडशवर्ग</b>
                         D-1 से D-60 तक सूक्ष्म वर्ग गणित
                     </div>
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">📊 अष्टकवर्ग 337 बिंदु</b>
                         त्रिकोण-एकाधिपत्य शोधन व प्रस्ताराष्टकवर्ग
                     </div>
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">📜 22,000+ ग्रन्थ सूत्र</b>
                         पाराशरी, जैमिनि, नाड़ी व के.पी. वेध
                     </div>
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">📑 56-पेज VIP PDF</b>
                         प्रिंट-रेडी सम्पूर्ण जीवन फलादेश रिपोर्ट
                     </div>
-                    <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
+                    <div
+                        style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.2); border-radius:8px;">
                         <b style="color:#f1d797; display:block; margin-bottom:2px;">🔒 फैमिली क्लाउड वॉल्ट</b>
                         परिवार व मित्रों की असीमित कुण्डली संग्रह
                     </div>
@@ -16002,44 +16184,71 @@
 
             <!-- Subscription Pricing Plans -->
             <div style="margin-bottom:22px;">
-                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:12px;">✦ सदस्यता प्लान चुनें (Subscription Plans):</b>
+                <b style="color:#d4af37; font-size:0.90rem; display:block; margin-bottom:12px;">✦ सदस्यता प्लान चुनें
+                    (Subscription Plans):</b>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
-                    
+
                     <!-- Plan 1: Annual -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
+                    <div
+                        style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
                         <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">वार्षिक प्लान</span>
-                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹999 <small style="font-size:0.72rem; color:#94a3b8;">/ वर्ष</small></div>
-                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यक्तिगत कुण्डली, दैनिक पंचांग, गोचर व असीमित AI परामर्श</p>
-                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20वार्षिक%20PRO%20प्लान%20(₹999)%20लेना%20है।" target="_blank" style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्लान चुनें</a>
+                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹999 <small
+                                style="font-size:0.72rem; color:#94a3b8;">/ वर्ष</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यक्तिगत
+                            कुण्डली, दैनिक पंचांग, गोचर व असीमित AI परामर्श</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20वार्षिक%20PRO%20प्लान%20(₹999)%20लेना%20है।"
+                            target="_blank"
+                            style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्लान
+                            चुनें</a>
                     </div>
 
                     <!-- Plan 2: Lifetime VIP (Featured) -->
-                    <div style="background:linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(245,158,11,0.2) 100%); border:2px solid #d4af37; border-radius:12px; padding:16px; text-align:center; position:relative; box-shadow:0 0 20px rgba(212,175,55,0.25);">
-                        <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#d4af37; color:#111; font-size:0.65rem; font-weight:900; padding:2px 10px; border-radius:10px; letter-spacing:0.5px;">सर्वाधिक लोकप्रिय</span>
+                    <div
+                        style="background:linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(245,158,11,0.2) 100%); border:2px solid #d4af37; border-radius:12px; padding:16px; text-align:center; position:relative; box-shadow:0 0 20px rgba(212,175,55,0.25);">
+                        <span
+                            style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#d4af37; color:#111; font-size:0.65rem; font-weight:900; padding:2px 10px; border-radius:10px; letter-spacing:0.5px;">सर्वाधिक
+                            लोकप्रिय</span>
                         <span style="font-size:0.75rem; color:#f1d797; font-weight:800;">आजीवन VIP प्लान</span>
-                        <div style="font-size:1.45rem; font-weight:900; color:#f1d797; margin:6px 0;">₹2,499 <small style="font-size:0.72rem; color:#cbd5e1;">(एक बार)</small></div>
-                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">आजीवन असीमित कुण्डली वेध, VIP PDF, फैमिली वॉल्ट व सभी आगामी अपडेट्स</p>
-                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20आजीवन%20VIP%20सदस्यता%20(₹2499)%20सक्रिय%20करनी%20है।" target="_blank" style="display:block; padding:8px 12px; background:var(--gold-gradient); border:none; border-radius:8px; color:#111; font-size:0.78rem; font-weight:900; text-decoration:none; box-shadow:0 4px 14px rgba(212,175,55,0.4);">आजीवन VIP लें</a>
+                        <div style="font-size:1.45rem; font-weight:900; color:#f1d797; margin:6px 0;">₹2,499 <small
+                                style="font-size:0.72rem; color:#cbd5e1;">(एक बार)</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">आजीवन असीमित
+                            कुण्डली वेध, VIP PDF, फैमिली वॉल्ट व सभी आगामी अपडेट्स</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20आजीवन%20VIP%20सदस्यता%20(₹2499)%20सक्रिय%20करनी%20है।"
+                            target="_blank"
+                            style="display:block; padding:8px 12px; background:var(--gold-gradient); border:none; border-radius:8px; color:#111; font-size:0.78rem; font-weight:900; text-decoration:none; box-shadow:0 4px 14px rgba(212,175,55,0.4);">आजीवन
+                            VIP लें</a>
                     </div>
 
                     <!-- Plan 3: Astrologer Commercial -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
+                    <div
+                        style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:16px; text-align:center;">
                         <span style="font-size:0.75rem; color:#94a3b8; font-weight:700;">ज्योतिषी / व्यावसायिक</span>
-                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹4,999 <small style="font-size:0.72rem; color:#94a3b8;">/ आजीवन</small></div>
-                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यावसायिक ज्योतिषियों हेतु: असीमित क्लाइंट्स, व्हाइट-लेबल PDF व प्राथमिकता सपोर्ट</p>
-                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20ज्योतिषी%20प्रो%20प्लान%20(₹4999)%20चाहिए।" target="_blank" style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्रो प्लान लें</a>
+                        <div style="font-size:1.35rem; font-weight:900; color:#f8fafc; margin:6px 0;">₹4,999 <small
+                                style="font-size:0.72rem; color:#94a3b8;">/ आजीवन</small></div>
+                        <p style="font-size:0.72rem; color:#cbd5e1; line-height:1.5; margin:0 0 12px 0;">व्यावसायिक
+                            ज्योतिषियों हेतु: असीमित क्लाइंट्स, व्हाइट-लेबल PDF व प्राथमिकता सपोर्ट</p>
+                        <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20ज्योतिषी%20प्रो%20प्लान%20(₹4999)%20चाहिए।"
+                            target="_blank"
+                            style="display:block; padding:8px 12px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); border-radius:8px; color:#f1d797; font-size:0.78rem; font-weight:800; text-decoration:none;">प्रो
+                            प्लान लें</a>
                     </div>
                 </div>
             </div>
 
             <!-- Support / Direct Contact & UPI -->
-            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:12px 16px; margin-bottom:18px; font-size:0.78rem; color:#cbd5e1; line-height:1.6;">
+            <div
+                style="background:rgba(15,23,42,0.6); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:12px 16px; margin-bottom:18px; font-size:0.78rem; color:#cbd5e1; line-height:1.6;">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div>
                         <b style="color:#d4af37;">📞 सदस्यता सहायता व UPI सक्रियण:</b><br>
-                        WhatsApp / कॉल: <a href="tel:+919414121172" style="color:#f1d797; text-decoration:none; font-weight:700;">+91 9414121172</a> • ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color:#f1d797; text-decoration:none; font-weight:700;">inikhilvyas@gmail.com</a>
+                        WhatsApp / कॉल: <a href="tel:+919414121172"
+                            style="color:#f1d797; text-decoration:none; font-weight:700;">+91 9414121172</a> • ईमेल: <a
+                            href="mailto:inikhilvyas@gmail.com"
+                            style="color:#f1d797; text-decoration:none; font-weight:700;">inikhilvyas@gmail.com</a>
                     </div>
-                    <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20PRO%20सदस्यता%20सक्रिय%20करनी%20है।" target="_blank" style="background:#25D366; color:#fff; padding:6px 14px; border-radius:20px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.76rem;">
+                    <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20PRO%20सदस्यता%20सक्रिय%20करनी%20है।"
+                        target="_blank"
+                        style="background:#25D366; color:#fff; padding:6px 14px; border-radius:20px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.76rem;">
                         💬 WhatsApp पर संपर्क करें
                     </a>
                 </div>
@@ -16047,12 +16256,14 @@
 
             <!-- License Key Activation -->
             <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:14px;">
-                <label style="font-size:0.78rem; color:#94a3b8; display:block; margin-bottom:6px; font-weight:700;">प्रो लाइसेंस कुंजी सक्रियण (Activate License Key):</label>
+                <label style="font-size:0.78rem; color:#94a3b8; display:block; margin-bottom:6px; font-weight:700;">प्रो
+                    लाइसेंस कुंजी सक्रियण (Activate License Key):</label>
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="proLicenseKeyInput" placeholder="उदा. VYAS-PRO-2026"
                         style="flex:1; background:rgba(15,23,42,0.9); border:1px solid rgba(212,175,55,0.4); border-radius:8px; padding:8px 12px; color:#f8fafc; font-size:0.82rem; letter-spacing:0.5px;">
                     <button type="button" class="header-btn primary" onclick="VyasDesktop.activateProLicenseKey()"
-                        style="white-space:nowrap; font-size:0.80rem; padding:8px 18px; background:var(--gold-gradient); color:#111; font-weight:900; border:none; border-radius:8px; cursor:pointer;">सक्रिय करें</button>
+                        style="white-space:nowrap; font-size:0.80rem; padding:8px 18px; background:var(--gold-gradient); color:#111; font-weight:900; border:none; border-radius:8px; cursor:pointer;">सक्रिय
+                        करें</button>
                 </div>
             </div>
         </div>
@@ -16061,12 +16272,17 @@
     <!-- VYAS ASTRA OFFICIAL FOOTER & SOLE FOUNDER ACCREDITATION -->
     <footer
         style="margin-top:50px; padding:32px 16px; border-top:1px solid rgba(212,175,55,0.3); background:rgba(7,11,25,0.95); text-align:center; font-size:0.88rem; color:#94A3B8; line-height:1.75;">
-        <div style="color:var(--accent-gold); font-weight:700; font-size:0.96rem; margin-bottom:8px; letter-spacing:0.5px;">✦ VYAS ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
+        <div
+            style="color:var(--accent-gold); font-weight:700; font-size:0.96rem; margin-bottom:8px; letter-spacing:0.5px;">
+            ✦ VYAS ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦</div>
         <div style="color:#E2E8F0; font-size:0.90rem; margin-bottom:6px;">
-            शोध, सूत्र एवं निर्देशन: <b style="color:var(--accent-gold); font-size:0.98rem;">निखिल व्यास (Nikhil Vyas)</b>, M.A.(Jyotish), LL.B • पाली (राजस्थान)
+            शोध, सूत्र एवं निर्देशन: <b style="color:var(--accent-gold); font-size:0.98rem;">निखिल व्यास (Nikhil
+                Vyas)</b>, M.A.(Jyotish), LL.B • पाली (राजस्थान)
         </div>
         <div style="margin-bottom:8px; font-size:0.86rem; color:#CBD5E1;">
-            📞 सम्पर्क: <a href="tel:9414121172" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; text-decoration:none;">inikhilvyas@gmail.com</a>
+            📞 सम्पर्क: <a href="tel:9414121172" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91
+                9414121172</a> • ✉️ ईमेल: <a href="mailto:inikhilvyas@gmail.com"
+                style="color:#38BDF8; text-decoration:none;">inikhilvyas@gmail.com</a>
         </div>
         <div style="font-size:0.75rem; color:#64748B; margin-top:6px;">
             © 2026 VYAS ASTRA • सर्वाधिकार सुरक्षित • NASA JPL Swiss Ephemeris 0.001" विशुद्ध खगोलीय परिशुद्धता।
