@@ -9896,7 +9896,7 @@
                     if (localStorage.getItem('vyas_pro_active') === 'true') return true;
                     if (localStorage.getItem('vyas_pro_member_' + norm) === 'true') return true;
                 } catch (e) { }
-                var authorizedPro = ['support@vyasastro.in', 'admin@vyasastro.in', 'vyasbilawas@gmail.com'];
+                var authorizedPro = ['support@vyasastro.in', 'admin@vyasastro.in'];
                 if (authorizedPro.indexOf(norm) !== -1) return true;
                 return false;
             },
@@ -15083,11 +15083,11 @@
                     var waBtn = document.getElementById('gwWhatsAppBtn');
                     if (waBtn) {
                         var waMsg = "नमस्ते, मुझे VYAS ASTRA " + encodeURIComponent(planName) + " (₹" + amount + ") की सदस्यता लेनी है। कृपया पेमेंट लिंक / गेटवे विवरण प्रदान करें।";
-                        waBtn.href = "https://wa.me/919414121172?text=" + waMsg;
+                        waBtn.href = "mailto:support@vyasastro.in" + waMsg;
                     }
                     box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 } else {
-                    var waUrl = "https://wa.me/919414121172?text=" + encodeURIComponent("नमस्ते, मुझे VYAS ASTRA " + planName + " (₹" + amount + ") की सदस्यता लेनी है।");
+                    var waUrl = "mailto:support@vyasastro.in" + encodeURIComponent("नमस्ते, मुझे VYAS ASTRA " + planName + " (₹" + amount + ") की सदस्यता लेनी है।");
                     window.open(waUrl, '_blank');
                 }
             },
@@ -15107,7 +15107,7 @@
                         localStorage.setItem('vyas_rzp_key', rzpKey);
                     } else {
                         var waMsg = "नमस्ते, मुझे VYAS ASTRA " + encodeURIComponent(plan) + " (₹" + amount + ") की सदस्यता लेनी है। कृपया पेमेंट लिंक प्रदान करें।";
-                        window.open("https://wa.me/919414121172?text=" + waMsg, '_blank');
+                        window.open("mailto:support@vyasastro.in" + waMsg, '_blank');
                         return;
                     }
                 }
@@ -15202,7 +15202,7 @@
                     this.updateProModalUI();
                     if (typeof this.updateGoogleAuthUI === 'function') this.updateGoogleAuthUI();
                 } else {
-                    alert("अमान्य लाइसेंस कुंजी। कृपया मान्य कुंजी दर्ज करें (उदा. VYAS-PRO-2026) अथवा +91 9414121172 पर संपर्क करें।");
+                    alert("अमान्य लाइसेंस कुंजी। कृपया मान्य कुंजी दर्ज करें (उदा. VYAS-PRO-2026) अथवा support@vyasastro.in पर संपर्क करें।");
                 }
             },
 
@@ -16329,15 +16329,15 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div>
                         <b style="color:#d4af37;">📞 सदस्यता सहायता व UPI सक्रियण:</b><br>
-                        WhatsApp / कॉल: <a href="tel:+919414121172"
-                            style="color:#f1d797; text-decoration:none; font-weight:700;">+91 9414121172</a> • ईमेल: <a
+                        आधिकारिक सहायता: <a href="mailto:support@vyasastro.in"
+                            style="color:#f1d797; text-decoration:none; font-weight:700;">support@vyasastro.in</a> • ईमेल: <a
                             href="mailto:support@vyasastro.in"
                             style="color:#f1d797; text-decoration:none; font-weight:700;">support@vyasastro.in</a>
                     </div>
-                    <a href="https://wa.me/919414121172?text=नमस्ते,%20मुझे%20VYAS%20ASTRA%20PRO%20सदस्यता%20सक्रिय%20करनी%20है।"
+                    <a href="mailto:support@vyasastro.in"
                         target="_blank"
                         style="background:#25D366; color:#fff; padding:6px 14px; border-radius:20px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.76rem;">
-                        💬 WhatsApp पर संपर्क करें
+                        ✉️ सहायता डेस्क पर संपर्क करें
                     </a>
                 </div>
             </div>
@@ -16367,8 +16367,8 @@
             शोध, सूत्र एवं निर्देशन: <b style="color:var(--accent-gold); font-size:0.98rem;">व्यास अस्त्र वैदिक शोध संस्थान (VYAS Research Foundation)</b> • आचार्य दैवज्ञ मण्डल
         </div>
         <div style="margin-bottom:8px; font-size:0.86rem; color:#CBD5E1;">
-            📞 सम्पर्क: <a href="tel:9414121172" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91
-                9414121172</a> • ✉️ ईमेल: <a href="mailto:support@vyasastro.in"
+            📞 सम्पर्क: <a href="mailto:support@vyasastro.in" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91
+                support@vyasastro.in</a> • ✉️ ईमेल: <a href="mailto:support@vyasastro.in"
                 style="color:#38BDF8; text-decoration:none;">support@vyasastro.in</a>
         </div>
         <div style="font-size:0.75rem; color:#64748B; margin-top:6px;">
