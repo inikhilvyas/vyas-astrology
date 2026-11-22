@@ -14,7 +14,7 @@ if exist "%KEYSTORE_NAME%" (
 )
 
 echo Generating 2048-bit RSA Release Keystore...
-keytool -genkey -v -keystore "%KEYSTORE_NAME%" -alias "%ALIAS%" -keyalg RSA -keysize 2048 -validity %VALIDITY_DAYS% -storepass vyasastro2026 -keypass vyasastro2026 -dname "CN=Nikhil Vyas, OU=Vyas Research, O=VYAS ASTRA, L=Pali, ST=Rajasthan, C=IN"
+keytool -genkey -v -keystore "%KEYSTORE_NAME%" -alias "%ALIAS%" -keyalg RSA -keysize 2048 -validity %VALIDITY_DAYS% -storepass vyasastro2026 -keypass vyasastro2026 -dname "CN=VYAS ASTRA, OU=Vedic Research, O=VYAS ASTRA FOUNDATION, L=Jaipur, ST=Rajasthan, C=IN"
 
 if %ERRORLEVEL% EQU 0 (
     echo.
