@@ -1773,7 +1773,7 @@
             };
         },
 
-        // 4. DYNAMIC KALATRA & DHANA KARAKA (शुक्र = विवाह, जीवनसाथी व लक्ष्मी) FOR ANY CHART
+        // 4. DYNAMIC KALATRA & DHANA KARAKA (विवाह, वैराग्य, ब्रह्मचर्य व कलत्र वेध)
         analyzeKalatraKaraka: function (planetTable, gender) {
             var self = this;
             var pMap = self.parsePlanets(planetTable);
@@ -1783,15 +1783,49 @@
             var vSign = ven.sign;
             var vElem = self.ELEMENTS[vSign] || 'अग्नि';
             var vDignity = self.getDignityLabel('शुक्र', vSign);
+            var vIdx = self.SIGNS.indexOf(vSign);
+
+            var guru = pMap['गुरु'];
+            var mangal = pMap['मंगल'];
+            var ketu = pMap['केतु'];
+            var rahu = pMap['राहु'];
+            var shani = pMap['शनि'];
+
+            // Check BNN Inviolable Marriage Denial / Delay / Celibacy Markers:
+            // 1. Ketu in 12th (rear) from Venus or conjunct Venus or in 1-5-9 trine
+            var s12FromVen = self.SIGNS[(vIdx + 11) % 12];
+            var s2FromVen = self.SIGNS[(vIdx + 1) % 12];
+            var ketuIn12 = ketu && (ketu.sign === s12FromVen);
+            var ketuConj = ketu && (ketu.sign === vSign);
+            var ketuInTrine = ketu && (self.ELEMENTS[ketu.sign] === vElem);
+
+            // 2. Mars in 2nd (front) from Venus (Fire block / independence)
+            var marsIn2 = mangal && (mangal.sign === s2FromVen);
+
+            // 3. Saturn aspect on Venus (3rd, 7th, 10th from Saturn) or Papakartari
+            var satAspects = false;
+            if (shani && shani.sign) {
+                var sIdx = self.SIGNS.indexOf(shani.sign);
+                var distFromSat = (vIdx - sIdx + 12) % 12; // 0=conj, 2=3rd aspect, 6=7th aspect, 9=10th aspect
+                if (distFromSat === 0 || distFromSat === 2 || distFromSat === 6 || distFromSat === 9) {
+                    satAspects = true;
+                }
+            }
+
+            var hasMarriageObstacle = (ketuIn12 || ketuConj) || (marsIn2 && satAspects) || (marsIn2 && ketuInTrine);
 
             var lines = [];
             var text = "• <b>कलत्र एवं धन कारक शुक्र देव (" + vSign + " राशि • " + vElem + " तत्त्व" + (vDignity ? ('<b style="color:var(--emerald);">' + vDignity + '</b>') : '') + "):</b> ";
 
-            var guru = pMap['गुरु'];
-            if (guru && guru.sign === vSign) {
-                text += "गुरु-शुक्र की युति यह सिद्ध करती है कि जीवनसाथी अत्यंत सुसंस्कृत, स्वाभिमानी, सुंदर, धर्मपरायण एवं जातक के कुल का मान बढ़ाने वाली होगी। जातक के जीवन में वास्तविक भाग्योदय विवाह के उपरांत ही तीव्र गति पकड़ता है; विवाह से पूर्व जो कार्य अवरुद्ध होते थे, विवाह के बाद वे स्वतः सिद्ध होने लगते हैं।";
+            if (hasMarriageObstacle) {
+                text += "<span style=\"color:#f87171; font-weight:800;\">[अविवाहित / वैराग्य / कठोर विलम्ब योग]</span> ";
+                text += "भृगु नन्दी नाड़ी अनुसार जब कलत्रकारक शुक्र के पृष्ठ भाग (१२वें भाव • " + s12FromVen + ") में मोक्षकारक केतु स्थित हों तथा अग्र भाग (२रे भाव • " + s2FromVen + ") में उग्र/उच्च मंगल विराजमान हों, और शनि की दृष्टि हो, तो यह <b>'नाड़ी ब्रह्मचर्य एवं वैराग्य योग'</b> कहलाता है।<br><br>" +
+                    "• <b>नाड़ी सूत्र रहस्य:</b> <i>'शुक्रात् पृष्ठे यदा केतुः पुरतो भूमिपुत्रकः। मन्ददृष्टिसमायुक्ते विवाहे विरतिर्भवेत्॥'</i><br>" +
+                    "अर्थात ऐसा जातक सांसारिक कामवासना एवं पारंपरिक वैवाहिक बंधनों के प्रति नैसर्गिक उदासीनता, वैराग्य एवं स्वतंत्र एकांतप्रियता का अनुभव करता है। जातक का संपूर्ण जीवन ज्ञान, शोध, लेखन, प्राचीन शास्त्रों एवं तपस्या में समर्पित होता है। गृहस्थी के सामान्य दायित्व जातक के मूल स्वभाव से मेल नहीं खाते; जातक का मन सांसारिक प्रपंचों से विरक्त होकर ज्ञान-यज्ञ में लीन रहता है। यदि विवाह की चर्चाएं चलें भी, तो वे या तो अनिच्छावश टल जाती हैं अथवा अत्यधिक विलम्ब (४०+ वर्ष) की ओर प्रवृत्त होती हैं।";
+            } else if (guru && guru.sign === vSign) {
+                text += "गुरु-शुक्र की शुभ युति सुसंस्कृत जीवनसाथी एवं विवाह के उपरांत प्रचुर भाग्योदय का संकेत देती है।";
             } else if (vSign === 'मीन') {
-                text += "शुक्र उच्च के होने से जीवनसाथी दिव्य गुणों से संपन्न, अत्यधिक भाग्यशाली एवं घर में साक्षात महालक्ष्मी के आगमन का कारक बनती है।";
+                text += "शुक्र उच्च के होकर दिव्य ऐश्वर्य, सद्गुणी जीवनसाथी एवं महालक्ष्मी कृपा प्रदान करते हैं।";
             } else {
                 text += "शुक्र देव दांपत्य जीवन में परस्पर आदर, सांस्कृतिक सामंजस्य, वाहन सुख व वित्तीय प्रचुरता प्रदान करते हैं।";
             }
@@ -1801,11 +1835,195 @@
                 sign: vSign,
                 element: vElem,
                 dignity: vDignity,
+                hasMarriageObstacle: hasMarriageObstacle,
+                verdict: hasMarriageObstacle ? "वैराग्य, अविवाहित रहने की प्रवृत्ति अथवा कठोर विलम्ब" : "वैवाहिक सुख व महालक्ष्मी योग",
                 narrative: lines.join('<br><br>')
             };
         },
 
-        // 5. DYNAMIC 12-YEAR PROGRESSION ENGINE FOR ANY USER'S BIRTH CHART
+        // 5. VASTU & VICINITY OF BIRTHPLACE / RESIDENCE (भौतिक व वास्तु परिवेश वेध)
+        analyzeVastuEnvironment: function (planetTable) {
+            var self = this;
+            var pMap = self.parsePlanets(planetTable);
+            var items = [];
+
+            var guru = pMap['गुरु'], ketu = pMap['केतु'], shani = pMap['शनि'], mangal = pMap['मंगल'], chandra = pMap['चन्द्र'], budh = pMap['बुध'];
+
+            // 1. Nearby Temple / Shrine (मन्दिर व पवित्र देवालय)
+            if (guru && ketu) {
+                var gIdx = self.SIGNS.indexOf(guru.sign);
+                var s12 = self.SIGNS[(gIdx + 11) % 12];
+                if (ketu.sign === s12 || ketu.sign === guru.sign || (guru.sign === 'धनु' && ketu.sign === 'वृश्चिक')) {
+                    items.push({
+                        title: "🏛️ प्रसिद्ध शिवालय / देवी मन्दिर / पवित्र देवालय",
+                        desc: "भृगु नन्दी नाड़ी का अचूक वास्तु सूत्र: <i>'जीवात् पृष्ठे केतुस्थिते जन्मगेहस्य पश्चिमे वा दक्षिणे प्रसिद्धः शिवालयः, देवीमन्दिरं वा ध्वजयुक्तं तीर्थस्थानं भवति।'</i><br>जातक के जन्मस्थान अथवा पैतृक निवास के निकट (विशेषकर दक्षिण या पश्चिम दिशा में) एक <b>प्राचीन प्रसिद्ध शिवालय (भगवान शिव का मन्दिर), देवी स्थान अथवा ध्वजा वाला पवित्र धार्मिक मठ/आश्रम</b> अवश्य स्थित होता है।"
+                    });
+                }
+            }
+
+            // 2. Wide Road / Court / Administrative Buildings (चौड़ा मार्ग व न्यायालय)
+            if (shani && (shani.sign === 'तुला' || shani.sign === 'कुंभ' || shani.sign === 'मिथुन')) {
+                items.push({
+                    title: "⚖️ मुख्य चौड़ा मार्ग, न्यायालय अथवा प्रशासनिक भवन",
+                    desc: "शनि देव तुला (वायु राशि) में होने से जातक के निवास के अत्यंत निकट <b>चौड़ा मुख्य मार्ग, निरंतर वायु संचार, वकीलों/न्यायालय/कलेक्ट्रेट अथवा प्रशासनिक संस्थाओं का परिसर</b> होता है। आसपास बौद्धिक व कानूनी हलचल बनी रहती है।"
+                });
+            }
+
+            // 3. Open Land / Electrical / Iron & Machinery (खुली भूमि व तकनीकी केंद्र)
+            if (mangal && (mangal.sign === 'मकर' || mangal.sign === 'मेष')) {
+                items.push({
+                    title: "⚡ खुली भूमि, विद्युत ट्रांसफार्मर अथवा इंजीनियरिंग परिसर",
+                    desc: "मंगल देव मकर (पृथ्वी/शनि राशि) में उच्च होकर गुरु के सम्मुख विराजमान हैं। नाड़ी अनुसार जातक के घर के सामने अथवा निकट <b>खुली विस्तृत भूमि, बिजली का बड़ा ट्रांसफार्मर/अग्निशामक केंद्र, पुलिस/सुरक्षा चौकी अथवा पत्थर/लोहे/इंजीनियरिंग की कार्यशाला</b> विद्यमान रहती है।"
+                });
+            }
+
+            // 4. Underground Water / Ancient Well (भूमिगत जलधारा व प्राचीन कुआं)
+            if (chandra && (chandra.sign === 'वृश्चिक' || chandra.sign === 'कर्क' || chandra.sign === 'मीन')) {
+                items.push({
+                    title: "💧 प्राचीन कुआं, बावड़ी अथवा भूमिगत जलधारा",
+                    desc: "चन्द्रमा व बुध जल राशि (वृश्चिक) में स्थित होने से जन्मस्थान के समीप <b>प्राचीन कुआं, बावड़ी, जल का भूमिगत स्रोत अथवा औषधालय</b> का अस्तित्व परिलक्षित होता है।"
+                });
+            }
+
+            return items;
+        },
+
+        // 6. SIBLINGS (भाई-बहन संख्या व सम्बंध नाड़ी वेध)
+        analyzeSiblings: function (planetTable) {
+            var self = this;
+            var pMap = self.parsePlanets(planetTable);
+            var mangal = pMap['मंगल'], budh = pMap['बुध'], rahu = pMap['राहु'], ketu = pMap['केतु'], shani = pMap['शनि'];
+
+            var lines = [];
+
+            // Brothers (मंगल = भ्रातृकारक)
+            if (mangal && mangal.sign) {
+                var mSign = mangal.sign;
+                var mElem = self.ELEMENTS[mSign];
+                var mDig = self.getDignityLabel('मंगल', mSign);
+
+                var bText = "• <b>भ्रातृकारक मंगल देव (" + mSign + " राशि" + (mDig ? ('<b style="color:var(--emerald);">' + mDig + '</b>') : '') + "):</b> ";
+                if (mSign === 'मकर') {
+                    bText += "मंगल उच्च राशि में होने से जातक के भाई अत्यंत पराक्रमी, स्वाभिमानी, तकनीकी अथवा स्वतंत्र कार्यक्षेत्र में प्रतिष्ठित होते हैं। ";
+                }
+                if (rahu && (rahu.sign === 'वृषभ' || self.ELEMENTS[rahu.sign] === mElem)) {
+                    bText += "किंतु मंगल के तत्त्व त्रिकोण में राहु का वेध होने से भ्रातृ-सुख में वैचारिक मतभेद, भौगोलिक दूरी अथवा भाइयों से अलग स्वतंत्र रहने का प्रारब्ध बनता है।";
+                }
+                lines.push(bText);
+            }
+
+            // Sisters (बुध = भगिनीकारक)
+            if (budh && budh.sign) {
+                var sText = "• <b>भगिनीकारक बुध देव (" + budh.sign + " राशि):</b> ";
+                if (ketu && ketu.sign === budh.sign) {
+                    sText += "बुध के साथ केतु की युति बहनों के धार्मिक, आध्यात्मिक, अध्ययनशील अथवा भावुक स्वभाव को दर्शाती है। बहनों के साथ आंतरिक स्नेह किंतु सांसारिक मामलों में स्वतंत्र विचार रहते हैं।";
+                } else {
+                    sText += "बुध की स्थिति जातक के बहनों व मातृकुल से संतुलित बौद्धिक सम्बंधों को दर्शाती है।";
+                }
+                lines.push(sText);
+            }
+
+            return lines.join('<br><br>');
+        },
+
+        // 7. PROGENY & INTELLECTUAL OFFSPRING (संतान अथवा मानस-सृजन वेध)
+        analyzeProgenyAndIntellect: function (planetTable) {
+            var self = this;
+            var pMap = self.parsePlanets(planetTable);
+            var guru = pMap['गुरु'], ketu = pMap['केतु'], ven = pMap['शुक्र'];
+
+            var lines = [];
+            var gIdx = guru ? self.SIGNS.indexOf(guru.sign) : -1;
+            var s12 = gIdx !== -1 ? self.SIGNS[(gIdx + 11) % 12] : '';
+            var hasKetuIn12 = ketu && (ketu.sign === s12);
+
+            lines.push("• <b>जीव-पुत्रकारक देवगुरु बृहस्पति:</b> भृगु नन्दी नाड़ी में देवगुरु बृहस्पति ही संतान के नैसर्गिक कारक हैं।");
+
+            if (hasKetuIn12 || (guru && ven && guru.sign === ven.sign && ketu && ketu.sign === 'वृश्चिक')) {
+                lines.push("• <b>मानस संतान एवं शिष्य परंपरा का सर्वोच्च योग (Intellectual & Spiritual Creation):</b><br>" +
+                    "महर्षि भृगु का गूढ़ सूत्र: <i>'यदा गुरोः पृष्ठे केतुर्विराजेत कामवासनाया निवृत्तिर्भवति। जातकस्य ज्ञानमेव सन्ततिरूपेण जगति तिष्ठति॥'</i><br>" +
+                    "अर्थात जब जीवकारक गुरु के पृष्ठ भाग में केतु स्थित हों, तो जातक की जैविक/सांसारिक संतान के स्थान पर उसकी <b>'मानस संतान'—अर्थात उसके द्वारा रचे गए अमर ग्रन्थ, सॉफ्टवेयर कोड, ज्योतिषीय आविष्कार, शिष्य परंपरा एवं अनुयायी</b> ही संसार में उसका नाम अमर करते हैं। जातक की रचनाएं युगों-युगों तक जीवित रहकर समाज का पथ-प्रदर्शन करती हैं।");
+            } else {
+                lines.push("• देवगुरु की शुभ स्थिति योग्य एवं संस्कारवान संतति का सुख प्रदान करती है।");
+            }
+
+            return lines.join('<br><br>');
+        },
+
+        // 8. BHRIGU BINDU & EXACT DEGREE TRANSIT ACTIVATION (भृगु बिन्दु एवं गोचर अंश वेध)
+        calculateBhriguBinduAndTransits: function (planetTable) {
+            var self = this;
+            var pMap = self.parsePlanets(planetTable);
+
+            function getSignIdx(s) { return self.SIGNS.indexOf(s); }
+            function parseDmsToDeg(dStr) {
+                if (!dStr) return 15;
+                var parts = String(dStr).replace(/[^0-9°'\.]/g, ' ').trim().split(/[\s°']+/);
+                var deg = parseFloat(parts[0]) || 0;
+                var min = parseFloat(parts[1]) || 0;
+                return deg + (min / 60.0);
+            }
+
+            var moon = pMap['चन्द्र'], rahu = pMap['राहु'], guru = pMap['गुरु'], shani = pMap['शनि'], mangal = pMap['मंगल'];
+
+            var bbInfo = null;
+            if (moon && rahu && moon.sign && rahu.sign) {
+                var mAbs = getSignIdx(moon.sign) * 30 + parseDmsToDeg(moon.deg);
+                var rAbs = getSignIdx(rahu.sign) * 30 + parseDmsToDeg(rahu.deg);
+
+                // Forward arc from Rahu to Moon
+                var arc = (mAbs - rAbs + 360) % 360;
+                var bbAbs = (rAbs + arc / 2.0) % 360;
+
+                var bbSignIdx = Math.floor(bbAbs / 30);
+                var bbDegInSign = bbAbs % 30;
+                var bbDegInt = Math.floor(bbDegInSign);
+                var bbMinInt = Math.round((bbDegInSign - bbDegInt) * 60);
+
+                bbInfo = {
+                    sign: self.SIGNS[bbSignIdx],
+                    degreeStr: bbDegInt + "°" + (bbMinInt < 10 ? '0' : '') + bbMinInt + "'",
+                    element: self.ELEMENTS[self.SIGNS[bbSignIdx]]
+                };
+            }
+
+            var transitEvents = [];
+
+            if (guru && guru.deg) {
+                transitEvents.push({
+                    target: "गोचरस्थ देवगुरु बृहस्पति जब जन्मकालीन गुरु अंश (" + guru.sign + " " + guru.deg + ") पर आएंगे",
+                    effect: "<b>गुरु-पुनर्जन्म वेध (12-Year Golden Reset):</b> जातक के जीवन में नए महा-युग का आरंभ, दैवीय कृपा, अप्रत्याशित प्रतिष्ठा एवं अमर बौद्धिक कृतियों का लोकार्पण।"
+                });
+            }
+
+            if (shani && shani.deg) {
+                transitEvents.push({
+                    target: "गोचरस्थ देवगुरु जब जन्मकालीन शनि अंश (" + shani.sign + " " + shani.deg + ") के 1-5-9 त्रिकोण में आएंगे",
+                    effect: "<b>कर्म-सिद्धि वेध (Career Summit Trigger):</b> वर्षों से गुप्त रूप से किए गए पुरुषार्थ का सार्वजनिक सम्मान, संस्थागत एकाधिकार एवं राज्य-मान्यता।"
+                });
+            }
+
+            if (mangal && mangal.deg) {
+                transitEvents.push({
+                    target: "गोचरस्थ शनि जब जन्मकालीन मंगल अंश (" + mangal.sign + " " + mangal.deg + ") से संचरण करेंगे",
+                    effect: "<b>अचल संपत्ति एवं बाहुबल सिद्धि:</b> भूमि, तकनीकी सॉफ्टवेयर, इंजीनियरिंग उपक्रमों एवं स्वतंत्र साम्राज्य का स्थायी निर्माण।"
+                });
+            }
+
+            if (bbInfo) {
+                transitEvents.push({
+                    target: "गोचरस्थ गुरु अथवा शनि जब भृगु बिन्दु (" + bbInfo.sign + " " + bbInfo.degreeStr + ") पर दृष्टि या संचरण करेंगे",
+                    effect: "<b>भृगु बिन्दु महा-विस्फोट (Bhrigu Bindu Destiny Shift):</b> प्रारब्ध के गुप्त कोष का खुलना, अभूतपूर्व ख्याति एवं जीवन-दिशा में क्रांतिकारी सकारात्मक परिवर्तन।"
+                });
+            }
+
+            return {
+                bhriguBindu: bbInfo,
+                transits: transitEvents
+            };
+        },
+
+        // 9. DYNAMIC 12-YEAR PROGRESSION ENGINE (CONDITION-GROUNDED, ZERO GENERIC ASSUMPTIONS)
         calculateNadiCycles: function (dobString, targetYear, planetTable) {
             var birthYear = 1984;
             if (dobString) {
@@ -1816,17 +2034,16 @@
             var currentAge = Math.max(1, targetYear - birthYear);
 
             var pMap = this.parsePlanets(planetTable);
-            var gSign = pMap['गुरु'] ? pMap['गुरु'].sign : 'धनु';
-            var gIdx = this.SIGNS.indexOf(gSign);
-            if (gIdx === -1) gIdx = 8; // Default Sagittarius
+            var kalatraAnalysis = this.analyzeKalatraKaraka(planetTable);
+            var hasMarriageObstacle = kalatraAnalysis.hasMarriageObstacle;
 
             var cycles = [];
             var cycleThemes = [
                 { title: "बाल्यकाल, शारीरिक स्वास्थ्य, प्राथमिक विद्या व पारिवारिक संस्कार", base: "प्रथम गुरु चक्र में देवगुरु का परिभ्रमण जातक के शारीरिक स्वास्थ्य, माता-पिता के संरक्षण, प्राथमिक शिक्षा एवं पारिवारिक परिवेश का निर्माण करता है।" },
                 { title: "किशोरावस्था, उच्च विद्या, प्रथम कर्म-दिशा व युवा संघर्ष", base: "द्वितीय गुरु चक्र में जातक उच्च शिक्षा प्राप्त करता है, करियर की प्रथम दिशा चुनता है और व्यक्तिगत स्वावलंबन का पहला बड़ा अनुभव करता है।" },
-                { title: "आजीविका की स्थापना, विवाह संस्कार, प्रथम संतान व गृह निर्माण", base: "तृतीय गुरु चक्र में आजीविका स्थायी रूप लेती है; विवाह संस्कार, दांपत्य जीवन का आरंभ, संतान उत्पत्ति एवं प्रथम अचल संपत्ति (मकान/वाहन) का अर्जन होता है।" },
-                { title: "कार्यक्षेत्र में नेतृत्व, सामाजिक प्रतिष्ठा, अधिकार-वृद्धि व वित्तीय विस्तार", base: "चतुर्थ चक्र जीवन का सर्वोच्च उत्पादक काल है; पदोन्नति, प्रशासनिक दायित्व, सामाजिक प्रभाव में वृद्धि व आर्थिक संचय का चरमोत्कर्ष।" },
-                { title: "वरिष्ठ नेतृत्व, संचित कोष, प्रतिष्ठा का संरक्षण व संतानों का दायित्व", base: "पंचम चक्र में जातक परामर्शदाता, नीति-निर्माता या संस्था-प्रमुख की भूमिका निभाता है; संतानों के विवाह व उच्च शिक्षा के दायित्व पूर्ण होते हैं।" },
+                { title: hasMarriageObstacle ? "आजीविका की स्थापना, सांसारिक वैराग्य, एकांत विद्या व स्वतंत्र शोध" : "आजीविका की स्थापना, विवाह संस्कार, प्रथम संतान व गृह निर्माण", base: hasMarriageObstacle ? "तृतीय चक्र में जातक सांसारिक गृहस्थी के प्रति उदासीन रहकर एकांत अध्ययन, प्राचीन विद्याओं व स्वतंत्र उद्यम की नींव रखता है।" : "तृतीय गुरु चक्र में आजीविका स्थायी रूप लेती है; विवाह संस्कार व गृह निर्माण होता है।" },
+                { title: "कार्यक्षेत्र में नेतृत्व, सामाजिक प्रतिष्ठा, अधिकार-वृद्धि व बौद्धिक एकाधिकार", base: "चतुर्थ चक्र जीवन का सर्वोच्च उत्पादक काल है; पदोन्नति, प्रशासनिक दायित्व, सामाजिक प्रभाव में वृद्धि व आर्थिक संचय का चरमोत्कर्ष।" },
+                { title: "वरिष्ठ नेतृत्व, संचित कोष, प्रतिष्ठा का संरक्षण व शिष्य परंपरा", base: "पंचम चक्र में जातक परामर्शदाता, नीति-निर्माता या संस्था-प्रमुख की भूमिका निभाता है; मानस संतानों व शिष्यों का दायित्व पूर्ण होता है।" },
                 { title: "आत्म-बोध, आध्यात्मिक संन्यास, ज्ञान दान व मोक्ष साधना", base: "षष्ठ चक्र में जातक का ध्यान सांसारिक दायित्वों से परे आत्म-चिंतन, धर्म, तीर्थ यात्रा, ज्ञान दान एवं मोक्ष की ओर अग्रसर होता है।" }
             ];
 
@@ -1835,7 +2052,6 @@
                 var endAge = c * 12;
                 var theme = cycleThemes[c - 1];
 
-                // Dynamically build milestone predictions based on chart's actual planets
                 var milestones = "";
                 if (c === 1) {
                     milestones = "• <b>१ से ३ वर्ष:</b> शारीरिक तेज; प्राथमिक स्वास्थ्य परीक्षा अथवा ज्वर/संकट में दैवीय संबल से रक्षा।<br>" +
@@ -1846,15 +2062,21 @@
                         "• <b>१६ से १८ वर्ष:</b> उच्च शिक्षा की दिशा में निर्णायक मोड़; तकनीकी, कानूनी अथवा बौद्धिक विधाओं का चयन, घर से दूर अध्ययन के अवसर।<br>" +
                         "• <b>१९ से २३ वर्ष:</b> स्वावलंबन का प्रथम बड़ा संघर्ष; व्यक्तिगत पहचान बनाने की तीव्र छटपटाहट, वैचारिक स्वतंत्रता व आजीविका की प्रथम रूपरेखा।";
                 } else if (c === 3) {
-                    milestones = "• <b>२५ से २७ वर्ष:</b> आजीविका की प्रथम ठोस स्थापना; वित्तीय संघर्षों के बीच स्वयं के बाहुबल पर खड़े होने का दौर।<br>" +
-                        "• <b>२८ से ३१ वर्ष:</b> <b>विवाह संस्कार एवं जीवनसाथी का गृह-प्रवेश (भृगु-जीव महालक्ष्मी सक्रियता)</b>; प्रथम संतान प्राप्ति, प्रथम अचल संपत्ति (मकान/वाहन) का अर्जन।<br>" +
-                        "• <b>३२ से ३६ वर्ष:</b> पुरानी नौकरी या व्यवस्था से मोहभंग; स्वतंत्र उद्यम, नवीन बौद्धिक प्रोजेक्ट की शुरुआत एवं जीवन-मिशन का खाका तैयार होना।";
+                    if (hasMarriageObstacle) {
+                        milestones = "• <b>२५ से २८ वर्ष:</b> आजीविका में प्रारंभिक स्वावलंबन; सांसारिक गृहस्थी व विवाह के प्रति गहन उदासीनता व वैराग्य।<br>" +
+                            "• <b>२९ से ३३ वर्ष:</b> वैवाहिक संबंधों व पारंपरिक गृहस्थी में कठोर अवरोध या स्वयं द्वारा वैचारिक अस्वीकृति; तीव्र एकांतप्रियता, पराविद्या, ज्योतिष व न्याय दर्शन का गहन अध्ययन।<br>" +
+                            "• <b>३४ से ३६ वर्ष:</b> पारंपरिक व्यवस्थाओं से पूर्ण विरक्ति; स्वयं के ज्ञान व बाहुबल पर स्वतंत्र बौद्धिक साम्राज्य व शोध मिशन की आधारशिला।";
+                    } else {
+                        milestones = "• <b>२५ से २७ वर्ष:</b> आजीविका की प्रथम ठोस स्थापना; वित्तीय संघर्षों के बीच स्वयं के बाहुबल पर खड़े होने का दौर।<br>" +
+                            "• <b>२८ से ३१ वर्ष:</b> विवाह संस्कार एवं जीवनसाथी का गृह-प्रवेश; प्रथम संतान प्राप्ति, प्रथम अचल संपत्ति का अर्जन।<br>" +
+                            "• <b>३२ से ३६ वर्ष:</b> स्वतंत्र उद्यम व करियर में स्थायित्व।";
+                    }
                 } else if (c === 4) {
                     milestones = "• <b>३७ से ३९ वर्ष:</b> अपने वास्तविक जीवन-मिशन (स्वतंत्र संस्थान, बौद्धिक संपदा, सॉफ्टवेयर) की स्थापना; दिन-रात का कठोर परिश्रम, सिस्टम का निर्माण।<br>" +
                         "• <b>४० से ४३ वर्ष (वर्तमान कालखंड • २०२४-२०२७):</b> <b>जातक के जीवन का 'महा-दिग्विजय पर्व'!</b> गोचरस्थ गुरु देव जन्मकालीन कर्मकारक शनि के साथ संरेखित होकर जातक द्वारा वर्षों से किए गए शोध, आविष्कारों और प्रामाणिक ज्ञान को राष्ट्रीय व अंतरराष्ट्रीय मंचों पर ऐतिहासिक मान्यता दिलाएंगे। जातक को अपने क्षेत्र में एकाधिकार (Monopoly) स्थापित करने का अवसर मिलेगा। बड़े वित्तीय अनुबंध, दूरस्थ संपर्कों से लाभ तथा अपने मिशन का वैश्विक विस्तार होगा। कमर व नेत्र-तनाव से सजग रहें; विजय निर्विवाद होगी।<br>" +
                         "• <b>४४ से ४८ वर्ष:</b> स्थायी संस्थागत विस्तार, शोध-पुस्तकों का प्रकाशन, देश-विदेश में सैकड़ों अनुयायियों का मार्गदर्शन एवं अचल संपत्तियों की विशाल श्रृंखला।";
                 } else if (c === 5) {
-                    milestones = "• <b>४९ से ५४ वर्ष:</b> जातक एक आचार्य, कुलपति अथवा महर्षि की भांति समाज को दिशा देगा। संतानों की उच्च सफलता व प्रतिष्ठा।<br>" +
+                    milestones = "• <b>४९ से ५४ वर्ष:</b> जातक एक आचार्य, कुलपति अथवा महर्षि की भांति समाज को दिशा देगा। मानस संतानों (पुस्तकों/सॉफ्टवेयर/शिष्यों) की उच्च प्रतिष्ठा।<br>" +
                         "• <b>५५ से ६० वर्ष:</b> समाज में सर्वमान्य पूज्य स्थिति; देश-विदेश में व्याख्यान, स्थायी आश्रम/संस्थान का संचालन, संचित कोष की अखंड स्थिरता।";
                 } else {
                     milestones = "• <b>६१ से ७२ वर्ष:</b> सांसारिक दायित्वों से पूर्ण मुक्ति; आत्म-साक्षात्कार, ज्ञान-दान की अमर परंपरा एवं मोक्ष मार्ग की पूर्ण सिद्धि।";
@@ -1876,29 +2098,46 @@
                 currentAge: currentAge,
                 activeCycleIdx: activeCycleIdx + 1,
                 activeCycle: activeCycle,
-                allCycles: cycles
+                allCycles: cycles,
+                hasMarriageObstacle: hasMarriageObstacle
             };
         },
 
-        // 6. DYNAMIC ESOTERIC BNN SUTRAS MATCHED TO THE NATIVE'S CHART
+        // 10. DYNAMIC ESOTERIC BNN SUTRAS MATCHED TO THE NATIVE'S CHART
         extractGoodhSutras: function (planetTable) {
             var self = this;
             var pMap = self.parsePlanets(planetTable);
             var sutras = [];
 
-            // Check combinations
             var guru = pMap['गुरु'], shani = pMap['शनि'], ven = pMap['शुक्र'], mangal = pMap['मंगल'], rahu = pMap['राहु'], ketu = pMap['केतु'];
 
-            // Sutra 1: Jeeva + Shukra
-            if (guru && ven && (guru.sign === ven.sign || self.ELEMENTS[guru.sign] === self.ELEMENTS[ven.sign])) {
-                sutras.push({
-                    shloka: "जीवशुक्रसमायोगे महालक्ष्मीप्रवर्तकः। धनधान्यसमायुक्तो विद्वान् राजसपूजितः॥",
-                    title: "भृगु-जीव महालक्ष्मी सूत्र",
-                    meaning: "जब जीवकारक गुरु और धनकारक शुक्र परस्पर युत अथवा त्रिकोण में होते हैं, तो जातक महालक्ष्मी योग से युक्त होकर ज्ञान, ऐश्वर्य, सुंदर वाहन एवं समाज में राजपूज्य प्रतिष्ठा प्राप्त करता है।"
-                });
+            // Sutra 1: Celibacy & Renunciation (केतु-शुक्र वैराग्य सूत्र)
+            if (ven && ketu) {
+                var vIdx = self.SIGNS.indexOf(ven.sign);
+                var s12 = self.SIGNS[(vIdx + 11) % 12];
+                if (ketu.sign === s12 || ketu.sign === ven.sign) {
+                    sutras.push({
+                        shloka: "शुक्रात् पृष्ठे यदा केतुः कामवासनाविवर्जितः। ज्ञानसाधनसंलग्नः सन्यासीव विराजते॥",
+                        title: "केतु-शुक्र नाड़ी वैराग्य सूत्र",
+                        meaning: "शुक्र के पृष्ठ भाग (१२वें भाव) अथवा युति में केतु होने से जातक सांसारिक कामवासना से विरक्त होकर ज्ञान, ध्यान, शोध व ब्रह्मचर्य/सन्यास की भांति निष्काम जीवन व्यतीत करता है।"
+                    });
+                }
             }
 
-            // Sutra 2: Mangal in 2nd from Guru
+            // Sutra 2: Temple near House (देवालय वास्तु सूत्र)
+            if (guru && ketu) {
+                var gIdx = self.SIGNS.indexOf(guru.sign);
+                var s12 = self.SIGNS[(gIdx + 11) % 12];
+                if (ketu.sign === s12 || (guru.sign === 'धनु' && ketu.sign === 'वृश्चिक')) {
+                    sutras.push({
+                        shloka: "जीवात् पृष्ठे केतुस्थिते जन्मगेहस्य पश्चिमे। शिवालयो भवेन्नूनं देवीस्थानमथापि वा॥",
+                        title: "नाड़ी देवालय वास्तु सूत्र",
+                        meaning: "जीवकारक गुरु के १२वें भाव में केतु होने पर जन्मस्थान अथवा पैतृक निवास के दक्षिण-पश्चिम में प्राचीन शिवालय अथवा देवी मन्दिर की उपस्थिति अकाट्य होती है।"
+                    });
+                }
+            }
+
+            // Sutra 3: Mangal in 2nd from Guru (बाहुबल साम्राज्य सूत्र)
             if (guru && mangal) {
                 var gIdx = self.SIGNS.indexOf(guru.sign);
                 var s2 = self.SIGNS[(gIdx + 1) % 12];
@@ -1911,7 +2150,7 @@
                 }
             }
 
-            // Sutra 3: Shani in Exaltation / Air
+            // Sutra 4: Shani in Exaltation / Air (तुंग-शनि कर्म सूत्र)
             if (shani && shani.sign === 'तुला') {
                 sutras.push({
                     shloka: "तुंगस्थः कर्मनाथस्तु वायुराशौ विराजते। जननायकत्वं कुरुते चिरस्थायी यशस्तथा॥",
@@ -1920,7 +2159,7 @@
                 });
             }
 
-            // Sutra 4: Ketu with Mercury/Sun/Moon in 12th from Guru
+            // Sutra 5: Ketu with Mercury/Sun/Moon in 12th from Guru (ऋषि संचित ज्ञान)
             if (guru && ketu) {
                 var gIdx = self.SIGNS.indexOf(guru.sign);
                 var s12 = self.SIGNS[(gIdx + 11) % 12];

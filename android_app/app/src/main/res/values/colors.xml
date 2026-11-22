@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_cockpit">#030712</color>
+    <color name="gold_primary">#D4AF37</color>
+    <color name="gold_light">#FCEDAA</color>
+    <color name="gold_dark">#9A7B1C</color>
+    <color name="card_surface">#0C1324</color>
+    <color name="text_primary">#F8FAFC</color>
+</resources>

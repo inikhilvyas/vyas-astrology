@@ -223,16 +223,16 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नाम:</label>
-                            <input type="text" id="groomName" value="निखिल व्यास" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                            <input type="text" id="groomName" value="" placeholder="वर का नाम प्रविष्ट करें" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
                         </div>
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">जन्म तिथि:</label>
-                            <input type="date" id="groomDob" value="1984-11-23" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                            <input type="date" id="groomDob" value="" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
                         </div>
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">चन्द्र राशि:</label>
                             <select id="groomRashi" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
-                                <option value="वृश्चिक" selected>वृश्चिक (Scorpio)</option>
+                                <option value="" disabled selected>चन्द्र राशि चुनें...</option>
                                 <option value="मेष">मेष (Aries)</option>
                                 <option value="वृषभ">वृषभ (Taurus)</option>
                                 <option value="मिथुन">मिथुन (Gemini)</option>
@@ -240,6 +240,7 @@
                                 <option value="सिंह">सिंह (Leo)</option>
                                 <option value="कन्या">कन्या (Virgo)</option>
                                 <option value="तुला">तुला (Libra)</option>
+                                <option value="वृश्चिक">वृश्चिक (Scorpio)</option>
                                 <option value="धनु">धनु (Sagittarius)</option>
                                 <option value="मकर">मकर (Capricorn)</option>
                                 <option value="कुंभ">कुंभ (Aquarius)</option>
@@ -249,7 +250,7 @@
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नक्षत्र:</label>
                             <select id="groomNak" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
-                                <option value="अनुराधा" selected>अनुराधा (चरण 4)</option>
+                                <option value="" disabled selected>नक्षत्र चुनें...</option>
                                 <option value="अश्विनी">अश्विनी</option><option value="भरणी">भरणी</option><option value="कृत्तिका">कृत्तिका</option>
                                 <option value="रोहिणी">रोहिणी</option><option value="मृगशिरा">मृगशिरा</option><option value="आर्द्रा">आर्द्रा</option>
                                 <option value="पुनर्वसु">पुनर्वसु</option><option value="पुष्य">पुष्य</option><option value="आश्लेषा">आश्लेषा</option>
@@ -275,18 +276,19 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.85rem;">
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नाम:</label>
-                            <input type="text" id="brideName" value="सुयोग्य कन्या" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                            <input type="text" id="brideName" value="" placeholder="कन्या का नाम प्रविष्ट करें" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
                         </div>
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">जन्म तिथि:</label>
-                            <input type="date" id="brideDob" value="1988-06-15" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
+                            <input type="date" id="brideDob" value="" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
                         </div>
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">चन्द्र राशि:</label>
                             <select id="brideRashi" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
-                                <option value="मिथुन" selected>मिथुन (Gemini)</option>
+                                <option value="" disabled selected>चन्द्र राशि चुनें...</option>
                                 <option value="मेष">मेष (Aries)</option>
                                 <option value="वृषभ">वृषभ (Taurus)</option>
+                                <option value="मिथुन">मिथुन (Gemini)</option>
                                 <option value="कर्क">कर्क (Cancer)</option>
                                 <option value="सिंह">सिंह (Leo)</option>
                                 <option value="कन्या">कन्या (Virgo)</option>
@@ -301,7 +303,7 @@
                         <div>
                             <label style="display:block; color:var(--text-muted); margin-bottom:4px; font-size:0.75rem;">नक्षत्र:</label>
                             <select id="brideNak" style="width:100%; padding:7px 10px; background:#050811; border:1px solid var(--border-subtle); border-radius:6px; color:#fff;">
-                                <option value="आर्द्रा" selected>आर्द्रा (चरण 2)</option>
+                                <option value="" disabled selected>नक्षत्र चुनें...</option>
                                 <option value="अश्विनी">अश्विनी</option><option value="भरणी">भरणी</option><option value="कृत्तिका">कृत्तिका</option>
                                 <option value="रोहिणी">रोहिणी</option><option value="मृगशिरा">मृगशिरा</option><option value="पुनर्वसु">पुनर्वसु</option>
                                 <option value="पुष्य">पुष्य</option><option value="आश्लेषा">आश्लेषा</option><option value="मघा">मघा</option>
@@ -520,17 +522,41 @@
         }
 
         function calculateGunMilan() {
-            var gName = document.getElementById('groomName').value || 'वर';
-            var bName = document.getElementById('brideName').value || 'वधू';
+            var gName = document.getElementById('groomName').value.trim() || 'वर';
+            var bName = document.getElementById('brideName').value.trim() || 'वधू';
             var gRashi = document.getElementById('groomRashi').value;
             var bRashi = document.getElementById('brideRashi').value;
             var gNak = document.getElementById('groomNak').value;
             var bNak = document.getElementById('brideNak').value;
 
+            if (!gRashi || !bRashi || !gNak || !bNak) {
+                var resWrap = document.getElementById('ashtakootaTableBody');
+                if (resWrap) {
+                    resWrap.innerHTML = '<tr><td colspan="5" style="padding:24px; text-align:center; color:var(--text-muted); font-size:0.9rem;">' +
+                        '✦ कृपया वर एवं वधू दोनों की चन्द्र राशि एवं जन्म नक्षत्र चुनें अथवा वॉल्ट से लोड करें।' +
+                        '</td></tr>';
+                }
+                var scoreEl = document.getElementById('totalGunDisplay');
+                if (scoreEl) scoreEl.textContent = '-- / 36';
+                var vBadge = document.getElementById('matchVerdictBadge');
+                if (vBadge) {
+                    vBadge.textContent = 'विवरण प्रतीक्षारत';
+                    vBadge.className = 'verdict-badge';
+                    vBadge.style.background = 'rgba(255,255,255,0.08)';
+                    vBadge.style.color = 'var(--text-muted)';
+                }
+                var pWrap = document.getElementById('milanPhalitWrap');
+                if (pWrap) {
+                    pWrap.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-secondary);">' +
+                        'वर एवं वधू का विवरण भरकर <b>"अष्टकूट ३६ गुण मिलान करें"</b> बटन पर क्लिक करें।</div>';
+                }
+                return;
+            }
+
             var gNakIdx = NAKSHATRAS.indexOf(gNak);
-            if (gNakIdx === -1) gNakIdx = 16; // default Anuradha
+            if (gNakIdx === -1) gNakIdx = 0;
             var bNakIdx = NAKSHATRAS.indexOf(bNak);
-            if (bNakIdx === -1) bNakIdx = 5; // default Ardra
+            if (bNakIdx === -1) bNakIdx = 0;
 
             // 1. Varna (Max 1)
             var gV = VARNA_MAP[gRashi] || 2;

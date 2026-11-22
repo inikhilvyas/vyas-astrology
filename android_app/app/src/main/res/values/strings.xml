@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">VYAS ASTRA</string>
+    <string name="app_sub">व्यास अस्त्र • दैवज्ञ वैदिक ज्योतिष</string>
+    <string name="offline_notice">ऑफलाइन मोड: स्थानीय गणितीय इंजन द्वारा कुण्डली निर्मित की जा रही है।</string>
+    <string name="share_kundli">कुण्डली साझा करें</string>
+</resources>

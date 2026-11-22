@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="21.6"
+        android:translateY="21.6">
+        <!-- Golden Diamond Frame -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#D4AF37"
+            android:strokeWidth="4"
+            android:pathData="M54,14 L94,54 L54,94 L14,54 Z" />
+        <!-- Inner Diamond -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FCEDAA"
+            android:strokeWidth="2"
+            android:pathData="M54,26 L82,54 L54,82 L26,54 Z" />
+        <!-- Central Sun/Om Aura -->
+        <path
+            android:fillColor="#D4AF37"
+            android:pathData="M54,42 A12,12 0 1,0 54,66 A12,12 0 1,0 54,42 Z" />
+        <!-- Ray Points -->
+        <path
+            android:fillColor="#FCEDAA"
+            android:pathData="M54,6 L57,18 L51,18 Z M54,102 L57,90 L51,90 Z M6,54 L18,51 L18,57 Z M102,54 L90,51 L90,57 Z" />
+    </group>
+</vector>

@@ -807,22 +807,74 @@
                     '</div>' +
                     '</div>';
 
-                // SECTION 6: Secret Protection & Overcoming Adversaries (राहु-केतु धुरी • गुप्त वेध - Universal Dynamic)
-                var rkData = VyasNadiEngine.analyzeRahuKetuKaraka ? VyasNadiEngine.analyzeRahuKetuKaraka(activeList) : null;
-                html += '<div class="phalit-item" style="border-left:4px solid #2dd4bf; background:rgba(45,212,191,0.06); margin-bottom:16px;">' +
-                    '<div style="font-size:1.1rem; font-weight:800; color:#2dd4bf; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
-                    '<span>✦ ६. मायाकारक राहु एवं मोक्षकारक केतु (प्रारब्ध कर्म, तकनीक व मोक्ष धुरी)</span>' +
-                    '<span style="font-size:0.78rem; background:rgba(45,212,191,0.2); padding:3px 10px; border-radius:12px; color:#ccfbf1; font-weight:700;">' + (rkData ? ('राहु: ' + rkData.rahuSign + ' • केतु: ' + rkData.ketuSign) : 'राहु-केतु अक्ष') + '</span>' +
-                    '</div>' +
-                    '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
-                    (rkData ? rkData.narrative : 'राहु व केतु जीवन के भौतिक विस्तार एवं आध्यात्मिक मोक्ष की सीमा तय करते हैं।') +
-                    '</div>' +
-                    '</div>';
+                // SECTION 6: Vastu & Vicinity of Birthplace/Residence (मन्दिर, देवालय व भौतिक वास्तु वेध)
+                var vastuItems = VyasNadiEngine.analyzeVastuEnvironment ? VyasNadiEngine.analyzeVastuEnvironment(activeList) : [];
+                if (vastuItems && vastuItems.length > 0) {
+                    html += '<div class="phalit-item" style="border-left:4px solid #eab308; background:rgba(234,179,8,0.06); margin-bottom:16px;">' +
+                        '<div style="font-size:1.1rem; font-weight:800; color:#facc15; margin-bottom:10px;">' +
+                        '✦ ६. जन्मस्थान एवं निवास के भौतिक वास्तु चिह्न (Nearby Temple, Roads & Environment)' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:8px;">';
+                    vastuItems.forEach(function (vi) {
+                        html += '<div style="background:rgba(255,255,255,0.02); border:1px solid rgba(234,179,8,0.2); border-radius:8px; padding:10px 12px;">' +
+                            '<b style="color:#fef08a; font-size:0.92rem;">' + vi.title + '</b><br>' +
+                            '<div style="color:var(--text-secondary); font-size:0.86rem; line-height:1.65; margin-top:4px;">' + vi.desc + '</div>' +
+                            '</div>';
+                    });
+                    html += '</div></div>';
+                }
 
-                // SECTION 7: Directional Element Trines (पूर्व, दक्षिण, पश्चिम, उत्तर)
+                // SECTION 7: Siblings Dynamics (सहोदर - भाई व बहन नाड़ी वेध)
+                var siblingText = VyasNadiEngine.analyzeSiblings ? VyasNadiEngine.analyzeSiblings(activeList) : null;
+                if (siblingText) {
+                    html += '<div class="phalit-item" style="border-left:4px solid #14b8a6; background:rgba(20,184,166,0.06); margin-bottom:16px;">' +
+                        '<div style="font-size:1.1rem; font-weight:800; color:#2dd4bf; margin-bottom:8px;">' +
+                        '✦ ७. सहोदर नाड़ी वेध (Brother & Sister Dynamics & Sibling Count)' +
+                        '</div>' +
+                        '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
+                        siblingText +
+                        '</div>' +
+                        '</div>';
+                }
+
+                // SECTION 8: Progeny & Intellectual Creations (संतान अथवा मानस-सृजन वेध)
+                var progenyText = VyasNadiEngine.analyzeProgenyAndIntellect ? VyasNadiEngine.analyzeProgenyAndIntellect(activeList) : null;
+                if (progenyText) {
+                    html += '<div class="phalit-item" style="border-left:4px solid #ec4899; background:rgba(236,72,153,0.06); margin-bottom:16px;">' +
+                        '<div style="font-size:1.1rem; font-weight:800; color:#f472b6; margin-bottom:8px;">' +
+                        '✦ ८. संतान एवं मानस-सृजन वेध (Progeny vs. Intellectual Creations & Legacy)' +
+                        '</div>' +
+                        '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
+                        progenyText +
+                        '</div>' +
+                        '</div>';
+                }
+
+                // SECTION 9: Bhrigu Bindu & Exact Degree Transit Activations (भृगु बिन्दु एवं गोचर अंश वेध)
+                var bbTransitData = VyasNadiEngine.calculateBhriguBinduAndTransits ? VyasNadiEngine.calculateBhriguBinduAndTransits(activeList) : null;
+                if (bbTransitData) {
+                    html += '<div class="phalit-item" style="border-left:4px solid #8b5cf6; background:rgba(139,92,246,0.06); margin-bottom:16px;">' +
+                        '<div style="font-size:1.1rem; font-weight:800; color:#a78bfa; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
+                        '<span>✦ ९. भृगु बिन्दु (Bhrigu Bindu) एवं गोचर अंश वेध (Exact Degree Activation)</span>' +
+                        (bbTransitData.bhriguBindu ? ('<span style="font-size:0.78rem; background:rgba(139,92,246,0.25); padding:3px 10px; border-radius:12px; color:#ddd6fe; font-weight:800;">भृगु बिन्दु: ' + bbTransitData.bhriguBindu.sign + ' ' + bbTransitData.bhriguBindu.degreeStr + '</span>') : '') +
+                        '</div>' +
+                        '<div style="font-size:0.86rem; line-height:1.7; color:var(--text-secondary); margin-bottom:10px;">' +
+                        'भृगु नन्दी नाड़ी अनुसार जब गोचरस्थ गुरु, शनि अथवा राहु जन्मकालीन ग्रहों के <b>सटीक अंशों (Exact Degrees)</b> अथवा भृगु बिन्दु पर आते हैं, तो संबंधित भाव के फल में त्वरित विस्फोट होता है:' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:8px;">';
+                    bbTransitData.transits.forEach(function (tr) {
+                        html += '<div style="background:rgba(255,255,255,0.02); border-left:3px solid #8b5cf6; padding:8px 12px; border-radius:6px;">' +
+                            '<b style="color:#c4b5fd; font-size:0.88rem;">' + tr.target + ':</b><br>' +
+                            '<span style="color:#f8fafc; font-size:0.84rem;">' + tr.effect + '</span>' +
+                            '</div>';
+                    });
+                    html += '</div></div>';
+                }
+
+                // SECTION 10: Directional Element Trines (पूर्व, दक्षिण, पश्चिम, उत्तर)
                 html += '<div class="phalit-item" style="border-left:4px solid #f97316; background:rgba(249,115,22,0.06); margin-bottom:16px;">' +
                     '<div style="font-size:1.02rem; font-weight:800; color:#fb923c; margin-bottom:6px;">' +
-                    '✦ ७. चतुर्दिशा तत्त्व त्रिकोण फलादेश (4 Elemental Directions)' +
+                    '✦ १०. चतुर्दिशा तत्त्व त्रिकोण फलादेश (4 Elemental Directions)' +
                     '</div>' +
                     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.84rem; line-height:1.6; margin-top:6px;">' +
                     '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पूर्व (अग्नि • धर्म):</b> ' + (eastP.length ? eastP.join(', ') : 'शांत') + ' — आत्म-तेज, प्रतिष्ठा, स्वाभिमान व सात्विक संस्कार।</div>' +
@@ -832,12 +884,12 @@
                     '</div>' +
                     '</div>';
 
-                // SECTION 8: Authentic Classical BNN Sutras Tailored to this Chart
+                // SECTION 11: Authentic Classical BNN Sutras Tailored to this Chart
                 var customSutras = (VyasNadiEngine.extractGoodhSutras) ? VyasNadiEngine.extractGoodhSutras(activeList) : [];
                 if (customSutras && customSutras.length > 0) {
                     html += '<div style="margin-top:16px; margin-bottom:16px;">' +
                         '<div style="font-size:1.05rem; font-weight:800; color:#fb923c; margin-bottom:10px;">' +
-                        '✦ ८. कुण्डली-अनुकूल प्रामाणिक भृगु नन्दी नाड़ी गुप्त सूत्र (Tailored Classical Sutras)' +
+                        '✦ ११. कुण्डली-अनुकूल प्रामाणिक भृगु नन्दी नाड़ी गुप्त सूत्र (Tailored Classical Sutras)' +
                         '</div>' +
                         '<div style="display:grid; grid-template-columns:1fr; gap:10px;">';
                     customSutras.forEach(function (s) {

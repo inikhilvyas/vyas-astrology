@@ -1,28 +1,42 @@
 package in.vyasastro.app;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsetsController;
 import android.webkit.ConsoleMessage;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+public class MainActivity extends AppCompatActivity {
     private static final String LIVE_URL = "https://vyasastro.in/mobile/";
     private static final String OFFLINE_URL = "file:///android_asset/mobile/index.html";
+    private static final String TAG = "VyasAstraNative";
 
     private WebView webView;
 
@@ -31,37 +45,16 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                Log.e("VyasAstraCrash", "Uncaught exception: " + e.getMessage(), e);
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+            Log.e(TAG, "Uncaught exception on thread " + t.getName() + ": " + e.getMessage(), e)
+        );
 
-        try {
-            Window window = getWindow();
-            if (window != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    WindowInsetsController controller = window.getInsetsController();
-                    if (controller != null) {
-                        controller.setSystemBarsAppearance(0,
-                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
-                    }
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    );
-                    window.setStatusBarColor(Color.parseColor("#030712"));
-                    window.setNavigationBarColor(Color.parseColor("#030712"));
-                }
-            }
-        } catch (Throwable t) {
-            Log.w("VyasAstra", "StatusBar config skipped: " + t.getMessage());
-        }
+        setupWindowBars();
 
         try {
             webView = new WebView(this);
             webView.setBackgroundColor(Color.parseColor("#030712"));
+
             WebSettings settings = webView.getSettings();
             settings.setJavaScriptEnabled(true);
             settings.setDomStorageEnabled(true);
@@ -84,78 +77,117 @@ public class MainActivity extends Activity {
             webView.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    return false;
+                    if (url != null && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://"))) {
+                        return false;
+                    }
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                        return true;
+                    } catch (Throwable t) {
+                        return false;
+                    }
                 }
+
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                    Log.e("VyasAstraWeb", "WebView Error (" + errorCode + "): " + description);
-                    try {
-                        if (failingUrl != null && failingUrl.startsWith("https://vyasastro.in")) {
-                            Log.i("VyasAstraWeb", "Network error encountered on live site. Falling back to offline bundle.");
-                            view.loadUrl(OFFLINE_URL);
-                        }
-                    } catch (Throwable ignored) {}
+                    Log.w(TAG, "WebView error: " + description + " (" + errorCode + ") on " + failingUrl);
+                    if (failingUrl != null && failingUrl.startsWith("https://vyasastro.in")) {
+                        Log.i(TAG, "Network failure. Switching seamlessly to offline bundled asset engine.");
+                        view.loadUrl(OFFLINE_URL);
+                    }
                 }
             });
 
             webView.setWebChromeClient(new WebChromeClient() {
                 @Override
                 public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                    // Replace intrusive "The page at file:// says:" dialog with sleek Android Toast
                     if (message != null && !message.trim().isEmpty()) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
                     result.confirm();
                     return true;
                 }
+
                 @Override
                 public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                    Log.d("VyasAstraConsole", consoleMessage.message() + " [" + consoleMessage.lineNumber() + "]");
+                    Log.d(TAG + "_JS", consoleMessage.message() + " [L" + consoleMessage.lineNumber() + "]");
                     return true;
                 }
             });
 
-            try {
-                webView.addJavascriptInterface(new WebAppInterface(this), "VyasNativeBridge");
-            } catch (Throwable t) {
-                Log.w("VyasAstra", "Bridge init skipped: " + t.getMessage());
-            }
+            // Register Native JavaScript Bridge
+            webView.addJavascriptInterface(new WebAppInterface(this), "VyasNativeBridge");
 
             setContentView(webView);
-                        boolean isConnected = false;
-            try {
-                ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                if (cm != null) {
-                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                    isConnected = (activeNetwork != null && activeNetwork.isConnected());
-                }
-            } catch (Throwable t) {
-                Log.w("VyasAstra", "Connectivity check skipped: " + t.getMessage());
-            }
 
-            if (isConnected) {
-                Log.i("VyasAstra", "Active internet detected. Loading live mobile platform: " + LIVE_URL);
+            // Modern Predictive Back Navigation Callback
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    if (webView != null && webView.canGoBack()) {
+                        webView.goBack();
+                    } else {
+                        setEnabled(false);
+                        getOnBackPressedDispatcher().onBackPressed();
+                    }
+                }
+            });
+
+            // Route to Live or Offline based on Connectivity
+            if (isNetworkConnected()) {
+                Log.i(TAG, "Online mode: loading live portal " + LIVE_URL);
                 webView.loadUrl(LIVE_URL);
             } else {
-                Log.i("VyasAstra", "No internet connection detected. Loading offline assets: " + OFFLINE_URL);
+                Log.i(TAG, "Offline mode: loading offline bundle " + OFFLINE_URL);
                 webView.loadUrl(OFFLINE_URL);
             }
 
         } catch (Throwable t) {
-            Log.e("VyasAstra", "Fatal WebView init error: " + t.getMessage(), t);
-            Toast.makeText(this, "VyasAstra Init Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Fatal WebView init failure", t);
+            Toast.makeText(this, "VyasAstra Native Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    @Override
-    public void onBackPressed() {
+    private void setupWindowBars() {
         try {
-            if (webView != null && webView.canGoBack()) {
-                webView.goBack();
-                return;
+            Window window = getWindow();
+            if (window != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    WindowInsetsController controller = window.getInsetsController();
+                    if (controller != null) {
+                        controller.setSystemBarsAppearance(0,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+                    }
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    );
+                    window.setStatusBarColor(Color.parseColor("#030712"));
+                    window.setNavigationBarColor(Color.parseColor("#030712"));
+                }
             }
         } catch (Throwable ignored) {}
-        super.onBackPressed();
+    }
+
+    private boolean isNetworkConnected() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) return false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                android.net.Network net = cm.getActiveNetwork();
+                if (net == null) return false;
+                NetworkCapabilities caps = cm.getNetworkCapabilities(net);
+                return caps != null && (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                       caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                                       caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+            } else {
+                NetworkInfo ni = cm.getActiveNetworkInfo();
+                return ni != null && ni.isConnected();
+            }
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     @Override
@@ -166,5 +198,66 @@ public class MainActivity extends Activity {
             }
         } catch (Throwable ignored) {}
         super.onDestroy();
+    }
+
+    /**
+     * Native Android JavaScript Bridge for VYAS ASTRA
+     */
+    public class WebAppInterface {
+        private final Context context;
+
+        public WebAppInterface(Context context) {
+            this.context = context;
+        }
+
+        @JavascriptInterface
+        public void showToast(String message) {
+            if (message != null && !message.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
+            }
+        }
+
+        @JavascriptInterface
+        public void shareKundli(String text, String title) {
+            try {
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+                sendIntent.putExtra(Intent.EXTRA_SUBJECT, title != null ? title : "VYAS ASTRA वैदिक कुण्डली");
+                sendIntent.setType("text/plain");
+                Intent shareIntent = Intent.createChooser(sendIntent, title != null ? title : "कुण्डली साझा करें");
+                context.startActivity(shareIntent);
+            } catch (Throwable t) {
+                Log.e(TAG, "Share failed: " + t.getMessage());
+            }
+        }
+
+        @JavascriptInterface
+        public void triggerHaptic() {
+            try {
+                Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                if (v != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(35, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        v.vibrate(35);
+                    }
+                }
+            } catch (Throwable ignored) {}
+        }
+
+        @JavascriptInterface
+        public boolean isOnline() {
+            return isNetworkConnected();
+        }
+
+        @JavascriptInterface
+        public String getVersionName() {
+            return "1.0.0";
+        }
+
+        @JavascriptInterface
+        public int getVersionCode() {
+            return 100;
+        }
     }
 }
