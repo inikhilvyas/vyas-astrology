@@ -783,36 +783,39 @@
                     html += '</div></div>';
                 }
 
-                // SECTION 4: Saturn as Karma Karaka (कर्म, आजीविका व संघर्ष)
+                // SECTION 4: Saturn as Karma Karaka (कर्म, आजीविका व संघर्ष - Universal Dynamic)
+                var karmaData = VyasNadiEngine.analyzeKarmaKaraka ? VyasNadiEngine.analyzeKarmaKaraka(activeList) : null;
                 html += '<div class="phalit-item" style="border-left:4px solid #c084fc; background:rgba(192,132,252,0.06); margin-bottom:16px;">' +
-                    '<div style="font-size:1.1rem; font-weight:800; color:#c084fc; margin-bottom:8px;">' +
-                    '✦ ४. कर्मकारक शनि देव (आजीविका, स्वतंत्र संस्थागत सत्ता व अमर ख्याति)' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#c084fc; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
+                    '<span>✦ ४. कर्मकारक शनि देव (आजीविका, वृत्ति व कर्म-भाग्य महा-वेध)</span>' +
+                    '<span style="font-size:0.78rem; background:rgba(192,132,252,0.2); padding:3px 10px; border-radius:12px; color:#e9d5ff; font-weight:700;">' + (karmaData ? (karmaData.sign + ' राशि • ' + karmaData.element + ' तत्त्व') : 'कर्म विश्लेषण') + '</span>' +
                     '</div>' +
                     '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
-                    careerPred + '<br>' +
-                    '• <b>नाड़ी कर्म रहस्य:</b> शनि देव तुला में उच्च के होने से जातक का कर्मक्षेत्र किसी संकीर्ण नौकरी में नहीं बंध सकता। जातक न्याय, बौद्धिक सॉफ्टवेयर, ज्योतिष अथवा जन-कल्याणकारी संस्था का संस्थापक व मार्गदर्शक बनेगा। ३६ वर्ष तक शनि ने कठोर तपस्या करवाई, तत्पश्चात दिया गया फल जीवन भर स्थिर रहता है।' +
+                    (karmaData ? karmaData.narrative : careerPred) +
                     '</div>' +
                     '</div>';
 
-                // SECTION 5: Venus as Kalatra & Dhana Karaka (दांपत्य, विवाह व भौतिक समृद्धि)
+                // SECTION 5: Venus as Kalatra & Dhana Karaka (दांपत्य, विवाह व भौतिक समृद्धि - Universal Dynamic)
+                var kalatraData = VyasNadiEngine.analyzeKalatraKaraka ? VyasNadiEngine.analyzeKalatraKaraka(activeList, prof.gender) : null;
                 html += '<div class="phalit-item" style="border-left:4px solid #f43f5e; background:rgba(244,63,94,0.06); margin-bottom:16px;">' +
-                    '<div style="font-size:1.1rem; font-weight:800; color:#fb7185; margin-bottom:8px;">' +
-                    '✦ ५. कलत्र एवं धन कारक शुक्र देव (विवाह, जीवनसाथी का स्वरूप एवं महालक्ष्मी भाग्योदय)' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#fb7185; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
+                    '<span>✦ ५. कलत्र एवं धन कारक शुक्र देव (विवाह, जीवनसाथी का स्वरूप एवं महालक्ष्मी भाग्योदय)</span>' +
+                    '<span style="font-size:0.78rem; background:rgba(244,63,94,0.2); padding:3px 10px; border-radius:12px; color:#fecdd3; font-weight:700;">' + (kalatraData ? (kalatraData.sign + ' राशि • ' + kalatraData.element + ' तत्त्व') : 'कलत्र विश्लेषण') + '</span>' +
                     '</div>' +
                     '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
-                    marriagePred + '<br>' +
-                    '• <b>महालक्ष्मी आगमन रहस्य:</b> भृगु नन्दी नाड़ी अनुसार गुरु-शुक्र की युति दर्शाती है कि जातक के जीवन में भाग्योदय का वास्तविक द्वार जीवनसाथी के आगमन के उपरांत ही खुलता है। जीवनसाथी सुसंस्कृत, स्वाभिमानी, धार्मिक एवं जातक के प्रति पूर्ण समर्पित होगी।' +
+                    (kalatraData ? kalatraData.narrative : marriagePred) +
                     '</div>' +
                     '</div>';
 
-                // SECTION 6: Secret Protection & Overcoming Adversaries (गुप्त शत्रु शमन एवं अदृश्य रक्षा वेध)
+                // SECTION 6: Secret Protection & Overcoming Adversaries (राहु-केतु धुरी • गुप्त वेध - Universal Dynamic)
+                var rkData = VyasNadiEngine.analyzeRahuKetuKaraka ? VyasNadiEngine.analyzeRahuKetuKaraka(activeList) : null;
                 html += '<div class="phalit-item" style="border-left:4px solid #2dd4bf; background:rgba(45,212,191,0.06); margin-bottom:16px;">' +
-                    '<div style="font-size:1.1rem; font-weight:800; color:#2dd4bf; margin-bottom:8px;">' +
-                    '✦ ६. गुप्त शत्रु शमन एवं अदृश्य ईश्वरीय रक्षा वेध (Scorpio Stellium & Ketu Protection)' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#2dd4bf; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">' +
+                    '<span>✦ ६. मायाकारक राहु एवं मोक्षकारक केतु (प्रारब्ध कर्म, तकनीक व मोक्ष धुरी)</span>' +
+                    '<span style="font-size:0.78rem; background:rgba(45,212,191,0.2); padding:3px 10px; border-radius:12px; color:#ccfbf1; font-weight:700;">' + (rkData ? ('राहु: ' + rkData.rahuSign + ' • केतु: ' + rkData.ketuSign) : 'राहु-केतु अक्ष') + '</span>' +
                     '</div>' +
                     '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
-                    '• वृश्चिक राशि (१२वें भाव) में सूर्य, चन्द्र, बुध व केतु की स्थिति यह स्पष्ट करती है कि जातक के पीठ पीछे ईर्ष्या करने वाले अथवा गुप्त अवरोध खड़े करने वाले लोग समय-समय पर सक्रिय होंगे।<br>' +
-                    '• <b>केतु का वज्र कवच:</b> नाड़ी सूत्र अनुसार केतु जब गूढ़ राशि में उच्च कोटि के ग्रहों से युक्त होता है, तो जातक के शत्रुओं का षड्यंत्र स्वतः निष्फल हो जाता है। जो भी जातक को अकारण क्षति पहुंचाने का प्रयास करेगा, वह स्वयं कर्म-चक्र में उलझकर परास्त होगा; जातक को किसी प्रतिशोध की आवश्यकता नहीं होगी।' +
+                    (rkData ? rkData.narrative : 'राहु व केतु जीवन के भौतिक विस्तार एवं आध्यात्मिक मोक्ष की सीमा तय करते हैं।') +
                     '</div>' +
                     '</div>';
 
@@ -829,15 +832,25 @@
                     '</div>' +
                     '</div>';
 
-                // SECTION 8: Classical Sutras & Shastric Citation
-                html += bankHtml;
-                html += '<div class="sutra-quote">' +
-                    '<b>भृगु नन्दी नाड़ी मूल सिद्धांत (महर्षि भृगु उपदेश):</b><br>' +
-                    '<i>"जीवो गुरुः कर्म शनिः कलत्रं शुक्र उच्यते। त्रिकोणे संगता ये च तेषां योगः प्रवर्तते॥<br>' +
-                    'यत्र यत्र गतो जीवस्तत्तद्भावफलं वदेत्। शनिना संयुतो जीवो धर्मकर्मधुरंधरः॥"</i><br>' +
-                    '<b>भावार्थ:</b> देवगुरु बृहस्पति स्वयं जातक (जीव) हैं, शनि कर्म हैं तथा शुक्र कलत्र व धन हैं। 1-5-9 त्रिकोण अथवा 2-12 अक्ष में बैठे ग्रह जातक के जीवन-पथ की रूपरेखा निर्धारित करते हैं।' +
-                    '</div>';
+                // SECTION 8: Authentic Classical BNN Sutras Tailored to this Chart
+                var customSutras = (VyasNadiEngine.extractGoodhSutras) ? VyasNadiEngine.extractGoodhSutras(activeList) : [];
+                if (customSutras && customSutras.length > 0) {
+                    html += '<div style="margin-top:16px; margin-bottom:16px;">' +
+                        '<div style="font-size:1.05rem; font-weight:800; color:#fb923c; margin-bottom:10px;">' +
+                        '✦ ८. कुण्डली-अनुकूल प्रामाणिक भृगु नन्दी नाड़ी गुप्त सूत्र (Tailored Classical Sutras)' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:10px;">';
+                    customSutras.forEach(function (s) {
+                        html += '<div class="sutra-quote" style="margin-top:0;">' +
+                            '<b style="color:#fed7aa; font-size:0.92rem;">' + s.title + ':</b><br>' +
+                            '<i style="color:#fdba74; font-size:0.86rem;">"' + s.shloka + '"</i><br>' +
+                            '<span style="color:#f8fafc; font-size:0.84rem; display:inline-block; margin-top:4px;"><b>भावार्थ:</b> ' + s.meaning + '</span>' +
+                            '</div>';
+                    });
+                    html += '</div></div>';
+                }
 
+                html += bankHtml;
                 phalitWrap.innerHTML = html;
             }
         }
