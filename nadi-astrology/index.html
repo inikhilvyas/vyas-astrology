@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>भृगु नन्दी नाड़ी (BNN) • 4-दिशा तत्त्व चक्र एवं त्रिकोण फलित | VYAS ASTRA</title>
-    <meta name="description" content="भृगु नन्दी नाड़ी (BNN) - 4 दिशा तत्त्व चक्र (अग्नि, पृथ्वी, वायु, जल), 1-5-9 त्रिकोण संबंध, जीवकारक गुरु एवं कर्मकारक शनि समीकरण।">
+    <meta name="description"
+        content="भृगु नन्दी नाड़ी (BNN) - 4 दिशा तत्त्व चक्र (अग्नि, पृथ्वी, वायु, जल), 1-5-9 त्रिकोण संबंध, जीवकारक गुरु एवं कर्मकारक शनि समीकरण।">
     <link rel="icon" type="image/png" href="/logo_icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -29,7 +32,12 @@
             --font-devanagari: 'Noto Sans Devanagari', sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: var(--bg-canvas);
             background-image: radial-gradient(circle at 10% 20%, rgba(234, 88, 12, 0.16), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
@@ -40,103 +48,275 @@
         }
 
         .master-header {
-            position: sticky; top: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
-            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px;
+            background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-gold);
         }
-        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
-        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
-        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid var(--gold);
+        }
+
+        .brand-title {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
 
         .vyas-portal-pill-strip {
-            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
-            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75);
+            border-bottom: 1px solid var(--border-subtle);
             scrollbar-width: none;
         }
-        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+
+        .vyas-portal-pill-strip::-webkit-scrollbar {
+            display: none;
+        }
+
         .portal-pill {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 7px 14px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
             transition: all 0.2s ease;
         }
-        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+
+        .portal-pill:hover {
+            background: rgba(212, 175, 55, 0.12);
+            color: var(--gold-light);
+            border-color: var(--border-gold);
+        }
+
         .portal-pill.active {
             background: linear-gradient(135deg, rgba(234, 88, 12, 0.28), rgba(212, 175, 55, 0.18));
-            color: var(--orange-light); border-color: var(--orange); font-weight: 700;
+            color: var(--orange-light);
+            border-color: var(--orange);
+            font-weight: 700;
         }
 
-        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
         .page-hero {
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
-            padding: 20px 24px; border-radius: 12px;
-            background: var(--bg-card); border: 1px solid rgba(234, 88, 12, 0.35);
-        }
-        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: #fb923c; display: flex; align-items: center; gap: 10px; }
-        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
-        .active-profile-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 14px; border-radius: 20px;
-            background: rgba(234, 88, 12, 0.12); border: 1px solid rgba(234, 88, 12, 0.35);
-            color: #fb923c; font-size: 0.82rem; font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid rgba(234, 88, 12, 0.35);
         }
 
-        .nadi-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
-        @media (max-width: 900px) { .nadi-grid { grid-template-columns: 1fr; } }
+        .hero-left h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #fb923c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-left p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .active-profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(234, 88, 12, 0.12);
+            border: 1px solid rgba(234, 88, 12, 0.35);
+            color: #fb923c;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .nadi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .nadi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         .card {
-            background: var(--bg-card); border: 1px solid var(--border-subtle);
-            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
         }
+
         .card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
         }
-        .card-title { font-size: 1.05rem; font-weight: 700; color: #fb923c; display: flex; align-items: center; gap: 8px; }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fb923c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .chart-box {
-            display: flex; justify-content: center; align-items: center;
-            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
-            border: 1px solid var(--border-subtle); min-height: 420px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid var(--border-subtle);
+            min-height: 420px;
         }
 
-        .direction-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+        .direction-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
         .direction-card {
-            padding: 12px; border-radius: 8px; background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-subtle);
         }
-        .direction-title { font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .direction-planets { font-size: 0.82rem; color: var(--text-primary); margin-top: 6px; }
+
+        .direction-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .direction-planets {
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            margin-top: 6px;
+        }
 
         .phalit-item {
-            padding: 14px; margin-bottom: 12px; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--orange);
-            font-size: 0.88rem; line-height: 1.65;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--orange);
+            font-size: 0.88rem;
+            line-height: 1.65;
         }
+
         .sutra-quote {
-            padding: 10px 14px; border-radius: 6px; margin-top: 10px;
-            background: rgba(234, 88, 12, 0.06); border: 1px dashed rgba(234, 88, 12, 0.3);
-            font-size: 0.82rem; color: #fed7aa;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-top: 10px;
+            background: rgba(234, 88, 12, 0.06);
+            border: 1px dashed rgba(234, 88, 12, 0.3);
+            font-size: 0.82rem;
+            color: #fed7aa;
         }
 
         .mobile-app-nav {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
-            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-gold); z-index: 100;
-            justify-content: space-around; align-items: center;
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: rgba(5, 8, 17, 0.96);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold);
+            z-index: 100;
+            justify-content: space-around;
+            align-items: center;
         }
-        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+
+        @media (max-width: 768px) {
+            .mobile-app-nav {
+                display: flex;
+            }
+        }
+
         .mobile-app-nav a {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.72rem;
+            gap: 3px;
         }
-        .mobile-app-nav a.active { color: #fb923c; font-weight: 700; }
-        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+
+        .mobile-app-nav a.active {
+            color: #fb923c;
+            font-weight: 700;
+        }
+
+        .mobile-app-nav svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
     </style>
 </head>
 
@@ -150,54 +330,97 @@
             </div>
         </a>
         <div class="active-profile-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
             <span id="activeProfileName">सक्रिय जातक</span>
         </div>
     </header>
 
     <nav class="vyas-portal-pill-strip">
         <a href="/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
             <span>कुण्डली</span>
         </a>
         <a href="/panchang/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
             <span>पंचांग</span>
         </a>
         <a href="/dasha/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </svg>
             <span>दशा चक्र</span>
         </a>
         <a href="/kp-astrology/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <circle cx="12" cy="12" r="2" />
+            </svg>
             <span>KP पद्धति</span>
         </a>
         <a href="/jaimini-astrology/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
+            </svg>
             <span>जैमिनी</span>
         </a>
         <a href="/nadi-astrology/" class="portal-pill active">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+            </svg>
             <span>BNN नाड़ी</span>
         </a>
         <a href="/ashtakavarga/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg>
             <span>अष्टकवर्ग</span>
         </a>
         <a href="/varshphal/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <ellipse cx="12" cy="12" rx="10" ry="4" />
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="19" cy="12" r="1.5" />
+            </svg>
             <span>वर्षफल</span>
         </a>
         <a href="/prashna-kundli/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="5 3 19 3 12 12 19 21 5 21 12 12" />
+            </svg>
             <span>प्रश्न कुण्डली</span>
         </a>
         <a href="/kundli-matching/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="9" cy="12" r="6" />
+                <circle cx="15" cy="12" r="6" />
+            </svg>
             <span>गुण मिलान</span>
         </a>
         <a href="/saved-kundli/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
             <span>कुण्डली वॉल्ट</span>
         </a>
     </nav>
@@ -206,33 +429,52 @@
         <div class="page-hero">
             <div class="hero-left">
                 <h1>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ea580c" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ea580c" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                    </svg>
                     भृगु नन्दी नाड़ी (BNN) 4-दिशा चक्र एवं त्रिकोण फलित
                 </h1>
-                <p>अग्नि, पृथ्वी, वायु, जल तत्त्वों के 1-5-9 त्रिकोण संबंध एवं देवगुरु बृहस्पति (जीव) व शनि (कर्म) योग।</p>
+                <p>अग्नि, पृथ्वी, वायु, जल तत्त्वों के 1-5-9 त्रिकोण संबंध एवं देवगुरु बृहस्पति (जीव) व शनि (कर्म) योग।
+                </p>
             </div>
             <div class="hero-right">
-                <a href="/#kundli-calc" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(251,146,60,0.15); border:1px solid rgba(251,146,60,0.35); color:#fb923c; text-decoration:none; font-size:0.82rem; font-weight:700;">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <a href="/#kundli-calc"
+                    style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(251,146,60,0.15); border:1px solid rgba(251,146,60,0.35); color:#fb923c; text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
                     कुण्डली बदलें / नई बनाएं
                 </a>
             </div>
         </div>
 
         <!-- Unified Active Native Info Bar -->
-        <div id="activeProfileBar" style="background: rgba(12,19,36,0.9); border: 1px solid rgba(234,88,12,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+        <div id="activeProfileBar"
+            style="background: rgba(12,19,36,0.9); border: 1px solid rgba(234,88,12,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
             <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:36px; height:36px; border-radius:50%; background:rgba(251,146,60,0.15); border:1px solid #ea580c; display:flex; align-items:center; justify-content:center;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fb923c" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+                <div
+                    style="width:36px; height:36px; border-radius:50%; background:rgba(251,146,60,0.15); border:1px solid #ea580c; display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fb923c" stroke-width="2">
+                        <circle cx="12" cy="7" r="4" />
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    </svg>
                 </div>
                 <div>
-                    <div id="unifiedProfileName" style="color:#f8fafc; font-weight:800; font-size:1.02rem;">सक्रिय जातक</div>
-                    <div id="unifiedProfileMeta" style="color:var(--text-muted); font-size:0.8rem;">जन्म विवरण एवं भृगु नन्दी नाड़ी वेध</div>
+                    <div id="unifiedProfileName" style="color:#f8fafc; font-weight:800; font-size:1.02rem;">सक्रिय जातक
+                    </div>
+                    <div id="unifiedProfileMeta" style="color:var(--text-muted); font-size:0.8rem;">जन्म विवरण एवं भृगु
+                        नन्दी नाड़ी वेध</div>
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-                <a href="/saved-kundli/" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <a href="/saved-kundli/"
+                    style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
                     वॉल्ट से लोड करें
                 </a>
             </div>
@@ -244,7 +486,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
                             <span>दिशा एवं तत्त्व चक्र (BNN Wheel)</span>
                         </div>
                         <span style="font-size:0.75rem; color:#fb923c; font-weight:700;">1-5-9 त्रिकोण</span>
@@ -281,7 +527,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
                             <span>भृगु नन्दी नाड़ी शास्त्रीय फलित</span>
                         </div>
                     </div>
@@ -294,19 +544,28 @@
                 <div class="card" style="margin-top:20px;">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                            </svg>
                             <span>नाड़ी तत्त्व एवं गोचर सक्रियता</span>
                         </div>
                     </div>
                     <div style="font-size:0.86rem; line-height:1.65; color:var(--text-secondary);">
                         <p style="margin-bottom:10px;">
-                            • <b>जीव-कर्म समीकरण:</b> भृगु नन्दी नाड़ी में <b>बृहस्पति</b> जीवकारक (जातक स्वयं) हैं तथा <b>शनि</b> कर्मकारक हैं। जब गोचर का गुरु जन्मकालीन शनि के 1-5-9 त्रिकोण में आता है, तो व्यक्ति के जीवन में महान कर्म सिद्धि का द्वार खुलता है।
+                            • <b>जीव-कर्म समीकरण:</b> भृगु नन्दी नाड़ी में <b>बृहस्पति</b> जीवकारक (जातक स्वयं) हैं तथा
+                            <b>शनि</b> कर्मकारक हैं। जब गोचर का गुरु जन्मकालीन शनि के 1-5-9 त्रिकोण में आता है, तो
+                            व्यक्ति के जीवन में महान कर्म सिद्धि का द्वार खुलता है।
                         </p>
                         <p style="margin-bottom:10px;">
-                            • <b>नाड़ी दृष्टि (Directional Sambandha):</b> एक ही दिशा (जैसे पूर्व के 1-5-9) में बैठे ग्रह एक साथ युति जैसा फल करते हैं। दूसरे भाव का ग्रह पोषक व बारहवें भाव का ग्रह व्ययकारक बनता है।
+                            • <b>नाड़ी दृष्टि (Directional Sambandha):</b> एक ही दिशा (जैसे पूर्व के 1-5-9) में बैठे
+                            ग्रह एक साथ युति जैसा फल करते हैं। दूसरे भाव का ग्रह पोषक व बारहवें भाव का ग्रह व्ययकारक
+                            बनता है।
                         </p>
                         <p>
-                            • <b>कलत्र विचार:</b> पुरुषों की पत्रिका में शुक्र तथा स्त्रियों की पत्रिका में मंगल व गुरु कलत्र/जीवनसाथी के वास्तविक कारक होते हैं।
+                            • <b>कलत्र विचार:</b> पुरुषों की पत्रिका में शुक्र तथा स्त्रियों की पत्रिका में मंगल व गुरु
+                            कलत्र/जीवनसाथी के वास्तविक कारक होते हैं।
                         </p>
                     </div>
                 </div>
@@ -316,23 +575,40 @@
 
     <nav class="mobile-app-nav">
         <a href="/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
             <span>कुण्डली</span>
         </a>
         <a href="/panchang/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
             <span>पंचांग</span>
         </a>
         <a href="/nadi-astrology/" class="active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+            </svg>
             <span>नाड़ी</span>
         </a>
         <a href="/saved-kundli/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
             <span>वॉल्ट</span>
         </a>
-        <a href="/?openPro=1" class="portal-pill" style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800;" title="VYAS ASTRA PRO आजीवन VIP सदस्यता">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+        <a href="/?openPro=1" class="portal-pill"
+            style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800;"
+            title="VYAS ASTRA PRO आजीवन VIP सदस्यता">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2">
+                <path d="M6 3h12l4 6-10 12L2 9z" />
+            </svg>
             <span>👑 PRO प्लान</span>
         </a>
     </nav>
@@ -442,86 +718,118 @@
             if (phalitWrap && window.VyasNadiEngine) {
                 var jeevaData = VyasNadiEngine.analyzeJeevaKaraka ? VyasNadiEngine.analyzeJeevaKaraka(activeList) : null;
                 var prof = chart.profile || {};
-                var cycleData = VyasNadiEngine.calculateNadiCycles ? VyasNadiEngine.calculateNadiCycles(prof.dob, 2026) : null;
+                var cycleData = VyasNadiEngine.calculateNadiCycles ? VyasNadiEngine.calculateNadiCycles(prof.dob, 2026, activeList) : null;
 
-                var jeevaKarmaPred = VyasNadiEngine.predict(activeList, 'general');
                 var careerPred = VyasNadiEngine.predict(activeList, 'career');
                 var marriagePred = VyasNadiEngine.predict(activeList, 'marriage');
 
                 var html = '';
 
                 // SECTION 1: Guru as Jeeva Karaka (Native Himself/Herself)
-                html += '<div class="phalit-item" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.06);">' +
-                    '<div style="font-size:1.05rem; font-weight:800; color:#fbbf24; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">' +
+                html += '<div class="phalit-item" style="border-left:4px solid #f59e0b; background:rgba(245,158,11,0.06); margin-bottom:16px;">' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#fbbf24; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
                     '<span>✦ १. देवगुरु बृहस्पति (जीवकारक - जातक स्वयं) नाड़ी महा-वेध</span>' +
-                    '<span style="font-size:0.78rem; background:rgba(245,158,11,0.2); padding:2px 10px; border-radius:12px; color:#fde68a;">' + (jeevaData ? (jeevaData.sign + ' राशि • ' + jeevaData.element + ' तत्त्व') : 'जीव विश्लेषण') + '</span>' +
+                    '<span style="font-size:0.78rem; background:rgba(245,158,11,0.2); padding:3px 10px; border-radius:12px; color:#fde68a; font-weight:700;">' + (jeevaData ? (jeevaData.sign + ' राशि • ' + jeevaData.element + ' तत्त्व') : 'जीव विश्लेषण') + '</span>' +
                     '</div>' +
-                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
-                    (jeevaData ? jeevaData.narrative : jeevaKarmaPred) +
+                    '<div style="font-size:0.9rem; line-height:1.8; color:var(--text-secondary);">' +
+                    (jeevaData ? jeevaData.narrative : 'देवगुरु बृहस्पति की शुभ स्थिति जातक को सात्विक बुद्धि व उच्च आत्म-सम्मान प्रदान करती है।') +
                     '</div>' +
                     '</div>';
 
-                // SECTION 2: BNN 12-Year Age Progression Cycles (चक्रानुक्रम आयु फलादेश)
+                // SECTION 2: Special Current Milestone Card (वर्तमान सक्रिय कालखंड महा-फलादेश)
                 if (cycleData) {
-                    html += '<div class="phalit-item" style="border-left:4px solid var(--emerald); background:rgba(16,185,129,0.06);">' +
-                        '<div style="font-size:1.05rem; font-weight:800; color:var(--emerald); margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
-                        '<span>✦ २. भृगु नाड़ी जीवन-चक्र प्रगति (BNN 12-Year Jupiter Cycles)</span>' +
-                        '<span style="font-size:0.8rem; background:rgba(16,185,129,0.2); padding:3px 10px; border-radius:12px; color:#6ee7b7; font-weight:800;">वर्तमान सक्रिय: ' + cycleData.activeCycle.ageRange + '</span>' +
+                    html += '<div class="phalit-item" style="border:1.5px solid var(--emerald); background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(5,8,17,0.85) 100%); border-radius:10px; padding:16px; margin-bottom:16px;">' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">' +
+                        '<div style="font-size:1.1rem; font-weight:900; color:var(--emerald); display:flex; align-items:center; gap:8px;">' +
+                        '<span>🔥 २. वर्तमान सक्रिय कालखंड: ' + cycleData.activeCycle.ageRange + ' (जातक आयु: ' + cycleData.currentAge + ' वर्ष)</span>' +
                         '</div>' +
-                        '<div style="font-size:0.86rem; line-height:1.7; color:var(--text-secondary); margin-bottom:10px;">' +
-                        'भृगु नन्दी नाड़ी अनुसार देवगुरु बृहस्पति प्रत्येक १२ वर्ष में राशि चक्र का एक पूर्ण परिभ्रमण करते हैं। जातक की वर्तमान आयु <b>' + cycleData.currentAge + ' वर्ष</b> है, अतः जातक वर्तमान में <b>' + cycleData.activeCycle.ageRange + '</b> के प्रभाव में जीवन-अनुभव प्राप्त कर रहा है:' +
+                        '<span style="background:var(--emerald); color:#000; font-size:0.75rem; font-weight:900; padding:3px 10px; border-radius:12px;">महा-दिग्विजय काल (Active Now)</span>' +
                         '</div>' +
-                        '<div style="display:grid; grid-template-columns:1fr; gap:8px; font-size:0.84rem;">';
+                        '<div style="font-size:0.9rem; line-height:1.8; color:#f8fafc; margin-bottom:12px;">' +
+                        '<b>महर्षि भृगु तात्कालिक गोचर वेध सूत्र:</b> जातक वर्तमान में <b>' + cycleData.activeCycle.ageRange + '</b> के सर्वाधिक शक्तिशाली चरण में है। गोचरस्थ देवगुरु बृहस्पति जन्मकालीन उच्च शनि (तुला) के साथ वायु-अग्नि त्रिकोण में संरेखित हो रहे हैं।<br>' +
+                        '• <b>ऐतिहासिक बौद्धिक मान्यता:</b> जातक द्वारा वर्षों से गुप्त रूप से किए गए शोध, सॉफ्टवेयर आविष्कारों, पुस्तकों एवं सिद्धांतों को राष्ट्रीय व अंतरराष्ट्रीय मंचों पर निर्विवाद मान्यता प्राप्त होगी।<br>' +
+                        '• <b>एकाधिकार (Monopoly) स्थापना:</b> यह कालखंड जातक को अपने क्षेत्र में अग्रणी विधाता बनाएगा; प्रतिस्पर्धी स्वतः पीछे छूट जाएंगे।<br>' +
+                        '• <b>वित्तीय महा-विस्तार:</b> बड़े अनुबंध, दूरस्थ/विदेशी संपर्कों से प्रचुर तरलता एवं अचल संपत्तियों का संचय होगा।<br>' +
+                        '• <b>सावधानी व स्वास्थ्य परामर्श:</b> अत्यधिक बौद्धिक श्रम के कारण गर्दन, रीढ़ की हड्डी, कमर व नेत्र-तनाव से सजग रहें; प्रतिदिन तांबे के पात्र से जल पिएं व सूर्योपासना करें।' +
+                        '</div>' +
+                        '</div>';
+
+                    // SECTION 3: Complete 6 BNN 12-Year Cycles (आयु १ से ७२ वर्ष तक का संपूर्ण घटनाक्रम)
+                    html += '<div class="phalit-item" style="border-left:4px solid #38bdf8; background:rgba(56,189,248,0.06); margin-bottom:16px;">' +
+                        '<div style="font-size:1.1rem; font-weight:800; color:#38bdf8; margin-bottom:8px;">' +
+                        '✦ ३. भृगु नाड़ी चक्रानुक्रम जीवन-यात्रा (BNN 12-Year Progression Milestones)' +
+                        '</div>' +
+                        '<div style="font-size:0.86rem; line-height:1.7; color:var(--text-secondary); margin-bottom:12px;">' +
+                        'भृगु नन्दी नाड़ी अनुसार देवगुरु बृहस्पति प्रत्येक १२ वर्ष में जन्मकालीन ग्रहों के ऊपर से संचरण करते हुए जीवन के नए अध्याय खोलते हैं:' +
+                        '</div>' +
+                        '<div style="display:grid; grid-template-columns:1fr; gap:10px;">';
 
                     cycleData.allCycles.forEach(function (cyc) {
                         var isActive = (cyc.cycle === cycleData.activeCycleIdx);
-                        var borderCls = isActive ? 'border:1.5px solid var(--emerald); background:rgba(16,185,129,0.12);' : 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);';
-                        var badge = isActive ? ' <span style="background:var(--emerald); color:#000; font-size:0.72rem; padding:1px 6px; border-radius:10px; font-weight:900;">सक्रिय कालखंड (Current)</span>' : '';
-                        html += '<div style="' + borderCls + ' padding:10px 12px; border-radius:8px;">' +
-                            '<b style="color:' + (isActive ? 'var(--emerald)' : '#fbbf24') + ';">' + cyc.ageRange + ' • ' + cyc.theme + '</b>' + badge + '<br>' +
-                            '<span style="color:var(--text-secondary); line-height:1.55; display:inline-block; margin-top:3px;">' + cyc.desc + '</span>' +
+                        var borderStyle = isActive ? 'border:1.5px solid var(--emerald); background:rgba(16,185,129,0.1);' : 'border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02);';
+                        var badge = isActive ? ' <span style="background:var(--emerald); color:#000; font-size:0.72rem; padding:2px 8px; border-radius:10px; font-weight:900;">सक्रिय कालखंड (Current)</span>' : '';
+
+                        html += '<div style="' + borderStyle + ' padding:12px 14px; border-radius:8px;">' +
+                            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">' +
+                            '<b style="color:' + (isActive ? 'var(--emerald)' : '#fbbf24') + '; font-size:0.92rem;">' + cyc.ageRange + ' • ' + cyc.theme + '</b>' +
+                            badge +
+                            '</div>' +
+                            '<div style="font-size:0.85rem; line-height:1.7; color:var(--text-secondary); margin-top:4px;">' +
+                            (cyc.milestones || cyc.desc) +
+                            '</div>' +
                             '</div>';
                     });
 
                     html += '</div></div>';
                 }
 
-                // SECTION 3: Saturn as Karma Karaka (कर्म, आजीविका व संघर्ष)
-                html += '<div class="phalit-item" style="border-left:4px solid #38bdf8; background:rgba(56,189,248,0.06);">' +
-                    '<div style="font-size:1.05rem; font-weight:800; color:#38bdf8; margin-bottom:6px;">' +
-                    '✦ ३. कर्मकारक शनि देव (आजीविका, पद, प्रतिष्ठा व कर्म सिद्धि)' +
+                // SECTION 4: Saturn as Karma Karaka (कर्म, आजीविका व संघर्ष)
+                html += '<div class="phalit-item" style="border-left:4px solid #c084fc; background:rgba(192,132,252,0.06); margin-bottom:16px;">' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#c084fc; margin-bottom:8px;">' +
+                    '✦ ४. कर्मकारक शनि देव (आजीविका, स्वतंत्र संस्थागत सत्ता व अमर ख्याति)' +
                     '</div>' +
-                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
+                    '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
                     careerPred + '<br>' +
-                    '• <b>नाड़ी कर्म रहस्य:</b> भृगु नन्दी नाड़ी अनुसार शनि जिस तत्त्व में बैठते हैं, जातक का कर्म क्षेत्र उसी तत्त्व की प्रकृति से बंधा होता है। शनि-गुरु का संबंध जातक को समाज में नीति-निर्माता, सलाहकार अथवा स्थायी नेतृत्व प्रदान करता है।' +
+                    '• <b>नाड़ी कर्म रहस्य:</b> शनि देव तुला में उच्च के होने से जातक का कर्मक्षेत्र किसी संकीर्ण नौकरी में नहीं बंध सकता। जातक न्याय, बौद्धिक सॉफ्टवेयर, ज्योतिष अथवा जन-कल्याणकारी संस्था का संस्थापक व मार्गदर्शक बनेगा। ३६ वर्ष तक शनि ने कठोर तपस्या करवाई, तत्पश्चात दिया गया फल जीवन भर स्थिर रहता है।' +
                     '</div>' +
                     '</div>';
 
-                // SECTION 4: Venus as Kalatra & Dhana Karaka (दांपत्य, विवाह व भौतिक समृद्धि)
-                html += '<div class="phalit-item" style="border-left:4px solid #f43f5e; background:rgba(244,63,94,0.06);">' +
-                    '<div style="font-size:1.05rem; font-weight:800; color:#fb7185; margin-bottom:6px;">' +
-                    '✦ ४. कलत्र एवं धन कारक शुक्र देव (विवाह, जीवनसाथी व लक्ष्मी सिद्धि)' +
+                // SECTION 5: Venus as Kalatra & Dhana Karaka (दांपत्य, विवाह व भौतिक समृद्धि)
+                html += '<div class="phalit-item" style="border-left:4px solid #f43f5e; background:rgba(244,63,94,0.06); margin-bottom:16px;">' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#fb7185; margin-bottom:8px;">' +
+                    '✦ ५. कलत्र एवं धन कारक शुक्र देव (विवाह, जीवनसाथी का स्वरूप एवं महालक्ष्मी भाग्योदय)' +
                     '</div>' +
-                    '<div style="font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' +
+                    '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
                     marriagePred + '<br>' +
-                    '• <b>महालक्ष्मी वेध:</b> भृगु-जीव संबंध जातक को जीवनसाथी के आगमन के उपरांत अचल संपत्ति, उत्तम वाहन व पारिवारिक प्रतिष्ठा में गुणात्मक वृद्धि प्रदान करता है।' +
+                    '• <b>महालक्ष्मी आगमन रहस्य:</b> भृगु नन्दी नाड़ी अनुसार गुरु-शुक्र की युति दर्शाती है कि जातक के जीवन में भाग्योदय का वास्तविक द्वार जीवनसाथी के आगमन के उपरांत ही खुलता है। जीवनसाथी सुसंस्कृत, स्वाभिमानी, धार्मिक एवं जातक के प्रति पूर्ण समर्पित होगी।' +
                     '</div>' +
                     '</div>';
 
-                // SECTION 5: Directional Element Trines (पूर्व, दक्षिण, पश्चिम, उत्तर)
-                html += '<div class="phalit-item" style="border-left:4px solid #c084fc; background:rgba(192,132,252,0.06);">' +
-                    '<div style="font-size:1.02rem; font-weight:800; color:#c084fc; margin-bottom:6px;">' +
-                    '✦ ५. चतुर्दिशा तत्त्व त्रिकोण फलादेश (4 Elemental Directions)' +
+                // SECTION 6: Secret Protection & Overcoming Adversaries (गुप्त शत्रु शमन एवं अदृश्य रक्षा वेध)
+                html += '<div class="phalit-item" style="border-left:4px solid #2dd4bf; background:rgba(45,212,191,0.06); margin-bottom:16px;">' +
+                    '<div style="font-size:1.1rem; font-weight:800; color:#2dd4bf; margin-bottom:8px;">' +
+                    '✦ ६. गुप्त शत्रु शमन एवं अदृश्य ईश्वरीय रक्षा वेध (Scorpio Stellium & Ketu Protection)' +
+                    '</div>' +
+                    '<div style="font-size:0.88rem; line-height:1.8; color:var(--text-secondary);">' +
+                    '• वृश्चिक राशि (१२वें भाव) में सूर्य, चन्द्र, बुध व केतु की स्थिति यह स्पष्ट करती है कि जातक के पीठ पीछे ईर्ष्या करने वाले अथवा गुप्त अवरोध खड़े करने वाले लोग समय-समय पर सक्रिय होंगे।<br>' +
+                    '• <b>केतु का वज्र कवच:</b> नाड़ी सूत्र अनुसार केतु जब गूढ़ राशि में उच्च कोटि के ग्रहों से युक्त होता है, तो जातक के शत्रुओं का षड्यंत्र स्वतः निष्फल हो जाता है। जो भी जातक को अकारण क्षति पहुंचाने का प्रयास करेगा, वह स्वयं कर्म-चक्र में उलझकर परास्त होगा; जातक को किसी प्रतिशोध की आवश्यकता नहीं होगी।' +
+                    '</div>' +
+                    '</div>';
+
+                // SECTION 7: Directional Element Trines (पूर्व, दक्षिण, पश्चिम, उत्तर)
+                html += '<div class="phalit-item" style="border-left:4px solid #f97316; background:rgba(249,115,22,0.06); margin-bottom:16px;">' +
+                    '<div style="font-size:1.02rem; font-weight:800; color:#fb923c; margin-bottom:6px;">' +
+                    '✦ ७. चतुर्दिशा तत्त्व त्रिकोण फलादेश (4 Elemental Directions)' +
                     '</div>' +
                     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.84rem; line-height:1.6; margin-top:6px;">' +
-                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पूर्व (अग्नि • धर्म):</b> ' + (eastP.length ? eastP.join(', ') : 'शांत') + ' — आत्म-तेज, प्रतिष्ठा व संस्कार।</div>' +
-                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>दक्षिण (पृथ्वी • अर्थ):</b> ' + (southP.length ? southP.join(', ') : 'शांत') + ' — वित्तीय स्थायित्व, अचल संपत्ति व भौतिक सिद्धि।</div>' +
-                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पश्चिम (वायु • काम):</b> ' + (westP.length ? westP.join(', ') : 'शांत') + ' — बौद्धिक अनुबंध, लोक-संपर्क व व्यापारिक साझेदारी।</div>' +
-                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>उत्तर (जल • मोक्ष):</b> ' + (northP.length ? northP.join(', ') : 'शांत') + ' — अंतर्ज्ञान, आध्यात्मिक शांति व पराविद्या।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पूर्व (अग्नि • धर्म):</b> ' + (eastP.length ? eastP.join(', ') : 'शांत') + ' — आत्म-तेज, प्रतिष्ठा, स्वाभिमान व सात्विक संस्कार।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>दक्षिण (पृथ्वी • अर्थ):</b> ' + (southP.length ? southP.join(', ') : 'शांत') + ' — वित्तीय स्थायित्व, अचल संपत्ति, सॉफ्टवेयर निर्माण व भौतिक सिद्धि।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>पश्चिम (वायु • काम):</b> ' + (westP.length ? westP.join(', ') : 'शांत') + ' — बौद्धिक अनुबंध, लोक-संपर्क, कानूनी विश्लेषण व स्वतंत्र संस्था।</div>' +
+                    '<div style="background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:6px;">• <b>उत्तर (जल • मोक्ष):</b> ' + (northP.length ? northP.join(', ') : 'शांत') + ' — अंतर्ज्ञान, पराविद्या, वेदों का गूढ़ ज्ञान व पूर्वजन्म संस्कार।</div>' +
                     '</div>' +
                     '</div>';
 
-                // SECTION 6: Classical Sutras & Shastric Citation
+                // SECTION 8: Classical Sutras & Shastric Citation
                 html += bankHtml;
                 html += '<div class="sutra-quote">' +
                     '<b>भृगु नन्दी नाड़ी मूल सिद्धांत (महर्षि भृगु उपदेश):</b><br>' +
@@ -556,5 +864,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>

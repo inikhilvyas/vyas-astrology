@@ -14,7 +14,7 @@
  * ═════════════════════════════════════════════════════════════════════════
  */
 
-(function(global) {
+(function (global) {
     'use strict';
 
     var SIGNS_HI = ["", "मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
@@ -26,7 +26,7 @@
          * 1. KP BHAVA CHALIT CHART
          * Renders Placidus unequal house cusps with exact degree spans and residing planets.
          */
-        renderKPChalitChart: function(housesData, placidusCusps, size, isLight) {
+        renderKPChalitChart: function (housesData, placidusCusps, size, isLight) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;
@@ -132,7 +132,7 @@
          * 2. JAIMINI KARAKAMSHA & SWAMSHA CHART
          * Renders the Navamsha sign of Atmakaraka (AK) as House 1 (Lagna) with 7 Chara Karaka tags.
          */
-        renderJaiminiKarakamsaChart: function(karakamsaLagnaSignNum, housesData, karakas, size, isLight, chartTypeTitle) {
+        renderJaiminiKarakamsaChart: function (karakamsaLagnaSignNum, housesData, karakas, size, isLight, chartTypeTitle) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;
@@ -293,7 +293,7 @@
          * Traditional diamond chart prominently displaying the SAV bindus (22-38) in each of the 12 houses.
          * Houses >= 30: Balavan (Emerald/Green), 28-29: Medium (Gold), < 28: Low (Red/Amber).
          */
-        renderAshtakavargaChart: function(savPointsArray, lagnaSignNum, size, isLight) {
+        renderAshtakavargaChart: function (savPointsArray, lagnaSignNum, size, isLight) {
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;
@@ -400,7 +400,7 @@
          * - West: Vayu (3-7-11)
          * - North: Jala (4-8-12)
          */
-        renderNadiDirectionalChart: function(planetTable, size, isLight) {
+        renderNadiDirectionalChart: function (planetTable, size, isLight) {
             var s = size || 460;
             var h = s / 2.0;
             var bgGrad = isLight ?
@@ -519,216 +519,220 @@
          * 5. TAJIKA VARSHPHAL CHART (Solar Return Chart + Muntha Badge)
          * Solar return chart with Muntha badge [🚩 मुंथा] and Varshesha badge.
          */
-        renderVarshphalChart: function(housesData, munthaSignNum, varsheshaPlanet, varshAge, size, isLight, customLagnaSignNum) {
-            var s = size || 460;
-            var h = s / 2.0;
-            var q = s / 4.0;
-            var bgGrad = isLight ?
-                '<linearGradient id="vBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#F5EFE0"/></linearGradient>' :
-                '<linearGradient id="vBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1402"/><stop offset="50%" stop-color="#0f0c01"/><stop offset="100%" stop-color="#050400"/></linearGradient>';
-            var strokeLine = isLight ? '#B45309' : '#f59e0b';
-            var strokeBorder = isLight ? '#92400E' : '#d97706';
-            var textPrimary = isLight ? '#1B2E4B' : '#fef3c7';
-            var textMuted = isLight ? '#64748B' : '#fde68a';
-            var munthaGold = '#eab308';
+        renderVarshphalChart: function (housesData, munthaSignNum, varsheshaPlanet, varshAge, size, isLight) {
+            renderVarshphalChart: function(housesData, munthaSignNum, varsheshaPlanet, varshAge, size, isLight, customLagnaSignNum) {
+                var s = size || 460;
+                var h = s / 2.0;
+                var q = s / 4.0;
+                var bgGrad = isLight ?
+                    '<linearGradient id="vBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#F5EFE0"/></linearGradient>' :
+                    '<linearGradient id="vBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1402"/><stop offset="50%" stop-color="#0f0c01"/><stop offset="100%" stop-color="#050400"/></linearGradient>';
+                var strokeLine = isLight ? '#B45309' : '#f59e0b';
+                var strokeBorder = isLight ? '#92400E' : '#d97706';
+                var textPrimary = isLight ? '#1B2E4B' : '#fef3c7';
+                var textMuted = isLight ? '#64748B' : '#fde68a';
+                var munthaGold = '#eab308';
 
-            var parts = [];
-            parts.push('<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg" class="vyas-varshphal-chart" style="max-width:100%; height:auto;">');
-            parts.push('<defs>' + bgGrad + '<filter id="vShd"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.85"/></filter></defs>');
+                var parts = [];
+                parts.push('<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg" class="vyas-varshphal-chart" style="max-width:100%; height:auto;">');
+                parts.push('<defs>' + bgGrad + '<filter id="vShd"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.85"/></filter></defs>');
 
-            // Outer frame
-            parts.push('<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="url(#vBg)" stroke="' + strokeBorder + '" stroke-width="2.4" rx="12"/>');
-            parts.push('<rect x="6" y="6" width="' + (s - 12) + '" height="' + (s - 12) + '" fill="none" stroke="' + strokeBorder + '" stroke-width="0.8" stroke-dasharray="5,3" rx="8"/>');
+                // Outer frame
+                parts.push('<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="url(#vBg)" stroke="' + strokeBorder + '" stroke-width="2.4" rx="12"/>');
+                parts.push('<rect x="6" y="6" width="' + (s - 12) + '" height="' + (s - 12) + '" fill="none" stroke="' + strokeBorder + '" stroke-width="0.8" stroke-dasharray="5,3" rx="8"/>');
 
-            // Diamond lines
-            var lines = [
-                [0, 0, s, s], [0, s, s, 0],
-                [h, 0, s, h], [s, h, h, s],
-                [h, s, 0, h], [0, h, h, 0]
-            ];
-            for (var i = 0; i < lines.length; i++) {
-                var ln = lines[i];
-                parts.push('<line x1="' + ln[0] + '" y1="' + ln[1] + '" x2="' + ln[2] + '" y2="' + ln[3] + '" stroke="' + strokeLine + '" stroke-width="1.6"/>');
-            }
+                // Diamond lines
+                var lines = [
+                    [0, 0, s, s], [0, s, s, 0],
+                    [h, 0, s, h], [s, h, h, s],
+                    [h, s, 0, h], [0, h, h, 0]
+                ];
+                for (var i = 0; i < lines.length; i++) {
+                    var ln = lines[i];
+                    parts.push('<line x1="' + ln[0] + '" y1="' + ln[1] + '" x2="' + ln[2] + '" y2="' + ln[3] + '" stroke="' + strokeLine + '" stroke-width="1.6"/>');
+                }
 
-            var positions = {
-                1: [h, q - 8],
-                2: [q, q / 2 + 2],
-                3: [q / 2 + 10, q + 6],
-                4: [q + 4, h],
-                5: [q / 2 + 10, s - q - 6],
-                6: [q, s - q / 2 - 2],
-                7: [h, s - q + 14],
-                8: [s - q, s - q / 2 - 2],
-                9: [s - q / 2 - 10, s - q - 6],
-                10: [s - q - 4, h],
-                11: [s - q / 2 - 10, q + 6],
-                12: [s - q, q / 2 + 2]
+                var positions = {
+                    1: [h, q - 8],
+                    2: [q, q / 2 + 2],
+                    3: [q / 2 + 10, q + 6],
+                    4: [q + 4, h],
+                    5: [q / 2 + 10, s - q - 6],
+                    6: [q, s - q / 2 - 2],
+                    7: [h, s - q + 14],
+                    8: [s - q, s - q / 2 - 2],
+                    9: [s - q / 2 - 10, s - q - 6],
+                    10: [s - q - 4, h],
+                    11: [s - q / 2 - 10, q + 6],
+                    12: [s - q, q / 2 + 2]
+                };
+
+                // Varsha Lagna Sign
+                var lagnaSignNum = customLagnaSignNum || (housesData && housesData.lagna_sign_num) || 1;
+                if (!customLagnaSignNum && housesData && housesData[1]) {
+                    var lagnaSignNum = 1;
+                    if (typeof customLagnaSignNum !== 'undefined' && customLagnaSignNum) {
+                        lagnaSignNum = parseInt(customLagnaSignNum) || 1;
+                    } else if (housesData && housesData.lagna_sign_num) {
+                        lagnaSignNum = parseInt(housesData.lagna_sign_num) || 1;
+                    } else if (housesData && housesData[1]) {
+                        var d1Val = housesData[1][0];
+                        lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? (d1Val.sign || d1Val.s) : d1Val) || 1;
+                        if (typeof d1Val === 'object' && d1Val !== null) {
+                            lagnaSignNum = parseInt(d1Val.sign || d1Val.s) || 1;
+                        } else if (typeof d1Val === 'number') {
+                            lagnaSignNum = d1Val;
+                        } else if (typeof d1Val === 'string') {
+                            var sMap = { 'मेष': 1, 'वृषभ': 2, 'मिथुन': 3, 'कर्क': 4, 'सिंह': 5, 'कन्या': 6, 'तुला': 7, 'वृश्चिक': 8, 'धनु': 9, 'मकर': 10, 'कुंभ': 11, 'मीन': 12 };
+                            lagnaSignNum = sMap[d1Val] || parseInt(d1Val) || 1;
+                        }
+                    }
+
+                    var munthaSign = parseInt(munthaSignNum) || 1;
+                    var vLord = (varsheshaPlanet || '').replace(/\s*\(.*\)/, '').trim();
+
+                    for (var house = 1; house <= 12; house++) {
+                        var pos = positions[house];
+                        var x = pos[0];
+                        var y = pos[1];
+
+                        var signNum = ((lagnaSignNum - 1 + house - 1) % 12) + 1;
+                        var isMunthaHere = (signNum === munthaSign);
+
+                        // Sign Badge
+                        parts.push('<circle cx="' + x + '" cy="' + (y - 30) + '" r="12" fill="' + (isLight ? '#FEF3C7' : '#451a03') + '" stroke="' + strokeBorder + '" stroke-width="1.2"/>');
+                        parts.push('<text x="' + x + '" y="' + (y - 25) + '" font-family="Cinzel, serif" font-size="12" font-weight="900" fill="' + (isLight ? '#92400E' : '#fde68a') + '" text-anchor="middle">' + signNum + '</text>');
+
+                        // Muntha Badge in the relevant house
+                        if (isMunthaHere) {
+                            parts.push('<rect x="' + (x - 30) + '" y="' + (y - 14) + '" width="60" height="15" fill="#f59e0b" rx="4"/>');
+                            parts.push('<text x="' + x + '" y="' + (y - 3) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="900" fill="#000" text-anchor="middle">मुंथा (Muntha)</text>');
+                        }
+
+                        // Planets in this house
+                        var pList = (housesData && housesData[house]) ? housesData[house] : [];
+                        var py = y + (isMunthaHere ? 10 : 0);
+                        for (var pi = 0; pi < pList.length; pi++) {
+                            var rawP = pList[pi];
+                            var pName = (typeof rawP === 'object' && rawP !== null) ? (rawP.p || rawP.planet || '') : String(rawP);
+                            pName = pName.replace(/\s*D[0-9]+/gi, '').trim();
+                            if (!pName) continue;
+
+                            var isVarshesha = vLord && pName.indexOf(vLord) !== -1;
+                            var tag = isVarshesha ? ' [वर्षेश]' : '';
+                            var fillCol = isVarshesha ? '#fbbf24' : textPrimary;
+
+                            parts.push('<text x="' + x + '" y="' + (py + (pi * 13)) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="11" font-weight="' + (isVarshesha ? 900 : 700) + '" fill="' + fillCol + '" text-anchor="middle" filter="url(#vShd)">' + pName + tag + '</text>');
+                        }
+                    }
+
+                    // Center watermark
+                    parts.push('<text x="' + h + '" y="' + (h - 7) + '" font-family="Cinzel, serif" font-size="13" font-weight="800" fill="' + munthaGold + '" text-anchor="middle" letter-spacing="1">TAJIKA VARSHPHAL</text>');
+                    parts.push('<text x="' + h + '" y="' + (h + 9) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9.5" font-weight="700" fill="' + textMuted + '" text-anchor="middle">वर्ष ' + (varshAge ? (varshAge + 'वां वर्ष') : '') + ' • वर्षेश: ' + (vLord || 'गुरु') + '</text>');
+
+                    parts.push('</svg>');
+                    return parts.join('\n');
+                },
+
+
+                /**
+                 * 6. PANCHANG TATKALIK AKASHA CHART
+                 * Real-time celestial North Indian chart cast for current city and timestamp.
+                 */
+                renderTatkalikPanchangChart: function(housesData, currentCityName, istTimeStr, size, isLight, customLagnaSignNum) {
+                    var s = size || 460;
+                    var h = s / 2.0;
+                    var q = s / 4.0;
+                    var bgGrad = isLight ?
+                        '<linearGradient id="pBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FCFAF6"/><stop offset="100%" stop-color="#EDE9FE"/></linearGradient>' :
+                        '<linearGradient id="pBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#090514"/><stop offset="50%" stop-color="#04020a"/><stop offset="100%" stop-color="#010003"/></linearGradient>';
+                    var strokeLine = isLight ? '#4338CA' : '#818cf8';
+                    var strokeBorder = isLight ? '#3730A3' : '#6366f1';
+                    var textPrimary = isLight ? '#1E1B4B' : '#e0e7ff';
+                    var textMuted = isLight ? '#64748B' : '#a5b4fc';
+
+                    var parts = [];
+                    parts.push('<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg" class="vyas-tatkalik-panchang-chart" style="max-width:100%; height:auto;">');
+                    parts.push('<defs>' + bgGrad + '<filter id="pShd"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.85"/></filter></defs>');
+
+                    // Outer frame
+                    parts.push('<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="url(#pBg)" stroke="' + strokeBorder + '" stroke-width="2.4" rx="12"/>');
+                    parts.push('<rect x="6" y="6" width="' + (s - 12) + '" height="' + (s - 12) + '" fill="none" stroke="' + strokeBorder + '" stroke-width="0.8" stroke-dasharray="5,3" rx="8"/>');
+
+                    // Diamond lines
+                    var lines = [
+                        [0, 0, s, s], [0, s, s, 0],
+                        [h, 0, s, h], [s, h, h, s],
+                        [h, s, 0, h], [0, h, h, 0]
+                    ];
+                    for (var i = 0; i < lines.length; i++) {
+                        var ln = lines[i];
+                        parts.push('<line x1="' + ln[0] + '" y1="' + ln[1] + '" x2="' + ln[2] + '" y2="' + ln[3] + '" stroke="' + strokeLine + '" stroke-width="1.6"/>');
+                    }
+
+                    var positions = {
+                        1: [h, q - 8],
+                        2: [q, q / 2 + 2],
+                        3: [q / 2 + 10, q + 6],
+                        4: [q + 4, h],
+                        5: [q / 2 + 10, s - q - 6],
+                        6: [q, s - q / 2 - 2],
+                        7: [h, s - q + 14],
+                        8: [s - q, s - q / 2 - 2],
+                        9: [s - q / 2 - 10, s - q - 6],
+                        10: [s - q - 4, h],
+                        11: [s - q / 2 - 10, q + 6],
+                        12: [s - q, q / 2 + 2]
+                    };
+
+                    var lagnaSignNum = 1;
+                    if (housesData && housesData[1]) {
+                        var d1Val = housesData[1][0];
+                        lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? d1Val.sign : d1Val) || 1;
+                    }
+
+                    for (var house = 1; house <= 12; house++) {
+                        var pos = positions[house];
+                        var x = pos[0];
+                        var y = pos[1];
+
+                        var signNum = ((lagnaSignNum - 1 + house - 1) % 12) + 1;
+
+                        // Sign Badge
+                        parts.push('<circle cx="' + x + '" cy="' + (y - 30) + '" r="12" fill="' + (isLight ? '#EEF2FF' : '#1e1b4b') + '" stroke="' + strokeBorder + '" stroke-width="1.2"/>');
+                        parts.push('<text x="' + x + '" y="' + (y - 25) + '" font-family="Cinzel, serif" font-size="12" font-weight="900" fill="' + (isLight ? '#3730A3' : '#c7d2fe') + '" text-anchor="middle">' + signNum + '</text>');
+
+                        if (house === 1) {
+                            parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="800" fill="#a5b4fc" text-anchor="middle">तात्कालिक लग्न</text>');
+                        }
+
+                        // Real-time planets
+                        var pList = (housesData && housesData[house]) ? housesData[house] : [];
+                        var py = y + 2;
+                        for (var pi = 0; pi < pList.length; pi++) {
+                            var rawP = pList[pi];
+                            var pName = (typeof rawP === 'object' && rawP !== null) ? (rawP.p || rawP.planet || '') : String(rawP);
+                            pName = pName.replace(/\s*D[0-9]+/gi, '').trim();
+                            if (!pName) continue;
+
+                            parts.push('<text x="' + x + '" y="' + (py + (pi * 13)) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="11" font-weight="700" fill="' + textPrimary + '" text-anchor="middle" filter="url(#pShd)">' + pName + '</text>');
+                        }
+                    }
+
+                    // Center watermark
+                    parts.push('<text x="' + h + '" y="' + (h - 7) + '" font-family="Cinzel, serif" font-size="13" font-weight="800" fill="#818cf8" text-anchor="middle" letter-spacing="1">TATKALIK GOCHAR</text>');
+                    parts.push('<text x="' + h + '" y="' + (h + 9) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="700" fill="' + textMuted + '" text-anchor="middle">' + (currentCityName || 'अयोध्या') + ' • ' + (istTimeStr || 'वर्तमान वेध') + '</text>');
+
+                    parts.push('</svg>');
+                    return parts.join('\n');
+                }
             };
 
-            // Varsha Lagna Sign
-            var lagnaSignNum = 1;
-            if (typeof customLagnaSignNum !== 'undefined' && customLagnaSignNum) {
-                lagnaSignNum = parseInt(customLagnaSignNum) || 1;
-            } else if (housesData && housesData.lagna_sign_num) {
-                lagnaSignNum = parseInt(housesData.lagna_sign_num) || 1;
-            } else if (housesData && housesData[1]) {
-                var d1Val = housesData[1][0];
-                if (typeof d1Val === 'object' && d1Val !== null) {
-                    lagnaSignNum = parseInt(d1Val.sign || d1Val.s) || 1;
-                } else if (typeof d1Val === 'number') {
-                    lagnaSignNum = d1Val;
-                } else if (typeof d1Val === 'string') {
-                    var sMap = { 'मेष':1, 'वृषभ':2, 'मिथुन':3, 'कर्क':4, 'सिंह':5, 'कन्या':6, 'तुला':7, 'वृश्चिक':8, 'धनु':9, 'मकर':10, 'कुंभ':11, 'मीन':12 };
-                    lagnaSignNum = sMap[d1Val] || parseInt(d1Val) || 1;
-                }
+            // Attach to global / window
+            if (typeof module !== 'undefined' && module.exports) {
+                module.exports = VyasChartRenderers;
             }
+            global.VyasChartRenderers = VyasChartRenderers;
 
-            var munthaSign = parseInt(munthaSignNum) || 1;
-            var vLord = (varsheshaPlanet || '').replace(/\s*\(.*\)/, '').trim();
-
-            for (var house = 1; house <= 12; house++) {
-                var pos = positions[house];
-                var x = pos[0];
-                var y = pos[1];
-
-                var signNum = ((lagnaSignNum - 1 + house - 1) % 12) + 1;
-                var isMunthaHere = (signNum === munthaSign);
-
-                // Sign Badge
-                parts.push('<circle cx="' + x + '" cy="' + (y - 30) + '" r="12" fill="' + (isLight ? '#FEF3C7' : '#451a03') + '" stroke="' + strokeBorder + '" stroke-width="1.2"/>');
-                parts.push('<text x="' + x + '" y="' + (y - 25) + '" font-family="Cinzel, serif" font-size="12" font-weight="900" fill="' + (isLight ? '#92400E' : '#fde68a') + '" text-anchor="middle">' + signNum + '</text>');
-
-                // Muntha Badge in the relevant house
-                if (isMunthaHere) {
-                    parts.push('<rect x="' + (x - 30) + '" y="' + (y - 14) + '" width="60" height="15" fill="#f59e0b" rx="4"/>');
-                    parts.push('<text x="' + x + '" y="' + (y - 3) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="900" fill="#000" text-anchor="middle">मुंथा (Muntha)</text>');
-                }
-
-                // Planets in this house
-                var pList = (housesData && housesData[house]) ? housesData[house] : [];
-                var py = y + (isMunthaHere ? 10 : 0);
-                for (var pi = 0; pi < pList.length; pi++) {
-                    var rawP = pList[pi];
-                    var pName = (typeof rawP === 'object' && rawP !== null) ? (rawP.p || rawP.planet || '') : String(rawP);
-                    pName = pName.replace(/\s*D[0-9]+/gi, '').trim();
-                    if (!pName) continue;
-
-                    var isVarshesha = vLord && pName.indexOf(vLord) !== -1;
-                    var tag = isVarshesha ? ' [वर्षेश]' : '';
-                    var fillCol = isVarshesha ? '#fbbf24' : textPrimary;
-
-                    parts.push('<text x="' + x + '" y="' + (py + (pi * 13)) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="11" font-weight="' + (isVarshesha ? 900 : 700) + '" fill="' + fillCol + '" text-anchor="middle" filter="url(#vShd)">' + pName + tag + '</text>');
-                }
-            }
-
-            // Center watermark
-            parts.push('<text x="' + h + '" y="' + (h - 7) + '" font-family="Cinzel, serif" font-size="13" font-weight="800" fill="' + munthaGold + '" text-anchor="middle" letter-spacing="1">TAJIKA VARSHPHAL</text>');
-            parts.push('<text x="' + h + '" y="' + (h + 9) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9.5" font-weight="700" fill="' + textMuted + '" text-anchor="middle">वर्ष ' + (varshAge ? (varshAge + 'वां वर्ष') : '') + ' • वर्षेश: ' + (vLord || 'गुरु') + '</text>');
-
-            parts.push('</svg>');
-            return parts.join('\n');
-        },
-
-
-        /**
-         * 6. PANCHANG TATKALIK AKASHA CHART
-         * Real-time celestial North Indian chart cast for current city and timestamp.
-         */
-        renderTatkalikPanchangChart: function(housesData, currentCityName, istTimeStr, size, isLight, customLagnaSignNum) {
-            var s = size || 460;
-            var h = s / 2.0;
-            var q = s / 4.0;
-            var bgGrad = isLight ?
-                '<linearGradient id="pBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FCFAF6"/><stop offset="100%" stop-color="#EDE9FE"/></linearGradient>' :
-                '<linearGradient id="pBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#090514"/><stop offset="50%" stop-color="#04020a"/><stop offset="100%" stop-color="#010003"/></linearGradient>';
-            var strokeLine = isLight ? '#4338CA' : '#818cf8';
-            var strokeBorder = isLight ? '#3730A3' : '#6366f1';
-            var textPrimary = isLight ? '#1E1B4B' : '#e0e7ff';
-            var textMuted = isLight ? '#64748B' : '#a5b4fc';
-
-            var parts = [];
-            parts.push('<svg width="' + s + '" height="' + s + '" viewBox="0 0 ' + s + ' ' + s + '" xmlns="http://www.w3.org/2000/svg" class="vyas-tatkalik-panchang-chart" style="max-width:100%; height:auto;">');
-            parts.push('<defs>' + bgGrad + '<filter id="pShd"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.85"/></filter></defs>');
-
-            // Outer frame
-            parts.push('<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="url(#pBg)" stroke="' + strokeBorder + '" stroke-width="2.4" rx="12"/>');
-            parts.push('<rect x="6" y="6" width="' + (s - 12) + '" height="' + (s - 12) + '" fill="none" stroke="' + strokeBorder + '" stroke-width="0.8" stroke-dasharray="5,3" rx="8"/>');
-
-            // Diamond lines
-            var lines = [
-                [0, 0, s, s], [0, s, s, 0],
-                [h, 0, s, h], [s, h, h, s],
-                [h, s, 0, h], [0, h, h, 0]
-            ];
-            for (var i = 0; i < lines.length; i++) {
-                var ln = lines[i];
-                parts.push('<line x1="' + ln[0] + '" y1="' + ln[1] + '" x2="' + ln[2] + '" y2="' + ln[3] + '" stroke="' + strokeLine + '" stroke-width="1.6"/>');
-            }
-
-            var positions = {
-                1: [h, q - 8],
-                2: [q, q / 2 + 2],
-                3: [q / 2 + 10, q + 6],
-                4: [q + 4, h],
-                5: [q / 2 + 10, s - q - 6],
-                6: [q, s - q / 2 - 2],
-                7: [h, s - q + 14],
-                8: [s - q, s - q / 2 - 2],
-                9: [s - q / 2 - 10, s - q - 6],
-                10: [s - q - 4, h],
-                11: [s - q / 2 - 10, q + 6],
-                12: [s - q, q / 2 + 2]
-            };
-
-            var lagnaSignNum = 1;
-            if (housesData && housesData[1]) {
-                var d1Val = housesData[1][0];
-                lagnaSignNum = parseInt(typeof d1Val === 'object' && d1Val !== null ? d1Val.sign : d1Val) || 1;
-            }
-
-            for (var house = 1; house <= 12; house++) {
-                var pos = positions[house];
-                var x = pos[0];
-                var y = pos[1];
-
-                var signNum = ((lagnaSignNum - 1 + house - 1) % 12) + 1;
-
-                // Sign Badge
-                parts.push('<circle cx="' + x + '" cy="' + (y - 30) + '" r="12" fill="' + (isLight ? '#EEF2FF' : '#1e1b4b') + '" stroke="' + strokeBorder + '" stroke-width="1.2"/>');
-                parts.push('<text x="' + x + '" y="' + (y - 25) + '" font-family="Cinzel, serif" font-size="12" font-weight="900" fill="' + (isLight ? '#3730A3' : '#c7d2fe') + '" text-anchor="middle">' + signNum + '</text>');
-
-                if (house === 1) {
-                    parts.push('<text x="' + x + '" y="' + (y - 12) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="800" fill="#a5b4fc" text-anchor="middle">तात्कालिक लग्न</text>');
-                }
-
-                // Real-time planets
-                var pList = (housesData && housesData[house]) ? housesData[house] : [];
-                var py = y + 2;
-                for (var pi = 0; pi < pList.length; pi++) {
-                    var rawP = pList[pi];
-                    var pName = (typeof rawP === 'object' && rawP !== null) ? (rawP.p || rawP.planet || '') : String(rawP);
-                    pName = pName.replace(/\s*D[0-9]+/gi, '').trim();
-                    if (!pName) continue;
-
-                    parts.push('<text x="' + x + '" y="' + (py + (pi * 13)) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="11" font-weight="700" fill="' + textPrimary + '" text-anchor="middle" filter="url(#pShd)">' + pName + '</text>');
-                }
-            }
-
-            // Center watermark
-            parts.push('<text x="' + h + '" y="' + (h - 7) + '" font-family="Cinzel, serif" font-size="13" font-weight="800" fill="#818cf8" text-anchor="middle" letter-spacing="1">TATKALIK GOCHAR</text>');
-            parts.push('<text x="' + h + '" y="' + (h + 9) + '" font-family="Noto Sans Devanagari, sans-serif" font-size="9" font-weight="700" fill="' + textMuted + '" text-anchor="middle">' + (currentCityName || 'अयोध्या') + ' • ' + (istTimeStr || 'वर्तमान वेध') + '</text>');
-
-            parts.push('</svg>');
-            return parts.join('\n');
-        }
-    };
-
-    // Attach to global / window
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = VyasChartRenderers;
-    }
-    global.VyasChartRenderers = VyasChartRenderers;
-
-})(typeof window !== 'undefined' ? window : global);
+        })(typeof window !== 'undefined' ? window : global);
 
