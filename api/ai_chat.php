@@ -585,6 +585,66 @@ foreach ($keys as $key) {
         }
     }
 }
+
+// ----------------------------------------------------------------------
+// 1.5 RESILIENT BACKUP FAILOVER: OpenRouter / OmniRouter (Claude 3.5 Sonnet / GPT-4o / DeepSeek R1)
+// ----------------------------------------------------------------------
+$routerConfigFile = __DIR__ . '/router_config.json';
+$routerConfig = file_exists($routerConfigFile) ? json_decode(file_get_contents($routerConfigFile), true) : [];
+
+$routerKey = getenv('OPENROUTER_API_KEY') 
+    ?: (isset($routerConfig['openrouter_api_key']) ? trim($routerConfig['openrouter_api_key']) : '')
+    ?: (isset($input['openRouterKey']) ? trim($input['openRouterKey']) : '');
+
+$routerBase = getenv('OMNIROUTER_BASE_URL')
+    ?: (isset($routerConfig['omnirouter_base_url']) ? trim($routerConfig['omnirouter_base_url']) : '')
+    ?: 'https://openrouter.ai/api/v1/chat/completions';
+
+$routerModels = (!empty($routerConfig['preferred_models']) && is_array($routerConfig['preferred_models']))
+    ? $routerConfig['preferred_models']
+    : ['anthropic/claude-3.5-sonnet', 'openai/gpt-4o', 'deepseek/deepseek-r1'];
+
+if (!empty($routerKey)) {
+    foreach ($routerModels as $rModel) {
+        $ch = curl_init($routerBase);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, "VYAS-Astra/1.0 (Android; Web)");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer " . $routerKey,
+            "Content-Type: application/json",
+            "HTTP-Referer: https://vyasastro.in",
+            "X-Title: VYAS ASTRA Vedic AI"
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            "model" => $rModel,
+            "messages" => $messages,
+            "temperature" => 0.2,
+            "max_tokens" => 1500
+        ]));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 12); // 12-second bounded timeout
+
+        $rResponse = curl_exec($ch);
+        $rHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($rHttpCode === 200 && $rResponse) {
+            $rData = json_decode($rResponse, true);
+            if (isset($rData['choices'][0]['message']['content'])) {
+                $rawText = sanitizeAiOutput($rData['choices'][0]['message']['content']);
+                $content = preg_replace('/\*\*(.*?)\*\*/', '<b>$1</b>', $rawText);
+                $content = nl2br($content);
+                echo json_encode([
+                    "reply" => $content,
+                    "rawText" => $rawText,
+                    "provider" => "openrouter",
+                    "model" => $rModel
+                ]);
+                exit();
+            }
+        }
+    }
+}
 // Graceful Fallback: If external AI keys are unavailable, synthesize direct Shastric response from matched sutras & context
 if (!empty($sutraContext)) {
     $fallbackReply = "<b>ॐ नमः शिवाय। सादर प्रणाम!</b><br><br>" .

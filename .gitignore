@@ -55,3 +55,6 @@ android_app/.gradle/
 android_app/build/
 android_app/*/build/
 android_app/local.properties
+
+# Router config with API keys
+api/router_config.json

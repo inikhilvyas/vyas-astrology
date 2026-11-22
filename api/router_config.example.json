@@ -1,0 +1,10 @@
+{
+  "comment": "Place your OpenRouter or OmniRouter API key here to act as an automatic backup failover when Groq keys hit rate limits.",
+  "openrouter_api_key": "",
+  "omnirouter_base_url": "https://openrouter.ai/api/v1/chat/completions",
+  "preferred_models": [
+    "anthropic/claude-3.5-sonnet",
+    "openai/gpt-4o",
+    "deepseek/deepseek-r1"
+  ]
+}
