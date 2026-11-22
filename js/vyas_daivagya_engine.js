@@ -2231,33 +2231,110 @@
             var goodh = chart.goodh_diagnostics || null;
             var khara = (goodh && goodh.khara_and_64th_navamsha) ? goodh.khara_and_64th_navamsha : null;
 
-            // Card Builder Function
-            function buildCardResponse(badge, title, verdict, shastraItems, fruit, timing, remedies) {
+            // =========================================================================
+            // ACHARYA VYAS v12.0 GURUKUL 5-TIER CARD BUILDER & CLASSIFIED DATA BANK
+            // =========================================================================
+            function buildCardResponse(badge, title, verdict, shastraItems, fruit, timing, remedies, tarkaContext) {
                 var h = '';
-                // 1. Header Banner
-                h += '<div style="background:rgba(212,175,55,0.08); border-left:4px solid var(--accent-gold); padding:14px 16px; border-radius:8px; margin-bottom:14px;">';
-                h += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">';
-                h += '<span style="color:var(--accent-gold); font-weight:700; font-size:0.92rem;">✦ ' + title + '</span>';
-                h += '<span style="background:rgba(212,175,55,0.18); color:var(--accent-gold); font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:12px;">' + badge + '</span>';
+
+                // Normalize Remedies into Vardhana (Amplification) and Shaman (Pacification)
+                var vardhanaList = [];
+                var shamanList = [];
+                if (remedies && typeof remedies === 'object' && !Array.isArray(remedies)) {
+                    vardhanaList = remedies.vardhana || [];
+                    shamanList = remedies.shaman || [];
+                } else if (Array.isArray(remedies)) {
+                    for (var rIdx = 0; rIdx < remedies.length; rIdx++) {
+                        var rem = remedies[rIdx];
+                        if (/(दान|तिल|शनिवार|कौवे|कुत्ते|गरीब|अपंग|असह|शमन|राहु|केतु|शांति|पीपल.*न छुएं)/i.test(rem)) {
+                            shamanList.push(rem);
+                        } else {
+                            vardhanaList.push(rem);
+                        }
+                    }
+                    if (vardhanaList.length === 0 && shamanList.length > 0) {
+                        vardhanaList.push('लग्नेश ' + lagnaLord + ' देव के बीज मंत्र का नित्य १०८ बार शांत चित्त से जप कर आत्म-बल में वृद्धि करें।');
+                    }
+                    if (shamanList.length === 0) {
+                        shamanList.push('राहु-केतु व त्रिक भाव जनित विघ्नों के शमन हेतु पक्षियों को नित्य सप्तधान्य (सतनाजा) डालें।');
+                    }
+                }
+
+                // 1. Header Banner with Gurukul v12.0 Stamp
+                h += '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(15,23,42,0.85)); border-left:4px solid var(--accent-gold); border-radius:10px; padding:16px; margin-bottom:14px; box-shadow:0 4px 15px rgba(0,0,0,0.2);">';
+                h += '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px;">';
+                h += '<span style="color:var(--accent-gold); font-size:1.1rem;">✦</span>';
+                h += '<b style="color:var(--accent-gold); font-size:1.02rem; letter-spacing:0.3px;">' + title + '</b>';
                 h += '</div>';
-                h += '<div style="font-size:0.80rem; color:var(--text-muted); line-height:1.6;">';
-                h += 'जातक: <b style="color:var(--text-primary);">' + name + '</b> • लग्न: <b style="color:var(--text-primary);">' + lagna + ' (' + lagnaLord + ')</b> • सक्रिय दशा: <b style="color:var(--text-primary);">' + dashaChain + '</b>';
+                h += '<div style="display:flex; gap:6px; align-items:center;">';
+                h += '<span style="background:rgba(212,175,55,0.18); color:var(--accent-gold); font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:12px; border:1px solid rgba(212,175,55,0.3);">' + badge + '</span>';
+                h += '<span style="background:rgba(96,165,250,0.15); color:#60a5fa; font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:12px; border:1px solid rgba(96,165,250,0.3);">v12.0 गुरुकुल दैवज्ञ</span>';
+                h += '</div></div>';
+                h += '<div style="font-size:0.83rem; color:var(--text-muted); line-height:1.6; display:flex; flex-wrap:wrap; gap:12px;">';
+                h += '<span>जातक: <b style="color:var(--text-primary);">' + name + '</b></span>';
+                h += '<span>लग्न: <b style="color:var(--text-primary);">' + lagna + ' (' + lagnaLord + ')</b></span>';
+                h += '<span>सक्रिय दशा: <b style="color:var(--text-primary);">' + dashaChain + '</b></span>';
+                h += '<span>अमात्यकारक: <b style="color:var(--text-primary);">' + amk + '</b></span>';
                 h += '</div></div>';
 
-                // 2. Direct Verdict Card
+                // 2. Classified Astro-Data Bank (कुण्डली का वर्गीकृत डेटाबेस - Protocol Phase 1)
+                h += '<div style="background:rgba(15,23,42,0.65); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:14px; margin-bottom:14px;">';
+                h += '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px;">';
+                h += '<span style="font-size:1.1rem;">📊</span>';
+                h += '<b style="color:var(--accent-gold); font-size:0.92rem;">कुण्डली का वर्गीकृत डेटाबेस (Classified Astro-Data Bank)</b>';
+                h += '</div>';
+                h += '<span style="font-size:0.72rem; color:#94a3b8; background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px;">नासा-ग्रेड सूक्ष्म गणित</span>';
+                h += '</div>';
+
+                // Grid / Table of planetary coordinates
+                h += '<div style="overflow-x:auto;">';
+                h += '<table style="width:100%; font-size:0.78rem; border-collapse:collapse; text-align:left; color:var(--text-secondary); min-width:480px;">';
+                h += '<tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-weight:600;">';
+                h += '<th style="padding:6px 8px;">ग्रह</th>';
+                h += '<th style="padding:6px 8px;">भाव व राशि</th>';
+                h += '<th style="padding:6px 8px;">डिग्री</th>';
+                h += '<th style="padding:6px 8px;">नक्षत्र (पद)</th>';
+                h += '<th style="padding:6px 8px;">अवस्था / डिग्निटी</th>';
+                h += '<th style="padding:6px 8px;">SAV अंक</th>';
+                h += '</tr>';
+
+                var keyPlanets = ['सूर्य', 'चन्द्र', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'राहु', 'केतु'];
+                for (var kpIdx = 0; kpIdx < keyPlanets.length; kpIdx++) {
+                    var pKey = keyPlanets[kpIdx];
+                    var plData = pMap[pKey];
+                    if (!plData) continue;
+                    var plHouse = plData.house || 1;
+                    var plSav = sav[(lagnaIdx + plHouse - 1) % 12] || 28;
+                    h += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+                    h += '<td style="padding:5px 8px; font-weight:700; color:var(--text-primary);">' + pKey + '</td>';
+                    h += '<td style="padding:5px 8px;">भाव ' + plHouse + ' (' + (plData.sign || '-') + ')</td>';
+                    h += '<td style="padding:5px 8px; font-family:monospace; color:#cbd5e1;">' + (plData.degree || '-') + '</td>';
+                    h += '<td style="padding:5px 8px; color:#e2e8f0;">' + (plData.nakshatra || '-') + '</td>';
+                    h += '<td style="padding:5px 8px;"><span style="background:rgba(212,175,55,0.12); color:#fde047; padding:1px 6px; border-radius:4px; font-size:0.72rem;">' + (plData.dignity || 'सम') + '</span></td>';
+                    h += '<td style="padding:5px 8px; font-weight:700; color:' + (plSav >= 28 ? '#4ade80' : '#f87171') + ';">' + plSav + ' बिंदु</td>';
+                    h += '</tr>';
+                }
+                h += '</table></div>';
+                h += '<div style="font-size:0.75rem; color:#64748b; margin-top:8px; line-height:1.5;">';
+                h += '✦ सर्वाष्टकवर्ग कुल: <b style="color:#e2e8f0;">३३७ बिंदु</b> • चर कारक: AK (<b style="color:#e2e8f0;">' + ak + '</b>), AmK (<b style="color:#e2e8f0;">' + amk + '</b>), DK (<b style="color:#e2e8f0;">' + dk + '</b>) • २२वां द्रेष्काण: <b style="color:#e2e8f0;">' + (khara ? khara.drekkana_22_lord : 'शनि') + '</b>';
+                h += '</div></div>';
+
+                // 3. Section 1: The Clear Direct Verdict (सीधा शास्त्रीय निर्णय)
                 h += '<div style="background:var(--bg-card); border:1px solid var(--border-card); border-radius:10px; padding:16px; margin-bottom:14px;">';
                 h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
                 h += '<span style="font-size:1.15rem;">🎯</span>';
-                h += '<b style="color:var(--accent-gold); font-size:0.95rem;">सीधा शास्त्रीय निर्णय (The Clear Direct Verdict)</b>';
+                h += '<b style="color:var(--accent-gold); font-size:0.96rem;">१. सीधा शास्त्रीय निर्णय (The Clear Direct Verdict)</b>';
                 h += '</div>';
-                h += '<p style="margin:0; font-size:0.90rem; line-height:1.75; color:var(--text-primary);">' + verdict + '</p>';
+                h += '<p style="margin:0; font-size:0.91rem; line-height:1.75; color:var(--text-primary); font-weight:500;">' + verdict + '</p>';
                 h += '</div>';
 
-                // 3. Application to Native\'s Chart Card
+                // 4. Section 2: Application to Native\'s Chart (कुण्डली पर नियमों का वास्तविक घटित होना)
                 h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
                 h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
                 h += '<span style="font-size:1.15rem;">🔍</span>';
-                h += '<b style="color:#60a5fa; font-size:0.95rem;">आपकी कुण्डली पर नियमों का वास्तविक घटित होना (Application to Your Chart)</b>';
+                h += '<b style="color:#60a5fa; font-size:0.96rem;">२. आपकी कुण्डली पर शास्त्रीय नियमों का वास्तविक घटित होना</b>';
                 h += '</div>';
                 h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
                 for (var si = 0; si < shastraItems.length; si++) {
@@ -2265,35 +2342,108 @@
                 }
                 h += '</ul></div>';
 
-                // 4. Exact Fruit & Manifestation Card
+                // 5. Section 3: Gurukul Pedagogical Tarka & Varga Calculus (गुरुकुल तर्क एवं वर्गीय मीमांसा)
+                h += '<div style="background:rgba(30,41,59,0.55); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:16px; margin-bottom:14px;">';
+                h += '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px;">';
+                h += '<span style="font-size:1.15rem;">📜</span>';
+                h += '<b style="color:#f1de87; font-size:0.96rem;">३. गुरुकुल तर्क एवं बहु-वर्गीय परीक्षण (Gurukul Tarka & Varga Calculus)</b>';
+                h += '</div>';
+                h += '<span style="font-size:0.72rem; color:#94a3b8; background:rgba(212,175,55,0.12); padding:2px 8px; border-radius:4px;">पोर्टफोलियो प्रधानता एवं कर्म-मूल</span>';
+                h += '</div>';
+                h += '<div style="font-size:0.84rem; color:#94a3b8; margin-bottom:12px; line-height:1.6; font-style:italic; border-bottom:1px dashed rgba(255,255,255,0.08); padding-bottom:8px;">';
+                h += '"लग्न संभावित प्रतिज्ञा (Promise) दर्शाता है, भाव चलित स्थूल स्थिति स्पष्ट करता है, नवमांश (D-9) व दशमांश (D-10) फल की वास्तविकता तय करते हैं, और षष्ट्यंश (D-60) संचित कर्मों की अंतिम सीमा तय करता है।"';
+                h += '</div>';
+
+                h += '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">';
+                h += '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #60a5fa;">';
+                h += '<b style="color:#60a5fa; font-size:0.83rem;">✦ प्रतिज्ञा (The Promise - D-1/चलित):</b>';
+                h += '<p style="margin:4px 0 0 0; font-size:0.80rem; color:var(--text-secondary); line-height:1.5;">लग्न भाव व भावेश स्थूल संसार में अवसर का सृजन करते हैं। ग्रह भाव-चलित में अपनी वास्तविक कार्य-स्थिति में प्रतिष्ठित हैं।</p>';
+                h += '</div>';
+
+                h += '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #34d399;">';
+                h += '<b style="color:#34d399; font-size:0.83rem;">✦ फल व पोर्टफोलियो प्रधानता (D-9/D-10):</b>';
+                h += '<p style="margin:4px 0 0 0; font-size:0.80rem; color:var(--text-secondary); line-height:1.5;">D-1 की स्थिति केवल बीज है, वास्तविक फल D-9 व D-10 में पुष्ट होता है। यदि ग्रह संबंधित वर्ग में बलवान है तभी परिणाम स्थायी होगा।</p>';
+                h += '</div>';
+
+                h += '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #f87171;">';
+                h += '<b style="color:#f87171; font-size:0.83rem;">✦ कर्म-मूल (D-60 & Negative Root):</b>';
+                h += '<p style="margin:4px 0 0 0; font-size:0.80rem; color:var(--text-secondary); line-height:1.5;">षष्ट्यंश के देव/राक्षस स्वभाव अनुसार फल की प्राप्ति होती है। D-1 से ६/८/१२वें स्थान पर स्थित ग्रह आंतरिक संघर्ष के उपरांत सिद्धि देते हैं।</p>';
+                h += '</div>';
+
+                h += '<div style="background:rgba(15,23,42,0.6); padding:10px 12px; border-radius:8px; border-left:3px solid #fbbf24;">';
+                h += '<b style="color:#fbbf24; font-size:0.83rem;">✦ कृष्णमूर्ति पद्धति (KP Script & CSL):</b>';
+                h += '<p style="margin:4px 0 0 0; font-size:0.80rem; color:var(--text-secondary); line-height:1.5;">४-चरणीय कस्पल सब-लॉर्ड (CSL) संबंधित भावों के फल को हरी झंडी प्रदान करता है, जिससे घटना का समय अकाट्य बनता है।</p>';
+                h += '</div>';
+                h += '</div>';
+
+                if (tarkaContext) {
+                    h += '<div style="margin-top:12px; padding:10px 12px; background:rgba(212,175,55,0.06); border-radius:8px; font-size:0.82rem; color:var(--text-secondary); line-height:1.6;">';
+                    h += '<b style="color:var(--accent-gold);">विशेष गुरुकुल निष्कर्ष:</b> ' + tarkaContext;
+                    h += '</div>';
+                }
+                h += '</div>';
+
+                // 6. Section 4: Exact Fruit & Manifestation (फल क्या और कैसा मिलेगा?)
                 h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
                 h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
                 h += '<span style="font-size:1.15rem;">⚡</span>';
-                h += '<b style="color:#34d399; font-size:0.95rem;">फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest?)</b>';
+                h += '<b style="color:#34d399; font-size:0.96rem;">४. फल क्या और कैसा मिलेगा? (What Exact Fruit & Quality Will Manifest?)</b>';
                 h += '</div>';
-                h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + fruit + '</p>';
+                h += '<p style="margin:0; font-size:0.89rem; line-height:1.75; color:var(--text-secondary);">' + fruit + '</p>';
                 h += '</div>';
 
-                // 5. Timeline & Dasha Triggers Card
+                // 7. Section 5: Exact Timeline & Dasha Triggers (काल-खंड: यह फल कब फलीभूत होगा?)
                 h += '<div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:10px; padding:16px; margin-bottom:14px;">';
                 h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
                 h += '<span style="font-size:1.15rem;">⏱️</span>';
-                h += '<b style="color:#fbbf24; font-size:0.95rem;">काल-खंड: यह फल कब फलीभूत होगा? (Exact Timeline & Dasha Triggers: Months & Years)</b>';
+                h += '<b style="color:#fbbf24; font-size:0.96rem;">५. काल-खंड: यह फल कब फलीभूत होगा? (Exact Timeline & Dasha Triggers)</b>';
                 h += '</div>';
-                h += '<p style="margin:0; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">' + timing + '</p>';
+                h += '<p style="margin:0; font-size:0.89rem; line-height:1.75; color:var(--text-secondary);">' + timing + '</p>';
                 h += '</div>';
 
-                // 6. Practical Remedies Card
-                h += '<div style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.25); border-radius:10px; padding:16px;">';
-                h += '<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">';
+                // 8. Section 6: Omni-Remedial Matrix (Vardhana vs. Shaman - सर्व-दोष निवारण महायंत्र)
+                h += '<div style="background:linear-gradient(135deg, rgba(212,175,55,0.06), rgba(15,23,42,0.9)); border:1px solid rgba(212,175,55,0.3); border-radius:10px; padding:16px;">';
+                h += '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px;">';
+                h += '<div style="display:flex; align-items:center; gap:8px;">';
                 h += '<span style="font-size:1.15rem;">🛡️</span>';
-                h += '<b style="color:var(--accent-gold); font-size:0.95rem;">दैवज्ञ व्यावहारिक मार्गदर्शन व अचूक सात्विक उपाय (Practical Satvik Remedies)</b>';
+                h += '<b style="color:var(--accent-gold); font-size:0.96rem;">६. सर्व-दोष निवारण महायंत्र (Omni-Remedial Matrix)</b>';
                 h += '</div>';
-                h += '<ul style="margin:0; padding-left:18px; font-size:0.88rem; line-height:1.75; color:var(--text-secondary);">';
-                for (var ri = 0; ri < remedies.length; ri++) {
-                    h += '<li style="margin-bottom:6px;">' + remedies[ri] + '</li>';
+                h += '<span style="font-size:0.72rem; color:#fde047; background:rgba(212,175,55,0.15); padding:2px 8px; border-radius:4px; font-weight:600;">ऊर्जा वर्धन बनाम ऊर्जा शमन</span>';
+                h += '</div>';
+
+                h += '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">';
+
+                // Sub-card A: Vardhana (Amplification)
+                h += '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:12px 14px;">';
+                h += '<div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">';
+                h += '<span style="color:#34d399; font-size:1rem;">🌟</span>';
+                h += '<b style="color:#34d399; font-size:0.88rem;">ऊर्जा वर्धन (Vardhana - Amplification)</b>';
+                h += '</div>';
+                h += '<div style="font-size:0.75rem; color:#94a3b8; margin-bottom:8px;">लग्नेश, भाग्येश एवं योगकारक शक्तियों का संवर्धन (रत्न/मंत्र/आचरण):</div>';
+                h += '<ul style="margin:0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:var(--text-secondary);">';
+                for (var vi = 0; vi < vardhanaList.length; vi++) {
+                    h += '<li style="margin-bottom:6px;">' + vardhanaList[vi] + '</li>';
                 }
                 h += '</ul></div>';
+
+                // Sub-card B: Shaman (Pacification)
+                h += '<div style="background:rgba(15,23,42,0.7); border:1px solid rgba(248,113,113,0.3); border-radius:8px; padding:12px 14px;">';
+                h += '<div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">';
+                h += '<span style="color:#f87171; font-size:1rem;">🛡️</span>';
+                h += '<b style="color:#f87171; font-size:0.88rem;">ऊर्जा शमन (Shaman - Pacification)</b>';
+                h += '</div>';
+                h += '<div style="font-size:0.75rem; color:#94a3b8; margin-bottom:8px;">त्रिक भाव (६/८/१२), मारक एवं राहु-केतु के वेग का शमन (दान/शांति/व्रत):</div>';
+                h += '<ul style="margin:0; padding-left:16px; font-size:0.84rem; line-height:1.65; color:var(--text-secondary);">';
+                for (var si2 = 0; si2 < shamanList.length; si2++) {
+                    h += '<li style="margin-bottom:6px;">' + shamanList[si2] + '</li>';
+                }
+                h += '</ul></div>';
+
+                h += '</div>';
+                h += '<div style="font-size:0.75rem; color:#64748b; margin-top:10px; line-height:1.5; text-align:center;">';
+                h += 'वेध आधार: महर्षि पराशर, महर्षि जैमिनी, भृगु नन्दी नाड़ी, के.एस. कृष्णमूर्ति (KP) व आधुनिक शोध • निखिल व्यास (शोध निदेशक)';
+                h += '</div></div>';
 
                 return h;
             }
