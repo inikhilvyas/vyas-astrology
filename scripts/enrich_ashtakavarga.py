@@ -117,3 +117,4 @@ def enrich_ashtakavarga():
 
 if __name__ == '__main__':
     enrich_ashtakavarga()
+

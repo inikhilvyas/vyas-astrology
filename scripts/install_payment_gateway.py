@@ -200,3 +200,4 @@ with open('index.html', 'w', encoding='utf-8') as f:
     f.write(code)
 
 print("SUCCESS: Payment gateway installed and all invalid UPI references purged from index.html!")
+

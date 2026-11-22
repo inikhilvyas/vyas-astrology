@@ -28,3 +28,4 @@ if __name__ == '__main__':
     inspect_ashtakavarga()
     inspect_varshphal()
     inspect_nadi()
+

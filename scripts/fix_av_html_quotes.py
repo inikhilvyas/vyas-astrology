@@ -8,3 +8,4 @@ with open('ashtakavarga/index.html', 'w', encoding='utf-8') as f:
     f.write(c)
 
 print("Fixed quotes in ashtakavarga/index.html")
+

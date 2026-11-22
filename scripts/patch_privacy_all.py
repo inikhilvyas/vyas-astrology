@@ -71,3 +71,4 @@ for p in ['static/mobile/index.html', 'mobile/index.html', 'android_app/app/src/
     patch_file(p, mobile_replacements)
 
 print("All privacy patches completed.")
+

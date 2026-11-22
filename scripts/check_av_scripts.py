@@ -6,3 +6,4 @@ import re
 print("Script sources in ashtakavarga:")
 for s in re.findall(r'<script[^>]*src=[\'"][^\'"]*[\'"]', c):
     print(" ", s)
+

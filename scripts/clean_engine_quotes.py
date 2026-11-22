@@ -30,3 +30,4 @@ with open('js/vyas_daivagya_engine.js', 'w', encoding='utf-8') as f:
     f.writelines(out)
 
 print("Safely quoted all rule and range properties")
+

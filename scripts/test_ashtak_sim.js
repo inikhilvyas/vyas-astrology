@@ -73,3 +73,4 @@ if (scriptMatch) {
         console.error("ERROR running ashtakavarga script:", e);
     }
 }
+

@@ -81,3 +81,4 @@ The supreme VYAS rule is: SOURCE TEXT CAN TELL YOU WHAT A CONFIGURATION IS TRADI
 VYAS 34.0 is successful when it can say not only “what the chart indicates,” but also “what is actually calculated, which astrological tradition produced the indication, what evidence supports it, what evidence contradicts it, how independent the evidence really is, when it is activated, how precise the timing can defensibly be, what could make it fail, and whether the supplied software/report interpretation is actually supported by the underlying horoscope.” When the evidence is insufficient, the correct VYAS answer is not a forced prediction. The correct answer is: “INSUFFICIENT EVIDENCE FOR A DEFENSIBLE PREDICTION.” Accuracy, provenance, independence, verification and intellectual honesty always take priority over complexity, certainty and user expectation."""
 
 print("Length of prompt text:", len(prompt_text))
+

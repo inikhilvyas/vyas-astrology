@@ -158,3 +158,4 @@ if __name__ == '__main__':
     patch_varshphal()
     patch_nadi()
     patch_ashtakavarga()
+

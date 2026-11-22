@@ -79,3 +79,4 @@ if old_plan_section in code and 'id="proUpiCheckoutBox"' not in code:
     print("SUCCESS: Injected dynamic UPI QR & instant mobile checkout into index.html!")
 else:
     print("Warning: old_plan_section not found or already injected")
+

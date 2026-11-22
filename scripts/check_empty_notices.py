@@ -8,3 +8,4 @@ for p in ['ashtakavarga/index.html', 'varshphal/index.html', 'nadi-astrology/ind
         print(m.group(0))
     else:
         print("Not found!")
+

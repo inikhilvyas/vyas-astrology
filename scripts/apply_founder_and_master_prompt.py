@@ -173,3 +173,4 @@ for sp in subpages:
         print(f"Updated footer in {sp}")
 
 print("ALL UPDATES COMPLETE!")
+

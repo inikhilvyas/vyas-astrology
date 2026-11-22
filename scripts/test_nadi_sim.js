@@ -66,3 +66,4 @@ if (scriptMatch) {
     const cardMatches = phalit.match(/✦\s*[०-९1-9]+\.[^<]+/g);
     console.log('Cards rendered in Nadi:', cardMatches);
 }
+

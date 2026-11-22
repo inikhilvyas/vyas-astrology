@@ -3,3 +3,4 @@ with open('varshphal/index.html', 'r', encoding='utf-8') as f:
 
 for i in range(210, 260):
     print(f"{i+1}: {lines[i].strip()}")
+
