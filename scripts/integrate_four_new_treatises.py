@@ -342,3 +342,4 @@ for folder, fname, content in ref_targets:
     print(f"Synced reference {fpath}")
 
 print("All 4 treatises processed and synced with zero astrologer names.")
+

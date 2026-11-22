@@ -43,3 +43,4 @@ skill_files = [
 ]
 for sf in skill_files:
     update_skill(sf)
+
