@@ -77,11 +77,24 @@ public class MainActivity extends AppCompatActivity {
             webView.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    if (url != null && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://"))) {
+                    if (url == null) return false;
+                    // Google OAuth or external auth MUST open in system browser to prevent 403 disallowed_useragent and black screens
+                    if (url.contains("accounts.google.com") || url.contains("google.com/o/oauth2")) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            return true;
+                        } catch (Throwable t) {
+                            Log.e(TAG, "Failed to launch external browser for OAuth", t);
+                        }
+                    }
+                    if (url.startsWith("https://vyasastro.in") || url.startsWith("file://")) {
                         return false;
                     }
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                         return true;
                     } catch (Throwable t) {
@@ -200,6 +213,19 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (intent != null && intent.getData() != null) {
+            String dataUrl = intent.getData().toString();
+            Log.i(TAG, "Deep link return received: " + dataUrl);
+            if (webView != null) {
+                webView.loadUrl(dataUrl);
+            }
+        }
+    }
+
     /**
      * Native Android JavaScript Bridge for VYAS ASTRA
      */
@@ -208,6 +234,17 @@ public class MainActivity extends AppCompatActivity {
 
         public WebAppInterface(Context context) {
             this.context = context;
+        }
+
+        @JavascriptInterface
+        public void openExternalUrl(String url) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            } catch (Throwable t) {
+                Log.e(TAG, "Failed to open external url: " + t.getMessage());
+            }
         }
 
         @JavascriptInterface

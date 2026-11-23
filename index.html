@@ -14370,6 +14370,10 @@
                     var deityName = D60_DEITIES[d60_deity_idx] + " (#" + (d60_deity_idx + 1) + ")";
                     addV("D60", 60, d60_sign, (deg * 60.0) % 30.0, deityName);
 
+                    // D150 Nadiamsha (0°12' = 12 arcminutes = 150 parts per sign)
+                    var d150_part = Math.min(149, Math.floor(deg / 0.2));
+                    addV("D150", 150, (pSign + d150_part) % 12, (deg * 150.0) % 30.0, "Nadiamsha #" + (d150_part + 1));
+
                     return v;
                 }
 
@@ -14406,6 +14410,7 @@
                 for (var vkIdx = 0; vkIdx < vKeys.length; vkIdx++) {
                     var vk = vKeys[vkIdx];
                     var ascV = ascVargas[vk];
+                    if (!ascV) continue;
                     var aSign = ascV.sign_index;
                     var vHouses = {};
                     for (var h = 1; h <= 12; h++) {
@@ -14485,7 +14490,7 @@
                     shodashaData[cKeyLower] = cObj;
                 }
                 builtCharts.chalit = { title: "भाव चलित चक्र", ascSign: SIGNS_HI[ascSignIdx] + " लग्न", houses: d1Houses };
-                window.SHODASHAVARGA_DATA = shodashaData;
+                if (typeof window !== 'undefined') window.SHODASHAVARGA_DATA = shodashaData;
 
                 // =========================================================================
                 // 10. AUTHENTIC PARASHARI BPHS ASHTAKAVARGA ENGINE (SAV = EXACT 337 BINDUS)
