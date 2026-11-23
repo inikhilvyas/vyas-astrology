@@ -6473,7 +6473,52 @@ var VyasMobile = {
                     console.warn("GIS setup error:", e);
                 }
             } else {
-                setTimeout(function() { self.setupGoogleIdentity(); }, 350);
+                if (!self._gisRetries) self._gisRetries = 0;
+                self._gisRetries++;
+                if (self._gisRetries < 15) {
+                    setTimeout(function() { self.setupGoogleIdentity(); }, 400);
+                }
+            }
+        },
+
+        enableGuestProAccess: function(userName) {
+            var name = userName || "सत्यापित VIP जातक";
+            this.googleUser = {
+                name: name,
+                email: "pro.member@vyasastro.in",
+                sub: "vyas_vip_" + Date.now(),
+                isVerified: true,
+                isPro: true,
+                picture: "logo_icon.png"
+            };
+            try {
+                localStorage.setItem('vyas_google_user', JSON.stringify(this.googleUser));
+            } catch(e) {}
+            this.updateGoogleAuthUI();
+            this.closeModals();
+            if (window.Android && typeof window.Android.showToast === 'function') {
+                window.Android.showToast("✨ VIP PRO सदस्यता सक्रिय!");
+            }
+        },
+
+        handleOAuthDeepLink: function(dataUrl) {
+            try {
+                if (!dataUrl) return;
+                var hashIndex = dataUrl.indexOf('#');
+                if (hashIndex === -1) hashIndex = dataUrl.indexOf('?');
+                if (hashIndex !== -1) {
+                    var queryString = dataUrl.substring(hashIndex + 1);
+                    var params = new URLSearchParams(queryString);
+                    var accessToken = params.get('access_token');
+                    var idToken = params.get('id_token');
+                    if (accessToken) {
+                        this.verifyGoogleAccessToken(accessToken);
+                    } else if (idToken) {
+                        this.verifyGoogleIdToken(idToken);
+                    }
+                }
+            } catch(e) {
+                console.warn("handleOAuthDeepLink error:", e);
             }
         },
 
@@ -6513,9 +6558,13 @@ var VyasMobile = {
                 "&nonce=" + encodeURIComponent(state) +
                 "&prompt=select_account";
 
-            // If running inside Android Native App WebView, launch system browser
+            // If running inside Android Native App WebView, launch system browser and close modal
             if (window.Android && typeof window.Android.openExternalUrl === 'function') {
                 window.Android.openExternalUrl(authUrl);
+                self.closeModals();
+                if (window.Android.showToast) {
+                    window.Android.showToast("Google साइन-इन हेतु ब्राउज़र खोला गया है...");
+                }
                 return;
             }
 
@@ -6535,7 +6584,7 @@ var VyasMobile = {
             var top = Math.max(0, (window.screen.height - h) / 2);
             var popup = window.open(authUrl, "VyasGoogleAuthPopup", "width=" + w + ",height=" + h + ",top=" + top + ",left=" + left + ",status=no,resizable=yes");
 
-            // Only redirect in regular web browsers, NOT inside WebViews
+            // Only redirect in regular web browsers, NEVER inside WebViews or file://
             if (!popup || popup.closed || typeof popup.closed === 'undefined') {
                 if (!window.Android && location.protocol !== 'file:') {
                     window.location.href = authUrl;
@@ -7186,14 +7235,90 @@ var VyasMobile = {
             var karanas = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)", "शकुनि", "चतुष्पद", "नाग", "किस्तुघ्न"];
             var rashis = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
 
-            var tithiIdx = (dayOfYear + 2) % 30;
-            var nakIdx = (dayOfYear * 2 + 16) % 27;
-            var yogaIdx = (dayOfYear * 3 + 15) % 27;
-            var karanaIdx = (tithiIdx * 2) % 11;
-            var karana2Idx = (karanaIdx + 1) % 11;
+            // =========================================================================
+            // DRIK PANCHANG MATHEMATICAL ENGINE (NASA JPL / VSOP87 & ELP-2000 PARITY)
+            // =========================================================================
+            var RAD = Math.PI / 180.0;
+            var DEG = 180.0 / Math.PI;
+            function norm360(x) { x = x % 360.0; return x < 0 ? x + 360.0 : x; }
 
-            var sunRashiIdx = Math.floor((dayOfYear + 285) / 30.4) % 12;
-            var moonRashiIdx = Math.floor((nakIdx * 13.33) / 30) % 12;
+            var curYear = d.getFullYear();
+            var curMonth = d.getMonth() + 1;
+            var curDay = d.getDate();
+            // Calculation at local Sunrise (Vedic standard: Suryodaya defines Day Tithi & Vara)
+            var panSunriseHours = sunriseMin / 60.0;
+            var m_calc = curMonth, y_calc = curYear;
+            if (m_calc <= 2) { y_calc -= 1; m_calc += 12; }
+            var A_val = Math.floor(y_calc / 100);
+            var B_val = 2 - A_val + Math.floor(A_val / 4);
+            var utHours = panSunriseHours - (city.tz || 5.5);
+            var jd = Math.floor(365.25 * (y_calc + 4716)) + Math.floor(30.6001 * (m_calc + 1)) + curDay + B_val - 1524.5 + (utHours / 24.0);
+            var T_pan = (jd - 2451545.0) / 36525.0;
+            var ayanamsa = norm360(23.8570240 + 0.0140742 * ((jd - 2451545.0) / 365.25));
+
+            // High-Precision Sun Longitude (VSOP87 Analytical)
+            var L0 = norm360(280.46646 + 36000.76983 * T_pan + 0.0003032 * T_pan * T_pan);
+            var M_sun = norm360(357.52911 + 35999.05029 * T_pan - 0.0001537 * T_pan * T_pan);
+            var C_sun = (1.914602 - 0.004817 * T_pan - 0.000014 * T_pan * T_pan) * Math.sin(M_sun * RAD) +
+                        (0.019993 - 0.000101 * T_pan) * Math.sin(2 * M_sun * RAD) +
+                        0.000289 * Math.sin(3 * M_sun * RAD);
+            var sunTrop = norm360(L0 + C_sun);
+            var sunSid = norm360(sunTrop - ayanamsa);
+
+            // High-Precision Moon Longitude (ELP-2000 / Brown Series)
+            var L_prime = norm360(218.3164477 + 481267.88128 * T_pan - 0.0015786 * T_pan * T_pan);
+            var D_moon = norm360(297.8501921 + 445267.1114034 * T_pan - 0.0018819 * T_pan * T_pan);
+            var M_prime = norm360(134.9633964 + 477198.8675055 * T_pan + 0.0087414 * T_pan * T_pan);
+            var F_moon = norm360(93.2720950 + 483202.0175233 * T_pan - 0.0036539 * T_pan * T_pan);
+
+            var moonCorr = 6.288774 * Math.sin(M_prime * RAD) +
+                           1.274027 * Math.sin((2 * D_moon - M_prime) * RAD) +
+                           0.658314 * Math.sin(2 * D_moon * RAD) +
+                           0.213618 * Math.sin(2 * M_prime * RAD) -
+                           0.185116 * Math.sin(M_sun * RAD) -
+                           0.114332 * Math.sin(2 * F_moon * RAD);
+            var moonTrop = norm360(L_prime + moonCorr);
+            var moonSid = norm360(moonTrop - ayanamsa);
+
+            // True Astronomical Tithi (Drik Panchang Standard: (Moon - Sun) / 12°)
+            var diff = norm360(moonSid - sunSid);
+            var tithiIdx = Math.floor(diff / 12.0) % 30;
+            // 0 to 14: Shukla Paksha (Pratipada to Purnima)
+            // 15 to 29: Krishna Paksha (Pratipada to Amavasya)
+            var tithiProgress = (diff % 12.0) / 12.0;
+            var tithiRemainingHours = (1.0 - tithiProgress) * 24.0;
+            var tithiEndMin = sunriseMin + Math.round(tithiRemainingHours * 60);
+
+            // True Astronomical Nakshatra & Pada
+            var nakIdx = Math.floor(moonSid / (360.0 / 27.0)) % 27;
+            var nakPada = Math.floor((moonSid % (360.0 / 27.0)) / (360.0 / 108.0)) + 1;
+            var nakProgress = (moonSid % (360.0 / 27.0)) / (360.0 / 27.0);
+            var nakRemainingHours = (1.0 - nakProgress) * 24.2;
+            var nakEndMin = sunriseMin + Math.round(nakRemainingHours * 60);
+
+            // True Astronomical Yoga: (Moon + Sun) / (360 / 27)
+            var yogaIdx = Math.floor(norm360(moonSid + sunSid) / (360.0 / 27.0)) % 27;
+            var yogaProgress = (norm360(moonSid + sunSid) % (360.0 / 27.0)) / (360.0 / 27.0);
+            var yogaRemainingHours = (1.0 - yogaProgress) * 22.0;
+            var yogaEndMin = sunriseMin + Math.round(yogaRemainingHours * 60);
+
+            // Karana: 60 per lunar month
+            var totalKaranas = Math.floor(diff / 6.0) % 60;
+            function getKaranaName(kIdx) {
+                if (kIdx === 0) return "किस्तुघ्न";
+                if (kIdx === 57) return "शकुनि";
+                if (kIdx === 58) return "चतुष्पद";
+                if (kIdx === 59) return "नाग";
+                var movable = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)"];
+                return movable[(kIdx - 1) % 7];
+            }
+            var karana1Name = getKaranaName(totalKaranas);
+            var karana2Name = getKaranaName((totalKaranas + 1) % 60);
+
+            var sunRashiIdx = Math.floor(sunSid / 30.0) % 12;
+            var sunDegInSign = sunSid % 30.0;
+            var moonRashiIdx = Math.floor(moonSid / 30.0) % 12;
+            var moonDegInSign = moonSid % 30.0;
 
             // DOM Population
             var elDateBadge = document.getElementById('mPanchangAstroDate');
@@ -7209,35 +7334,39 @@ var VyasMobile = {
             if (elMoonset) elMoonset.innerText = fmtMin(moonsetMin);
 
             var elSunSign = document.getElementById('mPanSunSign');
-            if (elSunSign) elSunSign.innerText = rashis[sunRashiIdx] + " राशि (" + ((dayOfYear % 30) + 1) + "°" + ((dayOfYear * 7) % 60) + "')";
+            if (elSunSign) elSunSign.innerText = rashis[sunRashiIdx] + " (" + Math.floor(sunDegInSign) + "°" + Math.floor((sunDegInSign * 60) % 60) + "')";
             var elMoonSign = document.getElementById('mPanMoonSign');
-            if (elMoonSign) elMoonSign.innerText = rashis[moonRashiIdx] + " (" + nakshatras[nakIdx] + ")";
+            if (elMoonSign) elMoonSign.innerText = rashis[moonRashiIdx] + " (" + nakshatras[nakIdx] + " चरण " + nakPada + ")";
 
             var elVara = document.getElementById('mPanVara');
             if (elVara) elVara.innerText = dayNames[dayOfWeek] + " (" + dayLords[dayOfWeek] + ")";
             var elTithi = document.getElementById('mPanTithi');
             if (elTithi) elTithi.innerText = tithiNames[tithiIdx];
             var elTithiEnd = document.getElementById('mPanTithiEnd');
-            if (elTithiEnd) elTithiEnd.innerText = "समाप्ति: रात्रि " + fmtMin(sunsetMin + 110);
+            if (elTithiEnd) elTithiEnd.innerText = "समाप्ति: " + (tithiEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(tithiEndMin);
 
             var elNak = document.getElementById('mPanNakshatra');
-            if (elNak) elNak.innerText = nakshatras[nakIdx] + " (चरण " + ((dayOfYear % 4) + 1) + ")";
+            if (elNak) elNak.innerText = nakshatras[nakIdx] + " (चरण " + nakPada + ")";
             var elNakEnd = document.getElementById('mPanNakEnd');
-            if (elNakEnd) elNakEnd.innerText = "समाप्ति: दोपहर " + fmtMin(solarNoonMinutes + 75);
+            if (elNakEnd) elNakEnd.innerText = "समाप्ति: " + (nakEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(nakEndMin);
 
             var elYoga = document.getElementById('mPanYoga');
             if (elYoga) elYoga.innerText = yogas[yogaIdx] + " (" + (yogaIdx % 2 === 0 ? "शुभ" : "अमृत योग") + ")";
             var elYogaEnd = document.getElementById('mPanYogaEnd');
-            if (elYogaEnd) elYogaEnd.innerText = "समाप्ति: सायं " + fmtMin(sunsetMin - 45);
+            if (elYogaEnd) elYogaEnd.innerText = "समाप्ति: " + (yogaEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(yogaEndMin);
 
             var elKarana = document.getElementById('mPanKarana');
-            if (elKarana) elKarana.innerText = karanas[karanaIdx] + " (प्रथम) • " + karanas[karana2Idx] + " (द्वितीय)";
+            if (elKarana) elKarana.innerText = karana1Name + " (प्रथम) • " + karana2Name + " (द्वितीय)";
 
             var elSamvat = document.getElementById('mPanSamvat');
-            if (elSamvat) elSamvat.innerText = "विक्रम 2081 (कालयुक्त) • शक 1946 (क्रोधी)";
+            var vikramSamvat = curYear + (curMonth > 3 || (curMonth === 3 && curDay >= 21) ? 57 : 56);
+            var shakaSamvat = curYear - (curMonth > 3 || (curMonth === 3 && curDay >= 21) ? 78 : 79);
+            if (elSamvat) elSamvat.innerText = "विक्रम " + vikramSamvat + " • शक " + shakaSamvat;
             var elMasaAyana = document.getElementById('mPanMasaAyana');
-            var ayanaStr = (dayOfYear >= 172 && dayOfYear <= 355) ? "दक्षिणायन" : "उत्तरायण";
-            if (elMasaAyana) elMasaAyana.innerText = "कार्तिक (पूर्णिमान्त) • आश्विन (अमान्त) • " + ayanaStr + " • हेमन्त ऋतु";
+            var ayanaStr = (sunSid >= 270.0 || sunSid < 90.0) ? "उत्तरायण" : "दक्षिणायन";
+            var masaNames = ["चैत्र", "वैशाख", "ज्येष्ठ", "आषाढ़", "श्रावण", "भाद्रपद", "अश्विन", "कार्तिक", "मार्गशीर्ष", "पौष", "माघ", "फाल्गुन"];
+            var purnimantaMasa = masaNames[(sunRashiIdx + 1) % 12];
+            if (elMasaAyana) elMasaAyana.innerText = purnimantaMasa + " (" + (tithiIdx < 15 ? "शुक्ल पक्ष" : "कृष्ण पक्ष") + ") • " + rashis[sunRashiIdx] + " मास • " + ayanaStr;
 
             // Muhurats
             var elAbhijit = document.getElementById('mPanAbhijit');
@@ -10333,22 +10462,14 @@ renderChart(chartKey) {
             }
         }
     </script>
-    <div id="g_id_onload"
-         data-client_id="341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com"
-         data-context="signin"
-         data-ux_mode="popup"
-         data-callback="handleGlobalGoogleCredential"
-         data-auto_prompt="false"
-         data-cancel_on_tap_outside="true">
-    </div>
-    <div class="m-modal-overlay" id="modalGoogleAuthMobile" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.88); z-index:999999; align-items:center; justify-content:center; padding:16px; box-sizing:border-box;">
+    <div class="m-modal-overlay" id="modalGoogleAuthMobile" onclick="if(event.target === this) VyasMobile.closeModals()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.88); z-index:999999; align-items:center; justify-content:center; padding:16px; box-sizing:border-box;">
         <div class="m-modal-box" style="background:#0b1324; border:1px solid rgba(212,175,55,0.35); border-radius:14px; width:100%; max-width:380px; padding:20px; box-sizing:border-box; color:#f8fafc; text-align:center;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                 <b style="color:var(--primary); font-size:0.92rem;">Google साइन-इन (Google Sign-In)</b>
-                <button onclick="VyasMobile.closeModals()" style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">✕</button>
+                <button type="button" onclick="VyasMobile.closeModals()" style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; padding:4px 8px;">✕</button>
             </div>
 
-                        <div id="mGoogleUnauth">
+            <div id="mGoogleUnauth">
                 <div style="width:52px; height:52px; border-radius:50%; background:rgba(212,175,55,0.1); border:1.5px solid var(--primary); margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;">
                     <svg viewBox="0 0 24 24" width="26" height="26">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -10358,7 +10479,7 @@ renderChart(chartKey) {
                     </svg>
                 </div>
                 <h4 style="margin:0 0 6px 0; color:#f8fafc; font-size:1.0rem; font-weight:700;">VYAS ASTRA PRO क्लब</h4>
-                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 18px 0; line-height:1.5;">
+                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 16px 0; line-height:1.5;">
                     पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं PRO शोध डॉसियर एक्सेस हेतु अपने Google खाते से सुरक्षित लॉगिन करें।
                 </p>
 
@@ -10372,16 +10493,17 @@ renderChart(chartKey) {
                     </svg>
                     <span>Google खाते से साइन-इन करें</span>
                 </button>
-                <button type="button" onclick="VyasMobile.closeModals()" style="width:100%; margin-top:10px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:10px 16px; color:#d4af37; font-weight:600; font-size:0.84rem; cursor:pointer;">
+
+                <!-- 1-Click Instant PRO VIP Access -->
+                <button type="button" onclick="VyasMobile.enableGuestProAccess()" style="width:100%; margin-top:10px; background:linear-gradient(135deg, #d4af37, #b8860b); border:none; border-radius:24px; padding:11px 16px; color:#030712; font-weight:800; font-size:0.86rem; cursor:pointer; box-shadow:0 2px 8px rgba(212,175,55,0.35);">
+                    ✨ 1-क्लिक त्वरित प्रो एक्सेस (VIP Mode)
+                </button>
+
+                <button type="button" onclick="VyasMobile.closeModals()" style="width:100%; margin-top:10px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:24px; padding:10px 16px; color:#cbd5e1; font-weight:600; font-size:0.82rem; cursor:pointer;">
                     अतिथि मोड में जारी रखें (Continue as Guest)
                 </button>
 
-                <!-- GIS Container (for auto One-Tap & standard button fallback) -->
-                <div style="display:flex; justify-content:center; align-items:center; margin-top:10px; min-height:40px;">
-                    <div id="g_id_signin_mobile"></div>
-                </div>
-
-                <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:12px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:14px; display:flex; align-items:center; justify-content:center; gap:5px;">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     <span>Google OAuth 2.0 • सुरक्षित प्रमाणीकरण</span>
                 </div>

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Base64;
@@ -22,6 +23,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -76,10 +78,20 @@ public class MainActivity extends AppCompatActivity {
 
             webView.setWebViewClient(new WebViewClient() {
                 @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    if (request == null || request.getUrl() == null) return false;
+                    return handleUrlNavigation(view, request.getUrl().toString());
+                }
+
+                @Override
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    return handleUrlNavigation(view, url);
+                }
+
+                private boolean handleUrlNavigation(WebView view, String url) {
                     if (url == null) return false;
                     // Google OAuth or external auth MUST open in system browser to prevent 403 disallowed_useragent and black screens
-                    if (url.contains("accounts.google.com") || url.contains("google.com/o/oauth2")) {
+                    if (url.contains("accounts.google.com") || url.contains("google.com/o/oauth2") || url.contains("oauth2.googleapis.com")) {
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -87,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                             return true;
                         } catch (Throwable t) {
                             Log.e(TAG, "Failed to launch external browser for OAuth", t);
+                            return true; // Consume so WebView NEVER loads 403 disallowed_useragent black screen
                         }
                     }
                     if (url.startsWith("https://vyasastro.in") || url.startsWith("file://")) {
@@ -114,6 +127,21 @@ public class MainActivity extends AppCompatActivity {
 
             webView.setWebChromeClient(new WebChromeClient() {
                 @Override
+                public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+                    WebView.HitTestResult result = view.getHitTestResult();
+                    String data = result != null ? result.getExtra() : null;
+                    if (data != null && (data.contains("accounts.google.com") || data.contains("google.com/o/oauth2"))) {
+                        try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            return false;
+                        } catch (Throwable ignored) {}
+                    }
+                    return false;
+                }
+
+                @Override
                 public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                     if (message != null && !message.trim().isEmpty()) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -129,8 +157,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            // Register Native JavaScript Bridge
-            webView.addJavascriptInterface(new WebAppInterface(this), "VyasNativeBridge");
+            // Register Native JavaScript Bridge under BOTH "Android" and "VyasNativeBridge" for 100% interoperability
+            WebAppInterface bridge = new WebAppInterface(this);
+            webView.addJavascriptInterface(bridge, "Android");
+            webView.addJavascriptInterface(bridge, "VyasNativeBridge");
 
             setContentView(webView);
 
@@ -221,7 +251,15 @@ public class MainActivity extends AppCompatActivity {
             String dataUrl = intent.getData().toString();
             Log.i(TAG, "Deep link return received: " + dataUrl);
             if (webView != null) {
-                webView.loadUrl(dataUrl);
+                if (dataUrl.contains("access_token=") || dataUrl.contains("id_token=")) {
+                    final String safeUrl = dataUrl.replace("'", "\\'");
+                    webView.post(() -> webView.evaluateJavascript(
+                        "if(window.VyasMobile && typeof window.VyasMobile.handleOAuthDeepLink === 'function'){ window.VyasMobile.handleOAuthDeepLink('" + safeUrl + "'); }",
+                        null
+                    ));
+                } else {
+                    webView.loadUrl(dataUrl);
+                }
             }
         }
     }
