@@ -7425,7 +7425,14 @@
                 if (!chart) {
                     try {
                         var saved = localStorage.getItem('vyas_active_profile');
-                        if (saved) chart = JSON.parse(saved);
+                        if (saved) {
+                            chart = JSON.parse(saved);
+                            if (chart && (!chart._engine_ver || chart._engine_ver < 5.2 || (chart.kp && chart.kp.cusps && chart.kp.cusps.length >= 2 && chart.kp.cusps[0].deg === chart.kp.cusps[1].deg))) {
+                                if (chart.profile && chart.profile.dob && typeof this.computeMathematicalKundli === 'function') {
+                                    chart = this.computeMathematicalKundli(chart.profile.name, chart.profile.dob, chart.profile.tob || '12:00', chart.profile.city || '', chart.profile.gender || 'Male', chart.profile.lat, chart.profile.lon);
+                                }
+                            }
+                        }
                     } catch (e) { }
                 }
                 if (chart && chart.profile && chart.profile.name && chart.profile.name !== 'अतिथि जातक (Guest)') {
@@ -10840,16 +10847,21 @@
                     if (dSec === 60) { dSec = 0; dMin++; }
                     if (dMin === 60) { dMin = 0; dDeg++; }
                     var cDms = dDeg + "°" + (dMin < 10 ? "0" : "") + dMin + "'" + (dSec < 10 ? "0" : "") + dSec + '"';
-                    kpCusps.push({
+                    var cuspItem = {
                         cusp: String(c),
+                        house: c,
                         sign: kpL.sign,
                         deg: cDms,
                         rl: kpL.rl,
                         nl: kpL.nl,
                         sl: kpL.sl,
                         ssl: kpL.ssl,
+                        star: kpL.nl,
+                        subLord: kpL.sl,
                         longitude: cLon
-                    });
+                    };
+                    kpCusps.push(cuspItem);
+                    kpCusps[c] = cuspItem;
                 }
 
                 var kpPlanets = [];
@@ -10998,6 +11010,8 @@
                 }
 
                 var finalBundle = {
+                    _engine_ver: 5.2,
+                    bhavat_bhavam: (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.evaluateAll === 'function') ? window.VyasBhavatBhavam.evaluateAll({ charts: builtCharts, planet_table: pTable, kp: { cusps: kpCusps, planets: kpPlanets } }) : null,
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                         lat: lat, lon: lon, tz: tz,

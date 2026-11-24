@@ -656,6 +656,7 @@
     <script src="/js/vyas_chart_renderers.js"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
     <script src="/js/vyas_kp_horary_solver.js"></script>
+    <script src="/js/vyas_bhavat_bhavam.js"></script>
 
     <script>
         function syncTopNavProfile() {
@@ -734,8 +735,13 @@
             // Populate Cusp Table
             var tbody = document.getElementById('kpCuspTableBody');
             var cHtml = '';
+            var getCusp = function(h) {
+                if (!cusps) return {};
+                if (Array.isArray(cusps)) return cusps[h - 1] || cusps[h] || {};
+                return cusps[h] || {};
+            };
             for (var h = 1; h <= 12; h++) {
-                var c = cusps[h] || {};
+                var c = getCusp(h);
                 var cDeg = c.deg || '-';
                 var cSign = c.sign || c.rl || '-';
                 var cStar = c.star || c.nl || '-';
@@ -747,14 +753,14 @@
             // Populate Comprehensive KP 4-Step & Cuspal Predictions
             var phalitWrap = document.getElementById('kpPhalitWrap');
             if (phalitWrap && window.VyasKPEngine) {
-                var c1 = cusps[1] || { subLord: 'शनि', sign: 'मेष', star: 'अश्विनी' };
-                var c2 = cusps[2] || { subLord: 'बुध', sign: 'वृषभ', star: 'कृतिका' };
-                var c4 = cusps[4] || { subLord: 'शुक्र', sign: 'कर्क', star: 'पुष्य' };
-                var c5 = cusps[5] || { subLord: 'गुरु', sign: 'सिंह', star: 'मघा' };
-                var c6 = cusps[6] || { subLord: 'मंगल', sign: 'कन्या', star: 'उत्तराफाल्गुनी' };
-                var c7 = cusps[7] || { subLord: 'शुक्र', sign: 'तुला', star: 'चित्रा' };
-                var c10 = cusps[10] || { subLord: 'गुरु', sign: 'मकर', star: 'उत्तराषाढ़ा' };
-                var c11 = cusps[11] || { subLord: 'बुध', sign: 'कुंभ', star: 'धनिष्ठा' };
+                var c1 = getCusp(1);
+                var c2 = getCusp(2);
+                var c4 = getCusp(4);
+                var c5 = getCusp(5);
+                var c6 = getCusp(6);
+                var c7 = getCusp(7);
+                var c10 = getCusp(10);
+                var c11 = getCusp(11);
 
                 var careerKP = VyasKPEngine.predict(chart, 'career');
                 var wealthKP = VyasKPEngine.predict(chart, 'wealth');

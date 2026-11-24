@@ -1190,6 +1190,8 @@
                 }
 
                 return {
+                    _engine_ver: 5.2,
+                    bhavat_bhavam: (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.evaluateAll === 'function') ? window.VyasBhavatBhavam.evaluateAll({ charts: builtCharts, planet_table: pTable, kp: { cusps: kpCusps, planets: kpPlanets } }) : null,
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                         lat: lat, lon: lon, tz: tz,
@@ -1596,9 +1598,15 @@
 
                     // Ensure complete varga charts exist; if incomplete, recompute full mathematical kundli
                     if (p.planet_table && p.charts && p.charts.d1 && p.charts.d9 && p.charts.d10 && p.profile && p.profile.dob) {
-                        // Ensure top-level houses alias is attached
-                        if (!p.houses && p.charts.d1.houses) p.houses = p.charts.d1.houses;
-                        return p;
+                        var needsRecomp = false;
+                        if (!p._engine_ver || p._engine_ver < 5.2) needsRecomp = true;
+                        if (p.kp && p.kp.cusps && p.kp.cusps.length >= 2) {
+                            if (p.kp.cusps[0].deg === p.kp.cusps[1].deg || !p.kp.cusps[0].longitude) needsRecomp = true;
+                        }
+                        if (!needsRecomp) {
+                            if (!p.houses && p.charts.d1.houses) p.houses = p.charts.d1.houses;
+                            return p;
+                        }
                     } 
                     
                     // If raw birth details exist, compute full mathematical kundli
