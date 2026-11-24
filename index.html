@@ -3216,6 +3216,8 @@
                     System)</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('jaimini', this)">जैमिनी ज्योतिष
                     (Jaimini)</button>
+                <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('bhavatbhavam', this)">भावात् भावम्
+                    (144 संयोजन)</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('nadi', this)">नाड़ी ज्योतिष (Nadi)</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('pdf', this)">जन्मपत्रिका PDF
                     (56-पृष्ठ)</button>
@@ -3838,6 +3840,215 @@
                                 <span>• Applications of Cuspal Interlinks Part 1 (K. Baskaran)</span>
                                 <span>• Kalamsa and Cuspal Interlinks (S.P. Khullar)</span>
                                 <span>• 4 Step Theory in Stellar Astrology</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7.5 TAB: BHAVAT BHAVAM (12x12 = 144 COMBINATIONS) & SHODH GRANTH -->
+                <div class="view-panel" id="view-bhavatbhavam">
+                    <!-- Bhavat Bhavam Interactive Synthesizer Card -->
+                    <div class="content-card" style="border:1px solid rgba(212,175,55,0.4); border-left:4px solid #d4af37; background:var(--bg-card); border-radius:10px; padding:18px; margin-bottom:16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                            <div>
+                                <b style="color:#d4af37; font-size:1.02rem;">✦ भावात् भावम् (12×12 = 144 संयोजन) महा-सिंथेसिस इंजन</b>
+                                <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:2px;">
+                                    शास्त्रीय सूत्र: <code style="color:#38bdf8; background:rgba(56,189,248,0.1); padding:2px 6px; border-radius:4px; font-weight:700;">Z = ((Y - 1 + X - 1) mod 12) + 1</code> • 6-स्तरीय सूक्ष्म परीक्षण
+                                </div>
+                            </div>
+                            <span style="font-size:0.72rem; background:rgba(212,175,55,0.15); color:#d4af37; padding:4px 10px; border-radius:12px; font-weight:800;">
+                                BPHS • जैमिनी • केपी कस्पल सब-लॉर्ड
+                            </span>
+                        </div>
+                        <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:14px; line-height:1.6;">
+                            भावात् भावम् सिद्धांत के अनुसार, किसी भाव का यथार्थ कार्य-फल उस भाव से सापेक्ष भाव की स्थिति से निर्धारित होता है। नीचे दिए गए किसी भी आधार भाव (Y) तथा उससे गिने जाने वाले सापेक्ष भाव (X) का चयन करें, प्रणाली तात्कालिक कुण्डली के अनुसार परिणामी भाव (Z), उसकी राशि, भावेश, ऑथेंटिक प्लेसिडस भोगांश, CSL तथा शास्त्रीय फलादेश प्रकट करेगी:
+                        </p>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:16px; background:rgba(15,23,42,0.5); padding:12px; border-radius:8px; border:1px solid var(--border-subtle);">
+                            <div>
+                                <label style="font-size:0.75rem; font-weight:700; color:#d4af37; display:block; margin-bottom:4px;">आधार भाव (Base Bhava Y):</label>
+                                <select id="bbBaseYSelect" class="form-input" style="width:100%; font-size:0.80rem;" onchange="VyasDesktop.evalBhavatBhavamUI()">
+                                    <option value="1">1st (तनु) • शरीर, आत्मबल व व्यक्तित्व</option>
+                                    <option value="2">2nd (धन) • संचित संपत्ति, वाणी व कुटुंब</option>
+                                    <option value="3">3rd (सहज) • पराक्रम, साहस व भाई-बहन</option>
+                                    <option value="4">4th (सुख) • माता, भूमि, भवन, वाहन व शांति</option>
+                                    <option value="5">5th (पुत्र) • बुद्धि, संतान, पूर्वपुण्य व विद्या</option>
+                                    <option value="6">6th (रिपु) • रोग, ऋण, शत्रु व प्रतिस्पर्धा</option>
+                                    <option value="7">7th (जाया) • जीवनसाथी, साझेदारी व लोक संपर्क</option>
+                                    <option value="8">8th (रंध्र) • आयु, गूढ़ विद्या, आकस्मिक धन व शोध</option>
+                                    <option value="9">9th (धर्म) • भाग्य, धर्म, उच्च शिक्षा व पिता</option>
+                                    <option value="10">10th (कर्म) • आजीविका, पद, प्रतिष्ठा व राज्य सम्मान</option>
+                                    <option value="11">11th (आय) • आय, मित्र, ज्येष्ठ भ्राता व सर्वकार्य सिद्धि</option>
+                                    <option value="12">12th (व्यय) • विदेश यात्रा, मोक्ष, अध्यात्म व व्यय</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem; font-weight:700; color:#38bdf8; display:block; margin-bottom:4px;">सापेक्ष भाव (Relative Bhava X):</label>
+                                <select id="bbRelativeXSelect" class="form-input" style="width:100%; font-size:0.80rem;" onchange="VyasDesktop.evalBhavatBhavamUI()">
+                                    <option value="1">1 से 1 (मूल भाव प्रभाव)</option>
+                                    <option value="2">का 2रा भाव (धन/पोषण/कुटुंब)</option>
+                                    <option value="3">का 3रा भाव (पराक्रम/प्रयास/संचार)</option>
+                                    <option value="4">का 4था भाव (सुख/वाहन/स्थिरता)</option>
+                                    <option value="5">का 5वाँ भाव (सृजन/बुद्धि/मंत्र)</option>
+                                    <option value="6">का 6ठा भाव (रोग/ऋण/शत्रु/सेवा)</option>
+                                    <option value="7">का 7वाँ भाव (साझेदारी/लोक/विस्तार)</option>
+                                    <option value="8">का 8वाँ भाव (आयु/संकट/आकस्मिकता)</option>
+                                    <option value="9">का 9वाँ भाव (भाग्य/धर्म/गुरु कृपा)</option>
+                                    <option value="10" selected>का 10वाँ भाव (कर्म/आजीविका/सत्ता)</option>
+                                    <option value="11">का 11वाँ भाव (लाभ/इच्छापूर्ति/मित्र)</option>
+                                    <option value="12">का 12वाँ भाव (व्यय/मोक्ष/विदेश)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; align-items:flex-end;">
+                                <button type="button" class="header-btn primary" onclick="VyasDesktop.evalBhavatBhavamUI()" style="width:100%; padding:9px; font-weight:800; font-size:0.80rem; background:var(--gold-gradient); color:#111; border:none; border-radius:6px; cursor:pointer;">
+                                    ✦ संश्लेषण करें (Synthesize)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Result Display Box -->
+                        <div id="bbResultCard" style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.3); border-radius:8px; padding:14px;">
+                            <!-- Populated dynamically by VyasDesktop.evalBhavatBhavamUI() -->
+                        </div>
+                    </div>
+
+                    <!-- 12 X from X Master Table -->
+                    <div class="content-card" style="margin-bottom:16px;">
+                        <div class="card-heading">
+                            <span>✦ 12 मूल भावात् भावम् ("X से X" महा-तालिका)</span>
+                            <span style="font-size:0.72rem; color:var(--primary-navy); font-weight:700;">प्रामाणिक शास्त्रीय नियम</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table class="astronomy-table">
+                                <thead>
+                                    <tr>
+                                        <th>संयोजन</th>
+                                        <th>परिणामी भाव (Z)</th>
+                                        <th>शास्त्रीय सिद्ध-सूत्र</th>
+                                        <th>गूढ़ फलादेश व जीवन प्रभाव</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><b>1 से 1</b></td><td><span style="color:#10b981; font-weight:800;">1st (तनु)</span></td><td>स्वयं का मूल अस्तित्व, प्राण-शक्ति व आत्मा</td><td>लग्न ही सम्पूर्ण कुण्डली का आधार है। तनु से तनु भाव स्वयं के अस्तित्व, आत्मबल और शारीरिक आरोग्यता का निर्धारण करता है।</td></tr>
+                                    <tr><td><b>2 से 2</b></td><td><span style="color:#10b981; font-weight:800;">3rd (सहज)</span></td><td>धन का पोषण, पुरुषार्थ, संचित प्रयास व संवाद</td><td>द्वितीय (धन) से द्वितीय भाव तृतीय (सहज) है। यह दर्शाता है कि धन की वृद्धि जातक के निरंतर पराक्रम, लेखनी और व्यावसायिक संवाद से ही संभव है।</td></tr>
+                                    <tr><td><b>3 से 3</b></td><td><span style="color:#10b981; font-weight:800;">5th (पुत्र)</span></td><td>पराक्रम का सृजन, कौशल, विवेक व प्रतिभा</td><td>तृतीय (पराक्रम) से तृतीय भाव पंचम (बुद्धि) है। अदम्य साहस केवल शारीरिक नहीं बल्कि जब विवेक और पूर्वपुण्य से युक्त होता है, तभी पराक्रम सिद्धि देता है।</td></tr>
+                                    <tr><td><b>4 से 4</b></td><td><span style="color:#10b981; font-weight:800;">7th (जाया)</span></td><td>गृहस्थ सुख का विस्तार व लोक-साझेदारी</td><td>चतुर्थ (सुख) से चतुर्थ भाव सप्तम (जाया) है। घर की आंतरिक शांति का बाह्य विस्तार जीवनसाथी और लोक-व्यवहार की सामंजस्यता से होता है।</td></tr>
+                                    <tr><td><b>5 से 5</b></td><td><span style="color:#10b981; font-weight:800;">9th (धर्म)</span></td><td>बुद्धि व पूर्वपुण्य से भाग्योदय, धर्म व ईश्वरीय कृपा</td><td>पंचम (संतान/ज्ञान) से पंचम भाव नवम (धर्म) है। जातक की बुद्धि और साधना जब धर्म से जुड़ती है, तभी चिरस्थायी भाग्योदय घटित होता है।</td></tr>
+                                    <tr><td><b>6 से 6</b></td><td><span style="color:#10b981; font-weight:800;">11th (आय)</span></td><td>रोग, शत्रु व ऋण पर विजय और प्रचुर लाभ</td><td>षष्ठ (शत्रु/प्रतिस्पर्धा) से षष्ठ भाव एकादश (लाभ) है। कठिन संघर्षों, कर्जों और कानूनी वादों पर विजय प्राप्त कर जातक विपुल लाभ अर्जित करता है।</td></tr>
+                                    <tr><td><b>7 से 7</b></td><td><span style="color:#10b981; font-weight:800;">1st (तनु)</span></td><td>जीवनसाथी का प्रभाव व स्वयं का यथार्थ प्रतिबिंब</td><td>सप्तम (साझेदार) से सप्तम भाव पुनः लग्न (1ला भाव) है। जीवनसाथी वस्तुतः जातक के अपने ही अंतर्मन और प्रारब्ध का भौतिक दर्पण होता है।</td></tr>
+                                    <tr><td><b>8 से 8</b></td><td><span style="color:#10b981; font-weight:800;">3rd (सहज)</span></td><td>आयु-शक्ति, गूढ़ संकट में अदम्य धैर्य व साहस</td><td>अष्टम (आयु/संकट) से अष्टम भाव तृतीय (पराक्रम) है। जीवन-मरण के संकट और गंभीर विपत्तियों से उबरने की शक्ति जातक के 3रे भाव के जीवट से आती है।</td></tr>
+                                    <tr><td><b>9 से 9</b></td><td><span style="color:#10b981; font-weight:800;">5th (पुत्र)</span></td><td>धर्म, साधना व गुरु कृपा से मंत्र-सिद्धि व संतान</td><td>नवम (भाग्य/गुरु) से नवम भाव पंचम (मंत्र/संतान) है। गुरु के आशीर्वाद और धर्म-पालन से इष्ट-कृपा व तीव्र मंत्र-सिद्धि फलित होती है।</td></tr>
+                                    <tr><td><b>10 से 10</b></td><td><span style="color:#10b981; font-weight:800;">7th (जाया)</span></td><td>कर्म का लोक-विस्तार, व्यापारिक सत्ता व सामाजिक मान</td><td>दशम (कर्म/प्रतिष्ठा) से दशम भाव सप्तम (लोक-व्यवहार) है। कार्यक्षेत्र की सर्वोच्च सफलता जनता से संपर्क और बड़े व्यापारिक गठबंधनों से स्थापित होती है।</td></tr>
+                                    <tr><td><b>11 से 11</b></td><td><span style="color:#10b981; font-weight:800;">9th (धर्म)</span></td><td>लाभ की निरंतरता, अक्षय समृद्धि व धर्म-परायणता</td><td>एकादश (आय) से एकादश भाव नवम (धर्म) है। संचित लाभ तभी स्थायी और पुण्यदायी बनता है जब वह धर्म, परोपकार और नीति-सम्मत मार्ग से अर्जित हो।</td></tr>
+                                    <tr><td><b>12 से 12</b></td><td><span style="color:#10b981; font-weight:800;">11th (आय)</span></td><td>व्यय, त्याग व विदेशी निवेश से भौतिक-आध्यात्मिक लाभ</td><td>द्वादश (मोक्ष/व्यय) से द्वादश भाव एकादश (लाभ) है। विवेकपूर्ण त्याग, धर्मार्थ दान और सुदूर निवेश अंततः जातक को मान और आत्म-संतोष रूपी लाभ देता है।</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 3x3 Magic Square Yantras (15 to 39) & 12 Kamna Yantras -->
+                    <div class="content-card" style="margin-bottom:16px;">
+                        <div class="card-heading">
+                            <span>✦ संपूर्ण तांत्रिक व नवग्रह 3×3 अंकीय यंत्र (योग 15 से 39) एवं 12 कामना-यंत्र</span>
+                            <span style="font-size:0.72rem; color:var(--accent-gold); font-weight:700;">मेरु तंत्र • भोजपत्र विधान</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-top:12px;">
+                            <!-- Surya Yantra (15) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#f59e0b; font-size:0.86rem;">1. सूर्य यंत्र (योग = 15) • पूर्व दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(245,158,11,0.1); padding:6px; border-radius:6px; font-weight:800; color:#fbbf24; font-family:var(--font-mono);">
+                                    <div>6</div><div>1</div><div>8</div>
+                                    <div>7</div><div>5</div><div>3</div>
+                                    <div>2</div><div>9</div><div>4</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">तांबा/स्वर्ण • मातंगी/श्रीराम • जप: 7,000</span>
+                            </div>
+
+                            <!-- Chandra Yantra (18) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(56,189,248,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#38bdf8; font-size:0.86rem;">2. चंद्र यंत्र (योग = 18) • वायव्य दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(56,189,248,0.1); padding:6px; border-radius:6px; font-weight:800; color:#7dd3fc; font-family:var(--font-mono);">
+                                    <div>7</div><div>2</div><div>9</div>
+                                    <div>8</div><div>6</div><div>4</div>
+                                    <div>3</div><div>10</div><div>5</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">चांदी • काली/श्रीकृष्ण • जप: 11,000</span>
+                            </div>
+
+                            <!-- Mangal Yantra (21) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(239,68,68,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#ef4444; font-size:0.86rem;">3. मंगल यंत्र (योग = 21) • दक्षिण दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(239,68,68,0.1); padding:6px; border-radius:6px; font-weight:800; color:#f87171; font-family:var(--font-mono);">
+                                    <div>8</div><div>3</div><div>10</div>
+                                    <div>9</div><div>7</div><div>5</div>
+                                    <div>4</div><div>11</div><div>6</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">तांबा • छिन्नमस्ता/नरसिंह • जप: 10,000</span>
+                            </div>
+
+                            <!-- Budha Yantra (24) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(16,185,129,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#10b981; font-size:0.86rem;">4. बुध यंत्र (योग = 24) • उत्तर दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(16,185,129,0.1); padding:6px; border-radius:6px; font-weight:800; color:#34d399; font-family:var(--font-mono);">
+                                    <div>9</div><div>4</div><div>11</div>
+                                    <div>10</div><div>8</div><div>6</div>
+                                    <div>5</div><div>12</div><div>7</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">कांसा/भोजपत्र • कमला/बुद्ध • जप: 9,000</span>
+                            </div>
+
+                            <!-- Guru Yantra (27) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(234,179,8,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#eab308; font-size:0.86rem;">5. गुरु यंत्र (योग = 27) • ईशान दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(234,179,8,0.1); padding:6px; border-radius:6px; font-weight:800; color:#fde047; font-family:var(--font-mono);">
+                                    <div>10</div><div>5</div><div>12</div>
+                                    <div>11</div><div>9</div><div>7</div>
+                                    <div>6</div><div>13</div><div>8</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">पीतल/स्वर्ण • भुवनेश्वरी/वामन • जप: 19,000</span>
+                            </div>
+
+                            <!-- Shukra Yantra (30) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(236,72,153,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#ec4899; font-size:0.86rem;">6. शुक्र यंत्र (योग = 30) • आग्नेय दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(236,72,153,0.1); padding:6px; border-radius:6px; font-weight:800; color:#f472b6; font-family:var(--font-mono);">
+                                    <div>11</div><div>6</div><div>13</div>
+                                    <div>12</div><div>10</div><div>8</div>
+                                    <div>7</div><div>14</div><div>9</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">चांदी/स्फटिक • षोडशी/परशुराम • जप: 16,000</span>
+                            </div>
+
+                            <!-- Shani Yantra (33) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(148,163,184,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#94a3b8; font-size:0.86rem;">7. शनि यंत्र (योग = 33) • पश्चिम दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(148,163,184,0.1); padding:6px; border-radius:6px; font-weight:800; color:#cbd5e1; font-family:var(--font-mono);">
+                                    <div>12</div><div>7</div><div>14</div>
+                                    <div>13</div><div>11</div><div>9</div>
+                                    <div>8</div><div>15</div><div>10</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">लोहा/अष्टधातु • बगलामुखी/कूर्म • जप: 23,000</span>
+                            </div>
+
+                            <!-- Rahu Yantra (36) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(168,85,247,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#a855f7; font-size:0.86rem;">8. राहु यंत्र (योग = 36) • नैऋत्य दिशा</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(168,85,247,0.1); padding:6px; border-radius:6px; font-weight:800; color:#c084fc; font-family:var(--font-mono);">
+                                    <div>13</div><div>8</div><div>15</div>
+                                    <div>14</div><div>12</div><div>10</div>
+                                    <div>9</div><div>16</div><div>11</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">सीसा/अष्टधातु • धूमावती/वराह • जप: 18,000</span>
+                            </div>
+
+                            <!-- Ketu Yantra (39) -->
+                            <div style="background:rgba(15,23,42,0.6); border:1px solid rgba(249,115,22,0.3); border-radius:8px; padding:12px; text-align:center;">
+                                <b style="color:#f97316; font-size:0.86rem;">9. केतु यंत्र (योग = 39) • ईशान/नैऋत्य</b>
+                                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:180px; margin:8px auto; background:rgba(249,115,22,0.1); padding:6px; border-radius:6px; font-weight:800; color:#fb923c; font-family:var(--font-mono);">
+                                    <div>14</div><div>9</div><div>16</div>
+                                    <div>15</div><div>13</div><div>11</div>
+                                    <div>10</div><div>17</div><div>12</div>
+                                </div>
+                                <span style="font-size:0.72rem; color:var(--text-secondary);">तांबा/अष्टधातु • तारा/मत्स्य • जप: 17,000</span>
                             </div>
                         </div>
                     </div>
@@ -11348,6 +11559,7 @@
                 else if (tabKey === 'vargas') this.renderShodashavarga();
                 else if (tabKey === 'ashtakavarga') this.renderAshtakavarga();
                 else if (tabKey === 'kp') this.renderKP();
+                if (tabKey === 'bhavatbhavam') this.evalBhavatBhavamUI();
                 else if (tabKey === 'jaimini') this.renderJaimini();
                 else if (tabKey === 'nadi') this.renderNadi();
                 else if (tabKey === 'sphutas') this.renderSphutas();
@@ -13698,7 +13910,7 @@
                 var dobEl = document.getElementById('edit_dob');
                 var tobEl = document.getElementById('edit_tob');
                 var cityEl = document.getElementById('edit_city');
-                if (nameEl) nameEl.value = (this.googleUser && this.googleUser.name) ? this.googleUser.name : "";
+                if (nameEl) nameEl.value = "";
                 if (dobEl) dobEl.value = "";
                 if (tobEl) tobEl.value = "12:00";
                 if (cityEl) cityEl.value = "नई दिल्ली";
@@ -14836,12 +15048,77 @@
                     return { rl: rl, nl: nl, sl: sl, ssl: SUB_ORDER[sslIdx], sign: SIGNS_HI[sIdx] };
                 }
 
+                // Exact Spherical Placidus Semi-Arc Cusp Solver
+                function solveExactPlacidus(ascNir, latitude, ayan, jd) {
+                    var ascTrop = (ascNir + ayan) % 360.0;
+                    if (ascTrop < 0) ascTrop += 360.0;
+                    var T = (jd - 2451545.0) / 36525.0;
+                    var epsDeg = 23.43929111 - (46.8150 * T) / 3600.0;
+                    var eps = epsDeg * Math.PI / 180.0;
+                    var phi = Math.max(Math.min(latitude, 66.0), -66.0) * Math.PI / 180.0;
+                    var lam1 = ascTrop * Math.PI / 180.0;
+
+                    var alpha1 = (Math.atan2(Math.sin(lam1) * Math.cos(eps), Math.cos(lam1)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    var sinDecl1 = Math.sin(eps) * Math.sin(lam1);
+                    var tanDecl1 = sinDecl1 / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl1 * sinDecl1));
+                    var ad1 = Math.asin(Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl1))) * 180.0 / Math.PI;
+                    var oa1 = (alpha1 - ad1 + 360.0) % 360.0;
+                    var ramcDeg = (oa1 - 90.0 + 360.0) % 360.0;
+                    var ramc = ramcDeg * Math.PI / 180.0;
+                    var mcDeg = (Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+
+                    function pIter(offsetDeg, factor, diurnal) {
+                        var ra0 = (ramcDeg + offsetDeg) % 360.0;
+                        var raCurr = ra0;
+                        for (var iter = 0; iter < 35; iter++) {
+                            var raRad = raCurr * Math.PI / 180.0;
+                            var lam = Math.atan2(Math.sin(raRad), Math.cos(raRad) * Math.cos(eps));
+                            var sinDecl = Math.sin(eps) * Math.sin(lam);
+                            var tanDecl = sinDecl / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl * sinDecl));
+                            var arg = Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl));
+                            var adDeg = Math.asin(arg) * 180.0 / Math.PI;
+                            var raNext = diurnal ? ((ra0 + factor * adDeg) % 360.0 + 360.0) % 360.0 : ((ra0 - factor * adDeg) % 360.0 + 360.0) % 360.0;
+                            if (Math.abs((raNext - raCurr + 180.0) % 360.0 - 180.0) < 1e-7) {
+                                raCurr = raNext;
+                                break;
+                            }
+                            raCurr = raNext;
+                        }
+                        var raFin = raCurr * Math.PI / 180.0;
+                        return (Math.atan2(Math.sin(raFin), Math.cos(raFin) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    }
+
+                    var c11 = pIter(30.0, 1.0 / 3.0, true);
+                    var c12 = pIter(60.0, 2.0 / 3.0, true);
+                    var c2 = pIter(120.0, 2.0 / 3.0, false);
+                    var c3 = pIter(150.0, 1.0 / 3.0, false);
+
+                    var trop = {
+                        1: ascTrop, 2: c2, 3: c3, 4: (mcDeg + 180.0) % 360.0,
+                        5: (c11 + 180.0) % 360.0, 6: (c12 + 180.0) % 360.0,
+                        7: (ascTrop + 180.0) % 360.0, 8: (c2 + 180.0) % 360.0, 9: (c3 + 180.0) % 360.0,
+                        10: mcDeg, 11: c11, 12: c12
+                    };
+
+                    var res = {};
+                    for (var h = 1; h <= 12; h++) {
+                        res[h] = (trop[h] - ayan + 360.0) % 360.0;
+                    }
+                    return res;
+                }
+
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
-                    var cLon = norm(ascSid + (c - 1) * 30.0);
+                    var cLon = placidusMap[c];
                     var kpL = getKpLords(cLon);
                     var cDegIn = cLon % 30.0;
-                    var cDms = Math.floor(cDegIn) + "°" + Math.floor((cDegIn * 60) % 60) + "'";
+                    var dDeg = Math.floor(cDegIn);
+                    var dMin = Math.floor((cDegIn - dDeg) * 60.0);
+                    var dSec = Math.round(((cDegIn - dDeg) * 60.0 - dMin) * 60.0);
+                    if (dSec === 60) { dSec = 0; dMin++; }
+                    if (dMin === 60) { dMin = 0; dDeg++; }
+                    var cDms = dDeg + "°" + (dMin < 10 ? "0" : "") + dMin + "'" + (dSec < 10 ? "0" : "") + dSec + '"';
                     kpCusps.push({
                         cusp: String(c),
                         sign: kpL.sign,
@@ -14849,7 +15126,8 @@
                         rl: kpL.rl,
                         nl: kpL.nl,
                         sl: kpL.sl,
-                        ssl: kpL.ssl
+                        ssl: kpL.ssl,
+                        longitude: cLon
                     });
                 }
 
@@ -14892,15 +15170,25 @@
                 var jaiminiKarakas = sortedKarakas.map(function (item, idx) {
                     var deg = item.degInSign;
                     var dms = Math.floor(deg) + "°" + Math.floor((deg * 60) % 60) + "'";
+                    var h = ((item.signIdx - ascSignIdx + 12) % 12) + 1;
                     return {
                         abbr: KARAKA_NAMES[idx].abbr,
                         karaka: KARAKA_NAMES[idx].name,
+                        title: KARAKA_NAMES[idx].name,
+                        name: KARAKA_NAMES[idx].name,
                         planet: item.name,
                         sign: SIGNS_HI[item.signIdx],
                         deg: dms,
-                        signification: KARAKA_NAMES[idx].role
+                        degNum: deg,
+                        house: h,
+                        signification: KARAKA_NAMES[idx].role,
+                        desc: KARAKA_NAMES[idx].role,
+                        role: KARAKA_NAMES[idx].role
                     };
                 });
+                for (var jk = 0; jk < jaiminiKarakas.length; jk++) {
+                    jaiminiKarakas[jaiminiKarakas[jk].abbr] = jaiminiKarakas[jk];
+                }
 
                 var ak = sortedKarakas[0];
                 var klNavSign = (function (sign, deg) {
@@ -16511,7 +16799,9 @@
             © 2026 VYAS ASTRA • सर्वाधिकार सुरक्षित • NASA JPL Swiss Ephemeris 0.001" विशुद्ध खगोलीय परिशुद्धता।
         </div>
     </footer>
+    <script src="js/vyas_bhavat_bhavam.js"></script>
     <script src="js/vyas_kp_horary_solver.js"></script>
+    <script src="js/vyas_treatise_sutras.js"></script>
     <script src="js/vyas_treatise_engine.js"></script>
     <script src="js/vyas_swipe_navigation.js"></script>
 </body>

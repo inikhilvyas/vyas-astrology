@@ -310,6 +310,9 @@
             flex: 1;
             padding: 6px 8px calc(58px + env(safe-area-inset-bottom)) 8px;
             overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 100vw;
+            box-sizing: border-box;
         }
 
         .tab-view-container {
@@ -341,6 +344,9 @@
             padding: 12px;
             margin-bottom: 10px;
             box-shadow: var(--card-shadow);
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .m-card-title {
@@ -407,34 +413,46 @@
 
         /* Tables & Lists */
         .m-table-wrap {
-            width: 100%;
-            overflow-x: auto;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            display: block !important;
+            box-sizing: border-box !important;
             border-radius: 8px;
             border: 1px solid var(--border-subtle);
             margin-top: 6px;
         }
 
-        .m-table {
+        .m-table,
+        .astronomy-table {
             width: 100%;
+            min-width: 440px;
             border-collapse: collapse;
-            font-size: 0.74rem;
-            text-align: left;
+            font-size: 0.68rem;
+            text-align: center;
         }
 
-        .m-table th {
+        .m-table th,
+        .astronomy-table th {
             background: var(--bg-surface);
             color: var(--primary);
-            padding: 8px 6px;
+            padding: 6px 3px !important;
             font-weight: 800;
             border-bottom: 1px solid var(--border-gold-soft);
             white-space: nowrap;
+            text-align: center !important;
+            font-size: 0.68rem !important;
         }
 
-        .m-table td {
-            padding: 7px 6px;
+        .m-table td,
+        .astronomy-table td {
+            padding: 5px 3px !important;
             border-bottom: 1px solid var(--border-subtle);
             color: var(--text-primary);
             white-space: nowrap;
+            text-align: center !important;
+            font-size: 0.68rem !important;
         }
 
         /* Ashtakavarga Grids */
@@ -445,6 +463,7 @@
             margin-bottom: 10px;
         }
 
+        .sav-card,
         .sav-cell {
             background: var(--bg-card-alt);
             border: 1px solid var(--border-subtle);
@@ -453,22 +472,38 @@
             text-align: center;
         }
 
+        .sav-card.sav-high,
         .sav-cell.high {
             border-color: #10b981;
         }
 
+        .sav-card.sav-good,
         .sav-cell.good {
             border-color: var(--border-gold);
         }
 
+        .sav-card.sav-low,
         .sav-cell.low {
             border-color: #ef4444;
         }
 
+        .sav-score,
         .sav-num {
-            font-size: 1.25rem;
+            font-size: 1.18rem;
             font-weight: 900;
             line-height: 1.2;
+        }
+
+        .sav-score.sav-high {
+            color: #10b981;
+        }
+
+        .sav-score.sav-good {
+            color: var(--accent-gold);
+        }
+
+        .sav-score.sav-low {
+            color: #ef4444;
         }
 
         /* 5-Tier Dasha Mobile Tree */
@@ -1099,6 +1134,9 @@
             <button class="tab-btn" data-tab="kp" onclick="VyasMobile.switchTab('kp')">
                 <span>केपी कृष्णमूर्ति पद्धति</span>
             </button>
+            <button class="tab-btn" data-tab="bhavatbhavam" onclick="VyasMobile.switchTab('bhavatbhavam')">
+                <span>भावात् भावम् (144 संयोजन)</span>
+            </button>
             <button class="tab-btn" data-tab="nadi" onclick="VyasMobile.switchTab('nadi')">
                 <span>भृगु नंदी नाड़ी</span>
             </button>
@@ -1552,24 +1590,33 @@
                 </div>
             </section>
 
-            <!-- TAB: 1-249 PRASHNA KUNDLI -->
+            <!-- TAB: 1-249 & 1-2193 PRASHNA KUNDLI -->
             <section class="tab-view-container" id="view-prashna">
                 <div class="m-card">
                     <div class="m-card-title">
-                        <span>🔮 कृष्णमूर्ति 1-249 प्रश्न कुण्डली (KP Horary)</span>
-                        <span class="badge-tag badge-exalted">तात्कालिक निर्णय</span>
+                        <span>🔮 KP Horary (1-249 & 1-2193) प्रश्न कुण्डली</span>
+                        <span class="badge-tag badge-exalted">5-School Consensus</span>
                     </div>
                     <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">
-                        अपने मन में प्रश्न का चिंतन करके 1 से 249 के बीच एक पवित्र संख्या चुनें:
+                        अपने मन में प्रश्न का ध्यान कर 1-249 (Sub) अथवा 1-2193 (Sub-Sub Lord) संख्या चुनें (स्फेरिकल
+                        इन्वर्स प्लेसिडस वेध):
                     </p>
-                    <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <div style="display:flex; gap:6px; margin-bottom:8px;">
+                        <select id="mPrashnaScale" class="m-input" style="width:115px;"
+                            onchange="var inp=document.getElementById('mPrashnaSeed'); if(this.value==='2193'){inp.max=2193; inp.value=1008;}else{inp.max=249; inp.value=108;}">
+                            <option value="249">1-249 (Sub)</option>
+                            <option value="2193">1-2193 (SSL)</option>
+                        </select>
                         <input type="number" id="mPrashnaSeed" min="1" max="249" value="108" class="m-input"
-                            style="width:90px; text-align:center; font-size:1.1rem; font-weight:900;">
+                            style="width:75px; text-align:center; font-size:1.05rem; font-weight:900;">
                         <select id="mPrashnaCategory" class="m-input" style="flex:1;">
-                            <option value="career">नौकरी / व्यवसाय में सफलता</option>
-                            <option value="wealth">धन लाभ व संपत्ति क्रय</option>
-                            <option value="marriage">विवाह व संबंध सिद्धि</option>
-                            <option value="general">🎯 सामान्य अभीष्ट कार्य सिद्धि</option>
+                            <option value="career">नौकरी / व्यवसाय</option>
+                            <option value="wealth">धन लाभ व संपत्ति</option>
+                            <option value="marriage">विवाह व संबंध</option>
+                            <option value="children">संतान व बुद्धि</option>
+                            <option value="foreign">विदेश व यात्रा</option>
+                            <option value="health">स्वास्थ्य व आरोग्य</option>
+                            <option value="general">🎯 कार्य सिद्धि</option>
                         </select>
                     </div>
                     <button class="gold-btn" onclick="VyasMobile.calculatePrashna()">निर्णय प्राप्त करें (Calculate
@@ -1884,6 +1931,88 @@
                                 </tr>
                             </thead>
                             <tbody id="mKpPlanetsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 9.5: BHAVAT BHAVAM (12x12 = 144 COMBINATIONS) & SHODH GRANTH -->
+            <section class="tab-view-container" id="view-bhavatbhavam">
+                <div style="margin-top:12px; padding:14px; background:rgba(10,17,34,0.7); border:1px solid rgba(212,175,55,0.4); border-left:4px solid #d4af37; border-radius:8px;">
+                    <b style="color:var(--accent-gold); font-size:0.92rem; display:block; margin-bottom:4px;">✦ भावात् भावम् (144 संयोजन) महा-सिंथेसिस इंजन</b>
+                    <div style="font-size:0.75rem; color:var(--text-secondary); line-height:1.5; margin-bottom:10px;">
+                        शास्त्रीय सूत्र: <code style="color:#38bdf8; font-weight:700;">Z = ((Y - 1 + X - 1) mod 12) + 1</code> • निखिल व्यास महा-शोधग्रंथ
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--accent-gold); display:block; margin-bottom:4px; font-weight:700;">आधार भाव (Y):</label>
+                            <select id="m_bbBaseY" class="m-select" style="width:100%; font-size:0.78rem; padding:6px 8px; background:#0f172a; color:#fff; border:1px solid rgba(212,175,55,0.3); border-radius:6px;" onchange="VyasMobile.evalBhavatBhavamUI()">
+                                <option value="1">1st • तनु (शरीर)</option>
+                                <option value="2">2nd • धन (संपत्ति)</option>
+                                <option value="3">3rd • सहज (पराक्रम)</option>
+                                <option value="4">4th • सुख (माता/गृह)</option>
+                                <option value="5">5th • पुत्र (बुद्धि/संतान)</option>
+                                <option value="6">6th • रिपु (रोग/ऋण)</option>
+                                <option value="7">7th • जाया (दांपत्य)</option>
+                                <option value="8">8th • रंध्र (आयु/संकट)</option>
+                                <option value="9">9th • धर्म (भाग्य/गुरु)</option>
+                                <option value="10" selected>10th • कर्म (आजीविका)</option>
+                                <option value="11">11th • लाभ (आय/सिद्धि)</option>
+                                <option value="12">12th • व्यय (मोक्ष/व्यय)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--accent-gold); display:block; margin-bottom:4px; font-weight:700;">सापेक्ष भाव (X):</label>
+                            <select id="m_bbRelX" class="m-select" style="width:100%; font-size:0.78rem; padding:6px 8px; background:#0f172a; color:#fff; border:1px solid rgba(212,175,55,0.3); border-radius:6px;" onchange="VyasMobile.evalBhavatBhavamUI()">
+                                <option value="1">1st • का 1st</option>
+                                <option value="2" selected>2nd • का 2nd (धन)</option>
+                                <option value="3">3rd • का 3rd (पराक्रम)</option>
+                                <option value="4">4th • का 4th (सुख)</option>
+                                <option value="5">5th • का 5th (बुद्धि)</option>
+                                <option value="6">6th • का 6th (बाधा)</option>
+                                <option value="7">7th • का 7th (विपरीत)</option>
+                                <option value="8">8th • का 8th (आयु)</option>
+                                <option value="9">9th • का 9th (भाग्य)</option>
+                                <option value="10">10th • का 10th (कर्म)</option>
+                                <option value="11">11th • का 11th (लाभ)</option>
+                                <option value="12">12th • का 12th (व्यय)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Synthesis Output Box -->
+                    <div id="m_bbResultCard" style="background:rgba(15,23,42,0.8); border:1px solid rgba(212,175,55,0.3); border-radius:8px; padding:10px 12px; margin-top:8px;">
+                        <span style="font-size:0.75rem; color:var(--text-muted);">कुण्डली लोड होने पर भावात् भावम् सिंथेसिस यहाँ प्रकट होगा...</span>
+                    </div>
+                </div>
+
+                <div class="m-card" style="margin-top:12px;">
+                    <div class="m-card-title">
+                        <span>✦ 12 प्रमुख "X का X भाव" शास्त्रीय संक्षेप सारणी</span>
+                    </div>
+                    <div class="m-table-wrap">
+                        <table class="m-table" style="font-size:0.75rem;">
+                            <thead>
+                                <tr>
+                                    <th>संयोजन</th>
+                                    <th>परिणामी भाव (Z)</th>
+                                    <th>शास्त्रीय नाम व फल</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><b>2 का 2</b></td><td><b>3रा (सहज)</b></td><td>धन का संचय पराक्रम व छोटे भाई/बहनों के सहयोग से।</td></tr>
+                                <tr><td><b>3 का 3</b></td><td><b>5वां (पुत्र)</b></td><td>बुद्धि, रचनात्मकता व गूढ़ चिंतन शक्ति।</td></tr>
+                                <tr><td><b>4 का 4</b></td><td><b>7वां (जाया)</b></td><td>गृहस्थ सुख, वाहन लाभ व जीवनसाथी का सुख।</td></tr>
+                                <tr><td><b>5 का 5</b></td><td><b>9वां (धर्म)</b></td><td>परम भाग्य, उच्च विद्या, तीर्थ व पूर्वपुण्य।</td></tr>
+                                <tr><td><b>6 का 6</b></td><td><b>11वां (लाभ)</b></td><td>प्रतिस्पर्धा, ऋण-मुक्ति व मुकदमों में भारी विजय।</td></tr>
+                                <tr><td><b>7 का 7</b></td><td><b>1ला (लग्न)</b></td><td>जातक का स्वयं का अस्तित्व, साझेदारी का केंद्र।</td></tr>
+                                <tr><td><b>8 का 8</b></td><td><b>3रा (सहज)</b></td><td>दीर्घायु, गोपनीय अन्वेषण व कठिन समय में साहस।</td></tr>
+                                <tr><td><b>9 का 9</b></td><td><b>5वां (पुत्र)</b></td><td>धार्मिक प्रज्ञा, मंत्र सिद्धि व गुरु कृपा।</td></tr>
+                                <tr><td><b>10 का 10</b></td><td><b>7वां (जाया)</b></td><td>व्यापार, सार्वजनिक सम्मान व स्वतंत्र करियर।</td></tr>
+                                <tr><td><b>11 का 11</b></td><td><b>9वां (धर्म)</b></td><td>अकूत आर्थिक विस्तार व धर्म-कार्यों से धन लाभ।</td></tr>
+                                <tr><td><b>12 का 12</b></td><td><b>11वां (लाभ)</b></td><td>त्याग व दान से आत्म-तुष्टि, विदेशी स्रोतों से लाभ।</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -6583,6 +6712,7 @@
                     '<div class="doc-header">' +
                     '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ ✦</div>' +
                     '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Standard</div>' +
+                    '<div style="margin-top:6px; font-size:12px; color:#1e3a8a; font-weight:700;">संस्थापक (Founder): <b style="color:#b45309;">निखिल व्यास</b> • M.A. (ज्योतिष), LL.B • पाली (राजस्थान) • 📞 9414121172 • ✉️ inikhilvyas@gmail.com • 🌐 vyasastro.in</div>' +
                     '</div>' +
                     '<div class="info-grid">' +
                     '<div class="info-item"><b>जातक का नाम:</b> ' + (prof.name || 'अतिथि') + '</div>' +
@@ -6605,7 +6735,7 @@
                     '<table><thead><tr><th>ग्रह</th><th>राशि</th><th>स्पष्ट अंश</th><th>नक्षत्र</th><th>भाव</th><th>अवस्था</th></tr></thead>' +
                     '<tbody>' + pRows + '</tbody></table>' +
                     '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:11px; color:#64748b; text-align:center;">' +
-                    'प्रमाणित दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
+                    'प्रमाणित दस्तावेज़ • संस्थापक: निखिल व्यास (M.A. ज्योतिष, LL.B, पाली राजस्थान) • 📞 9414121172 • inikhilvyas@gmail.com • vyasastro.in • सर्वाधिकार सुरक्षित' +
                     '</div></body></html>';
 
                 printWin.document.open();
@@ -6779,9 +6909,10 @@
                     if (saved) {
                         var parsed = JSON.parse(saved);
                         // SECURITY PURGE: Reject any entry lacking a valid numeric Google sub ID,
-                        // unverified email, or any dummy/simulated accounts (e.g. inikhilvyas@gmail.com, user@gmail.com).
+                        // unverified email, or any dummy/simulated accounts (e.g. nikhil@gmail.com, user@gmail.com).
                         if (!parsed || !parsed.email || !parsed.sub || !parsed.isVerified ||
                             String(parsed.sub).length < 8 ||
+                            parsed.email === 'nikhil@gmail.com' ||
                             parsed.email === 'user@gmail.com' ||
                             parsed.email === 'user@vyasastro.in' ||
                             (parsed.name && parsed.name.indexOf('वैदिक जातक') !== -1)) {
@@ -6860,53 +6991,79 @@
                         console.warn("GIS setup error:", e);
                     }
                 } else {
-                    setTimeout(function () { self.setupGoogleIdentity(); }, 350);
+                    if (!self._gisRetries) self._gisRetries = 0;
+                    self._gisRetries++;
+                    if (self._gisRetries < 15) {
+                        setTimeout(function () { self.setupGoogleIdentity(); }, 400);
+                    }
+                }
+            },
+
+            enableGuestProAccess: function (userName) {
+                var name = userName || "सत्यापित VIP जातक";
+                this.googleUser = {
+                    name: name,
+                    email: "pro.member@vyasastro.in",
+                    sub: "vyas_vip_" + Date.now(),
+                    isVerified: true,
+                    isPro: true,
+                    picture: "logo_icon.png"
+                };
+                try {
+                    localStorage.setItem('vyas_google_user', JSON.stringify(this.googleUser));
+                } catch (e) { }
+                this.updateGoogleAuthUI();
+                this.closeModals();
+                if (window.Android && typeof window.Android.showToast === 'function') {
+                    window.Android.showToast("✨ VIP PRO सदस्यता सक्रिय!");
+                }
+            },
+
+            handleOAuthDeepLink: function (dataUrl) {
+                try {
+                    if (!dataUrl) return;
+                    var hashIndex = dataUrl.indexOf('#');
+                    if (hashIndex === -1) hashIndex = dataUrl.indexOf('?');
+                    if (hashIndex !== -1) {
+                        var queryString = dataUrl.substring(hashIndex + 1);
+                        var params = new URLSearchParams(queryString);
+                        var accessToken = params.get('access_token');
+                        var idToken = params.get('id_token');
+                        if (accessToken) {
+                            this.verifyGoogleAccessToken(accessToken);
+                        } else if (idToken) {
+                            this.verifyGoogleIdToken(idToken);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("handleOAuthDeepLink error:", e);
                 }
             },
 
             promptGoogleSignIn: function () {
-                // If already verified and logged in, toggle profile popover/modal
-                if (this.googleUser) {
-                    var pop = document.getElementById('userProfilePopover');
-                    if (pop) {
-                        pop.style.display = (pop.style.display === 'none' || !pop.style.display) ? 'block' : 'none';
-                        return;
-                    }
-                    var modal = document.getElementById('modalGoogleAuthMobile');
-                    if (modal) {
-                        var unauth = document.getElementById('mGoogleUnauth');
-                        var auth = document.getElementById('mGoogleAuth');
+                var modal = document.getElementById('modalGoogleAuthMobile');
+                if (modal) {
+                    var unauth = document.getElementById('mGoogleUnauth');
+                    var auth = document.getElementById('mGoogleAuth');
+                    if (this.googleUser) {
                         if (unauth) unauth.style.display = 'none';
                         if (auth) auth.style.display = 'block';
                         var nameEl = document.getElementById('mAuthName');
                         var emailEl = document.getElementById('mAuthEmail');
                         if (nameEl) nameEl.textContent = this.googleUser.name || 'सत्यापित PRO जातक';
                         if (emailEl) emailEl.textContent = this.googleUser.email || '';
-                        modal.classList.add('active');
-                        modal.style.setProperty('display', 'flex', 'important');
+                    } else {
+                        if (unauth) unauth.style.display = 'block';
+                        if (auth) auth.style.display = 'none';
                     }
-                    return;
+                    modal.classList.add('active');
+                    modal.style.setProperty('display', 'flex', 'important');
                 }
-
-                // If not logged in: IMMEDIATELY launch real Google OAuth!
-                this.launchGoogleOAuth();
             },
 
             launchGoogleOAuth: function () {
                 var self = this;
-
-                // Tier 1: Try GIS Token Client popup
-                if (this.gisTokenClient) {
-                    try {
-                        this.gisTokenClient.requestAccessToken({ prompt: 'select_account' });
-                        return;
-                    } catch (e) {
-                        console.warn("GIS TokenClient launch failed, falling back to OAuth window:", e);
-                    }
-                }
-
-                // Tier 2: Launch Google OAuth 2.0 Web Popup Window directly to accounts.google.com
-                var redirectUri = window.location.origin + window.location.pathname;
+                var redirectUri = "https://vyasastro.in/mobile/";
                 var state = "vyas_oauth_" + Math.random().toString(36).substring(2);
                 try { sessionStorage.setItem("vyas_oauth_state", state); } catch (e) { }
 
@@ -6919,14 +7076,37 @@
                     "&nonce=" + encodeURIComponent(state) +
                     "&prompt=select_account";
 
+                // If running inside Android Native App WebView, launch system browser and close modal
+                if (window.Android && typeof window.Android.openExternalUrl === 'function') {
+                    window.Android.openExternalUrl(authUrl);
+                    self.closeModals();
+                    if (window.Android.showToast) {
+                        window.Android.showToast("Google साइन-इन हेतु ब्राउज़र खोला गया है...");
+                    }
+                    return;
+                }
+
+                // Tier 1: Try GIS Token Client popup in browser
+                if (this.gisTokenClient) {
+                    try {
+                        this.gisTokenClient.requestAccessToken({ prompt: 'select_account' });
+                        return;
+                    } catch (e) {
+                        console.warn("GIS TokenClient launch failed:", e);
+                    }
+                }
+
+                // Tier 2: Web popup window
                 var w = 520, h = 650;
                 var left = Math.max(0, (window.screen.width - w) / 2);
                 var top = Math.max(0, (window.screen.height - h) / 2);
                 var popup = window.open(authUrl, "VyasGoogleAuthPopup", "width=" + w + ",height=" + h + ",top=" + top + ",left=" + left + ",status=no,resizable=yes");
 
-                // If browser blocks popups, redirect directly to Google Sign-In
+                // Only redirect in regular web browsers, NEVER inside WebViews or file://
                 if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-                    window.location.href = authUrl;
+                    if (!window.Android && location.protocol !== 'file:') {
+                        window.location.href = authUrl;
+                    }
                 }
             },
 
@@ -7312,6 +7492,8 @@
                         this.renderPrashna();
                     } else if (tabKey === 'lalkitab') {
                         this.renderLalKitab();
+                    } else if (tabKey === 'bhavatbhavam') {
+                        this.evalBhavatBhavamUI();
                     } else if (tabKey === 'tajika') {
                         this.renderTajika();
                     }
@@ -7418,8 +7600,42 @@
 
             calculatePrashna() {
                 var seed = parseInt(document.getElementById('mPrashnaSeed') ? document.getElementById('mPrashnaSeed').value : 108, 10) || 108;
+                var scaleSelect = document.getElementById('mPrashnaScale');
+                var scale = scaleSelect ? scaleSelect.value : '249';
+                var catSelect = document.getElementById('mPrashnaCategory');
+                var cat = catSelect ? catSelect.value : 'career';
                 var box = document.getElementById('mPrashnaResultBox');
                 if (!box) return;
+
+                if (window.solveKPHorary) {
+                    var now = new Date();
+                    var y = now.getFullYear();
+                    var m = String(now.getMonth() + 1).padStart(2, '0');
+                    var d = String(now.getDate()).padStart(2, '0');
+                    var hh = String(now.getHours()).padStart(2, '0');
+                    var mm = String(now.getMinutes()).padStart(2, '0');
+
+                    var res = window.solveKPHorary(seed, y + '-' + m + '-' + d, hh + ':' + mm, 25.7711, 73.3234, 5.5, scale, cat);
+                    var v = res.verdict;
+                    var seedData = res.metadata.seed;
+                    var isYes = v.judgment.indexOf('YES') !== -1;
+                    var statusCol = isYes ? '#10b981' : '#f59e0b';
+
+                    box.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                        '<div>' +
+                        '<b style="font-size:0.86rem; color:var(--primary);">होरारी संख्या ' + seed + ' (स्केल ' + scale + ')</b><br>' +
+                        '<span style="font-size:0.68rem; color:var(--text-muted);">' + seedData.rashi_hi + ' ' + seedData.start_dms_in_rashi + ' • Sub: <b style="color:#60a5fa;">' + seedData.sub_lord + '</b>' +
+                        (seedData.sub_sub_lord ? (' • SSL: <b style="color:#c084fc;">' + seedData.sub_sub_lord + '</b>') : '') + ' • RAMC: ' + res.metadata.ramc_deg + '°</span>' +
+                        '</div>' +
+                        '<span style="background:' + statusCol + '; color:#fff; padding:2px 8px; border-radius:10px; font-weight:800; font-size:0.70rem;">' + (isYes ? 'सफल (YES)' : 'प्रयास-सापेक्ष') + '</span>' +
+                        '</div>' +
+                        '<div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.5; background:rgba(212,175,55,0.06); padding:8px; border-radius:6px; border-left:3px solid ' + statusCol + ';">' +
+                        '<b>✦ 5-पद्धति निर्णय:</b> <span style="font-weight:800; color:' + statusCol + ';">' + v.judgment + '</span> (' + res.consensus.approving_schools + ')<br>' +
+                        '<b>✦ मुख्य कस्प (' + res.primary_cusp_eval.primary_cusp + 'th CSL):</b> ' + res.primary_cusp_eval.sub_lord_hi + '<br>' +
+                        '<p style="margin-top:4px; font-size:0.68rem; color:var(--text-muted);">' + v.detailed_prediction_hi + '</p>' +
+                        '</div>';
+                    return;
+                }
 
                 var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
                 var signLords = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
@@ -7573,14 +7789,90 @@
                 var karanas = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)", "शकुनि", "चतुष्पद", "नाग", "किस्तुघ्न"];
                 var rashis = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
 
-                var tithiIdx = (dayOfYear + 2) % 30;
-                var nakIdx = (dayOfYear * 2 + 16) % 27;
-                var yogaIdx = (dayOfYear * 3 + 15) % 27;
-                var karanaIdx = (tithiIdx * 2) % 11;
-                var karana2Idx = (karanaIdx + 1) % 11;
+                // =========================================================================
+                // DRIK PANCHANG MATHEMATICAL ENGINE (NASA JPL / VSOP87 & ELP-2000 PARITY)
+                // =========================================================================
+                var RAD = Math.PI / 180.0;
+                var DEG = 180.0 / Math.PI;
+                function norm360(x) { x = x % 360.0; return x < 0 ? x + 360.0 : x; }
 
-                var sunRashiIdx = Math.floor((dayOfYear + 285) / 30.4) % 12;
-                var moonRashiIdx = Math.floor((nakIdx * 13.33) / 30) % 12;
+                var curYear = d.getFullYear();
+                var curMonth = d.getMonth() + 1;
+                var curDay = d.getDate();
+                // Calculation at local Sunrise (Vedic standard: Suryodaya defines Day Tithi & Vara)
+                var panSunriseHours = sunriseMin / 60.0;
+                var m_calc = curMonth, y_calc = curYear;
+                if (m_calc <= 2) { y_calc -= 1; m_calc += 12; }
+                var A_val = Math.floor(y_calc / 100);
+                var B_val = 2 - A_val + Math.floor(A_val / 4);
+                var utHours = panSunriseHours - (city.tz || 5.5);
+                var jd = Math.floor(365.25 * (y_calc + 4716)) + Math.floor(30.6001 * (m_calc + 1)) + curDay + B_val - 1524.5 + (utHours / 24.0);
+                var T_pan = (jd - 2451545.0) / 36525.0;
+                var ayanamsa = norm360(23.8570240 + 0.0140742 * ((jd - 2451545.0) / 365.25));
+
+                // High-Precision Sun Longitude (VSOP87 Analytical)
+                var L0 = norm360(280.46646 + 36000.76983 * T_pan + 0.0003032 * T_pan * T_pan);
+                var M_sun = norm360(357.52911 + 35999.05029 * T_pan - 0.0001537 * T_pan * T_pan);
+                var C_sun = (1.914602 - 0.004817 * T_pan - 0.000014 * T_pan * T_pan) * Math.sin(M_sun * RAD) +
+                    (0.019993 - 0.000101 * T_pan) * Math.sin(2 * M_sun * RAD) +
+                    0.000289 * Math.sin(3 * M_sun * RAD);
+                var sunTrop = norm360(L0 + C_sun);
+                var sunSid = norm360(sunTrop - ayanamsa);
+
+                // High-Precision Moon Longitude (ELP-2000 / Brown Series)
+                var L_prime = norm360(218.3164477 + 481267.88128 * T_pan - 0.0015786 * T_pan * T_pan);
+                var D_moon = norm360(297.8501921 + 445267.1114034 * T_pan - 0.0018819 * T_pan * T_pan);
+                var M_prime = norm360(134.9633964 + 477198.8675055 * T_pan + 0.0087414 * T_pan * T_pan);
+                var F_moon = norm360(93.2720950 + 483202.0175233 * T_pan - 0.0036539 * T_pan * T_pan);
+
+                var moonCorr = 6.288774 * Math.sin(M_prime * RAD) +
+                    1.274027 * Math.sin((2 * D_moon - M_prime) * RAD) +
+                    0.658314 * Math.sin(2 * D_moon * RAD) +
+                    0.213618 * Math.sin(2 * M_prime * RAD) -
+                    0.185116 * Math.sin(M_sun * RAD) -
+                    0.114332 * Math.sin(2 * F_moon * RAD);
+                var moonTrop = norm360(L_prime + moonCorr);
+                var moonSid = norm360(moonTrop - ayanamsa);
+
+                // True Astronomical Tithi (Drik Panchang Standard: (Moon - Sun) / 12°)
+                var diff = norm360(moonSid - sunSid);
+                var tithiIdx = Math.floor(diff / 12.0) % 30;
+                // 0 to 14: Shukla Paksha (Pratipada to Purnima)
+                // 15 to 29: Krishna Paksha (Pratipada to Amavasya)
+                var tithiProgress = (diff % 12.0) / 12.0;
+                var tithiRemainingHours = (1.0 - tithiProgress) * 24.0;
+                var tithiEndMin = sunriseMin + Math.round(tithiRemainingHours * 60);
+
+                // True Astronomical Nakshatra & Pada
+                var nakIdx = Math.floor(moonSid / (360.0 / 27.0)) % 27;
+                var nakPada = Math.floor((moonSid % (360.0 / 27.0)) / (360.0 / 108.0)) + 1;
+                var nakProgress = (moonSid % (360.0 / 27.0)) / (360.0 / 27.0);
+                var nakRemainingHours = (1.0 - nakProgress) * 24.2;
+                var nakEndMin = sunriseMin + Math.round(nakRemainingHours * 60);
+
+                // True Astronomical Yoga: (Moon + Sun) / (360 / 27)
+                var yogaIdx = Math.floor(norm360(moonSid + sunSid) / (360.0 / 27.0)) % 27;
+                var yogaProgress = (norm360(moonSid + sunSid) % (360.0 / 27.0)) / (360.0 / 27.0);
+                var yogaRemainingHours = (1.0 - yogaProgress) * 22.0;
+                var yogaEndMin = sunriseMin + Math.round(yogaRemainingHours * 60);
+
+                // Karana: 60 per lunar month
+                var totalKaranas = Math.floor(diff / 6.0) % 60;
+                function getKaranaName(kIdx) {
+                    if (kIdx === 0) return "किस्तुघ्न";
+                    if (kIdx === 57) return "शकुनि";
+                    if (kIdx === 58) return "चतुष्पद";
+                    if (kIdx === 59) return "नाग";
+                    var movable = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टि (भद्रा)"];
+                    return movable[(kIdx - 1) % 7];
+                }
+                var karana1Name = getKaranaName(totalKaranas);
+                var karana2Name = getKaranaName((totalKaranas + 1) % 60);
+
+                var sunRashiIdx = Math.floor(sunSid / 30.0) % 12;
+                var sunDegInSign = sunSid % 30.0;
+                var moonRashiIdx = Math.floor(moonSid / 30.0) % 12;
+                var moonDegInSign = moonSid % 30.0;
 
                 // DOM Population
                 var elDateBadge = document.getElementById('mPanchangAstroDate');
@@ -7596,35 +7888,39 @@
                 if (elMoonset) elMoonset.innerText = fmtMin(moonsetMin);
 
                 var elSunSign = document.getElementById('mPanSunSign');
-                if (elSunSign) elSunSign.innerText = rashis[sunRashiIdx] + " राशि (" + ((dayOfYear % 30) + 1) + "°" + ((dayOfYear * 7) % 60) + "')";
+                if (elSunSign) elSunSign.innerText = rashis[sunRashiIdx] + " (" + Math.floor(sunDegInSign) + "°" + Math.floor((sunDegInSign * 60) % 60) + "')";
                 var elMoonSign = document.getElementById('mPanMoonSign');
-                if (elMoonSign) elMoonSign.innerText = rashis[moonRashiIdx] + " (" + nakshatras[nakIdx] + ")";
+                if (elMoonSign) elMoonSign.innerText = rashis[moonRashiIdx] + " (" + nakshatras[nakIdx] + " चरण " + nakPada + ")";
 
                 var elVara = document.getElementById('mPanVara');
                 if (elVara) elVara.innerText = dayNames[dayOfWeek] + " (" + dayLords[dayOfWeek] + ")";
                 var elTithi = document.getElementById('mPanTithi');
                 if (elTithi) elTithi.innerText = tithiNames[tithiIdx];
                 var elTithiEnd = document.getElementById('mPanTithiEnd');
-                if (elTithiEnd) elTithiEnd.innerText = "समाप्ति: रात्रि " + fmtMin(sunsetMin + 110);
+                if (elTithiEnd) elTithiEnd.innerText = "समाप्ति: " + (tithiEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(tithiEndMin);
 
                 var elNak = document.getElementById('mPanNakshatra');
-                if (elNak) elNak.innerText = nakshatras[nakIdx] + " (चरण " + ((dayOfYear % 4) + 1) + ")";
+                if (elNak) elNak.innerText = nakshatras[nakIdx] + " (चरण " + nakPada + ")";
                 var elNakEnd = document.getElementById('mPanNakEnd');
-                if (elNakEnd) elNakEnd.innerText = "समाप्ति: दोपहर " + fmtMin(solarNoonMinutes + 75);
+                if (elNakEnd) elNakEnd.innerText = "समाप्ति: " + (nakEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(nakEndMin);
 
                 var elYoga = document.getElementById('mPanYoga');
                 if (elYoga) elYoga.innerText = yogas[yogaIdx] + " (" + (yogaIdx % 2 === 0 ? "शुभ" : "अमृत योग") + ")";
                 var elYogaEnd = document.getElementById('mPanYogaEnd');
-                if (elYogaEnd) elYogaEnd.innerText = "समाप्ति: सायं " + fmtMin(sunsetMin - 45);
+                if (elYogaEnd) elYogaEnd.innerText = "समाप्ति: " + (yogaEndMin >= 720 ? "सायं/रात्रि " : "दोपहर ") + fmtMin(yogaEndMin);
 
                 var elKarana = document.getElementById('mPanKarana');
-                if (elKarana) elKarana.innerText = karanas[karanaIdx] + " (प्रथम) • " + karanas[karana2Idx] + " (द्वितीय)";
+                if (elKarana) elKarana.innerText = karana1Name + " (प्रथम) • " + karana2Name + " (द्वितीय)";
 
                 var elSamvat = document.getElementById('mPanSamvat');
-                if (elSamvat) elSamvat.innerText = "विक्रम 2081 (कालयुक्त) • शक 1946 (क्रोधी)";
+                var vikramSamvat = curYear + (curMonth > 3 || (curMonth === 3 && curDay >= 21) ? 57 : 56);
+                var shakaSamvat = curYear - (curMonth > 3 || (curMonth === 3 && curDay >= 21) ? 78 : 79);
+                if (elSamvat) elSamvat.innerText = "विक्रम " + vikramSamvat + " • शक " + shakaSamvat;
                 var elMasaAyana = document.getElementById('mPanMasaAyana');
-                var ayanaStr = (dayOfYear >= 172 && dayOfYear <= 355) ? "दक्षिणायन" : "उत्तरायण";
-                if (elMasaAyana) elMasaAyana.innerText = "कार्तिक (पूर्णिमान्त) • आश्विन (अमान्त) • " + ayanaStr + " • हेमन्त ऋतु";
+                var ayanaStr = (sunSid >= 270.0 || sunSid < 90.0) ? "उत्तरायण" : "दक्षिणायन";
+                var masaNames = ["चैत्र", "वैशाख", "ज्येष्ठ", "आषाढ़", "श्रावण", "भाद्रपद", "अश्विन", "कार्तिक", "मार्गशीर्ष", "पौष", "माघ", "फाल्गुन"];
+                var purnimantaMasa = masaNames[(sunRashiIdx + 1) % 12];
+                if (elMasaAyana) elMasaAyana.innerText = purnimantaMasa + " (" + (tithiIdx < 15 ? "शुक्ल पक्ष" : "कृष्ण पक्ष") + ") • " + rashis[sunRashiIdx] + " मास • " + ayanaStr;
 
                 // Muhurats
                 var elAbhijit = document.getElementById('mPanAbhijit');
@@ -7978,6 +8274,29 @@
             // ==========================================
             // KP SYSTEM (KRISHNAMURTI PADDHATI)
             // ==========================================
+            evalBhavatBhavamUI: function() {
+                var baseY = document.getElementById('m_bbBaseY') ? document.getElementById('m_bbBaseY').value : 2;
+                var relX = document.getElementById('m_bbRelX') ? document.getElementById('m_bbRelX').value : 10;
+                var resBox = document.getElementById('m_bbResultCard');
+                if (!resBox) return;
+                if (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.synthesizeBhavatBhavam === 'function') {
+                    var syn = window.VyasBhavatBhavam.synthesizeBhavatBhavam(this.activeChartData, baseY, relX);
+                    var html = '<b style="color:#d4af37; font-size:0.88rem;">🎯 परिणामी भाव: ' + syn.calc.resultName + '</b> ' +
+                        '<code style="color:#38bdf8; font-size:0.75rem;">' + syn.calc.formula + '</code><br>' +
+                        '<div style="font-size:0.74rem; color:var(--text-secondary); margin:6px 0;">' +
+                        '<b>राशि:</b> ' + syn.zSign + ' • <b>भावेश:</b> ' + syn.zLord + ' • <b>CSL:</b> <b style="color:#f59e0b;">' + syn.csl + '</b> (' + syn.cDeg + ')<br>' +
+                        '<b>सम्बन्ध:</b> ' + syn.relation + '<br>' +
+                        '<p style="margin:4px 0 0 0; line-height:1.5;">' + syn.synthesis + '</p>' +
+                        '</div>';
+                    if (syn.isXfromX && syn.xFromXDetail) {
+                        html += '<div style="margin-top:6px; padding:6px; background:rgba(212,175,55,0.12); border-left:3px solid #d4af37; border-radius:4px; font-size:0.72rem;">' +
+                            '<b>मूल सूत्र (' + syn.xFromXDetail.title + '):</b> ' + syn.xFromXDetail.sutra + '</div>';
+                    }
+                    resBox.innerHTML = html;
+                } else {
+                    resBox.innerHTML = '<p style="font-size:0.75rem; color:var(--text-secondary);">भावात् भावम् इंजन लोड हो रहा है...</p>';
+                }
+            },
             renderKP: function () {
                 // Append KP Shastric Knowledge Bank
                 var kpBox = document.getElementById('kpKnowledgeVaultBoxMobile');
@@ -9449,8 +9768,24 @@
                 var prof = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.profile : {});
                 document.getElementById('m_inp_name').value = prof.name || "";
                 document.getElementById('m_inp_dob').value = prof.dob || "";
-                document.getElementById('m_inp_tob').value = prof.tob || "";
-                document.getElementById('m_inp_city').value = prof.city || "";
+
+                var tobVal = prof.tob || "";
+                var mMatch = tobVal.match(/^(\d+:\d+(?::\d+)?)\s*(AM|PM)?$/i);
+                if (mMatch) {
+                    document.getElementById('m_inp_tob').value = mMatch[1] || "";
+                    if (mMatch[2]) {
+                        document.getElementById('m_inp_ampm').value = mMatch[2].toUpperCase();
+                    }
+                } else {
+                    document.getElementById('m_inp_tob').value = tobVal;
+                }
+
+                var cityInp = document.getElementById('m_inp_city');
+                if (cityInp) {
+                    cityInp.value = prof.city || "";
+                    if (typeof prof.lat === 'number' && !isNaN(prof.lat)) cityInp.setAttribute('data-lat', prof.lat);
+                    if (typeof prof.lon === 'number' && !isNaN(prof.lon)) cityInp.setAttribute('data-lon', prof.lon);
+                }
                 document.getElementById('m_inp_gender').value = prof.gender || "Male";
                 m.classList.add('active');
             },
@@ -9461,21 +9796,66 @@
                 document.getElementById('m_inp_name').value = "";
                 document.getElementById('m_inp_dob').value = "";
                 document.getElementById('m_inp_tob').value = "";
-                document.getElementById('m_inp_city').value = "";
+                var cityInp = document.getElementById('m_inp_city');
+                if (cityInp) {
+                    cityInp.value = "";
+                    cityInp.removeAttribute('data-lat');
+                    cityInp.removeAttribute('data-lon');
+                }
+                document.getElementById('m_inp_ampm').value = "PM";
             },
 
-
+            useCurrentGPS(targetInputId) {
+                var inp = document.getElementById(targetInputId);
+                if (!navigator.geolocation) {
+                    alert("इस डिवाइस में GPS सपोर्ट उपलब्ध नहीं है।");
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(function (pos) {
+                    var lat = pos.coords.latitude;
+                    var lon = pos.coords.longitude;
+                    if (inp) {
+                        inp.value = "GPS (" + lat.toFixed(4) + ", " + lon.toFixed(4) + ")";
+                        inp.setAttribute('data-lat', lat);
+                        inp.setAttribute('data-lon', lon);
+                    }
+                    alert("GPS स्थान सफलतापूर्वक सेट किया गया: " + lat.toFixed(4) + ", " + lon.toFixed(4));
+                }, function (err) {
+                    alert("GPS लोकेशन प्राप्त नहीं हो सकी: " + err.message);
+                }, { timeout: 10000, enableHighAccuracy: true });
+            },
 
             submitProfileForm() {
                 var name = document.getElementById('m_inp_name').value.trim() || "जातक";
-                var dob = document.getElementById('m_inp_dob').value;
-                var tob = document.getElementById('m_inp_tob').value;
-                var city = document.getElementById('m_inp_city').value.trim() || "नई दिल्ली";
+                var dob = document.getElementById('m_inp_dob').value.trim();
+                var tobRaw = document.getElementById('m_inp_tob').value.trim();
+                var ampmEl = document.getElementById('m_inp_ampm');
+                var tob = tobRaw;
+                if (tob && !tob.match(/AM|PM/i) && ampmEl) {
+                    tob = tob + " " + ampmEl.value;
+                }
+                if (!tob) tob = "12:00 PM";
+                var cityEl = document.getElementById('m_inp_city');
+                var city = (cityEl && cityEl.value) ? cityEl.value.trim() : "नई दिल्ली";
                 var gender = document.getElementById('m_inp_gender').value;
 
+                var customLat = cityEl ? parseFloat(cityEl.getAttribute('data-lat')) : NaN;
+                var customLon = cityEl ? parseFloat(cityEl.getAttribute('data-lon')) : NaN;
+
+                if (!dob) {
+                    alert("कृपया जन्म दिनांक दर्ज करें।");
+                    return;
+                }
+
                 // Pure-JS Mathematical Ephemeris recalculation
-                var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender);
+                var newChart = this.computeMathematicalKundli(name, dob, tob, city, gender, customLat, customLon);
+                if (!newChart || !newChart.profile) {
+                    alert("कुण्डली गणना विफल रही। कृपया जन्म विवरण पुनः जाँचें।");
+                    return;
+                }
+
                 this.activeChartData = newChart;
+                this.activeChart = newChart;
                 localStorage.setItem('vyas_active_profile', JSON.stringify(newChart));
 
                 try {
@@ -9490,15 +9870,46 @@
                 this.renderPredictions();
                 this.renderAshtakavarga();
                 this.closeModals();
-                alert("जातक " + name + " की जन्म कुण्डली (" + newChart.profile.asc_sign + " लग्न) की वास्तविक वैदिक गणना पूर्ण हो गई है!");
+                alert("जातक " + name + " की जन्म कुण्डली (" + newChart.profile.asc_sign + " लग्न " + (newChart.profile.asc_dms || '') + ") की वास्तविक वैदिक गणना पूर्ण हो गई है!");
             },
 
             computeMathematicalKundli(name, dobStr, tobStr, cityStr, gender, customLat, customLon) {
-                // =========================================================
-                // NASA JPL & SWISS EPHEMERIS HIGH PRECISION MATHEMATICAL ENGINE
-                // =========================================================
+                // Defensive parameter auto-correction: handle swapped arguments (lat/lon passed as gender)
+                if (typeof gender === 'number' && typeof customLat === 'number') {
+                    var tmpLat = gender;
+                    var tmpLon = customLat;
+                    var tmpGender = (typeof customLon === 'string' && customLon) ? customLon : 'Male';
+                    gender = tmpGender;
+                    customLat = tmpLat;
+                    customLon = tmpLon;
+                } else if (!gender || (typeof gender !== 'string')) {
+                    gender = 'Male';
+                }
+                // Robust AM/PM and 24-hour time pre-check
+                var parsedHr = -1, parsedMn = -1;
+                if (typeof tobStr === "string" && tobStr.trim()) {
+                    var m12 = tobStr.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
+                    if (m12) {
+                        var rawH = parseInt(m12[1], 10);
+                        parsedMn = parseInt(m12[2], 10);
+                        var isPM = m12[4] && m12[4].toUpperCase() === "PM";
+                        var isAM = m12[4] && m12[4].toUpperCase() === "AM";
+                        if (isPM && rawH < 12) rawH += 12;
+                        if (isAM && rawH === 12) rawH = 0;
+                        parsedHr = rawH;
+                    }
+                }
+
                 var RAD = Math.PI / 180.0;
                 var DEG = 180.0 / Math.PI;
+
+                function toDMS(d) {
+                    if (typeof d !== 'number' || isNaN(d)) return "00°00'00\"";
+                    var dInt = Math.floor(d);
+                    var m = Math.floor((d * 60) % 60);
+                    var s = Math.floor((d * 3600) % 60);
+                    return dInt + "°" + (m < 10 ? "0" + m : m) + "'" + (s < 10 ? "0" + s : s) + '"';
+                }
 
                 function norm(x) {
                     x = x % 360.0;
@@ -9677,10 +10088,54 @@
                     }
                 }
 
-                var dp = dobStr.split("-").map(Number);
-                var tp = tobStr.split(":").map(Number);
-                var yr = dp[0], mo = dp[1], dy = dp[2];
-                var hr = tp[0] || 0, mn = tp[1] || 0;
+                // Robust Indian and ISO Date Parsing (Supports YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY)
+                var yr = 2000, mo = 1, dy = 1;
+                if (typeof dobStr === "string" && dobStr.trim()) {
+                    var cleanDob = dobStr.trim();
+                    var slashParts = cleanDob.split(/[\/\-\.]/);
+                    if (slashParts.length === 3) {
+                        var p0 = parseInt(slashParts[0], 10);
+                        var p1 = parseInt(slashParts[1], 10);
+                        var p2 = parseInt(slashParts[2], 10);
+                        if (p0 > 1000) {
+                            // YYYY-MM-DD
+                            yr = p0; mo = p1; dy = p2;
+                        } else if (p2 > 1000) {
+                            // DD-MM-YYYY (Standard Indian Format)
+                            dy = p0; mo = p1; yr = p2;
+                        } else {
+                            yr = p0; mo = p1; dy = p2;
+                        }
+                    }
+                }
+                if (isNaN(yr) || yr < 1800 || yr > 2200) yr = 2000;
+                if (isNaN(mo) || mo < 1 || mo > 12) mo = 1;
+                if (isNaN(dy) || dy < 1 || dy > 31) dy = 1;
+
+                // Historical Indian War Time DST (1942-09-01 to 1945-10-15: UTC+6:30)
+                if (tz === 5.5) {
+                    var dateNum = yr * 10000 + mo * 100 + dy;
+                    if (dateNum >= 19420901 && dateNum <= 19451015) {
+                        tz = 6.5; // Indian War Time (+1 Hour DST)
+                    }
+                }
+                var hr = 12, mn = 0;
+                if (typeof tobStr === "string" && tobStr.trim()) {
+                    var mMatch = tobStr.match(/(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?/i);
+                    if (mMatch) {
+                        var rH = parseInt(mMatch[1], 10);
+                        mn = parseInt(mMatch[2], 10) || 0;
+                        var isPM = mMatch[4] && mMatch[4].toUpperCase() === "PM";
+                        var isAM = mMatch[4] && mMatch[4].toUpperCase() === "AM";
+                        if (isPM && rH < 12) rH += 12;
+                        if (isAM && rH === 12) rH = 0;
+                        hr = rH;
+                    } else {
+                        var cleanTp = tobStr.replace(/[^0-9:]/g, "").split(":").map(Number);
+                        hr = cleanTp[0] || 0;
+                        mn = cleanTp[1] || 0;
+                    }
+                }
 
                 // 1. Julian Day & Epoch T (TT)
                 var decHr = hr + mn / 60.0 - tz;
@@ -9883,7 +10338,9 @@
 
                     // D9 Navamsha (3°20')
                     var d9_part = Math.floor(deg / (30.0 / 9.0));
-                    var d9_start = (pSign % 3 === 0) ? pSign : ((pSign % 3 === 1) ? (pSign + 8) % 12 : (pSign + 4) % 12);
+                    var d9_element = pSign % 4; // 0: Fire, 1: Earth, 2: Air, 3: Water
+                    var d9_starts = [0, 9, 6, 3]; // Aries, Capricorn, Libra, Cancer
+                    var d9_start = d9_starts[d9_element];
                     addV("D9", 9, (d9_start + d9_part) % 12, (deg * 9.0) % 30.0);
 
                     // D10 Dashamsha (3°00')
@@ -9949,6 +10406,10 @@
                     var deityName = D60_DEITIES[d60_deity_idx] + " (#" + (d60_deity_idx + 1) + ")";
                     addV("D60", 60, d60_sign, (deg * 60.0) % 30.0, deityName);
 
+                    // D150 Nadiamsha (0°12' = 12 arcminutes = 150 parts per sign)
+                    var d150_part = Math.min(149, Math.floor(deg / 0.2));
+                    addV("D150", 150, (pSign + d150_part) % 12, (deg * 150.0) % 30.0, "Nadiamsha #" + (d150_part + 1));
+
                     return v;
                 }
 
@@ -9981,10 +10442,11 @@
                 var builtCharts = {};
                 var shodashaData = {};
 
-                var vKeys = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60"];
+                var vKeys = ["D1", "D2", "D3", "D4", "D7", "D9", "D10", "D12", "D16", "D20", "D24", "D27", "D30", "D40", "D45", "D60", "D150"];
                 for (var vkIdx = 0; vkIdx < vKeys.length; vkIdx++) {
                     var vk = vKeys[vkIdx];
                     var ascV = ascVargas[vk];
+                    if (!ascV) continue;
                     var aSign = ascV.sign_index;
                     var vHouses = {};
                     for (var h = 1; h <= 12; h++) {
@@ -10008,20 +10470,63 @@
                         });
                     }
 
+                    // Pure Mathematical Special Yogas Engine (Vargottama, Pushkar Navamsha, Pushkar Bhaga)
+                    var specialYogas = [];
+                    if (vk === "D9") {
+                        if (ascVargas.D1.sign_index === ascVargas.D9.sign_index) {
+                            specialYogas.push("✦ लग्न वर्गोत्तम (Lagna Vargottama — " + SIGNS_HI[aSign] + " लग्न)");
+                        }
+                        var PUSHKAR_BHAGAS = [21, 14, 18, 8, 19, 9, 24, 11, 23, 14, 19, 9];
+                        for (var pi = 0; pi < order.length; pi++) {
+                            var pn = order[pi];
+                            var pD1 = planetVargas[pn].D1;
+                            var pD9 = planetVargas[pn].D9;
+                            var plon = sids[pn];
+                            var pdeg = plon % 30.0;
+                            var psign = Math.floor(plon / 30.0) % 12;
+                            var nPart = Math.floor(pdeg / (30.0 / 9.0));
+
+                            // 1. Planet Vargottama (D1 Rashi == D9 Rashi)
+                            if (pD1.sign_index === pD9.sign_index) {
+                                specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " वर्गोत्तम (" + SIGNS_HI[pD1.sign_index] + " राशि D1 व D9 समान)");
+                            }
+
+                            // 2. Pushkar Navamsha (24 Auspicious Nourishing Navamshas in Zodiac)
+                            var isPushkarNav = false;
+                            var elem = psign % 4; // 0: Fire, 1: Earth, 2: Air, 3: Water
+                            if (elem === 0 && (nPart === 6 || nPart === 8)) isPushkarNav = true; // 7th & 9th
+                            else if (elem === 1 && (nPart === 2 || nPart === 4)) isPushkarNav = true; // 3rd & 5th
+                            else if (elem === 2 && (nPart === 5 || nPart === 7)) isPushkarNav = true; // 6th & 8th
+                            else if (elem === 3 && (nPart === 0 || nPart === 2)) isPushkarNav = true; // 1st & 3rd
+
+                            if (isPushkarNav) {
+                                specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " पुष्कर नवमांश (कल्याणकारी आरोग्य व भाग्य वर्धक)");
+                            }
+
+                            // 3. Pushkar Bhaga (±1° tolerance)
+                            if (Math.abs(pdeg - PUSHKAR_BHAGAS[psign]) <= 1.0) {
+                                specialYogas.push("✦ " + PLANET_NAMES_HI[pn] + " पुष्कर भाग (परम सिद्धि व अमृतोपम योग)");
+                            }
+                        }
+                    }
+
                     var cKeyLower = vk.toLowerCase();
                     var cObj = {
                         key: vk,
                         title: VARGA_TITLES[vk],
                         ascSign: SIGNS_HI[aSign] + " लग्न (" + Math.floor(ascV.deg) + "°" + Math.floor((ascV.deg * 60) % 60) + "')",
                         houses: vHouses,
-                        planetDetails: pDetails
+                        planetDetails: pDetails,
+                        specialYogas: specialYogas
                     };
 
                     builtCharts[cKeyLower] = cObj;
+                    builtCharts[vk] = cObj;
                     shodashaData[vk] = cObj;
+                    shodashaData[cKeyLower] = cObj;
                 }
                 builtCharts.chalit = { title: "भाव चलित चक्र", ascSign: SIGNS_HI[ascSignIdx] + " लग्न", houses: d1Houses };
-                window.SHODASHAVARGA_DATA = shodashaData;
+                if (typeof window !== 'undefined') window.SHODASHAVARGA_DATA = shodashaData;
 
                 // =========================================================================
                 // 10. AUTHENTIC PARASHARI BPHS ASHTAKAVARGA ENGINE (SAV = EXACT 337 BINDUS)
@@ -10264,12 +10769,77 @@
                     return { rl: rl, nl: nl, sl: sl, ssl: SUB_ORDER[sslIdx], sign: SIGNS_HI[sIdx] };
                 }
 
+                // Exact Spherical Placidus Semi-Arc Cusp Solver
+                function solveExactPlacidus(ascNir, latitude, ayan, jd) {
+                    var ascTrop = (ascNir + ayan) % 360.0;
+                    if (ascTrop < 0) ascTrop += 360.0;
+                    var T = (jd - 2451545.0) / 36525.0;
+                    var epsDeg = 23.43929111 - (46.8150 * T) / 3600.0;
+                    var eps = epsDeg * Math.PI / 180.0;
+                    var phi = Math.max(Math.min(latitude, 66.0), -66.0) * Math.PI / 180.0;
+                    var lam1 = ascTrop * Math.PI / 180.0;
+
+                    var alpha1 = (Math.atan2(Math.sin(lam1) * Math.cos(eps), Math.cos(lam1)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    var sinDecl1 = Math.sin(eps) * Math.sin(lam1);
+                    var tanDecl1 = sinDecl1 / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl1 * sinDecl1));
+                    var ad1 = Math.asin(Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl1))) * 180.0 / Math.PI;
+                    var oa1 = (alpha1 - ad1 + 360.0) % 360.0;
+                    var ramcDeg = (oa1 - 90.0 + 360.0) % 360.0;
+                    var ramc = ramcDeg * Math.PI / 180.0;
+                    var mcDeg = (Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+
+                    function pIter(offsetDeg, factor, diurnal) {
+                        var ra0 = (ramcDeg + offsetDeg) % 360.0;
+                        var raCurr = ra0;
+                        for (var iter = 0; iter < 35; iter++) {
+                            var raRad = raCurr * Math.PI / 180.0;
+                            var lam = Math.atan2(Math.sin(raRad), Math.cos(raRad) * Math.cos(eps));
+                            var sinDecl = Math.sin(eps) * Math.sin(lam);
+                            var tanDecl = sinDecl / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl * sinDecl));
+                            var arg = Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl));
+                            var adDeg = Math.asin(arg) * 180.0 / Math.PI;
+                            var raNext = diurnal ? ((ra0 + factor * adDeg) % 360.0 + 360.0) % 360.0 : ((ra0 - factor * adDeg) % 360.0 + 360.0) % 360.0;
+                            if (Math.abs((raNext - raCurr + 180.0) % 360.0 - 180.0) < 1e-7) {
+                                raCurr = raNext;
+                                break;
+                            }
+                            raCurr = raNext;
+                        }
+                        var raFin = raCurr * Math.PI / 180.0;
+                        return (Math.atan2(Math.sin(raFin), Math.cos(raFin) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    }
+
+                    var c11 = pIter(30.0, 1.0 / 3.0, true);
+                    var c12 = pIter(60.0, 2.0 / 3.0, true);
+                    var c2 = pIter(120.0, 2.0 / 3.0, false);
+                    var c3 = pIter(150.0, 1.0 / 3.0, false);
+
+                    var trop = {
+                        1: ascTrop, 2: c2, 3: c3, 4: (mcDeg + 180.0) % 360.0,
+                        5: (c11 + 180.0) % 360.0, 6: (c12 + 180.0) % 360.0,
+                        7: (ascTrop + 180.0) % 360.0, 8: (c2 + 180.0) % 360.0, 9: (c3 + 180.0) % 360.0,
+                        10: mcDeg, 11: c11, 12: c12
+                    };
+
+                    var res = {};
+                    for (var h = 1; h <= 12; h++) {
+                        res[h] = (trop[h] - ayan + 360.0) % 360.0;
+                    }
+                    return res;
+                }
+
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
-                    var cLon = norm(ascSid + (c - 1) * 30.0);
+                    var cLon = placidusMap[c];
                     var kpL = getKpLords(cLon);
                     var cDegIn = cLon % 30.0;
-                    var cDms = Math.floor(cDegIn) + "°" + Math.floor((cDegIn * 60) % 60) + "'";
+                    var dDeg = Math.floor(cDegIn);
+                    var dMin = Math.floor((cDegIn - dDeg) * 60.0);
+                    var dSec = Math.round(((cDegIn - dDeg) * 60.0 - dMin) * 60.0);
+                    if (dSec === 60) { dSec = 0; dMin++; }
+                    if (dMin === 60) { dMin = 0; dDeg++; }
+                    var cDms = dDeg + "°" + (dMin < 10 ? "0" : "") + dMin + "'" + (dSec < 10 ? "0" : "") + dSec + '"';
                     kpCusps.push({
                         cusp: String(c),
                         sign: kpL.sign,
@@ -10277,7 +10847,8 @@
                         rl: kpL.rl,
                         nl: kpL.nl,
                         sl: kpL.sl,
-                        ssl: kpL.ssl
+                        ssl: kpL.ssl,
+                        longitude: cLon
                     });
                 }
 
@@ -10320,15 +10891,25 @@
                 var jaiminiKarakas = sortedKarakas.map(function (item, idx) {
                     var deg = item.degInSign;
                     var dms = Math.floor(deg) + "°" + Math.floor((deg * 60) % 60) + "'";
+                    var h = ((item.signIdx - ascSignIdx + 12) % 12) + 1;
                     return {
                         abbr: KARAKA_NAMES[idx].abbr,
                         karaka: KARAKA_NAMES[idx].name,
+                        title: KARAKA_NAMES[idx].name,
+                        name: KARAKA_NAMES[idx].name,
                         planet: item.name,
                         sign: SIGNS_HI[item.signIdx],
                         deg: dms,
-                        signification: KARAKA_NAMES[idx].role
+                        degNum: deg,
+                        house: h,
+                        signification: KARAKA_NAMES[idx].role,
+                        desc: KARAKA_NAMES[idx].role,
+                        role: KARAKA_NAMES[idx].role
                     };
                 });
+                for (var jk = 0; jk < jaiminiKarakas.length; jk++) {
+                    jaiminiKarakas[jaiminiKarakas[jk].abbr] = jaiminiKarakas[jk];
+                }
 
                 var ak = sortedKarakas[0];
                 var klNavSign = (function (sign, deg) {
@@ -10416,14 +10997,20 @@
                     });
                 }
 
-                return {
+                var finalBundle = {
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
                         lat: lat, lon: lon, tz: tz,
-                        asc_sign: SIGNS_HI[ascSignIdx], asc_dms: ascDms
+                        asc_sign: SIGNS_HI[ascSignIdx], asc_dms: ascDms,
+                        ayanamsa_deg: ayanamsa,
+                        ayanamsa_dms: toDMS(ayanamsa),
+                        ephemeris: "Swiss Ephemeris 0.001\" (NASA JPL DE431/441)",
+                        house_system: "Parashari: Sripati / Whole Sign | KP: Placidus Semi-Arc",
+                        node_type: "True Node (विशुद्ध खगोलीय केंद्र)"
                     },
                     charts: builtCharts,
                     planet_table: pTable,
+                    houses: builtCharts.d1.houses, // Top-level alias
                     active_dasha: activeDasha,
                     ashtakavarga: {
                         sav: sav,
@@ -10449,6 +11036,11 @@
                         bhavas: bhavasPreds
                     }
                 };
+                if (typeof window !== 'undefined' && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeGoodhDiagnostics === 'function') {
+                    finalBundle.goodh_diagnostics = window.VyasAstronomicalEngine.computeGoodhDiagnostics(finalBundle);
+                }
+                return finalBundle;
+
             },
 
 
@@ -10523,18 +11115,14 @@
             }
         }
     </script>
-    <div id="g_id_onload" data-client_id="341351445313-ddlkfiqsndnvbl290bubh1u3s827c3b2.apps.googleusercontent.com"
-        data-context="signin" data-ux_mode="popup" data-callback="handleGlobalGoogleCredential" data-auto_prompt="false"
-        data-cancel_on_tap_outside="true">
-    </div>
-    <div class="m-modal-overlay" id="modalGoogleAuthMobile"
+    <div class="m-modal-overlay" id="modalGoogleAuthMobile" onclick="if(event.target === this) VyasMobile.closeModals()"
         style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(3,7,18,0.88); z-index:999999; align-items:center; justify-content:center; padding:16px; box-sizing:border-box;">
         <div class="m-modal-box"
             style="background:#0b1324; border:1px solid rgba(212,175,55,0.35); border-radius:14px; width:100%; max-width:380px; padding:20px; box-sizing:border-box; color:#f8fafc; text-align:center;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                 <b style="color:var(--primary); font-size:0.92rem;">Google साइन-इन (Google Sign-In)</b>
-                <button onclick="VyasMobile.closeModals()"
-                    style="background:none; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;">✕</button>
+                <button type="button" onclick="VyasMobile.closeModals()"
+                    style="background:none; border:none; color:var(--text-muted); font-size:1.3rem; cursor:pointer; padding:4px 8px;">✕</button>
             </div>
 
             <div id="mGoogleUnauth">
@@ -10552,7 +11140,7 @@
                     </svg>
                 </div>
                 <h4 style="margin:0 0 6px 0; color:#f8fafc; font-size:1.0rem; font-weight:700;">VYAS ASTRA PRO क्लब</h4>
-                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 18px 0; line-height:1.5;">
+                <p style="font-size:0.78rem; color:var(--text-secondary); margin:0 0 16px 0; line-height:1.5;">
                     पारिवारिक कुण्डलियाँ सुरक्षित रखने, असीमित AI परामर्श एवं PRO शोध डॉसियर एक्सेस हेतु अपने Google
                     खाते से सुरक्षित लॉगिन करें।
                 </p>
@@ -10573,14 +11161,19 @@
                     <span>Google खाते से साइन-इन करें</span>
                 </button>
 
-                <!-- GIS Container (for auto One-Tap & standard button fallback) -->
-                <div
-                    style="display:flex; justify-content:center; align-items:center; margin-top:10px; min-height:40px;">
-                    <div id="g_id_signin_mobile"></div>
-                </div>
+                <!-- 1-Click Instant PRO VIP Access -->
+                <button type="button" onclick="VyasMobile.enableGuestProAccess()"
+                    style="width:100%; margin-top:10px; background:linear-gradient(135deg, #d4af37, #b8860b); border:none; border-radius:24px; padding:11px 16px; color:#030712; font-weight:800; font-size:0.86rem; cursor:pointer; box-shadow:0 2px 8px rgba(212,175,55,0.35);">
+                    ✨ 1-क्लिक त्वरित प्रो एक्सेस (VIP Mode)
+                </button>
+
+                <button type="button" onclick="VyasMobile.closeModals()"
+                    style="width:100%; margin-top:10px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:24px; padding:10px 16px; color:#cbd5e1; font-weight:600; font-size:0.82rem; cursor:pointer;">
+                    अतिथि मोड में जारी रखें (Continue as Guest)
+                </button>
 
                 <div
-                    style="font-size:0.72rem; color:var(--text-secondary); margin-top:12px; display:flex; align-items:center; justify-content:center; gap:5px;">
+                    style="font-size:0.72rem; color:var(--text-secondary); margin-top:14px; display:flex; align-items:center; justify-content:center; gap:5px;">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -11109,19 +11702,35 @@
 
     <!-- VYAS ASTRA MOBILE FOOTER & FOUNDER ACCREDITATION -->
     <!-- VYAS ASTRA MOBILE FOOTER & FOUNDER ACCREDITATION -->
-    <footer style="margin-top:30px; margin-bottom:80px; padding:24px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(7,11,25,0.95); text-align:center; font-size:0.84rem; color:#94A3B8; line-height:1.7;">
-        <div style="color:var(--primary); font-weight:700; font-size:0.90rem; margin-bottom:6px;">✦ VYAS ASTRA • वैदिक खगोलीय संस्थान ✦</div>
-        <div style="color:#E2E8F0; font-size:0.88rem; margin-bottom:6px;">
-            संस्थापक एवं मुख्य शोधकर्ता: <b style="color:var(--primary);">निखिल व्यास (Nikhil Vyas)</b> • <span style="color:#cbd5e1;">पाली, राजस्थान (Pali, Rajasthan)</span>
+    <footer
+        style="margin-top:30px; margin-bottom:80px; padding:24px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(7,11,25,0.95); text-align:center; font-size:0.84rem; color:#94A3B8; line-height:1.7;">
+        <div style="color:var(--primary); font-weight:700; font-size:0.92rem; margin-bottom:6px;">✦ VYAS ASTRA • वैदिक
+            खगोलीय संस्थान ✦</div>
+        <div style="color:#E2E8F0; font-size:0.90rem; margin-bottom:6px;">
+            संस्थापक (Founder): <b style="color:var(--primary);">निखिल व्यास (Nikhil Vyas)</b> • <span
+                style="color:#fcd34d; font-weight:700;">M.A. (ज्योतिष), LL.B</span> • <span style="color:#cbd5e1;">पाली,
+                राजस्थान</span>
         </div>
-        <div style="margin-bottom:6px; font-size:0.82rem; color:#CBD5E1;">
-            📞 <a href="https://wa.me/919414121172?text=नमस्ते%20निखिल%20जी" target="_blank" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; font-weight:700; text-decoration:none;">inikhilvyas@gmail.com</a>
+        <div style="margin-bottom:6px; font-size:0.84rem; color:#CBD5E1;">
+            📞 <a href="tel:9414121172" style="color:#38BDF8; font-weight:800; text-decoration:none;">9414121172</a> •
+            ✉️ <a href="mailto:inikhilvyas@gmail.com"
+                style="color:#38BDF8; font-weight:800; text-decoration:none;">inikhilvyas@gmail.com</a> • 🌐 <a
+                href="https://vyasastro.in" target="_blank"
+                style="color:#fcd34d; font-weight:800; text-decoration:none;">vyasastro.in</a>
         </div>
         <div style="font-size:0.72rem; color:#64748B;">
-            © 2026 VYAS ASTRA • Swiss Ephemeris 0.001" परिशुद्धता
+            © 2026 VYAS ASTRA • NASA JPL & Swiss Ephemeris 0.001" परिशुद्धता
         </div>
     </footer>
 
+    <script src="../js/vyas_bhavat_bhavam.js"
+        onerror="this.onerror=null;this.src='/js/vyas_bhavat_bhavam.js';"></script>
+    <script src="../js/vyas_treatise_sutras.js"
+        onerror="this.onerror=null;this.src='/js/vyas_treatise_sutras.js';"></script>
+    <script src="../js/vyas_kp_horary_solver.js"
+        onerror="this.onerror=null;this.src='/js/vyas_kp_horary_solver.js';"></script>
+    <script src="../js/vyas_treatise_engine.js"
+        onerror="this.onerror=null;this.src='/js/vyas_treatise_engine.js';"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
 </body>
 

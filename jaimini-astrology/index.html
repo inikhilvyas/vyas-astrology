@@ -502,15 +502,28 @@
                 'DK': { title: 'दाराकारक (Darakaraka)', desc: 'जीवनसाथी, विवाह, पार्टनरशिप व दांपत्य' }
             };
 
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var ascIdx = signs.indexOf(lagna);
+            if (ascIdx === -1) ascIdx = 0;
+
             for (var i = 0; i < kKeys.length; i++) {
                 var code = kKeys[i];
                 var item = karakas[code] || {};
                 var fb = fallbackKarakas[code] || { title: code, desc: 'जैमिनी चर कारक' };
-                var itemTitle = item.title || item.karaka || item.name || fb.title;
+                var rawTitle = item.title || item.karaka || item.name || fb.title;
+                var itemTitle = (rawTitle && rawTitle !== 'undefined') ? rawTitle : fb.title;
                 var itemPlanet = item.planet || '-';
-                var itemSign = item.sign ? (' (' + item.sign + ')') : '';
-                var itemDeg = item.deg ? (String(item.deg).replace(/°+$/, '') + '°') : '-';
-                var itemDesc = item.desc || item.signification || item.role || fb.desc;
+                var itemSign = (item.sign && item.sign !== 'undefined') ? (' (' + item.sign + ')') : '';
+                var itemDeg = (item.deg && item.deg !== 'undefined') ? (String(item.deg).replace(/°+$/, '') + '°') : '-';
+                var rawDesc = item.desc || item.signification || item.role || fb.desc;
+                var itemDesc = (rawDesc && rawDesc !== 'undefined') ? rawDesc : fb.desc;
+                
+                // Ensure item.house is computed if missing
+                if (!item.house && item.sign && item.sign !== 'undefined') {
+                    var sIdx = signs.indexOf(item.sign);
+                    if (sIdx !== -1) item.house = ((sIdx - ascIdx + 12) % 12) + 1;
+                }
+
                 var isAK = code === 'AK';
                 kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + itemTitle + '</td><td><b>' + itemPlanet + '</b>' + itemSign + '</td><td>' + itemDeg + '</td><td style="color:var(--text-muted); font-size:0.85rem;">' + itemDesc + '</td></tr>';
             }

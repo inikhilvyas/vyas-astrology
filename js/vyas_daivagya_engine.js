@@ -1517,18 +1517,36 @@
             if (!karakas || !karakas.AK) return "• जैमिनी चर कारक संरेखण सामान्य है।";
             var lines = [];
             var ak = karakas.AK, amk = karakas.AmK, dk = karakas.DK;
-            var akHouseStr = (ak.house && ak.house !== 'undefined') ? ("भाव " + ak.house + " ") : "";
-            var akDegStr = ak.deg ? (" " + ak.deg + (String(ak.deg).indexOf('°') !== -1 ? '' : '°')) : "";
+            var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+            var ascSign = (karakasOrChart && karakasOrChart.profile && karakasOrChart.profile.asc_sign) ? karakasOrChart.profile.asc_sign : "मेष";
+            var ascIdx = signs.indexOf(ascSign);
+            if (ascIdx === -1) ascIdx = 0;
+
+            function resolveHouse(kObj) {
+                if (kObj.house && kObj.house !== 'undefined' && typeof kObj.house === 'number') return kObj.house;
+                if (kObj.sign && kObj.sign !== 'undefined') {
+                    var sIdx = signs.indexOf(kObj.sign);
+                    if (sIdx !== -1) return ((sIdx - ascIdx + 12) % 12) + 1;
+                }
+                return null;
+            }
+
+            var akH = resolveHouse(ak);
+            var akHouseStr = akH ? ("भाव " + akH + " ") : "";
+            var akDegStr = (ak.deg && ak.deg !== 'undefined') ? (" " + ak.deg + (String(ak.deg).indexOf('°') !== -1 ? '' : '°')) : "";
             lines.push("• <b>आत्मकारक (AK - " + ak.planet + akDegStr + "):</b> " + akHouseStr + "(" + (ak.sign || "लग्न") + " राशि) में स्थित हैं। जैमिनी सूत्रानुसार जातक की आत्मा का मूल स्वभाव व लक्ष्य " + ak.planet + " के तत्त्वों से संचालित है।");
+
             if (domain === 'career' || domain === 'wealth' || domain === 'general' || domain === 'yoga') {
                 if (amk) {
-                    var amkHouseStr = (amk.house && amk.house !== 'undefined') ? ("भाव " + amk.house + " ") : "";
+                    var amkH = resolveHouse(amk);
+                    var amkHouseStr = amkH ? ("भाव " + amkH + " ") : "";
                     lines.push("• <b>अमात्यकारक (AmK - " + amk.planet + "):</b> " + amkHouseStr + "(" + (amk.sign || "") + ") में स्थित हैं। आजीविका में पद व अधिकार " + amk.planet + " की कृपा से प्राप्त होगा। जब भी " + amk.planet + " की दशा या कारकांश सक्रिय होगा, पदोन्नति अवश्यंभावी है।");
                 }
             }
             if (domain === 'marriage' || domain === 'general') {
                 if (dk) {
-                    var dkHouseStr = (dk.house && dk.house !== 'undefined') ? ("भाव " + dk.house + " ") : "";
+                    var dkH = resolveHouse(dk);
+                    var dkHouseStr = dkH ? ("भाव " + dkH + " ") : "";
                     lines.push("• <b>दाराकारक (DK - " + dk.planet + "):</b> " + dkHouseStr + "(" + (dk.sign || "") + ") में विराजमान हैं। जीवनसाथी का स्वरूप, स्वभाव एवं बौद्धिक स्तर " + dk.planet + " के गुणधर्मों से पूर्णतः मेल खाएगा।");
                 }
             }

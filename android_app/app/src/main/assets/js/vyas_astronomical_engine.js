@@ -948,12 +948,77 @@
                     return { rl: rl, nl: nl, sl: sl, ssl: SUB_ORDER[sslIdx], sign: SIGNS_HI_DIAG[sIdx] };
                 }
 
+                // Exact Spherical Placidus Semi-Arc Cusp Solver
+                function solveExactPlacidus(ascNir, latitude, ayan, jd) {
+                    var ascTrop = (ascNir + ayan) % 360.0;
+                    if (ascTrop < 0) ascTrop += 360.0;
+                    var T = (jd - 2451545.0) / 36525.0;
+                    var epsDeg = 23.43929111 - (46.8150 * T) / 3600.0;
+                    var eps = epsDeg * Math.PI / 180.0;
+                    var phi = Math.max(Math.min(latitude, 66.0), -66.0) * Math.PI / 180.0;
+                    var lam1 = ascTrop * Math.PI / 180.0;
+
+                    var alpha1 = (Math.atan2(Math.sin(lam1) * Math.cos(eps), Math.cos(lam1)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    var sinDecl1 = Math.sin(eps) * Math.sin(lam1);
+                    var tanDecl1 = sinDecl1 / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl1 * sinDecl1));
+                    var ad1 = Math.asin(Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl1))) * 180.0 / Math.PI;
+                    var oa1 = (alpha1 - ad1 + 360.0) % 360.0;
+                    var ramcDeg = (oa1 - 90.0 + 360.0) % 360.0;
+                    var ramc = ramcDeg * Math.PI / 180.0;
+                    var mcDeg = (Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+
+                    function pIter(offsetDeg, factor, diurnal) {
+                        var ra0 = (ramcDeg + offsetDeg) % 360.0;
+                        var raCurr = ra0;
+                        for (var iter = 0; iter < 35; iter++) {
+                            var raRad = raCurr * Math.PI / 180.0;
+                            var lam = Math.atan2(Math.sin(raRad), Math.cos(raRad) * Math.cos(eps));
+                            var sinDecl = Math.sin(eps) * Math.sin(lam);
+                            var tanDecl = sinDecl / Math.sqrt(Math.max(1e-12, 1.0 - sinDecl * sinDecl));
+                            var arg = Math.max(-0.999999, Math.min(0.999999, Math.tan(phi) * tanDecl));
+                            var adDeg = Math.asin(arg) * 180.0 / Math.PI;
+                            var raNext = diurnal ? ((ra0 + factor * adDeg) % 360.0 + 360.0) % 360.0 : ((ra0 - factor * adDeg) % 360.0 + 360.0) % 360.0;
+                            if (Math.abs((raNext - raCurr + 180.0) % 360.0 - 180.0) < 1e-7) {
+                                raCurr = raNext;
+                                break;
+                            }
+                            raCurr = raNext;
+                        }
+                        var raFin = raCurr * Math.PI / 180.0;
+                        return (Math.atan2(Math.sin(raFin), Math.cos(raFin) * Math.cos(eps)) * 180.0 / Math.PI + 360.0) % 360.0;
+                    }
+
+                    var c11 = pIter(30.0, 1.0 / 3.0, true);
+                    var c12 = pIter(60.0, 2.0 / 3.0, true);
+                    var c2 = pIter(120.0, 2.0 / 3.0, false);
+                    var c3 = pIter(150.0, 1.0 / 3.0, false);
+
+                    var trop = {
+                        1: ascTrop, 2: c2, 3: c3, 4: (mcDeg + 180.0) % 360.0,
+                        5: (c11 + 180.0) % 360.0, 6: (c12 + 180.0) % 360.0,
+                        7: (ascTrop + 180.0) % 360.0, 8: (c2 + 180.0) % 360.0, 9: (c3 + 180.0) % 360.0,
+                        10: mcDeg, 11: c11, 12: c12
+                    };
+
+                    var res = {};
+                    for (var h = 1; h <= 12; h++) {
+                        res[h] = (trop[h] - ayan + 360.0) % 360.0;
+                    }
+                    return res;
+                }
+
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
-                    var cLon = norm(ascSid + (c - 1) * 30.0);
+                    var cLon = placidusMap[c];
                     var kpL = getKpLords(cLon);
                     var cDegIn = cLon % 30.0;
-                    var cDms = Math.floor(cDegIn) + "°" + Math.floor((cDegIn * 60) % 60) + "'";
+                    var dDeg = Math.floor(cDegIn);
+                    var dMin = Math.floor((cDegIn - dDeg) * 60.0);
+                    var dSec = Math.round(((cDegIn - dDeg) * 60.0 - dMin) * 60.0);
+                    if (dSec === 60) { dSec = 0; dMin++; }
+                    if (dMin === 60) { dMin = 0; dDeg++; }
+                    var cDms = dDeg + "°" + (dMin < 10 ? "0" : "") + dMin + "'" + (dSec < 10 ? "0" : "") + dSec + '"';
                     var cuspObj = {
                         cusp: String(c),
                         sign: kpL.sign,
@@ -966,7 +1031,8 @@
                         starLord: kpL.nl,
                         subLord: kpL.sl,
                         subSubLord: kpL.ssl,
-                        significator: "भाव " + c
+                        significator: "भाव " + c,
+                        longitude: cLon
                     };
                     kpCusps.push(cuspObj);
                     kpCusps[c] = cuspObj; // Enable 1-based indexing so cusps[1] or cusps[10] never returns undefined

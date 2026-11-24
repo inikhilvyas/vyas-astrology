@@ -9,7 +9,7 @@
   <Identity
     Name="NikhilVyas.VYASAstraVedicAstrology"
     Publisher="CN=NikhilVyas, O=VedicYieldAstrologySystems, C=IN"
-    Version="1.1.2.0"
+    Version="1.1.3.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
@@ -47,4 +47,3 @@
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
 </Package>
-
