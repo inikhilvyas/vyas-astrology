@@ -1472,7 +1472,8 @@
                     var degStr = (p.d || p.degree || '0').toString();
                     var m = degStr.match(/(\d+)[°\.]\s*(\d+)?/);
                     var degVal = m ? parseFloat(m[1]) + (parseFloat(m[2] || 0) / 60) : 0;
-                    list.push({ name: name, deg: degVal, sign: p.r || p.sign, house: p.h || p.house });
+                    var hVal = p.h || p.house || '';
+                    list.push({ name: name, deg: degVal, sign: p.r || p.sign || '', house: hVal });
                 }
             });
             list.sort(function (a, b) { return b.deg - a.deg; });
@@ -1487,14 +1488,22 @@
             ];
             var res = {};
             for (var i = 0; i < Math.min(list.length, karakaDefs.length); i++) {
-                res[karakaDefs[i].k] = {
-                    planet: list[i].name,
-                    deg: list[i].deg.toFixed(2),
-                    sign: list[i].sign,
-                    house: list[i].house,
-                    title: karakaDefs[i].hi,
-                    desc: karakaDefs[i].desc
+                var itm = list[i];
+                var def = karakaDefs[i];
+                var kObj = {
+                    abbr: def.k,
+                    planet: itm.name,
+                    deg: itm.deg.toFixed(2),
+                    sign: itm.sign,
+                    house: itm.house || (i + 1),
+                    title: def.hi,
+                    karaka: def.hi,
+                    name: def.hi,
+                    desc: def.desc,
+                    role: def.desc,
+                    signification: def.desc
                 };
+                res[def.k] = kObj;
             }
             return res;
         },
@@ -1508,15 +1517,19 @@
             if (!karakas || !karakas.AK) return "• जैमिनी चर कारक संरेखण सामान्य है।";
             var lines = [];
             var ak = karakas.AK, amk = karakas.AmK, dk = karakas.DK;
-            lines.push("• <b>आत्मकारक (AK - " + ak.planet + " " + ak.deg + "°):</b> भाव " + ak.house + " (" + ak.sign + " राशि) में स्थित हैं। जैमिनी सूत्रानुसार जातक की आत्मा का मूल स्वभाव व लक्ष्य " + ak.planet + " के तत्त्वों से संचालित है।");
+            var akHouseStr = (ak.house && ak.house !== 'undefined') ? ("भाव " + ak.house + " ") : "";
+            var akDegStr = ak.deg ? (" " + ak.deg + (String(ak.deg).indexOf('°') !== -1 ? '' : '°')) : "";
+            lines.push("• <b>आत्मकारक (AK - " + ak.planet + akDegStr + "):</b> " + akHouseStr + "(" + (ak.sign || "लग्न") + " राशि) में स्थित हैं। जैमिनी सूत्रानुसार जातक की आत्मा का मूल स्वभाव व लक्ष्य " + ak.planet + " के तत्त्वों से संचालित है।");
             if (domain === 'career' || domain === 'wealth' || domain === 'general' || domain === 'yoga') {
                 if (amk) {
-                    lines.push("• <b>अमात्यकारक (AmK - " + amk.planet + "):</b> भाव " + amk.house + " (" + amk.sign + ") में स्थित हैं। आजीविका में पद व अधिकार " + amk.planet + " की कृपा से प्राप्त होगा। जब भी " + amk.planet + " की दशा या कारकांश सक्रिय होगा, पदोन्नति अवश्यंभावी है।");
+                    var amkHouseStr = (amk.house && amk.house !== 'undefined') ? ("भाव " + amk.house + " ") : "";
+                    lines.push("• <b>अमात्यकारक (AmK - " + amk.planet + "):</b> " + amkHouseStr + "(" + (amk.sign || "") + ") में स्थित हैं। आजीविका में पद व अधिकार " + amk.planet + " की कृपा से प्राप्त होगा। जब भी " + amk.planet + " की दशा या कारकांश सक्रिय होगा, पदोन्नति अवश्यंभावी है।");
                 }
             }
             if (domain === 'marriage' || domain === 'general') {
                 if (dk) {
-                    lines.push("• <b>दाराकारक (DK - " + dk.planet + "):</b> भाव " + dk.house + " (" + dk.sign + ") में विराजमान हैं। जीवनसाथी का स्वरूप, स्वभाव एवं बौद्धिक स्तर " + dk.planet + " के गुणधर्मों से पूर्णतः मेल खाएगा।");
+                    var dkHouseStr = (dk.house && dk.house !== 'undefined') ? ("भाव " + dk.house + " ") : "";
+                    lines.push("• <b>दाराकारक (DK - " + dk.planet + "):</b> " + dkHouseStr + "(" + (dk.sign || "") + ") में विराजमान हैं। जीवनसाथी का स्वरूप, स्वभाव एवं बौद्धिक स्तर " + dk.planet + " के गुणधर्मों से पूर्णतः मेल खाएगा।");
                 }
             }
             return lines.join('<br>');

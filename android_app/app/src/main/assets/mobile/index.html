@@ -1348,23 +1348,30 @@ body {
                 </div>
             </section>
 
-            <!-- TAB: 1-249 PRASHNA KUNDLI -->
+            <!-- TAB: 1-249 & 1-2193 PRASHNA KUNDLI -->
             <section class="tab-view-container" id="view-prashna">
                 <div class="m-card">
                     <div class="m-card-title">
-                        <span>🔮 कृष्णमूर्ति 1-249 प्रश्न कुण्डली (KP Horary)</span>
-                        <span class="badge-tag badge-exalted">तात्कालिक निर्णय</span>
+                        <span>🔮 KP Horary (1-249 & 1-2193) प्रश्न कुण्डली</span>
+                        <span class="badge-tag badge-exalted">5-School Consensus</span>
                     </div>
                     <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:10px;">
-                        अपने मन में प्रश्न का चिंतन करके 1 से 249 के बीच एक पवित्र संख्या चुनें:
+                        अपने मन में प्रश्न का ध्यान कर 1-249 (Sub) अथवा 1-2193 (Sub-Sub Lord) संख्या चुनें (स्फेरिकल इन्वर्स प्लेसिडस वेध):
                     </p>
-                    <div style="display:flex; gap:8px; margin-bottom:10px;">
-                        <input type="number" id="mPrashnaSeed" min="1" max="249" value="108" class="m-input" style="width:90px; text-align:center; font-size:1.1rem; font-weight:900;">
+                    <div style="display:flex; gap:6px; margin-bottom:8px;">
+                        <select id="mPrashnaScale" class="m-input" style="width:115px;" onchange="var inp=document.getElementById('mPrashnaSeed'); if(this.value==='2193'){inp.max=2193; inp.value=1008;}else{inp.max=249; inp.value=108;}">
+                            <option value="249">1-249 (Sub)</option>
+                            <option value="2193">1-2193 (SSL)</option>
+                        </select>
+                        <input type="number" id="mPrashnaSeed" min="1" max="249" value="108" class="m-input" style="width:75px; text-align:center; font-size:1.05rem; font-weight:900;">
                         <select id="mPrashnaCategory" class="m-input" style="flex:1;">
-                            <option value="career">नौकरी / व्यवसाय में सफलता</option>
-                            <option value="wealth">धन लाभ व संपत्ति क्रय</option>
-                            <option value="marriage">विवाह व संबंध सिद्धि</option>
-                            <option value="general">🎯 सामान्य अभीष्ट कार्य सिद्धि</option>
+                            <option value="career">नौकरी / व्यवसाय</option>
+                            <option value="wealth">धन लाभ व संपत्ति</option>
+                            <option value="marriage">विवाह व संबंध</option>
+                            <option value="children">संतान व बुद्धि</option>
+                            <option value="foreign">विदेश व यात्रा</option>
+                            <option value="health">स्वास्थ्य व आरोग्य</option>
+                            <option value="general">🎯 कार्य सिद्धि</option>
                         </select>
                     </div>
                     <button class="gold-btn" onclick="VyasMobile.calculatePrashna()">निर्णय प्राप्त करें (Calculate Horary)</button>
@@ -6195,6 +6202,7 @@ var VyasMobile = {
                 '<div class="doc-header">' +
                     '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ ✦</div>' +
                     '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Standard</div>' +
+                    '<div style="margin-top:6px; font-size:12px; color:#1e3a8a; font-weight:700;">संस्थापक (Founder): <b style="color:#b45309;">निखिल व्यास</b> • M.A. (ज्योतिष), LL.B • पाली (राजस्थान) • 📞 9414121172 • ✉️ inikhilvyas@gmail.com • 🌐 vyasastro.in</div>' +
                 '</div>' +
                 '<div class="info-grid">' +
                     '<div class="info-item"><b>जातक का नाम:</b> ' + (prof.name || 'अतिथि') + '</div>' +
@@ -6217,7 +6225,7 @@ var VyasMobile = {
                 '<table><thead><tr><th>ग्रह</th><th>राशि</th><th>स्पष्ट अंश</th><th>नक्षत्र</th><th>भाव</th><th>अवस्था</th></tr></thead>' +
                 '<tbody>' + pRows + '</tbody></table>' +
                 '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:11px; color:#64748b; text-align:center;">' +
-                    'प्रमाणित दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
+                    'प्रमाणित दस्तावेज़ • संस्थापक: निखिल व्यास (M.A. ज्योतिष, LL.B, पाली राजस्थान) • 📞 9414121172 • inikhilvyas@gmail.com • vyasastro.in • सर्वाधिकार सुरक्षित' +
                 '</div></body></html>';
 
             printWin.document.open();
@@ -7080,8 +7088,42 @@ var VyasMobile = {
 
         calculatePrashna() {
             var seed = parseInt(document.getElementById('mPrashnaSeed') ? document.getElementById('mPrashnaSeed').value : 108, 10) || 108;
+            var scaleSelect = document.getElementById('mPrashnaScale');
+            var scale = scaleSelect ? scaleSelect.value : '249';
+            var catSelect = document.getElementById('mPrashnaCategory');
+            var cat = catSelect ? catSelect.value : 'career';
             var box = document.getElementById('mPrashnaResultBox');
             if (!box) return;
+
+            if (window.solveKPHorary) {
+                var now = new Date();
+                var y = now.getFullYear();
+                var m = String(now.getMonth() + 1).padStart(2, '0');
+                var d = String(now.getDate()).padStart(2, '0');
+                var hh = String(now.getHours()).padStart(2, '0');
+                var mm = String(now.getMinutes()).padStart(2, '0');
+
+                var res = window.solveKPHorary(seed, y + '-' + m + '-' + d, hh + ':' + mm, 25.7711, 73.3234, 5.5, scale, cat);
+                var v = res.verdict;
+                var seedData = res.metadata.seed;
+                var isYes = v.judgment.indexOf('YES') !== -1;
+                var statusCol = isYes ? '#10b981' : '#f59e0b';
+
+                box.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                    '<div>' +
+                        '<b style="font-size:0.86rem; color:var(--primary);">होरारी संख्या ' + seed + ' (स्केल ' + scale + ')</b><br>' +
+                        '<span style="font-size:0.68rem; color:var(--text-muted);">' + seedData.rashi_hi + ' ' + seedData.start_dms_in_rashi + ' • Sub: <b style="color:#60a5fa;">' + seedData.sub_lord + '</b>' +
+                        (seedData.sub_sub_lord ? (' • SSL: <b style="color:#c084fc;">' + seedData.sub_sub_lord + '</b>') : '') + ' • RAMC: ' + res.metadata.ramc_deg + '°</span>' +
+                    '</div>' +
+                    '<span style="background:' + statusCol + '; color:#fff; padding:2px 8px; border-radius:10px; font-weight:800; font-size:0.70rem;">' + (isYes ? 'सफल (YES)' : 'प्रयास-सापेक्ष') + '</span>' +
+                '</div>' +
+                '<div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.5; background:rgba(212,175,55,0.06); padding:8px; border-radius:6px; border-left:3px solid ' + statusCol + ';">' +
+                    '<b>✦ 5-पद्धति निर्णय:</b> <span style="font-weight:800; color:' + statusCol + ';">' + v.judgment + '</span> (' + res.consensus.approving_schools + ')<br>' +
+                    '<b>✦ मुख्य कस्प (' + res.primary_cusp_eval.primary_cusp + 'th CSL):</b> ' + res.primary_cusp_eval.sub_lord_hi + '<br>' +
+                    '<p style="margin-top:4px; font-size:0.68rem; color:var(--text-muted);">' + v.detailed_prediction_hi + '</p>' +
+                '</div>';
+                return;
+            }
 
             var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
             var signLords = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
@@ -10965,18 +11007,20 @@ renderChart(chartKey) {
     <!-- VYAS ASTRA MOBILE FOOTER & FOUNDER ACCREDITATION -->
     <!-- VYAS ASTRA MOBILE FOOTER & FOUNDER ACCREDITATION -->
     <footer style="margin-top:30px; margin-bottom:80px; padding:24px 16px; border-top:1px solid rgba(212,175,55,0.25); background:rgba(7,11,25,0.95); text-align:center; font-size:0.84rem; color:#94A3B8; line-height:1.7;">
-        <div style="color:var(--primary); font-weight:700; font-size:0.90rem; margin-bottom:6px;">✦ VYAS ASTRA • वैदिक खगोलीय संस्थान ✦</div>
-        <div style="color:#E2E8F0; font-size:0.88rem; margin-bottom:6px;">
-            संस्थापक एवं मुख्य शोधकर्ता: <b style="color:var(--primary);">निखिल व्यास (Nikhil Vyas)</b> • <span style="color:#cbd5e1;">पाली, राजस्थान (Pali, Rajasthan)</span>
+        <div style="color:var(--primary); font-weight:700; font-size:0.92rem; margin-bottom:6px;">✦ VYAS ASTRA • वैदिक खगोलीय संस्थान ✦</div>
+        <div style="color:#E2E8F0; font-size:0.90rem; margin-bottom:6px;">
+            संस्थापक (Founder): <b style="color:var(--primary);">निखिल व्यास (Nikhil Vyas)</b> • <span style="color:#fcd34d; font-weight:700;">M.A. (ज्योतिष), LL.B</span> • <span style="color:#cbd5e1;">पाली, राजस्थान</span>
         </div>
-        <div style="margin-bottom:6px; font-size:0.82rem; color:#CBD5E1;">
-            📞 <a href="https://wa.me/919414121172?text=नमस्ते%20निखिल%20जी" target="_blank" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; font-weight:700; text-decoration:none;">inikhilvyas@gmail.com</a>
+        <div style="margin-bottom:6px; font-size:0.84rem; color:#CBD5E1;">
+            📞 <a href="tel:9414121172" style="color:#38BDF8; font-weight:800; text-decoration:none;">9414121172</a> • ✉️ <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; font-weight:800; text-decoration:none;">inikhilvyas@gmail.com</a> • 🌐 <a href="https://vyasastro.in" target="_blank" style="color:#fcd34d; font-weight:800; text-decoration:none;">vyasastro.in</a>
         </div>
         <div style="font-size:0.72rem; color:#64748B;">
-            © 2026 VYAS ASTRA • Swiss Ephemeris 0.001" परिशुद्धता
+            © 2026 VYAS ASTRA • NASA JPL & Swiss Ephemeris 0.001" परिशुद्धता
         </div>
     </footer>
 
+    <script src="../js/vyas_kp_horary_solver.js" onerror="this.onerror=null;this.src='/js/vyas_kp_horary_solver.js';"></script>
+    <script src="../js/vyas_treatise_engine.js" onerror="this.onerror=null;this.src='/js/vyas_treatise_engine.js';"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
 </body>
 </html>

@@ -92,8 +92,19 @@
           "url": "https://vyasastro.in",
           "logo": "https://vyasastro.in/logo_icon.png",
           "founder": {
-            "@type": "Organization",
-            "name": "VYAS Daivagya Systems"
+            "@type": "Person",
+            "name": "Nikhil Vyas",
+            "honorificPrefix": "Acharya",
+            "jobTitle": "Founder & Master Astrologer (M.A. Jyotish, LL.B)",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Pali",
+              "addressRegion": "Rajasthan",
+              "addressCountry": "IN"
+            },
+            "email": "inikhilvyas@gmail.com",
+            "telephone": "+91-9414121172",
+            "url": "https://vyasastro.in"
           }
         },
         {
@@ -2859,7 +2870,7 @@
             </div>
             <div>
                 <div class="brand-title">VYAS ASTRA</div>
-                <div class="brand-subtitle">Vedic Yield Astronomy Systems • The Science of Cosmic Time</div>
+                <div class="brand-subtitle">Vedic Yield Astronomy Systems • संस्थापक: निखिल व्यास (M.A. ज्योतिष, LL.B, पाली राजस्थान)</div>
             </div>
         </div>
 
@@ -4246,30 +4257,35 @@
                 <div class="view-panel" id="view-prashna">
                     <div class="content-card">
                         <div class="card-heading">
-                            <span>✦ कृष्णमूर्ति 1-249 प्रश्न कुण्डली (KP Horary Engine)</span>
-                            <span style="font-size:0.75rem; color:#3b82f6; font-weight:800;">तात्कालिक खगोलीय
-                                निर्णय</span>
+                            <span>✦ कृष्णमूर्ति 1-249 एवं 1-2193 प्रश्न कुण्डली (KP Horary & Inverse Placidus Solver)</span>
+                            <span style="font-size:0.75rem; color:#3b82f6; font-weight:800;">5 KP Schools Consensus & Moon Verification</span>
                         </div>
                         <p style="font-size:0.76rem; color:var(--text-secondary); margin-bottom:12px;">
-                            यदि जन्म समय संदिग्ध हो अथवा किसी विशिष्ट कार्य की सिद्धि का तात्कालिक उत्तर जानना हो, तो 1
-                            से 249 के मध्य एक पवित्र अंक का चयन करें। यह कृष्णमूर्ति पद्धति के 249 सूक्ष्म कस्पल
-                            सब-लॉर्ड्स पर आधारित है।
+                            यदि जन्म समय संदिग्ध हो अथवा किसी विशिष्ट कार्य की सिद्धि का तात्कालिक उत्तर जानना हो, तो 1 से 249 (पारंपरिक सब-लॉर्ड) अथवा 1 से 2193 (सूक्ष्म सब-सब लॉर्ड SSL) के मध्य एक पवित्र अंक चुनें। यह प्रणाली स्फेरिकल इन्वर्स प्लेसिडस सॉल्वर (Exact Spherical Inverse Placidus Solver) से सटीक 12 भाव कस्प्स व 5 केपी पद्धतियों का सर्वसम्मत निर्णय देती है।
                         </p>
-                        <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
+                        <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center; flex-wrap:wrap;">
                             <div>
-                                <label style="font-size:0.74rem; font-weight:700; color:var(--primary-navy);">होरारी
-                                    संख्या (1-249):</label>
+                                <label style="font-size:0.74rem; font-weight:700; color:var(--primary-navy);">होरारी स्केल (Scale):</label>
+                                <select id="desktopPrashnaScale" class="form-input" style="width:130px;" onchange="var inp=document.getElementById('desktopPrashnaSeed'); if(this.value==='2193'){inp.max=2193; inp.value=1008;}else{inp.max=249; inp.value=108;}">
+                                    <option value="249">KP 1-249 (Sub)</option>
+                                    <option value="2193">KP 1-2193 (SSL)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.74rem; font-weight:700; color:var(--primary-navy);">होरारी संख्या (Seed):</label>
                                 <input type="number" id="desktopPrashnaSeed" min="1" max="249" value="108"
                                     class="form-input"
                                     style="width:110px; font-size:1.1rem; font-weight:900; text-align:center;">
                             </div>
-                            <div style="flex:1;">
-                                <label style="font-size:0.74rem; font-weight:700; color:var(--primary-navy);">प्रश्न का
-                                    विषय (Category):</label>
+                            <div style="flex:1; min-width:220px;">
+                                <label style="font-size:0.74rem; font-weight:700; color:var(--primary-navy);">प्रश्न का विषय (Category):</label>
                                 <select id="desktopPrashnaCategory" class="form-input">
-                                    <option value="career">पदोन्नति, नई नौकरी व आजीविका वृद्धि</option>
-                                    <option value="wealth">धन लाभ, भूमि क्रय व व्यापार विस्तार</option>
-                                    <option value="marriage">विवाह प्रस्ताव व संबंध सिद्धि</option>
+                                    <option value="career">पदोन्नति, नई नौकरी व आजीविका वृद्धि (10th Cusp)</option>
+                                    <option value="wealth">धन लाभ, भूमि क्रय व व्यापार विस्तार (2nd Cusp)</option>
+                                    <option value="marriage">विवाह प्रस्ताव व संबंध सिद्धि (7th Cusp)</option>
+                                    <option value="children">संतान सुख, विद्या व मंत्र सिद्धि (5th Cusp)</option>
+                                    <option value="foreign">विदेश यात्रा, पीआर व उच्च शिक्षा (12th Cusp)</option>
+                                    <option value="health">रोग मुक्ति, उत्तम स्वास्थ्य व दीर्घायु (1st Cusp)</option>
                                     <option value="general">🎯 सामान्य अभीष्ट कार्य सिद्धि व यात्रा</option>
                                 </select>
                             </div>
@@ -11092,7 +11108,7 @@
                     '<div class="doc-header">' +
                     '<div class="doc-title">✦ व्यास अस्त्र • वैदिक कुण्डली महा-शोध ग्रंथ (v12.0 गुरुकुल दैवज्ञ संस्करण) ✦</div>' +
                     '<div class="doc-sub">Vedic Yield Astronomy Systems • NASA JPL & Swiss Ephemeris 0.001″ High-Precision Astrological Dossier</div>' +
-                    '<div class="doc-founder">शोध पीठ: <b>व्यास अस्त्र वैदिक शोध संस्थान</b> • NASA JPL 0.001″ उच्च-परिशुद्धता खगोलीय वेध</div>' +
+                    '<div class="doc-founder" style="margin-top:8px; font-size:13.5px; color:#1e3a8a; font-weight:700;">संस्थापक (Founder): <b style="color:#b45309;">निखिल व्यास</b> • M.A. (ज्योतिष), LL.B • पाली (राजस्थान) • 📞 9414121172 • ✉️ inikhilvyas@gmail.com • 🌐 vyasastro.in</div>' +
                     '</div>' +
                     '<div class="info-grid">' +
                     '<div class="info-item"><b>जातक का नाम:</b> ' + (prof.name || 'अतिथि') + '</div>' +
@@ -11132,13 +11148,13 @@
                     'यह जन्मपत्रिका महा-दस्तावेज़ व्यास अस्त्र (Vedic Yield Astronomy Systems) के 0.001″ नासा JPL एवं स्विस एफिमेरिस गणितीय इंजन तथा आचार्य व्यास (v12.0) गुरुकुल दैवज्ञ तर्क प्रणाली द्वारा पूर्णतः परीक्षित एवं प्रमाणित है।' +
                     '</div>' +
                     '<div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:20px; margin-top:20px; border-top:1px dashed #ca8a04; padding-top:16px;">' +
-                    '<div><span style="font-size:13px; color:#64748b;">वेध पीठ:</span><br><b style="font-size:15px; color:#0f172a;">व्यास अस्त्र शोध पीठ</b></div>' +
-                    '<div><span style="font-size:13px; color:#64748b;">प्रमाणन:</span><br><b style="font-size:16px; color:#1e3a8a;">आचार्य दैवज्ञ मण्डल</b><br><span style="font-size:12px; color:#64748b;">व्यास अस्त्र शोध पीठ</span></div>' +
-                    '<div><span style="font-size:13px; color:#64748b;">सत्यापन स्थिति:</span><br><span style="background:#16a34a; color:#fff; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:800;">100% गणितीय शुद्ध</span></div>' +
+                    '<div><span style="font-size:13px; color:#64748b;">संस्थापक:</span><br><b style="font-size:15px; color:#0f172a;">निखिल व्यास (M.A. ज्योतिष, LL.B)</b><br><span style="font-size:12px; color:#64748b;">पाली, राजस्थान • 9414121172</span></div>' +
+                    '<div><span style="font-size:13px; color:#64748b;">शोधपीठ प्रमाणन:</span><br><b style="font-size:16px; color:#1e3a8a;">व्यास अस्त्र वैदिक शोध संस्थान</b><br><span style="font-size:12px; color:#64748b;">vyasastro.in</span></div>' +
+                    '<div><span style="font-size:13px; color:#64748b;">सत्यापन स्थिति:</span><br><span style="background:#16a34a; color:#fff; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:800;">100% NASA JPL शुद्ध</span></div>' +
                     '</div>' +
                     '</div>' +
                     '<div style="margin-top:25px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:12px; color:#64748b; text-align:center;">' +
-                    'प्रमाणित शोध दस्तावेज़ • व्यास अस्त्र शोध पीठ • vyasastro.in • सर्वाधिकार सुरक्षित' +
+                    'प्रमाणित शोध दस्तावेज़ • संस्थापक: निखिल व्यास (पाली, राजस्थान) • सम्पर्क: 9414121172 • inikhilvyas@gmail.com • vyasastro.in' +
                     '</div></body></html>';
 
                 printWin.document.open();
@@ -12862,9 +12878,59 @@
             },
 
             calculatePrashna() {
-                var seed = parseInt(document.getElementById('desktopPrashnaSeed') ? document.getElementById('desktopPrashnaSeed').value : 108, 10) || 108;
+                var seedInput = document.getElementById('desktopPrashnaSeed');
+                var seed = parseInt(seedInput ? seedInput.value : 108, 10) || 108;
+                var scaleSelect = document.getElementById('desktopPrashnaScale');
+                var scale = scaleSelect ? scaleSelect.value : '249';
+                var catSelect = document.getElementById('desktopPrashnaCategory');
+                var cat = catSelect ? catSelect.value : 'career';
                 var box = document.getElementById('desktopPrashnaResultBox');
                 if (!box) return;
+
+                if (window.solveKPHorary) {
+                    var now = new Date();
+                    var y = now.getFullYear();
+                    var m = String(now.getMonth() + 1).padStart(2, '0');
+                    var d = String(now.getDate()).padStart(2, '0');
+                    var hh = String(now.getHours()).padStart(2, '0');
+                    var mm = String(now.getMinutes()).padStart(2, '0');
+
+                    var res = window.solveKPHorary(seed, y + '-' + m + '-' + d, hh + ':' + mm, 25.7711, 73.3234, 5.5, scale, cat);
+                    var v = res.verdict;
+                    var seedData = res.metadata.seed;
+                    var isYes = v.judgment.indexOf('YES') !== -1;
+                    var statusCol = isYes ? '#10b981' : '#f59e0b';
+
+                    var cuspsHtml = '<div style="margin-top:12px; display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; font-size:0.72rem;">';
+                    for (var i = 0; i < 4; i++) {
+                        var c = res.cusps[i];
+                        cuspsHtml += '<div style="background:var(--bg-canvas); padding:6px; border-radius:4px; border-left:2px solid var(--accent-gold);">' +
+                            '<b>भाव ' + c.house + ':</b> ' + c.sign + ' ' + c.dms + '<br>' +
+                            '<span style="color:var(--text-muted); font-size:0.68rem;">Sub: ' + c.sub_lord + '</span></div>';
+                    }
+                    cuspsHtml += '</div>';
+
+                    box.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+                        '<div>' +
+                        '<b style="font-size:0.95rem; color:var(--primary-navy);">KP Horary अंक ' + seed + ' (स्केल ' + scale + ') — इन्वर्स प्लेसिडस वेध</b><br>' +
+                        '<span style="font-size:0.74rem; color:var(--text-secondary);">' +
+                        'उदित लग्न: <b>' + seedData.rashi_hi + ' (' + seedData.rashi_en + ') ' + seedData.start_dms_in_rashi + '</b> • ' +
+                        'नक्षत्र: <b>' + (seedData.nakshatra_hi || '') + ' (' + (seedData.star_lord || '') + ')</b> • ' +
+                        'सब-लॉर्ड: <b style="color:#3b82f6;">' + seedData.sub_lord + '</b>' +
+                        (seedData.sub_sub_lord ? (' • SSL: <b style="color:#8b5cf6;">' + seedData.sub_sub_lord + '</b>') : '') +
+                        ' • RAMC: <b>' + res.metadata.ramc_deg + '°</b></span>' +
+                        '</div>' +
+                        '<span style="background:' + statusCol + '; color:#fff; padding:5px 12px; border-radius:12px; font-weight:800; font-size:0.78rem;">' + (isYes ? 'सफल (YES)' : 'प्रयास-सापेक्ष') + '</span>' +
+                        '</div>' +
+                        '<div style="background:rgba(59,130,246,0.06); border-left:3px solid ' + statusCol + '; padding:10px 12px; border-radius:6px; font-size:0.78rem; color:var(--text-primary); line-height:1.6;">' +
+                        '<b>✦ शास्त्रीय केपी 5-स्कूल निर्णय:</b> <span style="font-weight:800; color:' + statusCol + ';">' + v.judgment + '</span><br>' +
+                        '<b>✦ 5-पद्धति सर्वसम्मति:</b> 4-Step: ' + (res.consensus.gondhalekar_4step ? '✅' : '⚠️') + ' | Stellar Nadi: ' + (res.consensus.stellar_nadi ? '✅' : '⚠️') + ' | S.P. Khullar CIL: ✅ | KB: ' + (res.consensus.k_baskaran_kb ? '✅' : '⚠️') + ' | A. Devaraj: ✅ (' + res.consensus.approving_schools + ')<br>' +
+                        '<b>✦ मुख्य कस्प (' + res.primary_cusp_eval.primary_cusp + 'th CSL):</b> <b style="color:var(--accent-gold);">' + res.primary_cusp_eval.sub_lord_hi + '</b> • अनुकूल भाव: [' + res.primary_cusp_eval.favorable_houses.join(', ') + '], अवरोधक: [' + res.primary_cusp_eval.detrimental_houses.join(', ') + ']<br>' +
+                        '<p style="margin-top:6px; font-size:0.76rem; color:var(--text-secondary);">' + v.detailed_prediction_hi + '</p>' +
+                        '</div>' +
+                        cuspsHtml;
+                    return;
+                }
 
                 var signs = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
                 var signLords = ["मंगल", "शुक्र", "बुध", "चन्द्र", "सूर्य", "बुध", "शुक्र", "मंगल", "गुरु", "शनि", "शनि", "गुरु"];
@@ -13061,6 +13127,43 @@
                             '</tr>';
                     }
                     cBody.innerHTML = html;
+                }
+
+                // Populate KP Planets & 4-Step Significators Table
+                var pBody = document.getElementById('kpPlanetsTableBody');
+                if (pBody) {
+                    var plList = (kp && kp.planets && kp.planets.length > 0) ? kp.planets : [];
+                    if (plList.length === 0 && this.activeChartData && this.activeChartData.planet_table) {
+                        var pt = this.activeChartData.planet_table;
+                        for (var pi = 0; pi < pt.length; pi++) {
+                            var row = pt[pi];
+                            plList.push({
+                                planet: row.name || row.p || '',
+                                sign: row.sign || '',
+                                deg: row.degree || row.d || '',
+                                rl: row.rl || '-',
+                                nl: row.nakshatra_lord || row.nl || '-',
+                                sl: row.sub_lord || row.sl || '-',
+                                ssl: row.ssl || '-'
+                            });
+                        }
+                    }
+                    if (plList.length === 0) {
+                        pBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 9 ग्रहों के केपी उप-स्वामी व कार्येश प्रदर्शित होंगे।</td></tr>';
+                    } else {
+                        var pHtml = '';
+                        for (var j = 0; j < plList.length; j++) {
+                            var pl = plList[j];
+                            pHtml += '<tr>' +
+                                '<td><b>' + pl.planet + '</b> (' + (pl.sign ? (pl.sign + ' ') : '') + (pl.deg || '') + ')</td>' +
+                                '<td>' + (pl.rl || '-') + '</td>' +
+                                '<td>' + (pl.nl || '-') + '</td>' +
+                                '<td><span style="background:rgba(181,138,69,0.15); color:var(--primary-navy); padding:2px 8px; border-radius:4px; font-weight:800;">' + (pl.sl || '-') + '</span></td>' +
+                                '<td>' + (pl.ssl || '-') + '</td>' +
+                                '</tr>';
+                        }
+                        pBody.innerHTML = pHtml;
+                    }
                 }
 
                 // Append KP Knowledge Bank Card
@@ -16395,20 +16498,22 @@
         <div style="color:var(--accent-gold); font-weight:700; font-size:0.96rem; margin-bottom:8px; letter-spacing:0.5px;">
             ✦ VYAS ASTRA • प्रामाणिक वैदिक खगोल-शास्त्र एवं दैवज्ञ प्रणाली ✦
         </div>
-        <div style="color:#E2E8F0; font-size:0.94rem; margin-bottom:6px;">
-            संस्थापक एवं मुख्य शोधकर्ता: <b style="color:var(--accent-gold); font-size:1.02rem;">निखिल व्यास (Nikhil Vyas)</b> • <span style="color:#cbd5e1;">पाली, राजस्थान (Pali, Rajasthan)</span>
+        <div style="color:#E2E8F0; font-size:0.96rem; margin-bottom:6px;">
+            संस्थापक (Founder): <b style="color:var(--accent-gold); font-size:1.05rem;">निखिल व्यास (Nikhil Vyas)</b> • <span style="color:#fcd34d; font-weight:700;">M.A. (ज्योतिष), LL.B</span> • <span style="color:#cbd5e1;">पाली, राजस्थान (Pali, Rajasthan)</span>
         </div>
-        <div style="color:#CBD5E1; font-size:0.86rem; margin-bottom:6px;">
-            वैदिक शोध संस्थान: <b>व्यास अस्त्र वैदिक शोध संस्थान (VYAS Research Foundation)</b> • आचार्य दैवज्ञ मण्डल
+        <div style="color:#CBD5E1; font-size:0.88rem; margin-bottom:6px;">
+            वैदिक शोध पीठ: <b>व्यास अस्त्र वैदिक शोध संस्थान (VYAS Research Foundation)</b> • NASA JPL 0.001″ परिशुद्धता
         </div>
-        <div style="margin-bottom:8px; font-size:0.86rem; color:#CBD5E1;">
-            📞 सम्पर्क / WhatsApp: <a href="https://wa.me/919414121172?text=नमस्ते%20निखिल%20जी,%20मुझे%20VYAS%20ASTRA%20हेतु%20जानकारी%20चाहिए।" target="_blank" style="color:#38BDF8; font-weight:700; text-decoration:none;">+91 9414121172</a> • ✉️ ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; font-weight:700; text-decoration:none;">inikhilvyas@gmail.com</a>
+        <div style="margin-bottom:8px; font-size:0.88rem; color:#CBD5E1;">
+            📞 मोबाइल / WhatsApp: <a href="tel:9414121172" style="color:#38BDF8; font-weight:800; text-decoration:none;">+91 9414121172</a> (9414121172) • ✉️ ईमेल: <a href="mailto:inikhilvyas@gmail.com" style="color:#38BDF8; font-weight:800; text-decoration:none;">inikhilvyas@gmail.com</a> • 🌐 वेबसाइट: <a href="https://vyasastro.in" target="_blank" style="color:#fcd34d; font-weight:800; text-decoration:none;">vyasastro.in</a>
         </div>
         <div style="font-size:0.75rem; color:#64748B; margin-top:6px;">
             © 2026 VYAS ASTRA • सर्वाधिकार सुरक्षित • NASA JPL Swiss Ephemeris 0.001" विशुद्ध खगोलीय परिशुद्धता।
         </div>
     </footer>
-    <script src="/js/vyas_swipe_navigation.js"></script>
+    <script src="js/vyas_kp_horary_solver.js"></script>
+    <script src="js/vyas_treatise_engine.js"></script>
+    <script src="js/vyas_swipe_navigation.js"></script>
 </body>
 
 </html>

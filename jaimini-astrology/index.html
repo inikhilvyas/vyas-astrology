@@ -492,11 +492,27 @@
             var tbody = document.getElementById('karakaTableBody');
             var kHtml = '';
             var kKeys = ['AK', 'AmK', 'BK', 'MK', 'PK', 'GK', 'DK'];
+            var fallbackKarakas = {
+                'AK': { title: 'आत्मकारक (Atmakaraka)', desc: 'आत्मा, आत्मबल व आंतरिक प्रकृति' },
+                'AmK': { title: 'अमात्यकारक (Amatyakaraka)', desc: 'करियर, आजीविका, अधिकार व सामाजिक पद' },
+                'BK': { title: 'भ्रातृकारक (Bhratrukaraka)', desc: 'मार्गदर्शक, गुरु व बंधु' },
+                'MK': { title: 'मातृकारक (Matrukaraka)', desc: 'माता, सुख, संपत्ति व मानसिक शांति' },
+                'PK': { title: 'पुत्रकारक (Putrakaraka)', desc: 'संतान, उच्च विवेक, विद्या व प्रतिभा' },
+                'GK': { title: 'ज्ञातिकारक (Gnatikaraka)', desc: 'प्रतिद्वंद्वी, संघर्ष, रोग व ऋण' },
+                'DK': { title: 'दाराकारक (Darakaraka)', desc: 'जीवनसाथी, विवाह, पार्टनरशिप व दांपत्य' }
+            };
+
             for (var i = 0; i < kKeys.length; i++) {
                 var code = kKeys[i];
-                var item = karakas[code] || { title: code, planet: '-', deg: '-', sign: '-', desc: '-' };
+                var item = karakas[code] || {};
+                var fb = fallbackKarakas[code] || { title: code, desc: 'जैमिनी चर कारक' };
+                var itemTitle = item.title || item.karaka || item.name || fb.title;
+                var itemPlanet = item.planet || '-';
+                var itemSign = item.sign ? (' (' + item.sign + ')') : '';
+                var itemDeg = item.deg ? (String(item.deg).replace(/°+$/, '') + '°') : '-';
+                var itemDesc = item.desc || item.signification || item.role || fb.desc;
                 var isAK = code === 'AK';
-                kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + item.title + '</td><td><b>' + item.planet + '</b> (' + (item.sign || '') + ')</td><td>' + item.deg + '°</td><td style="color:var(--text-muted); font-size:0.85rem;">' + item.desc + '</td></tr>';
+                kHtml += '<tr><td class="' + (isAK ? 'ak' : '') + '"><b>' + code + '</b></td><td>' + itemTitle + '</td><td><b>' + itemPlanet + '</b>' + itemSign + '</td><td>' + itemDeg + '</td><td style="color:var(--text-muted); font-size:0.85rem;">' + itemDesc + '</td></tr>';
             }
             if (tbody) tbody.innerHTML = kHtml;
 

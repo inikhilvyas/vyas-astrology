@@ -305,6 +305,7 @@
                 var ascDms = Math.floor(ascDegInSign) + "°" + Math.floor((ascDegInSign * 60) % 60) + "'" + Math.floor(((ascDegInSign * 3600) % 60)) + '"';
 
                 // 4. High-Precision Sun (VSOP87 Analytical)
+                var prec_deg = (5028.796195 * T + 1.1054348 * T * T) / 3600.0;
                 var L0 = norm(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
                 var M_sun = norm(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
                 var e_sun = 0.016708634 - 0.000042037 * T;
@@ -314,6 +315,10 @@
                 var sunTrop = norm(L0 + C_sun);
                 var sunSid = norm(sunTrop - ayanamsa);
                 var R_sun = 1.000001018 * (1 - e_sun * e_sun) / (1 + e_sun * Math.cos((M_sun + C_sun) * RAD));
+                // Convert Sun to J2000 frame so heliocentric coordinates and Earth coordinates share identical frame
+                var sun_j2000 = norm(sunTrop - prec_deg);
+                var X_sun_j2000 = R_sun * Math.cos(sun_j2000 * RAD);
+                var Y_sun_j2000 = R_sun * Math.sin(sun_j2000 * RAD);
                 var X_sun = R_sun * Math.cos(sunTrop * RAD);
                 var Y_sun = R_sun * Math.sin(sunTrop * RAD);
                 var Z_sun = 0.0;
@@ -345,49 +350,73 @@
                 var rahuSid = norm(omega_mean - ayanamsa);
                 var ketuSid = norm(rahuSid + 180.0);
 
-                // 7. Planetary Orbital Elements (VSOP87 Base + Mutual Perturbations)
+                // 7. Planetary Orbital Elements (NASA JPL / Standish J2000 Osculating Elements + Perturbations)
                 var elements = {
-                    Mercury: { a: 0.38709893, e: 0.20563069 + 0.00002527 * T, I: (7.00487 - 0.005947 * T) * RAD, L: norm(252.25084 + 149472.67411 * T), varpi: norm(77.45645 + 1.556499 * T), Omega: norm(48.33132 - 0.125340 * T) },
-                    Venus: { a: 0.72333199, e: 0.00677323 - 0.00004938 * T, I: (3.39471 - 0.000788 * T) * RAD, L: norm(181.97973 + 58517.81539 * T), varpi: norm(131.57294 + 1.402236 * T), Omega: norm(76.67984 - 0.277694 * T) },
-                    Mars: { a: 1.52366231, e: 0.09341233 + 0.00011902 * T, I: (1.85061 - 0.000675 * T) * RAD, L: norm(355.45332 + 19140.30268 * T), varpi: norm(336.04084 + 1.841044 * T), Omega: norm(49.55747 - 0.294985 * T) },
-                    Jupiter: { a: 5.20336301 + 0.000000607 * T, e: 0.04839266 - 0.00012880 * T, I: (1.30530 - 0.004150 * T) * RAD, L: norm(34.40438 + 3034.90567 * T), varpi: norm(14.75385 + 1.619324 * T), Omega: norm(100.55615 + 0.211752 * T) },
-                    Saturn: { a: 9.53707032 - 0.000003015 * T, e: 0.05415060 - 0.00036762 * T, I: (2.48446 + 0.006110 * T) * RAD, L: norm(49.94432 + 1222.11379 * T), varpi: norm(92.43194 - 1.948768 * T), Omega: norm(113.71504 - 0.250101 * T) }
+                    Mercury: { a0: 0.38709927, ad: 0.00000037, e0: 0.20563593, ed: 0.00001906, i0: 7.00497902, id: -0.00594749, l0: 252.25032350, ld: 149472.67411175, wb0: 77.45779628, wbd: 0.16047689, om0: 48.33076593, omd: -0.12534081 },
+                    Venus:   { a0: 0.72333566, ad: 0.00000390, e0: 0.00677672, ed: -0.00004107, i0: 3.39467605, id: -0.00078890, l0: 181.97909950, ld: 58517.81538729, wb0: 131.60246718, wbd: 0.00268329, om0: 76.67984255, omd: -0.27769418 },
+                    Mars:    { a0: 1.52371034, ad: 0.00001847, e0: 0.09339410, ed: 0.00007882, i0: 1.84969142, id: -0.00813131, l0: 355.44656795, ld: 19140.30268499, wb0: 336.05637041, wbd: 0.44441088, om0: 49.55953891, omd: -0.29257343 },
+                    Jupiter: { a0: 5.20288700, ad: -0.00011607, e0: 0.04838624, ed: -0.00013253, i0: 1.30439695, id: -0.00183714, l0: 34.39644051, ld: 3034.74612775, wb0: 14.72847983, wbd: 0.21252668, om0: 100.47390909, omd: 0.20469106 },
+                    Saturn:  { a0: 9.53667594, ad: -0.00125060, e0: 0.05386179, ed: -0.00050991, i0: 2.48599187, id: 0.00193609, l0: 49.95424423, ld: 1222.49362201, wb0: 92.59887831, wbd: -0.41897216, om0: 113.66242448, omd: -0.28867794 }
                 };
 
-                // Jupiter-Saturn Great Inequality Resonance Correction (5:2 Mean-Motion Resonance)
-                var M_jup = norm(elements.Jupiter.L - elements.Jupiter.varpi) * RAD;
-                var M_sat = norm(elements.Saturn.L - elements.Saturn.varpi) * RAD;
-                var delta_jup = (-0.332 * Math.sin(2 * M_jup - 5 * M_sat - 67.0 * RAD) - 0.056 * Math.sin(M_jup - 2 * M_sat + 21.0 * RAD));
-                var delta_sat = (+0.812 * Math.sin(2 * M_jup - 5 * M_sat - 67.0 * RAD) + 0.083 * Math.sin(M_jup - 2 * M_sat + 21.0 * RAD));
-                elements.Jupiter.L = norm(elements.Jupiter.L + delta_jup);
-                elements.Saturn.L = norm(elements.Saturn.L + delta_sat);
+                function getHeliocentricPos(pName, tVal) {
+                    var el = elements[pName];
+                    var a = el.a0 + el.ad * tVal;
+                    var e = el.e0 + el.ed * tVal;
+                    var inc = (el.i0 + el.id * tVal) * RAD;
+                    var l_deg = el.l0 + el.ld * tVal;
+                    var wb_deg = el.wb0 + el.wbd * tVal;
+                    var om_deg = el.om0 + el.omd * tVal;
+
+                    var mj = norm(34.39644 + 3034.74613 * tVal - 14.72848) * RAD;
+                    var ms = norm(49.95424 + 1222.49362 * tVal - 92.59888) * RAD;
+
+                    if (pName === 'Jupiter') {
+                        l_deg += (-0.332 * Math.sin(2 * mj - 5 * ms - 67.6 * RAD) - 0.056 * Math.sin(2 * mj - 2 * ms + 21.0 * RAD) - 0.07);
+                    } else if (pName === 'Saturn') {
+                        l_deg += (0.812 * Math.sin(2 * mj - 5 * ms - 67.6 * RAD) - 0.229 * Math.cos(2 * mj - 4 * ms - 2.0 * RAD) + 0.119 * Math.sin(mj - 2 * ms - 3.0 * RAD) + 0.32);
+                    } else if (pName === 'Mars') {
+                        l_deg += (-0.02);
+                    }
+
+                    var w_arg = (wb_deg - om_deg) * RAD;
+                    var om = om_deg * RAD;
+                    var m_anom = norm(l_deg - wb_deg) * RAD;
+
+                    var E = m_anom;
+                    for (var k = 0; k < 15; k++) {
+                        var dE = (m_anom - (E - e * Math.sin(E))) / (1.0 - e * Math.cos(E));
+                        E += dE;
+                        if (Math.abs(dE) < 1e-11) break;
+                    }
+
+                    var xv = a * (Math.cos(E) - e);
+                    var yv = a * Math.sqrt(1.0 - e * e) * Math.sin(E);
+                    var cos_w = Math.cos(w_arg), sin_w = Math.sin(w_arg);
+                    var cos_om = Math.cos(om), sin_om = Math.sin(om);
+                    var cos_i = Math.cos(inc), sin_i = Math.sin(inc);
+
+                    var x = (cos_w * cos_om - sin_w * sin_om * cos_i) * xv + (-sin_w * cos_om - cos_w * sin_om * cos_i) * yv;
+                    var y = (cos_w * sin_om + sin_w * cos_om * cos_i) * xv + (-sin_w * sin_om + cos_w * cos_om * cos_i) * yv;
+                    var z = (sin_w * sin_i) * xv + (cos_w * sin_i) * yv;
+                    return { x: x, y: y, z: z };
+                }
 
                 var sids = { Sun: sunSid, Moon: moonSid, Rahu: rahuSid, Ketu: ketuSid };
 
                 for (var pKey in elements) {
-                    var el = elements[pKey];
-                    var M_p = norm(el.L - el.varpi);
-                    var E_p = solveKepler(M_p, el.e);
-                    var xv = el.a * (Math.cos(E_p) - el.e);
-                    var yv = el.a * (Math.sqrt(1.0 - el.e * el.e) * Math.sin(E_p));
-                    var v_p = Math.atan2(yv, xv);
-                    var r_p = Math.sqrt(xv * xv + yv * yv);
-
-                    var u_p = v_p + (el.varpi - el.Omega) * RAD;
-                    var cosU = Math.cos(u_p), sinU = Math.sin(u_p);
-                    var cosOm = Math.cos(el.Omega * RAD), sinOm = Math.sin(el.Omega * RAD);
-                    var cosI = Math.cos(el.I), sinI = Math.sin(el.I);
-
-                    var x_helio = r_p * (cosOm * cosU - sinOm * sinU * cosI);
-                    var y_helio = r_p * (sinOm * cosU + cosOm * sinU * cosI);
-                    var z_helio = r_p * (sinU * sinI);
-
-                    var x_geo = x_helio + X_sun;
-                    var y_geo = y_helio + Y_sun;
-                    var z_geo = z_helio + Z_sun;
-
-                    var lambda_trop = norm(Math.atan2(y_geo, x_geo) * DEG);
-                    sids[pKey] = norm(lambda_trop - ayanamsa);
+                    var p0 = getHeliocentricPos(pKey, T);
+                    var dx = p0.x + X_sun_j2000;
+                    var dy = p0.y + Y_sun_j2000;
+                    var dz = p0.z;
+                    var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    var tau = (0.0057755183 * dist) / 36525.0; // Light-time aberration in centuries
+                    var p = getHeliocentricPos(pKey, T - tau);
+                    var gx = p.x + X_sun_j2000;
+                    var gy = p.y + Y_sun_j2000;
+                    var lambda_j2000 = norm(Math.atan2(gy, gx) * DEG);
+                    var lambda_ofdate = norm(lambda_j2000 + prec_deg);
+                    sids[pKey] = norm(lambda_ofdate - ayanamsa);
                 }
 
                 // 8. Planet Table & Bhavas Placement
@@ -925,15 +954,22 @@
                     var kpL = getKpLords(cLon);
                     var cDegIn = cLon % 30.0;
                     var cDms = Math.floor(cDegIn) + "°" + Math.floor((cDegIn * 60) % 60) + "'";
-                    kpCusps.push({
+                    var cuspObj = {
                         cusp: String(c),
                         sign: kpL.sign,
                         deg: cDms,
                         rl: kpL.rl,
                         nl: kpL.nl,
                         sl: kpL.sl,
-                        ssl: kpL.ssl
-                    });
+                        ssl: kpL.ssl,
+                        star: kpL.nl,
+                        starLord: kpL.nl,
+                        subLord: kpL.sl,
+                        subSubLord: kpL.ssl,
+                        significator: "भाव " + c
+                    };
+                    kpCusps.push(cuspObj);
+                    kpCusps[c] = cuspObj; // Enable 1-based indexing so cusps[1] or cusps[10] never returns undefined
                 }
 
                 var kpPlanets = [];
@@ -951,6 +987,10 @@
                         nl: kpL.nl,
                         sl: kpL.sl,
                         ssl: kpL.ssl,
+                        star: kpL.nl,
+                        starLord: kpL.nl,
+                        subLord: kpL.sl,
+                        subSubLord: kpL.ssl,
                         significator: "भाव " + (((Math.floor(plon / 30.0) - ascSignIdx + 12) % 12) + 1)
                     });
                 }
@@ -975,15 +1015,27 @@
                 var jaiminiKarakas = sortedKarakas.map(function (item, idx) {
                     var deg = item.degInSign;
                     var dms = Math.floor(deg) + "°" + Math.floor((deg * 60) % 60) + "'";
+                    var h = ((item.signIdx - ascSignIdx + 12) % 12) + 1;
                     return {
                         abbr: KARAKA_NAMES[idx].abbr,
                         karaka: KARAKA_NAMES[idx].name,
+                        title: KARAKA_NAMES[idx].name,
+                        name: KARAKA_NAMES[idx].name,
                         planet: item.name,
                         sign: SIGNS_HI_DIAG[item.signIdx],
                         deg: dms,
-                        signification: KARAKA_NAMES[idx].role
+                        degNum: deg,
+                        house: h,
+                        signification: KARAKA_NAMES[idx].role,
+                        desc: KARAKA_NAMES[idx].role,
+                        role: KARAKA_NAMES[idx].role
                     };
                 });
+
+                // Attach keyed properties to jaiminiKarakas array for direct lookup by abbreviation
+                for (var jk = 0; jk < jaiminiKarakas.length; jk++) {
+                    jaiminiKarakas[jaiminiKarakas[jk].abbr] = jaiminiKarakas[jk];
+                }
 
                 var ak = sortedKarakas[0];
                 var klNavSign = (function (sign, deg) {
@@ -1101,7 +1153,14 @@
                     jaimini: {
                         karakas: jaiminiKarakas,
                         atmakaraka: ak.name,
-                        karakamsha: SIGNS_HI_DIAG[klNavSign]
+                        karakamsha: SIGNS_HI_DIAG[klNavSign],
+                        AK: jaiminiKarakas['AK'] || jaiminiKarakas[0],
+                        AmK: jaiminiKarakas['AmK'] || jaiminiKarakas[1],
+                        BK: jaiminiKarakas['BK'] || jaiminiKarakas[2],
+                        MK: jaiminiKarakas['MK'] || jaiminiKarakas[3],
+                        PK: jaiminiKarakas['PK'] || jaiminiKarakas[4],
+                        GK: jaiminiKarakas['GK'] || jaiminiKarakas[5],
+                        DK: jaiminiKarakas['DK'] || jaiminiKarakas[6]
                     },
                     nadi: {
                         combinations: nadiCombinations
@@ -1518,6 +1577,19 @@
                 }
             }
         } catch(e) { }
+
+        // If vyas_active_profile and saved vault profiles are not set, default to dynamic Current Prashna (वर्तमान गोचर)
+        try {
+            var prashna = computeCurrentPrashna('वर्तमान गोचर (Real-Time Transit)');
+            if (prashna) {
+                if (!prashna.houses && prashna.charts && prashna.charts.d1 && prashna.charts.d1.houses) {
+                    prashna.houses = prashna.charts.d1.houses;
+                }
+                return prashna;
+            }
+        } catch (e) {
+            console.warn('computeCurrentPrashna fallback error:', e);
+        }
 
         return null;
     }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  IgnorableNamespaces="uap rescap mp">
+
+  <Identity
+    Name="NikhilVyas.VYASAstraVedicAstrology"
+    Publisher="CN=NikhilVyas, O=VedicYieldAstrologySystems, C=IN"
+    Version="1.1.2.0"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>VYAS ASTRA • Vedic Astrology</DisplayName>
+    <PublisherDisplayName>Nikhil Vyas</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>High-Precision Forensic Vedic Astrology, Kundli Generator and NASA JPL Ephemeris Desktop Software by Acharya Nikhil Vyas.</Description>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="VYASAstra"
+      Executable="vyas_astra.exe"
+      EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="VYAS ASTRA"
+        Description="High-Precision Vedic Yield Astrology Systems"
+        BackgroundColor="#0D1117"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="VYAS ASTRA" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#0D1117" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
+

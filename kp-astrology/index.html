@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>KP ज्योतिष • भाव चलित चक्र, कस्पल सब-लॉर्ड एवं 4-स्टेप सिद्धांत | VYAS ASTRA</title>
-    <meta name="description" content="कृष्णमूर्ति पद्धति (KP Astrology) - भाव चलित चक्र (Placidus Cusps), 12 भाव कस्पल सब-लॉर्ड, 1-249 होरारी अंक प्रणाली व 4-स्टेप फलादेश।">
+    <meta name="description"
+        content="कृष्णमूर्ति पद्धति (KP Astrology) - भाव चलित चक्र (Placidus Cusps), 12 भाव कस्पल सब-लॉर्ड, 1-249 होरारी अंक प्रणाली व 4-स्टेप फलादेश।">
     <link rel="icon" type="image/png" href="/logo_icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -29,7 +32,12 @@
             --font-devanagari: 'Noto Sans Devanagari', sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             background-color: var(--bg-canvas);
             background-image: radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.15), transparent 40%), radial-gradient(circle at 90% 15%, rgba(212, 175, 55, 0.12), transparent 45%);
@@ -41,112 +49,295 @@
 
         /* Top Sticky Master Bar */
         .master-header {
-            position: sticky; top: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 24px; background: rgba(5, 8, 17, 0.94);
-            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-gold);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 24px;
+            background: rgba(5, 8, 17, 0.94);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-gold);
         }
-        .brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-        .brand-logo { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); }
-        .brand-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
-        .brand-sub { font-size: 0.72rem; color: var(--text-muted); }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid var(--gold);
+        }
+
+        .brand-title {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
 
         /* Universal Swipeable Gold Pill Bar */
         .vyas-portal-pill-strip {
-            display: flex; gap: 8px; overflow-x: auto; padding: 10px 24px;
-            background: rgba(8, 14, 29, 0.75); border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 24px;
+            background: rgba(8, 14, 29, 0.75);
+            border-bottom: 1px solid var(--border-subtle);
             scrollbar-width: none;
         }
-        .vyas-portal-pill-strip::-webkit-scrollbar { display: none; }
+
+        .vyas-portal-pill-strip::-webkit-scrollbar {
+            display: none;
+        }
+
         .portal-pill {
-            display: inline-flex; align-items: center; gap: 7px;
-            padding: 7px 14px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle);
-            color: var(--text-secondary); text-decoration: none;
-            font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
             transition: all 0.2s ease;
         }
-        .portal-pill:hover { background: rgba(212, 175, 55, 0.12); color: var(--gold-light); border-color: var(--border-gold); }
+
+        .portal-pill:hover {
+            background: rgba(212, 175, 55, 0.12);
+            color: var(--gold-light);
+            border-color: var(--border-gold);
+        }
+
         .portal-pill.active {
             background: linear-gradient(135deg, rgba(2, 132, 199, 0.28), rgba(212, 175, 55, 0.18));
-            color: #bae6fd; border-color: var(--sky); font-weight: 700;
+            color: #bae6fd;
+            border-color: var(--sky);
+            font-weight: 700;
         }
 
-        .container { max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
         .page-hero {
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
-            padding: 20px 24px; border-radius: 12px;
-            background: var(--bg-card); border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        .hero-left h1 { font-size: 1.45rem; font-weight: 800; color: var(--sky); display: flex; align-items: center; gap: 10px; }
-        .hero-left p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; }
-        .active-profile-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 14px; border-radius: 20px;
-            background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35);
-            color: var(--sky); font-size: 0.82rem; font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
-        .kp-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; }
-        @media (max-width: 900px) { .kp-grid { grid-template-columns: 1fr; } }
+        .hero-left h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--sky);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-left p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .active-profile-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: var(--sky);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .kp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.35fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .kp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         .card {
-            background: var(--bg-card); border: 1px solid var(--border-subtle);
-            border-radius: 12px; padding: 20px; backdrop-filter: blur(12px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
         }
+
         .card-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
         }
-        .card-title { font-size: 1.05rem; font-weight: 700; color: var(--sky); display: flex; align-items: center; gap: 8px; }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--sky);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .chart-box {
-            display: flex; justify-content: center; align-items: center;
-            background: rgba(0, 0, 0, 0.35); border-radius: 10px; padding: 14px;
-            border: 1px solid var(--border-subtle); min-height: 420px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid var(--border-subtle);
+            min-height: 420px;
         }
 
         /* Cuspal Table */
-        .table-wrap { overflow-x: auto; margin-top: 14px; }
-        table.kp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: center; }
-        table.kp-table th, table.kp-table td { padding: 8px 6px; border: 1px solid var(--border-subtle); }
-        table.kp-table th { background: rgba(56, 189, 248, 0.12); color: var(--sky); font-weight: 700; }
-        table.kp-table td.sublord { color: var(--gold-light); font-weight: 800; background: rgba(212, 175, 55, 0.08); }
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 14px;
+        }
+
+        table.kp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        table.kp-table th,
+        table.kp-table td {
+            padding: 8px 6px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        table.kp-table th {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--sky);
+            font-weight: 700;
+        }
+
+        table.kp-table td.sublord {
+            color: var(--gold-light);
+            font-weight: 800;
+            background: rgba(212, 175, 55, 0.08);
+        }
 
         /* Phalit Box */
         .phalit-item {
-            padding: 14px; margin-bottom: 12px; border-radius: 8px;
-            background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--sky);
-            font-size: 0.88rem; line-height: 1.65;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--sky);
+            font-size: 0.88rem;
+            line-height: 1.65;
         }
 
         /* Horary 1-249 box */
         .horary-box {
-            display: flex; gap: 10px; align-items: center; margin-top: 14px;
-            padding: 12px; border-radius: 8px; background: rgba(56, 189, 248, 0.06);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.06);
             border: 1px dashed rgba(56, 189, 248, 0.3);
         }
+
         .horary-input {
-            width: 80px; padding: 6px 10px; border-radius: 6px;
-            background: #000; border: 1px solid var(--sky); color: #fff;
-            font-weight: 800; text-align: center; font-size: 1rem;
+            width: 80px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #000;
+            border: 1px solid var(--sky);
+            color: #fff;
+            font-weight: 800;
+            text-align: center;
+            font-size: 1rem;
         }
 
         /* Mobile bottom nav */
         .mobile-app-nav {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
-            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-gold); z-index: 100;
-            justify-content: space-around; align-items: center;
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: rgba(5, 8, 17, 0.96);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border-gold);
+            z-index: 100;
+            justify-content: space-around;
+            align-items: center;
         }
-        @media (max-width: 768px) { .mobile-app-nav { display: flex; } }
+
+        @media (max-width: 768px) {
+            .mobile-app-nav {
+                display: flex;
+            }
+        }
+
         .mobile-app-nav a {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); text-decoration: none; font-size: 0.72rem; gap: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.72rem;
+            gap: 3px;
         }
-        .mobile-app-nav a.active { color: var(--sky); font-weight: 700; }
-        .mobile-app-nav svg { width: 18px; height: 18px; stroke: currentColor; }
+
+        .mobile-app-nav a.active {
+            color: var(--sky);
+            font-weight: 700;
+        }
+
+        .mobile-app-nav svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
     </style>
 </head>
 
@@ -160,54 +351,97 @@
             </div>
         </a>
         <div class="active-profile-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
             <span id="activeProfileName">सक्रिय जातक</span>
         </div>
     </header>
 
     <nav class="vyas-portal-pill-strip">
         <a href="/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
             <span>कुण्डली</span>
         </a>
         <a href="/panchang/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>
             <span>पंचांग</span>
         </a>
         <a href="/dasha/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+            </svg>
             <span>दशा चक्र</span>
         </a>
         <a href="/kp-astrology/" class="portal-pill active">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><circle cx="12" cy="12" r="2"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" y1="12" x2="6" y2="12" />
+                <line x1="18" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="6" />
+                <line x1="12" y1="18" x2="12" y2="22" />
+                <circle cx="12" cy="12" r="2" />
+            </svg>
             <span>KP पद्धति</span>
         </a>
         <a href="/jaimini-astrology/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
+            </svg>
             <span>जैमिनी</span>
         </a>
         <a href="/nadi-astrology/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="12" cy="12" r="10" />
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+            </svg>
             <span>BNN नाड़ी</span>
         </a>
         <a href="/ashtakavarga/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+            </svg>
             <span>अष्टकवर्ग</span>
         </a>
         <a href="/varshphal/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1.5"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <ellipse cx="12" cy="12" rx="10" ry="4" />
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="19" cy="12" r="1.5" />
+            </svg>
             <span>वर्षफल</span>
         </a>
         <a href="/prashna-kundli/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="5 3 19 3 12 12 19 21 5 21 12 12"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <polygon points="5 3 19 3 12 12 19 21 5 21 12 12" />
+            </svg>
             <span>प्रश्न कुण्डली</span>
         </a>
         <a href="/kundli-matching/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <circle cx="9" cy="12" r="6" />
+                <circle cx="15" cy="12" r="6" />
+            </svg>
             <span>गुण मिलान</span>
         </a>
         <a href="/saved-kundli/" class="portal-pill">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
             <span>कुण्डली वॉल्ट</span>
         </a>
     </nav>
@@ -216,33 +450,54 @@
         <div class="page-hero">
             <div class="hero-left">
                 <h1>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#38bdf8" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="2" y1="12" x2="6" y2="12" />
+                        <line x1="18" y1="12" x2="22" y2="12" />
+                        <line x1="12" y1="2" x2="12" y2="6" />
+                        <line x1="12" y1="18" x2="12" y2="22" />
+                    </svg>
                     KP भाव चलित चक्र एवं 4-स्टेप कस्पल सब-लॉर्ड
                 </h1>
                 <p>प्लैसिडस (Placidus) असमान भाव विभाजन, 12 भावों के कस्पल सब-लॉर्ड एवं घटना स्वीकृति सिद्धांत।</p>
             </div>
             <div class="hero-right">
-                <a href="/#kundli-calc" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.35); color:#38bdf8; text-decoration:none; font-size:0.82rem; font-weight:700;">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <a href="/#kundli-calc"
+                    style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.35); color:#38bdf8; text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
                     कुण्डली बदलें / नई बनाएं
                 </a>
             </div>
         </div>
 
         <!-- Unified Active Native Info Bar -->
-        <div id="activeProfileBar" style="background: rgba(12,19,36,0.9); border: 1px solid rgba(56,189,248,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+        <div id="activeProfileBar"
+            style="background: rgba(12,19,36,0.9); border: 1px solid rgba(56,189,248,0.3); border-radius: 12px; padding: 12px 18px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
             <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:36px; height:36px; border-radius:50%; background:rgba(56,189,248,0.15); border:1px solid var(--sky); display:flex; align-items:center; justify-content:center;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+                <div
+                    style="width:36px; height:36px; border-radius:50%; background:rgba(56,189,248,0.15); border:1px solid var(--sky); display:flex; align-items:center; justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2">
+                        <circle cx="12" cy="7" r="4" />
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    </svg>
                 </div>
                 <div>
-                    <div id="unifiedProfileName" style="color:#f8fafc; font-weight:800; font-size:1.02rem;">सक्रिय जातक</div>
-                    <div id="unifiedProfileMeta" style="color:var(--text-muted); font-size:0.8rem;">जन्म विवरण एवं लग्न वेध</div>
+                    <div id="unifiedProfileName" style="color:#f8fafc; font-weight:800; font-size:1.02rem;">सक्रिय जातक
+                    </div>
+                    <div id="unifiedProfileMeta" style="color:var(--text-muted); font-size:0.8rem;">जन्म विवरण एवं लग्न
+                        वेध</div>
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-                <a href="/saved-kundli/" style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <a href="/saved-kundli/"
+                    style="display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:700;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
                     वॉल्ट से लोड करें
                 </a>
             </div>
@@ -254,7 +509,10 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 12 12 22 2 12"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polygon points="12 2 22 12 12 22 2 12" />
+                            </svg>
                             <span>KP भाव चलित चक्र (Placidus Chart)</span>
                         </div>
                         <span style="font-size:0.75rem; color:var(--sky); font-weight:700;">12 भाव कस्प</span>
@@ -271,7 +529,15 @@
                 <div class="card" style="margin-top:20px;">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6" />
+                                <line x1="8" y1="12" x2="21" y2="12" />
+                                <line x1="8" y1="18" x2="21" y2="18" />
+                                <line x1="3" y1="6" x2="3.01" y2="6" />
+                                <line x1="3" y1="12" x2="3.01" y2="12" />
+                                <line x1="3" y1="18" x2="3.01" y2="18" />
+                            </svg>
                             <span>12 भाव कस्पल तालिका (Cusp Details)</span>
                         </div>
                     </div>
@@ -279,7 +545,11 @@
                         <table class="kp-table">
                             <thead>
                                 <tr>
-                                    <th>भाव</th><th>आरंभ अंश</th><th>राशि</th><th>नक्षत्र स्वामी</th><th>कस्पल सब-लॉर्ड</th>
+                                    <th>भाव</th>
+                                    <th>आरंभ अंश</th>
+                                    <th>राशि</th>
+                                    <th>नक्षत्र स्वामी</th>
+                                    <th>कस्पल सब-लॉर्ड</th>
                                 </tr>
                             </thead>
                             <tbody id="kpCuspTableBody">
@@ -295,7 +565,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
                             <span>KP 4-स्टेप फलादेश (Event Fulfillment)</span>
                         </div>
                     </div>
@@ -308,19 +582,27 @@
                 <div class="card" style="margin-top:20px;">
                     <div class="card-header">
                         <div class="card-title">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 14 14" />
+                            </svg>
                             <span>KP घटना समय-चक्र एवं 2-6-10-11 समीकरण</span>
                         </div>
                     </div>
                     <div style="font-size:0.86rem; line-height:1.65; color:var(--text-secondary);">
                         <p style="margin-bottom:10px;">
-                            <b>KP 4-स्टेप सिद्धांत:</b> ग्रह स्वयं का नहीं, बल्कि अपने <b>नक्षत्र स्वामी (Star Lord)</b> का फल प्रदान करता है, जबकि उस घटना की अंतिम अनुमति व दिशा उसका <b>उप-स्वामी (Sub-Lord)</b> तय करता है।
+                            <b>KP 4-स्टेप सिद्धांत:</b> ग्रह स्वयं का नहीं, बल्कि अपने <b>नक्षत्र स्वामी (Star Lord)</b>
+                            का फल प्रदान करता है, जबकि उस घटना की अंतिम अनुमति व दिशा उसका <b>उप-स्वामी (Sub-Lord)</b>
+                            तय करता है।
                         </p>
                         <p style="margin-bottom:10px;">
-                            • <b>करियर (Job & Business):</b> भाव 2, 6, 10, 11 के कस्पल सब-लॉर्ड जब परस्पर सम्बद्ध होते हैं, तो व्यक्ति को कभी भी स्थायी बेरोजगारी का सामना नहीं करना पड़ता।
+                            • <b>करियर (Job & Business):</b> भाव 2, 6, 10, 11 के कस्पल सब-लॉर्ड जब परस्पर सम्बद्ध होते
+                            हैं, तो व्यक्ति को कभी भी स्थायी बेरोजगारी का सामना नहीं करना पड़ता।
                         </p>
                         <p>
-                            • <b>विवाह (Marriage Timing):</b> भाव 2, 7, 11 का संयोग विवाह संस्कार की 100% शास्त्रीय स्वीकृति देता है। यदि सब-लॉर्ड 1, 6, 10 से युक्त हो तो विलंब अथवा पृथकता का योग बनता है।
+                            • <b>विवाह (Marriage Timing):</b> भाव 2, 7, 11 का संयोग विवाह संस्कार की 100% शास्त्रीय
+                            स्वीकृति देता है। यदि सब-लॉर्ड 1, 6, 10 से युक्त हो तो विलंब अथवा पृथकता का योग बनता है।
                         </p>
                     </div>
                 </div>
@@ -330,23 +612,40 @@
 
     <nav class="mobile-app-nav">
         <a href="/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 22 12 12 22 2 12"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="12 2 22 12 12 22 2 12" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="12" y1="2" x2="12" y2="22" />
+            </svg>
             <span>कुण्डली</span>
         </a>
         <a href="/panchang/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 3a9 9 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
             <span>पंचांग</span>
         </a>
         <a href="/kp-astrology/" class="active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="2" />
+            </svg>
             <span>KP</span>
         </a>
         <a href="/saved-kundli/">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
             <span>वॉल्ट</span>
         </a>
-        <a href="/?openPro=1" class="portal-pill" style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800;" title="VYAS ASTRA PRO आजीवन VIP सदस्यता">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>
+        <a href="/?openPro=1" class="portal-pill"
+            style="border:1px solid rgba(212,175,55,0.7); background:linear-gradient(135deg, rgba(212,175,55,0.18) 0%, rgba(245,158,11,0.25) 100%); color:#f1d797; font-weight:800;"
+            title="VYAS ASTRA PRO आजीवन VIP सदस्यता">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#f1d797" stroke-width="2">
+                <path d="M6 3h12l4 6-10 12L2 9z" />
+            </svg>
             <span>👑 PRO प्लान</span>
         </a>
     </nav>
@@ -356,6 +655,7 @@
     <script src="/js/vyas_daivagya_engine.js"></script>
     <script src="/js/vyas_chart_renderers.js"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
+    <script src="/js/vyas_kp_horary_solver.js"></script>
 
     <script>
         function syncTopNavProfile() {
@@ -365,10 +665,10 @@
                 var pName = (p && p.profile && p.profile.name) ? p.profile.name : "अतिथि जातक";
                 var el = document.getElementById('activeProfileName');
                 if (el) el.textContent = pName;
-            } catch(e) {}
+            } catch (e) { }
         }
         document.addEventListener('DOMContentLoaded', syncTopNavProfile);
-        
+
         var activeChart = null;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -547,7 +847,63 @@
         function castHorary() {
             var seed = parseInt(document.getElementById('kpHorarySeed').value, 10) || 108;
             if (seed < 1 || seed > 249) seed = 108;
-            if (typeof window.computeMathematicalKundli === 'function') {
+
+            if (typeof window.solveKPHorary === 'function') {
+                var now = new Date();
+                var y = now.getFullYear();
+                var m = String(now.getMonth() + 1).padStart(2, '0');
+                var d = String(now.getDate()).padStart(2, '0');
+                var hh = String(now.getHours()).padStart(2, '0');
+                var mm = String(now.getMinutes()).padStart(2, '0');
+
+                var hRes = window.solveKPHorary(seed, y + '-' + m + '-' + d, hh + ':' + mm, 25.7711, 73.3234, 5.5, '249', 'career');
+
+                // Reconstruct full chart object with exact spherical Placidus cusps
+                var cuspsNir = {};
+                var cuspsList = [];
+                for (var i = 0; i < hRes.cusps.length; i++) {
+                    var c = hRes.cusps[i];
+                    cuspsNir[c.house] = c.degree;
+                    cuspsList.push({
+                        cusp: c.house,
+                        sign: c.sign,
+                        deg: c.dms,
+                        star: c.star_lord,
+                        subLord: c.sub_lord,
+                        rl: c.sign_lord,
+                        nl: c.star_lord,
+                        sl: c.sub_lord
+                    });
+                }
+
+                // If active chart exists, borrow its planets or compute fresh
+                var hChart = (window.computeMathematicalKundli) ?
+                    window.computeMathematicalKundli('KP होरारी प्रश्न (' + seed + ')', y + '-' + m + '-' + d, hh + ':' + mm, 'उज्जैन', 'Prashna') :
+                    (activeChart || {});
+
+                if (!hChart.kp) hChart.kp = {};
+                hChart.kp.cusps = cuspsList;
+                hChart.profile = {
+                    name: 'KP होरारी अंक ' + seed + ' (Exact Inverse Placidus)',
+                    asc_sign: hRes.metadata.seed.rashi_hi,
+                    asc_dms: hRes.metadata.seed.start_dms_in_rashi,
+                    dob: y + '-' + m + '-' + d,
+                    tob: hh + ':' + mm,
+                    city: 'उज्जैन'
+                };
+
+                activeChart = hChart;
+                renderKPView(activeChart);
+
+                // Show 5-School consensus and verdict in an attractive modal/alert
+                var v = hRes.verdict;
+                alert('🎯 KP 1-249 Horary & Inverse Placidus वेध संपन्न!\n\n' +
+                    '• लग्न: ' + hRes.metadata.seed.rashi_hi + ' ' + hRes.metadata.seed.start_dms_in_rashi + '\n' +
+                    '• RAMC: ' + hRes.metadata.ramc_deg + '° | दशम CSL: ' + hRes.primary_cusp_eval.sub_lord_hi + '\n' +
+                    '• 5-School सहमति: ' + hRes.consensus.approving_schools + '\n' +
+                    '• निर्णय: ' + v.judgment + '\n\n' +
+                    v.detailed_prediction_hi);
+            } else if (typeof window.computeMathematicalKundli === 'function') {
                 var now = new Date();
                 var y = now.getFullYear();
                 var m = String(now.getMonth() + 1).padStart(2, '0');
@@ -563,5 +919,5 @@
         }
     </script>
 </body>
-</html>
 
+</html>
