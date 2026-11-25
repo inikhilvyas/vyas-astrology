@@ -1007,7 +1007,7 @@
                     return res;
                 }
 
-                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd);
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
                     var cLon = placidusMap[c];

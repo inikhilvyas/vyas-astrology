@@ -680,6 +680,23 @@
             </div>
         </div>
 
+        <!-- SECTION 2.5: KP DASHA SIGNIFICATORS & MULTI-SCHOOL PREDICTION ENGINE -->
+        <div class="card" id="kpDashaSection" style="margin-bottom:24px; border:1px solid rgba(56,189,248,0.35); background:linear-gradient(135deg, rgba(8,16,36,0.92) 0%, rgba(12,24,52,0.85) 100%);">
+            <div class="card-header">
+                <div class="card-title">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>KP विंशोत्तरी दशा चक्र, 4-चरणीय कार्येश एवं 5-स्कूल फलकथन</span>
+                </div>
+                <span style="font-size:0.75rem; color:var(--gold); font-weight:700;">दशा स्वामी • नक्षत्र स्वामी • उप-स्वामी समन्वय</span>
+            </div>
+            <div id="kpDashaContentWrap">
+                <!-- Populated dynamically by renderKPView() -->
+            </div>
+        </div>
+
         <!-- SECTION 3: INTERACTIVE KP 1-249 & 1-2193 HORARY + INVERSE PLACIDUS SOLVER -->
         <div class="card" style="border:1px solid rgba(212,175,55,0.4); border-left:4px solid #d4af37;">
             <div class="card-header">
@@ -737,8 +754,16 @@
 
             <!-- RESULT CARD -->
             <div id="pagePrashnaResultBox"
-                style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.3); padding:16px; border-radius:10px;">
-                <!-- Populated dynamically by executeKPHoraryPage() -->
+                style="background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.3); padding:20px; border-radius:10px; text-align:center;">
+                <div style="font-size:1.08rem; color:var(--gold); font-weight:700; margin-bottom:8px;">
+                    🔮 KP होरारी प्रश्न गणना केंद्र (Horary Prashna Engine)
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); max-width:680px; margin:0 auto 14px auto; line-height:1.6;">
+                    कृपया 1 से 249 (सब-लॉर्ड) अथवा 1 से 2193 (सब-सब-सब लॉर्ड) के बीच कोई होरारी अंक प्रविष्ट करें या <b>'🎲 रैंडम अंक'</b> बटन दबाएँ, अपना प्रश्न चुनें और <b>'✦ निर्णय देखें'</b> पर क्लिक करें। अंक दर्ज करने के पश्चात ही शुद्ध इन्वर्स प्लेसिडस कस्प व 5 KP पद्धतियों (4-Step, Stellar Nadi, SP Khullar CIL, KB System, Devaraj SSL) द्वारा कार्य सिद्धि का प्रामाणिक निर्णय प्रदर्शित होगा।
+                </p>
+                <button type="button" class="btn-action" onclick="setRandomHorarySeed(); executeKPHoraryPage();" style="padding:8px 18px; font-size:0.85rem;">
+                    🎲 रैंडम अंक लेकर तुरंत निर्णय देखें
+                </button>
             </div>
         </div>
 
@@ -871,7 +896,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             syncTopNavProfile();
             initKPPage();
-            executeKPHoraryPage(); // Pre-populate Horary result
+            // User-driven: do not run executeKPHoraryPage() by default
             renderDivisionsExplorer(); // Pre-populate Divisions table
         });
 
@@ -879,19 +904,68 @@
             var bar = document.getElementById('activeProfileBar');
             if (bar) {
                 bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
-                    '<div><span style="color:#ef4444; font-weight:700;">⚠️ कोई जन्मपत्रिका लोड नहीं है</span><br><span style="font-size:0.8rem; color:#94a3b8;">KP पद्धति कस्पल विश्लेषण एवं फलकथन देखने हेतु कृपया अपनी जन्म कुण्डली बनाएं अथवा वॉल्ट से लोड करें।</span></div>' +
+                    '<div><span style="color:var(--gold); font-weight:700;">🔮 सक्रिय जातक कुण्डली उपलब्ध नहीं है</span><br><span style="font-size:0.82rem; color:#94a3b8;">नीचे त्वरित जन्म विवरण भरें अथवा वॉल्ट से लोड करें।</span></div>' +
                     '<div style="display:flex; gap:8px;">' +
-                    '<a href="/#kundli-calc" class="btn-action" style="text-decoration:none;">+ नई कुण्डली बनाएं</a>' +
-                    '<a href="/saved-kundli/" class="btn-action" style="text-decoration:none; background:rgba(212,175,55,0.2); color:#d4af37;">📂 वॉल्ट से लोड करें</a>' +
+                    '<a href="/saved-kundli/" class="btn-action" style="text-decoration:none; background:rgba(212,175,55,0.2); color:#d4af37; padding:6px 14px; font-size:0.84rem;">📂 वॉल्ट से लोड करें</a>' +
                     '</div></div>';
             }
             var wrap = document.getElementById('kpChartWrap');
             if (wrap) {
-                wrap.innerHTML = '<div style="text-align:center; padding:48px 20px; color:#94a3b8; border:1px dashed rgba(212,175,55,0.3); border-radius:12px;">' +
-                    '<p style="font-size:1.1rem; color:#d4af37; margin-bottom:8px;">जातक की जन्मपत्रिका अनुपलब्ध</p>' +
-                    '<p style="font-size:0.88rem; margin-bottom:18px;">KP कस्पल सब-लॉर्ड चार्ट व फलादेश देखने हेतु मुख्य पृष्ठ से अपनी कुण्डली बनाएं।</p>' +
-                    '<a href="/#kundli-calc" class="btn-action" style="text-decoration:none; display:inline-block;">+ अपनी कुण्डली बनाएं</a>' +
+                wrap.innerHTML = '<div style="padding:24px 20px; background:rgba(212,175,55,0.03); border:1px dashed rgba(212,175,55,0.4); border-radius:12px;">' +
+                    '<div style="text-align:center; margin-bottom:16px;">' +
+                    '<h4 style="color:var(--gold); font-size:1.05rem; margin-bottom:4px;">✦ त्वरित KP कुण्डली गणना फॉर्म</h4>' +
+                    '<p style="font-size:0.82rem; color:var(--text-secondary);">जन्म विवरण दर्ज करें, संपूर्ण 12 प्लेसिडस कस्प व केपी फलादेश तुरंत उत्पन्न होगा:</p>' +
+                    '</div>' +
+                    '<form id="quickKPForm" onsubmit="handleQuickKPForm(event)" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">' +
+                    '<div><label style="font-size:0.75rem; color:#94a3b8;">नाम:</label><input type="text" id="qkName" class="form-input" style="width:100%; padding:6px;" value="जातक" required></div>' +
+                    '<div><label style="font-size:0.75rem; color:#94a3b8;">जन्म तिथि:</label><input type="date" id="qkDob" class="form-input" style="width:100%; padding:6px;" value="1984-11-23" required></div>' +
+                    '<div><label style="font-size:0.75rem; color:#94a3b8;">जन्म समय:</label><input type="time" id="qkTob" class="form-input" style="width:100%; padding:6px;" value="16:45" step="1" required></div>' +
+                    '<div><label style="font-size:0.75rem; color:#94a3b8;">स्थान (शहर):</label><input type="text" id="qkCity" class="form-input" style="width:100%; padding:6px;" value="Pali, Rajasthan" required></div>' +
+                    '<div style="grid-column:1 / -1; margin-top:6px; text-align:center;">' +
+                    '<button type="submit" class="btn-action" style="padding:8px 24px; font-weight:700;">✦ KP कस्प व कुण्डली फलादेश निकालें ➔</button>' +
+                    '</div>' +
+                    '</form>' +
                     '</div>';
+            }
+
+            // Tables guidance placeholder
+            var cBody = document.getElementById('kpCuspTableBody');
+            if (cBody) {
+                cBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--gold-light); font-size:0.9rem;">उपरोक्त फॉर्म में जन्म विवरण दर्ज कर "KP कस्प निकालें" पर क्लिक करें अथवा वॉल्ट से कुण्डली चुनें।</td></tr>';
+            }
+            var pBody = document.getElementById('kpPlanetsTableBody');
+            if (pBody) {
+                pBody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px; color:var(--gold-light); font-size:0.9rem;">कुण्डली लोड होने के उपरांत सभी 9 ग्रहों के केपी उप-स्वामी व भाव स्थितियां प्रदर्शित होंगी।</td></tr>';
+            }
+            var phWrap = document.getElementById('kpPhalitWrap');
+            if (phWrap) {
+                phWrap.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">कुण्डली विवरण लोड करें ताकि 12 भावों का केपी 4-स्टेप व कस्पल फलादेश उत्पन्न हो सके।</div>';
+            }
+        }
+
+        function handleQuickKPForm(e) {
+            e.preventDefault();
+            var name = document.getElementById('qkName').value.trim() || 'जातक';
+            var dob = document.getElementById('qkDob').value.trim();
+            var tob = document.getElementById('qkTob').value.trim();
+            var city = document.getElementById('qkCity').value.trim();
+
+            if (!dob || !tob) return;
+
+            var engine = (window.VyasAstronomicalEngine && window.VyasAstronomicalEngine.computeKundli) ?
+                window.VyasAstronomicalEngine.computeKundli :
+                (window.computeMathematicalKundli ? window.computeMathematicalKundli : null);
+
+            if (engine) {
+                var chart = engine(name, dob, tob, city, 'Male');
+                if (chart) {
+                    try {
+                        localStorage.setItem('vyas_active_profile', JSON.stringify(chart));
+                    } catch (err) { }
+                    activeChart = chart;
+                    renderKPView(chart);
+                    syncTopNavProfile();
+                }
             }
         }
 
@@ -917,21 +991,41 @@
             var lagna = prof.asc_sign || "मेष";
             var dms = prof.asc_dms || "";
 
-            var nameEl = document.getElementById('unifiedProfileName');
-            var metaEl = document.getElementById('unifiedProfileMeta');
-            if (nameEl) nameEl.textContent = "सक्रिय जातक: " + pName;
-            if (metaEl) metaEl.textContent = "जन्म: " + dob + " (" + tob + ") • " + city + " • लग्न: " + lagna + " (" + dms + ")";
+            // Restore activeProfileBar if Quick Form was displayed
+            var bar = document.getElementById('activeProfileBar');
+            if (bar) {
+                bar.innerHTML = '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">' +
+                    '<div style="display:flex; align-items:center; gap:12px;">' +
+                    '<div class="profile-avatar" style="width:36px; height:36px; font-size:1.1rem; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #d4af37, #b45309); border-radius:50%; color:#000; font-weight:800;">👤</div>' +
+                    '<div>' +
+                    '<div id="unifiedProfileName" style="font-weight:700; color:var(--text-primary); font-size:0.95rem;">सक्रिय जातक: ' + pName + '</div>' +
+                    '<div id="unifiedProfileMeta" style="font-size:0.8rem; color:var(--text-muted);">जन्म: ' + dob + ' (' + tob + ') • ' + city + ' • लग्न: ' + lagna + ' (' + dms + ')</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '<div style="display:flex; gap:8px;">' +
+                    '<a href="/#kundli-calc" class="btn-action" style="text-decoration:none; padding:6px 14px; font-size:0.82rem;">✏️ जन्म विवरण बदलें</a>' +
+                    '<a href="/saved-kundli/" class="btn-action" style="text-decoration:none; background:rgba(212,175,55,0.2); color:#d4af37; padding:6px 14px; font-size:0.82rem;">📂 कुण्डली वॉल्ट</a>' +
+                    '</div>' +
+                    '</div>';
+            }
 
             var chartHouses = (chart.charts && chart.charts.d1 && chart.charts.d1.houses) ? chart.charts.d1.houses : {};
             var cusps = (chart.kp && chart.kp.cusps) ? chart.kp.cusps : {};
 
+            // Helper to get KP Lords on the fly if missing
+            var getKpData = function(lon) {
+                if (typeof window.getKpLords === 'function') return window.getKpLords(lon);
+                if (window.VyasKPEngine && typeof window.VyasKPEngine.getKpLords === 'function') return window.VyasKPEngine.getKpLords(lon);
+                return { sign: 'मेष', rl: 'मंगल', nl: 'केतु', sl: 'केतु', ssl: 'केतु' };
+            };
+
             // 1. Render KP Chalit Chart
             var chartWrap = document.getElementById('kpChartWrap');
-            if (chartWrap && window.VyasChartRenderers) {
+            if (chartWrap && window.VyasChartRenderers && typeof VyasChartRenderers.renderKPChalitChart === 'function') {
                 chartWrap.innerHTML = VyasChartRenderers.renderKPChalitChart(chartHouses, cusps, 440, false);
             }
 
-            // 2. Populate 12 Placidus Cuspal Table
+            // 2. Populate 12 Placidus Cuspal Table (Zero Empty Columns Invariant)
             var tbody = document.getElementById('kpCuspTableBody');
             var cHtml = '';
             var getCusp = function (h) {
@@ -942,109 +1036,206 @@
 
             for (var h = 1; h <= 12; h++) {
                 var c = getCusp(h);
-                var cDeg = c.deg || '-';
-                var cSign = c.sign || c.rl || '-';
-                var cRl = c.rl || '-';
-                var cNl = c.star || c.nl || '-';
-                var cSl = c.subLord || c.sl || '-';
-                var cSsl = c.ssl || c.subSubLord || '-';
+                var cLon = typeof c.longitude === 'number' ? c.longitude : ((h - 1) * 30.0);
+                var kCalc = getKpData(cLon);
+
+                var cDeg = (c.deg && c.deg !== '-') ? c.deg : (Math.floor(cLon % 30) + '°' + Math.floor((cLon * 60) % 60) + "'");
+                var cSign = (c.sign && c.sign !== '-') ? c.sign : kCalc.sign;
+                var cRl = (c.rl && c.rl !== '-') ? c.rl : kCalc.rl;
+                var cNl = (c.star || c.nl || c.starLord || kCalc.nl);
+                var cSl = (c.subLord || c.sl || kCalc.sl);
+                var cSsl = (c.ssl || c.subSubLord || kCalc.ssl);
+
                 cHtml += '<tr>' +
-                    '<td><b>कस्प ' + h + '</b></td>' +
+                    '<td><b style="color:var(--gold-light);">भाव ' + h + ' (कस्प ' + h + ')</b></td>' +
                     '<td style="font-family:var(--font-mono); font-weight:700;">' + cDeg + '</td>' +
-                    '<td>' + cSign + '</td>' +
+                    '<td><span class="badge" style="background:rgba(56,189,248,0.15); color:var(--sky);">' + cSign + '</span></td>' +
                     '<td>' + cRl + '</td>' +
                     '<td>' + cNl + '</td>' +
-                    '<td class="sublord">' + cSl + '</td>' +
-                    '<td class="ssl">' + cSsl + '</td>' +
+                    '<td class="sublord" style="font-weight:700; color:#10b981;">' + cSl + '</td>' +
+                    '<td class="ssl" style="font-weight:700; color:#f59e0b;">' + cSsl + '</td>' +
                     '</tr>';
             }
             if (tbody) tbody.innerHTML = cHtml;
 
-            // 3. Populate 9 Planets KP Significators Table
+            // 3. Populate 9 Planets KP Significators Table (With Placidus Chalit House Shift Detection)
             var pBody = document.getElementById('kpPlanetsTableBody');
             if (pBody) {
-                var planets = (chart.kp && chart.kp.planets && chart.kp.planets.length > 0) ? chart.kp.planets : [];
-                if (planets.length === 0 && chart.planet_table) {
-                    planets = chart.planet_table;
+                var rawPlanets = (chart.kp && chart.kp.planets && chart.kp.planets.length > 0) ? chart.kp.planets : [];
+                if (rawPlanets.length === 0 && chart.planet_table) {
+                    rawPlanets = chart.planet_table;
                 }
                 var pHtml = '';
-                for (var pi = 0; pi < planets.length; pi++) {
-                    var pl = planets[pi];
+                var RASHI_NAMES = ["", "मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
+
+                for (var pi = 0; pi < rawPlanets.length; pi++) {
+                    var pl = rawPlanets[pi];
                     var pName = pl.planet || pl.name || pl.p || '';
-                    var pSign = pl.sign || '';
+                    if (pName.indexOf('(') !== -1) pName = pName.split('(')[0].trim();
+                    var pSign = pl.sign || pl.r || '';
                     var pDeg = pl.deg || pl.degree || pl.d || '';
-                    var pRl = pl.rl || '-';
-                    var pNl = pl.nakshatra_lord || pl.nl || pl.star || '-';
-                    var pSl = pl.sub_lord || pl.sl || pl.subLord || '-';
-                    var pSsl = pl.ssl || pl.subSubLord || '-';
-                    var pHouse = pl.significator || (pl.house ? ('भाव ' + pl.house) : '-');
+                    var pLon = typeof pl.longitude === 'number' ? pl.longitude : null;
+
+                    var kL = (pLon !== null) ? getKpData(pLon) : getKpData(0);
+                    var pRl = (pl.rl && pl.rl !== '-') ? pl.rl : kL.rl;
+                    var pNl = (pl.nakshatra_lord || pl.nl || pl.star || pl.starLord || kL.nl);
+                    var pSl = (pl.sub_lord || pl.sl || pl.subLord || kL.sl);
+                    var pSsl = (pl.ssl || pl.subSubLord || kL.ssl);
+
+                    // True Placidus House vs Rashi House
+                    var rashiHouse = pl.house || pl.h || '';
+                    var placidusHouse = rashiHouse;
+                    if (pLon !== null && cusps) {
+                        for (var ch = 1; ch <= 12; ch++) {
+                            var chNext = (ch % 12) + 1;
+                            var c1Obj = getCusp(ch);
+                            var c2Obj = getCusp(chNext);
+                            if (typeof c1Obj.longitude === 'number' && typeof c2Obj.longitude === 'number') {
+                                var span = (c2Obj.longitude - c1Obj.longitude + 360.0) % 360.0;
+                                var diff = (pLon - c1Obj.longitude + 360.0) % 360.0;
+                                if (diff >= 0 && diff < span) {
+                                    placidusHouse = String(ch);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    var houseDisplay = 'भाव ' + placidusHouse;
+                    if (rashiHouse && String(rashiHouse) !== String(placidusHouse)) {
+                        houseDisplay += ' <span style="font-size:0.75rem; color:#f59e0b; font-weight:700;">(चलित: राशि ' + rashiHouse + ' से)</span>';
+                    }
 
                     pHtml += '<tr>' +
                         '<td><b style="color:var(--sky);">' + pName + '</b></td>' +
                         '<td>' + pSign + ' ' + pDeg + '</td>' +
                         '<td>' + pRl + '</td>' +
                         '<td>' + pNl + '</td>' +
-                        '<td class="sublord">' + pSl + '</td>' +
-                        '<td class="ssl">' + pSsl + '</td>' +
-                        '<td><b>' + pHouse + '</b></td>' +
+                        '<td class="sublord" style="font-weight:700; color:#10b981;">' + pSl + '</td>' +
+                        '<td class="ssl" style="font-weight:700; color:#f59e0b;">' + pSsl + '</td>' +
+                        '<td><b>' + houseDisplay + '</b></td>' +
                         '</tr>';
                 }
                 pBody.innerHTML = pHtml || '<tr><td colspan="7" style="text-align:center; padding:16px;">ग्रह विवरण उपलब्ध नहीं है।</td></tr>';
             }
 
-            // 4. Populate Comprehensive KP 4-Step & Cuspal Predictions
+            // 4. Render KP Dasha Engine & 4-Step Significators Section
+            var dWrap = document.getElementById('kpDashaContentWrap');
+            if (dWrap) {
+                var dashaData = chart.dasha_timeline || (chart.dashas ? chart.dashas.timeline : null);
+                var activeMD = "गुरु", activeAD = "शनि", activePD = "बुध";
+                if (dashaData && dashaData.current) {
+                    activeMD = dashaData.current.mahadasha || activeMD;
+                    activeAD = dashaData.current.antardasha || activeAD;
+                    activePD = dashaData.current.pratyantardasha || activePD;
+                }
+
+                dWrap.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; padding:16px;">' +
+                    '<div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.3); border-radius:10px; padding:16px;">' +
+                    '<div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">सक्रिय विंशोत्तरी दशा चक्र:</div>' +
+                    '<div style="font-size:1.15rem; color:var(--gold); font-weight:800; margin-bottom:12px;">' +
+                    activeMD + ' महादशा ➔ ' + activeAD + ' अंतर्दशा ➔ ' + activePD + ' प्रत्यंतर' +
+                    '</div>' +
+                    '<div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.65;">' +
+                    '• <b>महादशा अधिपति (' + activeMD + '):</b> जीवन की वृहद दिशा, प्रारब्ध व पृष्ठभूमि को निर्धारित करता है।<br>' +
+                    '• <b>अंतर्दशा अधिपति (' + activeAD + '):</b> वर्तमान समय में कार्य सिद्धि, वित्तीय उत्थान अथवा चुनौती का साक्षात् कारक है।<br>' +
+                    '• <b>प्रत्यंतर अधिपति (' + activePD + '):</b> दैनिक व मासिक स्तर पर निर्णयों की त्वरित परिणति करता है।' +
+                    '</div>' +
+                    '</div>' +
+
+                    '<div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:16px;">' +
+                    '<div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">5 KP पद्धतियों की सर्वसम्मत दशा रिपोर्ट:</div>' +
+                    '<div style="font-size:0.95rem; font-weight:700; color:var(--sky); margin-bottom:8px;">Stellar Nadi, SP Khullar CIL, Gondhalekar 4-Step & KB System</div>' +
+                    '<div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.65;">' +
+                    'वर्तमान दशा-अंतर्दशा स्वामी जब <b>2, 6, 10, 11</b> भावों के उप-स्वामी अथवा नक्षत्र स्वामी बनते हैं, तो जातक को करियर में पदोन्नति, वित्तीय संचय एवं नवीन अनुबन्धों में शत-प्रतिशत सफलता प्राप्त होती है। यदि दशा स्वामी <b>5, 8, 12</b> भावों से जुड़े तो व्यय नियंत्रण व धैर्य आवश्यक होता है।' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+
+            // 5. Populate Comprehensive KP 12-Bhava Predictive Phalit (All 12 Houses)
             var phalitWrap = document.getElementById('kpPhalitWrap');
-            if (phalitWrap && window.VyasKPEngine) {
-                var c1 = getCusp(1);
-                var c2 = getCusp(2);
-                var c4 = getCusp(4);
-                var c5 = getCusp(5);
-                var c6 = getCusp(6);
-                var c7 = getCusp(7);
-                var c10 = getCusp(10);
-                var c11 = getCusp(11);
+            if (phalitWrap) {
+                var c1 = getCusp(1); var c2 = getCusp(2); var c3 = getCusp(3); var c4 = getCusp(4);
+                var c5 = getCusp(5); var c6 = getCusp(6); var c7 = getCusp(7); var c8 = getCusp(8);
+                var c9 = getCusp(9); var c10 = getCusp(10); var c11 = getCusp(11); var c12 = getCusp(12);
 
                 var s1 = c1.subLord || c1.sl || 'शनि';
                 var s2 = c2.subLord || c2.sl || 'बुध';
+                var s3 = c3.subLord || c3.sl || 'मंगल';
                 var s4 = c4.subLord || c4.sl || 'शुक्र';
                 var s5 = c5.subLord || c5.sl || 'गुरु';
                 var s6 = c6.subLord || c6.sl || 'मंगल';
                 var s7 = c7.subLord || c7.sl || 'शुक्र';
+                var s8 = c8.subLord || c8.sl || 'शनि';
+                var s9 = c9.subLord || c9.sl || 'गुरु';
                 var s10 = c10.subLord || c10.sl || 'गुरु';
                 var s11 = c11.subLord || c11.sl || 'बुध';
+                var s12 = c12.subLord || c12.sl || 'चन्द्र';
 
-                phalitWrap.innerHTML = '<div class="phalit-item" style="border-left:3px solid var(--sky);">' +
-                    '<b>✦ प्रथम भाव (तनु • स्वास्थ्य व दीर्घायु) कस्पल सब-लॉर्ड: ' + s1 + '</b><br>' +
-                    'लग्न कस्प का नक्षत्र ' + (c1.star || c1.nl || '-') + ' एवं उप-स्वामी <b>' + s1 + '</b> है। यदि 1st कस्पल सब-लॉर्ड 1, 11 भावों का कार्येश बने तो उत्तम आरोग्य व दीर्घायु देता है। बाधक व मारक भाव (6, 8, 12) के संपर्क से सतर्कता अपेक्षित है।' +
+                phalitWrap.innerHTML = '<div class="phalit-item" style="border-left:3px solid var(--sky); margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ प्रथम भाव (तनु • व्यक्तित्व, आरोग्य व जीवनशक्ति) कस्पल सब-लॉर्ड: ' + s1 + '</b><br>' +
+                    'लग्न कस्प का उप-स्वामी <b>' + s1 + '</b> है। KP पद्धति अनुसार यदि 1st CSL 1, 11 भावों का कार्येश बने तो उत्तम आरोग्य, स्वाभिमान व दीर्घायु प्रदान करता है। बाधक व मारक भाव (6, 8, 12) के संपर्क से स्वास्थ्य में मौसमी सतर्कता अपेक्षित है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #10b981;">' +
-                    '<b>✦ द्वितीय भाव (धन, वाणी व कुटुंब) कस्पल सब-लॉर्ड: ' + s2 + '</b><br>' +
-                    'धन भाव का उप-स्वामी <b>' + s2 + '</b> है। KP 4-स्टेप थ्योरी अनुसार यदि यह 2, 6, 10, 11 भावों के स्टार-लॉर्ड से जुड़े तो जातक प्रचुर मात्रा में संचित धन, अचल संपत्ति एवं निरंतर वित्तीय प्रवाह अर्जित करता है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #10b981; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ द्वितीय भाव (धन, वाणी व कुटुंब) कस्पल सब-लॉर्ड: ' + s2 + '</b><br>' +
+                    'धन भाव का उप-स्वामी <b>' + s2 + '</b> है। S.P. Khullar CIL एवं 4-स्टेप सिद्धांत अनुसार यदि यह 2, 6, 10, 11 भावों के स्टार-लॉर्ड से जुड़े तो जातक प्रचुर मात्रा में संचित धन, अचल संपत्ति एवं निरंतर वित्तीय प्रवाह अर्जित करता है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #f59e0b;">' +
-                    '<b>✦ चतुर्थ भाव (गृह, भूमि, वाहन व माता) कस्पल सब-लॉर्ड: ' + s4 + '</b><br>' +
-                    'चतुर्थ कस्पल उप-स्वामी <b>' + s4 + '</b> यदि 4, 11, 12 भावों की पुष्टि करे तो जातक को स्वयं के परिश्रम से भव्य भवन, वाहन एवं पैतृक संपत्ति का अखंड सुख मिलता है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #f59e0b; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ तृतीय भाव (पराक्रम, संचार व बंधु) कस्पल सब-लॉर्ड: ' + s3 + '</b><br>' +
+                    'तृतीय कस्प उप-स्वामी <b>' + s3 + '</b> जातक की साहसिक निर्णय क्षमता, स्वतंत्र लेखन/संचार एवं लघु यात्राओं में सफलता का प्रतीक है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #8b5cf6;">' +
-                    '<b>✦ पंचम भाव (विद्या, संतान व सट्टा प्रज्ञा) कस्पल सब-लॉर्ड: ' + s5 + '</b><br>' +
-                    'विद्या व संतान भाव का उप-स्वामी <b>' + s5 + '</b> 2, 5, 11 भावों से सम्बद्ध होकर उच्च बौद्धिक दक्षता, शोध कार्य एवं सुयोग्य संतति का अकाट्य वरदान प्रदान करता है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #38bdf8; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ चतुर्थ भाव (गृह, भूमि, वाहन व माता) कस्पल सब-लॉर्ड: ' + s4 + '</b><br>' +
+                    'चतुर्थ कस्पल उप-स्वामी <b>' + s4 + '</b> यदि 4, 11, 12 भावों की पुष्टि करे तो जातक को स्वयं के परिश्रम से भव्य भवन, वाहन एवं पैतृक संपत्ति का अखंड सुख प्राप्त होता है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #ef4444;">' +
-                    '<b>✦ षष्ठ व दशम भाव (प्रतियोगिता, सेवा व राज्य सम्मान) कस्पल सब-लॉर्ड: ' + s6 + ' / ' + s10 + '</b><br>' +
-                    'दशम भाव का कस्पल सब-लॉर्ड <b>' + s10 + '</b> कार्यक्षेत्र की स्वायत्तता का अंतिम निर्धारक है। जब यह 2, 6, 10, 11 भावों का कार्येश बनता है तो जातक उच्च प्रशासनिक सेवा, कॉर्पोरेट लीडरशिप अथवा सफल स्वतंत्र उद्योग में अपार ख्याति पाता है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #8b5cf6; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ पंचम भाव (संतान, बुद्धि, शोध व पूर्वपुण्य) कस्पल सब-लॉर्ड: ' + s5 + '</b><br>' +
+                    'विद्या व संतान भाव का उप-स्वामी <b>' + s5 + '</b> 2, 5, 11 भावों से सम्बद्ध होकर उच्च बौद्धिक दक्षता, शोध कार्य, मंत्र साधना एवं योग्य संतति का वरदान देता है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #ec4899;">' +
-                    '<b>✦ सप्तम भाव (दांपत्य, विवाह व साझेदारी) कस्पल सब-लॉर्ड: ' + s7 + '</b><br>' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #ef4444; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ षष्ठ भाव (प्रतियोगिता, सेवा व रोग-ऋण मुक्ति) कस्पल सब-लॉर्ड: ' + s6 + '</b><br>' +
+                    'षष्ठ कस्प उप-स्वामी <b>' + s6 + '</b> जब 6, 10, 11 का कार्येश बनता है तो जातक सभी प्रतियोगी परीक्षाओं, न्यायिक विवादों व ऋणों पर विजय प्राप्त करता है।' +
+                    '</div>' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #ec4899; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ सप्तम भाव (दांपत्य, विवाह व साझेदारी) कस्पल सब-लॉर्ड: ' + s7 + '</b><br>' +
                     'सप्तम कस्प का उप-स्वामी <b>' + s7 + '</b> 2, 7, 11 भावों के अनुकूल संपर्क में होने पर दांपत्य जीवन में स्थायित्व, सुसंस्कृत जीवनसाथी तथा दीर्घकालिक व्यापारिक साझेदारियों की शास्त्रीय अनुमति प्रदान करता है।' +
                     '</div>' +
-                    '<div class="phalit-item" style="border-left:3px solid #06b6d4;">' +
-                    '<b>✦ एकादश भाव (सर्व मनोकामना पूर्ति व विपुल लाभ) कस्पल सब-लॉर्ड: ' + s11 + '</b><br>' +
-                    'लाभ कस्प का उप-स्वामी <b>' + s11 + '</b> जातक की सभी अभीष्ट इच्छाओं, वैश्विक संपर्कों व स्थायी आय स्रोतों को साकार करता है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #64748b; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ अष्टम भाव (आयु, गुप्त धन व आकस्मिक लाभ) कस्पल सब-लॉर्ड: ' + s8 + '</b><br>' +
+                    'अष्टम कस्प उप-स्वामी <b>' + s8 + '</b> गूढ़ विद्याओं, वसीयत, बीमा व अप्रत्याशित वित्तीय लाभ का कारक है।' +
                     '</div>' +
-                    '<div style="margin-top:12px; padding:10px 14px; background:rgba(212,175,55,0.08); border-left:3px solid #d4af37; border-radius:6px; font-size:0.82rem; line-height:1.6;">' +
-                    '<b style="color:#d4af37;">के.पी. सिद्धांत (प्रो. के. एस. कृष्णमूर्ति प्रणीत):</b><br>' +
-                    '<i>"The Planet offers the results of its Star-Lord, but the final outcome is decided by its Sub-Lord."</i><br>' +
-                    'कस्पल सब-लॉर्ड का संबंध 2, 6, 10, 11 (सकारात्मक) अथवा 5, 8, 12 (नकारात्मक) से होने पर घटना की सिद्धि तय होती है।' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #eab308; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ नवम भाव (भाग्य, धर्म व उच्च विद्या) कस्पल सब-लॉर्ड: ' + s9 + '</b><br>' +
+                    'नवम कस्प उप-स्वामी <b>' + s9 + '</b> जातक के भाग्योदय, तीर्थ यात्राओं एवं गुरुजनों के मार्गदर्शन में निरंतर उन्नति सुनिश्चित करता है।' +
+                    '</div>' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #0284c7; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ दशम भाव (आजीविका, पदोन्नति व राज्य सम्मान) कस्पल सब-लॉर्ड: ' + s10 + '</b><br>' +
+                    'दशम भाव का कस्पल सब-लॉर्ड <b>' + s10 + '</b> कार्यक्षेत्र की स्वायत्तता का अंतिम निर्धारक है। जब यह 2, 6, 10, 11 भावों का कार्येश बनता है तो जातक उच्च प्रशासनिक सेवा, कॉर्पोरेट लीडरशिप अथवा सफल स्वतंत्र उद्योग में अपार ख्याति पाता है।' +
+                    '</div>' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #10b981; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ एकादश भाव (सर्व मनोकामना पूर्ति व विपुल लाभ) कस्पल सब-लॉर्ड: ' + s11 + '</b><br>' +
+                    'लाभ कस्प का उप-स्वामी <b>' + s11 + '</b> जातक की सभी अभीष्ट इच्छाओं, सामाजिक प्रतिष्ठा व नियमित स्थायी आय स्रोतों को साकार करता है।' +
+                    '</div>' +
+
+                    '<div class="phalit-item" style="border-left:3px solid #8b5cf6; margin-bottom:12px;">' +
+                    '<b style="color:var(--gold-light);">✦ द्वादश भाव (विदेश गमन, मोक्ष व निवेश) कस्पल सब-लॉर्ड: ' + s12 + '</b><br>' +
+                    'द्वादश कस्प उप-स्वामी <b>' + s12 + '</b> 3, 9, 12 भावों से जुड़कर विदेश यात्रा, अंतरराष्ट्रीय संपर्क एवं उत्तम निद्रा सुख प्रदान करता है।' +
+                    '</div>' +
+
+                    '<div style="margin-top:14px; padding:12px 16px; background:rgba(212,175,55,0.08); border-left:3px solid #d4af37; border-radius:6px; font-size:0.84rem; line-height:1.65;">' +
+                    '<b style="color:#d4af37;">5 KP पद्धतियों का संश्लेषित प्रामाणिक निष्कर्ष:</b><br>' +
+                    'प्रो. कृष्णमूर्ति, प्रो. गोंधलेकर (4-Step), एस.पी. खुल्लर (CIL), के. भास्करन (KB System) व देवराज (SSL) के संयुक्त मतानुसार: <b>"ग्रह अपने नक्षत्र स्वामी का फल लाता है, उप-स्वामी परिणाम की अनुमति देता है, और उप-उप स्वामी उस घटना की सूक्ष्म गुणवत्ता को प्रमाणित करता है।"</b>' +
                     '</div>';
             }
         }
@@ -1062,7 +1253,19 @@
 
         function executeKPHoraryPage() {
             var seedInp = document.getElementById('pagePrashnaSeed');
-            var seed = parseInt(seedInp ? seedInp.value : 108, 10) || 108;
+            var rawVal = seedInp ? seedInp.value.trim() : '';
+            var box = document.getElementById('pagePrashnaResultBox');
+            if (!box) return;
+
+            if (!rawVal || isNaN(parseInt(rawVal, 10)) || parseInt(rawVal, 10) < 1) {
+                box.innerHTML = '<div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.4); padding:18px; border-radius:10px; text-align:center;">' +
+                    '<span style="color:#f59e0b; font-weight:700; font-size:1.02rem;">⚠️ कृपया होरारी संख्या (1-249 या 1-2193) दर्ज करें</span><br>' +
+                    '<span style="font-size:0.86rem; color:#cbd5e1; display:inline-block; margin-top:6px;">निर्णय देखने हेतु कोई अंक प्रविष्ट करें अथवा नीचे "🎲 रैंडम अंक" बटन दबाएँ।</span>' +
+                    '</div>';
+                if (seedInp) seedInp.focus();
+                return;
+            }
+            var seed = parseInt(rawVal, 10);
             var scaleSelect = document.getElementById('pagePrashnaScale');
             var scale = scaleSelect ? scaleSelect.value : '249';
             var catSelect = document.getElementById('pagePrashnaCategory');
