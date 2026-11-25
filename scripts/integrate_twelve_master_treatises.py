@@ -417,3 +417,4 @@ for book_path, text in treatises.items():
         print(f"Synced {target_f}")
 
 print("All 12 treatises written and synced to references.")
+

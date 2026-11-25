@@ -287,3 +287,4 @@ def patch_mobile_files():
 if __name__ == '__main__':
     patch_index_html()
     patch_mobile_files()
+

@@ -3056,6 +3056,7 @@
             </svg>
             <span>KP पद्धति</span>
         </a>
+        <a href="/bhavat-bhavam/" class="portal-pill"><span>⚡</span><span>भावात् भावम्</span></a>
         <a href="/jaimini-astrology/" class="portal-pill" title="जैमिनी कारकांश व स्वंश चक्र">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6">
                 <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9" />
@@ -3731,6 +3732,7 @@
                                     <th>नक्षत्र स्वामी (NL)</th>
                                     <th>उप-स्वामी (SL)</th>
                                     <th>उप-उप स्वामी (SSL)</th>
+                                    <th>कार्येश भाव (Significator)</th>
                                 </tr>
                             </thead>
                             <tbody id="kpPlanetsTableBody">
@@ -10042,9 +10044,16 @@
                 if (userVault && userVault.profile && userVault.profile.name && userVault.profile.name !== 'अतिथि जातक (Guest)') {
                     // Auto-correct any legacy Kanya 26°55 calculation dynamically from user's own birth details
                     var needsRecompU = false;
-                    if (!userVault._engine_ver || userVault._engine_ver < 5.2) needsRecompU = true;
+                    if (!userVault._engine_ver || userVault._engine_ver < 6.0) needsRecompU = true;
                     if (userVault.kp && userVault.kp.cusps && userVault.kp.cusps.length >= 2) {
-                        if (userVault.kp.cusps[0].deg === userVault.kp.cusps[1].deg || !userVault.kp.cusps[0].longitude) needsRecompU = true;
+                        if (!userVault.kp.cusps[0].longitude || userVault.kp.cusps.length !== 12) needsRecompU = true;
+                    if (!needsRecompU && userVault.kp.cusps.length >= 2) {
+                        for (var ci = 0; ci < userVault.kp.cusps.length - 1; ci++) {
+                            if (userVault.kp.cusps[ci] && userVault.kp.cusps[ci+1] && userVault.kp.cusps[ci].deg === userVault.kp.cusps[ci+1].deg) {
+                                needsRecompU = true; break;
+                            }
+                        }
+                    }
                     }
                     if (needsRecompU || userVault.profile.asc_sign === 'कन्या' || (userVault.profile.asc_dms && userVault.profile.asc_dms.indexOf("26°55") !== -1)) {
                         if (userVault.profile.dob) {
@@ -11455,7 +11464,7 @@
                     });
                 } catch (e) { }
 
-                var CURRENT_ENGINE_VERSION = 'v5.0_pure_math_parashari_2026';
+                var CURRENT_ENGINE_VERSION = 'v6.0_placidus_bhavatbhavam_2026';
                 try {
                     var storedVer = localStorage.getItem('vyas_engine_version');
                     var stored = localStorage.getItem('vyas_active_profile');
@@ -11499,9 +11508,16 @@
                         var data = JSON.parse(stored);
                         if (data && data.profile && data.profile.name && data.profile.name !== 'अतिथि जातक (Guest)' && data.profile.dob) {
                             var needsRecomp = false;
-                            if (!data._engine_ver || data._engine_ver < 5.2) needsRecomp = true;
+                            if (!data._engine_ver || data._engine_ver < 6.0) needsRecomp = true;
                             if (data.kp && data.kp.cusps && data.kp.cusps.length >= 2) {
-                                if (data.kp.cusps[0].deg === data.kp.cusps[1].deg || !data.kp.cusps[0].longitude) needsRecomp = true;
+                                if (!data.kp.cusps[0].longitude || data.kp.cusps.length !== 12) needsRecomp = true;
+                            if (!needsRecomp && data.kp.cusps.length >= 2) {
+                                for (var ci = 0; ci < data.kp.cusps.length - 1; ci++) {
+                                    if (data.kp.cusps[ci] && data.kp.cusps[ci+1] && data.kp.cusps[ci].deg === data.kp.cusps[ci+1].deg) {
+                                        needsRecomp = true; break;
+                                    }
+                                }
+                            }
                             }
                             if (needsRecomp || data.profile.asc_sign === 'कन्या' || (data.profile.asc_dms && data.profile.asc_dms.indexOf("26°55") !== -1)) {
                                 data = this.computeMathematicalKundli(data.profile.name, data.profile.dob, data.profile.tob || '12:00', data.profile.city || '', data.profile.gender || 'Male', data.profile.lat, data.profile.lon);
@@ -11517,9 +11533,16 @@
                         var fromVault = this.loadFromUserVault();
                         if (fromVault && fromVault.profile && fromVault.profile.name && fromVault.profile.name !== 'अतिथि जातक (Guest)' && fromVault.profile.dob) {
                             var needsRecompV = false;
-                            if (!fromVault._engine_ver || fromVault._engine_ver < 5.2) needsRecompV = true;
+                            if (!fromVault._engine_ver || fromVault._engine_ver < 6.0) needsRecompV = true;
                             if (fromVault.kp && fromVault.kp.cusps && fromVault.kp.cusps.length >= 2) {
-                                if (fromVault.kp.cusps[0].deg === fromVault.kp.cusps[1].deg || !fromVault.kp.cusps[0].longitude) needsRecompV = true;
+                                if (!fromVault.kp.cusps[0].longitude || fromVault.kp.cusps.length !== 12) needsRecompV = true;
+                            if (!needsRecompV && fromVault.kp.cusps.length >= 2) {
+                                for (var ci = 0; ci < fromVault.kp.cusps.length - 1; ci++) {
+                                    if (fromVault.kp.cusps[ci] && fromVault.kp.cusps[ci+1] && fromVault.kp.cusps[ci].deg === fromVault.kp.cusps[ci+1].deg) {
+                                        needsRecompV = true; break;
+                                    }
+                                }
+                            }
                             }
                             if (needsRecompV || fromVault.profile.asc_sign === 'कन्या' || (fromVault.profile.asc_dms && fromVault.profile.asc_dms.indexOf("26°55") !== -1)) {
                                 fromVault = this.computeMathematicalKundli(fromVault.profile.name, fromVault.profile.dob, fromVault.profile.tob || '12:00', fromVault.profile.city || '', fromVault.profile.gender || 'Male', fromVault.profile.lat, fromVault.profile.lon);
@@ -13348,13 +13371,22 @@
                     var html = '';
                     for (var i = 0; i < kp.cusps.length; i++) {
                         var c = kp.cusps[i];
+                        if (!c) continue;
+                        var cNum = c.cusp || c.house || (i + 1);
+                        var cSign = c.sign || '-';
+                        var cDeg = c.deg || '-';
+                        var cRl = c.rl || '-';
+                        var cNl = c.nl || c.star || '-';
+                        var cSl = c.sl || c.subLord || '-';
+                        var cSsl = c.ssl || '-';
                         html += '<tr>' +
-                            '<td><b>कस्प ' + c.cusp + '</b></td>' +
-                            '<td>' + c.sign + '</td>' +
-                            '<td style="font-family:var(--font-mono);">' + c.deg + '</td>' +
-                            '<td>' + c.rl + '</td>' +
-                            '<td>' + c.nl + '</td>' +
-                            '<td><span style="background:rgba(181,138,69,0.15); color:var(--primary-navy); padding:2px 8px; border-radius:4px; font-weight:800;">' + c.sl + '</span></td>' +
+                            '<td><b>कस्प ' + cNum + '</b></td>' +
+                            '<td>' + cSign + '</td>' +
+                            '<td style="font-family:var(--font-mono); font-weight:700;">' + cDeg + '</td>' +
+                            '<td>' + cRl + '</td>' +
+                            '<td>' + cNl + '</td>' +
+                            '<td><span style="background:rgba(181,138,69,0.15); color:var(--primary-navy); padding:2px 8px; border-radius:4px; font-weight:800;">' + cSl + '</span></td>' +
+                            '<td><span style="background:rgba(56,189,248,0.12); color:#0284c7; padding:2px 8px; border-radius:4px; font-weight:700;">' + cSsl + '</span></td>' +
                             '</tr>';
                     }
                     cBody.innerHTML = html;
@@ -13380,17 +13412,23 @@
                         }
                     }
                     if (plList.length === 0) {
-                        pBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 9 ग्रहों के केपी उप-स्वामी व कार्येश प्रदर्शित होंगे।</td></tr>';
+                        pBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">कुण्डली लोड होने पर 9 ग्रहों के केपी उप-स्वामी व कार्येश प्रदर्शित होंगे।</td></tr>';
                     } else {
                         var pHtml = '';
                         for (var j = 0; j < plList.length; j++) {
                             var pl = plList[j];
+                            if (!pl) continue;
+                            var pName = pl.planet || pl.name || '-';
+                            var pSign = pl.sign ? (pl.sign + ' ') : '';
+                            var pDeg = pl.deg || pl.degree || '';
+                            var pSig = pl.significator || ('भाव ' + (pl.h || (j + 1)));
                             pHtml += '<tr>' +
-                                '<td><b>' + pl.planet + '</b> (' + (pl.sign ? (pl.sign + ' ') : '') + (pl.deg || '') + ')</td>' +
+                                '<td><b>' + pName + '</b> ' + (pSign || pDeg ? ('(' + pSign + pDeg + ')') : '') + '</td>' +
                                 '<td>' + (pl.rl || '-') + '</td>' +
                                 '<td>' + (pl.nl || '-') + '</td>' +
                                 '<td><span style="background:rgba(181,138,69,0.15); color:var(--primary-navy); padding:2px 8px; border-radius:4px; font-weight:800;">' + (pl.sl || '-') + '</span></td>' +
-                                '<td>' + (pl.ssl || '-') + '</td>' +
+                                '<td><span style="background:rgba(56,189,248,0.12); color:#0284c7; padding:2px 8px; border-radius:4px; font-weight:700;">' + (pl.ssl || '-') + '</span></td>' +
+                                '<td><span style="background:rgba(217,119,6,0.12); color:#d97706; padding:2px 8px; border-radius:4px; font-weight:700;">' + pSig + '</span></td>' +
                                 '</tr>';
                         }
                         pBody.innerHTML = pHtml;
@@ -15160,7 +15198,7 @@
                     return res;
                 }
 
-                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, (typeof jd !== 'undefined' ? jd : 2451545.0));
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
                     var cLon = placidusMap[c];
@@ -15186,7 +15224,6 @@
                         longitude: cLon
                     };
                     kpCusps.push(cuspItem);
-                    kpCusps[c] = cuspItem;
                 }
 
                 var kpPlanets = [];
@@ -15335,7 +15372,7 @@
                 }
 
                 var finalBundle = {
-                    _engine_ver: 5.2,
+                    _engine_ver: 6.0,
                     bhavat_bhavam: (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.evaluateAll === 'function') ? window.VyasBhavatBhavam.evaluateAll({ charts: builtCharts, planet_table: pTable, kp: { cusps: kpCusps, planets: kpPlanets } }) : null,
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,

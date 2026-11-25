@@ -1,10 +1,16 @@
-# scripts/check_tabs.py
+import re
+
 with open('index.html', 'r', encoding='utf-8') as f:
     text = f.read()
 
-tabs = ['daily', 'dasha', 'predictions', 'ashtakavarga', 'shadbala', 'match', 'prashna', 'remedies', 'sphutas', 'transit', 'vargas', 'kp', 'jaimini', 'nadi', 'pdf']
-for t in tabs:
-    target_id = f'view-{t}'
-    pos = text.find(f'id="{target_id}"')
-    print(f"Tab {t:15} -> {target_id:20} found: {pos != -1} (at {pos})")
+tabs = re.findall(r'id=["\']view-([^"\']+)["\']', text)
+print('Website Views/Tabs:', tabs)
 
+# Look for KP and Horary tabs
+print('KP in website:', 'kp' in text.lower())
+print('Horary in website:', 'horary' in text.lower())
+
+with open('mobile/index.html', 'r', encoding='utf-8') as f:
+    mtext = f.read()
+mtabs = re.findall(r'id=["\']view-([^"\']+)["\']', mtext)
+print('Mobile Views/Tabs:', mtabs)

@@ -1,6 +1,5 @@
-with open('mobile/index.html', 'r', encoding='utf-8') as f:
-    lines = f.readlines()
+with open('cpp/desktop/main_gui.cpp', 'r', encoding='utf-8') as f:
+    text = f.read()
 
-for i in range(1040, min(1130, len(lines))):
-    print(f'{i+1}: {lines[i].strip()}')
-
+pos = text.find('DrawKPAndJaiminiTable')
+print(text[pos+2500:pos+5500])

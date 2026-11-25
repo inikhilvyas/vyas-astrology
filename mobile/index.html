@@ -10835,7 +10835,7 @@
                     return res;
                 }
 
-                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, jd_ut);
+                var placidusMap = solveExactPlacidus(ascSid, lat, ayanamsa, (typeof jd !== 'undefined' ? jd : 2451545.0));
                 var kpCusps = [];
                 for (var c = 1; c <= 12; c++) {
                     var cLon = placidusMap[c];
@@ -10861,7 +10861,6 @@
                         longitude: cLon
                     };
                     kpCusps.push(cuspItem);
-                    kpCusps[c] = cuspItem;
                 }
 
                 var kpPlanets = [];
@@ -11010,7 +11009,7 @@
                 }
 
                 var finalBundle = {
-                    _engine_ver: 5.2,
+                    _engine_ver: 6.0,
                     bhavat_bhavam: (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.evaluateAll === 'function') ? window.VyasBhavatBhavam.evaluateAll({ charts: builtCharts, planet_table: pTable, kp: { cusps: kpCusps, planets: kpPlanets } }) : null,
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,
