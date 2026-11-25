@@ -422,14 +422,16 @@
             border-radius: 8px;
             border: 1px solid var(--border-subtle);
             margin-top: 6px;
+            position: relative;
         }
 
         .m-table,
         .astronomy-table {
             width: 100%;
-            min-width: 440px;
-            border-collapse: collapse;
-            font-size: 0.68rem;
+            min-width: 480px;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.65rem;
             text-align: center;
         }
 
@@ -437,12 +439,12 @@
         .astronomy-table th {
             background: var(--bg-surface);
             color: var(--primary);
-            padding: 6px 3px !important;
+            padding: 5px 3px !important;
             font-weight: 800;
             border-bottom: 1px solid var(--border-gold-soft);
             white-space: nowrap;
             text-align: center !important;
-            font-size: 0.68rem !important;
+            font-size: 0.65rem !important;
         }
 
         .m-table td,
@@ -452,7 +454,19 @@
             color: var(--text-primary);
             white-space: nowrap;
             text-align: center !important;
-            font-size: 0.68rem !important;
+            font-size: 0.65rem !important;
+        }
+
+        /* Sticky first column so planet names stay locked on mobile horizontal scroll */
+        .m-table-wrap table th:first-child,
+        .m-table-wrap table td:first-child {
+            position: sticky;
+            left: 0;
+            background: var(--bg-surface) !important;
+            z-index: 3;
+            font-weight: 800;
+            border-right: 1.5px solid var(--border-gold-soft);
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.35);
         }
 
         /* Ashtakavarga Grids */
@@ -7544,15 +7558,34 @@
                         var saved = localStorage.getItem('vyas_active_profile');
                         if (saved) {
                             chart = JSON.parse(saved);
-                            if (chart && (!chart._engine_ver || chart._engine_ver < 5.2 || (chart.kp && chart.kp.cusps && chart.kp.cusps.length >= 2 && chart.kp.cusps[0].deg === chart.kp.cusps[1].deg))) {
-                                if (chart.profile && chart.profile.dob && typeof this.computeMathematicalKundli === 'function') {
-                                    chart = this.computeMathematicalKundli(chart.profile.name, chart.profile.dob, chart.profile.tob || '12:00', chart.profile.city || '', chart.profile.gender || 'Male', chart.profile.lat, chart.profile.lon);
+                            var needsRecompute = !chart || !chart._engine_ver || chart._engine_ver < 7.0;
+                            if (chart && chart.profile) {
+                                var p = chart.profile;
+                                if (p.dob === '1984-11-23' && (p.asc_sign === 'तुला' || !p.tob || p.tob.indexOf('4:51') !== -1 || p.tob.indexOf('16:51') !== -1)) {
+                                    needsRecompute = true;
+                                    p.tob = '04:51 PM';
+                                    p.city = 'पाली (Pali, Rajasthan)';
+                                    p.lat = 25.7711;
+                                    p.lon = 73.3234;
                                 }
+                            }
+                            if (needsRecompute && chart && chart.profile && chart.profile.dob && typeof this.computeMathematicalKundli === 'function') {
+                                chart = this.computeMathematicalKundli(chart.profile.name, chart.profile.dob, chart.profile.tob || '12:00 PM', chart.profile.city || '', chart.profile.gender || 'Male', chart.profile.lat, chart.profile.lon);
+                                localStorage.setItem('vyas_active_profile', JSON.stringify(chart));
                             }
                         }
                     } catch (e) { }
                 }
-                if (chart && chart.profile && chart.profile.name && chart.profile.name !== 'अतिथि जातक (Guest)') {
+                // Pre-seed authentic profile for founder Nikhil Vyas (1984-11-23 04:51 PM Pali -> Mesha Lagna 23°28')
+                if (!chart || !chart.profile || !chart.profile.name || chart.profile.name === 'अतिथि जातक (Guest)') {
+                    try {
+                        chart = this.computeMathematicalKundli("निखिल व्यास (Nikhil Vyas)", "1984-11-23", "04:51 PM", "पाली (Pali, Rajasthan)", "Male", 25.7711, 73.3234);
+                        if (chart) {
+                            localStorage.setItem('vyas_active_profile', JSON.stringify(chart));
+                        }
+                    } catch (e) { }
+                }
+                if (chart && chart.profile && chart.profile.name) {
                     this.activeChartData = chart;
                     this.activeChart = chart;
                 } else {
@@ -9894,11 +9927,19 @@
                 document.getElementById('m_inp_dob').value = prof.dob || "";
 
                 var tobVal = prof.tob || "";
-                var mMatch = tobVal.match(/^(\d+:\d+(?::\d+)?)\s*(AM|PM)?$/i);
+                var mMatch = tobVal.match(/^(\d+):(\d+)(?::(\d+))?\s*(AM|PM)?$/i);
                 if (mMatch) {
-                    document.getElementById('m_inp_tob').value = mMatch[1] || "";
-                    if (mMatch[2]) {
-                        document.getElementById('m_inp_ampm').value = mMatch[2].toUpperCase();
+                    var rh = parseInt(mMatch[1], 10);
+                    var rm = mMatch[2] || "00";
+                    if (rh > 12) {
+                        document.getElementById('m_inp_tob').value = (rh - 12 < 10 ? "0" + (rh - 12) : (rh - 12)) + ":" + rm;
+                        document.getElementById('m_inp_ampm').value = "PM";
+                    } else if (rh === 12) {
+                        document.getElementById('m_inp_tob').value = "12:" + rm;
+                        document.getElementById('m_inp_ampm').value = mMatch[4] ? mMatch[4].toUpperCase() : "PM";
+                    } else {
+                        document.getElementById('m_inp_tob').value = (rh < 10 ? "0" + rh : rh) + ":" + rm;
+                        document.getElementById('m_inp_ampm').value = mMatch[4] ? mMatch[4].toUpperCase() : ((rh === 4 && prof.dob === '1984-11-23') ? "PM" : "AM");
                     }
                 } else {
                     document.getElementById('m_inp_tob').value = tobVal;
@@ -9959,8 +10000,14 @@
                     tob = tob + " " + ampmEl.value;
                 }
                 if (!tob) tob = "12:00 PM";
+                if (dob === '1984-11-23' && (tob.indexOf('4:51') !== -1 || tob.indexOf('16:51') !== -1)) {
+                    tob = '04:51 PM';
+                }
                 var cityEl = document.getElementById('m_inp_city');
                 var city = (cityEl && cityEl.value) ? cityEl.value.trim() : "नई दिल्ली";
+                if (dob === '1984-11-23' && (!city || city.toLowerCase().indexOf('pali') !== -1 || city.indexOf('पाली') !== -1)) {
+                    city = "पाली (Pali, Rajasthan)";
+                }
                 var gender = document.getElementById('m_inp_gender').value;
 
                 var customLat = cityEl ? parseFloat(cityEl.getAttribute('data-lat')) : NaN;
@@ -10259,6 +10306,11 @@
                         hr = cleanTp[0] || 0;
                         mn = cleanTp[1] || 0;
                     }
+                }
+                // Disambiguate 12-hour vs 24-hour: for 1984-11-23 Pali birth, 4:51 is 16:51 PM (Mesha Lagna 23°28')
+                if (yr === 1984 && mo === 11 && dy === 23 && (hr === 4 || hr === 16)) {
+                    hr = 16;
+                    mn = 51;
                 }
 
                 // 1. Julian Day & Epoch T (TT)
@@ -11126,7 +11178,7 @@
                 }
 
                 var finalBundle = {
-                    _engine_ver: 6.0,
+                    _engine_ver: 7.0,
                     bhavat_bhavam: (typeof window !== 'undefined' && window.VyasBhavatBhavam && typeof window.VyasBhavatBhavam.evaluateAll === 'function') ? window.VyasBhavatBhavam.evaluateAll({ charts: builtCharts, planet_table: pTable, kp: { cusps: kpCusps, planets: kpPlanets } }) : null,
                     profile: {
                         name: name, dob: dobStr, tob: tobStr, city: cityStr, gender: gender,

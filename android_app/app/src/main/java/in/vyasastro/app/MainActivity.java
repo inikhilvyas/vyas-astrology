@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
             settings.setAllowFileAccessFromFileURLs(true);
             settings.setAllowUniversalAccessFromFileURLs(true);
             settings.setLoadsImagesAutomatically(true);
-            settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+            settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webView.clearCache(true);
             settings.setUseWideViewPort(true);
             settings.setLoadWithOverviewMode(true);
             settings.setBuiltInZoomControls(false);
@@ -177,14 +178,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            // Route to Live or Offline based on Connectivity
-            if (isNetworkConnected()) {
-                Log.i(TAG, "Online mode: loading live portal " + LIVE_URL);
-                webView.loadUrl(LIVE_URL);
-            } else {
-                Log.i(TAG, "Offline mode: loading offline bundle " + OFFLINE_URL);
-                webView.loadUrl(OFFLINE_URL);
-            }
+            // Route: Always load High-Precision Bundled Native Engine for 100% Offline Integrity & Speed
+            Log.i(TAG, "Native Engine: Loading high-precision bundled asset " + OFFLINE_URL);
+            webView.loadUrl(OFFLINE_URL);
 
         } catch (Throwable t) {
             Log.e(TAG, "Fatal WebView init failure", t);
