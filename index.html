@@ -3187,6 +3187,131 @@
             color: #0F172A !important;
             border: 1px solid #CBD5E1 !important;
         }
+
+        /* =====================================================================
+           INTERNATIONAL EDITORIAL GRADE LAYOUT (Zero-Wrap Header + Underline Nav)
+           ===================================================================== */
+        .master-header {
+            padding: 10px 22px !important;
+            gap: 14px !important;
+            min-height: 60px !important;
+        }
+        .brand-box { flex-shrink: 0 !important; gap: 10px !important; }
+        .brand-title { font-size: 1.15rem !important; white-space: nowrap !important; line-height: 1.15 !important; }
+        .brand-subtitle { font-size: 0.64rem !important; white-space: nowrap !important; letter-spacing: 0.08em !important; opacity: 0.85; }
+        .header-center-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 5px 14px !important;
+            border-radius: 999px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+        }
+        [data-theme="light"] .header-center-info {
+            background: #F8FAFC !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+        .header-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            flex-wrap: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+        .header-actions .luxury-nav-btn,
+        .header-actions .google-signin-btn,
+        .header-actions .jatak-badge {
+            white-space: nowrap !important;
+            height: 36px !important;
+            padding: 0 12px !important;
+            font-size: 0.78rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+        }
+        .vyas-tools-wrap { position: relative; }
+        .vyas-tools-menu {
+            display: none;
+            position: absolute;
+            top: 44px;
+            right: 0;
+            min-width: 210px;
+            background: rgba(11, 17, 32, 0.98);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+            z-index: 99999;
+        }
+        [data-theme="light"] .vyas-tools-menu {
+            background: #FFFFFF;
+            border-color: #CBD5E1;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.14);
+        }
+        .vyas-tools-item {
+            width: 100%;
+            text-align: left;
+            padding: 9px 12px;
+            border: none;
+            background: transparent;
+            color: #E2E8F0;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .vyas-tools-item:hover { background: rgba(212, 175, 55, 0.15); }
+        [data-theme="light"] .vyas-tools-item { color: #0F172A; }
+        [data-theme="light"] .vyas-tools-item:hover { background: #F1F5F9; }
+
+        /* Editorial Underline Portal Bar (Replaces 13 chunky oval pills) */
+        .vyas-portal-pill-strip {
+            gap: 4px !important;
+            padding: 0 22px !important;
+            min-height: 44px !important;
+        }
+        .vyas-portal-pill-strip .portal-pill {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid transparent !important;
+            border-radius: 0 !important;
+            padding: 10px 12px !important;
+            font-size: 0.8rem !important;
+            box-shadow: none !important;
+        }
+        .vyas-portal-pill-strip .portal-pill.active {
+            border-bottom-color: #D4AF37 !important;
+            font-weight: 800 !important;
+        }
+        [data-theme="light"] .vyas-portal-pill-strip .portal-pill {
+            background: transparent !important;
+            color: #475569 !important;
+        }
+        [data-theme="light"] .vyas-portal-pill-strip .portal-pill:hover {
+            background: #F8FAFC !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .vyas-portal-pill-strip .portal-pill.active {
+            background: transparent !important;
+            color: #1E3A8A !important;
+            border-bottom-color: #1E3A8A !important;
+        }
+        /* Fix black frame around chart SVG in Light Mode */
+        [data-theme="light"] #chartSvgContainer,
+        [data-theme="light"] .chart-canvas-wrap,
+        [data-theme="light"] .kundli-svg-box {
+            background: #FAF8F5 !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 12px !important;
+        }
+        @media (max-width: 1180px) {
+            .header-center-info { display: none !important; }
+        }
     </style>
 
     <script src="js/vyas_sutras_bank.js?v=5.2.0"></script>
@@ -3251,35 +3376,18 @@
                     </svg></span><span id="langSwitchText">EN</span>
             </button>
 
-            <!-- Family Vault Button -->
-            <button class="luxury-nav-btn" onclick="VyasDesktop.openFamilyVaultModal()" title="पारिवारिक कुण्डली वॉल्ट">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg> <span class="btn-text">परिवार वॉल्ट</span>
-            </button>
-
-            <!-- BTR Rectifier Button -->
-            <button class="luxury-nav-btn" onclick="VyasDesktop.openBTRModal()" title="जन्म समय सुधार सहायक">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                </svg> <span class="btn-text">BTR सुधार</span>
-            </button>
-
-            <!-- Viral Cosmic Share Card Button -->
-            <button class="luxury-nav-btn gold-accent" onclick="VyasDesktop.openShareCardModal()"
-                title="व्हाट्सएप / इंस्टाग्राम शेयर कार्ड बनाएं">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="18" cy="5" r="3" />
-                    <circle cx="6" cy="12" r="3" />
-                    <circle cx="18" cy="19" r="3" />
-                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                </svg> <span class="btn-text">शेयर कार्ड</span>
-            </button>
+            <!-- Compact Tools Dropdown (Family Vault, BTR, Share Card) -->
+            <div class="vyas-tools-wrap">
+                <button class="luxury-nav-btn" onclick="var m=document.getElementById('vyasToolsMenu'); m.style.display=(m.style.display==='block'?'none':'block');" title="विशेष ज्योतिष टूल्स">
+                    <span>टूल्स ▾</span>
+                </button>
+                <div class="vyas-tools-menu" id="vyasToolsMenu" onclick="this.style.display='none';">
+                    <button class="vyas-tools-item" onclick="VyasDesktop.openFamilyVaultModal()">👥 परिवार वॉल्ट</button>
+                    <button class="vyas-tools-item" onclick="VyasDesktop.openBTRModal()">⏱️ BTR समय सुधार</button>
+                    <button class="vyas-tools-item" onclick="VyasDesktop.openShareCardModal()">✨ शेयर कार्ड बनाएं</button>
+                    <button class="vyas-tools-item" onclick="VyasDesktop.openProModal()">💎 PRO सदस्यता</button>
+                </div>
+            </div>
             <!-- Google Sign-In Box -->
             <div class="google-auth-wrapper" id="googleAuthWrapper">
                 <button class="google-signin-btn" id="googleSignInBtn" onclick="VyasDesktop.promptGoogleSignIn()">
