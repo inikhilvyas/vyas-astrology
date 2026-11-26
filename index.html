@@ -10815,15 +10815,35 @@
                 }
             },
 
-            syncCloudProfiles: function () {
-                var list = this.getUserProfilesList ? this.getUserProfilesList() : [];
-                var total = list.length;
-                var activeName = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile.name : "अतिथि जातक";
-                alert("☁️ क्लाउड कुण्डली सिंक स्थिति:\n\n" +
-                    "• सक्रिय कुण्डली: " + activeName + " (सुरक्षित)\n" +
-                    "• कुल सुरक्षित चार्ट: " + total + "\n" +
-                    "• सर्वर स्टेटस: 100% सिंक्रोनाइज़्ड\n" +
-                    "• स्विस एफिमेरिस डेटा: सिक्योर 256-बिट एन्क्रिप्टेड");
+            syncCloudProfiles: async function (silent) {
+                var email = (this.googleUser && this.googleUser.email) ? this.googleUser.email.trim().toLowerCase() : '';
+                var localList = [];
+                try { localList = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]'); } catch (e) {}
+                if (!email) {
+                    if (!silent) alert("☁️ क्लाउड सिंक के लिए कृपया पहले अपने Google खाते से लॉगिन करें।\n(लोकल सुरक्षित चार्ट: " + localList.length + ")");
+                    return;
+                }
+                try {
+                    var res = await fetch('/api/kundli_vault.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, action: 'merge', profiles: localList })
+                    });
+                    var data = await res.json();
+                    if (data && data.success && Array.isArray(data.profiles)) {
+                        localStorage.setItem('vyas_custom_profiles', JSON.stringify(data.profiles));
+                        if (window.VyasVaultBackup) window.VyasVaultBackup.syncToIDB();
+                    if (window.VyasDesktop && typeof VyasDesktop.syncCloudProfiles === 'function') VyasDesktop.syncCloudProfiles(true);
+                        if (!silent) {
+                            alert("☁️ क्लाउड कुण्डली सिंक सफल!\n\n• खाता: " + email + "\n• कुल सुरक्षित कुण्डलियाँ: " + data.profiles.length + "\n• सर्वर स्टेटस: 100% सिंक्रोनाइज़्ड (Hostinger Cloud)");
+                            if (document.getElementById('modalSavedProfiles') && document.getElementById('modalSavedProfiles').classList.contains('active')) {
+                                this.openSavedProfilesModal();
+                            }
+                        }
+                    }
+                } catch (e) {
+                    if (!silent) alert("क्लाउड सिंक त्रुटि: इंटरनेट कनेक्शन जांचें। लोकल सुरक्षित चार्ट: " + localList.length);
+                }
             },
 
             handleSignOut: function () {
@@ -14765,6 +14785,7 @@
                     });
                     try { localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom)); } catch (e) { }
                     if (window.VyasVaultBackup) window.VyasVaultBackup.syncToIDB();
+                    if (window.VyasDesktop && typeof VyasDesktop.syncCloudProfiles === 'function') VyasDesktop.syncCloudProfiles(true);
                 }
                 if (this.googleUser && this.googleUser.email) {
                     var email = this.googleUser.email.trim().toLowerCase();
@@ -15142,6 +15163,7 @@
                             });
                             localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom));
                             if (window.VyasVaultBackup) window.VyasVaultBackup.syncToIDB();
+                    if (window.VyasDesktop && typeof VyasDesktop.syncCloudProfiles === 'function') VyasDesktop.syncCloudProfiles(true);
                         }
                     } catch (e) { }
 
@@ -16676,29 +16698,42 @@
             updateVyasHeroDashboard();
             setInterval(updateVyasHeroDashboard, 3000);
             if (window.VyasVaultBackup) window.VyasVaultBackup.restoreFromIDB();
+            if (window.VyasDesktop && typeof VyasDesktop.syncCloudProfiles === 'function') {
+                setTimeout(function () { VyasDesktop.syncCloudProfiles(true); }, 1500);
+            }
             enforceThemeFontContrast();
-            // Re-run contrast guard whenever theme attribute changes
             try {
                 new MutationObserver(function () { enforceThemeFontContrast(); })
                     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+                setInterval(enforceThemeFontContrast, 1200);
             } catch (e) {}
         }
 
         function enforceThemeFontContrast() {
             try {
                 var isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                var paleColors = ['rgb(255, 255, 255)', 'rgb(248, 250, 252)', 'rgb(241, 245, 249)', 'rgb(226, 232, 240)', 'rgb(203, 213, 225)', 'rgb(148, 163, 184)', 'rgb(100, 116, 139)'];
-                var els = document.querySelectorAll('.cockpit-col div, .cockpit-col span, .cockpit-col p, .user-profile-popover *, .modal-box div, .modal-box span, .modal-box p');
+                var els = document.querySelectorAll('.cockpit-col *, .user-profile-popover *, .modal-box *, .vyas-notif-drawer *, .vyas-tools-menu *');
                 for (var i = 0; i < els.length; i++) {
                     var el = els[i];
-                    if (el.closest('svg') || el.tagName === 'BUTTON' && el.classList.contains('primary')) continue;
+                    if (el.tagName === 'SVG' || el.tagName === 'PATH' || el.tagName === 'CIRCLE' || el.tagName === 'LINE' || el.tagName === 'RECT' || el.closest('svg') || el.classList.contains('primary')) continue;
                     if (isLight) {
                         var cs = getComputedStyle(el).color;
+                        var m = cs.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                        if (!m) continue;
+                        var r = parseInt(m[1], 10), g = parseInt(m[2], 10), b = parseInt(m[3], 10);
+                        var a = m[4] !== undefined ? parseFloat(m[4]) : 1.0;
+                        var lum = 0.299 * r + 0.587 * g + 0.114 * b;
                         var bg = getComputedStyle(el).backgroundColor;
-                        var hasDarkBg = bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && (bg.indexOf('rgb(15,') === 0 || bg.indexOf('rgb(30,') === 0 || bg.indexOf('rgb(6,') === 0 || bg.indexOf('rgb(22,') === 0);
-                        if (!hasDarkBg && paleColors.indexOf(cs) !== -1) {
+                        var hasDarkBg = bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && (function () {
+                            var bm = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+                            if (!bm) return false;
+                            var ba = bm[4] !== undefined ? parseFloat(bm[4]) : 1.0;
+                            if (ba < 0.35) return false;
+                            return (0.299 * bm[1] + 0.587 * bm[2] + 0.114 * bm[3]) < 110;
+                        })();
+                        if (!hasDarkBg && (lum > 110 || a < 0.78)) {
                             if (!el.hasAttribute('data-orig-color')) el.setAttribute('data-orig-color', el.style.color || '');
-                            el.style.setProperty('color', cs === 'rgb(100, 116, 139)' || cs === 'rgb(148, 163, 184)' ? '#334155' : '#0F172A', 'important');
+                            el.style.setProperty('color', '#1E293B', 'important');
                         }
                     } else if (el.hasAttribute('data-orig-color')) {
                         var orig = el.getAttribute('data-orig-color');
