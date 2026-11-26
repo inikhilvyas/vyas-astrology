@@ -3312,6 +3312,43 @@
         @media (max-width: 1180px) {
             .header-center-info { display: none !important; }
         }
+
+        /* Popovers, Modals & Subtle Text Contrast in Light Mode */
+        [data-theme="light"] .user-profile-popover,
+        [data-theme="light"] .modal-box {
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            border: 1px solid #CBD5E1 !important;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16) !important;
+        }
+        [data-theme="light"] .user-display-name,
+        [data-theme="light"] .user-display-email,
+        [data-theme="light"] .cloud-sync-status,
+        [data-theme="light"] .popover-action-btn,
+        [data-theme="light"] .modal-header h3,
+        [data-theme="light"] .modal-box label,
+        [data-theme="light"] .modal-box p {
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .popover-action-btn {
+            background: #F8FAFC !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+        [data-theme="light"] .popover-action-btn:hover {
+            background: #EFF6FF !important;
+            border-color: #93C5FD !important;
+        }
+        [data-theme="light"] .popover-action-btn.danger {
+            color: #DC2626 !important;
+            background: #FEF2F2 !important;
+            border-color: #FECACA !important;
+        }
+        [data-theme="light"] .cockpit-col p,
+        [data-theme="light"] .cockpit-col li,
+        [data-theme="light"] .cockpit-col small {
+            color: #1E293B !important;
+            font-weight: 500;
+        }
     </style>
 
     <script src="js/vyas_sutras_bank.js?v=5.2.0"></script>
@@ -16639,6 +16676,36 @@
             updateVyasHeroDashboard();
             setInterval(updateVyasHeroDashboard, 3000);
             if (window.VyasVaultBackup) window.VyasVaultBackup.restoreFromIDB();
+            enforceThemeFontContrast();
+            // Re-run contrast guard whenever theme attribute changes
+            try {
+                new MutationObserver(function () { enforceThemeFontContrast(); })
+                    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+            } catch (e) {}
+        }
+
+        function enforceThemeFontContrast() {
+            try {
+                var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                var paleColors = ['rgb(255, 255, 255)', 'rgb(248, 250, 252)', 'rgb(241, 245, 249)', 'rgb(226, 232, 240)', 'rgb(203, 213, 225)', 'rgb(148, 163, 184)', 'rgb(100, 116, 139)'];
+                var els = document.querySelectorAll('.cockpit-col div, .cockpit-col span, .cockpit-col p, .user-profile-popover *, .modal-box div, .modal-box span, .modal-box p');
+                for (var i = 0; i < els.length; i++) {
+                    var el = els[i];
+                    if (el.closest('svg') || el.tagName === 'BUTTON' && el.classList.contains('primary')) continue;
+                    if (isLight) {
+                        var cs = getComputedStyle(el).color;
+                        var bg = getComputedStyle(el).backgroundColor;
+                        var hasDarkBg = bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && (bg.indexOf('rgb(15,') === 0 || bg.indexOf('rgb(30,') === 0 || bg.indexOf('rgb(6,') === 0 || bg.indexOf('rgb(22,') === 0);
+                        if (!hasDarkBg && paleColors.indexOf(cs) !== -1) {
+                            if (!el.hasAttribute('data-orig-color')) el.setAttribute('data-orig-color', el.style.color || '');
+                            el.style.setProperty('color', cs === 'rgb(100, 116, 139)' || cs === 'rgb(148, 163, 184)' ? '#334155' : '#0F172A', 'important');
+                        }
+                    } else if (el.hasAttribute('data-orig-color')) {
+                        var orig = el.getAttribute('data-orig-color');
+                        if (orig) el.style.color = orig; else el.style.removeProperty('color');
+                    }
+                }
+            } catch (e) { }
         }
 
         // Permanent IndexedDB + JSON Backup Vault so Saved Kundlis never disappear
