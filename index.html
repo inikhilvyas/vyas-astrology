@@ -203,21 +203,21 @@
             --bg-surface: #FFFFFF;
             --bg-card: #FFFFFF;
             --bg-card-hover: #F8FAFC;
-            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.94);
             --primary-navy: #0F172A;
-            --navy-light: #2563EB;
+            --navy-light: #1E3A8A;
             --navy-surface: #E2E8F0;
-            --border-gold: #C5A059;
-            --border-gold-glow: rgba(197, 160, 89, 0.3);
-            --border-gold-subtle: rgba(197, 160, 89, 0.2);
-            --border-subtle: #E2E8F0;
-            --border-card: #E2E8F0;
+            --border-gold: #B58A45;
+            --border-gold-glow: rgba(181, 138, 69, 0.3);
+            --border-gold-subtle: rgba(181, 138, 69, 0.25);
+            --border-subtle: #CBD5E1;
+            --border-card: #CBD5E1;
             --text-primary: #0F172A;
-            --text-secondary: #475569;
-            --text-muted: #64748B;
-            --accent-gold: #9A7B38;
-            --gold-gradient: linear-gradient(135deg, #9A7B38 0%, #C5A059 50%, #785E23 100%);
-            --gold-glow: 0 0 20px rgba(197, 160, 89, 0.2);
+            --text-secondary: #1E293B;
+            --text-muted: #334155;
+            --accent-gold: #92400E;
+            --gold-gradient: linear-gradient(135deg, #9A7B38 0%, #B58A45 50%, #785E23 100%);
+            --gold-glow: 0 0 20px rgba(181, 138, 69, 0.2);
             --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.08);
             --shadow-header: 0 2px 12px rgba(15, 23, 42, 0.06);
         }
@@ -3075,6 +3075,29 @@
         }
         [data-theme="light"] .cockpit-col label {
             color: #0F172A !important;
+            font-weight: 600 !important;
+        }
+        [data-theme="light"] .brand-title {
+            background: none !important;
+            -webkit-background-clip: initial !important;
+            -webkit-text-fill-color: #1E3A8A !important;
+            color: #1E3A8A !important;
+            text-shadow: none !important;
+        }
+        [data-theme="light"] .vyas-hero-lbl {
+            color: #92400E !important;
+        }
+        [data-theme="light"] .panchang-ticker,
+        [data-theme="light"] .panchang-ticker span,
+        [data-theme="light"] .brand-subtitle {
+            color: #1E293B !important;
+            font-weight: 600 !important;
+        }
+        [data-theme="light"] [style*="color:#64748b"],
+        [data-theme="light"] [style*="color:#64748B"],
+        [data-theme="light"] [style*="color:var(--text-muted)"],
+        [data-theme="light"] [style*="color: var(--text-muted)"] {
+            color: #334155 !important;
         }
         [data-theme="light"] .portal-pill {
             background: #F8FAFC !important;
@@ -14596,6 +14619,7 @@
                         asc_sign: prof.asc_sign
                     });
                     try { localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom)); } catch (e) { }
+                    if (window.VyasVaultBackup) window.VyasVaultBackup.syncToIDB();
                 }
                 if (this.googleUser && this.googleUser.email) {
                     var email = this.googleUser.email.trim().toLowerCase();
@@ -14709,8 +14733,10 @@
                         '<div style="font-size:1.8rem; margin-bottom:8px;">📜</div>' +
                         'अभी कोई सुरक्षित कुण्डली उपलब्ध नहीं है。<br>ऊपर <b>"💾 वर्तमान चार्ट सहेजें"</b> अथवा <b>"+ नई कुण्डली"</b> से नई जन्मपत्रिका जोड़ें।</div>';
                 }
-                html += '<div style="margin-top:12px;">' +
-                    '<button onclick="VyasDesktop.openNewProfileModal(); VyasDesktop.closeModals();" class="header-btn primary" style="width:100%; padding:10px; font-size:0.92rem; font-weight:700; border-radius:6px;">+ नई कुण्डली प्रविष्ट करें</button>' +
+                html += '<div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">' +
+                    '<button onclick="VyasDesktop.openNewProfileModal(); VyasDesktop.closeModals();" class="header-btn primary" style="flex:1; min-width:180px; padding:10px; font-size:0.9rem; font-weight:700; border-radius:8px;">+ नई कुण्डली प्रविष्ट करें</button>' +
+                    '<button onclick="VyasVaultBackup.exportBackup()" class="header-btn" style="padding:10px 14px; font-size:0.82rem; font-weight:700; border-radius:8px;">📥 बैकअप सेव</button>' +
+                    '<button onclick="VyasVaultBackup.importBackup()" class="header-btn" style="padding:10px 14px; font-size:0.82rem; font-weight:700; border-radius:8px;">📤 बैकअप लोड</button>' +
                     '</div>';
                 html += '</div>';
                 body.innerHTML = html;
@@ -14970,6 +14996,7 @@
                                 asc_sign: newChart.profile.asc_sign
                             });
                             localStorage.setItem('vyas_custom_profiles', JSON.stringify(custom));
+                            if (window.VyasVaultBackup) window.VyasVaultBackup.syncToIDB();
                         }
                     } catch (e) { }
 
@@ -16503,7 +16530,87 @@
             selectVyasPillar('today', true);
             updateVyasHeroDashboard();
             setInterval(updateVyasHeroDashboard, 3000);
+            if (window.VyasVaultBackup) window.VyasVaultBackup.restoreFromIDB();
         }
+
+        // Permanent IndexedDB + JSON Backup Vault so Saved Kundlis never disappear
+        window.VyasVaultBackup = {
+            openDB: function (cb) {
+                try {
+                    var req = indexedDB.open('VyasKundliVaultDB', 1);
+                    req.onupgradeneeded = function (e) {
+                        var db = e.target.result;
+                        if (!db.objectStoreNames.contains('vault')) db.createObjectStore('vault', { keyPath: 'k' });
+                    };
+                    req.onsuccess = function (e) { cb(e.target.result); };
+                } catch (e) { }
+            },
+            syncToIDB: function () {
+                this.openDB(function (db) {
+                    try {
+                        var tx = db.transaction('vault', 'readwrite');
+                        var st = tx.objectStore('vault');
+                        ['vyas_custom_profiles', 'vyas_family_vault'].forEach(function (k) {
+                            var v = localStorage.getItem(k);
+                            if (v && v !== '[]') st.put({ k: k, v: v, ts: Date.now() });
+                        });
+                    } catch (e) { }
+                });
+            },
+            restoreFromIDB: function () {
+                this.openDB(function (db) {
+                    try {
+                        var tx = db.transaction('vault', 'readonly');
+                        var st = tx.objectStore('vault');
+                        ['vyas_custom_profiles', 'vyas_family_vault'].forEach(function (k) {
+                            var cur = localStorage.getItem(k);
+                            if (!cur || cur === '[]') {
+                                var g = st.get(k);
+                                g.onsuccess = function () {
+                                    if (g.result && g.result.v) {
+                                        try { localStorage.setItem(k, g.result.v); } catch (e) {}
+                                    }
+                                };
+                            }
+                        });
+                    } catch (e) { }
+                });
+            },
+            exportBackup: function () {
+                var data = {
+                    vyas_custom_profiles: JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]'),
+                    vyas_family_vault: JSON.parse(localStorage.getItem('vyas_family_vault') || '[]'),
+                    exported_at: new Date().toISOString()
+                };
+                var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'vyas_kundli_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+                a.click();
+            },
+            importBackup: function () {
+                var inp = document.createElement('input');
+                inp.type = 'file';
+                inp.accept = '.json';
+                inp.onchange = function (e) {
+                    var file = e.target.files[0];
+                    if (!file) return;
+                    var r = new FileReader();
+                    r.onload = function () {
+                        try {
+                            var d = JSON.parse(r.result);
+                            if (Array.isArray(d.vyas_custom_profiles)) localStorage.setItem('vyas_custom_profiles', JSON.stringify(d.vyas_custom_profiles));
+                            if (Array.isArray(d.vyas_family_vault)) localStorage.setItem('vyas_family_vault', JSON.stringify(d.vyas_family_vault));
+                            window.VyasVaultBackup.syncToIDB();
+                            alert('✓ सभी सुरक्षित कुण्डलियाँ सफलतापूर्वक रीस्टोर हो गईं!');
+                            if (window.VyasDesktop && VyasDesktop.openSavedProfilesModal) VyasDesktop.openSavedProfilesModal();
+                        } catch (err) { alert('अमान्य बैकअप फाइल।'); }
+                    };
+                    r.readAsText(file);
+                };
+                inp.click();
+            }
+        };
 
         function initVyasDailyAppNotifications(appRef) {
             try {

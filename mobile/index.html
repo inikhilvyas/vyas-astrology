@@ -89,24 +89,24 @@
         }
 
         [data-theme="light"] {
-            --bg-canvas: #FBF9F4;
-            --bg-surface: #F3EFE6;
+            --bg-canvas: #F4F6F9;
+            --bg-surface: #FFFFFF;
             --bg-card: #FFFFFF;
-            --bg-card-alt: #F7F4EC;
-            --bg-hover: #EBE5D8;
-            --primary: #8C6D37;
+            --bg-card-alt: #F8FAFC;
+            --bg-hover: #E2E8F0;
+            --primary: #92400E;
             --primary-light: #B58A45;
-            --primary-navy: #1B2E4B;
-            --accent-gold: #8C6D37;
+            --primary-navy: #0F172A;
+            --accent-gold: #92400E;
             --border-gold: #B58A45;
             --border-gold-soft: rgba(181, 138, 69, 0.35);
-            --border-subtle: #E2DBD0;
-            --text-primary: #1B2E4B;
-            --text-secondary: #4A5568;
-            --text-muted: #718096;
+            --border-subtle: #CBD5E1;
+            --text-primary: #0F172A;
+            --text-secondary: #1E293B;
+            --text-muted: #334155;
             --gold-gradient: linear-gradient(135deg, #D6BD8A 0%, #B58A45 50%, #8C6D37 100%);
             --navy-gradient: linear-gradient(135deg, #F3EFE6 0%, #FFFFFF 100%);
-            --card-shadow: 0 4px 16px rgba(27, 46, 75, 0.08);
+            --card-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
         }
 
         * {
@@ -10500,6 +10500,14 @@
                     var saved = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
                     saved.push(newChart.profile);
                     localStorage.setItem('vyas_custom_profiles', JSON.stringify(saved));
+                    try {
+                        var req = indexedDB.open('VyasKundliVaultDB', 1);
+                        req.onupgradeneeded = function (e) { if (!e.target.result.objectStoreNames.contains('vault')) e.target.result.createObjectStore('vault', { keyPath: 'k' }); };
+                        req.onsuccess = function (e) {
+                            var tx = e.target.result.transaction('vault', 'readwrite');
+                            tx.objectStore('vault').put({ k: 'vyas_custom_profiles', v: JSON.stringify(saved), ts: Date.now() });
+                        };
+                    } catch (e) {}
                 } catch (e) { }
 
                 this.loadProfile();
