@@ -2956,6 +2956,88 @@
             background: #f8fafc;
             border-color: #cbd5e1;
         }
+        /* 4-Pillar Segmented Navigation & Hero Observatory Strip */
+        .vyas-pillar-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            background: rgba(8, 13, 26, 0.72);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 14px;
+            padding: 6px;
+            margin-bottom: 10px;
+        }
+        [data-theme="light"] .vyas-pillar-bar {
+            background: #f3efe6;
+            border-color: rgba(181, 138, 69, 0.28);
+        }
+        .vyas-pillar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 8px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .vyas-pillar-btn:hover {
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .vyas-pillar-btn.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.08));
+            border-color: rgba(212, 175, 55, 0.45);
+            color: #f6e05e;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+        }
+        [data-theme="light"] .vyas-pillar-btn { color: #475569; }
+        [data-theme="light"] .vyas-pillar-btn.active {
+            background: #ffffff;
+            color: #8c6d37;
+            border-color: #b58a45;
+            box-shadow: 0 2px 10px rgba(27, 46, 75, 0.08);
+        }
+        .vyas-hero-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 768px) {
+            .vyas-pillar-bar { grid-template-columns: repeat(2, 1fr); }
+            .vyas-hero-strip { grid-template-columns: 1fr; }
+        }
+        .vyas-hero-card {
+            background: linear-gradient(180deg, rgba(19, 28, 49, 0.9), rgba(11, 17, 32, 0.95));
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 11px 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        [data-theme="light"] .vyas-hero-card {
+            background: #ffffff;
+            border-color: rgba(181, 138, 69, 0.25);
+        }
+        .vyas-hero-lbl {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #d4af37;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+        .vyas-hero-val {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #f8fafc;
+        }
+        [data-theme="light"] .vyas-hero-val { color: #1b2e4b; }
     </style>
 
     <script src="js/vyas_sutras_bank.js?v=5.2.0"></script>
@@ -2980,7 +3062,7 @@
             </div>
             <div>
                 <div class="brand-title">VYAS ASTRA</div>
-                <div class="brand-subtitle">Vedic Yield Astronomy Systems • संस्थापक: निखिल व्यास (M.A. ज्योतिष, LL.B, पाली राजस्थान)</div>
+                <div class="brand-subtitle">Vedic Yield Astronomy Systems</div>
             </div>
         </div>
 
@@ -3310,10 +3392,34 @@
             </div>
         </div>
 
-        <!-- MIDDLE COLUMN: 11 MULTI-PILLAR TABS -->
+        <!-- MIDDLE COLUMN: 4-PILLAR OBSERVATORY + SUB-PILLS -->
         <div class="cockpit-col">
-            <!-- Scrollable Tab Bar -->
-            <nav class="tab-scroll-nav">
+            <!-- Hero Observatory Summary Strip -->
+            <div class="vyas-hero-strip" id="vyasHeroStrip">
+                <div class="vyas-hero-card">
+                    <div class="vyas-hero-lbl">लग्न एवं चन्द्र</div>
+                    <div class="vyas-hero-val" id="vyasHeroLagna">कुण्डली लोड करें</div>
+                </div>
+                <div class="vyas-hero-card">
+                    <div class="vyas-hero-lbl">सक्रिय ५-स्तरीय दशा</div>
+                    <div class="vyas-hero-val" id="vyasHeroDasha">विंशोत्तरी दशा</div>
+                </div>
+                <div class="vyas-hero-card" style="cursor:pointer;" onclick="VyasDesktop.switchTab('daily')">
+                    <div class="vyas-hero-lbl">आज का पंचांग</div>
+                    <div class="vyas-hero-val" id="vyasHeroPanchang">दैनिक मुहूर्त देखें →</div>
+                </div>
+            </div>
+
+            <!-- 4-Pillar Segmented Navigation -->
+            <div class="vyas-pillar-bar" id="vyasPillarBar">
+                <button class="vyas-pillar-btn active" data-pillar="today" onclick="selectVyasPillar('today')">आज व पंचांग</button>
+                <button class="vyas-pillar-btn" data-pillar="charts" onclick="selectVyasPillar('charts')">कुण्डली व चार्ट</button>
+                <button class="vyas-pillar-btn" data-pillar="predictions" onclick="selectVyasPillar('predictions')">दशा व फलित</button>
+                <button class="vyas-pillar-btn" data-pillar="tools" onclick="selectVyasPillar('tools')">रिपोर्ट व टूल्स</button>
+            </div>
+
+            <!-- Scrollable Tab Bar (Filtered by Active Pillar) -->
+            <nav class="tab-scroll-nav" id="vyasSubTabBar">
                 <button class="tab-nav-btn active" onclick="VyasDesktop.switchTab('daily', this)">दैनिक व्यक्तिगत
                     राशिफल</button>
                 <button class="tab-nav-btn" onclick="VyasDesktop.switchTab('dasha', this)">विंशोत्तरी दशा
@@ -16178,9 +16284,66 @@
                 }
             } catch (e) { }
             VyasDesktop.init();
-            setTimeout(function () { initVyasDailyAppNotifications(window.VyasDesktop); }, 1200);
+            setTimeout(function () { initVyasObservatoryNav(); initVyasDailyAppNotifications(window.VyasDesktop); }, 1200);
             setInterval(function () { initVyasDailyAppNotifications(window.VyasDesktop); }, 1800000);
         });
+
+        var VYAS_PILLAR_MAP = {
+            today: ['daily', 'transit', 'prashna'],
+            charts: ['ashtakavarga', 'shadbala', 'vargas', 'sphutas'],
+            predictions: ['dasha', 'predictions', 'kp', 'jaimini', 'bhavatbhavam', 'nadi', 'remedies'],
+            tools: ['pdf', 'match']
+        };
+
+        function selectVyasPillar(pillarKey, skipTabSwitch) {
+            try {
+                var btns = document.querySelectorAll('#vyasPillarBar .vyas-pillar-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.toggle('active', btns[i].getAttribute('data-pillar') === pillarKey);
+                }
+                var allowed = VYAS_PILLAR_MAP[pillarKey] || [];
+                var subBtns = document.querySelectorAll('#vyasSubTabBar .tab-nav-btn');
+                var firstBtn = null;
+                for (var j = 0; j < subBtns.length; j++) {
+                    var oc = subBtns[j].getAttribute('onclick') || '';
+                    var m = oc.match(/switchTab\('([^']+)'/);
+                    var key = m ? m[1] : '';
+                    var show = allowed.indexOf(key) !== -1;
+                    subBtns[j].style.display = show ? 'inline-flex' : 'none';
+                    if (show && !firstBtn) firstBtn = { key: key, el: subBtns[j] };
+                }
+                if (!skipTabSwitch && firstBtn && window.VyasDesktop && typeof VyasDesktop.switchTab === 'function') {
+                    VyasDesktop.switchTab(firstBtn.key, firstBtn.el);
+                }
+            } catch (e) { }
+        }
+
+        function updateVyasHeroDashboard() {
+            try {
+                var chart = (window.VyasDesktop && VyasDesktop.activeChartData) ? VyasDesktop.activeChartData : (window.AUTHENTIC_BUNDLE || null);
+                var elLagna = document.getElementById('vyasHeroLagna');
+                var elDasha = document.getElementById('vyasHeroDasha');
+                var elPan = document.getElementById('vyasHeroPanchang');
+                if (chart && chart.profile && elLagna) {
+                    elLagna.innerText = (chart.profile.asc_sign || 'मेष') + ' लग्न • ' + (chart.profile.moon_sign || 'वृश्चिक') + ' राशि';
+                }
+                if (chart && chart.active_dasha && elDasha) {
+                    var d = chart.active_dasha;
+                    elDasha.innerText = [d.md, d.ad, d.pd].filter(Boolean).join(' → ') || 'विंशोत्तरी दशा';
+                }
+                var tithi = document.getElementById('htTithi');
+                var nak = document.getElementById('htNak');
+                if (elPan && tithi && nak) {
+                    elPan.innerText = tithi.textContent + ' • ' + nak.textContent;
+                }
+            } catch (e) { }
+        }
+
+        function initVyasObservatoryNav() {
+            selectVyasPillar('today', true);
+            updateVyasHeroDashboard();
+            setInterval(updateVyasHeroDashboard, 3000);
+        }
 
         function initVyasDailyAppNotifications(appRef) {
             try {

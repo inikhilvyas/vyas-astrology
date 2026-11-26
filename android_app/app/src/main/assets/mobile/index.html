@@ -1054,6 +1054,43 @@
             background: #ffffff;
             color: #1b2e4b;
         }
+        /* Mobile 4-Pillar Segmented Navigation & Hero Strip */
+        .m-pillar-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin: 8px 10px 4px 10px;
+            padding: 4px;
+            background: rgba(8, 13, 26, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 12px;
+        }
+        [data-theme="light"] .m-pillar-bar {
+            background: #f3efe6;
+            border-color: rgba(181, 138, 69, 0.3);
+        }
+        .m-pillar-btn {
+            padding: 8px 4px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+        .m-pillar-btn.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.24), rgba(212, 175, 55, 0.08));
+            border-color: rgba(212, 175, 55, 0.45);
+            color: #f6e05e;
+        }
+        [data-theme="light"] .m-pillar-btn { color: #475569; }
+        [data-theme="light"] .m-pillar-btn.active {
+            background: #ffffff;
+            color: #8c6d37;
+            border-color: #b58a45;
+        }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer>
         window.useCurrentMobileGPS = function (targetInputId) {
@@ -1185,7 +1222,15 @@
             </div>
         </div>
 
-        <!-- 2. ANDROID-STYLE HORIZONTAL SCROLLABLE TAB BAR (14 DISTINCT TABS) -->
+        <!-- 4-PILLAR SEGMENTED NAVIGATION -->
+        <div class="m-pillar-bar" id="mPillarBar">
+            <button class="m-pillar-btn active" data-pillar="today" onclick="selectMobilePillar('today')">आज</button>
+            <button class="m-pillar-btn" data-pillar="charts" onclick="selectMobilePillar('charts')">कुण्डली</button>
+            <button class="m-pillar-btn" data-pillar="predictions" onclick="selectMobilePillar('predictions')">फलित</button>
+            <button class="m-pillar-btn" data-pillar="tools" onclick="selectMobilePillar('tools')">रिपोर्ट/टूल्स</button>
+        </div>
+
+        <!-- 2. ANDROID-STYLE HORIZONTAL SCROLLABLE TAB BAR (FILTERED BY PILLAR) -->
         <nav class="tab-layout-bar" id="mScrollTabBar">
             <button class="tab-btn active" data-tab="home" onclick="VyasMobile.switchTab('home')">
                 <span>होम / राशिफल</span>
@@ -11668,9 +11713,37 @@
 
             window.VyasMobile = VyasMobile;
             VyasMobile.init();
-            setTimeout(function () { initVyasMobileDailyNotifications(window.VyasMobile); }, 1200);
+            setTimeout(function () { selectMobilePillar('today', true); initVyasMobileDailyNotifications(window.VyasMobile); }, 1200);
             setInterval(function () { initVyasMobileDailyNotifications(window.VyasMobile); }, 1800000);
         });
+
+        var M_PILLAR_MAP = {
+            today: ['home', 'transit', 'prashna'],
+            charts: ['kundli', 'shadbala', 'ashtakavarga', 'vargas', 'sphutas'],
+            predictions: ['dasha', 'predictions', 'kp', 'bhavatbhavam', 'nadi', 'jaimini', 'lalkitab', 'remedies'],
+            tools: ['pdf', 'match']
+        };
+
+        function selectMobilePillar(pillarKey, skipTabSwitch) {
+            try {
+                var btns = document.querySelectorAll('#mPillarBar .m-pillar-btn');
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.toggle('active', btns[i].getAttribute('data-pillar') === pillarKey);
+                }
+                var allowed = M_PILLAR_MAP[pillarKey] || [];
+                var subBtns = document.querySelectorAll('#mScrollTabBar .tab-btn');
+                var firstKey = null;
+                for (var j = 0; j < subBtns.length; j++) {
+                    var key = subBtns[j].getAttribute('data-tab') || '';
+                    var show = allowed.indexOf(key) !== -1;
+                    subBtns[j].style.display = show ? 'inline-flex' : 'none';
+                    if (show && !firstKey) firstKey = key;
+                }
+                if (!skipTabSwitch && firstKey && window.VyasMobile && typeof VyasMobile.switchTab === 'function') {
+                    VyasMobile.switchTab(firstKey);
+                }
+            } catch (e) { }
+        }
 
         function initVyasMobileDailyNotifications(appRef) {
             try {
