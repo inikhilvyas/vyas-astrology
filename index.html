@@ -3038,6 +3038,106 @@
             color: #f8fafc;
         }
         [data-theme="light"] .vyas-hero-val { color: #1b2e4b; }
+
+        /* =====================================================================
+           COMPLETE LIGHT MODE OVERRIDES (Fixes dark-on-dark & invisible text)
+           ===================================================================== */
+        [data-theme="light"] body {
+            background: #F4F6F9 !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .portal-bar {
+            background: #FFFFFF !important;
+            border-bottom: 1px solid #E2E8F0 !important;
+        }
+        [data-theme="light"] .portal-pill {
+            background: #F8FAFC !important;
+            color: #334155 !important;
+            border-color: #CBD5E1 !important;
+        }
+        [data-theme="light"] .portal-pill.active, [data-theme="light"] .portal-pill:hover {
+            background: #FEF3C7 !important;
+            color: #78350F !important;
+            border-color: #B58A45 !important;
+        }
+        [data-theme="light"] .cockpit-col {
+            background: #FFFFFF !important;
+            border: 1px solid #E2E8F0 !important;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+        }
+        [data-theme="light"] .tab-scroll-nav {
+            background: #F1F5F9 !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+        [data-theme="light"] .tab-nav-btn {
+            color: #334155 !important;
+        }
+        [data-theme="light"] .tab-nav-btn:hover {
+            background: #E2E8F0 !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .tab-nav-btn.active {
+            background: #FFFFFF !important;
+            color: #8C6D37 !important;
+            border-color: #B58A45 !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
+        }
+        [data-theme="light"] .header-btn, [data-theme="light"] .luxury-nav-btn, [data-theme="light"] .google-signin-btn {
+            background: #F8FAFC !important;
+            color: #0F172A !important;
+            border: 1px solid #CBD5E1 !important;
+        }
+        [data-theme="light"] .header-btn.primary {
+            background: linear-gradient(135deg, #D6BD8A 0%, #B58A45 100%) !important;
+            color: #0F172A !important;
+            border-color: #9A7B38 !important;
+        }
+        [data-theme="light"] .vyas-bell-btn {
+            background: #FEF3C7 !important;
+            color: #92400E !important;
+            border-color: #D97706 !important;
+        }
+        [data-theme="light"] .panchang-ticker, [data-theme="light"] .brand-subtitle {
+            color: #334155 !important;
+        }
+        [data-theme="light"] .tab-content-panel, [data-theme="light"] .content-card {
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            border-color: #E2E8F0 !important;
+        }
+        [data-theme="light"] .cockpit-col p,
+        [data-theme="light"] .cockpit-col span,
+        [data-theme="light"] .cockpit-col td,
+        [data-theme="light"] .cockpit-col div,
+        [data-theme="light"] .cockpit-col label {
+            color: #1E293B;
+        }
+        [data-theme="light"] .cockpit-col [style*="color:#E2E8F0"],
+        [data-theme="light"] .cockpit-col [style*="color:#cbd5e1"],
+        [data-theme="light"] .cockpit-col [style*="color:#CBD5E1"],
+        [data-theme="light"] .cockpit-col [style*="color:#F1F5F9"],
+        [data-theme="light"] .cockpit-col [style*="color:#f8fafc"],
+        [data-theme="light"] .cockpit-col [style*="color:#94A3B8"],
+        [data-theme="light"] .cockpit-col [style*="color:#94a3b8"] {
+            color: #1E293B !important;
+        }
+        [data-theme="light"] .cockpit-col [style*="color:#F6E05E"],
+        [data-theme="light"] .cockpit-col [style*="color:#F1DE87"],
+        [data-theme="light"] .cockpit-col [style*="color:#FFF3BF"],
+        [data-theme="light"] .cockpit-col [style*="color:#d4af37"] {
+            color: #854D0E !important;
+        }
+        [data-theme="light"] .cockpit-col [style*="background:rgba(15,23,42"],
+        [data-theme="light"] .cockpit-col [style*="background: rgba(15, 23, 42"],
+        [data-theme="light"] .cockpit-col [style*="background:rgba(0,0,0"] {
+            background: #F8FAFC !important;
+            border-color: #CBD5E1 !important;
+        }
+        [data-theme="light"] .cockpit-col select, [data-theme="light"] .cockpit-col input {
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            border: 1px solid #CBD5E1 !important;
+        }
     </style>
 
     <script src="js/vyas_sutras_bank.js?v=5.2.0"></script>
@@ -10972,51 +11072,85 @@
 
             toggleLanguage: function () {
                 this.isEnglishMode = !this.isEnglishMode;
+                try { localStorage.setItem('vyas_lang', this.isEnglishMode ? 'en' : 'hi'); } catch (e) {}
+                this.applyLanguageToUI();
+            },
+
+            applyLanguageToUI: function () {
+                var isEn = !!this.isEnglishMode;
                 var btnText = document.getElementById('langSwitchText');
-                if (btnText) btnText.textContent = this.isEnglishMode ? 'HI' : 'EN';
+                if (btnText) btnText.textContent = isEn ? 'HI' : 'EN';
 
                 var translations = {
-                    // Tab labels
                     'daily': { hi: 'दैनिक राशिफल व पंचांग', en: 'Daily Horoscope & Panchang' },
-                    'dasha': { hi: '☊ विंशोत्तरी दशा (5-स्तर)', en: '☊ Vimshottari Dasha (5-Tier)' },
+                    'dasha': { hi: 'विंशोत्तरी दशा (5-स्तर)', en: 'Vimshottari Dasha (5-Tier)' },
                     'predictions': { hi: 'विस्तृत महा-फलादेश', en: 'Comprehensive Predictions' },
-                    'ashtakavarga': { hi: '⊞ अष्टकवर्ग (SAV/BAV/प्रस्तार)', en: '⊞ Ashtakavarga (SAV/BAV/PAV)' },
-                    'shadbala': { hi: 'षड्बल सामर्थ्य', en: 'Shadbala Planetary Strengths' },
+                    'ashtakavarga': { hi: 'अष्टकवर्ग (SAV/BAV/प्रस्तार)', en: 'Ashtakavarga (SAV/BAV/PAV)' },
+                    'shadbala': { hi: 'षड्बल सामर्थ्य', en: 'Shadbala Strengths' },
                     'match': { hi: '36 गुण मिलान', en: '36 Guna Matchmaking' },
                     'prashna': { hi: '1-249 प्रश्न कुण्डली', en: '1-249 Horary Prashna' },
-                    'remedies': { hi: 'वैदिक रत्न एवं उपाय', en: 'Vedic Remedies & Gemstones' },
-                    'sphutas': { hi: '🎯 विशेष लग्न व स्फुट', en: '🎯 Sensitive Sphutas & Points' },
-                    'transit': { hi: '♃ तात्कालिक गोचर व वर्षफल', en: '♃ Transits & Tajika Varshphal' },
-                    'vargas': { hi: '▦ षोडशवर्ग (16 चक्र)', en: '▦ Shodashvarga (16 Divisional)' },
-                    'kp': { hi: '⚝ केपी ज्योतिष (KP System)', en: '⚝ KP Astrology System' },
+                    'remedies': { hi: 'वैदिक रत्न एवं उपाय', en: 'Vedic Remedies & Gems' },
+                    'sphutas': { hi: 'विशेष लग्न व स्फुट', en: 'Sensitive Sphutas' },
+                    'transit': { hi: 'तात्कालिक गोचर व वर्षफल', en: 'Transits & Varshphal' },
+                    'vargas': { hi: 'षोडशवर्ग (16 चक्र)', en: 'Shodashvarga (16 Charts)' },
+                    'kp': { hi: 'केपी ज्योतिष (KP System)', en: 'KP Astrology System' },
                     'jaimini': { hi: 'जैमिनी ज्योतिष (Jaimini)', en: 'Jaimini Astrology' },
+                    'bhavatbhavam': { hi: 'भावात् भावम् (144 संयोजन)', en: 'Bhavat Bhavam (144)' },
                     'nadi': { hi: 'नाड़ी ज्योतिष (Nadi)', en: 'Nadi Astrology' },
-                    'pdf': { hi: 'जन्मपत्रिका PDF (56-पृष्ठ)', en: 'VIP Pro Kundli PDF (56-Pages)' }
+                    'pdf': { hi: 'जन्मपत्रिका PDF (56-पृष्ठ)', en: 'VIP Pro PDF (56-Pages)' }
                 };
 
-                var tabs = document.querySelectorAll('.tab-nav-btn');
-                var tabKeys = ['daily', 'dasha', 'predictions', 'ashtakavarga', 'shadbala', 'match', 'prashna', 'remedies', 'sphutas', 'transit', 'vargas', 'kp', 'jaimini', 'nadi', 'pdf'];
-                for (var i = 0; i < tabs.length && i < tabKeys.length; i++) {
-                    var k = tabKeys[i];
-                    if (translations[k]) {
-                        tabs[i].textContent = this.isEnglishMode ? translations[k].en : translations[k].hi;
+                var subBtns = document.querySelectorAll('#vyasSubTabBar .tab-nav-btn');
+                for (var i = 0; i < subBtns.length; i++) {
+                    var oc = subBtns[i].getAttribute('onclick') || '';
+                    var m = oc.match(/switchTab\('([^']+)'/);
+                    var k = m ? m[1] : '';
+                    if (k && translations[k]) {
+                        subBtns[i].textContent = isEn ? translations[k].en : translations[k].hi;
+                    }
+                }
+
+                // Bidirectional UI Phrase Map (Header, Pillars, Portal Bar, Hero, Chart Headers)
+                var phraseMap = [
+                    ['परिवार वॉल्ट', 'Family Vault'], ['BTR सुधार', 'BTR Rectifier'], ['शेयर कार्ड', 'Share Card'],
+                    ['Google साइन-इन', 'Google Sign-In'], ['कुण्डलियाँ', 'Saved Charts'], ['विवरण', 'Details'],
+                    ['PRO सदस्यता', 'PRO Plan'], ['+ नई कुण्डली', '+ New Chart'], ['डार्क मोड', 'Dark Mode'], ['लाइट मोड', 'Light Mode'],
+                    ['आज व पंचांग', 'Today & Panchang'], ['कुण्डली व चार्ट', 'Charts & Strength'],
+                    ['दशा व फलित', 'Dasha & Predictions'], ['रिपोर्ट व टूल्स', 'Reports & Tools'],
+                    ['लग्न एवं चन्द्र', 'Lagna & Moon'], ['सक्रिय ५-स्तरीय दशा', 'Active 5-Tier Dasha'], ['आज का पंचांग', 'Today Panchang'],
+                    ['कुण्डली', 'Kundli'], ['पंचांग', 'Panchang'], ['दशा चक्र', 'Dasha'], ['KP पद्धति', 'KP System'],
+                    ['भावात् भावम्', 'Bhavat Bhavam'], ['जैमिनी', 'Jaimini'], ['BNN नाड़ी', 'BNN Nadi'],
+                    ['अष्टकवर्ग', 'Ashtakavarga'], ['वर्षफल', 'Varshphal'], ['प्रश्न कुण्डली', 'Prashna'],
+                    ['गुण मिलान', 'Matchmaking'], ['कुण्डली वॉल्ट', 'Chart Vault'], ['👑 PRO प्लान', '👑 PRO Plan'],
+                    ['D-1 चक्र', 'D-1 Lagna'], ['D-9 नवमांश', 'D-9 Navamsha'], ['D-10 दशमांश', 'D-10 Dashamsha'], ['भाव चलित', 'Bhava Chalit'],
+                    ['दैनिक पंचांग व पर्व सूचनाएं चालू करें', 'Enable Daily Panchang Alerts']
+                ];
+                var targets = document.querySelectorAll('.header-actions span, .vyas-pillar-btn, .portal-pill span, .vyas-hero-lbl, .chart-tab-btn, #btnEnablePushAlerts');
+                for (var ti = 0; ti < targets.length; ti++) {
+                    var el = targets[ti];
+                    var txt = (el.textContent || '').trim();
+                    for (var pi = 0; pi < phraseMap.length; pi++) {
+                        var hi = phraseMap[pi][0], en = phraseMap[pi][1];
+                        if (isEn && txt === hi) { el.textContent = en; break; }
+                        if (!isEn && txt === en) { el.textContent = hi; break; }
                     }
                 }
 
                 // Update Header profile chip dynamically
                 var chip = document.getElementById('headerProfileChip');
                 if (chip) {
-                    var pName = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile.name : (this.isEnglishMode ? 'Vedic Chart' : 'वैदिक कुण्डली');
-                    var pLagna = (this.activeChartData && this.activeChartData.profile) ? (this.activeChartData.profile.asc_sign + ' लग्न') : (this.isEnglishMode ? 'Blank Slate' : 'रिक्त खाका');
+                    var pName = (this.activeChartData && this.activeChartData.profile) ? this.activeChartData.profile.name : (isEn ? 'Vedic Chart' : 'वैदिक कुण्डली');
+                    var pLagna = (this.activeChartData && this.activeChartData.profile) ? (this.activeChartData.profile.asc_sign + (isEn ? ' Lagna' : ' लग्न')) : (isEn ? 'Blank Slate' : 'रिक्त खाका');
                     chip.innerHTML = '<span class="jatak-icon"><svg class="v-icon v-user" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="jatak-name">' + pName + '</span> <span class="jatak-lagna">' + pLagna + '</span>';
                 }
 
                 // Update chart and tables
-                this.renderChart(this.currentVarga || 'd1');
-                this.updateDailyHoroscopeUI();
-                this.updateYogasBannerUI();
-                this.renderPlanetTable();
-                this.initDashaTree();
+                try { this.renderChart(this.currentVarga || 'd1'); } catch (e) {}
+                try { this.updateDailyHoroscopeUI(); } catch (e) {}
+                try { this.updateYogasBannerUI(); } catch (e) {}
+                try { this.renderPlanetTable(); } catch (e) {}
+                try { this.initDashaTree(); } catch (e) {}
+                if (typeof updateVyasHeroDashboard === 'function') updateVyasHeroDashboard();
             },
 
             // --- DYNAMIC 36 GUNA MATCHMAKING ENGINE ---

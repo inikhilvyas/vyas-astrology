@@ -1091,6 +1091,43 @@
             color: #8c6d37;
             border-color: #b58a45;
         }
+        /* Mobile Light Mode Complete Overrides */
+        [data-theme="light"] body, [data-theme="light"] #mobileAppRoot {
+            background: #F4F6F9 !important;
+            color: #0F172A !important;
+        }
+        [data-theme="light"] .m-card, [data-theme="light"] .profile-strip, [data-theme="light"] .tab-layout-bar {
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            border-color: #CBD5E1 !important;
+        }
+        [data-theme="light"] .tab-btn {
+            color: #334155 !important;
+        }
+        [data-theme="light"] .tab-btn.active {
+            color: #8C6D37 !important;
+            border-bottom-color: #B58A45 !important;
+        }
+        [data-theme="light"] .hdr-pill-btn {
+            background: #F8FAFC !important;
+            color: #0F172A !important;
+            border-color: #CBD5E1 !important;
+        }
+        [data-theme="light"] .bottom-nav {
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-top: 1px solid #CBD5E1 !important;
+        }
+        [data-theme="light"] .m-card [style*="color:#E2E8F0"],
+        [data-theme="light"] .m-card [style*="color:#cbd5e1"],
+        [data-theme="light"] .m-card [style*="color:#94A3B8"],
+        [data-theme="light"] .m-card [style*="color:#f8fafc"] {
+            color: #1E293B !important;
+        }
+        [data-theme="light"] .m-card [style*="background:rgba(15,23,42"],
+        [data-theme="light"] .m-card [style*="background:rgba(0,0,0"] {
+            background: #F8FAFC !important;
+            border-color: #CBD5E1 !important;
+        }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer>
         window.useCurrentMobileGPS = function (targetInputId) {
@@ -1204,6 +1241,9 @@
 
                 <button class="hdr-pill-btn" onclick="VyasMobile.openSavedProfilesModal()" title="कुण्डलियाँ">
                     <span>कुण्डलियाँ</span>
+                </button>
+                <button class="hdr-pill-btn" id="mLangBtn" onclick="toggleMobileLanguage()" title="Language / भाषा">
+                    <span id="mLangText">EN</span>
                 </button>
                 <button class="hdr-pill-btn" id="mThemeToggle" onclick="VyasMobile.toggleTheme()" title="थीम बदलें">
                     <span id="mThemeIcon" style="display:inline-flex;align-items:center;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line></svg></span>
@@ -11743,6 +11783,42 @@
                     VyasMobile.switchTab(firstKey);
                 }
             } catch (e) { }
+        }
+
+        window.__mIsEnglish = false;
+        function toggleMobileLanguage() {
+            window.__mIsEnglish = !window.__mIsEnglish;
+            var isEn = window.__mIsEnglish;
+            var lt = document.getElementById('mLangText');
+            if (lt) lt.textContent = isEn ? 'HI' : 'EN';
+            var mTabs = {
+                home: ['होम / राशिफल', 'Home / Daily'], kundli: ['लग्न चक्र', 'Lagna Chart'],
+                shadbala: ['षड्बल सामर्थ्य', 'Shadbala'], match: ['36 गुण मिलान', '36 Guna Match'],
+                prashna: ['1-249 होरारी प्रश्न', '1-249 Prashna'], remedies: ['रत्न व अचूक उपाय', 'Remedies'],
+                sphutas: ['विशेष लग्न व स्फुट', 'Special Sphutas'], dasha: ['विंशोत्तरी 5-स्तरीय दशा', '5-Tier Dasha'],
+                predictions: ['12 भाव फलादेश', '12 Houses'], ashtakavarga: ['अष्टकवर्ग (SAV 337)', 'Ashtakavarga'],
+                transit: ['गोचर व साढ़ेसाती', 'Transits'], vargas: ['षोडशवर्ग (16 चक्र)', '16 Vargas'],
+                kp: ['केपी कृष्णमूर्ति पद्धति', 'KP System'], bhavatbhavam: ['भावात् भावम् (144 संयोजन)', 'Bhavat Bhavam'],
+                nadi: ['भृगु नंदी नाड़ी', 'BNN Nadi'], jaimini: ['जैमिनी चर दशा', 'Jaimini'],
+                lalkitab: ['लाल किताब फरमान', 'Lal Kitab'], pdf: ['56-पेज PDF', '56-Page PDF']
+            };
+            var btns = document.querySelectorAll('#mScrollTabBar .tab-btn');
+            for (var i = 0; i < btns.length; i++) {
+                var k = btns[i].getAttribute('data-tab');
+                if (k && mTabs[k]) btns[i].querySelector('span').textContent = isEn ? mTabs[k][1] : mTabs[k][0];
+            }
+            var mPhrases = [
+                ['आज', 'Today'], ['कुण्डली', 'Charts'], ['फलित', 'Predictions'], ['रिपोर्ट/टूल्स', 'Reports/Tools'],
+                ['+ नई', '+ New'], ['लॉगिन', 'Login'], ['कुण्डलियाँ', 'Charts']
+            ];
+            var els = document.querySelectorAll('.m-pillar-btn, .hdr-pill-btn span');
+            for (var j = 0; j < els.length; j++) {
+                var t = (els[j].textContent || '').trim();
+                for (var p = 0; p < mPhrases.length; p++) {
+                    if (isEn && t === mPhrases[p][0]) { els[j].textContent = mPhrases[p][1]; break; }
+                    if (!isEn && t === mPhrases[p][1]) { els[j].textContent = mPhrases[p][0]; break; }
+                }
+            }
         }
 
         function initVyasMobileDailyNotifications(appRef) {
