@@ -3042,13 +3042,39 @@
         /* =====================================================================
            COMPLETE LIGHT MODE OVERRIDES (Fixes dark-on-dark & invisible text)
            ===================================================================== */
-        [data-theme="light"] body {
+        html[data-theme="light"], html[data-theme="light"] body {
             background: #F4F6F9 !important;
+            background-image: none !important;
             color: #0F172A !important;
         }
-        [data-theme="light"] .portal-bar {
+        [data-theme="light"] body::before, [data-theme="light"] body::after {
+            display: none !important;
+            opacity: 0 !important;
+        }
+        [data-theme="light"] .master-header, [data-theme="light"] .app-header {
+            background: rgba(255, 255, 255, 0.96) !important;
+            border-bottom: 1px solid #CBD5E1 !important;
+            box-shadow: 0 2px 14px rgba(15, 23, 42, 0.06) !important;
+        }
+        [data-theme="light"] .vyas-portal-pill-strip, [data-theme="light"] .portal-bar {
             background: #FFFFFF !important;
             border-bottom: 1px solid #E2E8F0 !important;
+        }
+        [data-theme="light"] .jatak-badge {
+            background: #FEF3C7 !important;
+            border: 1px solid #B58A45 !important;
+            color: #78350F !important;
+        }
+        [data-theme="light"] .jatak-badge span, [data-theme="light"] .jatak-badge .jatak-name, [data-theme="light"] .jatak-badge .jatak-lagna {
+            color: #78350F !important;
+        }
+        [data-theme="light"] .live-status-pill {
+            background: #ECFDF5 !important;
+            color: #065F46 !important;
+            border-color: #10B981 !important;
+        }
+        [data-theme="light"] .cockpit-col label {
+            color: #0F172A !important;
         }
         [data-theme="light"] .portal-pill {
             background: #F8FAFC !important;
