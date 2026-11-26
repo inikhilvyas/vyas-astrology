@@ -2850,6 +2850,112 @@
             stroke: currentColor;
             flex-shrink: 0;
         }
+
+        /* =====================================================================
+           VYAS CELESTIAL OBSERVATORY — LUXURY UI/UX & NOTIFICATION CENTER
+           ===================================================================== */
+        .app-header {
+            background: rgba(8, 13, 26, 0.88) !important;
+            backdrop-filter: blur(20px) saturate(160%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        }
+        [data-theme="light"] .app-header {
+            background: rgba(252, 250, 246, 0.92) !important;
+            border-bottom: 1px solid rgba(181, 138, 69, 0.25) !important;
+            box-shadow: 0 4px 20px rgba(27, 46, 75, 0.08) !important;
+        }
+        .luxury-nav-btn, .google-signin-btn {
+            border-radius: 10px !important;
+            border: 1px solid rgba(212, 175, 55, 0.22) !important;
+            transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s ease, border-color 0.2s ease !important;
+        }
+        .luxury-nav-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(212, 175, 55, 0.5) !important;
+        }
+        .card, .panel-card, .dossier-card {
+            border-radius: 14px !important;
+            border: 1px solid rgba(212, 175, 55, 0.16) !important;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+        }
+        [data-theme="light"] .card, [data-theme="light"] .panel-card, [data-theme="light"] .dossier-card {
+            border: 1px solid rgba(181, 138, 69, 0.22) !important;
+            box-shadow: 0 6px 24px rgba(27, 46, 75, 0.06) !important;
+        }
+        .astronomy-table td, .astronomy-table th {
+            font-variant-numeric: tabular-nums;
+        }
+        .vyas-bell-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #f6e05e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .vyas-bell-btn:hover {
+            background: rgba(212, 175, 55, 0.22);
+            transform: translateY(-1px);
+        }
+        .vyas-bell-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.55);
+        }
+        .vyas-notif-drawer {
+            display: none;
+            position: fixed;
+            top: 66px;
+            right: 20px;
+            width: 380px;
+            max-width: calc(100vw - 24px);
+            max-height: 80vh;
+            overflow-y: auto;
+            background: rgba(11, 17, 32, 0.97);
+            backdrop-filter: blur(22px);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+            z-index: 999999;
+            padding: 16px;
+            color: #f8fafc;
+        }
+        [data-theme="light"] .vyas-notif-drawer {
+            background: rgba(255, 255, 255, 0.98);
+            color: #1b2e4b;
+            box-shadow: 0 18px 45px rgba(27, 46, 75, 0.18);
+        }
+        .vyas-notif-slot {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        [data-theme="light"] .vyas-notif-slot {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
     </style>
 
     <script src="js/vyas_sutras_bank.js?v=5.2.0"></script>
@@ -2892,6 +2998,15 @@
         </div>
 
         <div class="header-actions">
+            <!-- Notification Bell Icon + Unread Badge -->
+            <button class="vyas-bell-btn" id="vyasBellBtn" onclick="toggleVyasNotifDrawer()" title="दैनिक पंचांग एवं व्यक्तिगत भविष्यफल सूचनाएं (9 PM / 7 AM)">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="vyas-bell-badge" id="vyasBellBadge">2</span>
+            </button>
+
             <!-- Language Switcher [HI / EN] -->
             <button class="luxury-nav-btn" id="langSwitchBtn" onclick="VyasDesktop.toggleLanguage()"
                 title="Change Language / भाषा बदलें">
@@ -16102,16 +16217,65 @@
 
                 var feedUrls = ['/api/push_dispatch.php?slot=' + slot, 'https://raw.githubusercontent.com/vyasbilawas-ctrl/vyas-astrology/main/data/daily_notifications_feed.json'];
                 fetch(feedUrls[1], { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (feed) {
+                    window.__vyasNotifFeed = feed;
+                    renderVyasNotifDrawer(feed, prof, dashaStr);
                     var slotObj = (feed && feed.slots && feed.slots[slot]) ? feed.slots[slot] : (feed && feed.latest ? feed.latest : null);
                     var title = (slotObj && slotObj.title) ? slotObj.title : ((slot === '9pm' ? '🌙 कल का पूर्व-संध्या' : '☀️ आज का प्रातःकालीन') + ' पंचांग एवं भविष्यफल');
                     var body = (slotObj && slotObj.short_body) ? slotObj.short_body : (prof.name + ' (' + (prof.asc_sign || 'मेष') + ' लग्न) • सूक्ष्म दशा: ' + dashaStr);
                     showInAppToast(title, body);
                 }).catch(function () {
+                    renderVyasNotifDrawer(null, prof, dashaStr);
                     var title = (slot === '9pm' ? '🌙 कल का पूर्व-संध्या' : '☀️ आज का प्रातःकालीन') + ' पंचांग एवं भविष्यफल';
                     var body = prof.name + ' (' + (prof.asc_sign || 'मेष') + ' लग्न) • सक्रिय दशा: ' + dashaStr;
                     showInAppToast(title, body);
                 });
             } catch (e) { }
+        }
+
+        function ensureVyasNotifDrawer() {
+            var dr = document.getElementById('vyasNotifDrawer');
+            if (!dr) {
+                dr = document.createElement('div');
+                dr.id = 'vyasNotifDrawer';
+                dr.className = 'vyas-notif-drawer';
+                document.body.appendChild(dr);
+            }
+            return dr;
+        }
+
+        function renderVyasNotifDrawer(feed, prof, dashaStr) {
+            var dr = ensureVyasNotifDrawer();
+            var s7 = (feed && feed.slots && feed.slots['7am']) ? feed.slots['7am'] : null;
+            var s9 = (feed && feed.slots && feed.slots['9pm']) ? feed.slots['9pm'] : null;
+            var pName = (prof && prof.name) ? prof.name : 'जातक';
+            var lagna = (prof && prof.asc_sign) ? prof.asc_sign : 'मेष';
+            dr.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(212,175,55,0.25);padding-bottom:10px;margin-bottom:12px;">' +
+                '<div style="font-weight:800;font-size:14px;color:#d4af37;">🔔 दैनिक पंचांग व भविष्यफल अलर्ट</div>' +
+                '<button onclick="toggleVyasNotifDrawer()" style="background:none;border:none;color:#94a3b8;font-size:16px;cursor:pointer;">✕</button>' +
+                '</div>' +
+                '<div class="vyas-notif-slot">' +
+                '<div style="font-size:12px;font-weight:800;color:#fbbf24;margin-bottom:4px;">☀️ प्रातः 7:00 AM • आज का पंचांग व फलित</div>' +
+                '<div style="font-size:12.5px;line-height:1.6;">' + (s7 ? (s7.short_body + (s7.festival ? '<br>🎊 <b>पर्व:</b> ' + s7.festival : '')) : (pName + ' (' + lagna + ' लग्न) • दशा: ' + dashaStr)) + '</div>' +
+                '</div>' +
+                '<div class="vyas-notif-slot">' +
+                '<div style="font-size:12px;font-weight:800;color:#60a5fa;margin-bottom:4px;">🌙 रात्रि 9:00 PM • कल का पूर्व-संध्या अलर्ट</div>' +
+                '<div style="font-size:12.5px;line-height:1.6;">' + (s9 ? (s9.short_body + (s9.festival ? '<br>🎊 <b>पर्व:</b> ' + s9.festival : '')) : ('कल के पंचांग, नवतारा व सर्वतोभद्र वेध की तैयारी')) + '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;margin-top:8px;">' +
+                '<button onclick="if(window.VyasDesktop&&VyasDesktop.switchTab)VyasDesktop.switchTab(\'daily\');toggleVyasNotifDrawer();" style="flex:1;padding:8px 10px;background:linear-gradient(135deg,#e6c775,#c59b27);color:#0f172a;border:none;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;">पूरा पंचांग व राशिफल खोलें</button>' +
+                '<button onclick="if(window.Notification)Notification.requestPermission();" style="padding:8px 10px;background:rgba(212,175,55,0.15);color:#d4af37;border:1px solid rgba(212,175,55,0.35);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">पुश अनुमति</button>' +
+                '</div>';
+        }
+
+        function toggleVyasNotifDrawer() {
+            var dr = ensureVyasNotifDrawer();
+            var isOpen = dr.style.display === 'block';
+            dr.style.display = isOpen ? 'none' : 'block';
+            var badge = document.getElementById('vyasBellBadge');
+            if (!isOpen && badge) badge.style.display = 'none';
+            if (!isOpen && !dr.innerHTML) {
+                renderVyasNotifDrawer(window.__vyasNotifFeed || null, { name: 'जातक', asc_sign: 'मेष' }, 'विंशोत्तरी दशा सक्रिय');
+            }
         }
     </script>
 
