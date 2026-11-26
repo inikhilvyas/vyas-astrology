@@ -285,7 +285,7 @@ def dispatch_channels(user: dict, payload: dict, config: dict, dry_run: bool = F
 
     # 2. WhatsApp (CallMeBot) Dispatch
     wa = config.get("whatsapp", {})
-    wa_key = wa.get("apikey", "")
+    wa_key = wa.get("apikey") or os.getenv("CALLMEBOT_APIKEY", "")
     wa_phone = user.get("phone") or wa.get("primary_phone", "")
     if wa.get("enabled") and wa_phone and wa_key and len(wa_key) >= 4:
         try:

@@ -1,0 +1,80 @@
+name: VYAS Daily Panchang & Bhavishyaphal Notification Agent
+
+on:
+  schedule:
+    # 9:00 PM IST = 15:30 UTC (Previous night alert for tomorrow)
+    - cron: '30 15 * * *'
+    # 7:00 AM IST = 01:30 UTC (Morning alert for today)
+    - cron: '30 1 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Notification mode (9pm, 7am, test, monitor)'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - 9pm
+          - 7am
+          - test
+          - monitor
+
+permissions:
+  contents: read
+
+jobs:
+  notify-and-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Swiss Ephemeris
+        run: pip install pyswisseph
+
+      - name: Determine Mode
+        id: mode_step
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "MODE=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event.schedule }}" = "30 15 * * *" ]; then
+            echo "MODE=9pm" >> $GITHUB_OUTPUT
+          else
+            echo "MODE=7am" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Daily Panchang & Personalized Bhavishyaphal Agent
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+        run: |
+          if [ "${{ steps.mode_step.outputs.MODE }}" = "test" ]; then
+            python scripts/vyas_daily_notification_agent.py --mode test --dry-run
+          else
+            python scripts/vyas_daily_notification_agent.py --mode ${{ steps.mode_step.outputs.MODE }}
+          fi
+
+      - name: Run Self-Monitor Health Check
+        run: |
+          python scripts/vyas_daily_notification_agent.py --mode monitor
+          if [ -f data/notification_agent_status.json ]; then
+            echo "### VYAS Notification Agent Status" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat data/notification_agent_status.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Status & Dispatch Logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: notification-agent-logs-${{ github.run_number }}
+          path: |
+            data/notification_agent_status.json
+            data/push_dispatch_log.json
+          retention-days: 14
