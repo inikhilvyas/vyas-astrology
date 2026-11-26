@@ -20,7 +20,7 @@ on:
           - monitor
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   notify-and-monitor:
@@ -69,6 +69,14 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
+      - name: Commit Updated App/Website Feed
+        if: steps.mode_step.outputs.MODE != 'test'
+        run: |
+          git config user.name "vyas-notification-agent[bot]"
+          git config user.email "vyas-bot@vyasastro.in"
+          git add data/daily_notifications_feed.json data/notification_agent_status.json data/push_dispatch_log.json
+          git diff --staged --quiet || (git commit -m "chore(notifications): update ${MODE} daily panchang & bhavishyaphal feed" && git push)
+
       - name: Upload Status & Dispatch Logs
         uses: actions/upload-artifact@v4
         if: always()
@@ -78,3 +86,4 @@ jobs:
             data/notification_agent_status.json
             data/push_dispatch_log.json
           retention-days: 14
+

@@ -182,6 +182,14 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "Native Engine: Loading high-precision bundled asset " + OFFLINE_URL);
             webView.loadUrl(OFFLINE_URL);
 
+            // Schedule 9:00 PM & 7:00 AM Native Daily Panchang + Bhavishyaphal Notifications
+            if (Build.VERSION.SDK_INT >= 33) {
+                if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+                }
+            }
+            DailyNotificationReceiver.scheduleDailyAlarms(this);
+
         } catch (Throwable t) {
             Log.e(TAG, "Fatal WebView init failure", t);
             Toast.makeText(this, "VyasAstra Native Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
@@ -329,6 +337,16 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public int getVersionCode() {
             return 100;
+        }
+
+        @JavascriptInterface
+        public void syncDailyNotifications(String title9pm, String body9pm, String title7am, String body7am) {
+            try {
+                DailyNotificationReceiver.savePersonalizedSlots(context, title9pm, body9pm, title7am, body7am);
+                DailyNotificationReceiver.scheduleDailyAlarms(context);
+            } catch (Throwable t) {
+                Log.e(TAG, "syncDailyNotifications error: " + t.getMessage());
+            }
         }
     }
 }

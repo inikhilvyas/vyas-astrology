@@ -1,0 +1,81 @@
+{
+  "history": [
+    {
+      "timestamp_ist": "2026-11-26 09:39:20 IST",
+      "mode": "test",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-26",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष द्वितीया",
+      "festival": "",
+      "overall_score": 45,
+      "delivery": {
+        "telegram": "dry_run",
+        "whatsapp": "dry_run",
+        "log": "dry_run"
+      }
+    },
+    {
+      "timestamp_ist": "2026-11-26 09:41:34 IST",
+      "mode": "test",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-26",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष द्वितीया",
+      "festival": "",
+      "overall_score": 45,
+      "delivery": {
+        "telegram": "dry_run",
+        "whatsapp": "dry_run",
+        "log": "dry_run"
+      }
+    },
+    {
+      "timestamp_ist": "2026-11-26 14:57:56 IST",
+      "mode": "test",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-26",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष द्वितीया",
+      "festival": "",
+      "overall_score": 45,
+      "delivery": {
+        "telegram": "dry_run",
+        "whatsapp": "dry_run",
+        "log": "dry_run"
+      }
+    },
+    {
+      "timestamp_ist": "2026-11-26 15:10:53 IST",
+      "mode": "9pm",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-27",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष तृतीया",
+      "festival": "",
+      "overall_score": 62,
+      "delivery": {
+        "telegram": "skipped",
+        "whatsapp": "skipped",
+        "log": "ok"
+      }
+    },
+    {
+      "timestamp_ist": "2026-11-26 15:10:55 IST",
+      "mode": "7am",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-26",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष द्वितीया",
+      "festival": "",
+      "overall_score": 45,
+      "delivery": {
+        "telegram": "skipped",
+        "whatsapp": "skipped",
+        "log": "ok"
+      }
+    }
+  ],
+  "last_run_ist": "2026-11-26 15:10:55 IST",
+  "last_mode": "7am",
+  "last_test_date": "2026-11-26",
+  "active_users_count": 1,
+  "healthy": true,
+  "last_9pm_date": "2026-11-26",
+  "last_7am_date": "2026-11-26"
+}

@@ -16063,7 +16063,56 @@
                 }
             } catch (e) { }
             VyasDesktop.init();
+            setTimeout(function () { initVyasDailyAppNotifications(window.VyasDesktop); }, 1200);
+            setInterval(function () { initVyasDailyAppNotifications(window.VyasDesktop); }, 1800000);
         });
+
+        function initVyasDailyAppNotifications(appRef) {
+            try {
+                var now = new Date();
+                var hr = now.getHours();
+                var slot = (hr >= 21) ? '9pm' : (hr >= 7 ? '7am' : '9pm');
+                var todayKey = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + slot;
+                var chart = (appRef && appRef.activeChartData) ? appRef.activeChartData : (window.AUTHENTIC_BUNDLE || null);
+                var prof = (chart && chart.profile) ? chart.profile : { name: 'जातक', asc_sign: 'मेष' };
+                var dasha = (chart && chart.active_dasha) ? chart.active_dasha : {};
+                var dashaStr = [dasha.md, dasha.ad, dasha.pd, dasha.sd].filter(Boolean).join(' → ') || 'विंशोत्तरी दशा सक्रिय';
+
+                function showInAppToast(title, body) {
+                    if (localStorage.getItem('vyas_notif_seen_' + todayKey)) return;
+                    var old = document.getElementById('vyasDailyNotifBanner');
+                    if (old) old.remove();
+                    var div = document.createElement('div');
+                    div.id = 'vyasDailyNotifBanner';
+                    div.style.cssText = 'position:fixed;bottom:18px;right:18px;max-width:390px;z-index:99999;background:linear-gradient(135deg,#0f172a,#1e293b);color:#f8fafc;border:1.5px solid #d4af37;border-radius:12px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,0.45);font-family:inherit;';
+                    div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">' +
+                        '<b style="color:#f6e05e;font-size:13.5px;">🔔 ' + title + '</b>' +
+                        '<button onclick="localStorage.setItem(\'vyas_notif_seen_' + todayKey + '\',\'1\');this.closest(\'#vyasDailyNotifBanner\').remove();" style="background:none;border:none;color:#94a3b8;font-size:16px;cursor:pointer;">✕</button>' +
+                        '</div>' +
+                        '<div style="font-size:12.5px;line-height:1.6;color:#e2e8f0;white-space:pre-line;">' + body + '</div>' +
+                        '<div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end;">' +
+                        '<button onclick="if(window.VyasDesktop&&VyasDesktop.switchTab)VyasDesktop.switchTab(\'daily\');localStorage.setItem(\'vyas_notif_seen_' + todayKey + '\',\'1\');this.closest(\'#vyasDailyNotifBanner\').remove();" style="background:#d4af37;color:#0f172a;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;">दैनिक पंचांग व फलित देखें</button>' +
+                        '</div>';
+                    document.body.appendChild(div);
+                    if ('Notification' in window && Notification.permission === 'granted' && !localStorage.getItem('vyas_browser_notif_' + todayKey)) {
+                        localStorage.setItem('vyas_browser_notif_' + todayKey, '1');
+                        try { new Notification(title, { body: body, icon: '/logo_icon.png' }); } catch (e) {}
+                    }
+                }
+
+                var feedUrls = ['/api/push_dispatch.php?slot=' + slot, 'https://raw.githubusercontent.com/vyasbilawas-ctrl/vyas-astrology/main/data/daily_notifications_feed.json'];
+                fetch(feedUrls[1], { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (feed) {
+                    var slotObj = (feed && feed.slots && feed.slots[slot]) ? feed.slots[slot] : (feed && feed.latest ? feed.latest : null);
+                    var title = (slotObj && slotObj.title) ? slotObj.title : ((slot === '9pm' ? '🌙 कल का पूर्व-संध्या' : '☀️ आज का प्रातःकालीन') + ' पंचांग एवं भविष्यफल');
+                    var body = (slotObj && slotObj.short_body) ? slotObj.short_body : (prof.name + ' (' + (prof.asc_sign || 'मेष') + ' लग्न) • सूक्ष्म दशा: ' + dashaStr);
+                    showInAppToast(title, body);
+                }).catch(function () {
+                    var title = (slot === '9pm' ? '🌙 कल का पूर्व-संध्या' : '☀️ आज का प्रातःकालीन') + ' पंचांग एवं भविष्यफल';
+                    var body = prof.name + ' (' + (prof.asc_sign || 'मेष') + ' लग्न) • सक्रिय दशा: ' + dashaStr;
+                    showInAppToast(title, body);
+                });
+            } catch (e) { }
+        }
     </script>
 
     <!-- MODAL: FAMILY VAULT -->

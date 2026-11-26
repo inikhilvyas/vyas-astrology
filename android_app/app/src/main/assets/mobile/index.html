@@ -11589,7 +11589,75 @@
 
             window.VyasMobile = VyasMobile;
             VyasMobile.init();
+            setTimeout(function () { initVyasMobileDailyNotifications(window.VyasMobile); }, 1200);
+            setInterval(function () { initVyasMobileDailyNotifications(window.VyasMobile); }, 1800000);
         });
+
+        function initVyasMobileDailyNotifications(appRef) {
+            try {
+                var now = new Date();
+                var hr = now.getHours();
+                var slot = (hr >= 21) ? '9pm' : (hr >= 7 ? '7am' : '9pm');
+                var todayKey = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + '_' + slot;
+                var chart = (appRef && (appRef.activeChart || appRef.activeChartData)) ? (appRef.activeChart || appRef.activeChartData) : (window.AUTHENTIC_BUNDLE || null);
+                var prof = (chart && chart.profile) ? chart.profile : { name: 'जातक', asc_sign: 'मेष', moon_sign: 'वृश्चिक' };
+                var dasha = (chart && chart.active_dasha) ? chart.active_dasha : {};
+                var dashaStr = [dasha.md, dasha.ad, dasha.pd, dasha.sd].filter(Boolean).join(' → ') || 'विंशोत्तरी दशा सक्रिय';
+
+                var fallback9pmTitle = '🌙 कल का दैनिक पंचांग एवं व्यक्तिगत भविष्यफल';
+                var fallback9pmBody = prof.name + ' (' + (prof.asc_sign || 'मेष') + ' लग्न • ' + (prof.moon_sign || '') + ' राशि) • सूक्ष्म दशा: ' + dashaStr;
+                var fallback7amTitle = '☀️ आज का प्रातःकालीन पंचांग एवं व्यक्तिगत भविष्यफल';
+                var fallback7amBody = fallback9pmBody;
+
+                function syncNativeBridge(t9, b9, t7, b7) {
+                    try {
+                        if (window.VyasNativeBridge && typeof window.VyasNativeBridge.syncDailyNotifications === 'function') {
+                            window.VyasNativeBridge.syncDailyNotifications(t9, b9, t7, b7);
+                        }
+                    } catch (e) {}
+                }
+
+                function showMobileBanner(title, body) {
+                    if (localStorage.getItem('vyas_m_notif_seen_' + todayKey)) return;
+                    var old = document.getElementById('vyasMobileDailyBanner');
+                    if (old) old.remove();
+                    var div = document.createElement('div');
+                    div.id = 'vyasMobileDailyBanner';
+                    div.style.cssText = 'position:fixed;bottom:74px;left:12px;right:12px;z-index:99999;background:linear-gradient(135deg,#0f172a,#1e293b);color:#f8fafc;border:1.5px solid #d4af37;border-radius:12px;padding:12px 14px;box-shadow:0 10px 28px rgba(0,0,0,0.55);';
+                    div.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">' +
+                        '<b style="color:#f6e05e;font-size:13px;">🔔 ' + title + '</b>' +
+                        '<button onclick="localStorage.setItem(\'vyas_m_notif_seen_' + todayKey + '\',\'1\');this.closest(\'#vyasMobileDailyBanner\').remove();" style="background:none;border:none;color:#94a3b8;font-size:16px;cursor:pointer;">✕</button>' +
+                        '</div>' +
+                        '<div style="font-size:12px;line-height:1.55;color:#e2e8f0;white-space:pre-line;">' + body + '</div>' +
+                        '<div style="margin-top:8px;display:flex;justify-content:flex-end;">' +
+                        '<button onclick="if(window.VyasMobile&&VyasMobile.switchTab)VyasMobile.switchTab(\'daily\');localStorage.setItem(\'vyas_m_notif_seen_' + todayKey + '\',\'1\');this.closest(\'#vyasMobileDailyBanner\').remove();" style="background:#d4af37;color:#0f172a;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;">पंचांग व भविष्यफल देखें</button>' +
+                        '</div>';
+                    document.body.appendChild(div);
+                }
+
+                syncNativeBridge(fallback9pmTitle, fallback9pmBody, fallback7amTitle, fallback7amBody);
+                fetch('https://raw.githubusercontent.com/vyasbilawas-ctrl/vyas-astrology/main/data/daily_notifications_feed.json', { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (feed) {
+                        var s9 = (feed && feed.slots && feed.slots['9pm']) ? feed.slots['9pm'] : null;
+                        var s7 = (feed && feed.slots && feed.slots['7am']) ? feed.slots['7am'] : null;
+                        var cur = (slot === '9pm' ? s9 : s7) || (feed && feed.latest ? feed.latest : null);
+                        syncNativeBridge(
+                            (s9 && s9.title) ? s9.title : fallback9pmTitle,
+                            (s9 && s9.short_body) ? s9.short_body : fallback9pmBody,
+                            (s7 && s7.title) ? s7.title : fallback7amTitle,
+                            (s7 && s7.short_body) ? s7.short_body : fallback7amBody
+                        );
+                        showMobileBanner(
+                            (cur && cur.title) ? cur.title : (slot === '9pm' ? fallback9pmTitle : fallback7amTitle),
+                            (cur && cur.short_body) ? cur.short_body : fallback7amBody
+                        );
+                    })
+                    .catch(function () {
+                        showMobileBanner(slot === '9pm' ? fallback9pmTitle : fallback7amTitle, fallback7amBody);
+                    });
+            } catch (e) { }
+        }
     </script>
 
     <!-- GOOGLE VIP SIGN-IN MODAL (MOBILE) -->

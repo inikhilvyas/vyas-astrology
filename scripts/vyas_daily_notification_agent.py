@@ -39,6 +39,7 @@ USERS_PATH = os.path.join(DATA_DIR, "notification_users.json")
 CONFIG_PATH = os.path.join(DATA_DIR, "sentinel_config.json")
 STATUS_PATH = os.path.join(DATA_DIR, "notification_agent_status.json")
 DISPATCH_LOG_PATH = os.path.join(DATA_DIR, "push_dispatch_log.json")
+FEED_PATH = os.path.join(DATA_DIR, "daily_notifications_feed.json")
 
 IST = timezone(timedelta(hours=5, minutes=30))
 
@@ -135,26 +136,11 @@ def safe_compute_panchang(pan_dt_ist: datetime, lat: float, lon: float, tz_hours
         masa_hi = ["चैत्र","वैशाख","ज्येष्ठ","आषाढ़","श्रावण","भाद्रपद","आश्विन","कार्तिक","मार्गशीर्ष","पौष","माघ","फाल्गुन"][(sun_sign + 1) % 12]
         vara_lords = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
         fest = get_hindu_festival(masa_en, tithi_idx % 15, paksha, vara_lords[pan_dt_ist.weekday()], (sun_sign + 1) % 12)
-        yogas_hi = ["विष्कम्भ","प्रीति","आयुष्मान","सौभाग्य","शोभन","अतिगण्ड","सुकर्मा","धृति","शूल","गण्ड","वृद्धि","ध्रुव","व्याघात","हर्षण","वज्र","सिद्धि","व्यतीपात","वरीयान्","परिघ","शिव","सिद्ध","साध्य","शुभ","शुक्ल","ब्रह्म","इन्द्र","वैधृति"]
-        # Rahu Kaal & Abhijit Muhurta from Sunrise/Sunset
-        def _fmt_hm(jd_val):
-            _, _, _, hr = swe.revjul(jd_val + (tz_hours / 24.0))
-            hh = int(hr); mm = int((hr - hh) * 60)
-            return f"{(hh % 12 or 12):02d}:{mm:02d} {'AM' if hh < 12 else 'PM'}"
-        rahu_periods = [1, 6, 4, 5, 3, 2, 7] # Mon..Sun (weekday 0..6)
-        r_jd = rise_res[1][0] if rise_res[0] == 0 else jd_0 + 0.28
-        s_jd = set_res[1][0] if set_res[0] == 0 else jd_0 + 0.74
-        day_jd = s_jd - r_jd
-        rp = rahu_periods[pan_dt_ist.weekday()]
-        rahu_str_calc = f"{_fmt_hm(r_jd + rp * day_jd / 8.0)} - {_fmt_hm(r_jd + (rp + 1) * day_jd / 8.0)}"
-        mid_jd = (r_jd + s_jd) / 2.0
-        abhijit_str_calc = "बुधवार: वर्जित" if pan_dt_ist.weekday() == 2 else f"{_fmt_hm(mid_jd - 24/1440.0)} - {_fmt_hm(mid_jd + 24/1440.0)}"
         return SimpleNamespace(
             masa_amanta_hi=masa_hi, paksha_hi=paksha_hi, tithi_hi=tithi_hi,
             nakshatra_hi=constants.NAKSHATRAS_HI[nak_idx] if hasattr(constants, "NAKSHATRAS_HI") else constants.NAKSHATRAS[nak_idx],
-            yoga_hi=yogas_hi[yoga_idx],
-            karana_hi=karana_names_hi[k_idx], sunrise=sunrise_str, sunset=sunset_str,
-            rahu_kalam=rahu_str_calc, abhijit=abhijit_str_calc, festival=fest
+            yoga_hi=constants.YOGAS_HI[yoga_idx] if hasattr(constants, "YOGAS_HI") else f"योग {yoga_idx+1}",
+            karana_hi=karana_names_hi[k_idx], sunrise=sunrise_str, sunset=sunset_str, festival=fest
         )
 
 
@@ -222,8 +208,8 @@ def build_user_notification(user: dict, target_ist: datetime, slot_label: str) -
     karana_str = getattr(pan, "karana_hi", getattr(pan, "karana", ""))
     sunrise_str = getattr(pan, "sunrise", "06:45 AM")
     sunset_str = getattr(pan, "sunset", "05:45 PM")
-    rahu_str = getattr(pan, "rahu_kalam", None) or horoscope.get("rahu_kalam", "-")
-    abhijit_str = getattr(pan, "abhijit", None) or horoscope.get("amrit_vela", "-")
+    rahu_str = horoscope.get("rahu_kalam", "-")
+    abhijit_str = horoscope.get("amrit_vela", "-")
 
     message = (
         f"🕉️ *व्यास अस्त्र • {slot_label} दैनिक पंचांग एवं व्यक्तिगत राशिफल*\n"
@@ -256,7 +242,23 @@ def build_user_notification(user: dict, target_ist: datetime, slot_label: str) -
         "slot": slot_label,
         "overall_score": horoscope["overall_score"],
         "tithi": tithi_str,
+        "nakshatra": nak_str,
+        "yoga": yoga_str,
+        "karana": karana_str,
+        "sunrise": sunrise_str,
+        "sunset": sunset_str,
+        "abhijit": abhijit_str,
+        "rahu_kaal": rahu_str,
         "festival": festival_txt,
+        "lagna": lagna_hi,
+        "moon_rashi": moon_rashi_hi,
+        "nakshatra_janma": moon_nak_hi,
+        "navatara": horoscope["tara_name"],
+        "dasha": horoscope["narratives"]["dasha_full_text"],
+        "sbc_summary": sbc_summary,
+        "remedy": horoscope["daily_remedy"],
+        "title": f"🕉️ {slot_label} पंचांग एवं भविष्यफल ({date_str})",
+        "short_body": f"तिथि: {tithi_str} | नक्षत्र: {nak_str} | अनुकूलता: {horoscope['overall_score']}% ({horoscope['tara_name']})" + (f" | पर्व: {festival_txt}" if festival_txt else ""),
         "message": message,
     }
 
@@ -348,6 +350,26 @@ def run_agent(mode: str, dry_run: bool = False):
     status["healthy"] = True
     status["history"] = (status.get("history", []) + processed)[-50:]
     save_json(STATUS_PATH, status)
+
+    # Save App & Website Feed (data/daily_notifications_feed.json)
+    feed = load_json(FEED_PATH, {"updated_at_ist": "", "slots": {}})
+    feed["updated_at_ist"] = now_ist.strftime("%Y-%m-%d %H:%M:%S IST")
+    if processed:
+        # Store latest slot payload for website/app consumption
+        feed["latest"] = {
+            "mode": mode,
+            "target_date": processed[0]["target_date"],
+            "tithi": processed[0]["tithi"],
+            "festival": processed[0]["festival"],
+            "overall_score": processed[0]["overall_score"],
+            "title": payload["title"],
+            "short_body": payload["short_body"],
+            "message": payload["message"],
+            "users": {p["user_id"]: p for p in processed},
+        }
+        feed.setdefault("slots", {})[mode] = feed["latest"]
+    save_json(FEED_PATH, feed)
+
     if not dry_run:
         save_json(DISPATCH_LOG_PATH, dispatch_log[-100:])
     return status
