@@ -97,13 +97,27 @@
         "whatsapp": "skipped",
         "log": "ok"
       }
+    },
+    {
+      "timestamp_ist": "2026-11-28 05:10:16 IST",
+      "mode": "9pm",
+      "user_id": "nikhil_vyas",
+      "target_date": "2026-11-29",
+      "tithi": "मार्गशीर्ष कृष्ण पक्ष षष्ठी",
+      "festival": "",
+      "overall_score": 61,
+      "delivery": {
+        "telegram": "skipped",
+        "whatsapp": "skipped",
+        "log": "ok"
+      }
     }
   ],
-  "last_run_ist": "2026-11-27 15:20:26 IST",
-  "last_mode": "7am",
+  "last_run_ist": "2026-11-28 05:10:16 IST",
+  "last_mode": "9pm",
   "last_test_date": "2026-11-26",
   "active_users_count": 1,
   "healthy": true,
-  "last_9pm_date": "2026-11-27",
+  "last_9pm_date": "2026-11-28",
   "last_7am_date": "2026-11-27"
 }
