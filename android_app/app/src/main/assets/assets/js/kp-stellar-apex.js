@@ -224,26 +224,48 @@
             if (pName !== nlKey) starTenants[nlKey].push(pName);
         }
 
+        function getBaseHouses(pn) {
+            var p = planets[pn];
+            if (!p) return [];
+            var hSet = {};
+            p.occ.concat(p.owned).forEach(function (h) { if (h) hSet[h] = true; });
+            if (pn === 'Rahu' || pn === 'Ketu') {
+                Object.keys(planets).forEach(function (other) {
+                    if (other !== pn && angularDiff(p.lon, planets[other].lon) <= 3.3333) {
+                        planets[other].occ.concat(planets[other].owned).forEach(function (h) { if (h) hSet[h] = true; });
+                    }
+                });
+                if (planets[p.nl]) {
+                    planets[p.nl].occ.concat(planets[p.nl].owned).forEach(function (h) { if (h) hSet[h] = true; });
+                }
+                var sg = p.chain5.sign_lord;
+                if (planets[sg]) {
+                    planets[sg].occ.concat(planets[sg].owned).forEach(function (h) { if (h) hSet[h] = true; });
+                }
+            }
+            return Object.keys(hSet).map(Number).sort(function (a, b) { return a - b; });
+        }
+
         Object.keys(planets).forEach(function (pn) {
             var p = planets[pn];
             var isUntenanted = !starTenants[pn] || starTenants[pn].length === 0;
             var isOwnStar = (p.nl === pn);
             p.isPS = isUntenanted || isOwnStar;
-            var nlObj = planets[p.nl] || { occ: [], owned: [] };
-            var slObj = planets[p.sl] || { occ: [], owned: [] };
-            var sslObj = planets[p.ssl] || { occ: [], owned: [] };
-            p.step1 = Array.from(new Set(p.occ.concat(p.owned)));
-            p.step2 = Array.from(new Set(nlObj.occ.concat(nlObj.owned)));
-            p.step3 = Array.from(new Set(slObj.occ.concat(slObj.owned)));
-            p.step4 = Array.from(new Set(sslObj.occ.concat(sslObj.owned)));
-            p.allHouses = Array.from(new Set(p.step1.concat(p.step2, p.step3, p.step4)));
+            var nlObj = planets[p.nl] || { occ: [] };
+            var stOfSb = (planets[p.sl] && planets[p.sl].nl) ? planets[p.sl].nl : '';
+            p.step1 = getBaseHouses(pn);
+            p.step2 = getBaseHouses(p.nl);
+            p.step3 = getBaseHouses(p.sl);
+            p.step4 = stOfSb ? getBaseHouses(stOfSb) : [];
+            p.allHouses = Array.from(new Set(p.step1.concat(p.step2, p.step3, p.step4))).sort(function (a, b) { return a - b; });
 
             var psH = {};
             if (p.isPS) p.step1.forEach(function (h) { psH[h] = true; });
             if (planets[p.nl] && planets[p.nl].isPS) p.step2.forEach(function (h) { psH[h] = true; });
             else nlObj.occ.forEach(function (h) { psH[h] = true; });
             if (planets[p.sl] && planets[p.sl].isPS) p.step3.forEach(function (h) { psH[h] = true; });
-            if (planets[p.ssl] && planets[p.ssl].isPS) p.step4.forEach(function (h) { psH[h] = true; });
+            if (stOfSb && planets[stOfSb] && planets[stOfSb].isPS) getBaseHouses(stOfSb).forEach(function (h) { psH[h] = true; });
+            else if (stOfSb && planets[stOfSb]) planets[stOfSb].occ.forEach(function (h) { psH[h] = true; });
             p.psHouses = Object.keys(psH).map(Number).sort(function (a, b) { return a - b; });
         });
 
