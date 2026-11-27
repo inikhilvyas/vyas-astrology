@@ -8,7 +8,6 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="../assets/css/elite-theme.css">
     <script>
         // Force unregister obsolete mobile PWA service workers
         if ('serviceWorker' in navigator) {
@@ -923,12 +922,7 @@
         /* =========================================================================
    ADX MOBILE LUXURY ELEVATIONS
    ========================================================================= */
-        body {
-            background: radial-gradient(circle at 20% 10%, rgba(29, 78, 216, 0.15), transparent 45%),
-                radial-gradient(circle at 80% 15%, rgba(212, 175, 55, 0.12), transparent 40%),
-                #040711 !important;
-            background-color: #040711 !important;
-        }
+/* body background handled by elite-theme.css */
 
         .m-header {
             background: rgba(8, 14, 28, 0.88) !important;
@@ -1292,6 +1286,7 @@
             color: #92400e !important;
         }
         </style>
+    <link rel="stylesheet" href="../assets/css/elite-theme.css">
     <script src="https://accounts.google.com/gsi/client" async defer>
         window.useCurrentMobileGPS = function (targetInputId) {
             var input = document.getElementById(targetInputId);
@@ -12807,6 +12802,93 @@
     <script src="../js/vyas_treatise_engine.js"
         onerror="this.onerror=null;this.src='/js/vyas_treatise_engine.js';"></script>
     <script src="/js/vyas_swipe_navigation.js"></script>
+
+<script>
+(function () {
+    var _syncTimer = null;
+    function parseRgb(str) {
+        if (!str) return null;
+        var m = str.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
+        if (!m) return null;
+        return { r: +m[1], g: +m[2], b: +m[3], a: m[4] === undefined ? 1 : +m[4] };
+    }
+    function lum(c) {
+        return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255;
+    }
+    window.vyasSyncThemeSurfaces = function () {
+        var isLight = (document.documentElement.getAttribute('data-theme') === 'light') ||
+                      (document.body && document.body.getAttribute('data-theme') === 'light');
+        var nodes = document.querySelectorAll('section, div, table, thead, tbody, tr, th, td, nav, header, footer, aside, article, p, span, b, strong, h1, h2, h3, h4, label, li, button, input, select, textarea');
+        for (var i = 0; i < nodes.length; i++) {
+            var el = nodes[i];
+            if (el.closest && el.closest('svg')) continue;
+            if (el.classList && (el.classList.contains('gold-btn') || el.classList.contains('badge-tag') || el.classList.contains('badge-exalted'))) continue;
+
+            if (isLight) {
+                var cs = window.getComputedStyle(el);
+                var bg = parseRgb(cs.backgroundColor);
+                if (bg && bg.a > 0.35 && lum(bg) < 0.22) {
+                    if (!el.hasAttribute('data-vyas-orig-bg')) {
+                        el.setAttribute('data-vyas-orig-bg', el.style.background || '');
+                        el.setAttribute('data-vyas-orig-bgc', el.style.backgroundColor || '');
+                    }
+                    var tag = el.tagName;
+                    var targetBg = (tag === 'TH' || tag === 'THEAD') ? '#F1EDE2' : (tag === 'TD' || tag === 'TR' ? 'transparent' : '#FFFFFF');
+                    el.style.setProperty('background', targetBg, 'important');
+                    el.style.setProperty('background-color', targetBg, 'important');
+                    if (el.style.borderColor || cs.borderTopWidth !== '0px') {
+                        el.style.setProperty('border-color', 'rgba(180, 134, 11, 0.24)', 'important');
+                    }
+                }
+                var fg = parseRgb(cs.color);
+                if (fg && fg.a > 0.4 && lum(fg) > 0.68) {
+                    if (!el.hasAttribute('data-vyas-orig-col')) {
+                        el.setAttribute('data-vyas-orig-col', el.style.color || '');
+                    }
+                    el.style.setProperty('color', '#0F172A', 'important');
+                }
+            } else {
+                if (el.hasAttribute('data-vyas-orig-bg')) {
+                    el.style.background = el.getAttribute('data-vyas-orig-bg');
+                    el.style.backgroundColor = el.getAttribute('data-vyas-orig-bgc');
+                    el.style.removeProperty('border-color');
+                    el.removeAttribute('data-vyas-orig-bg');
+                    el.removeAttribute('data-vyas-orig-bgc');
+                }
+                if (el.hasAttribute('data-vyas-orig-col')) {
+                    el.style.color = el.getAttribute('data-vyas-orig-col');
+                    el.removeAttribute('data-vyas-orig-col');
+                }
+            }
+        }
+    };
+    function scheduleSync() {
+        clearTimeout(_syncTimer);
+        _syncTimer = setTimeout(window.vyasSyncThemeSurfaces, 80);
+    }
+    window.addEventListener('DOMContentLoaded', function () {
+        scheduleSync();
+        var obs = new MutationObserver(function (muts) {
+            for (var i = 0; i < muts.length; i++) {
+                if (muts[i].attributeName === 'data-theme' || muts[i].type === 'childList') {
+                    scheduleSync();
+                    break;
+                }
+            }
+        });
+        obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        if (document.body) {
+            obs.observe(document.body, { attributes: true, attributeFilter: ['data-theme'], childList: true, subtree: true });
+        }
+    });
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.closest && e.target.closest('.tab-btn, .m-pillar-btn, .nav-tab, .pillar-btn, #mThemeToggle, #themeToggleBtn, [data-tab], [data-pillar]')) {
+            setTimeout(window.vyasSyncThemeSurfaces, 60);
+        }
+    });
+})();
+</script>
+
 </body>
 
 </html>
