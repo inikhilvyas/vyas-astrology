@@ -6743,6 +6743,7 @@
                         "- तात्कालिक आकाश गोचर वेध (18 Nov 2026): देवगुरु बृहस्पति (वृषभ 23°), शनिदेव (कुंभ/मीन संधि 26°), राहु (कुंभ), केतु (सिंह)",
                         "- जन्मकालीन 0.0000° ग्रह निर्देशांक:",
                         "- " + planets,
+                        ((window.VyasKPApex && typeof window.VyasKPApex.buildAIContext === "function") ? window.VyasKPApex.buildAIContext(activeChart, query).summaryText : ""),
                         "═════════════════════════════════════════════════════════════════",
                         "",
                         "दैवज्ञ दृष्टि एवं फलकथन मर्यादा (Astrological Reasoning Directives):",
@@ -7267,7 +7268,8 @@
                     kpHtml = '<div class="page-break"></div>' +
                         '<div class="section-title">षष्ठ खण्ड: कृष्णमूर्ति पद्धति (KP Placidus 12 Cusps & 4-Step Significators)</div>' +
                         (cuspRows ? '<table><thead><tr><th>कस्प</th><th>राशि</th><th>अंश</th><th>राशि स्वामी</th><th>नक्षत्र स्वामी</th><th>उप-स्वामी (CSL)</th><th>सूक्ष्म स्वामी (SSL)</th></tr></thead><tbody>' + cuspRows + '</tbody></table>' : '') +
-                        (kpPlRows ? '<div class="sub-heading">केपी ग्रह सिग्निफिकेटर तालिका</div><table><thead><tr><th>ग्रह</th><th>राशि व अंश</th><th>RL</th><th>NL</th><th>SL</th><th>SSL</th><th>कार्येश भाव</th></tr></thead><tbody>' + kpPlRows + '</tbody></table>' : '');
+                        (kpPlRows ? '<div class="sub-heading">केपी ग्रह सिग्निफिकेटर तालिका</div><table><thead><tr><th>ग्रह</th><th>राशि व अंश</th><th>RL</th><th>NL</th><th>SL</th><th>SSL</th><th>कार्येश भाव</th></tr></thead><tbody>' + kpPlRows + '</tbody></table>' : '') +
+                        ((window.VyasKPApex && typeof window.VyasKPApex.buildPdfSectionHtml === 'function') ? window.VyasKPApex.buildPdfSectionHtml(chart) : '');
                 }
 
                 var jaiminiHtml = '';
@@ -11973,6 +11975,10 @@
 
                 try {
                     var resp = await window.VyasAIEngine.askSage(text, this.activeChartData);
+                    if (resp && this.activeChartData && window.VyasKPApex && typeof window.VyasKPApex.buildAIContext === 'function') {
+                        var kpMobCtx = window.VyasKPApex.buildAIContext(this.activeChartData, text);
+                        if (kpMobCtx && kpMobCtx.htmlCard) resp += kpMobCtx.htmlCard;
+                    }
                     var elem = document.getElementById(thinkId);
                     if (elem) elem.innerHTML = resp;
                 } catch (e) {

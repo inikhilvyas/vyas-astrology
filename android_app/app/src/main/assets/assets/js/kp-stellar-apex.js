@@ -546,12 +546,102 @@
         }
     }
 
+    function detectDomainFromQuery(query) {
+        var q = String(query || '').toLowerCase();
+        if (/विवाह|शादी|marriage|spouse|wife|husband|patni|pati|divorce/.test(q)) return 'marriage';
+        if (/नौकरी|job|service|employment|sarkari|सरकारी|career/.test(q)) return 'job';
+        if (/व्यवसाय|व्यापार|business|startup|trade|shop/.test(q)) return 'business';
+        if (/पदोन्नति|promotion|increment|rise|tarakki/.test(q)) return 'promotion';
+        if (/धन|पैसा|income|wealth|money|paisa|labh|लाभ|karz/.test(q)) return 'wealth';
+        if (/संतान|पुत्र|पुत्री|child|baby|progeny|santan/.test(q)) return 'childbirth';
+        if (/घर|मकान|भूमि|वाहन|property|house|car|vehicle|flat|zameen/.test(q)) return 'property';
+        if (/विदेश|foreign|abroad|visa|pr|settlement|america|canada|uk/.test(q)) return 'foreign';
+        if (/शिक्षा|पढ़ाई|study|education|exam|degree/.test(q)) return 'education';
+        if (/मुकदमा|कोर्ट|court|case|litigation|legal|win/.test(q)) return 'litigation';
+        if (/स्वास्थ्य|रोग|बीमारी|health|disease|illness|hospital/.test(q)) return 'health';
+        return 'job';
+    }
+
+    function buildPdfSectionHtml(chart) {
+        if (!chart || !chart.kp || !chart.kp.cusps) return '';
+        var domainKeys = Object.keys(KP_DOMAINS);
+        var domRows = '';
+        var sampleEv = null;
+        for (var i = 0; i < domainKeys.length; i++) {
+            var dk = domainKeys[i];
+            var ev = evaluateDomain(chart, dk, 'kp_new');
+            if (i === 0) sampleEv = ev;
+            domRows += '<tr>' +
+                '<td><b>' + ev.domain.label + '</b></td>' +
+                '<td>कस्प ' + ev.domain.cusp + '</td>' +
+                '<td><b>' + ev.cslHi + '</b></td>' +
+                '<td>' + ev.csslHi + '</td>' +
+                '<td>' + (ev.supHits.join(', ') || '-') + '</td>' +
+                '<td>' + (ev.negHits.join(', ') || '-') + '</td>' +
+                '<td><b style="color:' + ev.color + ';">' + ev.verdictHi + '</b> (' + ev.supScore + '/' + ev.negScore + ')</td>' +
+                '</tr>';
+        }
+        var psRows = '';
+        if (sampleEv && sampleEv.planets) {
+            Object.keys(sampleEv.planets).forEach(function (pk) {
+                var p = sampleEv.planets[pk];
+                psRows += '<tr>' +
+                    '<td><b>' + p.hi + '</b> ' + (p.isPS ? '(PS)' : '') + '</td>' +
+                    '<td>' + (p.step1.join(',') || '-') + '</td>' +
+                    '<td>' + (p.step2.join(',') || '-') + '</td>' +
+                    '<td>' + (p.step3.join(',') || '-') + '</td>' +
+                    '<td>' + (p.step4.join(',') || '-') + '</td>' +
+                    '<td style="font-family:monospace;">' + p.chain5.chain_hi + '</td>' +
+                    '</tr>';
+            });
+        }
+        return '<div class="sub-heading">KP Stellar Apex Suite v3: 6-पद्धतीय जीवन क्षेत्र निर्णय (11 Domains Promise Gate)</div>' +
+            '<p>क्लासिकल KSK, 4-Step Theory (सुनील गोंधलेकर), S.P. Khullar (CIL), नक्षत्र नाड़ी, K. Baskaran व A. Devaraj के संयुक्त गणितीय नियम से 11 प्रमुख जीवन क्षेत्रों का निष्पक्ष निर्णय:</p>' +
+            '<table><thead><tr><th>जीवन क्षेत्र</th><th>कस्प</th><th>CSL (SL)</th><th>CSSL (SSL)</th><th>समर्थक भाव</th><th>बाधक भाव</th><th>6-School निर्णय</th></tr></thead><tbody>' + domRows + '</tbody></table>' +
+            (psRows ? '<div class="sub-heading">4-Step Theory (Primary Significators) एवं 5-Level KP Chain</div><table><thead><tr><th>ग्रह (PS)</th><th>Step 1</th><th>Step 2</th><th>Step 3</th><th>Step 4</th><th>5-Level Chain (RL→NL→SL→SSL→SSSL)</th></tr></thead><tbody>' + psRows + '</tbody></table>' : '');
+    }
+
+    function buildAIContext(chart, query) {
+        var rp = computeLiveRulingPlanets();
+        if (!chart || !chart.kp || !chart.kp.cusps) {
+            return {
+                summaryText: '[KP LIVE RP] Day Lord: ' + rp.dayLord + ', Moon: ' + rp.moonDms + ' (RL:' + rp.moonSignLord + '/NL:' + rp.moonStarLord + '/SL:' + rp.moonSubLord + ')',
+                htmlCard: ''
+            };
+        }
+        var dk = detectDomainFromQuery(query);
+        var ev = evaluateDomain(chart, dk, 'kp_new');
+        var summaryText = [
+            '[KP STELLAR APEX v3 — DETERMINISTIC 6-SCHOOL DATA LOCK]',
+            '- Query Domain: ' + ev.domain.label + ' (Primary Cusp: ' + ev.domain.cusp + ')',
+            '- BLUF Verdict: ' + ev.verdictHi + ' (Promise Score: ' + ev.supScore + ', Obstruction Score: ' + ev.negScore + ', Retro Delay Flag: ' + ev.retroFlag + ')',
+            '- 1. Classical KP (KSK): CSL=' + ev.cslHi + ' (NL=' + hiPlanet(ev.cslData.nl) + '), Supportive=' + (ev.supHits.join(',') || 'None') + ', Negating=' + (ev.negHits.join(',') || 'None'),
+            '- 2. Four-Step Theory: CSL PS=' + ev.cslData.isPS + ', PS Houses=[' + (ev.cslData.psHouses.join(',') || '-') + ']',
+            '- 3. S.P. Khullar (CIL): CSSL=' + ev.csslHi + ', 12th-from-cusp Negated=' + ev.twelfthNegated + ', Supportive Rel=[' + (ev.khullarSup.join(',') || '-') + ']',
+            '- 4. Nakshatra Nadi (Hit): Cusp Hits<=' + '3deg=[' + (ev.cuspHits.join(',') || 'None') + ']',
+            '- 5. K. Baskaran: Star Lord=' + ev.baskaran.starHi + ' (PS=' + ev.baskaran.isPS + '), Base=[' + (ev.baskaran.baseHouses.join(',') || '-') + ']',
+            '- 6. A. Devaraj: Chain=' + ev.cslHi + '->' + ev.csslHi + ', MicroSup=[' + (ev.devaraj.microSup.join(',') || '-') + '], MicroNeg=[' + (ev.devaraj.microNeg.join(',') || '-') + ']',
+            '- Live Ruling Planets: Day=' + rp.dayLord + ', Moon=' + rp.moonSignLord + '/' + rp.moonStarLord + '/' + rp.moonSubLord
+        ].join('\n');
+
+        var htmlCard = '<div style="margin-top:10px; padding:10px 12px; border-radius:10px; background:rgba(212,175,55,0.08); border-left:3px solid ' + ev.color + '; font-size:0.84rem; line-height:1.55;">' +
+            '<b style="color:var(--primary);">⚝ KP Stellar Apex v3 वेध (' + ev.domain.label + '):</b> ' +
+            '<b style="color:' + ev.color + ';">' + ev.verdictHi + '</b> (Score: ' + ev.supScore + ' vs ' + ev.negScore + ')<br>' +
+            '• <b>KSK / 4-Step:</b> कस्प ' + ev.domain.cusp + ' CSL <b>' + ev.cslHi + '</b> (' + (ev.cslData.isPS ? 'PS' : 'Tenanted') + ') → समर्थक भाव: <b>' + (ev.supHits.join(', ') || '-') + '</b> | बाधक: <b>' + (ev.negHits.join(', ') || '-') + '</b><br>' +
+            '• <b>Khullar (CIL) / Devaraj:</b> CSSL <b>' + ev.csslHi + '</b> (' + (ev.twelfthNegated ? '12वां व्यय अवरोध' : '12वां मुक्त') + ') | <b>तात्कालिक RP:</b> दिन-' + rp.dayLord + ', चन्द्र-' + rp.moonSignLord + '/' + rp.moonStarLord + '/' + rp.moonSubLord +
+            '</div>';
+
+        return { summaryText: summaryText, htmlCard: htmlCard };
+    }
+
     global.VyasKPApex = {
         analyzeLongitude: analyzeLongitude,
         evaluateDomain: evaluateDomain,
         computeLiveRulingPlanets: computeLiveRulingPlanets,
         calcManual5Level: calcManual5Level,
         switchSuiteTab: switchSuiteTab,
+        buildPdfSectionHtml: buildPdfSectionHtml,
+        buildAIContext: buildAIContext,
         renderPanel: renderPanel
     };
 })(window);

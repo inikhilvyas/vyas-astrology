@@ -9827,6 +9827,10 @@
                         try {
                             var verifiedReading = VyasDaivagyaCore.formatReading(query, activeChart);
                             if (verifiedReading) {
+                                if (window.VyasKPApex && typeof window.VyasKPApex.buildAIContext === 'function') {
+                                    var kpAiCtx = window.VyasKPApex.buildAIContext(activeChart, query);
+                                    if (kpAiCtx && kpAiCtx.htmlCard) verifiedReading += kpAiCtx.htmlCard;
+                                }
                                 if (window.VyasAIEngine && window.VyasAIEngine.chatHistory) {
                                     window.VyasAIEngine.chatHistory.push({ role: "user", content: query });
                                     window.VyasAIEngine.chatHistory.push({ role: "assistant", content: verifiedReading });
@@ -10000,6 +10004,7 @@
                         "- तात्कालिक आकाश गोचर वेध (18 Nov 2026): देवगुरु बृहस्पति (सिंह 01°51'), शनिदेव (मीन 14°08'), राहु (कुंभ 00°53'), केतु (सिंह 00°53') [NASA JPL/Swiss Ephemeris 0.0000°]",
                         "- जन्मकालीन 0.0000° ग्रह निर्देशांक:",
                         "- " + planets,
+                        ((window.VyasKPApex && typeof window.VyasKPApex.buildAIContext === "function") ? window.VyasKPApex.buildAIContext(activeChart, query).summaryText : ""),
                         "",
                         "═════════════════════════════════════════════════════════════════",
                         "🏛️ D-10 दशमांश चक्र (DASHAMSHA — करियर, पद, आजीविका व प्रतिष्ठा):",
@@ -12066,7 +12071,8 @@
                         '<div class="section-title">षष्ठ खण्ड: कृष्णमूर्ति पद्धति (KP Placidus 12 Cusps & 4-Step Significators)</div>' +
                         '<p>कृष्णमूर्ति पद्धति के अनुसार किसी घटना के घटित होने का अंतिम निर्णय भाव के <b>कस्पल सब-लॉर्ड (CSL)</b> द्वारा होता है:</p>' +
                         (cuspRows ? '<table><thead><tr><th>कस्प</th><th>राशि</th><th>अंश</th><th>राशि स्वामी</th><th>नक्षत्र स्वामी</th><th>उप-स्वामी (CSL)</th><th>सूक्ष्म स्वामी (SSL)</th></tr></thead><tbody>' + cuspRows + '</tbody></table>' : '') +
-                        (kpPlRows ? '<div class="sub-heading">केपी ग्रह सिग्निफिकेटर तालिका</div><table><thead><tr><th>ग्रह</th><th>राशि व अंश</th><th>RL</th><th>NL</th><th>SL</th><th>SSL</th><th>कार्येश भाव</th></tr></thead><tbody>' + kpPlRows + '</tbody></table>' : '');
+                        (kpPlRows ? '<div class="sub-heading">केपी ग्रह सिग्निफिकेटर तालिका</div><table><thead><tr><th>ग्रह</th><th>राशि व अंश</th><th>RL</th><th>NL</th><th>SL</th><th>SSL</th><th>कार्येश भाव</th></tr></thead><tbody>' + kpPlRows + '</tbody></table>' : '') +
+                        ((window.VyasKPApex && typeof window.VyasKPApex.buildPdfSectionHtml === 'function') ? window.VyasKPApex.buildPdfSectionHtml(chart) : '');
                 }
 
                 // 5. Jaimini Chara Karakas
