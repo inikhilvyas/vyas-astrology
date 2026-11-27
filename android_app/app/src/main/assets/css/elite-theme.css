@@ -1,0 +1,187 @@
+/* ==========================================================================
+   VYAS ASTRA — Elite Luxury Celestial Design System (v2.0)
+   Inspired by Co-Star, Sanctuary, Linear & Apple Editorial Craftsmanship
+   ========================================================================== */
+
+:root {
+    color-scheme: dark light;
+
+    /* Cosmic Obsidian & Champagne Gold (Dark Mode Default) */
+    --bg-canvas: #05070f;
+    --bg-canvas-gradient:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(30, 58, 138, 0.28), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 15%, rgba(212, 175, 55, 0.12), transparent 55%),
+        #05070f;
+    --bg-surface: rgba(10, 15, 30, 0.88);
+    --bg-card: rgba(14, 21, 40, 0.76);
+    --bg-card-alt: rgba(20, 29, 54, 0.82);
+    --bg-glass: rgba(10, 15, 30, 0.72);
+    --bg-hover: rgba(30, 44, 82, 0.75);
+
+    --gold-classic: #D4AF37;
+    --gold-gradient: linear-gradient(135deg, #FFF3BF 0%, #D4AF37 50%, #996515 100%);
+    --border-gold: rgba(212, 175, 55, 0.36);
+    --border-subtle: rgba(255, 255, 255, 0.09);
+
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+
+    --font-sans: 'Plus Jakarta Sans', 'Poppins', 'Noto Sans Devanagari', -apple-system, sans-serif;
+    --font-serif: 'Cinzel', Georgia, serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --glass-blur: blur(22px) saturate(170%);
+    --shadow-elite: 0 14px 42px -12px rgba(0, 0, 0, 0.68), 0 0 24px rgba(212, 175, 55, 0.1);
+    --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Warm Alabaster Ivory & Royal Bronze (Light Mode) */
+[data-theme="light"],
+html[data-theme="light"],
+body[data-theme="light"] {
+    --bg-canvas: #F6F3EC;
+    --bg-canvas-gradient:
+        radial-gradient(ellipse 75% 45% at 20% 0%, rgba(212, 175, 55, 0.12), transparent 55%),
+        radial-gradient(ellipse 60% 45% at 85% 10%, rgba(30, 58, 138, 0.07), transparent 55%),
+        #F6F3EC;
+    --bg-surface: rgba(255, 255, 255, 0.94);
+    --bg-card: #FFFFFF;
+    --bg-card-alt: #F8F6F0;
+    --bg-glass: rgba(255, 255, 255, 0.88);
+    --bg-hover: #EFECE3;
+
+    --gold-classic: #92400E;
+    --gold-gradient: linear-gradient(135deg, #B58A45 0%, #92400E 55%, #78350F 100%);
+    --border-gold: rgba(180, 134, 11, 0.32);
+    --border-subtle: rgba(15, 23, 42, 0.12);
+
+    --text-primary: #0F172A;
+    --text-secondary: #1E293B;
+    --text-muted: #475569;
+
+    --shadow-elite: 0 10px 30px -8px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(180, 134, 11, 0.14);
+}
+
+body {
+    background: var(--bg-canvas-gradient) !important;
+    background-color: var(--bg-canvas) !important;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.35s var(--ease-luxury), color 0.25s ease;
+}
+
+.brand-title,
+.brand-text-box h1 {
+    font-family: var(--font-serif);
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.03em;
+}
+
+/* Tabular Numbers for Astronomical Precision */
+.dms, .degree, .mono, td[style*="JetBrains"], [data-dms] {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Glass 2.0 Elevated Cards & Smooth GPU Micro-Animations */
+.card, .m-card, .glass-panel, .chart-card, .dasha-card, .panchang-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-gold);
+    box-shadow: var(--shadow-elite);
+    transition:
+        transform 0.35s var(--ease-luxury),
+        box-shadow 0.35s var(--ease-luxury),
+        border-color 0.3s ease,
+        background-color 0.3s ease;
+}
+
+@media (hover: hover) {
+    .card:hover, .glass-panel:hover {
+        transform: translateY(-2px);
+        border-color: rgba(212, 175, 55, 0.55);
+    }
+}
+
+.m-card:active, .hdr-pill-btn:active, .gold-btn:active, .tab-btn:active, .m-pillar-btn:active {
+    transform: scale(0.98);
+}
+
+/* Smooth Tab & View Entrance Animation */
+@keyframes vyasTabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-view-container.active,
+.tab-content.active,
+.tab-pane.active {
+    animation: vyasTabFadeIn 0.32s var(--ease-luxury) both;
+}
+
+/* Subtle Celestial Ambient Pulse for Active Badges */
+@keyframes vyasGoldPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.25); }
+    50% { box-shadow: 0 0 16px 2px rgba(212, 175, 55, 0.18); }
+}
+
+.vyas-live-pulse {
+    animation: vyasGoldPulse 3.5s ease-in-out infinite;
+}
+
+/* Light-Mode Universal Component & Table Legibility */
+[data-theme="light"] .app-top-header,
+[data-theme="light"] header,
+[data-theme="light"] .bottom-nav,
+[data-theme="light"] .bottom-nav-bar {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: rgba(180, 134, 11, 0.25) !important;
+    color: #0F172A !important;
+}
+
+[data-theme="light"] .card,
+[data-theme="light"] .m-card,
+[data-theme="light"] .m-modal-card,
+[data-theme="light"] .modal-content,
+[data-theme="light"] .glass-panel {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border-color: rgba(180, 134, 11, 0.28) !important;
+}
+
+[data-theme="light"] table th {
+    background: #F1EDE2 !important;
+    color: #0F172A !important;
+    border-color: rgba(180, 134, 11, 0.25) !important;
+}
+
+[data-theme="light"] table td {
+    color: #1E293B !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border-color: rgba(15, 23, 42, 0.22) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
