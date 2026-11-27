@@ -4245,6 +4245,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="content-card" id="kpStellarApexDesktopBox" style="margin-top:16px;"></div>
                     <!-- KP SHASTRA KNOWLEDGE BANK & TREATISES (KP Readers 1-6 & Cuspal Interlinks) -->
 
                     <!-- VAIDIK & PARASHARI KNOWLEDGE VAULT BOX -->
@@ -14370,6 +14371,10 @@
                     }
                 }
 
+                if (window.VyasKPApex && typeof window.VyasKPApex.renderPanel === 'function') {
+                    try { window.VyasKPApex.renderPanel(this.activeChartData, 'kpStellarApexDesktopBox'); } catch (e) { console.warn('KP Apex error:', e); }
+                }
+
                 // Append KP Knowledge Bank Card
                 var kpBox = document.getElementById('kpKnowledgeVaultBox');
                 if (!kpBox) {
@@ -18207,6 +18212,7 @@
 })();
 </script>
 
+    <script src="/assets/js/kp-stellar-apex.js"></script>
 </body>
 
 </html>

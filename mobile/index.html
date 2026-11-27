@@ -2269,6 +2269,7 @@
                         </table>
                     </div>
                 </div>
+                <div class="m-card" id="kpStellarApexMobileBox"></div>
             </section>
 
             <!-- TAB 9.5: BHAVAT BHAVAM (12x12 = 144 COMBINATIONS) & SHODH GRANTH -->
@@ -9158,6 +9159,10 @@
                     }
                 }
 
+                if (window.VyasKPApex && typeof window.VyasKPApex.renderPanel === 'function') {
+                    try { window.VyasKPApex.renderPanel(this.activeChartData || (window.AUTHENTIC_BUNDLE || null), 'kpStellarApexMobileBox'); } catch (e) { console.warn('KP Apex mobile error:', e); }
+                }
+
                 var kp = (this.activeChartData && this.activeChartData.kp && this.activeChartData.kp.cusps) ? this.activeChartData.kp : (window.AUTHENTIC_BUNDLE ? window.AUTHENTIC_BUNDLE.kp : null);
                 var cBody = document.getElementById('mKpCuspsBody') || document.getElementById('kpCuspsTableBody');
                 if (cBody) {
@@ -12889,6 +12894,7 @@
 })();
 </script>
 
+    <script src="../assets/js/kp-stellar-apex.js"></script>
 </body>
 
 </html>
