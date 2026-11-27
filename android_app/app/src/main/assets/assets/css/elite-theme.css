@@ -1,0 +1,34 @@
+/* VYAS ASTRA - Elite Luxury Theme */
+:root {
+    --bg-canvas: #05070f;
+    --bg-canvas-gradient: radial-gradient(circle at 50% 0%, #1a1e2e, #05070f);
+    --bg-surface: rgba(10, 15, 30, 0.85);
+    --bg-card: rgba(15, 22, 40, 0.6);
+    --bg-glass: rgba(10, 15, 30, 0.7);
+    
+    --gold-classic: #D4AF37;
+    --gold-gradient: linear-gradient(135deg, #FFF3BF 0%, #D4AF37 50%, #8B6508 100%);
+    
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    
+    --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --font-serif: 'Cinzel', serif;
+    
+    --glass-blur: blur(25px);
+    --shadow-elite: 0 10px 40px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+body {
+    background: var(--bg-canvas-gradient);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+}
+
+.brand-title {
+    font-family: var(--font-serif);
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
