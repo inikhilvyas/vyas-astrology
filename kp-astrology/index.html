@@ -1031,7 +1031,8 @@
             // 1. Render KP Chalit Chart
             var chartWrap = document.getElementById('kpChartWrap');
             if (chartWrap && window.VyasChartRenderers && typeof VyasChartRenderers.renderKPChalitChart === 'function') {
-                chartWrap.innerHTML = VyasChartRenderers.renderKPChalitChart(chartHouses, cusps, 440, false);
+                var isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+                chartWrap.innerHTML = VyasChartRenderers.renderKPChalitChart(chartHouses, cusps, 440, isLightTheme);
             }
 
             // 2. Populate 12 Placidus Cuspal Table (Zero Empty Columns Invariant)

@@ -27,6 +27,9 @@
          * Renders Placidus unequal house cusps with exact degree spans and residing planets.
          */
         renderKPChalitChart: function (housesData, placidusCusps, size, isLight) {
+            if (typeof isLight === 'undefined') {
+                isLight = (document.documentElement.getAttribute('data-theme') === 'light');
+            }
             var s = size || 460;
             var h = s / 2.0;
             var q = s / 4.0;

@@ -73,6 +73,55 @@
                 }
             }
         }
+
+        // Also adapt Kundli SVGs on sub-pages between Dark & Light themes
+        var svgs = document.querySelectorAll('svg');
+        for (var s = 0; s < svgs.length; s++) {
+            var svg = svgs[s];
+            if (svg.getAttribute('width') && parseInt(svg.getAttribute('width'), 10) < 120) continue;
+            var stops = svg.querySelectorAll('stop');
+            for (var st = 0; st < stops.length; st++) {
+                var stopEl = stops[st];
+                if (isLight) {
+                    var sc = (stopEl.getAttribute('stop-color') || '').toLowerCase();
+                    if (/^#0[0-9a-f]{5}$|^#1[0-9a-f]{5}$/.test(sc)) {
+                        if (!stopEl.hasAttribute('data-vyas-orig-stop')) stopEl.setAttribute('data-vyas-orig-stop', sc);
+                        stopEl.setAttribute('stop-color', st === 0 ? '#FCFAF6' : '#EFECE4');
+                    }
+                } else if (stopEl.hasAttribute('data-vyas-orig-stop')) {
+                    stopEl.setAttribute('stop-color', stopEl.getAttribute('data-vyas-orig-stop'));
+                    stopEl.removeAttribute('data-vyas-orig-stop');
+                }
+            }
+            var svgEls = svg.querySelectorAll('rect, line, text, tspan');
+            for (var se = 0; se < svgEls.length; se++) {
+                var sel = svgEls[se];
+                if (isLight) {
+                    var fl = (sel.getAttribute('fill') || '').toLowerCase();
+                    if (sel.tagName === 'rect' && /^#0[0-9a-f]{5}$|^#1[0-9a-f]{5}$/.test(fl)) {
+                        if (!sel.hasAttribute('data-vyas-orig-fill')) sel.setAttribute('data-vyas-orig-fill', fl);
+                        sel.setAttribute('fill', '#FCFAF6');
+                    } else if ((sel.tagName === 'text' || sel.tagName === 'tspan') && (fl === '#f0f9ff' || fl === '#f8fafc' || fl === '#e2e8f0' || fl === '#ffffff' || fl === '#fff' || fl === '#38bdf8' || fl === '#94a3b8')) {
+                        if (!sel.hasAttribute('data-vyas-orig-fill')) sel.setAttribute('data-vyas-orig-fill', fl);
+                        sel.setAttribute('fill', fl === '#38bdf8' ? '#B45309' : (fl === '#94a3b8' ? '#475569' : '#1B2E4B'));
+                    }
+                    var sk = (sel.getAttribute('stroke') || '').toLowerCase();
+                    if (sk === '#38bdf8' || sk === '#0284c7') {
+                        if (!sel.hasAttribute('data-vyas-orig-stroke')) sel.setAttribute('data-vyas-orig-stroke', sk);
+                        sel.setAttribute('stroke', sk === '#0284c7' ? '#B58A45' : '#243A59');
+                    }
+                } else {
+                    if (sel.hasAttribute('data-vyas-orig-fill')) {
+                        sel.setAttribute('fill', sel.getAttribute('data-vyas-orig-fill'));
+                        sel.removeAttribute('data-vyas-orig-fill');
+                    }
+                    if (sel.hasAttribute('data-vyas-orig-stroke')) {
+                        sel.setAttribute('stroke', sel.getAttribute('data-vyas-orig-stroke'));
+                        sel.removeAttribute('data-vyas-orig-stroke');
+                    }
+                }
+            }
+        }
     }
 
     function applyTheme(theme) {
