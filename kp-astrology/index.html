@@ -1131,11 +1131,60 @@
             var dWrap = document.getElementById('kpDashaContentWrap');
             if (dWrap) {
                 var dashaData = chart.dasha_timeline || (chart.dashas ? chart.dashas.timeline : null);
-                var activeMD = "गुरु", activeAD = "शनि", activePD = "बुध";
-                if (dashaData && dashaData.current) {
-                    activeMD = dashaData.current.mahadasha || activeMD;
-                    activeAD = dashaData.current.antardasha || activeAD;
-                    activePD = dashaData.current.pratyantardasha || activePD;
+                var activeMD = "-", activeAD = "-", activePD = "-";
+                if (chart.active_dasha && (chart.active_dasha.md || chart.active_dasha.mahadasha)) {
+                    activeMD = chart.active_dasha.md || chart.active_dasha.mahadasha;
+                    activeAD = chart.active_dasha.ad || chart.active_dasha.antardasha || "-";
+                    activePD = chart.active_dasha.pd || chart.active_dasha.pratyantardasha || "-";
+                } else if (dashaData && dashaData.current) {
+                    activeMD = dashaData.current.mahadasha || "-";
+                    activeAD = dashaData.current.antardasha || "-";
+                    activePD = dashaData.current.pratyantardasha || "-";
+                } else if (Array.isArray(chart.vimshottari)) {
+                    var nowMs = Date.now();
+                    for (var mi = 0; mi < chart.vimshottari.length; mi++) {
+                        var mItem = chart.vimshottari[mi];
+                        var mStart = mItem.startMs || (mItem.start ? new Date(mItem.start).getTime() : 0);
+                        var mEnd = mItem.endMs || (mItem.end ? new Date(mItem.end).getTime() : 0);
+                        if (nowMs >= mStart && nowMs <= mEnd) {
+                            activeMD = mItem.lord || mItem.planet || "-";
+                            var ads = mItem.antardashas || mItem.sub || [];
+                            for (var ai = 0; ai < ads.length; ai++) {
+                                var aItem = ads[ai];
+                                var aStart = aItem.startMs || (aItem.start ? new Date(aItem.start).getTime() : 0);
+                                var aEnd = aItem.endMs || (aItem.end ? new Date(aItem.end).getTime() : 0);
+                                if (nowMs >= aStart && nowMs <= aEnd) {
+                                    activeAD = aItem.lord || aItem.planet || "-";
+                                    var pds = aItem.pratyantardashas || aItem.sub || [];
+                                    for (var pi = 0; pi < pds.length; pi++) {
+                                        var pItem = pds[pi];
+                                        var pStart = pItem.startMs || (pItem.start ? new Date(pItem.start).getTime() : 0);
+                                        var pEnd = pItem.endMs || (pItem.end ? new Date(pItem.end).getTime() : 0);
+                                        if (nowMs >= pStart && nowMs <= pEnd) {
+                                            activePD = pItem.lord || pItem.planet || "-";
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                // Fallback: compute live Vimshottari Mahadasha from Moon longitude & DOB if still '-'
+                if (activeMD === "-" && chart.profile && chart.profile.dob && chart.planet_table) {
+                    try {
+                        var moonRow = chart.planet_table.find(function (r) { return /चन्द्र|चंद्र|moon/i.test(r.name || r.p || ''); });
+                        if (moonRow && window.VyasAstronomicalEngine && typeof window.VyasAstronomicalEngine.computeVimshottari === 'function') {
+                            var vTree = window.VyasAstronomicalEngine.computeVimshottari(moonRow.longitude || 0, chart.profile.dob);
+                            if (vTree && vTree.active) {
+                                activeMD = vTree.active.md || activeMD;
+                                activeAD = vTree.active.ad || activeAD;
+                                activePD = vTree.active.pd || activePD;
+                            }
+                        }
+                    } catch (e) {}
                 }
 
                 dWrap.innerHTML = '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; padding:16px;">' +
