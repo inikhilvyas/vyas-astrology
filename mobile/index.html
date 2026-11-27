@@ -7826,9 +7826,9 @@
                     "&nonce=" + encodeURIComponent(state) +
                     "&prompt=select_account";
 
-                // If running inside Android Native App WebView, launch system browser and close modal
+                // If running inside Android Native App WebView, launch hosted GIS OAuth bridge on vyasastro.in
                 if (window.Android && typeof window.Android.openExternalUrl === 'function') {
-                    window.Android.openExternalUrl(authUrl);
+                    window.Android.openExternalUrl("https://vyasastro.in/oauth-mobile.html");
                     self.closeModals();
                     if (window.Android.showToast) {
                         window.Android.showToast("Google साइन-इन हेतु ब्राउज़र खोला गया है...");
