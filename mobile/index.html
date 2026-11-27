@@ -1154,7 +1154,151 @@
             background: #F8FAFC !important;
             border-color: #CBD5E1 !important;
         }
-    </style>
+    
+        /* =========================================================================
+           UNICORN ROYAL APP LUXURY SYSTEM (v2)
+           ========================================================================= */
+        .profile-strip {
+            margin: 10px 12px 6px 12px !important;
+            border-radius: 16px !important;
+            padding: 12px 14px !important;
+            background: linear-gradient(135deg, rgba(22, 34, 64, 0.96) 0%, rgba(11, 18, 36, 0.98) 100%) !important;
+            border: 1px solid rgba(212, 175, 55, 0.38) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+            position: relative;
+        }
+        .profile-strip::after {
+            content: '›';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #d4af37;
+            font-weight: 700;
+            opacity: 0.85;
+        }
+        .profile-strip-name {
+            font-size: 0.98rem !important;
+            font-weight: 800 !important;
+            padding-right: 20px;
+            flex-wrap: wrap;
+        }
+        .profile-strip-meta {
+            font-size: 0.84rem !important;
+            color: #cbd5e1 !important;
+            padding-right: 20px;
+            line-height: 1.4;
+        }
+        .m-pillar-bar {
+            margin: 4px 12px 6px 12px !important;
+            padding: 4px !important;
+            border-radius: 14px !important;
+            background: rgba(15, 23, 42, 0.92) !important;
+            border: 1px solid rgba(212, 175, 55, 0.22) !important;
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 4px !important;
+        }
+        .m-pillar-btn {
+            border-radius: 10px !important;
+            padding: 9px 4px !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            border: none !important;
+            background: transparent !important;
+            color: #94a3b8 !important;
+            transition: all 0.2s ease !important;
+        }
+        .m-pillar-btn.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(180, 134, 11, 0.14)) !important;
+            color: #fde68a !important;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.18), inset 0 0 0 1px rgba(212, 175, 55, 0.4) !important;
+        }
+        .tab-layout-bar {
+            background: transparent !important;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.16) !important;
+            padding: 6px 12px 10px 12px !important;
+            gap: 8px !important;
+        }
+        .tab-btn {
+            border-radius: 20px !important;
+            padding: 8px 14px !important;
+            font-size: 0.86rem !important;
+            font-weight: 700 !important;
+            background: rgba(15, 23, 42, 0.78) !important;
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+            color: #cbd5e1 !important;
+            white-space: nowrap !important;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #e6c775 0%, #c59b27 100%) !important;
+            color: #090d16 !important;
+            border-color: #fde68a !important;
+            font-weight: 800 !important;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.28) !important;
+        }
+        .app-main-viewport {
+            padding: 8px 12px 92px 12px !important;
+        }
+        .m-card {
+            border-radius: 18px !important;
+            padding: 16px !important;
+            margin-bottom: 14px !important;
+            background: linear-gradient(165deg, rgba(16, 24, 44, 0.94) 0%, rgba(10, 15, 29, 0.97) 100%) !important;
+            border: 1px solid rgba(212, 175, 55, 0.24) !important;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+        }
+        .m-card-title {
+            font-size: 1.02rem !important;
+            font-weight: 800 !important;
+            margin-bottom: 12px !important;
+            padding-bottom: 8px !important;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.14) !important;
+        }
+        [data-theme="light"] body {
+            background: #f7f4ec !important;
+            background-color: #f7f4ec !important;
+            color: #0f172a !important;
+        }
+        [data-theme="light"] .profile-strip {
+            background: linear-gradient(135deg, #fffdf8 0%, #f7efe0 100%) !important;
+            border-color: rgba(180, 134, 11, 0.45) !important;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08) !important;
+        }
+        [data-theme="light"] .profile-strip-meta {
+            color: #334155 !important;
+        }
+        [data-theme="light"] .m-pillar-bar {
+            background: #ece6d8 !important;
+            border-color: rgba(180, 134, 11, 0.28) !important;
+        }
+        [data-theme="light"] .m-pillar-btn {
+            color: #475569 !important;
+        }
+        [data-theme="light"] .m-pillar-btn.active {
+            background: #ffffff !important;
+            color: #92400e !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1) !important;
+        }
+        [data-theme="light"] .tab-btn {
+            background: #ffffff !important;
+            color: #334155 !important;
+            border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+        [data-theme="light"] .m-card {
+            background: #ffffff !important;
+            border-color: rgba(180, 134, 11, 0.28) !important;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07) !important;
+        }
+        [data-theme="light"] .m-card-title {
+            color: #92400e !important;
+        }
+        </style>
     <script src="https://accounts.google.com/gsi/client" async defer>
         window.useCurrentMobileGPS = function (targetInputId) {
             var input = document.getElementById(targetInputId);
@@ -1368,65 +1512,65 @@
                 <!-- Cosmic Score Card -->
                 <div class="m-card">
                     <div class="m-card-title"
-                        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                        <span>जातक का व्यक्तिगत दैनिक राशिफल</span>
-                        <span style="font-size:0.70rem; color:#10b981;">नवतारा + गोचर + दशा</span>
+                        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                        <span>✨ दैनिक वैदिक राशिफल</span>
+                        <span style="font-size:0.78rem; color:#10b981; background:rgba(16,185,129,0.12); padding:3px 9px; border-radius:999px; border:1px solid rgba(16,185,129,0.28);">नवतारा + गोचर</span>
                     </div>
-                    <button id="mBtnEnablePushAlerts" onclick="VyasPushEngine.subscribeUser()"
-                        style="background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; padding:6px 12px; border-radius:6px; font-weight:700; font-size:0.75rem; margin-bottom:10px; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(16,185,129,0.3);">🔔
-                        दैनिक पंचांग व पर्व सूचनाएं चालू करें</button>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(212,175,55,0.07); border:1px solid rgba(212,175,55,0.2); margin-bottom:14px;">
                         <div>
-                            <div style="font-size:1.8rem; font-weight:900; color:var(--primary); font-family:var(--font-serif);"
+                            <div style="font-size:2.1rem; font-weight:900; color:var(--primary); font-family:var(--font-serif); line-height:1;"
                                 id="mDayIndex">--</div>
-                            <div style="font-size:0.80rem; color:var(--text-muted); font-weight:700;" id="mDaySub">
+                            <div style="font-size:0.86rem; color:var(--text-muted); font-weight:700; margin-top:4px;" id="mDaySub">
                                 कुण्डली आवश्यक</div>
                         </div>
-                        <div style="text-align:right; font-size:0.82rem; color:var(--text-secondary); line-height:1.5;">
-                            सक्रिय दशा: <b id="mActiveDashaHeader" style="color:var(--primary);">कुण्डली बनाएं</b><br>
-                            शुभ मुहूर्त: <b>अभिजित 11:58 AM - 12:44 PM</b>
+                        <div style="text-align:right; font-size:0.88rem; color:var(--text-secondary); line-height:1.55;">
+                            दशा: <b id="mActiveDashaHeader" style="color:var(--primary);">कुण्डली बनाएं</b><br>
+                            शुभ मुहूर्त: <b>11:58 AM - 12:44 PM</b>
                         </div>
                     </div>
 
                     <!-- 4 Stambh Grid (Live Astronomical & Natal Synthesis) -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;"
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;"
                         id="mDaily4Pillars">
                         <div
-                            style="background:var(--bg-card-alt); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">
-                            <b style="color:var(--primary); font-size:0.84rem;">धन व वाणी विचार</b>
+                            style="background:var(--bg-card-alt); padding:12px; border-radius:14px; border:1px solid rgba(212,175,55,0.22);">
+                            <b style="color:var(--primary); font-size:0.94rem; display:block;">💰 धन व वाणी</b>
                             <p id="mDailyDhana"
-                                style="font-size:0.80rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                                style="font-size:0.88rem; color:var(--text-secondary); margin-top:6px; line-height:1.5;">
                                 आर्थिक लेन-देन में विवेक रखें। स्पष्ट व मधुर वाणी लाभ देगी।</p>
                         </div>
                         <div
-                            style="background:var(--bg-card-alt); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">
-                            <b style="color:var(--primary); font-size:0.84rem;">कर्मक्षेत्र व आजीविका</b>
+                            style="background:var(--bg-card-alt); padding:12px; border-radius:14px; border:1px solid rgba(212,175,55,0.22);">
+                            <b style="color:var(--primary); font-size:0.94rem; display:block;">💼 कर्म व आजीविका</b>
                             <p id="mDailyKarma"
-                                style="font-size:0.80rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                                style="font-size:0.88rem; color:var(--text-secondary); margin-top:6px; line-height:1.5;">
                                 वर्तमान गोचर अनुसार कर्मक्षेत्र में अनुशासन व सात्विक निष्ठा से सफलता मिलेगी।</p>
                         </div>
                         <div
-                            style="background:var(--bg-card-alt); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">
-                            <b style="color:var(--primary); font-size:0.84rem;">❤️ संबंध व परिवार</b>
+                            style="background:var(--bg-card-alt); padding:12px; border-radius:14px; border:1px solid rgba(212,175,55,0.22);">
+                            <b style="color:var(--primary); font-size:0.94rem; display:block;">❤️ संबंध व परिवार</b>
                             <p id="mDailyFamily"
-                                style="font-size:0.80rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                                style="font-size:0.88rem; color:var(--text-secondary); margin-top:6px; line-height:1.5;">
                                 पारिवारिक सामंजस्य रहेगा। जीवनसाथी व परिजनों के परामर्श का सम्मान करें।</p>
                         </div>
                         <div
-                            style="background:var(--bg-card-alt); padding:10px; border-radius:8px; border:1px solid var(--border-subtle);">
-                            <b style="color:var(--primary); font-size:0.84rem;">🌿 स्वास्थ्य एवं ऊर्जा</b>
+                            style="background:var(--bg-card-alt); padding:12px; border-radius:14px; border:1px solid rgba(212,175,55,0.22);">
+                            <b style="color:var(--primary); font-size:0.94rem; display:block;">🌿 स्वास्थ्य व ऊर्जा</b>
                             <p id="mDailyHealth"
-                                style="font-size:0.80rem; color:var(--text-secondary); margin-top:4px; line-height:1.5;">
+                                style="font-size:0.88rem; color:var(--text-secondary); margin-top:6px; line-height:1.5;">
                                 हल्का सात्विक भोजन, पर्याप्त जल ग्रहण करें तथा सूर्य उपासना से आत्मबल बढ़ाएं।</p>
                         </div>
                     </div>
 
                     <!-- Daily Target Remedy -->
                     <div
-                        style="background:rgba(212,175,55,0.1); border:1px solid var(--border-gold); padding:8px 10px; border-radius:8px; font-size:0.74rem;">
-                        <b>आज का अचूक उपाय:</b> सूर्यनारायण को तांबे के लोटे से अर्घ्य दें। <i>"ॐ घृणि सूर्याय नमः"</i>
-                        का जप करें।
+                        style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); padding:10px 12px; border-radius:12px; font-size:0.88rem; line-height:1.5; margin-bottom:10px;">
+                        <b>🪔 आज का अचूक उपाय:</b> सूर्यनारायण को तांबे के लोटे से अर्घ्य दें। <i>"ॐ घृणि सूर्याय नमः"</i> का जप करें।
                     </div>
+
+                    <button id="mBtnEnablePushAlerts" onclick="VyasPushEngine.subscribeUser()"
+                        style="background:rgba(16,185,129,0.14); color:#34d399; border:1px solid rgba(16,185,129,0.35); padding:10px 14px; border-radius:12px; font-weight:700; font-size:0.88rem; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">🔔
+                        दैनिक पंचांग व पर्व अलर्ट चालू करें</button>
                 </div>
 
                 <!-- Fast Shortcuts Grid (Like Nakshatra Tak Pro) -->
@@ -1436,39 +1580,39 @@
                     </div>
                     <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; text-align:center;">
                         <div onclick="VyasMobile.switchTab('kundli')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
-                            <div style="font-size:1.3rem;"></div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
+                            <div style="font-size:1.5rem;">☸️</div>
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 लग्न चक्र</div>
                         </div>
                         <div onclick="VyasMobile.switchTab('dasha')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
                             <div style="font-size:1.3rem;">⏳</div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 दशा चक्र</div>
                         </div>
                         <div onclick="VyasMobile.switchTab('predictions')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
-                            <div style="font-size:1.3rem;"></div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
+                            <div style="font-size:1.5rem;">📜</div>
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 फलादेश</div>
                         </div>
                         <div onclick="VyasMobile.switchTab('ashtakavarga')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
                             <div style="font-size:1.3rem;">⊞</div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 अष्टकवर्ग</div>
                         </div>
                         <div onclick="VyasMobile.switchTab('transit')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
                             <div style="font-size:1.3rem;">🌌</div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 गोचर 2026</div>
                         </div>
                         <div onclick="VyasMobile.switchTab('chat')"
-                            style="background:var(--bg-card-alt); padding:10px 4px; border-radius:8px; cursor:pointer; border:1px solid var(--border-subtle);">
+                            style="background:var(--bg-card-alt); padding:14px 6px; border-radius:14px; cursor:pointer; border:1px solid rgba(212,175,55,0.22);">
                             <div style="font-size:1.3rem;"></div>
-                            <div style="font-size:0.72rem; font-weight:700; color:var(--text-primary); margin-top:2px;">
+                            <div style="font-size:0.86rem; font-weight:700; color:var(--text-primary); margin-top:5px;">
                                 व्यास AI</div>
                         </div>
                     </div>
