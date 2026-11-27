@@ -2980,7 +2980,7 @@
                     ✓ यह संभावित समय स्वीकार करें और कुण्डली अपडेट करें
                 </button>
             </div>
-        </div>>
+        </div>
 
         <!-- 3. VIRAL COSMIC SHARE CARD MODAL (MOBILE) -->
         <div id="mShareCardModal" class="m-modal-overlay">
@@ -3019,7 +3019,7 @@
                 </div>
                 <div id="mSavedProfilesList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
                 </div>
-                <button onclick="VyasMobile.openNewProfileModal()" class="gold-btn"
+                <button onclick="VyasMobile.closeModals(); VyasMobile.openNewProfileModal()" class="gold-btn"
                     style="font-size:0.82rem; padding:10px; width:100%;">
                     + नई कुण्डली बनाएँ (निःशुल्क)
                 </button>
@@ -9860,13 +9860,22 @@
                         '</div>';
                 }
                 html += '<div style="margin-top:14px;">' +
-                    '<button onclick="VyasMobile.openNewProfileModal(); VyasMobile.closeModals();" class="gold-btn" style="width:100%; padding:12px; font-size:0.95rem; font-weight:700; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px;">' +
+                    '<button onclick="VyasMobile.closeModals(); VyasMobile.openNewProfileModal();" class="gold-btn" style="width:100%; padding:12px; font-size:0.95rem; font-weight:700; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px;">' +
                     '<span>+</span> नई कुण्डली प्रविष्ट करें' +
                     '</button>' +
                     '</div>';
 
                 list.innerHTML = html;
-                modal.style.display = 'flex';
+                this.closeModals();
+                modal.classList.add('active');
+                modal.style.setProperty('display', 'flex', 'important');
+                if (this.googleUser && this.googleUser.email && typeof this.syncCloudProfiles === 'function' && !this._cloudRefreshedInModal) {
+                    var selfM = this;
+                    this._cloudRefreshedInModal = true;
+                    this.syncCloudProfiles(false).then(function () {
+                        setTimeout(function () { selfM._cloudRefreshedInModal = false; }, 3000);
+                    });
+                }
             },
 
             loadCombinedProfile: function (index) {
@@ -10663,7 +10672,9 @@
                     if (typeof prof.lon === 'number' && !isNaN(prof.lon)) cityInp.setAttribute('data-lon', prof.lon);
                 }
                 document.getElementById('m_inp_gender').value = prof.gender || "Male";
+                this.closeModals();
                 m.classList.add('active');
+                m.style.setProperty('display', 'flex', 'important');
             },
 
             openNewProfileModal() {
