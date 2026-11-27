@@ -7691,6 +7691,8 @@
                             this.googleUser = null;
                         } else {
                             this.googleUser = parsed;
+                            var selfAuth = this;
+                            setTimeout(function () { if (selfAuth.syncCloudProfiles) selfAuth.syncCloudProfiles(); }, 250);
                         }
                         this.updateGoogleAuthUI();
                     } else {
@@ -7987,15 +7989,84 @@
                 if (this.activeChartData) {
                     this.loadProfile();
                     this.renderChart(this.currentVarga || 'd1');
-
                     this.renderPlanetTable();
                     this.renderPredictions();
                     this.renderDashaTree();
-                } else {
-                    this.openNewProfileModal();
                 }
 
-                alert("✓ स्वागतम् " + this.googleUser.name + " जी! Google प्रमाणीकरण सफल। PRO एक्सेस सक्रिय है।");
+                // Sync saved Kundlis from Hostinger Cloud Vault for this Google email
+                this.syncCloudProfiles(true);
+                alert("✓ स्वागतम् " + this.googleUser.name + " जी! Google प्रमाणीकरण सफल। आपकी सुरक्षित कुण्डलियाँ क्लाउड से लोड की जा रही हैं...");
+            },
+
+            syncCloudProfiles: async function (autoLoadIfEmpty) {
+                try {
+                    if (!this.googleUser || !this.googleUser.email) return [];
+                    var email = String(this.googleUser.email).toLowerCase().trim();
+                    var custom = [];
+                    var fam = [];
+                    try { custom = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]') || []; } catch (e) { }
+                    try { fam = JSON.parse(localStorage.getItem('vyas_family_vault') || '[]') || []; } catch (e) { }
+
+                    // Deduplicate local profiles
+                    var localMap = {};
+                    var localList = [];
+                    custom.concat(fam).forEach(function (p) {
+                        if (!p || !p.name || !p.dob) return;
+                        var key = (String(p.name).trim() + '|' + String(p.dob).trim()).toLowerCase();
+                        if (!localMap[key]) {
+                            localMap[key] = true;
+                            localList.push({
+                                name: p.name,
+                                dob: p.dob,
+                                tob: p.tob || '12:00 PM',
+                                city: p.city || 'Pali, Rajasthan',
+                                gender: p.gender || 'Male',
+                                asc_sign: p.asc_sign || '',
+                                lat: p.lat || null,
+                                lon: p.lon || null,
+                                tz: p.tz || 5.5
+                            });
+                        }
+                    });
+
+                    var resp = await fetch("https://vyasastro.in/api/kundli_vault.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email: email, action: "merge", profiles: localList })
+                    });
+                    if (!resp.ok) return localList;
+                    var data = await resp.json();
+                    if (data && data.success && Array.isArray(data.profiles)) {
+                        var merged = data.profiles;
+                        try {
+                            localStorage.setItem('vyas_custom_profiles', JSON.stringify(merged));
+                            localStorage.setItem('vyas_user_vault_' + email, JSON.stringify(merged));
+                        } catch (e) { }
+
+                        if (!this.activeChartData && merged.length > 0 && typeof this.computeMathematicalKundli === 'function') {
+                            var first = merged[0];
+                            var chart = this.computeMathematicalKundli(first.name, first.dob, first.tob || '12:00 PM', first.city || '', first.gender || 'Male', first.lat, first.lon);
+                            if (chart) {
+                                this.activeChartData = chart;
+                                this.activeChart = chart;
+                                try { localStorage.setItem('vyas_active_profile', JSON.stringify(chart)); } catch (e) { }
+                                this.loadProfile();
+                                this.renderChart(this.currentVarga || 'd1');
+                                this.renderPlanetTable();
+                                this.renderPredictions();
+                                this.renderDashaTree();
+                                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
+                            }
+                        } else if (autoLoadIfEmpty && !this.activeChartData && merged.length === 0) {
+                            this.openNewProfileModal();
+                        }
+                        return merged;
+                    }
+                } catch (err) {
+                    console.warn("Cloud vault sync error:", err);
+                }
+                return [];
             },
 
             signOutGoogleUser: function () {
@@ -9763,7 +9834,17 @@
                     if (fam) familyProfiles = JSON.parse(fam);
                 } catch (e) { }
 
-                var allProfiles = customProfiles.concat(familyProfiles);
+                var seenMap = {};
+                var allProfiles = [];
+                customProfiles.concat(familyProfiles).forEach(function (p) {
+                    if (!p || !p.name) return;
+                    var k = (String(p.name).trim() + '|' + String(p.dob || '').trim()).toLowerCase();
+                    if (!seenMap[k]) {
+                        seenMap[k] = true;
+                        allProfiles.push(p);
+                    }
+                });
+                this._cachedSavedProfiles = allProfiles;
 
                 if (allProfiles.length > 0) {
                     for (var i = 0; i < allProfiles.length; i++) {
@@ -9773,7 +9854,7 @@
                             '<b style="color:var(--primary); font-size:0.95rem;">' + (p.name || 'सुरक्षित जातक') + '</b><br>' +
                             '<span style="font-size:0.82rem; color:var(--text-muted);">' + (p.dob || '') + ' ' + (p.tob || '') + ' • ' + (p.city || '') + '</span>' +
                             '</div>' +
-                            '<button onclick="VyasMobile.loadFamilyMember(' + i + '); VyasMobile.closeModals();" class="gold-btn" style="padding:6px 14px; font-size:0.84rem; font-weight:700; border-radius:8px;">लोड करें</button>' +
+                            '<button onclick="VyasMobile.loadCombinedProfile(' + i + '); VyasMobile.closeModals();" class="gold-btn" style="padding:6px 14px; font-size:0.84rem; font-weight:700; border-radius:8px;">लोड करें</button>' +
                             '</div>';
                     }
                 } else {
@@ -9791,6 +9872,23 @@
 
                 list.innerHTML = html;
                 modal.style.display = 'flex';
+            },
+
+            loadCombinedProfile: function (index) {
+                var list = this._cachedSavedProfiles || [];
+                var p = list[index];
+                if (!p) return;
+                var chart = p.chartData || this.computeMathematicalKundli(p.name, p.dob, p.tob || '12:00 PM', p.city || '', p.gender || 'Male', p.lat, p.lon);
+                if (!chart) return;
+                this.activeChartData = chart;
+                this.activeChart = chart;
+                try { localStorage.setItem('vyas_active_profile', JSON.stringify(chart)); } catch (e) { }
+                this.loadProfile();
+                this.renderChart(this.currentVarga || 'd1');
+                this.renderPlanetTable();
+                this.renderPredictions();
+                this.renderDashaTree();
+                if (typeof this.renderAshtakavarga === 'function') this.renderAshtakavarga();
             },
 
 
@@ -10649,8 +10747,11 @@
 
                 try {
                     var saved = JSON.parse(localStorage.getItem('vyas_custom_profiles') || '[]');
-                    saved.push(newChart.profile);
+                    saved.unshift(newChart.profile);
                     localStorage.setItem('vyas_custom_profiles', JSON.stringify(saved));
+                    if (typeof this.syncCloudProfiles === 'function') {
+                        this.syncCloudProfiles(false);
+                    }
                     try {
                         var req = indexedDB.open('VyasKundliVaultDB', 1);
                         req.onupgradeneeded = function (e) { if (!e.target.result.objectStoreNames.contains('vault')) e.target.result.createObjectStore('vault', { keyPath: 'k' }); };
