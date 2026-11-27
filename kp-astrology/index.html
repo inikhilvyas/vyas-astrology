@@ -831,6 +831,7 @@
                 </table>
             </div>
         </div>
+        <div class="kp-card" id="kpStellarApexPageBox" style="margin-top:18px; padding:18px;"></div>
     </main>
 
     <!-- MOBILE BOTTOM APP NAV -->
@@ -879,6 +880,7 @@
     <script src="/js/vyas_swipe_navigation.js?v=5.2.0"></script>
     <script src="/js/vyas_kp_horary_solver.js?v=5.2.0"></script>
     <script src="/js/vyas_bhavat_bhavam.js?v=5.2.0"></script>
+    <script src="/assets/js/kp-stellar-apex.js?v=3.0.0"></script>
 
     <script>
         var activeChart = null;
@@ -896,6 +898,9 @@
         document.addEventListener('DOMContentLoaded', function () {
             syncTopNavProfile();
             initKPPage();
+            if (window.VyasKPApex && typeof window.VyasKPApex.renderPanel === 'function') {
+                window.VyasKPApex.renderPanel(activeChart, 'kpStellarApexPageBox');
+            }
             // User-driven: do not run executeKPHoraryPage() by default
             renderDivisionsExplorer(); // Pre-populate Divisions table
         });
@@ -982,6 +987,9 @@
         }
 
         function renderKPView(chart) {
+            if (window.VyasKPApex && typeof window.VyasKPApex.renderPanel === 'function') {
+                try { window.VyasKPApex.renderPanel(chart, 'kpStellarApexPageBox'); } catch (e) {}
+            }
             if (!chart) return;
             var prof = chart.profile || {};
             var pName = prof.name || "सक्रिय जातक";
@@ -1382,25 +1390,39 @@
 
             var filtered = table.filter(function (row) {
                 if (!q) return true;
-                var str = (row.number + ' ' + (row.sign_hi || '') + ' ' + (row.sign_en || '') + ' ' + (row.rashi_hi || '') + ' ' + (row.rashi_lord || '') + ' ' + (row.star_lord || '') + ' ' + (row.sub_lord || '') + ' ' + (row.sub_sub_lord || '')).toLowerCase();
+                var rowNum = row.horary_number || row.number || '';
+                var str = (rowNum + ' ' + (row.sign_hi || '') + ' ' + (row.sign_en || '') + ' ' + (row.rashi_hi || '') + ' ' + (row.rashi_en || '') + ' ' + (row.rashi_lord || row.sign_lord || '') + ' ' + (row.star_lord || '') + ' ' + (row.sub_lord || '') + ' ' + (row.sub_sub_lord || '')).toLowerCase();
                 return str.indexOf(q) !== -1;
             });
+
+            function fmtInRashi(absDeg) {
+                if (typeof absDeg !== 'number' || isNaN(absDeg)) return '';
+                var dIn = ((absDeg % 30) + 30) % 30;
+                var d = Math.floor(dIn);
+                var rm = (dIn - d) * 60;
+                var m = Math.floor(rm);
+                var s = Math.round((rm - m) * 60);
+                if (s >= 60) { s -= 60; m += 1; }
+                if (m >= 60) { m -= 60; d = (d + 1) % 30; }
+                return String(d).padStart(2, '0') + '°' + String(m).padStart(2, '0') + "'" + String(s).padStart(2, '0') + '"';
+            }
 
             // Display first 250 matches
             var html = '';
             var maxShow = Math.min(filtered.length, 250);
             for (var i = 0; i < maxShow; i++) {
                 var r = filtered[i];
-                var signName = r.sign_hi || r.rashi_hi || r.sign_en || '';
-                var startDms = r.start_dms_in_rashi || r.from_dms || r.start_dms || '';
-                var endDms = r.end_dms_in_rashi || r.to_dms || r.end_dms || '';
+                var rowNo = r.horary_number || r.number || (i + 1);
+                var signName = r.sign_hi || r.rashi_hi || r.sign_en || r.rashi_en || '';
+                var startDms = r.start_dms_in_rashi || r.from_dms || r.start_dms || fmtInRashi(r.abs_start_deg);
+                var endDms = r.end_dms_in_rashi || r.to_dms || r.end_dms || fmtInRashi(r.abs_end_deg);
                 var rl = r.rashi_lord || r.sign_lord || '';
                 var nl = r.star_lord || '';
                 var sl = r.sub_lord || '';
                 var ssl = r.sub_sub_lord || '';
 
                 html += '<tr>' +
-                    '<td><b>' + r.number + '</b></td>' +
+                    '<td><b>' + rowNo + '</b></td>' +
                     '<td>' + signName + '</td>' +
                     '<td style="font-family:var(--font-mono);">' + startDms + '</td>' +
                     '<td style="font-family:var(--font-mono);">' + endDms + '</td>' +
