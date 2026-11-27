@@ -7538,7 +7538,9 @@
                             parsed.email === 'nikhil@gmail.com' ||
                             parsed.email === 'user@gmail.com' ||
                             parsed.email === 'user@vyasastro.in' ||
-                            (parsed.name && parsed.name.indexOf('वैदिक जातक') !== -1)) {
+                            parsed.email === 'pro.member@vyasastro.in' ||
+                            String(parsed.sub).indexOf('vyas_vip_') === 0 ||
+                            (parsed.name && (parsed.name.indexOf('वैदिक जातक') !== -1 || parsed.name.indexOf('सत्यापित VIP जातक') !== -1))) {
                             console.warn("Purged unverified or simulated user profile:", parsed);
                             localStorage.removeItem('vyas_google_user');
                             localStorage.removeItem('vyas_g_jwt');
@@ -7622,25 +7624,6 @@
                 }
             },
 
-            enableGuestProAccess: function (userName) {
-                var name = userName || "सत्यापित VIP जातक";
-                this.googleUser = {
-                    name: name,
-                    email: "pro.member@vyasastro.in",
-                    sub: "vyas_vip_" + Date.now(),
-                    isVerified: true,
-                    isPro: true,
-                    picture: "logo_icon.png"
-                };
-                try {
-                    localStorage.setItem('vyas_google_user', JSON.stringify(this.googleUser));
-                } catch (e) { }
-                this.updateGoogleAuthUI();
-                this.closeModals();
-                if (window.Android && typeof window.Android.showToast === 'function') {
-                    window.Android.showToast("✨ VIP PRO सदस्यता सक्रिय!");
-                }
-            },
 
             handleOAuthDeepLink: function (dataUrl) {
                 try {
@@ -8068,14 +8051,13 @@
                         }
                     } catch (e) { }
                 }
-                // Pre-seed authentic profile for founder Nikhil Vyas (1984-11-23 04:51 PM Pali -> Mesha Lagna 23°28')
-                if (!chart || !chart.profile || !chart.profile.name || chart.profile.name === 'अतिथि जातक (Guest)') {
-                    try {
-                        chart = this.computeMathematicalKundli("निखिल व्यास (Nikhil Vyas)", "1984-11-23", "04:51 PM", "पाली (Pali, Rajasthan)", "Male", 25.7711, 73.3234);
-                        if (chart) {
-                            localStorage.setItem('vyas_active_profile', JSON.stringify(chart));
-                        }
-                    } catch (e) { }
+                // Do NOT pre-seed any personal Kundli when logged out; purge leaked pre-seed if unauthenticated
+                if (chart && chart.profile && chart.profile.name === 'निखिल व्यास (Nikhil Vyas)' && !this.googleUser) {
+                    chart = null;
+                    try { localStorage.removeItem('vyas_active_profile'); } catch (e) { }
+                }
+                if (chart && chart.profile && chart.profile.name === 'अतिथि जातक (Guest)') {
+                    chart = null;
                 }
                 if (chart && chart.profile && chart.profile.name) {
                     this.activeChartData = chart;
@@ -12021,11 +12003,6 @@
                     <span>Google खाते से साइन-इन करें</span>
                 </button>
 
-                <!-- 1-Click Instant PRO VIP Access -->
-                <button type="button" onclick="VyasMobile.enableGuestProAccess()"
-                    style="width:100%; margin-top:10px; background:linear-gradient(135deg, #d4af37, #b8860b); border:none; border-radius:24px; padding:11px 16px; color:#030712; font-weight:800; font-size:0.86rem; cursor:pointer; box-shadow:0 2px 8px rgba(212,175,55,0.35);">
-                    ✨ 1-क्लिक त्वरित प्रो एक्सेस (VIP Mode)
-                </button>
 
                 <button type="button" onclick="VyasMobile.closeModals()"
                     style="width:100%; margin-top:10px; background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); border-radius:24px; padding:10px 16px; color:#cbd5e1; font-weight:600; font-size:0.82rem; cursor:pointer;">

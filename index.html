@@ -10383,6 +10383,8 @@
                             parsed.email === 'nikhil@gmail.com' ||
                             parsed.email === 'user@gmail.com' ||
                             parsed.email === 'user@vyasastro.in' ||
+                            parsed.email === 'pro.member@vyasastro.in' ||
+                            String(parsed.sub).indexOf('vyas_vip_') === 0 ||
                             (parsed.name && parsed.name.indexOf('वैदिक जातक') !== -1)) {
                             console.warn("Purged unverified or simulated user profile:", parsed);
                             localStorage.removeItem('vyas_google_user');
