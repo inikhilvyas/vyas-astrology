@@ -423,27 +423,35 @@
         attach(cid);
     }
 
+    var TARGET_CONTAINERS = ['desktopKundliSvgWrap', 'mobileKundliSvgBox', 'kpChartWrap', 'chartSvgContainer', 'mChartSvgWrap'];
+
     function autoAttachAll() {
-        ['chartSvgContainer', 'mChartSvgWrap', 'kpChartWrap'].forEach(function (cid) {
+        TARGET_CONTAINERS.forEach(function (cid) {
             if (document.getElementById(cid)) attach(cid);
         });
     }
 
-    // Re-attach automatically whenever charts re-render
-    if (typeof MutationObserver !== 'undefined') {
-        window.addEventListener('DOMContentLoaded', function () {
-            autoAttachAll();
-            ['chartSvgContainer', 'mChartSvgWrap', 'kpChartWrap'].forEach(function (cid) {
-                var el = document.getElementById(cid);
-                if (!el) return;
-                var obs = new MutationObserver(function () {
-                    if (!el.querySelector('#vyasDrishtiOverlayGroup')) {
-                        setTimeout(function () { attach(cid); }, 30);
-                    }
-                });
-                obs.observe(el, { childList: true });
+    function initDrishtiObserver() {
+        autoAttachAll();
+        TARGET_CONTAINERS.forEach(function (cid) {
+            var el = document.getElementById(cid);
+            if (!el || el._vyasDrishtiObserved) return;
+            el._vyasDrishtiObserved = true;
+            var obs = new MutationObserver(function () {
+                if (!el.querySelector('#vyasDrishtiOverlayGroup')) {
+                    setTimeout(function () { attach(cid); }, 30);
+                }
             });
+            obs.observe(el, { childList: true });
         });
+    }
+
+    if (typeof MutationObserver !== 'undefined') {
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initDrishtiObserver);
+        } else {
+            initDrishtiObserver();
+        }
     }
 
     global.VyasDrishtiInspector = {

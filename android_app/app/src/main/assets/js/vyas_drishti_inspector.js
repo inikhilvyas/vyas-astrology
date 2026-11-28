@@ -175,10 +175,12 @@
         var dx = p2[0] - p1[0];
         var dy = p2[1] - p1[1];
         var len = Math.sqrt(dx * dx + dy * dy) || 1;
+        // Slight perpendicular curve toward center for clean visual separation
         var bend = Math.min(36, len * 0.18);
         var nx = -dy / len, ny = dx / len;
         var cpx = cx + nx * bend;
         var cpy = cy + ny * bend;
+        // Shorten start & end slightly so arrowhead sits cleanly inside target house
         var pad = Math.min(22, len * 0.14);
         var sx = p1[0] + (dx / len) * pad;
         var sy = p1[1] + (dy / len) * pad;
@@ -199,6 +201,7 @@
         var model = getChartModel(chart);
         var isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
+        // Remove previous overlay group
         var oldG = svg.querySelector('#vyasDrishtiOverlayGroup');
         if (oldG) oldG.remove();
         var oldDefs = svg.querySelector('#vyasDrishtiDefs');
@@ -229,6 +232,7 @@
         var activeHouse = (_state.containerId === containerId && _state.house) ? _state.house : null;
         var activePlanet = (_state.containerId === containerId && _state.mode === 'planet' && _state.planet) ? _state.planet : null;
 
+        // 1. Highlight selected house or planet's house + owned houses
         if (activePlanet && model.planets[activePlanet]) {
             var pObj = model.planets[activePlanet];
             activeHouse = pObj.house;
@@ -254,6 +258,7 @@
             g.appendChild(selPoly);
         }
 
+        // 2. Draw Drishti Arrows
         if (activePlanet && model.planets[activePlanet]) {
             var pObj2 = model.planets[activePlanet];
             var pCol = PLANET_COLORS[activePlanet] || '#ef4444';
@@ -269,6 +274,7 @@
                 g.appendChild(ap);
             });
         } else if (activeHouse) {
+            // Incoming aspects into activeHouse
             Object.keys(model.planets).forEach(function (pn) {
                 var po = model.planets[pn];
                 po.aspects.forEach(function (asp) {
@@ -286,6 +292,7 @@
             });
         }
 
+        // 3. Interactive House Hitboxes
         for (var h = 1; h <= 12; h++) {
             (function (houseNum) {
                 var hit = document.createElementNS(ns, 'polygon');
@@ -336,6 +343,7 @@
         var lordHi = SIGN_LORDS[hInfo.signIdx];
         var lordObj = model.planets[lordHi];
 
+        // Mode Pills: [भाव] + planets in this house (or all planets if planet mode)
         var pillsHtml = '<button type="button" onclick="VyasDrishtiInspector.selectHouse(\'' + containerId + '\',' + hNum + ')" style="padding:5px 12px; border-radius:8px; border:1px solid var(--border-gold, #d4af37); font-weight:800; font-size:0.8rem; cursor:pointer; background:' + (_state.mode === 'house' ? 'var(--gold-gradient, #d4af37)' : 'var(--bg-card-alt, #182442)') + '; color:' + (_state.mode === 'house' ? '#090d16' : 'var(--text-primary, #f8fafc)') + ';">भाव ' + hNum + '</button>';
 
         var housePlanets = hInfo.planets.length ? hInfo.planets : Object.keys(model.planets);
@@ -415,26 +423,35 @@
         attach(cid);
     }
 
+    var TARGET_CONTAINERS = ['desktopKundliSvgWrap', 'mobileKundliSvgBox', 'kpChartWrap', 'chartSvgContainer', 'mChartSvgWrap'];
+
     function autoAttachAll() {
-        ['chartSvgContainer', 'mChartSvgWrap', 'kpChartWrap'].forEach(function (cid) {
+        TARGET_CONTAINERS.forEach(function (cid) {
             if (document.getElementById(cid)) attach(cid);
         });
     }
 
-    if (typeof MutationObserver !== 'undefined') {
-        window.addEventListener('DOMContentLoaded', function () {
-            autoAttachAll();
-            ['chartSvgContainer', 'mChartSvgWrap', 'kpChartWrap'].forEach(function (cid) {
-                var el = document.getElementById(cid);
-                if (!el) return;
-                var obs = new MutationObserver(function () {
-                    if (!el.querySelector('#vyasDrishtiOverlayGroup')) {
-                        setTimeout(function () { attach(cid); }, 30);
-                    }
-                });
-                obs.observe(el, { childList: true });
+    function initDrishtiObserver() {
+        autoAttachAll();
+        TARGET_CONTAINERS.forEach(function (cid) {
+            var el = document.getElementById(cid);
+            if (!el || el._vyasDrishtiObserved) return;
+            el._vyasDrishtiObserved = true;
+            var obs = new MutationObserver(function () {
+                if (!el.querySelector('#vyasDrishtiOverlayGroup')) {
+                    setTimeout(function () { attach(cid); }, 30);
+                }
             });
+            obs.observe(el, { childList: true });
         });
+    }
+
+    if (typeof MutationObserver !== 'undefined') {
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initDrishtiObserver);
+        } else {
+            initDrishtiObserver();
+        }
     }
 
     global.VyasDrishtiInspector = {
